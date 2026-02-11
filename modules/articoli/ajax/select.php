@@ -208,12 +208,21 @@ switch ($resource) {
         // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
-            $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `mg_movimenti`.`idsede` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
+            // Per documenti di acquisto (dir=uscita): usa idsede_destinazione
+            // Per documenti di vendita (dir=entrata): usa idsede_partenza
+            if ($superselect['dir'] == 'uscita') {
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`idsede` = '.prepare($superselect['idsede_destinazione']))['qta'];
+                $qta_da_usare = $qta_sede;
+            } else {
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
+                $qta_da_usare = $qta_sede;
+            } 
 
             $rs[$k] = array_merge($r, [
-                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_sede).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),
-                'qta_sede' => $qta_sede,
-                'disabled' => $qta_sede <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
+                'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_da_usare).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),
+                'qta' => $qta_da_usare, // Usa la quantità della sede specificata in base alla direzione del documento
+                'qta_sede' => isset($superselect['idsede_partenza']) || isset($superselect['idsede_destinazione']) ? $qta_sede : null,
+                'disabled' => $qta_da_usare <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }
 

@@ -29,8 +29,7 @@ $code = $_GET['code'];
 
 // Account individuato via state
 if (!empty($state)) {
-    $account = OAuth2::find($_SESSION['oauth2_id'])
-        ->first();
+    $account = OAuth2::find($_SESSION['oauth2_id']);
 } else {
     $account = OAuth2::find(get('id'));
 

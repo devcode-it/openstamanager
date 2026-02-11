@@ -28,10 +28,11 @@ $op = filter('op');
 $token = filter('token');
 
 $microsoft = null;
-
+$keycloack = null;
 if ($dbo->isConnected()) {
     try {
         $microsoft = $dbo->selectOne('zz_oauth2', '*', ['name' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
+        $keycloack = $dbo->selectOne('zz_oauth2', '*', ['name' => 'Keycloak', 'enabled' => 1, 'is_login' => 1]);
     } catch (QueryException $e) {
     }
 }
@@ -253,14 +254,23 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
                                     <i class="fa fa-question-circle mr-1"></i>'.tr('Password dimenticata?').'
                                 </a>
                             </div>';
-    if ($microsoft) {
+    if ($microsoft || $keycloack) {
         echo '
                         <div class="social-auth-links text-center mt-4 pt-3 border-top">
-                            <p class="text-muted">'.tr('- oppure -').'</p>
-
+                            <p class="text-muted">'.tr('- oppure -').'</p>';
+                        if ($microsoft) {
+                            echo '
                             <a href="'.base_path_osm().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
                                 <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
-                            </a>
+                            </a>';
+                        }
+                        if ($keycloack) {
+                            echo '
+                            <a href="'.base_path_osm().'/oauth2_login.php?id='.$keycloack['id'].'" class="btn btn-block btn-social btn-info btn-flat shadow-sm">
+                                <i class="fa fa-key mr-2"></i>'.tr('Accedi con Keycloack').'
+                            </a>';
+                        }
+                        echo '
                         </div>';
     }
     echo '

@@ -503,11 +503,3 @@ CREATE TABLE IF NOT EXISTS `an_automezzi_danni` (
     PRIMARY KEY (`id`),
     INDEX(`idsede`)
 );
-
--- Aggiunta colonne minimo e massimo alla tabella mg_listini_articoli per gestire i prezzi per range
-ALTER TABLE `mg_listini_articoli` ADD `minimo` decimal(15,6) DEFAULT NULL;
-ALTER TABLE `mg_listini_articoli` ADD `massimo` decimal(15,6) DEFAULT NULL;
-
--- Aggiunta provider OAuth2 Keycloak
-INSERT INTO `zz_oauth2` (`name`, `class`, `client_id`, `client_secret`, `config`, `state`, `access_token`, `refresh_token`, `after_configuration`, `is_login`, `enabled`) VALUES
-('Keycloak', 'Modules\\Emails\\OAuth2\\KeycloakLogin', '', '', '{\"auth_server_url\":\"\",\"realm\":\"\"}', '', NULL, NULL, '', 1, 0);

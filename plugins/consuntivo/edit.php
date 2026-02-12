@@ -32,6 +32,86 @@ $stati_intervento = [];
 $materiali_art = [];
 $materiali_righe = [];
 
+// Cache per le sessioni per evitare query duplicate
+$sessioni_cache = [];
+
+/**
+ * Funzione helper per calcolare margine, margine percentuale e ricarico percentuale
+ */
+function calcolaMargini($costo, $ricavo)
+{
+    $margine = $ricavo - $costo;
+    
+    if ($ricavo > 0) {
+        $margine_prc = (int) ((1 - ($costo / $ricavo)) * 100);
+        $ricarico_prc = $costo > 0 ? (int) ((($ricavo / $costo) - 1) * 100) : 100;
+    } else {
+        $margine_prc = 0;
+        $ricarico_prc = 0;
+    }
+    
+    return [
+        'margine' => $margine,
+        'margine_prc' => $margine_prc,
+        'ricarico_prc' => $ricarico_prc,
+    ];
+}
+
+/**
+ * Funzione helper per ottenere le sessioni di un intervento con cache
+ */
+function getSessioniCache($intervento, &$cache)
+{
+    $id = $intervento->id;
+    
+    if (!isset($cache[$id])) {
+        $cache[$id] = $intervento->sessioni()
+            ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
+            ->where('non_conteggiare', 0)
+            ->get();
+    }
+    
+    return $cache[$id];
+}
+
+/**
+ * Funzione helper per calcolare i totali di una sessione
+ */
+function calcolaTotaliSessione($sessione)
+{
+    return [
+        'costo' => $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata,
+        'ricavo' => $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera +
+                    $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio +
+                    $sessione->prezzo_diritto_chiamata,
+    ];
+}
+
+/**
+ * Funzione helper per generare HTML sconto
+ */
+function getHtmlSconto($sconto)
+{
+    return !empty($sconto) ? '<br><span class="badge badge-danger">'.moneyFormat(-$sconto).'</span>' : '';
+}
+
+/**
+ * Funzione helper per ottenere la query degli interventi disponibili
+ */
+function getQueryInterventiDisponibili($idanagrafica)
+{
+    global $dbo;
+    
+    return 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione 
+            FROM in_interventi 
+            WHERE id_preventivo IS NULL 
+                AND id_contratto IS NULL 
+                AND id_ordine IS NULL 
+                AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) 
+                AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) 
+                AND idanagrafica='.prepare($idanagrafica);
+}
+
 // Tabella con riepilogo interventi
 if ($id_module == Module::where('name', 'Preventivi')->first()->id) {
     $documento = Preventivo::find($id_record);
@@ -99,9 +179,9 @@ if (!empty($interventi)) {
         echo '
     <tr class="hide" id="dettagli_'.$intervento->id.'">
         <td colspan="5">';
-        // Lettura sessioni di lavoro
-        $sessioni = $intervento->sessioni()->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')->where('non_conteggiare', 0)->get();
-        if (!empty($sessioni)) {
+        // Lettura sessioni di lavoro con cache
+        $sessioni = getSessioniCache($intervento, $sessioni_cache);
+        if (!$sessioni->isEmpty()) {
             echo '
             <table class="table table-striped table-sm table-bordered">
                 <tr>
@@ -118,8 +198,8 @@ if (!empty($interventi)) {
                 </tr>';
             foreach ($sessioni as $sessione) {
                 // Visualizzo lo sconto su ore o km se c'è
-                $sconto_ore = !empty($sessione->sconto_totale_manodopera) ? '<br><span class="badge badge-danger">'.moneyFormat(-$sessione->sconto_totale_manodopera).'</span>' : '';
-                $sconto_km = !empty($sessione->sconto_totale_viaggio) ? '<br><span class="badge badge-danger">'.moneyFormat(-$sessione->sconto_totale_viaggio).'</span>' : '';
+                $sconto_ore = getHtmlSconto($sessione->sconto_totale_manodopera);
+                $sconto_km = getHtmlSconto($sessione->sconto_totale_viaggio);
                 echo '
                 <tr>
                     <td>'.$sessione->anagrafica->ragione_sociale.'</td>
@@ -133,20 +213,29 @@ if (!empty($interventi)) {
                     <td class="text-right success">'.moneyFormat($sessione->prezzo_viaggio).$sconto_km.'</td>
                     <td class="text-right success">'.moneyFormat($sessione->prezzo_diritto_chiamata).'</td>
                 </tr>';
+                
+                // Calcola totali sessione
+                $totali_sessione = calcolaTotaliSessione($sessione);
+                
                 // Raggruppamento per tipologia descrizione
-                $tipologie[$sessione->tipo->getTranslation('title')]['ore'] += $sessione->ore;
-                $tipologie[$sessione->tipo->getTranslation('title')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tipologie[$sessione->tipo->getTranslation('title')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $tipo_title = $sessione->tipo->getTranslation('title');
+                $tipologie[$tipo_title]['ore'] = ($tipologie[$tipo_title]['ore'] ?? 0) + $sessione->ore;
+                $tipologie[$tipo_title]['costo'] = ($tipologie[$tipo_title]['costo'] ?? 0) + $totali_sessione['costo'];
+                $tipologie[$tipo_title]['ricavo'] = ($tipologie[$tipo_title]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
+                
                 // Raggruppamento per tecnico
-                $tecnici[$sessione->anagrafica->ragione_sociale]['ore'] += $sessione->ore;
-                $tecnici[$sessione->anagrafica->ragione_sociale]['km'] += $sessione->km;
-                $tecnici[$sessione->anagrafica->ragione_sociale]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $tecnici[$sessione->anagrafica->ragione_sociale]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $tecnico_nome = $sessione->anagrafica->ragione_sociale;
+                $tecnici[$tecnico_nome]['ore'] = ($tecnici[$tecnico_nome]['ore'] ?? 0) + $sessione->ore;
+                $tecnici[$tecnico_nome]['km'] = ($tecnici[$tecnico_nome]['km'] ?? 0) + $sessione->km;
+                $tecnici[$tecnico_nome]['costo'] = ($tecnici[$tecnico_nome]['costo'] ?? 0) + $totali_sessione['costo'];
+                $tecnici[$tecnico_nome]['ricavo'] = ($tecnici[$tecnico_nome]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
+                
                 // Raggruppamento per stato intervento
-                $stati_intervento[$intervento->stato->getTranslation('title')]['colore'] = $intervento->stato->colore;
-                $stati_intervento[$intervento->stato->getTranslation('title')]['ore'] += $sessione->ore;
-                $stati_intervento[$intervento->stato->getTranslation('title')]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-                $stati_intervento[$intervento->stato->getTranslation('title')]['ricavo'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera + $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio + $sessione->prezzo_diritto_chiamata;
+                $stato_title = $intervento->stato->getTranslation('title');
+                $stati_intervento[$stato_title]['colore'] = $intervento->stato->colore;
+                $stati_intervento[$stato_title]['ore'] = ($stati_intervento[$stato_title]['ore'] ?? 0) + $sessione->ore;
+                $stati_intervento[$stato_title]['costo'] = ($stati_intervento[$stato_title]['costo'] ?? 0) + $totali_sessione['costo'];
+                $stati_intervento[$stato_title]['ricavo'] = ($stati_intervento[$stato_title]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
             }
             echo '
             </table>';
@@ -163,7 +252,7 @@ if (!empty($interventi)) {
                     <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
             foreach ($articoli as $articolo) {
-                $sconto = !empty($articolo->sconto) ? '<br><span class="badge badge-danger">'.moneyFormat(-$articolo->sconto).'</span>' : '';
+                $sconto = getHtmlSconto($articolo->sconto);
                 echo '
                 <tr>
                     <td>
@@ -174,10 +263,14 @@ if (!empty($interventi)) {
                     <td class="text-right success">'.moneyFormat($articolo->imponibile).$sconto.'</td>
                 </tr>';
                 // Raggruppamento per articolo con lo stesso prezzo
-                $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / ($articolo->qta > 0 ? $articolo->qta : 1));
-                $costo = (string) ($articolo->spesa / ($articolo->qta > 0 ? $articolo->qta : 1));
+                $qta = $articolo->qta > 0 ? $articolo->qta : 1;
+                $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / $qta);
+                $costo = (string) ($articolo->spesa / $qta);
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->descrizione;
-                $materiali_art[$descrizione][$ricavo][$costo]['id'] = $articolo->id;
+                
+                if (!isset($materiali_art[$descrizione][$ricavo][$costo])) {
+                    $materiali_art[$descrizione][$ricavo][$costo] = ['id' => $articolo->id, 'qta' => 0, 'costo' => 0, 'ricavo' => 0];
+                }
                 $materiali_art[$descrizione][$ricavo][$costo]['qta'] += $articolo->qta;
                 $materiali_art[$descrizione][$ricavo][$costo]['costo'] += $articolo->spesa;
                 $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $articolo->imponibile - $articolo->sconto;
@@ -197,7 +290,7 @@ if (!empty($interventi)) {
                     <th width="150">'.tr('Prezzo di vendita').'</th>
                 </tr>';
             foreach ($righe as $riga) {
-                $sconto = !empty($riga->sconto) ? '<br><span class="badge badge-danger">'.moneyFormat(-$riga->sconto).'</span>' : '';
+                $sconto = getHtmlSconto($riga->sconto);
                 echo '
                 <tr>
                     <td>
@@ -208,9 +301,10 @@ if (!empty($interventi)) {
                     <td class="text-right success">'.moneyFormat($riga->imponibile).$sconto.'</td>
                 </tr>';
                 // Raggruppamento per riga
-                $materiali_righe[$riga->descrizione]['qta'] += $riga->qta;
-                $materiali_righe[$riga->descrizione]['costo'] += $riga->spesa;
-                $materiali_righe[$riga->descrizione]['ricavo'] += $riga->imponibile - $riga->sconto;
+                $descrizione_riga = $riga->descrizione;
+                $materiali_righe[$descrizione_riga]['qta'] = ($materiali_righe[$descrizione_riga]['qta'] ?? 0) + $riga->qta;
+                $materiali_righe[$descrizione_riga]['costo'] = ($materiali_righe[$descrizione_riga]['costo'] ?? 0) + $riga->spesa;
+                $materiali_righe[$descrizione_riga]['ricavo'] = ($materiali_righe[$descrizione_riga]['ricavo'] ?? 0) + $riga->imponibile - $riga->sconto;
             }
             echo '
             </table>';
@@ -324,19 +418,16 @@ echo '
             </tr>';
 ksort($tipologie);
 foreach ($tipologie as $key => $tipologia) {
-    $margine = $tipologia['ricavo'] - $tipologia['costo'];
-    if ($tipologia['ricavo']) {
-        $margine_prc = (int) (1 - ($tipologia['costo'] / ($tipologia['ricavo'] > 0 ? $tipologia['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($tipologia['ricavo'] && $tipologia['costo']) ? (int) ((($tipologia['ricavo'] / ($tipologia['costo'] > 0 ? $tipologia['costo'] : 1)) - 1) * 100) : 100;
-    }
+    $margini = calcolaMargini($tipologia['costo'], $tipologia['ricavo']);
+    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
     echo '
             <tr>
                 <td>'.$key.'</td>
                 <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
                 <td class="text-right">'.Translator::numberToLocale($tipologia['costo']).' €</td>
                 <td class="text-right">'.Translator::numberToLocale($tipologia['ricavo']).' €</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
             </tr>';
 }
 echo '
@@ -355,11 +446,8 @@ echo '
             </tr>';
 ksort($tecnici);
 foreach ($tecnici as $key => $tecnico) {
-    $margine = $tecnico['ricavo'] - $tecnico['costo'];
-    if ($tecnico['ricavo']) {
-        $margine_prc = (int) (1 - ($tecnico['costo'] / ($tecnico['ricavo'] > 0 ? $tecnico['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($tecnico['ricavo'] && $tecnico['costo']) ? (int) ((($tecnico['ricavo'] / ($tecnico['costo'] > 0 ? $tecnico['costo'] : 1)) - 1) * 100) : 100;
-    }
+    $margini = calcolaMargini($tecnico['costo'], $tecnico['ricavo']);
+    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
     echo '
             <tr>
                 <td>'.$key.'</td>
@@ -367,8 +455,8 @@ foreach ($tecnici as $key => $tecnico) {
                 <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
                 <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
                 <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
             </tr>';
 }
 echo '
@@ -388,19 +476,16 @@ echo '
             </tr>';
 ksort($stati_intervento);
 foreach ($stati_intervento as $key => $stato) {
-    $margine = $stato['ricavo'] - $stato['costo'];
-    if ($stato['ricavo']) {
-        $margine_prc = (int) (1 - ($stato['costo'] / ($stato['ricavo'] > 0 ? $stato['ricavo'] : 1))) * 100;
-        $ricarico_prc = ($stato['ricavo'] && $stato['costo']) ? (int) ((($stato['ricavo'] / ($stato['costo'] > 0 ? $stato['costo'] : 1)) - 1) * 100) : 100;
-    }
+    $margini = calcolaMargini($stato['costo'], $stato['ricavo']);
+    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
     echo '
             <tr>
                 <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
                 <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
                 <td class="text-right">'.Translator::numberToLocale($stato['costo']).' €</td>
                 <td class="text-right">'.Translator::numberToLocale($stato['ricavo']).' €</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
             </tr>';
 }
 echo '
@@ -420,34 +505,32 @@ ksort($materiali_art);
 foreach ($materiali_art as $key => $materiali_array1) {
     foreach ($materiali_array1 as $materiali_array2) {
         foreach ($materiali_array2 as $materiale) {
-            $margine = $materiale['ricavo'] - $materiale['costo'];
-            $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100;
-            $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] > 0 ? $materiale['costo'] : 1)) - 1) * 100) : 100;
+            $margini = calcolaMargini($materiale['costo'], $materiale['ricavo']);
+            $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
             echo '
             <tr>
                 <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
                 <td class="text-center">'.$materiale['qta'].'</td>
                 <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
                 <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
             </tr>';
         }
     }
 }
 ksort($materiali_righe);
 foreach ($materiali_righe as $key => $materiale) {
-    $margine = $materiale['ricavo'] - $materiale['costo'];
-    $margine_prc = (int) (1 - ($materiale['costo'] / ($materiale['ricavo'] > 0 ? $materiale['ricavo'] : 1))) * 100;
-    $ricarico_prc = ($materiale['ricavo'] && $materiale['costo']) ? (int) ((($materiale['ricavo'] / ($materiale['costo'] > 0 ? $materiale['costo'] : 1)) - 1) * 100) : 100;
+    $margini = calcolaMargini($materiale['costo'], $materiale['ricavo']);
+    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
     echo '
             <tr>
                 <td>'.$key.'</td>
                 <td class="text-center">'.$materiale['qta'].'</td>
                 <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
                 <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$margine_prc.'%)</td>
-                <td class="text-right '.($margine > 0 ? 'bg-success' : 'bg-danger').'">'.Translator::numberToLocale($margine).' € ('.$ricarico_prc.'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
             </tr>';
 }
 echo '
@@ -471,11 +554,8 @@ $interventi_per_mese = [];
 $totals = ['ore' => 0, 'km' => 0, 'costo' => 0, 'totale' => 0];
 
 foreach ($interventi as $intervento) {
-    // Ottieni le sessioni di lavoro per questo intervento
-    $sessioni = $intervento->sessioni()
-        ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
-        ->where('non_conteggiare', 0)
-        ->get();
+    // Riutilizza le sessioni già caricate in cache
+    $sessioni = getSessioniCache($intervento, $sessioni_cache);
 
     foreach ($sessioni as $sessione) {
         $mese = date('Y-m', strtotime((string) $sessione->orario_inizio));
@@ -487,19 +567,19 @@ foreach ($interventi as $intervento) {
                 'totale' => 0,
             ];
         }
+        
+        // Usa la funzione helper per calcolare i totali
+        $totali_sessione = calcolaTotaliSessione($sessione);
+        
         $interventi_per_mese[$mese]['ore'] += $sessione->ore;
         $interventi_per_mese[$mese]['km'] += $sessione->km;
-        $interventi_per_mese[$mese]['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-        $interventi_per_mese[$mese]['totale'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera +
-                                                $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio +
-                                                $sessione->prezzo_diritto_chiamata;
+        $interventi_per_mese[$mese]['costo'] += $totali_sessione['costo'];
+        $interventi_per_mese[$mese]['totale'] += $totali_sessione['ricavo'];
 
         $totals['ore'] += $sessione->ore;
         $totals['km'] += $sessione->km;
-        $totals['costo'] += $sessione->costo_manodopera + $sessione->costo_viaggio + $sessione->costo_diritto_chiamata;
-        $totals['totale'] += $sessione->prezzo_manodopera - $sessione->sconto_totale_manodopera +
-                            $sessione->prezzo_viaggio - $sessione->sconto_totale_viaggio +
-                            $sessione->prezzo_diritto_chiamata;
+        $totals['costo'] += $totali_sessione['costo'];
+        $totals['totale'] += $totali_sessione['ricavo'];
     }
 }
 
@@ -537,7 +617,7 @@ echo '
 </div>';
 
 // Aggiunta interventi se il documento é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-$query = 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione FROM in_interventi WHERE id_preventivo IS NULL AND id_contratto IS NULL AND id_ordine IS NULL AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) AND idanagrafica='.prepare($record['idanagrafica']);
+$query = getQueryInterventiDisponibili($record['idanagrafica']);
 
 $count = $dbo->fetchNum($query);
 

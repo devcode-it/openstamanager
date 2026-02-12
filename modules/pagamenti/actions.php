@@ -120,7 +120,7 @@ switch (filter('op')) {
             flash()->info(tr('Elemento eliminato con successo!'));
 
             if ($id_record == $id) {
-                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `title`='.prepare($record['descrizione']));
+                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `co_pagamenti`.`name`='.prepare($record['descrizione']));
                 if (count($res) != 0) {
                     redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
                 } else {

@@ -336,7 +336,7 @@ if (!empty($anagrafica)) {
             {[ "type": "select", "label": "'.tr('Fattura collegata').'", "name": "ref_fattura", "required": 0, "values": "query='.$query.'" ]}
         </div>';
     } elseif ($dati_generali['TipoDocumento'] == 'TD06') {
-        $query .= 'AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `title` = 'Fatture pro-forma' AND `id_module` = ".prepare($id_module).')';
+        $query .= 'AND `co_documenti`.`id_segment` = (SELECT `zz_segments`.`id` FROM `zz_segments` WHERE `zz_segments`.`name` = "Fatture pro-forma" AND `id_module` = '.prepare($id_module).')';
 
         echo '
             <div class="col-md-3">

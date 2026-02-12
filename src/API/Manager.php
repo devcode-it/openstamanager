@@ -148,7 +148,7 @@ class Manager
         $module = $response['module'];
 
         // Ottieni la lista dei campi di database dalla tabella con nome $table, e escludi da $select quelli non inclusi
-        if (!empty($table)) {
+        if (!empty($table) && !empty($select)) {
             $database = database();
             $columns = $database->fetchArray('SHOW COLUMNS FROM `'.$table.'`');
             $column_names = array_column($columns, 'Field');
@@ -185,8 +185,12 @@ class Manager
                 $query = $database->table($table);
 
                 // Query per ottenere le informazioni
-                foreach ($select as $s) {
-                    $query->selectRaw($s);
+                if ($select === '*') {
+                    $query->select('*');
+                } else {
+                    foreach ($select as $s) {
+                        $query->selectRaw($s);
+                    }
                 }
 
                 foreach ($joins as $join) {
@@ -214,12 +218,27 @@ class Manager
                     $query->groupBy($group);
                 }
 
+                // Ordinamento
+                if (!empty($order)) {
+                    if (is_array($order)) {
+                        foreach ($order as $field => $direction) {
+                            $query->orderBy($field, $direction);
+                        }
+                    } else {
+                        $query->orderBy($order);
+                    }
+                }
+
                 $count = $query->count();
 
                 // Composizione query finale
                 $response = [];
 
-                $response['records'] = $database->select($table, $select, $joins, $where, $order, [$page * $length, $length], null, $group, $whereraw);
+                // Clone della query per ottenere i record con paginazione
+                $recordsQuery = clone $query;
+                $recordsQuery->offset($page * $length);
+                $recordsQuery->limit($length);
+                $response['records'] = $recordsQuery->get()->toArray();
                 $response['total-count'] = $count;
             }
 

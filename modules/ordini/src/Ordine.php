@@ -53,7 +53,7 @@ class Ordine extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
+    public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $nome, $data, $id_segment = null)
     {
         $model = new static();
 
@@ -71,6 +71,7 @@ class Ordine extends Document
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
+        $model->nome = $nome;
         $model->data = $data;
         $model->idpagamento = $id_pagamento;
 

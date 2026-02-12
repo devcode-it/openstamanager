@@ -45,13 +45,14 @@ if ($module->name == 'Ordini cliente') {
 switch (post('op')) {
     case 'add':
         $idanagrafica = post('idanagrafica');
+        $nome = post('nome');
         $data = post('data');
         $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($idanagrafica);
         $tipo = Tipo::where('dir', $dir)->first();
 
-        $ordine = Ordine::build($anagrafica, $tipo, $data, $id_segment);
+        $ordine = Ordine::build($anagrafica, $tipo, $nome, $data, $id_segment);
         $id_record = $ordine->id;
 
         flash()->info(tr('Aggiunto ordine numero _NUM_!', [
@@ -82,6 +83,7 @@ switch (post('op')) {
             $rs = $dbo->fetchArray($query);
             $pagamento = $rs[0]['descrizione'];
 
+            $ordine->nome = post('nome');
             $ordine->idanagrafica = post('idanagrafica');
             $ordine->idreferente = post('idreferente');
             $ordine->data = post('data') ?: null;
@@ -536,7 +538,7 @@ switch (post('op')) {
         if (post('create_document') == 'on') {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
-            $ordine = Ordine::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
+            $ordine = Ordine::build($documento->anagrafica, $tipo, '', post('data'), post('id_segment'));
             $ordine->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
             $ordine->idsede_partenza = $idsede_partenza;
             $ordine->idsede_destinazione = $idsede_destinazione;
@@ -597,7 +599,7 @@ switch (post('op')) {
             $anagrafica = Anagrafica::find(post('idanagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
 
-            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'));
+            $ordine = Ordine::build($anagrafica, $tipo, '', post('data'), post('id_segment'));
             $ordine->save();
 
             $id_record = $ordine->id;
@@ -682,7 +684,7 @@ switch (post('op')) {
             $anagrafica = Anagrafica::find(post('idanagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
 
-            $ordine = Ordine::build($anagrafica, $tipo, post('data'), post('id_segment'));
+            $ordine = Ordine::build($anagrafica, $tipo, '', post('data'), post('id_segment'));
             $ordine->save();
 
             $id_record = $ordine->id;

@@ -162,6 +162,9 @@ echo '
 
 		<div class="card-body">
 			<div class="row">
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "value": "$nome$" ]}
+                </div>
 
 				<div class="col-md-3" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>
 					{[ "type": "text", "label": "<?php echo tr('Numero ordine'); ?>", "name": "numero", "required": 1, "class": "text-center", "value": "$numero$" ]}
@@ -174,10 +177,29 @@ echo '
 				<div class="col-md-3">
 					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}
 				</div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-3">
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
+
+                <div class="col-md-3">
+                    {[ "type": "number", "label": "<?php echo tr('Sconto in fattura'); ?>", "name": "sconto_finale", "value": "<?php echo $ordine->sconto_finale_percentuale ?: $ordine->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($ordine->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
+                </div>
+            <?php
+            if ($dir == 'entrata') {
+            ?>
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
+                </div>
+            <?php
+            }
+            ?>
             </div>
 
             <div class="row">
@@ -186,24 +208,20 @@ echo '
 				</div>
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$", "link": "module:Porto" ]}
-				</div>
-
-				<div class="col-md-3">
-                <?php
+                    <?php
                     if (!empty($record['idvettore'])) {
                         echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
                     }
-$esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-    'id' => $record['idspedizione'],
-])['esterno'];
-?>
+                    $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
+                        'id' => $record['idspedizione'],
+                    ])['esterno'];
+                    ?>
 					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
-                    {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $ordine->sconto_finale_percentuale ?: $ordine->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($ordine->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}
-                </div>
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$", "link": "module:Porto" ]}
+				</div>
             </div>
 
             <script>
@@ -234,24 +252,6 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
                     }
                 });
             </script>
-<?php
-
-if ($dir == 'entrata') {
-    ?>
-            <div class="row">
-                <div class="col-md-2">
-                    {[ "type": "text", "label": "<?php echo tr('Numero ordine cliente'); ?>", "name": "numero_cliente", "required":0, "value": "<?php echo $record['numero_cliente']; ?>", "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>" ]}
-                </div>
-
-                <div class="col-md-2">
-                    {[ "type": "date", "label": "<?php echo tr('Data ordine cliente'); ?>", "name": "data_cliente", "value": "<?php echo $record['data_cliente']; ?>" ]}
-                </div>
-
-
-            </div>
-                <?php
-}
-?>
 
             <div class="row">
 				<div class="col-md-12">

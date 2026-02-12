@@ -178,7 +178,7 @@ switch (post('op')) {
                     $new_ordine = Ordine::find($new_ordini[$ordine->idanagrafica]);
                 } else {
                     $anagrafica = Anagrafica::find($ordine->idanagrafica);
-                    $new_ordine = Ordine::build($anagrafica, $tipo, $data, post('id_segment'));
+                    $new_ordine = Ordine::build($anagrafica, $tipo, '', $data, post('id_segment'));
                     $new_ordine->idstatoordine = $id_stato;
                     $new_ordine->data = $data;
                     $new_ordine->save();

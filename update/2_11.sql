@@ -13,3 +13,6 @@ ALTER TABLE `mg_listini_articoli` ADD `massimo` decimal(15,6) DEFAULT NULL;
 -- Aggiunta provider OAuth2 Keycloak
 INSERT INTO `zz_oauth2` (`name`, `class`, `client_id`, `client_secret`, `config`, `state`, `access_token`, `refresh_token`, `after_configuration`, `is_login`, `enabled`) VALUES
 ('Keycloak', 'Modules\\Emails\\OAuth2\\KeycloakLogin', '', '', '{\"auth_server_url\":\"\",\"realm\":\"\"}', '', NULL, NULL, '', 1, 0);
+
+-- Aggiunto campo nome in Ordini
+ALTER TABLE `or_ordini` ADD `nome` VARCHAR(100) NOT NULL; 

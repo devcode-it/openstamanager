@@ -46,6 +46,13 @@ class Preventivo extends Document
     protected $table = 'co_preventivi';
 
     /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['anagrafica', 'stato', 'pagamento'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -106,9 +113,6 @@ class Preventivo extends Document
         if (!empty($id_pagamento)) {
             $model->idpagamento = $id_pagamento;
         }
-        if (!empty($id_agente)) {
-            $model->idagente = $id_agente;
-        }
 
         // Banca predefinita per l'anagrafica controparte (cliente)
         $banca_controparte = Banca::where('id_anagrafica', $anagrafica->id)
@@ -144,14 +148,12 @@ class Preventivo extends Document
     public function getOreInterventiAttribute()
     {
         if (!isset($this->info['ore_interventi'])) {
-            $sessioni = collect();
-
-            $interventi = $this->interventi;
-            foreach ($interventi as $intervento) {
-                $sessioni = $sessioni->merge($intervento->sessioni);
-            }
-
-            $this->info['ore_interventi'] = $sessioni->sum('ore');
+            $this->info['ore_interventi'] = $this->interventi()
+                ->with('sessioni')
+                ->get()
+                ->pluck('sessioni')
+                ->flatten()
+                ->sum('ore');
         }
 
         return $this->info['ore_interventi'];
@@ -234,12 +236,12 @@ class Preventivo extends Document
 
     public function bancaAzienda()
     {
-        return $this->belongsTo(\Modules\Banche\Banca::class, 'id_banca_azienda');
+        return $this->belongsTo(Banca::class, 'id_banca_azienda');
     }
 
     public function bancaControparte()
     {
-        return $this->belongsTo(\Modules\Banche\Banca::class, 'id_banca_controparte');
+        return $this->belongsTo(Banca::class, 'id_banca_controparte');
     }
 
     /**
@@ -249,12 +251,19 @@ class Preventivo extends Document
      */
     public function getBanca()
     {
+        // Eager loading del pagamento per evitare query aggiuntive
         $pagamento = $this->pagamento;
 
         if ($pagamento && $pagamento->isRiBa()) {
-            $banca = \Modules\Banche\Banca::find($this->id_banca_controparte) ?: \Modules\Banche\Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
+            // Prima cerca la banca controparte specificata, altrimenti cerca quella predefinita
+            $banca = $this->id_banca_controparte 
+                ? Banca::find($this->id_banca_controparte)
+                : Banca::where('id_anagrafica', $this->idanagrafica)
+                    ->where('predefined', 1)
+                    ->whereNull('deleted_at')
+                    ->first();
         } else {
-            $banca = \Modules\Banche\Banca::find($this->id_banca_azienda);
+            $banca = Banca::find($this->id_banca_azienda);
         }
 
         return $banca;
@@ -327,8 +336,8 @@ class Preventivo extends Document
 
         // cambio stato agli interventi solo se sto fatturando il preventivo
         if ($trigger->getDocument() instanceof Fattura) {
-            // Trasferimento degli interventi collegati
-            $interventi = $this->interventi;
+            // Trasferimento degli interventi collegati con eager loading dello stato
+            $interventi = $this->interventi()->with('stato')->get();
             $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
             foreach ($interventi as $intervento) {
                 if ($intervento->stato->is_bloccato == 1) {
@@ -348,24 +357,9 @@ class Preventivo extends Document
      */
     public static function getNextNumero($data, $id_segment)
     {
-        $maschera = Generator::getMaschera($id_segment);
-
-        if (str_contains($maschera, 'm')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
-                'MONTH(data_bozza) = '.prepare(date('m', strtotime((string) $data))),
-            ]);
-        } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
-            ]);
-        } else {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_preventivi', 'numero');
-        }
-
-        $numero = Generator::generate($maschera, $ultimo);
-
-        return $numero;
+        return getNextNumeroProgressivo('co_preventivi', 'numero', $data, $id_segment, [
+            'data_field' => 'data_bozza',
+        ]);
     }
 
     // Opzioni di riferimento
@@ -397,13 +391,16 @@ class Preventivo extends Document
 
     public function getRevisioniAttribute()
     {
-        $revisioni = Preventivo::where('master_revision', '=', $this->master_revision)->get()->pluck('id')->toArray();
-
-        return $revisioni;
+        // Ottimizzazione: usa pluck() direttamente sulla query invece di caricare tutti i modelli
+        return Preventivo::where('master_revision', '=', $this->master_revision)
+            ->pluck('id')
+            ->toArray();
     }
 
     public function getUltimaRevisioneAttribute()
     {
-        return Preventivo::selectRaw('MAX(numero_revision) AS revisione')->where('master_revision', $this->master_revision)->get()->toArray()[0]['revisione'];
+        // Ottimizzazione: usa value() invece di toArray() per ottenere solo il valore
+        return Preventivo::where('master_revision', $this->master_revision)
+            ->max('numero_revision');
     }
 }

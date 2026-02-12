@@ -57,32 +57,20 @@ class Ordine extends Document
     {
         $model = new static();
 
-        $stato_documento = Stato::where('name', 'Bozza')->first()->id;
+        $stato_documento = Stato::where('name', 'Bozza')->value('id');
 
         $direzione = $tipo_documento->dir;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
-
-        if ($direzione == 'entrata') {
-            $conto = 'vendite';
-        } else {
-            $conto = 'acquisti';
-        }
+        $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = $anagrafica['idpagamento_'.$conto];
-
-        // Se non è stato associato un pagamento predefinito al cliente, leggo il pagamento dalle impostazioni
-        if (empty($id_pagamento)) {
-            $id_pagamento = setting('Tipo di pagamento predefinito');
-        }
+        $id_pagamento = $anagrafica['idpagamento_'.$conto] ?: setting('Tipo di pagamento predefinito');
 
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
         $model->idagente = $anagrafica->idagente;
-
-        // Salvataggio delle informazioni
         $model->data = $data;
         $model->idpagamento = $id_pagamento;
 
@@ -157,71 +145,99 @@ class Ordine extends Document
     {
         parent::triggerEvasione($trigger);
 
-        if (setting('Cambia automaticamente stato ordini fatturati')) {
-            $righe = $this->getRighe();
-
-            $qta_evasa = $righe->sum('qta_evasa');
-            $qta = $righe->sum('qta');
-            $parziale = $qta != $qta_evasa;
-
-            $stato_attuale = $this->stato;
-            $nome_stato = (database()->isConnected() && database()->tableExists('or_statiordine_lang') ? $stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id) : $stato_attuale->descrizione);
-
-            $righe_fatturate = $righe->where('qta_evasa', '>', 0);
-            $qta_fatturate = 0;
-            $fatture_collegate_totali = 0;
-
-            foreach ($righe_fatturate as $riga) {
-                $fatture_collegate = database()->table('co_righe_documenti')
-                    ->where('original_id', $riga->id)
-                    ->where('original_type', $riga::class)
-                    ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
-                    ->count();
-
-                $fatture_collegate_totali += $fatture_collegate;
-
-                if ($fatture_collegate > 0) {
-                    $qta_fatturate += $riga->qta;
-                }
-            }
-
-            $parziale_fatturato = $qta != $qta_fatturate;
-
-            // Impostazione del nuovo stato
-            if ($qta_evasa == 0) {
-                $descrizione = 'Accettato';
-            } elseif ($trigger->getDocument() instanceof \Modules\Fatture\Fattura) {
-                $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-            } elseif ($trigger->getDocument() instanceof DDT) {
-                $ddt = $trigger->getDocument();
-                $fatture_ddt = database()->table('co_righe_documenti')
-                    ->where('idddt', $ddt->id)
-                    ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
-                    ->count();
-
-                if ($fatture_ddt > 0) {
-                    $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-                } else {
-                    $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-                }
-            } elseif ($fatture_collegate_totali > 0) {
-                $descrizione = $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-            } elseif (in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato'])) {
-                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-            } elseif ($qta_evasa > 0) {
-                $descrizione = $parziale ? 'Parzialmente evaso' : 'Evaso';
-            } else {
-                $descrizione = $nome_stato;
-            }
-
-            if (database()->isConnected() && database()->tableExists('or_statiordine_lang')) {
-                $stato = Stato::where('name', $descrizione)->first()->id;
-            } else {
-                $stato = Stato::where('descrizione', $descrizione)->first()->id;
-            }
-            $this->stato()->associate($stato);
-            $this->save();
+        if (!setting('Cambia automaticamente stato ordini fatturati')) {
+            return;
         }
+
+        $righe = $this->getRighe();
+        $qta_evasa = $righe->sum('qta_evasa');
+        $qta = $righe->sum('qta');
+        $parziale = $qta != $qta_evasa;
+
+        $stato_attuale = $this->stato;
+        $use_translation = database()->isConnected() && database()->tableExists('or_statiordine_lang');
+        $nome_stato = $use_translation
+            ? $stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id)
+            : $stato_attuale->descrizione;
+
+        // Ottimizzazione: singola query per calcolare quantità fatturate
+        $righe_ids = $righe->pluck('id')->toArray();
+        $class_type = Components\Articolo::class;
+        
+        $fatture_collegate = database()->table('co_righe_documenti')
+            ->whereIn('original_id', $righe_ids)
+            ->where('original_type', $class_type)
+            ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+            ->select('co_righe_documenti.original_id', 'co_righe_documenti.iddocumento')
+            ->get()
+            ->keyBy('original_id');
+
+        $qta_fatturate = 0;
+        $fatture_collegate_totali = $fatture_collegate->count();
+
+        foreach ($righe as $riga) {
+            if ($fatture_collegate->has($riga->id)) {
+                $qta_fatturate += $riga->qta;
+            }
+        }
+
+        $parziale_fatturato = $qta != $qta_fatturate;
+        $descrizione = $this->determinaNuovoStato($trigger, $qta_evasa, $parziale, $parziale_fatturato, $nome_stato, $fatture_collegate_totali);
+
+        $stato_field = $use_translation ? 'name' : 'descrizione';
+        $stato = Stato::where($stato_field, $descrizione)->first()->id;
+        
+        $this->stato()->associate($stato);
+        $this->save();
+    }
+
+    /**
+     * Determina il nuovo stato dell'ordine in base alle condizioni di evasione/fatturazione.
+     *
+     * @param Component $trigger
+     * @param float $qta_evasa
+     * @param bool $parziale
+     * @param bool $parziale_fatturato
+     * @param string $nome_stato
+     * @param int $fatture_collegate_totali
+     * @return string
+     */
+    protected function determinaNuovoStato(Component $trigger, $qta_evasa, $parziale, $parziale_fatturato, $nome_stato, $fatture_collegate_totali)
+    {
+        if ($qta_evasa == 0) {
+            return 'Accettato';
+        }
+
+        $documento = $trigger->getDocument();
+
+        if ($documento instanceof \Modules\Fatture\Fattura) {
+            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+        }
+
+        if ($documento instanceof DDT) {
+            $fatture_ddt = database()->table('co_righe_documenti')
+                ->where('idddt', $documento->id)
+                ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                ->count();
+
+            return $fatture_ddt > 0
+                ? ($parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato')
+                : ($parziale ? 'Parzialmente evaso' : 'Evaso');
+        }
+
+        if ($fatture_collegate_totali > 0) {
+            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+        }
+
+        if (in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato'])) {
+            return $parziale ? 'Parzialmente evaso' : 'Evaso';
+        }
+
+        if ($qta_evasa > 0) {
+            return $parziale ? 'Parzialmente evaso' : 'Evaso';
+        }
+
+        return $nome_stato;
     }
 
     // Metodi statici
@@ -237,33 +253,11 @@ class Ordine extends Document
      */
     public static function getNextNumero($data, $direzione, $id_segment)
     {
-        if ($direzione == 'entrata') {
-            $maschera = '#';
-        } else {
-            $maschera = Generator::getMaschera($id_segment);
-
-            if (str_contains($maschera, 'm')) {
-                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
-                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                    'MONTH(data) = '.prepare(date('m', strtotime($data))),
-                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-                ]);
-            } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
-                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
-                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-                ]);
-            } else {
-                $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero', [
-                    'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                    'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-                ]);
-            }
-        }
-
-        $numero = Generator::generate($maschera, $ultimo);
-
-        return $numero;
+        return getNextNumeroProgressivo('or_ordini', 'numero', $data, $id_segment, [
+            'direction' => $direzione,
+            'type_document_field' => 'idtipoordine',
+            'type_document_table' => 'or_tipiordine',
+        ]);
     }
 
     /**
@@ -276,33 +270,11 @@ class Ordine extends Document
      */
     public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
-        if ($direzione == 'uscita') {
-            return '';
-        }
-
-        $maschera = Generator::getMaschera($id_segment);
-
-        if (str_contains($maschera, 'm')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
-                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                'MONTH(data) = '.prepare(date('m', strtotime($data))),
-                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-            ]);
-        } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
-                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-            ]);
-        } else {
-            $ultimo = Generator::getPreviousFrom($maschera, 'or_ordini', 'numero_esterno', [
-                'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-                'idtipoordine IN (SELECT `id` FROM `or_tipiordine` WHERE `dir` = '.prepare($direzione).')',
-            ]);
-        }
-
-        $numero = Generator::generate($maschera, $ultimo);
-
-        return $numero;
+        return getNextNumeroSecondarioProgressivo('or_ordini', 'numero_esterno', $data, $id_segment, [
+            'direction' => $direzione,
+            'type_document_field' => 'idtipoordine',
+            'type_document_table' => 'or_tipiordine',
+        ]);
     }
 
     // Opzioni di riferimento
@@ -314,7 +286,11 @@ class Ordine extends Document
 
     public function getReferenceNumber()
     {
-        return setting('Visualizza numero ordine cliente') ? ($this->numero_cliente ?: ($this->numero_esterno ?: $this->numero)) : ($this->numero_esterno ?: $this->numero);
+        $visualizza_numero_cliente = setting('Visualizza numero ordine cliente');
+        
+        return $visualizza_numero_cliente
+            ? ($this->numero_cliente ?: $this->numero_esterno ?: $this->numero)
+            : ($this->numero_esterno ?: $this->numero);
     }
 
     public function getReferenceSecondaryNumber()
@@ -324,7 +300,9 @@ class Ordine extends Document
 
     public function getReferenceDate()
     {
-        return setting('Visualizza numero ordine cliente') ? ($this->data_cliente ?: $this->data) : $this->data;
+        $visualizza_numero_cliente = setting('Visualizza numero ordine cliente');
+        
+        return $visualizza_numero_cliente ? ($this->data_cliente ?: $this->data) : $this->data;
     }
 
     public function getReferenceRagioneSociale()

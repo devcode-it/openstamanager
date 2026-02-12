@@ -38,7 +38,7 @@ switch (filter('op')) {
                 $tipo->save();
                 flash()->info(tr('Salvataggio completato.'));
 
-                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments_lang`.`title` = "Scadenzario '.$nome_prev.'"')['id'];
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
 
                 $dbo->update('zz_segments', [
                     'clause' => 'co_scadenziario.tipo="'.$nome.'"',

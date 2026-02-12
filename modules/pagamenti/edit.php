@@ -113,7 +113,7 @@ $tipi_scadenza_pagamento = [
     ],
 ];
 
-$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `title`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` WHERE `co_pagamenti`.`name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
 $numero_rata = 1;
 foreach ($results as $result) {
     $tipo_scadenza_pagamento = 3;

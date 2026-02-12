@@ -160,7 +160,7 @@ switch (post('op')) {
         $scadenza = Scadenza::find($id_record);
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
 
-        $dbo->query("DELETE FROM co_scadenziario WHERE id='".$id_record."'");
+        $dbo->query("DELETE FROM co_scadenziario WHERE id=".prepare($id_record));
 
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();

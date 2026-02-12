@@ -366,16 +366,14 @@ class Anagrafica extends Model
      */
     public static function getNextCodice()
     {
-        // Recupero maschera per le anagrafiche
-        $maschera = setting('Formato codice anagrafica');
-
-        $ultimo = Generator::getPreviousFrom($maschera, 'an_anagrafiche', 'codice', [
-            "codice != ''",
-            'deleted_at IS NULL',
+        return getNextNumeroProgressivo('an_anagrafiche', 'codice', null, null, [
+            'use_setting' => true,
+            'setting_key' => 'Formato codice anagrafica',
+            'conditions_extra' => [
+                "codice != ''",
+                'deleted_at IS NULL',
+            ],
         ]);
-        $codice = Generator::generate($maschera, $ultimo);
-
-        return $codice;
     }
 
     protected static function creaConto(Anagrafica $anagrafica, $campo)

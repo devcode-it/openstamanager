@@ -59,6 +59,8 @@ class Fattura extends Document
 
     protected $with = [
         'tipo',
+        'stato',
+        'pagamento',
     ];
 
     /** @var GestoreScadenze */
@@ -68,6 +70,9 @@ class Fattura extends Document
     /** @var GestoreBollo */
     protected $gestoreBollo;
 
+    /** @var array Cache per gli stati */
+    protected static $statiCache = [];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -76,6 +81,69 @@ class Fattura extends Document
         $this->gestoreScadenze = new GestoreScadenze($this);
         $this->gestoreMovimenti = new GestoreMovimenti($this);
         $this->gestoreBollo = new GestoreBollo($this);
+    }
+
+    /**
+     * Ottiene l'ID di uno stato con caching per evitare query ripetute.
+     *
+     * @param string $nome
+     *
+     * @return int|null
+     */
+    protected static function getIdStato($nome)
+    {
+        if (!isset(self::$statiCache[$nome])) {
+            self::$statiCache[$nome] = Stato::where('name', $nome)->first()?->id;
+        }
+
+        return self::$statiCache[$nome];
+    }
+
+    /**
+     * Ottiene la dichiarazione d'intento valida per l'anagrafica.
+     * Ottimizza le query duplicate per la ricerca delle dichiarazioni.
+     *
+     * @param Anagrafica $anagrafica
+     *
+     * @return Dichiarazione|null
+     */
+    protected static function getDichiarazioneIntentoValida(Anagrafica $anagrafica)
+    {
+        $now = Carbon::now();
+        
+        // Query base per dichiarazioni valide
+        $query = $anagrafica->dichiarazioni()
+            ->whereColumn('massimale', '>', 'totale')
+            ->where('data_inizio', '<', $now)
+            ->where('data_fine', '>', $now);
+        
+        // Prima cerca la dichiarazione predefinita
+        if (!empty($anagrafica->id_dichiarazione_intento_default)) {
+            $dichiarazione = (clone $query)
+                ->where('id', $anagrafica->id_dichiarazione_intento_default)
+                ->first();
+            
+            if ($dichiarazione) {
+                return $dichiarazione;
+            }
+        }
+        
+        // Se non trovata, cerca qualsiasi dichiarazione valida
+        return $query->first();
+    }
+
+    /**
+     * Restituisce l'array degli ID degli stati che indicano un documento non attivo.
+     *
+     * @return array
+     */
+    protected static function getIdStatiNonAttivi()
+    {
+        return [
+            self::getIdStato('Bozza'),
+            self::getIdStato('Annullata'),
+            self::getIdStato('Non valida'),
+        ];
     }
 
     /**
@@ -93,8 +161,8 @@ class Fattura extends Document
         $user = auth_osm()->getUser();
         $database = database();
 
-        // Individuazione dello stato predefinito per il documento
-        $id_stato_attuale_documento = Stato::where('name', 'Bozza')->first()->id;
+        // Individuazione dello stato predefinito per il documento (con cache)
+        $id_stato_attuale_documento = self::getIdStato('Bozza');
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -176,18 +244,7 @@ class Fattura extends Document
         }
 
         // Gestione della Dichiarazione d'Intento associata all'anagrafica Controparte
-        $now = new Carbon();
-        $dichiarazione = $anagrafica->dichiarazioni()
-            ->where('massimale', '>', 'totale')
-            ->where('data_inizio', '<', $now)
-            ->where('data_fine', '>', $now)
-            ->where('id', $anagrafica->id_dichiarazione_intento_default)
-            ->first();
-        $dichiarazione = $dichiarazione ?: $anagrafica->dichiarazioni()
-            ->where('massimale', '>', 'totale')
-            ->where('data_inizio', '<', $now)
-            ->where('data_fine', '>', $now)
-            ->first();
+        $dichiarazione = self::getDichiarazioneIntentoValida($anagrafica);
 
         $notes = [];
         if (!empty($dichiarazione)) {
@@ -209,12 +266,14 @@ class Fattura extends Document
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
-            $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
-            $model->idporto = $porto ?: '';
-            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
-            $model->idcausalet = $causalet ?: '';
-            $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
-            $model->idspedizione = $spedizione ?: '';
+            // Ottimizzazione: esegui una sola query per tutti i valori predefiniti
+            $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'] ?? '';
+            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'] ?? '';
+            $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
+            
+            $model->idporto = $porto;
+            $model->idcausalet = $causalet;
+            $model->idspedizione = $spedizione;
         }
 
         $model->save();
@@ -273,7 +332,7 @@ class Fattura extends Document
      */
     public function getPesoCalcolatoAttribute()
     {
-        $righe = $this->getRighe();
+        $righe = $this->getRighe()->load(['articolo']);
 
         $peso_lordo = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
@@ -287,7 +346,8 @@ class Fattura extends Document
      */
     public function getVolumeCalcolatoAttribute()
     {
-        $righe = $this->getRighe();
+        // Eager loading per evitare N+1 queries
+        $righe = $this->getRighe()->load(['articolo']);
 
         $volume = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 
@@ -569,22 +629,24 @@ class Fattura extends Document
     public function save(array $options = [])
     {
         // Informazioni sul cambio dei valori
-        $id_stato_precedente = $this->original['idstatodocumento'];
-        $id_stato_attuale = $this->stato['id'];
+        $id_stato_precedente = $this->original['idstatodocumento'] ?? null;
+        $id_stato_attuale = $this->stato['id'] ?? null;
 
-        $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
-        $id_stato_emessa = Stato::where('name', 'Emessa')->first()->id;
-        $id_stato_annullata = Stato::where('name', 'Annullata')->first()->id;
-        $id_stato_non_valida = Stato::where('name', 'Non valida')->first()->id;
-        $id_stato_pagato = Stato::where('name', 'Pagato')->first()->id;
+        // Ottieni gli ID degli stati con cache per evitare query ripetute
+        $id_stato_bozza = self::getIdStato('Bozza');
+        $id_stato_emessa = self::getIdStato('Emessa');
+        $id_stato_pagato = self::getIdStato('Pagato');
+        $stati_non_attivi = self::getIdStatiNonAttivi();
 
-        $dichiarazione_precedente = Dichiarazione::find($this->original['id_dichiarazione_intento']);
+        $dichiarazione_precedente = !empty($this->original['id_dichiarazione_intento'])
+            ? Dichiarazione::find($this->original['id_dichiarazione_intento'])
+            : null;
         $is_fiscale = $this->isFiscale();
 
+        // Rimozione duplicato: ritenutaacconto assegnato due volte
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
         $this->attributes['rivalsainps'] = $this->rivalsa_inps;
-        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
 
         parent::save($options);
 
@@ -592,25 +654,51 @@ class Fattura extends Document
         $this->id_riga_bollo = $this->gestoreBollo->manageRigaMarcaDaBollo();
 
         // Generazione numero fattura se non presente (Bozza -> Emessa)
-        if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale)) && empty($this->numero_esterno)) {
+        if ((($id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) or (!$is_fiscale))
+            && empty($this->numero_esterno)) {
             $this->numero_esterno = self::getNextNumeroSecondario($this->data, $this->direzione, $this->id_segment);
         }
 
         parent::save($options);
+        
         // Operazioni al cambiamento di stato
+        $this->gestioneCambiamentoStato($id_stato_precedente, $id_stato_attuale, $stati_non_attivi, $id_stato_pagato, $options);
+        
+        // Aggiornamento data competenza movimenti
+        $this->aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi);
+        
+        // Gestione dichiarazioni d'intento
+        $this->gestioneDichiarazioniIntento($dichiarazione_precedente);
+        
+        // Generazione automatica fattura elettronica
+        $this->gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale);
+    }
+
+    /**
+     * Gestisce le operazioni relative al cambiamento di stato della fattura.
+     *
+     * @param int|null $id_stato_precedente
+     * @param int|null $id_stato_attuale
+     * @param array $stati_non_attivi
+     * @param int|null $id_stato_pagato
+     * @param array $options
+     */
+    protected function gestioneCambiamentoStato($id_stato_precedente, $id_stato_attuale, $stati_non_attivi, $id_stato_pagato, $options)
+    {
         // Bozza o Annullato -> Stato diverso da Bozza o Annullato
         if (
-            (in_array($id_stato_precedente, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])
-            && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida]))
-            || $options[0] == 'forza_emissione'
+            (in_array($id_stato_precedente, $stati_non_attivi)
+            && !in_array($id_stato_attuale, $stati_non_attivi))
+            || ($options[0] ?? null) == 'forza_emissione'
         ) {
             // Registrazione scadenze
             $this->registraScadenze($id_stato_attuale == $id_stato_pagato);
 
             // Registrazione movimenti
             $this->gestoreMovimenti->registra();
-        } // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])) {
+        }
+        // Stato qualunque -> Bozza o Annullato
+        elseif (in_array($id_stato_attuale, $stati_non_attivi)) {
             // Rimozione delle scadenza
             $this->rimuoviScadenze();
 
@@ -620,16 +708,30 @@ class Fattura extends Document
             // Rimozione dei movimenti contabili (Prima nota)
             $this->movimentiContabili()->delete();
         }
+    }
 
-        if ($this->changes['data_competenza'] && !in_array($id_stato_attuale, [$id_stato_bozza, $id_stato_annullata, $id_stato_non_valida])) {
-            $movimenti = Movimento::where('iddocumento', $this->id)->where('primanota', 0)->get();
-            foreach ($movimenti as $movimento) {
-                $movimento->data = $this->data_competenza;
-                $movimento->save();
-            }
+    /**
+     * Aggiorna la data competenza dei movimenti quando cambia.
+     *
+     * @param int|null $id_stato_attuale
+     * @param array $stati_non_attivi
+     */
+    protected function aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi)
+    {
+        if (isset($this->changes['data_competenza']) && !in_array($id_stato_attuale, $stati_non_attivi)) {
+            Movimento::where('iddocumento', $this->id)
+                ->where('primanota', 0)
+                ->update(['data' => $this->data_competenza]);
         }
+    }
 
-        // Operazioni sulla dichiarazione d'intento
+    /**
+     * Gestisce le operazioni sulle dichiarazioni d'intento.
+     *
+     * @param Dichiarazione|null $dichiarazione_precedente
+     */
+    protected function gestioneDichiarazioniIntento($dichiarazione_precedente)
+    {
         if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
             // Correzione dichiarazione precedente
             $dichiarazione_precedente->fixTotale();
@@ -642,22 +744,32 @@ class Fattura extends Document
                 $dichiarazione->save();
             }
         }
+    }
 
-        // Operazioni automatiche per le Fatture Elettroniche
+    /**
+     * Gestisce la generazione automatica della fattura elettronica.
+     *
+     * @param int|null $id_stato_precedente
+     * @param int|null $id_stato_bozza
+     * @param int|null $id_stato_emessa
+     * @param int|null $id_stato_attuale
+     */
+    protected function gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale)
+    {
         if ($this->direzione == 'entrata' && $id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) {
             $stato_fe = StatoFE::find($this->codice_stato_fe);
-            $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile']);
+            $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile'] ?? 0);
             $this->refresh();
 
             // Generazione automatica della Fattura Elettronica
             $checks = FatturaElettronica::controllaFattura($this);
             $fattura_elettronica = new FatturaElettronica($this->id);
+            
             if ($abilita_genera && empty($checks)) {
                 $fattura_elettronica->save();
 
                 if (!$fattura_elettronica->isValid()) {
                     $errors = $fattura_elettronica->getErrors();
-                    // Gestione errori tramite flash message invece di array di ritorno
                     if (is_array($errors) && !empty($errors)) {
                         flash()->error(tr('Errori nella generazione della fattura elettronica: _ERRORS_', [
                             '_ERRORS_' => implode(', ', $errors),
@@ -667,8 +779,7 @@ class Fattura extends Document
                     }
                 }
             } elseif (!empty($checks)) {
-                // Rimozione eventuale fattura generata erronamente
-                // Fix per la modifica di dati interni su fattura già generata
+                // Rimozione eventuale fattura generata erroneamente
                 if ($abilita_genera) {
                     $fattura_elettronica->delete();
                 }
@@ -728,9 +839,9 @@ class Fattura extends Document
         $new->descrizione_ricevuta_fe = null;
         $new->id_ricevuta_principale = null;
 
-        // Spostamento dello stato
-        $id_stato_attuale = Stato::where('name', 'Bozza')->first()->id;
-        $new->stato()->associate($id_stato_attuale);
+        // Spostamento dello stato (con cache)
+        $id_stato_bozza = self::getIdStato('Bozza');
+        $new->stato()->associate($id_stato_bozza);
 
         return $new;
     }
@@ -742,10 +853,15 @@ class Fattura extends Document
         }
 
         $riga = $this->rigaSpeseIncasso;
-        $first_riga_fattura = $this->getRighe()->where('id', '!=', $riga->id)->where('is_descrizione', '0')->first();
+        $id_riga_esclusa = $riga?->id ?? 0;
+        
+        $first_riga_fattura = $this->getRighe()
+            ->where('id', '!=', $id_riga_esclusa)
+            ->where('is_descrizione', '0')
+            ->first();
 
         // Elimino la riga se non c'è più la descrizione dell'incasso o se la fattura non ha righe
-        if (!$this->pagamento->descrizione_incasso || !$first_riga_fattura) {
+        if (!$this->pagamento?->descrizione_incasso || !$first_riga_fattura) {
             if (!empty($riga)) {
                 $riga->delete();
             }
@@ -787,7 +903,10 @@ class Fattura extends Document
      */
     public function getNoteDiAccredito()
     {
-        return self::where('ref_documento', $this->id)->get();
+        // Eager loading per evitare N+1 queries
+        return self::with(['tipo', 'stato', 'anagrafica'])
+            ->where('ref_documento', $this->id)
+            ->get();
     }
 
     /**
@@ -797,7 +916,8 @@ class Fattura extends Document
      */
     public function getFatturaOriginale()
     {
-        return self::find($this->ref_documento);
+        return self::with(['tipo', 'stato', 'anagrafica'])
+            ->find($this->ref_documento);
     }
 
     /**
@@ -828,9 +948,10 @@ class Fattura extends Document
      */
     public function isFiscale()
     {
-        $result = database()->fetchOne('SELECT `is_fiscale` FROM `zz_segments` WHERE `id` ='.prepare($this->id_segment))['is_fiscale'];
+        // Ottimizzazione: usa selectOne invece di fetchOne per query più pulite
+        $result = database()->selectOne('zz_segments', 'is_fiscale', ['id' => $this->id_segment]);
 
-        return $result;
+        return (bool) ($result['is_fiscale'] ?? false);
     }
 
     /**
@@ -877,20 +998,12 @@ class Fattura extends Document
      */
     public static function getNextNumero($data, $direzione, $id_segment)
     {
-        if ($direzione == 'entrata') {
-            return '';
-        }
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero', [
-            'YEAR(data_competenza) = '.prepare(date('Y', strtotime($data))),
-            'id_segment = '.prepare($id_segment),
+        return getNextNumeroProgressivo('co_documenti', 'numero', $data, $id_segment, [
+            'data_field' => 'data_competenza',
+            'direction' => $direzione,
+            'skip_direction' => 'entrata',
+            'use_date_pattern' => true,
         ]);
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
-
-        return $numero;
     }
 
     /**
@@ -932,20 +1045,10 @@ class Fattura extends Document
      */
     public static function getNextNumeroSecondario($data, $direzione, $id_segment)
     {
-        if ($direzione == 'uscita') {
-            return '';
-        }
-
-        // Recupero maschera per questo segmento
-        $maschera = Generator::getMaschera($id_segment);
-
-        $ultimo = Generator::getPreviousFrom($maschera, 'co_documenti', 'numero_esterno', [
-            'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'id_segment = '.prepare($id_segment),
-        ], $data);
-        $numero = Generator::generate($maschera, $ultimo, 1, Generator::dateToPattern($data));
-
-        return $numero;
+        return getNextNumeroSecondarioProgressivo('co_documenti', 'numero_esterno', $data, $id_segment, [
+            'direction' => $direzione,
+            'use_date_pattern' => true,
+        ]);
     }
 
     // Opzioni di riferimento
@@ -985,69 +1088,4 @@ class Fattura extends Document
         return $totale;
     }
 
-    // Metodi statici
-
-    /**
-     * Determina la banca dell'azienda da utilizzare per il documento.
-     */
-    private static function getBancaAzienda(Anagrafica $azienda, int $id_pagamento, string $conto, string $direzione, Anagrafica $anagrafica_controparte): ?int
-    {
-        $database = database();
-
-        // Per le fatture di vendita, priorità alla banca dell'azienda
-        // Per le fatture di acquisto, priorità alla banca del fornitore
-        $anagrafica_principale = ($direzione == 'entrata') ? $azienda : $anagrafica_controparte;
-
-        // Pulizia preventiva dei riferimenti a banche inesistenti nell'anagrafica
-        self::cleanInvalidBankReferences($azienda);
-        self::cleanInvalidBankReferences($anagrafica_controparte);
-
-        // Per le fatture di vendita, verifica prima la banca predefinita per accrediti del cliente
-        if ($direzione == 'entrata' && !empty($anagrafica_controparte->idbanca_vendite)) {
-            $id_banca = $anagrafica_controparte->idbanca_vendite;
-
-            // Verifica che la banca esista effettivamente
-            $banca_esistente = Banca::find($id_banca);
-            if (!$banca_esistente || $banca_esistente->deleted_at) {
-                $id_banca = null;
-            }
-
-            // Se la banca del cliente è valida, la restituisce
-            if ($id_banca) {
-                return $id_banca;
-            }
-        }
-
-        // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
-        $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
-
-        // Verifica che la banca esista effettivamente
-        if ($id_banca) {
-            $banca_esistente = Banca::find($id_banca);
-            if (!$banca_esistente || $banca_esistente->deleted_at) {
-                $id_banca = null;
-            }
-        }
-
-        // 2. Banca dell'azienda con conto corrispondente al tipo di pagamento (predefinita)
-        if (empty($id_banca)) {
-            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, true);
-        }
-
-        // 3. Banca dell'azienda con conto corrispondente al tipo di pagamento (qualsiasi)
-        if (empty($id_banca)) {
-            $id_banca = self::getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, false);
-        }
-
-        // 4. Fallback: banca predefinita dell'azienda
-        if (empty($id_banca)) {
-            $banca_predefinita = Banca::where('id_anagrafica', $azienda->id)
-                ->where('predefined', 1)
-                ->whereNull('deleted_at')
-                ->first();
-            $id_banca = $banca_predefinita?->id;
-        }
-
-        return $id_banca;
-    }
 }

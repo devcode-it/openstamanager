@@ -43,6 +43,11 @@ class Contratto extends Document
      */
     public static $movimenta_magazzino = false;
 
+    /**
+     * @var bool Flag per evitare ricorsioni durante il salvataggio
+     */
+    protected $is_saving = false;
+
     protected $table = 'co_contratti';
 
     /**
@@ -100,13 +105,21 @@ class Contratto extends Document
 
     public function fixTipiSessioni()
     {
+        // Ottieni i tipi di intervento già associati al contratto
+        $presenti = database()->fetchArray('SELECT idtipointervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+        $id_presenti = array_column($presenti, 'idtipointervento');
+
+        // Aggiunta associazioni costi unitari al contratto per i tipi non presenti
+        $tipi = TipoSessione::whereNull('deleted_at')
+            ->whereNotIn('id', $id_presenti)
+            ->get(['id', 'costo_orario', 'costo_km', 'costo_diritto_chiamata', 'costo_orario_tecnico', 'costo_km_tecnico', 'costo_diritto_chiamata_tecnico']);
+
+        if ($tipi->isEmpty()) {
+            return;
+        }
+
+        // Costruisci l'array di inserimento in un'unica operazione
         $database = database();
-
-        $presenti = $database->fetchArray('SELECT idtipointervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
-
-        // Aggiunta associazioni costi unitari al contratto
-        $tipi = TipoSessione::whereNotIn('id', array_column($presenti, 'idtipointervento'))->where('deleted_at', null)->get();
-
         foreach ($tipi as $tipo) {
             $database->insert('co_contratti_tipiintervento', [
                 'idcontratto' => $this->id,
@@ -213,12 +226,23 @@ class Contratto extends Document
 
     public function save(array $options = [])
     {
-        $this->fixBudget();
-        $this->fixDataConclusione();
+        // Evita ricorsioni
+        if ($this->is_saving) {
+            return parent::save($options);
+        }
 
-        $result = parent::save($options);
+        $this->is_saving = true;
 
-        $this->fixTipiSessioni();
+        try {
+            $this->fixBudget();
+            $this->fixDataConclusione();
+
+            $result = parent::save($options);
+
+            $this->fixTipiSessioni();
+        } finally {
+            $this->is_saving = false;
+        }
 
         return $result;
     }
@@ -231,40 +255,62 @@ class Contratto extends Document
     {
         parent::triggerEvasione($trigger);
 
-        if (setting('Cambia automaticamente stato contratti fatturati')) {
-            // Non modificare lo stato se il contratto è già in uno stato bloccato, non fatturabile e non pianificabile
-            if ($this->stato && $this->stato->is_bloccato && !$this->stato->is_fatturabile && !$this->stato->is_pianificabile) {
-                return;
-            }
+        if (!setting('Cambia automaticamente stato contratti fatturati')) {
+            return;
+        }
 
-            $righe = $this->getRighe();
-            $qta_evasa = $righe->sum('qta_evasa');
-            $qta = $righe->sum('qta');
-            $parziale = $qta != $qta_evasa;
+        // Non modificare lo stato se il contratto è già in uno stato bloccato, non fatturabile e non pianificabile
+        if ($this->stato && $this->stato->is_bloccato && !$this->stato->is_fatturabile && !$this->stato->is_pianificabile) {
+            return;
+        }
 
-            // Impostazione del nuovo stato
-            if ($qta_evasa == 0) {
-                $descrizione = 'In lavorazione';
-                $codice_intervento = 'OK';
-            } else {
-                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
-                $codice_intervento = 'FAT';
-            }
+        $righe = $this->getRighe();
+        $qta_evasa = $righe->sum('qta_evasa');
+        $qta = $righe->sum('qta');
+        $parziale = $qta != $qta_evasa;
 
-            $stato = Stato::where('name', $descrizione)->first()->id;
-            $this->stato()->associate($stato);
-            $this->save();
+        // Impostazione del nuovo stato
+        if ($qta_evasa == 0) {
+            $descrizione = 'In lavorazione';
+            $codice_intervento = 'OK';
+        } else {
+            $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            $codice_intervento = 'FAT';
+        }
 
-            // Trasferimento degli interventi collegati
-            $interventi = $this->interventi;
-            $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
+        // Ottieni il nuovo stato
+        $stato = Stato::where('name', $descrizione)->first();
+        if (!$stato) {
+            return;
+        }
+
+        // Aggiorna lo stato solo se è diverso
+        if ($this->idstato != $stato->id) {
+            $this->idstato = $stato->id;
+            $this->saveQuietly();
+        }
+
+        // Ottieni lo stato intervento e trasferisci agli interventi collegati
+        $stato_intervento = \Modules\Interventi\Stato::where('codice', $codice_intervento)->first();
+        if ($stato_intervento) {
+            // Carica solo gli interventi con stato bloccato
+            $interventi = $this->interventi()->with('stato')->get();
             foreach ($interventi as $intervento) {
-                if ($intervento->stato->is_bloccato == 1) {
-                    $intervento->stato()->associate($stato_intervento);
-                    $intervento->save();
+                if ($intervento->stato && $intervento->stato->is_bloccato == 1 && $intervento->idstato != $stato_intervento->id) {
+                    $intervento->idstato = $stato_intervento->id;
+                    $intervento->saveQuietly();
                 }
             }
         }
+    }
+
+    /**
+     * Salva il modello senza eseguire i trigger e le operazioni automatiche.
+     * Utile per evitare ricorsioni durante il salvataggio.
+     */
+    public function saveQuietly(array $options = [])
+    {
+        return parent::save($options);
     }
 
     // Metodi statici
@@ -276,24 +322,9 @@ class Contratto extends Document
      */
     public static function getNextNumero($data, $id_segment)
     {
-        $maschera = Generator::getMaschera($id_segment);
-
-        if (str_contains($maschera, 'm')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
-                'MONTH(data_bozza) = '.prepare(date('m', strtotime((string) $data))),
-            ]);
-        } elseif (str_contains($maschera, 'YYYY') or str_contains($maschera, 'yy')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero', [
-                'YEAR(data_bozza) = '.prepare(date('Y', strtotime((string) $data))),
-            ]);
-        } else {
-            $ultimo = Generator::getPreviousFrom($maschera, 'co_contratti', 'numero');
-        }
-
-        $numero = Generator::generate($maschera, $ultimo);
-
-        return $numero;
+        return getNextNumeroProgressivo('co_contratti', 'numero', $data, $id_segment, [
+            'data_field' => 'data_bozza',
+        ]);
     }
 
     // Opzioni di riferimento

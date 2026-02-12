@@ -32,6 +32,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Util\Generator;
 
 /**
  * Esegue una somma precisa tra due interi/array.
@@ -618,4 +619,155 @@ function cleanInvalidBankReferences($anagrafica)
     if ($changed) {
         $anagrafica->save();
     }
+}
+
+/**
+ * Calcola il prossimo numero progressivo per un documento.
+ *
+ * Funzione generica per il calcolo del numero progressivo utilizzata da vari moduli
+ * (Contratti, Ordini, Interventi, DDT, Fatture, Preventivi, Anagrafiche).
+ *
+ * @param string $table Nome della tabella del database
+ * @param string $field Nome del campo da calcolare (numero, numero_esterno, codice)
+ * @param string $data Data del documento
+ * @param int $id_segment ID del segmento
+ * @param array $options Opzioni aggiuntive:
+ *   - 'data_field': nome del campo data (default 'data')
+ *   - 'direction': direzione del documento (entrata/uscita)
+ *   - 'skip_direction': direzione da saltare (ritorna stringa vuota)
+ *   - 'type_document': tipo di documento per condizioni extra
+ *   - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
+ *   - 'type_document_table': tabella del tipo documento
+ *   - 'conditions_extra': array di condizioni extra SQL
+ *   - 'use_setting': usa setting() invece di Generator::getMaschera() (default false)
+ *   - 'setting_key': chiave del setting per la maschera (se use_setting = true)
+ *   - 'date_pattern': pattern della data per Generator::generate()
+ *   - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
+ *
+ * @return string Il prossimo numero progressivo
+ */
+function getNextNumeroProgressivo($table, $field, $data, $id_segment, $options = [])
+{
+    // Opzioni di default
+    $defaults = [
+        'data_field' => 'data',
+        'direction' => null,
+        'skip_direction' => null,
+        'type_document' => null,
+        'type_document_field' => null,
+        'type_document_table' => null,
+        'conditions_extra' => [],
+        'use_setting' => false,
+        'setting_key' => null,
+        'date_pattern' => null,
+        'use_date_pattern' => false,
+    ];
+
+    $options = array_merge($defaults, $options);
+
+    // Se la direzione corrisponde a quella da saltare, ritorna stringa vuota
+    if ($options['skip_direction'] && $options['direction'] == $options['skip_direction']) {
+        return '';
+    }
+
+    // Ottieni la maschera
+    if ($options['use_setting']) {
+        $maschera = setting($options['setting_key']);
+    } else {
+        $maschera = Generator::getMaschera($id_segment);
+    }
+
+    // Se la maschera è '#', ritorna '#' (per ordini di vendita)
+    if ($maschera === '#') {
+        return '#';
+    }
+
+    // Calcola le condizioni in base alla maschera
+    $has_month = str_contains($maschera, 'm');
+    $has_year = str_contains($maschera, 'YYYY') || str_contains($maschera, 'yy');
+
+    // Costruisci le condizioni
+    $conditions = [];
+
+    // Condizione per anno (solo se data è specificata)
+    if ($has_year && $data !== null) {
+        $data_timestamp = strtotime((string) $data);
+        $conditions[] = 'YEAR('.$options['data_field'].') = '.prepare(date('Y', $data_timestamp));
+    }
+
+    // Condizione per mese (solo se data è specificata)
+    if ($has_month && $data !== null) {
+        $data_timestamp = strtotime((string) $data);
+        $conditions[] = 'MONTH('.$options['data_field'].') = '.prepare(date('m', $data_timestamp));
+    }
+
+    // Condizione per segmento (se specificato)
+    if (!empty($id_segment)) {
+        $conditions[] = 'id_segment = '.prepare($id_segment);
+    }
+
+    // Condizione per direzione/tipo documento
+    if ($options['direction'] && $options['type_document_field'] && $options['type_document_table']) {
+        $conditions[] = $options['type_document_field'].' IN (SELECT `id` FROM `'.$options['type_document_table'].'` WHERE `dir` = '.prepare($options['direction']).')';
+    }
+
+    // Aggiungi condizioni extra
+    if (!empty($options['conditions_extra'])) {
+        $conditions = array_merge($conditions, $options['conditions_extra']);
+    }
+
+    // Ottieni l'ultimo numero
+    $ultimo = !empty($conditions)
+        ? Generator::getPreviousFrom($maschera, $table, $field, $conditions, $data)
+        : Generator::getPreviousFrom($maschera, $table, $field, null, $data);
+
+    // Genera il nuovo numero
+    $date_pattern = ($options['use_date_pattern'] && $data !== null) ? Generator::dateToPattern($data) : ($options['date_pattern'] ?? []);
+    $numero = Generator::generate($maschera, $ultimo, 1, $date_pattern, $data);
+
+    return $numero;
+}
+
+/**
+ * Calcola il prossimo numero secondario progressivo per un documento.
+ *
+ * Funzione generica per il calcolo del numero secondario progressivo utilizzata da vari moduli
+ * (Ordini, DDT, Fatture). Il numero secondario viene solitamente utilizzato per
+ * i documenti di vendita (entrata).
+ *
+ * @param string $table Nome della tabella del database
+ * @param string $field Nome del campo da calcolare (numero_esterno)
+ * @param string $data Data del documento
+ * @param int $id_segment ID del segmento
+ * @param array $options Opzioni aggiuntive:
+ *   - 'data_field': nome del campo data (default 'data')
+ *   - 'direction': direzione del documento (entrata/uscita)
+ *   - 'skip_direction': direzione da saltare (ritorna stringa vuota, default 'uscita')
+ *   - 'type_document': tipo di documento per condizioni extra
+ *   - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
+ *   - 'type_document_table': tabella del tipo documento
+ *   - 'conditions_extra': array di condizioni extra SQL
+ *   - 'date_pattern': pattern della data per Generator::generate()
+ *   - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
+ *
+ * @return string Il prossimo numero secondario progressivo
+ */
+function getNextNumeroSecondarioProgressivo($table, $field, $data, $id_segment, $options = [])
+{
+    // Opzioni di default
+    $defaults = [
+        'data_field' => 'data',
+        'direction' => null,
+        'skip_direction' => 'uscita',
+        'type_document' => null,
+        'type_document_field' => null,
+        'type_document_table' => null,
+        'conditions_extra' => [],
+        'date_pattern' => null,
+        'use_date_pattern' => true,
+    ];
+
+    $options = array_merge($defaults, $options);
+
+    return getNextNumeroProgressivo($table, $field, $data, $id_segment, $options);
 }

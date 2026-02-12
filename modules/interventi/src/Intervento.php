@@ -21,7 +21,6 @@
 namespace Modules\Interventi;
 
 use Common\Document;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
@@ -33,8 +32,6 @@ use Util\Generator;
 class Intervento extends Document
 {
     use ReferenceTrait;
-    // use SoftDeletes;
-
     use RecordTrait;
 
     protected $table = 'in_interventi';
@@ -76,18 +73,7 @@ class Intervento extends Document
 
         $user = auth_osm()->getUser();
         // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
-        $id_sede = 0;
-        if (!empty($user->sedi)) {
-            // Verifico se la sede legale (0) è tra le sedi dell'utente
-            if (in_array(0, $user->sedi)) {
-                $id_sede = 0;
-            } else {
-                // Se la sede legale non è disponibile, prendo la prima sede dell'utente
-                $id_sede = $user->sedi[0];
-            }
-        }
-
-        $model->idsede_partenza = $id_sede ?: 0;
+        $model->idsede_partenza = (!empty($user->sedi) && in_array(0, $user->sedi)) ? 0 : (!empty($user->sedi) ? $user->sedi[0] : 0);
         $model->save();
 
         return $model;
@@ -107,9 +93,7 @@ class Intervento extends Document
     public function getKmTotaliAttribute()
     {
         if (!isset($this->info['km_totali'])) {
-            $sessioni = $this->sessioni;
-
-            $this->info['km_totali'] = $sessioni->sum('km');
+            $this->info['km_totali'] = $this->sessioni()->sum('km');
         }
 
         return $this->info['km_totali'];
@@ -118,23 +102,19 @@ class Intervento extends Document
     public function getInizioAttribute()
     {
         if (!isset($this->info['inizio'])) {
-            $sessioni = $this->sessioni;
-
-            $this->info['inizio'] = $sessioni->min('orario_inizio');
+            $this->info['inizio'] = $this->sessioni()->min('orario_inizio');
         }
 
-        return $this->info['inizio'] ?: $this->data_richiesta;
+        return $this->info['inizio'] ?? $this->data_richiesta;
     }
 
     public function getFineAttribute()
     {
         if (!isset($this->info['fine'])) {
-            $sessioni = $this->sessioni;
-
-            $this->info['fine'] = $sessioni->max('orario_fine');
+            $this->info['fine'] = $this->sessioni()->max('orario_fine');
         }
 
-        return $this->info['fine'] ?: $this->data_richiesta;
+        return $this->info['fine'] ?? $this->data_richiesta;
     }
 
     public function getModuleAttribute()
@@ -234,21 +214,9 @@ class Intervento extends Document
      */
     public static function getNextCodice($data, $id_segment)
     {
-        $maschera = Generator::getMaschera($id_segment);
-
-        // $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
-
-        if (str_contains($maschera, 'YYYY') || str_contains($maschera, 'yy')) {
-            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice', [
-                'YEAR(data_richiesta) = '.prepare(date('Y', strtotime($data))),
-            ], $data);
-        } else {
-            $ultimo = Generator::getPreviousFrom($maschera, 'in_interventi', 'codice');
-        }
-
-        $numero = Generator::generate($maschera, $ultimo, $quantity = 1, $values = [], $data);
-
-        return $numero;
+        return getNextNumeroProgressivo('in_interventi', 'codice', $data, $id_segment, [
+            'data_field' => 'data_richiesta',
+        ]);
     }
 
     // Opzioni di riferimento
@@ -287,12 +255,14 @@ class Intervento extends Document
     {
         $module = $this->getModule();
         $uploads = $module->files($this->id, true);
+        $image = null;
 
         // Cerca il primo file con key che inizia con 'signature_'
         foreach ($uploads as $upload) {
             if ($upload->key == 'signature') {
                 $directory = '/files/'.$module->attachments_directory.'/';
                 $image = $directory.$upload->filename;
+                break;
             }
         }
 

@@ -165,7 +165,7 @@ class Fattura extends Document
         $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
         // Logica unificata per la ricerca della banca dell'azienda
-        $id_banca_azienda = self::getBancaAzienda($azienda, $id_pagamento, $conto, $direzione, $anagrafica);
+        $id_banca_azienda = getBancaAzienda($azienda, $id_pagamento, $conto, $direzione, $anagrafica);
 
         $model->id_banca_azienda = $id_banca_azienda;
 
@@ -1049,59 +1049,5 @@ class Fattura extends Document
         }
 
         return $id_banca;
-    }
-
-    /**
-     * Cerca una banca dell'azienda associata al tipo di pagamento.
-     *
-     * @param object $database
-     */
-    private static function getBancaByPagamento($database, int $id_anagrafica, int $id_pagamento, string $conto, bool $solo_predefinita): ?int
-    {
-        $where_predefined = $solo_predefinita ? 'AND `predefined`=1' : '';
-
-        $query = "SELECT `id` FROM `co_banche`
-                  WHERE `deleted_at` IS NULL
-                  {$where_predefined}
-                  AND `id_pianodeiconti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
-                  AND `id_anagrafica` = :id_anagrafica";
-
-        $result = $database->fetchOne($query, [
-            ':id_pagamento' => $id_pagamento,
-            ':id_anagrafica' => $id_anagrafica,
-        ]);
-
-        return $result['id'] ?? null;
-    }
-
-    /**
-     * Pulisce i riferimenti a banche inesistenti o eliminate dall'anagrafica.
-     */
-    private static function cleanInvalidBankReferences(Anagrafica $anagrafica): void
-    {
-        $changed = false;
-
-        // Verifica idbanca_vendite
-        if ($anagrafica->idbanca_vendite) {
-            $banca = Banca::find($anagrafica->idbanca_vendite);
-            if (!$banca || $banca->deleted_at) {
-                $anagrafica->idbanca_vendite = null;
-                $changed = true;
-            }
-        }
-
-        // Verifica idbanca_acquisti
-        if ($anagrafica->idbanca_acquisti) {
-            $banca = Banca::find($anagrafica->idbanca_acquisti);
-            if (!$banca || $banca->deleted_at) {
-                $anagrafica->idbanca_acquisti = null;
-                $changed = true;
-            }
-        }
-
-        // Salva le modifiche se necessario
-        if ($changed) {
-            $anagrafica->save();
-        }
     }
 }

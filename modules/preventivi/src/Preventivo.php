@@ -25,6 +25,7 @@ use Carbon\CarbonInterval;
 use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
@@ -108,6 +109,21 @@ class Preventivo extends Document
         if (!empty($id_agente)) {
             $model->idagente = $id_agente;
         }
+
+        // Banca predefinita per l'anagrafica controparte (cliente)
+        $banca_controparte = Banca::where('id_anagrafica', $anagrafica->id)
+            ->where('predefined', 1)
+            ->first();
+
+        $model->id_banca_controparte = $banca_controparte?->id;
+
+        // Banca predefinita per l'azienda, con ricerca della banca impostata per il pagamento
+        $azienda = Anagrafica::find(setting('Azienda predefinita'));
+
+        // Logica unificata per la ricerca della banca dell'azienda
+        $id_banca_azienda = getBancaAzienda($azienda, $id_pagamento, 'vendite', 'entrata', $anagrafica);
+
+        $model->id_banca_azienda = $id_banca_azienda;
 
         $model->condizioni_fornitura = setting('Condizioni generali di fornitura preventivi');
         $model->id_segment = $id_segment;

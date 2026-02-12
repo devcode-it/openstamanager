@@ -47,6 +47,10 @@ if ($id_module == Module::where('name', 'Preventivi')->first()->id) {
     $text = tr('Ordine');
 }
 
+if (empty($documento)) {
+    return;
+}
+
 $interventi = Intervento::where($id_documento, $id_record)->get();
 $totale_ore_completate = 0;
 
@@ -247,7 +251,6 @@ if (!empty($interventi)) {
 </table>';
 }
 
-// Bilancio del documento
 $budget = $documento->totale_imponibile;
 $righe = $documento->getRighe();
 foreach ($righe as $riga) {

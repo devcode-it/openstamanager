@@ -25,6 +25,8 @@
  */
 use Common\Components\Accounting;
 use Intervention\Image\ImageManager;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Banche\Banca;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
@@ -480,4 +482,140 @@ function hasArticoliFiglio($id_articolo)
 function getImageManager()
 {
     return extension_loaded('gd') ? ImageManager::gd() : ImageManager::imagick();
+}
+
+/**
+ * Determina la banca dell'azienda da utilizzare per il documento.
+ *
+ * @param \Modules\Anagrafiche\Anagrafica $azienda Anagrafica dell'azienda
+ * @param int $id_pagamento ID del tipo di pagamento
+ * @param string $conto Tipo di conto (vendite/acquisti)
+ * @param string $direzione Direzione del documento (entrata/uscita)
+ * @param \Modules\Anagrafiche\Anagrafica $anagrafica_controparte Anagrafica della controparte
+ *
+ * @return int|null ID della banca selezionata
+ */
+function getBancaAzienda($azienda, $id_pagamento, $conto, $direzione, $anagrafica_controparte)
+{
+    $database = database();
+
+    // Per i documenti di vendita, priorità alla banca dell'azienda
+    // Per i documenti di acquisto, priorità alla banca del fornitore
+    $anagrafica_principale = ($direzione == 'entrata') ? $azienda : $anagrafica_controparte;
+
+    // Pulizia preventiva dei riferimenti a banche inesistenti nell'anagrafica
+    cleanInvalidBankReferences($azienda);
+    cleanInvalidBankReferences($anagrafica_controparte);
+
+    // Per i documenti di vendita, verifica prima la banca predefinita per accrediti del cliente
+    if ($direzione == 'entrata' && !empty($anagrafica_controparte->idbanca_vendite)) {
+        $id_banca = $anagrafica_controparte->idbanca_vendite;
+
+        // Verifica che la banca esista effettivamente
+        $banca_esistente = Banca::find($id_banca);
+        if (!$banca_esistente || $banca_esistente->deleted_at) {
+            $id_banca = null;
+        }
+
+        // Se la banca del cliente è valida, la restituisce
+        if ($id_banca) {
+            return $id_banca;
+        }
+    }
+
+    // 1. Banca predefinita dell'anagrafica principale per il tipo di operazione
+    $id_banca = $anagrafica_principale->{"idbanca_{$conto}"};
+
+    // Verifica che la banca esista effettivamente
+    if ($id_banca) {
+        $banca_esistente = Banca::find($id_banca);
+        if (!$banca_esistente || $banca_esistente->deleted_at) {
+            $id_banca = null;
+        }
+    }
+
+    // 2. Banca dell'azienda con conto corrispondente al tipo di pagamento (predefinita)
+    if (empty($id_banca)) {
+        $id_banca = getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, true);
+    }
+
+    // 3. Banca dell'azienda con conto corrispondente al tipo di pagamento (qualsiasi)
+    if (empty($id_banca)) {
+        $id_banca = getBancaByPagamento($database, $azienda->id, $id_pagamento, $conto, false);
+    }
+
+    // 4. Fallback: banca predefinita dell'azienda
+    if (empty($id_banca)) {
+        $banca_predefinita = Banca::where('id_anagrafica', $azienda->id)
+            ->where('predefined', 1)
+            ->whereNull('deleted_at')
+            ->first();
+        $id_banca = $banca_predefinita?->id;
+    }
+
+    return $id_banca;
+}
+
+/**
+ * Cerca una banca dell'azienda associata al tipo di pagamento.
+ *
+ * @param object $database Database object
+ * @param int $id_anagrafica ID dell'anagrafica
+ * @param int $id_pagamento ID del tipo di pagamento
+ * @param string $conto Tipo di conto (vendite/acquisti)
+ * @param bool $solo_predefinita Se true, cerca solo banche predefinite
+ *
+ * @return int|null ID della banca trovata
+ */
+function getBancaByPagamento($database, $id_anagrafica, $id_pagamento, $conto, $solo_predefinita)
+{
+    $where_predefined = $solo_predefinita ? 'AND `predefined`=1' : '';
+
+    $query = "SELECT `id` FROM `co_banche`
+              WHERE `deleted_at` IS NULL
+              {$where_predefined}
+              AND `id_pianodeiconti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
+              AND `id_anagrafica` = :id_anagrafica";
+
+    $result = $database->fetchOne($query, [
+        ':id_pagamento' => $id_pagamento,
+        ':id_anagrafica' => $id_anagrafica,
+    ]);
+
+    return $result['id'] ?? null;
+}
+
+/**
+ * Pulisce i riferimenti a banche inesistenti o eliminate dall'anagrafica.
+ *
+ * @param \Modules\Anagrafiche\Anagrafica $anagrafica Anagrafica da pulire
+ *
+ * @return void
+ */
+function cleanInvalidBankReferences($anagrafica)
+{
+    $changed = false;
+
+    // Verifica idbanca_vendite
+    if ($anagrafica->idbanca_vendite) {
+        $banca = Banca::find($anagrafica->idbanca_vendite);
+        if (!$banca || $banca->deleted_at) {
+            $anagrafica->idbanca_vendite = null;
+            $changed = true;
+        }
+    }
+
+    // Verifica idbanca_acquisti
+    if ($anagrafica->idbanca_acquisti) {
+        $banca = Banca::find($anagrafica->idbanca_acquisti);
+        if (!$banca || $banca->deleted_at) {
+            $anagrafica->idbanca_acquisti = null;
+            $changed = true;
+        }
+    }
+
+    // Salva le modifiche se necessario
+    if ($changed) {
+        $anagrafica->save();
+    }
 }

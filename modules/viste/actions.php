@@ -579,7 +579,8 @@ switch (filter('op')) {
     case 'delete':
         $id = filter('id');
 
-        $dbo->query('DELETE FROM `zz_views` WHERE `id`='.prepare($id));
+        $view = View::find($id);
+        $view->delete();
         $dbo->query('DELETE FROM `zz_group_view` WHERE `id_vista`='.prepare($id));
 
         flash()->info(tr('Eliminazione completata!'));
@@ -589,7 +590,8 @@ switch (filter('op')) {
     case 'delete_filter':
         $id = filter('id');
 
-        $dbo->query('DELETE FROM `zz_group_module` WHERE `id`='.prepare($id));
+        $clause = Clause::find($id);
+        $clause->delete();
 
         flash()->info(tr('Eliminazione completata!'));
 

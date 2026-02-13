@@ -54,7 +54,7 @@ class Parcella extends FatturaOrdinaria
         $fattura = Fattura::find($ref_fattura);
 
         // Rimozione righe precedenti (query per evitare procedure automatiche di compensazione)
-        database()->query('DELETE FROM co_righe_documenti WHERE iddocumento = '.prepare($fattura->id));
+        database()->delete('co_righe_documenti', ['iddocumento' => $fattura->id]);
 
         $fattura->anagrafica()->associate($anagrafica);
         $fattura->tipo()->associate($tipo);

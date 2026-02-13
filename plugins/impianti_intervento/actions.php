@@ -98,7 +98,7 @@ switch ($operazione) {
                 throw new Exception(tr('Impianto non trovato nell\'intervento'));
             }
 
-            $result = $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+            $result = $dbo->delete('my_impianti_interventi', ['idintervento' => $id_record, 'idimpianto' => $id_impianto]);
 
             // Verifica che l'eliminazione sia avvenuta
             $remaining = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
@@ -115,7 +115,7 @@ switch ($operazione) {
             $components = $dbo->fetchArray('SELECT * FROM my_componenti WHERE id_impianto = '.prepare($id_impianto));
             if (!empty($components)) {
                 foreach ($components as $component) {
-                    $dbo->query('DELETE FROM my_componenti_interventi WHERE id_componente = '.prepare($component['id']).' AND id_intervento = '.prepare($id_record));
+                    $dbo->delete('my_componenti_interventi', ['id_componente' => $component['id'], 'id_intervento' => $id_record]);
                 }
             }
 

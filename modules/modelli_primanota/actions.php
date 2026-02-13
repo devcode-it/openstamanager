@@ -52,7 +52,7 @@ switch (post('op')) {
         $nome = post('nome');
 
         // Eliminazione prima nota
-        $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
+        $dbo->delete('co_movimenti_modelli', ['idmastrino' => $idmastrino]);
 
         for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
             $idconto = post('idconto')[$i];
@@ -79,7 +79,7 @@ switch (post('op')) {
 
         if (!empty($idmastrino)) {
             // Eliminazione prima nota
-            $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare($idmastrino));
+            $dbo->delete('co_movimenti_modelli', ['idmastrino' => $idmastrino]);
 
             flash()->info(tr('Movimento eliminato!'));
         }

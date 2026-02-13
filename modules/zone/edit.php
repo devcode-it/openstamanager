@@ -31,12 +31,11 @@ include_once __DIR__.'/../../core.php';
 		</div>
 		<div class="card-body">
 			<div class="row">
-				<div class="col-md-4">
-					{[ "type": "text", "label": "<?php echo tr('Codice'); ?>", "name": "nome", "required": 1, "maxlength": 25, "class": "alphanumeric-mask", "value": "$nome$" ]}
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
-
-				<div class="col-md-8">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$descrizione$" ]}
+				<div class="col-md-6">
+					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 0, "value": "$descrizione$" ]}
 				</div>
 			</div>
 		</div>

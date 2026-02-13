@@ -35,7 +35,7 @@ switch ($operazione) {
 
     case 'delete_revision':
         $idrevisione = post('idrevisione');
-        $dbo->query('DELETE FROM co_preventivi WHERE id='.prepare($idrevisione));
+        $dbo->delete('co_preventivi', ['id' => $idrevisione]);
 
         flash()->info(tr('Revisione eliminata!'));
         break;

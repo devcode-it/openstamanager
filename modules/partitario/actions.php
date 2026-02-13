@@ -115,25 +115,39 @@ switch (post('op')) {
         if ($lvl == 2) {
             // Eliminazione conto di livello 2 (co_pianodeiconti2)
             // Controllo che non esistano movimenti associati ai conti di livello 3 collegati
-            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto = co_pianodeiconti3.id WHERE co_pianodeiconti3.idpianodeiconti2 = '.prepare($idconto));
+            $movimenti = $dbo->table('co_movimenti')
+                ->join('co_pianodeiconti3', 'co_movimenti.idconto', '=', 'co_pianodeiconti3.id')
+                ->where('co_pianodeiconti3.idpianodeiconti2', $idconto)
+                ->count();
 
             if ($idconto != '' and empty($movimenti)) {
                 // Prima elimino tutti i conti di livello 3 collegati
-                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                $conti_livello3 = $dbo->table('co_pianodeiconti3')
+                    ->where('idpianodeiconti2', $idconto)
+                    ->get()
+                    ->toArray();
 
                 foreach ($conti_livello3 as $conto3) {
                     // Scollego il conto dalle anagrafiche
-                    $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($conto3['id']));
-                    $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($conto3['id']));
+                    $dbo->table('an_anagrafiche')
+                        ->where('idconto_cliente', $conto3->id)
+                        ->update(['idconto_cliente' => null]);
+                    $dbo->table('an_anagrafiche')
+                        ->where('idconto_fornitore', $conto3->id)
+                        ->update(['idconto_fornitore' => null]);
                 }
 
                 // Elimino tutti i conti di livello 3 collegati
-                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                $deleted_l3 = $dbo->table('co_pianodeiconti3')
+                    ->where('idpianodeiconti2', $idconto)
+                    ->delete();
 
                 // Infine elimino il conto di livello 2
-                $query = 'DELETE FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+                $deleted_l2 = $dbo->table('co_pianodeiconti2')
+                    ->where('id', $idconto)
+                    ->delete();
 
-                if ($dbo->query($query)) {
+                if ($deleted_l2) {
                     flash()->info(tr('Conto e tutti i suoi sottoconti eliminati!'));
                 } else {
                     flash()->error(tr('Errore durante l\'eliminazione del conto!'));
@@ -144,16 +158,24 @@ switch (post('op')) {
         } else {
             // Eliminazione conto di livello 3 (co_pianodeiconti3) - logica esistente
             // Controllo che non esistano movimenti associati al conto
-            $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
+            $movimenti = $dbo->table('co_movimenti')
+                ->where('idconto', $idconto)
+                ->count();
 
             if ($idconto != '' and empty($movimenti)) {
                 // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
-                $dbo->query('UPDATE an_anagrafiche SET idconto_cliente = NULL WHERE idconto_cliente = '.prepare($idconto));
-                $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
+                $dbo->table('an_anagrafiche')
+                    ->where('idconto_cliente', $idconto)
+                    ->update(['idconto_cliente' => null]);
+                $dbo->table('an_anagrafiche')
+                    ->where('idconto_fornitore', $idconto)
+                    ->update(['idconto_fornitore' => null]);
 
-                $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+                $deleted = $dbo->table('co_pianodeiconti3')
+                    ->where('id', $idconto)
+                    ->delete();
 
-                if ($dbo->query($query)) {
+                if ($deleted) {
                     flash()->info(tr('Conto eliminato!'));
                 } else {
                     flash()->error(tr('Errore durante l\'eliminazione del conto!'));
@@ -167,7 +189,10 @@ switch (post('op')) {
         // Apertura bilancio
     case 'apri-bilancio':
         // Eliminazione eventuali movimenti di apertura fatti finora
-        $dbo->query('DELETE FROM co_movimenti WHERE is_apertura=1 AND data='.prepare($_SESSION['period_start']));
+        $dbo->table('co_movimenti')
+            ->where('is_apertura', 1)
+            ->where('data', $_SESSION['period_start'])
+            ->delete();
 
         $idconto_apertura = setting('Conto per Apertura conti patrimoniali');
         $idconto_chiusura = setting('Conto per Chiusura conti patrimoniali');
@@ -221,7 +246,10 @@ switch (post('op')) {
         // Chiusura bilancio
     case 'chiudi-bilancio':
         // Eliminazione eventuali movimenti di chiusura fatti finora
-        $dbo->query('DELETE FROM co_movimenti WHERE is_chiusura=1 AND data='.prepare($_SESSION['period_end']));
+        $dbo->table('co_movimenti')
+            ->where('is_chiusura', 1)
+            ->where('data', $_SESSION['period_end'])
+            ->delete();
 
         $idconto_apertura = setting('Conto per Apertura conti patrimoniali');
         $idconto_chiusura = setting('Conto per Chiusura conti patrimoniali');
@@ -278,11 +306,13 @@ switch (post('op')) {
         $end = post('end');
         $id_conto = post('id_conto');
 
-        $dbo->query('UPDATE co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_movimenti.idconto
-        SET co_movimenti.totale_reddito = (co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)
-        WHERE co_pianodeiconti3.id = '.prepare($id_conto).' AND
-            co_movimenti.data BETWEEN '.prepare($start).' AND '.prepare($end));
+        $dbo->table('co_movimenti')
+            ->join('co_pianodeiconti3', 'co_pianodeiconti3.id', '=', 'co_movimenti.idconto')
+            ->where('co_pianodeiconti3.id', $id_conto)
+            ->whereBetween('co_movimenti.data', [$start, $end])
+            ->update([
+                'co_movimenti.totale_reddito' => $dbo->raw('(co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)')
+            ]);
 
         break;
 
@@ -292,10 +322,20 @@ switch (post('op')) {
         $id_conti3 = 0;
 
         if (!empty($text)) {
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
+            $id_conti = $dbo->table('co_pianodeiconti2')
+                ->select('id AS idpianodeiconti2')
+                ->where('descrizione', 'like', '%'.$text.'%')
+                ->orWhere('numero', 'like', '%'.$text.'%')
+                ->get()
+                ->toArray();
             $id_conti2 = array_column($id_conti, 'idpianodeiconti2');
 
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
+            $id_conti = $dbo->table('co_pianodeiconti3')
+                ->select('id AS idpianodeiconti3', 'idpianodeiconti2')
+                ->where('descrizione', 'like', '%'.$text.'%')
+                ->orWhere('numero', 'like', '%'.$text.'%')
+                ->get()
+                ->toArray();
 
             $id_conti3 = array_column($id_conti, 'idpianodeiconti3');
             $id_conti2_3 = array_column($id_conti, 'idpianodeiconti2');

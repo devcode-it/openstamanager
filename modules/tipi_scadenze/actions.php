@@ -24,12 +24,11 @@ use Modules\Scadenzario\Tipo;
 
 switch (filter('op')) {
     case 'update':
-        $descrizione = filter('descrizione');
         $nome = filter('nome');
 
         if (isset($nome)) {
             // Se non esiste già una tipo di scadenza con lo stesso nome
-            $nome_new = Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first();
+            $nome_new = Tipo::where('name', $nome)->where('id', '!=', $id_record)->first();
             $nome_prev = $tipo->getTranslation('title');
             if (empty($nome_new)) {
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
@@ -52,8 +51,7 @@ switch (filter('op')) {
                     'id_record' => $segmento,
                     'id_lang' => Models\Locale::getDefault()->id,
                 ]);
-
-                $tipo->setTranslation('title', $descrizione);
+                $tipo->setTranslation('title', $nome);
                 flash()->info(tr('Salvataggio completato!'));
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con nome: _NOME_", [
@@ -68,17 +66,14 @@ switch (filter('op')) {
         break;
 
     case 'add':
-        $descrizione = filter('descrizione');
         $nome = filter('nome');
 
         if (isset($nome)) {
             // Se non esiste già un tipo di scadenza con lo stesso nome
-            if (empty(Tipo::where('name', $descrizione)->where('id', '!=', $id_record)->first())) {
-                $tipo = Tipo::build();
-                $tipo->name = $nome;
+            if (empty(Tipo::where('name', $nome)->where('id', '!=', $id_record)->first())) {
+                $tipo = Tipo::build($nome);
                 $tipo->save();
-
-                $id_record = $dbo->lastInsertedID();
+                $id_record = $tipo->id;
 
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
@@ -94,7 +89,7 @@ switch (filter('op')) {
                 ]);
 
                 if (isAjaxRequest()) {
-                    echo json_encode(['id' => $id_record, 'text' => $descrizione]);
+                    echo json_encode(['id' => $id_record, 'text' => $nome]);
                 }
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [
@@ -116,7 +111,7 @@ switch (filter('op')) {
         $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenziario` WHERE `tipo` = (SELECT `title` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
 
         if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->query('DELETE FROM `co_tipi_scadenze` WHERE `can_delete` = 1 AND `id`='.prepare($id_record));
+            $dbo->delete('co_tipi_scadenze', ['can_delete' => 1, 'id' => $id_record]);
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'scadenza',
             ]));

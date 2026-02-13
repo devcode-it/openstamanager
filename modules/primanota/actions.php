@@ -80,7 +80,7 @@ switch (post('op')) {
             if (empty(post('idmastrino'))) {
                 $idmastrino = get_new_idmastrino('co_movimenti_modelli');
             } else {
-                $dbo->query('DELETE FROM co_movimenti_modelli WHERE idmastrino='.prepare(post('idmastrino')));
+                $dbo->delete('co_movimenti_modelli', ['idmastrino' => post('idmastrino')]);
                 $idmastrino = post('idmastrino');
             }
 

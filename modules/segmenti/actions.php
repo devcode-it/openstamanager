@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Segmenti\Segmento;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
@@ -118,7 +120,8 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM zz_segments WHERE id='.prepare($id_record));
+        $segmento = Segmento::find($id_record);
+        $segmento->delete();
 
         // TODO
         // eliminare riferimento sulle fatture eventuali collegate a questo segmento?

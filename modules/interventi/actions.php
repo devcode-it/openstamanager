@@ -609,19 +609,7 @@ switch (post('op')) {
         // Eliminazione intervento
     case 'delete':
         try {
-            // Eliminazione associazioni tra interventi e contratti
-            $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
-
             $intervento->delete();
-
-            // Elimino il collegamento al componente
-            $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
-
-            // Eliminazione associazione tecnici collegati all'intervento
-            $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
-
-            // Eliminazione associazione interventi e my_impianti
-            $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
 
             flash()->info(tr('Intervento eliminato!'));
         } catch (InvalidArgumentException) {
@@ -1195,7 +1183,9 @@ switch (post('op')) {
     case 'delete_sessione':
         $id_sessione = post('id_sessione');
 
-        $dbo->query('DELETE FROM in_interventi_tecnici WHERE id='.prepare($id_sessione));
+        $dbo->table('in_interventi_tecnici')
+            ->where('id', $id_sessione)
+            ->delete();
 
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {

@@ -150,14 +150,14 @@ switch ($operazione) {
             }
             $tot_non_pianificati = implode(', ', array_unique(array_diff($non_pianificata, $pianificata)));
             if (!empty($tot_non_pianificati)) {
-                $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `id` IN ('.$tot_non_pianificati.')');
+                $dbo->delete('co_fatturazione_contratti', ['id' => explode(', ', $tot_non_pianificati)]);
             }
         }
 
         break;
 
     case 'reset':
-        $dbo->query('DELETE FROM `co_fatturazione_contratti` WHERE `idcontratto`='.prepare($id_record));
+        $dbo->delete('co_fatturazione_contratti', ['idcontratto' => $id_record]);
         $dbo->query('UPDATE `co_righe_contratti` SET `idpianificazione`=NULL WHERE `idpianificazione` IS NOT NULL AND `idcontratto`='.prepare($id_record));
         flash()->info(tr('Pianificazione rimossa'));
 

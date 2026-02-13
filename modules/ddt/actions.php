@@ -607,7 +607,7 @@ switch (filter('op')) {
     case 'copy':
         $new = $ddt->replicate();
 
-        $new->numero = DDT::getNextNumero($new->data, $dir, $id_segment);
+        $new->numero = DDT::getNextNumero($new->data, $dir, $ddt->id_segment);
         $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
 
         $stato = Stato::where('name', 'Bozza')->first()->id;

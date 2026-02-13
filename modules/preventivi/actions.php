@@ -145,16 +145,15 @@ switch (post('op')) {
         if (post('idintervento') !== null) {
             // Selezione costi da intervento
             $idintervento = post('idintervento');
-            $rs = $dbo->fetchArray('SELECT * FROM in_interventi WHERE id='.prepare($idintervento));
-            $costo_km = $rs[0]['prezzo_km_unitario'];
-            $costo_orario = $rs[0]['prezzo_ore_unitario'];
+            $intervento = Modules\Interventi\Intervento::find($idintervento);
+            $costo_km = $intervento->prezzo_km_unitario;
+            $costo_orario = $intervento->prezzo_ore_unitario;
 
-            $dbo->update('in_interventi', [
-                'id_preventivo' => $id_record,
-            ], ['id' => $idintervento]);
+            $dbo->table('in_interventi')->where('id', $idintervento)->update(['id_preventivo' => $id_record]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
-            $dbo->query('UPDATE `co_preventivi` SET `idstato`=(SELECT `id` FROM `co_statipreventivi` WHERE `co_statipreventivi`.`name`="In lavorazione") WHERE `co_preventivi`.`id`='.prepare($id_record));
+            $stato_in_lavorazione = Modules\Preventivi\Stato::where('name', 'In lavorazione')->first()->id;
+            $dbo->table('co_preventivi')->where('id', $id_record)->update(['idstato' => $stato_in_lavorazione]);
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],
@@ -167,9 +166,7 @@ switch (post('op')) {
         if (isset($_GET['idpreventivo']) && isset($_GET['idintervento'])) {
             $idintervento = get('idintervento');
 
-            $dbo->update('in_interventi', [
-                'id_preventivo' => null,
-            ], ['id' => $idintervento]);
+            $dbo->table('in_interventi')->where('id', $idintervento)->update(['id_preventivo' => null]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
@@ -459,7 +456,7 @@ switch (post('op')) {
 
     case 'add_revision':
         // Rimozione flag default_revision dal record principale e dalle revisioni
-        $dbo->query('UPDATE co_preventivi SET default_revision=0 WHERE master_revision = '.prepare($preventivo->master_revision));
+        $dbo->table('co_preventivi')->where('master_revision', $preventivo->master_revision)->update(['default_revision' => 0]);
 
         // Copia del preventivo
         $new = $preventivo->replicate();
@@ -493,7 +490,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `co_righe_preventivi` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            $dbo->table('co_righe_preventivi')->where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -505,16 +502,21 @@ switch (post('op')) {
         $dir = 'entrata';
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
+            $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('idarticolo');
             if (empty($id_articolo)) {
-                $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+                $id_articolo = $dbo->table('mg_articoli')
+                    ->where('deleted_at', null)
+                    ->where('attivo', 1)
+                    ->where('barcode', '')
+                    ->where('codice', $barcode)
+                    ->value('id');
                 $save_inline_barcode = false;
             }
         }
 
         if (!empty($id_articolo)) {
             $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
-            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
+            $qta_articolo = $dbo->table('mg_articoli')->where('id', $id_articolo)->value('qta');
 
             $originale = ArticoloOriginale::find($id_articolo);
 
@@ -548,12 +550,12 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $preventivo->idagente])['provvigione_default'];
+            $provvigione = Modules\Anagrafiche\Anagrafica::find($preventivo->idagente)->provvigione_default;
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoScontoVendite;
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
@@ -662,9 +664,9 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');

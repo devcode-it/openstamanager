@@ -226,7 +226,7 @@ switch (filter('op')) {
             $group->delete();
             User::where('idgruppo', $id_record)->delete();
             UserTokens::whereIn('id_utente', User::where('idgruppo', $id_record)->pluck('id'))->delete();
-            $dbo->query('DELETE FROM `zz_permissions` WHERE `idgruppo`='.prepare($id_record));
+            $dbo->delete('zz_permissions', ['idgruppo' => $id_record]);
             flash()->info(tr('Gruppo e relativi utenti eliminati!'));
         } else {
             flash()->error(tr('Questo gruppo non si può eliminare!'));

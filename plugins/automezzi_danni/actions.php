@@ -61,7 +61,7 @@ switch (post('op')) {
     case 'deldanno':
         $idscadenza = post('id');
 
-        $dbo->query('DELETE FROM an_automezzi_danni WHERE id = '.prepare($idscadenza));
+        $dbo->delete('an_automezzi_danni', ['id' => $idscadenza]);
 
         flash()->info(tr('Scadenza eliminata correttamente!'));
 

@@ -96,7 +96,7 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti') ?: null;
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite') ?: null;
         $anagrafica->split_payment = post('split_payment');
-        $anagrafica->id_listino = post('id_listino');
+        $anagrafica->id_listino = post('id_listino') ?: null;
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));

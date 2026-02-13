@@ -45,11 +45,6 @@ if ($record['can_delete'] and empty($scadenze)) {
 				<div class="col-md-3">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$name$", "extra": "<?php echo $attr; ?>"  ]}
 				</div>
-
-				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "$title$" ]}
-				</div>
-
 			</div>
 		</div>
 	</div>

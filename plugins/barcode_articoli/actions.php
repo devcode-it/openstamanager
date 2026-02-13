@@ -101,7 +101,7 @@ switch ($operazione) {
 
     case 'deletebarcode':
         $id = filter('id');
-        $dbo->query('DELETE FROM `mg_articoli_barcode` WHERE `id` = '.prepare($id).'');
+        $dbo->delete('mg_articoli_barcode', ['id' => $id]);
 
         flash()->info(tr('Barcode eliminato!'));
 
@@ -122,7 +122,7 @@ switch ($operazione) {
             flash()->info(tr('Pulsante aggiornato!'));
         } else {
             if (empty(post('colore')) && empty(post('descrizione_pulsante')) && empty(post('usa_immagine'))) {
-                $dbo->query('DELETE FROM mg_btn_articoli WHERE id='.prepare($btnid));
+                $dbo->delete('mg_btn_articoli', ['id' => $btnid]);
                 flash()->info(tr('Pulsante rimosso!'));
             } else {
                 $dbo->update('mg_btn_articoli', [
@@ -134,7 +134,7 @@ switch ($operazione) {
             }
         }
 
-        $dbo->query('DELETE FROM mg_btn_magazzini WHERE btn_id='.prepare($btnid));
+        $dbo->delete('mg_btn_magazzini', ['btn_id' => $btnid]);
         foreach (post('idmagazzini') as $idmagazzino) {
             $dbo->insert('mg_btn_magazzini', [
                 'btn_id' => $btnid,

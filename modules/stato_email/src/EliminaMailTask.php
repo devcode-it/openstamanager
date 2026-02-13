@@ -20,6 +20,7 @@
 
 namespace Modules\StatoEmail;
 
+use Modules\Emails\Mail;
 use Tasks\Manager;
 
 /**
@@ -30,13 +31,11 @@ class EliminaMailTask extends Manager
     public function needsExecution()
     {
         if (setting('Numero di giorni mantenimento coda di invio') > 0) {
-            $rs = database()->fetchArray('SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY) AND id_newsletter IS NOT NULL');
+            $count = Mail::where('sent_at', '<', database()->raw('DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY)'))
+                ->whereNotNull('id_newsletter')
+                ->count();
 
-            if (sizeof($rs) > 0) {
-                return true;
-            }
-
-            return false;
+            return $count > 0;
         }
 
         return false;
@@ -50,17 +49,19 @@ class EliminaMailTask extends Manager
         ];
 
         if (setting('Numero di giorni mantenimento coda di invio') > 0) {
-            $rs = database()->fetchArray('SELECT * FROM em_emails WHERE sent_at<DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY) AND id_newsletter IS NOT NULL');
+            $emails = Mail::where('sent_at', '<', database()->raw('DATE_SUB(NOW(), INTERVAL '.setting('Numero di giorni mantenimento coda di invio').' DAY)'))
+                ->whereNotNull('id_newsletter')
+                ->get();
 
-            if (empty($rs)) {
+            if ($emails->isEmpty()) {
                 $result = [
                     'response' => 1,
                     'message' => tr('Nessuna email da eliminare'),
                 ];
             }
 
-            foreach ($rs as $r) {
-                database()->query('DELETE FROM em_emails WHERE id='.prepare($r['id']));
+            foreach ($emails as $email) {
+                $email->delete();
             }
         } else {
             $result = [

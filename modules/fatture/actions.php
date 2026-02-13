@@ -363,11 +363,12 @@ switch ($op) {
         try {
             $fattura->delete();
 
-            $dbo->query('DELETE FROM co_scadenziario WHERE iddocumento='.prepare($id_record));
-            $dbo->query('DELETE FROM co_movimenti WHERE iddocumento='.prepare($id_record));
-
-            // Azzeramento collegamento della rata contrattuale alla pianificazione
-            $dbo->query('UPDATE co_fatturazione_contratti SET iddocumento=0 WHERE iddocumento='.prepare($id_record));
+            $dbo->table('co_scadenziario')
+                ->where('iddocumento', $id_record)
+                ->delete();
+            $dbo->table('co_movimenti')
+                ->where('iddocumento', $id_record)
+                ->delete();
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException) {

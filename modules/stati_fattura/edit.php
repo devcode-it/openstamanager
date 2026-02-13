@@ -43,7 +43,7 @@ include_once __DIR__.'/../../core.php';
 
 
 <?php
-$documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE idstatodocumento='.prepare($id_record));
+$documenti = Modules\Fatture\Stato::find($id_record)->fatture()->count();
 
 if (!empty($documenti)) {
     echo '

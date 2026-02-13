@@ -27,9 +27,6 @@ include_once __DIR__.'/../../core.php';
 		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
-		<div class="col-md-6">
-			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
-		</div>
 	</div>
 
 	<!-- PULSANTI -->

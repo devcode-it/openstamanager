@@ -28,3 +28,13 @@ ORDER BY
 
 UPDATE `zz_views` SET `query` = '`zz_marche`.`name`' WHERE `name` = 'Marche' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
 UPDATE `zz_views` SET `query` = '`modello`.`name`' WHERE `name` = 'Modello' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
+-- Aggiunta chiave esterna listini in anagrafiche
+ALTER TABLE `an_anagrafiche` CHANGE `id_listino` `id_listino` INT NULL; 
+UPDATE `an_anagrafiche` SET `id_listino` = null WHERE `id_listino` = 0; 
+UPDATE `an_anagrafiche` SET `id_listino` = null WHERE `id_listino` NOT IN (SELECT `id` FROM `mg_listini`);
+ALTER TABLE `an_anagrafiche` ADD CONSTRAINT `an_anagrafiche_ibfk_4` FOREIGN KEY (`id_listino`) REFERENCES `mg_listini`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT; 
+
+-- Correzione vista modulo Tipi scadenze
+UPDATE `zz_views` SET `query` = '`co_tipi_scadenze_lang`.`title`' WHERE `zz_views`.`name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'); 
+DELETE FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'); 

@@ -642,27 +642,27 @@ echo '
 </div>';
 
 // Numero interventi per tipologia
-$tipi = $dbo->fetchArray('SELECT *, in_tipiintervento.id AS idtipointervento FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
+$tipi = $dbo->table('in_tipiintervento')
+    ->leftJoin('in_tipiintervento_lang', function ($join) {
+        $join->on('in_tipiintervento.id', '=', 'in_tipiintervento_lang.id_record')
+            ->where('in_tipiintervento_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->select('*', 'in_tipiintervento.id as idtipointervento')
+    ->get()
+    ->toArray();
 
 $dataset = '';
 foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('
-    SELECT
-        COUNT(`in_interventi`.`id`) AS result,
-        YEAR(`sessioni`.`orario_fine`) AS `year`,
-        MONTH(`sessioni`.`orario_fine`) AS `month`
-    FROM
-        `in_interventi`
-        LEFT JOIN(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni ON `in_interventi`.`id` = `sessioni`.`idintervento`
-    WHERE
-        `in_interventi`.`idtipointervento` = '.prepare($tipo['idtipointervento']).'
-        AND `sessioni`.`orario_fine` BETWEEN '.prepare($start).' AND '.prepare($end).'
-    GROUP BY
-        YEAR(`sessioni`.`orario_fine`),
-        MONTH(`sessioni`.`orario_fine`)
-    ORDER BY
-        YEAR(`sessioni`.`orario_fine`) ASC,
-        MONTH(`sessioni`.`orario_fine`) ASC');
+    $interventi = $dbo->table('in_interventi')
+        ->leftJoin($dbo->raw('(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni'), 'in_interventi.id', '=', 'sessioni.idintervento')
+        ->where('in_interventi.idtipointervento', $tipo->idtipointervento)
+        ->whereBetween('sessioni.orario_fine', [$start, $end])
+        ->select($dbo->raw('COUNT(`in_interventi`.`id`) AS result, YEAR(`sessioni`.`orario_fine`) AS `year`, MONTH(`sessioni`.`orario_fine`) AS `month`'))
+        ->groupBy($dbo->raw('YEAR(`sessioni`.`orario_fine`)'), $dbo->raw('MONTH(`sessioni`.`orario_fine`)'))
+        ->orderBy($dbo->raw('YEAR(`sessioni`.`orario_fine`)'))
+        ->orderBy($dbo->raw('MONTH(`sessioni`.`orario_fine`)'))
+        ->get()
+        ->toArray();
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
@@ -670,7 +670,7 @@ foreach ($tipi as $tipo) {
     $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
-        label: "'.$tipo['title'].'",
+        label: "'.$tipo->title.'",
         backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($interventi, 'result')).'
@@ -750,7 +750,17 @@ $(document).ready(function() {
 // Ore interventi per tipologia
 $dataset = '';
 foreach ($tipi as $tipo) {
-    $interventi = $dbo->fetchArray('SELECT ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id=in_interventi_tecnici.idintervento WHERE in_interventi.idtipointervento = '.prepare($tipo['idtipointervento']).' AND in_interventi.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' AND in_interventi_tecnici.orario_fine BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(in_interventi_tecnici.orario_fine), MONTH(in_interventi_tecnici.orario_fine) ORDER BY YEAR(in_interventi_tecnici.orario_fine) ASC, MONTH(in_interventi_tecnici.orario_fine) ASC');
+    $interventi = $dbo->table('in_interventi')
+        ->join('in_interventi_tecnici', 'in_interventi.id', '=', 'in_interventi_tecnici.idintervento')
+        ->where('in_interventi.idtipointervento', $tipo->idtipointervento)
+        ->whereBetween('in_interventi.data_richiesta', [$start, $end])
+        ->whereBetween('in_interventi_tecnici.orario_fine', [$start, $end])
+        ->select($dbo->raw('ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month'))
+        ->groupBy($dbo->raw('YEAR(in_interventi_tecnici.orario_fine)'), $dbo->raw('MONTH(in_interventi_tecnici.orario_fine)'))
+        ->orderBy($dbo->raw('YEAR(in_interventi_tecnici.orario_fine)'))
+        ->orderBy($dbo->raw('MONTH(in_interventi_tecnici.orario_fine)'))
+        ->get()
+        ->toArray();
 
     $interventi = Stats::monthly($interventi, $start, $end);
 
@@ -758,7 +768,7 @@ foreach ($tipi as $tipo) {
     $background = '#'.dechex(random_int(256, 16777215));
 
     $dataset .= '{
-        label: "'.$tipo['title'].'",
+        label: "'.$tipo->title.'",
         backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($interventi, 'result')).'
@@ -840,20 +850,22 @@ $(document).ready(function() {
 </script>';
 
 // Interventi per tecnico
-$tecnici = $dbo->fetchArray('SELECT `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore`
-FROM
-    `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
-    INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-WHERE
-    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche_lang`.`title`='Tecnico'
-GROUP BY
-    `an_anagrafiche`.`idanagrafica`
-ORDER BY
-    `ragione_sociale` ASC");
+$tecnici = $dbo->table('an_anagrafiche')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
+        $join->on('an_tipianagrafiche_lang.id_record', '=', 'an_tipianagrafiche.id')
+            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->leftJoin('in_interventi_tecnici', 'in_interventi_tecnici.idtecnico', '=', 'an_anagrafiche.idanagrafica')
+    ->join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
+    ->whereNull('an_anagrafiche.deleted_at')
+    ->where('an_tipianagrafiche_lang.title', 'Tecnico')
+    ->select('an_anagrafiche.idanagrafica as id', 'ragione_sociale', 'colore')
+    ->groupBy('an_anagrafiche.idanagrafica')
+    ->orderBy('ragione_sociale')
+    ->get()
+    ->toArray();
 
 $dataset = '';
 $where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect']['idtipiintervento'] != '[]') ?
@@ -861,19 +873,31 @@ $where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect
     '1=1';
 
 foreach ($tecnici as $tecnico) {
-    $sessioni = $dbo->fetchArray('SELECT SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `in_interventi_tecnici`.`idtecnico` = '.prepare($tecnico['id']).' AND `in_interventi_tecnici`.`orario_inizio` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `in_statiintervento`.`is_bloccato` AND '.$where.' GROUP BY YEAR(`in_interventi_tecnici`.`orario_inizio`), MONTH(`in_interventi_tecnici`.`orario_inizio`) ORDER BY YEAR(`in_interventi_tecnici`.`orario_inizio`) ASC, MONTH(`in_interventi_tecnici`.`orario_inizio`) ASC');
+    $sessioni = $dbo->table('in_interventi_tecnici')
+        ->join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
+        ->leftJoin('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
+        ->where('in_interventi_tecnici.idtecnico', $tecnico->id)
+        ->whereBetween('in_interventi_tecnici.orario_inizio', [$start, $end])
+        ->where('in_statiintervento.is_bloccato', 1)
+        ->whereRaw($where)
+        ->select($dbo->raw('SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month'))
+        ->groupBy($dbo->raw('YEAR(`in_interventi_tecnici`.`orario_inizio`)'), $dbo->raw('MONTH(`in_interventi_tecnici`.`orario_inizio`)'))
+        ->orderBy($dbo->raw('YEAR(`in_interventi_tecnici`.`orario_inizio`)'))
+        ->orderBy($dbo->raw('MONTH(`in_interventi_tecnici`.`orario_inizio`)'))
+        ->get()
+        ->toArray();
 
     $sessioni = Stats::monthly($sessioni, $start, $end);
 
     // Colore tecnico
-    $background = strtoupper((string) $tecnico['colore']);
+    $background = strtoupper((string) $tecnico->colore);
     if (empty($background) || $background == '#FFFFFF') {
         // Random color
         $background = '#'.dechex(random_int(256, 16777215));
     }
 
     $dataset .= '{
-        label: "'.$tecnico['ragione_sociale'].'",
+        label: "'.$tecnico->ragione_sociale.'",
         backgroundColor: "'.$background.'",
         data: [
             '.implode(',', array_column($sessioni, 'result')).'
@@ -985,57 +1009,59 @@ $(document).ready(function() {
 
 $dataset = '';
 
-$nuovi_clienti = $dbo->fetchArray('SELECT
-    COUNT(*) AS result,
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
-    YEAR(`an_anagrafiche`.`created_at`) AS year,
-    MONTH(`an_anagrafiche`.`created_at`) AS month
-FROM
-    `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE
-    `an_tipianagrafiche_lang`.`title` = "Cliente" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).' GROUP BY YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`) ORDER BY YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
+$nuovi_clienti = $dbo->table('an_anagrafiche')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
+        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
+            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->where('an_tipianagrafiche_lang.title', 'Cliente')
+    ->whereNull('deleted_at')
+    ->whereBetween('an_anagrafiche.created_at', [$start, $end])
+    ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
+    ->groupBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'), $dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->get()
+    ->toArray();
 
-$nuovi_fornitori = $dbo->fetchArray('SELECT
-    COUNT(*) AS result,
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
-    YEAR(`an_anagrafiche`.`created_at`) AS year,
-    MONTH(`an_anagrafiche`.`created_at`) AS month
-FROM
-    `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE
-    `an_tipianagrafiche_lang`.`title` = "Fornitore" AND `deleted_at` IS NULL AND `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).'
-GROUP BY
-    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`)
-ORDER BY
-    YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
+$nuovi_fornitori = $dbo->table('an_anagrafiche')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
+        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
+            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->where('an_tipianagrafiche_lang.title', 'Fornitore')
+    ->whereNull('deleted_at')
+    ->whereBetween('an_anagrafiche.created_at', [$start, $end])
+    ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
+    ->groupBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'), $dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->get()
+    ->toArray();
 
 // Nuovi clienti per i quali ho emesso almeno una fattura di vendita
-$clienti_acquisiti = $dbo->fetchArray('SELECT
-    COUNT(*) AS result,
-    GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali,
-    YEAR(`an_anagrafiche`.`created_at`) AS year,
-    MONTH(`an_anagrafiche`.`created_at`) AS month
-FROM
-    `an_anagrafiche`
-    INNER JOIN `co_documenti` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-WHERE
-    `an_tipianagrafiche_lang`.`title` = "Cliente" AND
-    `co_tipidocumento`.`dir` = "entrata" AND
-    `an_anagrafiche`.`created_at` BETWEEN '.prepare($start).' AND '.prepare($end).'
-GROUP BY
-    YEAR(`an_anagrafiche`.`created_at`), MONTH(`an_anagrafiche`.`created_at`)
-ORDER BY
-    YEAR(`an_anagrafiche`.`created_at`) ASC, MONTH(`an_anagrafiche`.`created_at`) ASC');
+$clienti_acquisiti = $dbo->table('an_anagrafiche')
+    ->join('co_documenti', 'an_anagrafiche.idanagrafica', '=', 'co_documenti.idanagrafica')
+    ->join('co_tipidocumento', 'co_documenti.idtipodocumento', '=', 'co_tipidocumento.id')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
+        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
+            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->where('an_tipianagrafiche_lang.title', 'Cliente')
+    ->where('co_tipidocumento.dir', 'entrata')
+    ->whereBetween('an_anagrafiche.created_at', [$start, $end])
+    ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
+    ->groupBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'), $dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'))
+    ->orderBy($dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))
+    ->get()
+    ->toArray();
 
 // Random color
 $background = '#'.dechex(random_int(256, 16777215));

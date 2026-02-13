@@ -65,7 +65,7 @@ if (!$pianificazioni->isEmpty()) {
                 <td>';
 
         // Data scadenza
-        if (!$pianificazione->data_scadenza->equalTo($previous)) {
+        if ($previous === null || !$pianificazione->data_scadenza->equalTo($previous)) {
             $previous = $pianificazione->data_scadenza;
             echo '
                     <b>'.ucfirst((string) $pianificazione->data_scadenza->isoFormat('MMMM YYYY')).'</b>';

@@ -195,7 +195,7 @@ function salvaTariffeSede($id_sede, $id_parent)
         } else {
             // Se disattivo, elimina la tariffa se esiste
             if (isset($tariffe_map[$id_tipo])) {
-                $dbo->query('DELETE FROM in_tariffe_sedi WHERE id = '.prepare($tariffe_map[$id_tipo]));
+                $dbo->delete('in_tariffe_sedi', ['id' => $tariffe_map[$id_tipo]]);
             }
         }
     }

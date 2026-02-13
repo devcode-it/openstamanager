@@ -24,6 +24,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Group;
 use Models\Module;
 use Models\User;
+use Models\UserTokens;
 
 $id_utente = filter('id_utente');
 
@@ -158,13 +159,11 @@ switch (filter('op')) {
         if (auth_osm()->getUser()->id != $utente->id) {
             /* Controlla che l'utente che voglio eliminare non presenti logs associati */
             if (count($utente->logs) == 0) {
-                if ($dbo->query('DELETE FROM zz_users WHERE id='.prepare($id_utente))) {
-                    flash()->info(tr('Utente eliminato!'));
+                $utente->delete();
+                flash()->info(tr('Utente eliminato!'));
 
-                    if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
-                        flash()->info(tr('Token eliminato!'));
-                    }
-                }
+                UserTokens::where('id_utente', $id_utente)->delete();
+                flash()->info(tr('Token eliminato!'));
             } else {
                 flash()->error(tr('L\'utente _USER_ presenta dei log attivi. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
 
@@ -175,9 +174,8 @@ switch (filter('op')) {
 
                 flash()->info(tr('Utente disabilitato!'));
 
-                if ($dbo->query('DELETE FROM zz_tokens WHERE id_utente='.prepare($id_utente))) {
-                    flash()->info(tr('Token eliminato!'));
-                } flash()->info(tr('Token eliminato!'));
+                UserTokens::where('id_utente', $id_utente)->delete();
+                flash()->info(tr('Token eliminato!'));
             }
         } else {
             flash()->error(tr('L\'utente _USER_ è l\'utente attuale. Impossibile eliminare utente.', ['_USER_' => $utente->username]));
@@ -224,12 +222,12 @@ switch (filter('op')) {
         $rs = $dbo->fetchArray($query);
 
         if ($rs[0]['editable'] == 1) {
-            if ($dbo->query('DELETE FROM `zz_groups` WHERE `id`='.prepare($id_record))) {
-                $dbo->query('DELETE FROM `zz_users` WHERE `idgruppo`='.prepare($id_record));
-                $dbo->query('DELETE FROM `zz_tokens` WHERE `id_utente` IN (SELECT `id` FROM `zz_users` WHERE `idgruppo`='.prepare($id_record).')');
-                $dbo->query('DELETE FROM `zz_permissions` WHERE `idgruppo`='.prepare($id_record));
-                flash()->info(tr('Gruppo e relativi utenti eliminati!'));
-            }
+            $group = Group::find($id_record);
+            $group->delete();
+            User::where('idgruppo', $id_record)->delete();
+            UserTokens::whereIn('id_utente', User::where('idgruppo', $id_record)->pluck('id'))->delete();
+            $dbo->query('DELETE FROM `zz_permissions` WHERE `idgruppo`='.prepare($id_record));
+            flash()->info(tr('Gruppo e relativi utenti eliminati!'));
         } else {
             flash()->error(tr('Questo gruppo non si può eliminare!'));
         }

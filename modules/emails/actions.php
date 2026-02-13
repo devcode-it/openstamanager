@@ -82,7 +82,8 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE `em_templates` SET `deleted_at` = NOW() WHERE `id`='.prepare($id_record));
+        $template = Template::find($id_record);
+        $template->delete();
 
         flash()->info(tr('Template delle email eliminato!'));
 

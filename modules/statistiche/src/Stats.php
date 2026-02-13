@@ -44,7 +44,7 @@ class Stats
             $year = $month >= 12 ? $year + 1 : $year;
             $month = $month % 12;
 
-            if (!isset($data[$i]) || intval($data[$i]['month']) != $month + 1) {
+            if (!isset($data[$i]) || intval($data[$i]->month) != $month + 1) {
                 array_splice($data, $i, 0, [[
                     'result' => 0,
                     'year' => $year,

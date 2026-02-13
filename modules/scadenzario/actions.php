@@ -33,10 +33,19 @@ switch (post('op')) {
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
         $descrizione = strip_tags(post('descrizione'));
-        $iddocumento = post('iddocumento') ?: '';
+        $iddocumento = post('iddocumento') ?: 0;
         $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
-        $dbo->query('INSERT INTO co_scadenziario(idanagrafica, iddocumento, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato) VALUES('.prepare($idanagrafica).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($tipo).', '.prepare($data_emissione).', '.prepare($data).', '.prepare($da_pagare).", '0')");
+        $dbo->insert('co_scadenziario', [
+            'idanagrafica' => $idanagrafica,
+            'iddocumento' => $iddocumento,
+            'descrizione' => $descrizione,
+            'tipo' => $tipo,
+            'data_emissione' => $data_emissione,
+            'scadenza' => $data,
+            'da_pagare' => $da_pagare,
+            'pagato' => 0,
+        ]);
         $id_record = $dbo->lastInsertedID();
 
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $data)->where('data_fine', '>=', $data)->first();
@@ -160,7 +169,9 @@ switch (post('op')) {
         $scadenza = Scadenza::find($id_record);
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
 
-        $dbo->query("DELETE FROM co_scadenziario WHERE id=".prepare($id_record));
+        $dbo->table('co_scadenziario')
+            ->where('id', $id_record)
+            ->delete();
 
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
@@ -232,7 +243,20 @@ switch (post('op')) {
             $tipo = 'fattura'; // Tipo di default
             $data_emissione = date('Y-m-d');
 
-            $dbo->query('INSERT INTO co_scadenziario(idanagrafica, iddocumento, descrizione, tipo, data_emissione, scadenza, da_pagare, pagato, id_pagamento, id_banca_azienda, id_banca_controparte, data_concordata) VALUES('.prepare($idanagrafica).', '.prepare($iddocumento).', '.prepare($descrizione).', '.prepare($tipo).', '.prepare($data_emissione).', '.prepare($scadenza).', '.prepare($da_pagare).', '.prepare($pagato ?: 0).', '.prepare($id_pagamento ?: null).', '.prepare($id_banca_azienda ?: null).', '.prepare($id_banca_controparte ?: null).', '.prepare($data_concordata ?: null).')');
+            $dbo->insert('co_scadenziario', [
+                'idanagrafica' => $idanagrafica,
+                'iddocumento' => $iddocumento,
+                'descrizione' => $descrizione,
+                'tipo' => $tipo,
+                'data_emissione' => $data_emissione,
+                'scadenza' => $scadenza,
+                'da_pagare' => $da_pagare,
+                'pagato' => $pagato ?: 0,
+                'id_pagamento' => $id_pagamento ?: null,
+                'id_banca_azienda' => $id_banca_azienda ?: null,
+                'id_banca_controparte' => $id_banca_controparte ?: null,
+                'data_concordata' => $data_concordata ?: null,
+            ]);
             $id_record = $dbo->lastInsertedID();
 
             $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $scadenza)->where('data_fine', '>=', $scadenza)->first();

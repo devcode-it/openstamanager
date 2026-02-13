@@ -186,7 +186,7 @@ switch ($op) {
 
         // Rimuovo impianto e scollego tutti i suoi componenti
     case 'delete':
-        $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id_record));
+        $dbo->delete('my_impianti', ['id' => $id_record]);
 
         flash()->info(tr('Impianto e relativi componenti eliminati!'));
         break;

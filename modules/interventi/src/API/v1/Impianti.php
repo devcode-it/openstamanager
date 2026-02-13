@@ -49,9 +49,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         $data = $request['data'];
         $id_record = $data['id_intervento'];
 
-        database()->query('DELETE FROM my_impianti_interventi WHERE `idintervento` = :id_intervento', [
-            ':id_intervento' => $id_record,
-        ]);
+        database()->delete('my_impianti_interventi', ['idintervento' => $id_record]);
 
         $impianti = $data['impianti'];
         foreach ($impianti as $impianto) {

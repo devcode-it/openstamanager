@@ -133,15 +133,12 @@ switch (post('op')) {
 
     case 'delete':
         // Elimino le tariffe collegate ai vari tecnici
-        $query = 'DELETE FROM `in_tariffe` WHERE `idtipointervento`='.prepare($id_record);
-        $dbo->query($query);
+        $dbo->delete('in_tariffe', ['idtipointervento' => $id_record]);
 
         // Elimino le tariffe collegate ai contratti
-        $query = 'DELETE FROM `co_contratti_tipiintervento` WHERE `idtipointervento`='.prepare($id_record);
-        $dbo->query($query);
+        $dbo->delete('co_contratti_tipiintervento', ['idtipointervento' => $id_record]);
 
-        $query = 'DELETE FROM `in_fasceorarie_tipiintervento` WHERE `idtipointervento`='.prepare($id_record);
-        $dbo->query($query);
+        $dbo->delete('in_fasceorarie_tipiintervento', ['idtipointervento' => $id_record]);
 
         $query = 'UPDATE `in_tipiintervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
         $dbo->query($query);
@@ -212,8 +209,7 @@ switch (post('op')) {
 
     case 'delriga':
         $idriga = post('idriga');
-        $query = 'DELETE FROM in_righe_tipiinterventi WHERE id='.prepare($idriga);
-        $dbo->query($query);
+        $dbo->delete('in_righe_tipiinterventi', ['id' => $idriga]);
 
         flash()->info(tr('Riga eliminata!'));
 

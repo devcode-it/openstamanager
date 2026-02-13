@@ -172,8 +172,7 @@ if (!function_exists('elimina_movimenti')) {
 
         $idmastrino = $dbo->fetchOne('SELECT idmastrino FROM co_movimenti WHERE iddocumento='.prepare($id_documento).' AND primanota='.prepare($prima_nota))['idmastrino'];
 
-        $query2 = 'DELETE FROM co_movimenti WHERE idmastrino='.prepare($idmastrino).' AND primanota='.prepare($prima_nota);
-        $dbo->query($query2);
+        $dbo->delete('co_movimenti', ['idmastrino' => $idmastrino, 'primanota' => $prima_nota]);
     }
 }
 

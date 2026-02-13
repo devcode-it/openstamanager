@@ -63,7 +63,7 @@ class Combinazione extends Model
         $articoli = $this->articoli;
         foreach ($articoli as $articolo) {
             $articolo->delete();
-            $database->query('DELETE FROM mg_articolo_attributo WHERE id_articolo='.prepare($articolo['id']));
+            $database->delete('mg_articolo_attributo', ['id_articolo' => $articolo['id']]);
         }
 
         return parent::delete();

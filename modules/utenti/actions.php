@@ -109,7 +109,7 @@ switch (filter('op')) {
 
             $utente->save();
 
-            $dbo->query('DELETE FROM zz_user_sedi WHERE id_user = '.prepare($id_utente));
+            $dbo->delete('zz_user_sedi', ['id_user' => $id_utente]);
             $sedi = post('idsede');
 
             if (empty($sedi)) {
@@ -246,7 +246,7 @@ switch (filter('op')) {
             $permessi['Articoli'] = 'rw';
 
             // Rimuovi tutti i permessi esistenti
-            $dbo->query('DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record));
+            $dbo->delete('zz_permissions', ['idgruppo' => $id_record]);
 
             // Ottieni il gruppo per la sincronizzazione
             $group = Group::find($id_record);

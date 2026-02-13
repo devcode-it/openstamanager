@@ -61,7 +61,7 @@ switch (filter('op')) {
         }
 
         // Elimino le righe di ammortamento precedenti
-        $dbo->query('DELETE FROM `co_righe_ammortamenti` WHERE `id_riga` = '.prepare($id_record));
+        $dbo->delete('co_righe_ammortamenti', ['id_riga' => $id_record]);
         foreach ($anni as $i => $anno) {
             $perc = $percentuale[$i];
 

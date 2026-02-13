@@ -45,7 +45,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM do_documenti WHERE id = '.prepare($id_record));
+        $dbo->delete('do_documenti', ['id' => $id_record]);
 
         Uploads::deleteLinked([
             'id_module' => $id_module,

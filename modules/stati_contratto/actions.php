@@ -70,15 +70,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei contratti
-        if (count($dbo->fetchArray('SELECT `id` FROM `co_contratti` WHERE `idstato`='.prepare($id_record))) > 0) {
-            $query = 'UPDATE `co_staticontratti` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        } else {
-            $query = 'DELETE FROM `co_staticontratti` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        }
-
-        $dbo->query($query);
-
+        $stato->delete('co_staticontratti');        
         flash()->info(tr('Questo stato dei contratti è stato correttamente eliminato.'));
 
         break;

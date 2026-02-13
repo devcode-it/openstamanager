@@ -47,7 +47,7 @@ switch (post('op')) {
             SELECT `idimpianto` FROM `my_impianti_contratti` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id));
 
             if (empty($elementi)) {
-                $dbo->query('DELETE FROM my_impianti WHERE id='.prepare($id));
+                $dbo->delete('my_impianti', ['id' => $id]);
                 ++$n_impianti;
             }
         }

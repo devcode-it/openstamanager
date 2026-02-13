@@ -83,7 +83,7 @@ switch (filter('op')) {
         $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE id_provenienza='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($righe)) {
-            $dbo->query('DELETE FROM `an_provenienze` WHERE `id`='.prepare($id_record));
+            $dbo->delete('an_provenienze', ['id' => $id_record]);
             flash()->info(tr('Provenienza _NAME_ eliminata con successo!', [
                 '_NAME_' => $descrizione,
             ]));

@@ -67,7 +67,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
-            $dbo->query('DELETE FROM `co_ritenutaacconto` WHERE `id`='.prepare($id_record));
+            $dbo->delete('co_ritenutaacconto', ['id' => $id_record]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => "ritenuta d'acconto",

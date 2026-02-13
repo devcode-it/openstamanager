@@ -64,7 +64,7 @@ switch (filter('op')) {
         $rifornimenti = $dbo->fetchNum('SELECT `id` FROM `an_automezzi_rifornimenti` WHERE `id_gestore`='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($rifornimenti)) {
-            $dbo->query('DELETE FROM `an_automezzi_gestori` WHERE `id`='.prepare($id_record));
+            $dbo->delete('an_automezzi_gestori', ['id' => $id_record]);
 
             flash()->info(tr('Gestore eliminato con successo!'));
         } else {

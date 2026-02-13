@@ -133,6 +133,7 @@ switch (post('op')) {
         ]);
 
         flash()->info(tr('Viaggio aggiunto al registro!'));
+
         break;
 
         // Modifica viaggio
@@ -158,17 +159,17 @@ switch (post('op')) {
         ], ['id' => $idviaggio]);
 
         flash()->info(tr('Viaggio aggiornato!'));
+
         break;
 
         // Eliminazione viaggio
     case 'delviaggio':
         $idviaggio = post('id');
 
-        $query = 'DELETE FROM an_automezzi_viaggi WHERE id='.prepare($idviaggio);
-
-        if ($dbo->query($query)) {
+        if ($dbo->delete('an_automezzi_viaggi', ['id' => $idviaggio])) {
             flash()->info(tr('Viaggio rimosso dal registro!'));
         }
+
         break;
 
         // Aggiunta rifornimento
@@ -197,6 +198,7 @@ switch (post('op')) {
         ]);
 
         flash()->info(tr('Rifornimento aggiunto!'));
+
         break;
 
         // Modifica rifornimento
@@ -224,17 +226,17 @@ switch (post('op')) {
         ], ['id' => $idrifornimento]);
 
         flash()->info(tr('Rifornimento aggiornato!'));
+
         break;
 
         // Eliminazione rifornimento
     case 'delrifornimento':
         $idrifornimento = post('id');
 
-        $query = 'DELETE FROM an_automezzi_rifornimenti WHERE id='.prepare($idrifornimento);
-
-        if ($dbo->query($query)) {
+        if ($dbo->delete('an_automezzi_rifornimenti', ['id' => $idrifornimento])) {
             flash()->info(tr('Rifornimento rimosso!'));
         }
+
         break;
 
         // Firma viaggio

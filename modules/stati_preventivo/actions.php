@@ -66,14 +66,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei preventivi
-        if (count($dbo->fetchArray('SELECT `id` FROM `co_preventivi` WHERE `idstato`='.prepare($id_record))) > 0) {
-            $query = 'UPDATE `co_statipreventivi` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        } else {
-            $query = 'DELETE FROM `co_statipreventivi` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        }
-
-        $dbo->query($query);
+        $stato->delete('co_statipreventivi');        
 
         flash()->info(tr('Stato preventivo eliminato.'));
 

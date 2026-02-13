@@ -23,11 +23,13 @@ namespace Modules\Interventi;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stato extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    use SoftDeletes;
     protected $table = 'in_statiintervento';
 
     protected static $translated_fields = [

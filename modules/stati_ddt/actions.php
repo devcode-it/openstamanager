@@ -66,14 +66,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato nei DDT
-        if (count($dbo->fetchArray('SELECT `id` FROM `dt_ddt` WHERE `idstatoddt`='.prepare($id_record))) > 0) {
-            $query = 'UPDATE `dt_statiddt` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        } else {
-            $query = 'DELETE FROM `dt_statiddt` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        }
-
-        $dbo->query($query);
+        $stato->delete('dt_statiddt');        
 
         flash()->info(tr('Stato DDT eliminato.'));
 

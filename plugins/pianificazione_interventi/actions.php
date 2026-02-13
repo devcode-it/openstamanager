@@ -62,9 +62,9 @@ switch ($operazione) {
         // Eliminazione pianificazione
     case 'delete-promemoria':
         $id = post('id');
-
-        $dbo->query('DELETE FROM `co_promemoria` WHERE id='.prepare($id));
-        $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria='.prepare($id));
+        
+        $dbo->delete('co_promemoria', ['id' => $id]);
+        $dbo->delete('co_righe_promemoria', ['id_promemoria' => $id]);
 
         flash()->info(tr('Pianificazione eliminata!'));
 

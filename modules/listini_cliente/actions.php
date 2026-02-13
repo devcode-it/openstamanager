@@ -130,13 +130,9 @@ switch (filter('op')) {
         $dbo->query('UPDATE mg_listini SET nome = CONCAT (nome, " (copia)") WHERE id = '.prepare($id_record_new));
 
         $articoli = Articolo::where('id_listino', $id_record)->get();
-        foreach ($articoli as $articolo) {
-            $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM mg_listini_articoli WHERE id= '.prepare($articolo->id));
-            $dbo->query('ALTER TABLE tmp DROP id');
-            $dbo->query('INSERT INTO mg_listini_articoli SELECT NULL,tmp. * FROM tmp');
-            $id_riga_new = $dbo->lastInsertedID();
-            $dbo->query('DROP TEMPORARY TABLE tmp');
-            $dbo->query('UPDATE mg_listini_articoli SET id_listino = '.prepare($id_record_new).' WHERE id = '.prepare($id_riga_new));
+        if ($articoli->isNotEmpty()) {
+            $dbo->query('INSERT INTO mg_listini_articoli (SELECT NULL, tmp.* FROM mg_listini_articoli tmp WHERE tmp.id IN ('.implode(',', $articoli->pluck('id')->toArray()).'))');
+            $dbo->query('UPDATE mg_listini_articoli SET id_listino = '.prepare($id_record_new).' WHERE id_listino = '.prepare($id_record));
         }
 
         flash()->info(tr('Listino duplicato correttamente!'));

@@ -89,10 +89,26 @@ class Scadenze
     public function rimuovi()
     {
         $scadenze = $this->fattura->scadenze;
+        $assicurazioni = [];
+        
+        // Ottimizzazione: raccogli tutte le anagrafiche delle scadenze e carica le assicurazioni in una sola query
+        $id_anagrafiche = $scadenze->pluck('idanagrafica')->unique()->filter()->values();
+        $assicurazioni_map = [];
+        
+        if ($id_anagrafiche->isNotEmpty()) {
+            $assicurazioni_list = AssicurazioneCrediti::whereIn('id_anagrafica', $id_anagrafiche)->get();
+            
+            // Crea una mappa per accesso rapido
+            foreach ($assicurazioni_list as $assicurazione) {
+                $key = $assicurazione->id_anagrafica.'_'.$assicurazione->data_inizio.'_'.$assicurazione->data_fine;
+                $assicurazioni_map[$key] = $assicurazione;
+            }
+        }
+        
         foreach ($scadenze as $scadenza) {
-            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
-            if (!empty($assicurazione_crediti)) {
-                $assicurazioni[] = $assicurazione_crediti;
+            $key = $scadenza->idanagrafica.'_'.$scadenza->scadenza->format('Y-m-d').'_'.$scadenza->scadenza->format('Y-m-d');
+            if (isset($assicurazioni_map[$key])) {
+                $assicurazioni[] = $assicurazioni_map[$key];
             }
         }
 
@@ -123,6 +139,7 @@ class Scadenze
         $scadenza->data_emissione = $fattura->data;
         $scadenza->save();
 
+        // TODO: Considerare di passare le assicurazioni come parametro se chiamato da rimuovi()
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();

@@ -206,30 +206,85 @@ function getDestinationComponents($riga)
 {
     $documents = [];
 
-    $contratti = database()->table('co_righe_contratti')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+    // Ottimizzazione: usa eager loading per evitare il problema N+1
+    $contratti = Contratto::whereIn('id', function ($query) use ($riga) {
+        $query->select('idcontratto')
+            ->from('co_righe_contratti')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class);
+    })->get();
     foreach ($contratti as $contratto) {
-        $documents['documento'][] = Contratto::find($contratto->idcontratto);
-        $documents['qta'][] = $contratto->qta;
+        $riga_contratto = database()->table('co_righe_contratti')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class)
+            ->where('idcontratto', $contratto->id)
+            ->first();
+        $documents['documento'][] = $contratto;
+        $documents['qta'][] = $riga_contratto->qta;
     }
-    $fatture = database()->table('co_righe_documenti')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+
+    $fatture = Fattura::whereIn('id', function ($query) use ($riga) {
+        $query->select('iddocumento')
+            ->from('co_righe_documenti')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class);
+    })->get();
     foreach ($fatture as $fattura) {
-        $documents['documento'][] = Fattura::find($fattura->iddocumento);
-        $documents['qta'][] = $fattura->qta;
+        $riga_fattura = database()->table('co_righe_documenti')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class)
+            ->where('iddocumento', $fattura->id)
+            ->first();
+        $documents['documento'][] = $fattura;
+        $documents['qta'][] = $riga_fattura->qta;
     }
-    $ddts = database()->table('dt_righe_ddt')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+
+    $ddts = DDT::whereIn('id', function ($query) use ($riga) {
+        $query->select('idddt')
+            ->from('dt_righe_ddt')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class);
+    })->get();
     foreach ($ddts as $ddt) {
-        $documents['documento'][] = DDT::find($ddt->idddt);
-        $documents['qta'][] = $ddt->qta;
+        $riga_ddt = database()->table('dt_righe_ddt')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class)
+            ->where('idddt', $ddt->id)
+            ->first();
+        $documents['documento'][] = $ddt;
+        $documents['qta'][] = $riga_ddt->qta;
     }
-    $interventi = database()->table('in_righe_interventi')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+
+    $interventi = Intervento::whereIn('id', function ($query) use ($riga) {
+        $query->select('idintervento')
+            ->from('in_righe_interventi')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class);
+    })->get();
     foreach ($interventi as $intervento) {
-        $documents['documento'][] = Intervento::find($intervento->idintervento);
-        $documents['qta'][] = $intervento->qta;
+        $riga_intervento = database()->table('in_righe_interventi')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class)
+            ->where('idintervento', $intervento->id)
+            ->first();
+        $documents['documento'][] = $intervento;
+        $documents['qta'][] = $riga_intervento->qta;
     }
-    $ordini = database()->table('or_righe_ordini')->where('original_id', $riga->id)->where('original_type', $riga::class)->get();
+
+    $ordini = Ordine::whereIn('id', function ($query) use ($riga) {
+        $query->select('idordine')
+            ->from('or_righe_ordini')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class);
+    })->get();
     foreach ($ordini as $ordine) {
-        $documents['documento'][] = Ordine::find($ordine->idordine);
-        $documents['qta'][] = $ordine->qta;
+        $riga_ordine = database()->table('or_righe_ordini')
+            ->where('original_id', $riga->id)
+            ->where('original_type', $riga::class)
+            ->where('idordine', $ordine->id)
+            ->first();
+        $documents['documento'][] = $ordine;
+        $documents['qta'][] = $riga_ordine->qta;
     }
 
     return $documents;

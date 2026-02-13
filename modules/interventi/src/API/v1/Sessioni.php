@@ -70,10 +70,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
         $user = $this->getUser();
         $data = $request['data'];
 
-        $database->query('DELETE FROM `in_interventi_tecnici` WHERE `idintervento` = :id_intervento AND `idtecnico` = :id_tecnico', [
-            ':id_intervento' => $data['id_intervento'],
-            ':id_tecnico' => $user['idanagrafica'],
-        ]);
+        $database->delete('in_interventi_tecnici', ['idintervento' => $data['id_intervento'], 'idtecnico' => $user['idanagrafica']]);
 
         return [
             'id' => $data['id_intervento'],

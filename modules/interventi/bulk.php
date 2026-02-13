@@ -362,15 +362,6 @@ switch (post('op')) {
                     $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
 
                     $intervento->delete();
-
-                    // Elimino il collegamento al componente
-                    $dbo->query('DELETE FROM my_componenti WHERE id_intervento='.prepare($id_record));
-
-                    // Eliminazione associazione tecnici collegati all'intervento
-                    $dbo->query('DELETE FROM in_interventi_tecnici WHERE idintervento='.prepare($id_record));
-
-                    // Eliminazione associazione interventi e my_impianti
-                    $dbo->query('DELETE FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
                 } catch (InvalidArgumentException) {
                 }
             } else {

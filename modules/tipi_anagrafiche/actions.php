@@ -65,9 +65,9 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $query = 'DELETE FROM `an_tipianagrafiche` WHERE `id`='.prepare($id_record);
-        $dbo->query($query);
+        $dbo->delete('an_tipianagrafiche', ['id' => $id_record]);
 
         flash()->info(tr('Tipo di anagrafica eliminato!'));
+
         break;
 }

@@ -72,7 +72,7 @@ switch (post('op')) {
         $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idaspettobeni`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `idaspettobeni`='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->query('DELETE FROM `dt_aspettobeni` WHERE `id`='.prepare($id_record));
+            $dbo->delete('dt_aspettobeni', ['id' => $id_record]);
             flash()->info(tr('Aspetto beni eliminato con successo.'));
         } else {
             flash()->error(tr('Sono presenti dei documenti collegati a questo aspetto beni.'));

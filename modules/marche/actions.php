@@ -178,7 +178,7 @@ switch (post('op')) {
         }
 
         if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE (`id_marca`='.prepare($id).' OR `id_modello`='.prepare($id).'  OR `id_modello` IN (SELECT `id` FROM `zz_marche` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
-            $dbo->query('DELETE FROM `zz_marche` WHERE `id`='.prepare($id));
+            $dbo->delete('zz_marche', ['id' => $id]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'marca',

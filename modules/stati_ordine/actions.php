@@ -70,14 +70,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        // scelgo se settare come eliminato o cancellare direttamente la riga se non è stato utilizzato negli ordini
-        if (count($dbo->fetchArray('SELECT `id` FROM `or_statiordine` WHERE `id`='.prepare($id_record))) > 0) {
-            $query = 'UPDATE `or_statiordine` SET `deleted_at` = NOW() WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        } else {
-            $query = 'DELETE FROM `or_statiordine` WHERE `can_delete` = 1 AND `id`='.prepare($id_record);
-        }
-
-        $dbo->query($query);
+        $stato->delete('co_statiordine');        
 
         flash()->info(tr('Stato ordine eliminato.'));
 

@@ -134,7 +134,7 @@ class ColonneDuplicateViste extends Controllo
 
                 // Elimina tutte tranne la prima
                 for ($i = 1; $i < count($viste); ++$i) {
-                    $database->query('DELETE FROM `zz_views` WHERE `id` = '.prepare($viste[$i]['id']));
+                    $database->delete('zz_views', ['id' => $viste[$i]['id']]);
                 }
             }
         } elseif (str_starts_with((string) $record_id, 'record_lang_')) {
@@ -151,7 +151,7 @@ class ColonneDuplicateViste extends Controllo
                     ORDER BY `id` DESC
                 ');
                 for ($i = 1; $i < count($duplicati); ++$i) {
-                    $database->query('DELETE FROM `zz_views_lang` WHERE `id` = '.prepare($duplicati[$i]['id']));
+                    $database->delete('zz_views_lang', ['id' => $duplicati[$i]['id']]);
                 }
             }
         }
@@ -193,7 +193,7 @@ class ColonneDuplicateViste extends Controllo
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
                     for ($i = 1; $i < count($group); ++$i) {
-                        $database->query('DELETE FROM `zz_views` WHERE `id` = '.prepare($group[$i]['id']));
+                        $database->delete('zz_views', ['id' => $group[$i]['id']]);
                         $results['name_'.$group[$i]['id']] = true;
                     }
                 }
@@ -222,7 +222,7 @@ class ColonneDuplicateViste extends Controllo
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
                     for ($i = 1; $i < count($group); ++$i) {
-                        $database->query('DELETE FROM `zz_views_lang` WHERE `id` = '.prepare($group[$i]['id']));
+                        $database->delete('zz_views_lang', ['id' => $group[$i]['id']]);
                         $results['record_lang_'.$group[$i]['id']] = true;
                     }
                 }

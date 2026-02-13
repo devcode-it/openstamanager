@@ -81,7 +81,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM zz_otp_tokens WHERE id='.prepare($id_record));
+        $dbo->delete('zz_otp_tokens', ['id' => $id_record]);
         flash()->info(tr('Token eliminato!'));
         break;
 
@@ -102,8 +102,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM zz_otp_tokens WHERE id='.prepare($id_record));
-
+        $dbo->delete('zz_otp_tokens', ['id' => $id_record]);
         flash()->info(tr('Token eliminato!'));
         break;
 }

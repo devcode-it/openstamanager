@@ -444,8 +444,7 @@ switch (post('op')) {
             $idcontratto = get('idcontratto');
             $idintervento = get('idintervento');
 
-            $query = 'DELETE FROM `co_promemoria` WHERE idcontratto='.prepare($idcontratto).' AND idintervento='.prepare($idintervento);
-            $dbo->query($query);
+            $dbo->delete('co_promemoria', ['idcontratto' => $idcontratto, 'idintervento' => $idintervento]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
@@ -500,9 +499,9 @@ switch (post('op')) {
             try {
                 $contratto->delete();
 
-                $dbo->query('DELETE FROM co_promemoria WHERE idcontratto='.prepare($id_record));
-                $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($id_record));
-                $dbo->query('DELETE FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
+                $dbo->delete('co_promemoria', ['idcontratto' => $id_record]);
+                $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $id_record]);
+                $dbo->delete('my_impianti_contratti', ['idcontratto' => $id_record]);
 
                 flash()->info(tr('Contratto eliminato!'));
             } catch (InvalidArgumentException) {
@@ -531,7 +530,7 @@ switch (post('op')) {
         $new_idcontratto = $new_contratto->id;
 
         // Correzioni dei prezzi per gli interventi
-        $dbo->query('DELETE FROM co_contratti_tipiintervento WHERE idcontratto='.prepare($new_idcontratto));
+        $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $new_idcontratto]);
         $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($id_record));
         $new_contratto->save();
 

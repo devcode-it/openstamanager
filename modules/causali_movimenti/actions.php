@@ -76,7 +76,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
-            $dbo->query('DELETE FROM `mg_causali_movimenti` WHERE `id`='.prepare($id_record));
+            $dbo->delete('mg_causali_movimenti', ['id' => $id_record]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'movimento predefinito',

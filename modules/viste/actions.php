@@ -215,13 +215,13 @@ switch (filter('op')) {
                 if ($module_data['use_notes']) {
                     $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_notes\')');
                 } else {
-                    $dbo->query('DELETE FROM `zz_modules_flags` WHERE `id_module` = '.prepare($module_id).' AND `name` = \'use_notes\'');
+                    $dbo->delete('zz_modules_flags', ['id_module' => $module_id, 'name' => 'use_notes']);
                 }
 
                 if ($module_data['use_checklists']) {
                     $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_checklists\')');
                 } else {
-                    $dbo->query('DELETE FROM `zz_modules_flags` WHERE `id_module` = '.prepare($module_id).' AND `name` = \'use_checklists\'');
+                    $dbo->delete('zz_modules_flags', ['id_module' => $module_id, 'name' => 'use_checklists']);
                 }
             } else {
                 // Crea un nuovo modulo
@@ -287,12 +287,11 @@ switch (filter('op')) {
 
                 // Elimina prima le associazioni con i gruppi
                 foreach ($existing_views as $view) {
-                    $dbo->query('DELETE FROM `zz_group_view` WHERE `id_vista` = '.prepare($view['id']));
-                    $dbo->query('DELETE FROM `zz_views_lang` WHERE `id_record` = '.prepare($view['id']));
+                    $dbo->delete('zz_group_view', ['id_vista' => $view['id']]);
                 }
 
                 // Elimina tutte le viste
-                $dbo->query('DELETE FROM `zz_views` WHERE `id_module` = '.prepare($module_id));
+                $dbo->delete('zz_views', ['id_module' => $module_id]);
 
                 // Crea tutte le nuove viste dal file JSON
                 foreach ($module_data['views'] as $index => $view_data) {
@@ -347,13 +346,8 @@ switch (filter('op')) {
                 // Elimina tutti i filtri esistenti per il modulo
                 $existing_clauses = $dbo->fetchArray('SELECT `id` FROM `zz_group_module` WHERE `idmodule` = '.prepare($module_id));
 
-                // Elimina prima le traduzioni dei filtri
-                foreach ($existing_clauses as $clause) {
-                    $dbo->query('DELETE FROM `zz_group_module_lang` WHERE `id_record` = '.prepare($clause['id']));
-                }
-
                 // Elimina tutti i filtri
-                $dbo->query('DELETE FROM `zz_group_module` WHERE `idmodule` = '.prepare($module_id));
+                $dbo->delete('zz_group_module', ['idmodule' => $module_id]);
 
                 // Crea tutti i nuovi filtri dal file JSON
                 foreach ($module_data['clauses'] as $clause_data) {
@@ -581,7 +575,7 @@ switch (filter('op')) {
 
         $view = View::find($id);
         $view->delete();
-        $dbo->query('DELETE FROM `zz_group_view` WHERE `id_vista`='.prepare($id));
+        $dbo->delete('zz_group_view', ['id_vista' => $id]);
 
         flash()->info(tr('Eliminazione completata!'));
 

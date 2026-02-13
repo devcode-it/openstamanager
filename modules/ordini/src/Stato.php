@@ -23,11 +23,13 @@ namespace Modules\Ordini;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stato extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    use SoftDeletes;
     protected $table = 'or_statiordine';
 
     protected static $translated_fields = [

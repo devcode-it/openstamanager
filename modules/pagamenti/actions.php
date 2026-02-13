@@ -102,9 +102,8 @@ switch (filter('op')) {
             $descrizione = filter('descrizione');
 
             $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `title` = '.prepare($descrizione).')');
-            $dbo->query('DELETE FROM `co_pagamenti_lang` WHERE `title` = '.prepare($descrizione));
-
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id_record));
+            $dbo->delete('co_pagamenti_lang', ['title' => $descrizione]);
+            $dbo->delete('co_pagamenti', ['id' => $id_record]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'pagamento',
@@ -116,9 +115,8 @@ switch (filter('op')) {
     case 'delete_rata':
         $id = filter('id');
         if (isset($id)) {
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id`='.prepare($id));
+            $dbo->delete('co_pagamenti', ['id' => $id]);
             flash()->info(tr('Elemento eliminato con successo!'));
-
             if ($id_record == $id) {
                 $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `co_pagamenti`.`name`='.prepare($record['descrizione']));
                 if (count($res) != 0) {

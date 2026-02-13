@@ -38,3 +38,7 @@ ALTER TABLE `an_anagrafiche` ADD CONSTRAINT `an_anagrafiche_ibfk_4` FOREIGN KEY 
 -- Correzione vista modulo Tipi scadenze
 UPDATE `zz_views` SET `query` = '`co_tipi_scadenze_lang`.`title`' WHERE `zz_views`.`name` = 'Nome' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'); 
 DELETE FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi scadenze'); 
+
+-- Fix colonna mancante dt_statiddt
+ALTER TABLE `dt_statiddt` ADD `can_delete` INT NOT NULL DEFAULT '1' AFTER `is_fatturabile`; 
+UPDATE `dt_statiddt` SET `can_delete` = 0 WHERE `name` IN ('Bozza', 'Evaso', 'Fatturato', 'Parzialmente fatturato', 'Parzialmente evaso')

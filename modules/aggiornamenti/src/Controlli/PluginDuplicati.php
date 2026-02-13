@@ -166,7 +166,7 @@ class PluginDuplicati extends Controllo
 
                 // Elimina tutti tranne il primo
                 for ($i = 1; $i < \count($plugins); ++$i) {
-                    $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($plugins[$i]['id']));
+                    $database->delete('zz_plugins', ['id' => $plugins[$i]['id']]);
                 }
             }
         } elseif (str_starts_with((string) $record_id, 'title_diversi_')) {
@@ -186,7 +186,7 @@ class PluginDuplicati extends Controllo
                     ORDER BY `id` DESC
                 ');
                 for ($i = 1; $i < \count($duplicati); ++$i) {
-                    $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = '.prepare($duplicati[$i]['id']));
+                    $database->delete('zz_plugins_lang', ['id' => $duplicati[$i]['id']]);
                 }
             }
         }
@@ -228,7 +228,7 @@ class PluginDuplicati extends Controllo
                 if (\count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
                     for ($i = 1; $i < \count($group); ++$i) {
-                        $database->query('DELETE FROM `zz_plugins` WHERE `id` = '.prepare($group[$i]['id']));
+                        $database->delete('zz_plugins', ['id' => $group[$i]['id']]);
                         $results['name_'.$group[$i]['id']] = true;
                     }
                 }
@@ -257,7 +257,7 @@ class PluginDuplicati extends Controllo
                 if (count($group) > 1) {
                     // Mantieni il primo record (più recente per ID) ed elimina gli altri
                     for ($i = 1; $i < count($group); ++$i) {
-                        $database->query('DELETE FROM `zz_plugins_lang` WHERE `id` = '.prepare($group[$i]['id']));
+                        $database->delete('zz_plugins_lang', ['id' => $group[$i]['id']]);
                         $results['record_lang_'.$group[$i]['id']] = true;
                     }
                 }

@@ -61,7 +61,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM `in_tags` WHERE `in_tags`.`id`='.prepare($id_record));
+        $dbo->delete('in_tags', ['id' => $id_record]);
 
         flash()->info(tr('Tag eliminato!'));
 

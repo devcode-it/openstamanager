@@ -361,8 +361,7 @@ switch (post('op')) {
         // Leggo info prodotto per descrizione mg_movimenti
         $rs = $dbo->fetchArray('SELECT lotto, serial, altro FROM mg_prodotti WHERE id='.prepare($idprodotto));
 
-        $query = 'DELETE FROM mg_prodotti WHERE id='.prepare($idprodotto);
-        if ($dbo->query($query)) {
+        if ($dbo->delete('mg_prodotti', ['id' => $idprodotto])) {
             // Movimento il magazzino se l'ho specificato nelle impostazioni
             if (setting("Movimenta il magazzino durante l'inserimento o eliminazione dei lotti/serial number")) {
                 $articolo->movimenta(-1, tr('Eliminazione dal magazzino del prodotto con serial _SERIAL_', [
@@ -385,8 +384,7 @@ switch (post('op')) {
         // Aggiorno la quantità dell'articolo
         $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-'.$qta.' WHERE `id`='.prepare($idarticolo));
 
-        $query = 'DELETE FROM mg_movimenti WHERE id='.prepare($idmovimento);
-        if ($dbo->query($query)) {
+        if ($dbo->delete('mg_movimenti', ['id' => $idmovimento])) {
             flash()->info(tr('Movimento rimosso!'));
         }
         break;

@@ -25,14 +25,10 @@ use Modules\ListiniCliente\Listino;
 
 switch (post('op')) {
     case 'change_prezzo':
-        foreach ($id_records as $id) {
-            $listino = Listino::find($id);
-
-            $articoli = Articolo::where('id_listino', $id)->get();
-            foreach ($articoli as $articolo) {
-                $articolo->sconto_percentuale = post('percentuale');
-                $articolo->save();
-            }
+        $articoli = Articolo::whereIn('id_listino', $id_records)->get();
+        foreach ($articoli as $articolo) {
+            $articolo->sconto_percentuale = post('percentuale');
+            $articolo->save();
         }
 
         flash()->info(tr('Listini aggiornati!'));

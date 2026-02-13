@@ -118,7 +118,7 @@ if (!function_exists('renderChecklist')) {
                         <td colspan="5" style="padding-left:'.$margin.'px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-top:0px;">
                             <table class="table" style="margin-bottom:0px;">
                                 <tbody class="sort" data-sonof="'.$check->id.'">';
-            $children = $structure->checks()->where('id_parent', $check->id)->orderBy('order')->get();
+            $children = $check->children;
             foreach ($children as $child) {
                 $result .= renderChecklist($child, $level + 1, $check->id);
             }
@@ -175,7 +175,7 @@ if (!function_exists('renderChecklistInserimento')) {
                         <td colspan="4" style="padding-left:'.$margin.'px;padding-right:0px;padding-top:0px;padding-bottom:0px;border-top:0px;">
                             <table class="table" style="margin-bottom:0px;">
                                 <tbody class="sort" data-sonof="'.$check->id.'">';
-            $children = $record->checks()->where('id_parent', $check->id)->orderBy('order')->get();
+            $children = $check->children;
             foreach ($children as $child) {
                 $result .= renderChecklistInserimento($child, $level + 1, $check->id);
             }

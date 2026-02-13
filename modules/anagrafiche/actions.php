@@ -136,10 +136,10 @@ switch (post('op')) {
                     '_COD_' => $codice_fiscale,
                 ]);
 
-                $links = [];
-                foreach ($anagrafiche_codice_fiscale as $anagrafica_singola) {
-                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                }
+                // Ottimizzazione: usa pluck() per ottenere i dati necessari
+                $links = $anagrafiche_codice_fiscale->map(function ($anagrafica_singola) {
+                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                })->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -156,10 +156,10 @@ switch (post('op')) {
                     '_IVA_' => $partita_iva,
                 ]);
 
-                $links = [];
-                foreach ($anagrafiche_partita_iva as $anagrafica_singola) {
-                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                }
+                // Ottimizzazione: usa pluck() per ottenere i dati necessari
+                $links = $anagrafiche_partita_iva->map(function ($anagrafica_singola) {
+                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                })->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -255,10 +255,10 @@ switch (post('op')) {
                     '_COD_' => $codice_fiscale,
                 ]);
 
-                $links = [];
-                foreach ($anagrafiche_codice_fiscale as $anagrafica_singola) {
-                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                }
+                // Ottimizzazione: usa pluck() per ottenere i dati necessari
+                $links = $anagrafiche_codice_fiscale->map(function ($anagrafica_singola) {
+                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                })->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -275,10 +275,10 @@ switch (post('op')) {
                     '_IVA_' => $partita_iva,
                 ]);
 
-                $links = [];
-                foreach ($anagrafiche_partita_iva as $anagrafica_singola) {
-                    $links[] = '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                }
+                // Ottimizzazione: usa pluck() per ottenere i dati necessari
+                $links = $anagrafiche_partita_iva->map(function ($anagrafica_singola) {
+                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
+                })->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }

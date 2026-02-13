@@ -46,7 +46,7 @@ if ($module->name == 'Fatture di vendita') {
 
 // Controllo se la fattura è già stata inviata allo SDI
 if ($fattura) {
-    $stato_fe = $dbo->fetchOne('SELECT codice_stato_fe FROM co_documenti WHERE id = '.$fattura->id);
+    $stato_fe = ['codice_stato_fe' => $fattura->codice_stato_fe];
 }
 
 $ops = ['update', 'add_intervento', 'manage_documento_fe', 'manage_riga_fe', 'manage_articolo', 'manage_sconto', 'manage_riga', 'manage_descrizione', 'unlink_intervento', 'delete_riga', 'copy_riga', 'add_serial', 'add_articolo', 'edit-price'];
@@ -104,17 +104,14 @@ switch ($op) {
         $tipo = Tipo::find(post('idtipodocumento'));
         $fattura->tipo()->associate($tipo);
 
-        $data_fattura_precedente = $dbo->fetchOne('
-            SELECT
-                MAX(`data`) AS datamax
-            FROM
-                `co_documenti`
-                INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
-                INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
-            WHERE
-                `co_statidocumento_lang`.`title` = "Emessa" AND `co_tipidocumento`.`dir` = "entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
+        $data_fattura_precedente = Fattura::whereHas('stato', function ($query) {
+                $query->where('name', 'Emessa');
+            })
+            ->whereHas('tipo', function ($query) {
+                $query->where('dir', 'entrata');
+            })
+            ->where('id_segment', $fattura->id_segment)
+            ->max('data');
 
         if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == Stato::where('name', 'Emessa')->first()->id) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
             $fattura->data = $data_fattura_precedente['datamax'];
@@ -429,8 +426,8 @@ switch ($op) {
 
         if (!empty($id_record) && $id_intervento !== null) {
             $copia_descrizione = post('copia_descrizione');
-            $intervento = $dbo->fetchOne('SELECT descrizione FROM in_interventi WHERE id = '.prepare($id_intervento));
-            if (!empty($copia_descrizione) && !empty($intervento['descrizione'])) {
+            $intervento = Modules\Interventi\Intervento::find($id_intervento);
+            if (!empty($copia_descrizione) && !empty($intervento->descrizione)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = $intervento['descrizione'];
                 $riga->idintervento = $id_intervento;
@@ -861,7 +858,10 @@ switch ($op) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `co_righe_documenti` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            Modules\Fatture\Components\Articolo::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Modules\Fatture\Components\Riga::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Modules\Fatture\Components\Descrizione::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Modules\Fatture\Components\Sconto::where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -873,7 +873,8 @@ switch ($op) {
 
         // Metto l'intervento in stato "Fatturato"
         if (setting('Cambia automaticamente stato attività fatturate')) {
-            $dbo->query("UPDATE `in_interventi` SET `idstatointervento`=(SELECT `id` FROM `in_statiintervento` WHERE `codice`='FAT') WHERE `id`=".prepare($id_documento));
+            $stato_fatturato = Modules\Interventi\Stato::where('codice', 'FAT')->first()->id;
+            Modules\Interventi\Intervento::where('id', $id_documento)->update(['idstatointervento' => $stato_fatturato]);
         }
 
         // Individuazione del documento originale
@@ -1019,8 +1020,7 @@ switch ($op) {
         $data = post('data');
 
         $anagrafica = $fattura->anagrafica;
-        $id_tipo = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` WHERE `name` = "Nota di credito" AND `dir` = "entrata"')['id'];
-        $tipo = Tipo::find($id_tipo);
+        $tipo = Tipo::where('name', 'Nota di credito')->where('dir', 'entrata')->first();
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
@@ -1174,11 +1174,28 @@ switch ($op) {
     case 'controlla_serial':
         if (post('is_rientrabile')) {
             // Controllo che i serial entrati e usciti siano uguali in modo da poterli registrare nuovamente.
-            $serial_uscita = $dbo->fetchOne('SELECT COUNT(id) AS `tot` FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')))['tot'];
-            $serial_entrata = $dbo->fetchOne('SELECT COUNT(id) AS `tot` FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="entrata" AND id_articolo='.prepare(post('id_articolo')))['tot'];
+            $serial_uscita = $dbo->table('mg_prodotti')
+                ->where('serial', post('serial'))
+                ->where('dir', 'uscita')
+                ->where('id_articolo', post('id_articolo'))
+                ->count();
+            $serial_entrata = $dbo->table('mg_prodotti')
+                ->where('serial', post('serial'))
+                ->where('dir', 'entrata')
+                ->where('id_articolo', post('id_articolo'))
+                ->count();
             $has_serial = $serial_entrata != $serial_uscita;
         } else {
-            $has_serial = $dbo->fetchOne('SELECT id FROM mg_prodotti WHERE serial='.prepare(post('serial')).' AND dir="uscita" AND id_articolo='.prepare(post('id_articolo')).' AND (id_riga_documento IS NOT NULL OR id_riga_ordine IS NOT NULL OR id_riga_ddt IS NOT NULL)')['id'];
+            $has_serial = $dbo->table('mg_prodotti')
+                ->where('serial', post('serial'))
+                ->where('dir', 'uscita')
+                ->where('id_articolo', post('id_articolo'))
+                ->where(function ($query) {
+                    $query->whereNotNull('id_riga_documento')
+                        ->orWhereNotNull('id_riga_ordine')
+                        ->orWhereNotNull('id_riga_ddt');
+                })
+                ->value('id');
         }
 
         echo json_encode($has_serial);
@@ -1191,16 +1208,21 @@ switch ($op) {
         $save_inline_barcode = true;
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
+            $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('idarticolo');
             if (empty($id_articolo)) {
-                $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+                $id_articolo = $dbo->table('mg_articoli')
+                    ->where('deleted_at', null)
+                    ->where('attivo', 1)
+                    ->where('barcode', '')
+                    ->where('codice', $barcode)
+                    ->value('id');
                 $save_inline_barcode = false;
             }
         }
 
         if (!empty($id_articolo)) {
             $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
-            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
+            $qta_articolo = $dbo->table('mg_articoli')->where('id', $id_articolo)->value('qta');
 
             $originale = ArticoloOriginale::find($id_articolo);
 
@@ -1256,12 +1278,12 @@ switch ($op) {
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+                $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
                 if (!empty($piano_sconto)) {
-                    $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                    $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
                 }
 
-                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $fattura->idagente])['provvigione_default'];
+                $provvigione = Modules\Anagrafiche\Anagrafica::find($fattura->idagente)->provvigione_default;
 
                 $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: null;
                 $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: null;
@@ -1386,9 +1408,9 @@ switch ($op) {
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');
@@ -1517,9 +1539,11 @@ switch ($op) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = $dbo->fetchArray('SELECT `zz_segments`.* FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).") WHERE `predefined_addebito`='1'");
+    $rs_segment = Models\Segment::whereHas('translations', function ($query) {
+        $query->where('id_lang', Models\Locale::getDefault()->id);
+    })->where('predefined_addebito', '1')->first();
     if (!empty($rs_segment)) {
-        $id_segment = $rs_segment[0]['id'];
+        $id_segment = $rs_segment->id;
     } else {
         $id_segment = $record['id_segment'];
     }

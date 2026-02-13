@@ -192,15 +192,13 @@ if (!function_exists('aggiungi_movimento')) {
         $fattura = Fattura::find($iddocumento);
         $is_nota = $fattura->isNota();
 
-        // Totale marca da bollo, inps, ritenuta, idagente
-        $query = 'SELECT data, bollo, ritenutaacconto, rivalsainps, split_payment FROM co_documenti WHERE id='.prepare($iddocumento);
-        $rs = $dbo->fetchArray($query);
-        $totale_bolli = $is_nota ? -$rs[0]['bollo'] : $rs[0]['bollo'];
-        $totale_ritenutaacconto = $is_nota ? -$rs[0]['ritenutaacconto'] : $rs[0]['ritenutaacconto'];
+        // Ottimizzazione: usa il modello Eloquent invece di query SQL diretta
+        $totale_bolli = $is_nota ? -$fattura->bollo : $fattura->bollo;
+        $totale_ritenutaacconto = $is_nota ? -$fattura->ritenutaacconto : $fattura->ritenutaacconto;
         $totale_ritenutacontributi = $is_nota ? -$fattura->totale_ritenuta_contributi : $fattura->totale_ritenuta_contributi;
-        $totale_rivalsainps = $is_nota ? -$rs[0]['rivalsainps'] : $rs[0]['rivalsainps'];
-        $data_documento = $rs[0]['data'];
-        $split_payment = $rs[0]['split_payment'];
+        $totale_rivalsainps = $is_nota ? -$fattura->rivalsainps : $fattura->rivalsainps;
+        $data_documento = $fattura->data;
+        $split_payment = $fattura->split_payment;
 
         $netto_fattura = get_netto_fattura($iddocumento);
         $totale_fattura = get_totale_fattura($iddocumento);
@@ -392,10 +390,9 @@ if (!function_exists('get_new_idmastrino')) {
     {
         $dbo = database();
 
-        $query = 'SELECT MAX(idmastrino) AS maxidmastrino FROM '.$table;
-        $rs = $dbo->fetchArray($query);
+        $maxidmastrino = $dbo->table($table)->max('idmastrino');
 
-        return intval($rs[0]['maxidmastrino']) + 1;
+        return intval($maxidmastrino) + 1;
     }
 }
 

@@ -28,48 +28,66 @@ switch ($resource) {
         $indirizzi_proposti = filter('indirizzi_proposti');
         $where = '';
 
-        if ($indirizzi_proposti == 1) {
-            $where .= 'AND an_tipianagrafiche_lang.title = "Cliente"';
-        } elseif ($indirizzi_proposti == 2) {
-            $where .= 'AND an_tipianagrafiche_lang.title = "Fornitore"';
-        } else {
-            $indirizzi_proposti = null;
+        // Definizione filtri per tipo anagrafica
+        $tipo_anagrafica = match ($indirizzi_proposti) {
+            1 => '"Cliente"',
+            2 => '"Fornitore"',
+            default => null
+        };
+
+        if ($tipo_anagrafica !== null) {
+            $where .= 'AND an_tipianagrafiche.name = '.$tipo_anagrafica;
         }
 
         $results = [];
 
-        // Tutte le anagrafiche
-        $q = "SELECT DISTINCT(an_anagrafiche.email), an_anagrafiche.idanagrafica, an_anagrafiche.ragione_sociale FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.idtipoanagrafica INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang=1 AND an_tipianagrafiche_lang.id_record=an_tipianagrafiche.id) WHERE email != '' ".$where.' ORDER BY ragione_sociale';
-        $rs = $dbo->fetchArray($q);
-
-        foreach ($rs as $r) {
-            if (!empty($r['email'])) {
+        // Funzione helper per aggiungere risultati all'array
+        $addResults = function($records) use (&$results) {
+            foreach ($records as $record) {
                 $results[] = [
-                    'value' => $r['email'],
-                    'label' => $r['ragione_sociale'].' <'.$r['email'].'>',
+                    'value' => $record['email'],
+                    'label' => $record['ragione_sociale'].' <'.$record['email'].'>',
                 ];
             }
-        }
+        };
 
-        $q = "SELECT DISTINCT(an_sedi.email), an_sedi.idanagrafica, nomesede AS ragione_sociale FROM an_sedi INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_sedi.idanagrafica INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.idtipoanagrafica INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang=1 AND an_tipianagrafiche_lang.id_record=an_tipianagrafiche.id) WHERE an_sedi.email != '' ".$where.' ORDER BY ragione_sociale';
+        // Tutte le anagrafiche (query specifica senza join su se stessa)
+        $q = "
+            SELECT DISTINCT(an_anagrafiche.email) AS email,
+                   an_anagrafiche.idanagrafica,
+                   an_anagrafiche.ragione_sociale
+            FROM an_anagrafiche
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
+            INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
+            WHERE an_anagrafiche.email != '' $where
+            ORDER BY ragione_sociale
+        ";
+        $addResults($dbo->fetchArray($q));
 
-        $sedi = $dbo->fetchArray($q);
-        foreach ($sedi as $sede) {
-            $results[] = [
-                'value' => $sede['email'],
-                'label' => $sede['ragione_sociale'].' <'.$sede['email'].'>',
-            ];
-        }
+        // Funzione helper per sedi e referenti (tabelle che richiedono join con an_anagrafiche)
+        $fetchEmails = function($table, $email_column, $name_column) use ($dbo, $where) {
+            $query = "
+                SELECT DISTINCT($table.$email_column) AS email,
+                       $table.idanagrafica,
+                       $name_column AS ragione_sociale
+                FROM $table
+                INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = $table.idanagrafica
+                INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
+                INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
+                WHERE $table.$email_column != '' $where
+                ORDER BY ragione_sociale
+            ";
+            
+            return $dbo->fetchArray($query);
+        };
 
-        $q = "SELECT DISTINCT(an_referenti.email), an_referenti.idanagrafica, an_referenti.nome AS ragione_sociale FROM an_referenti INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=an_referenti.idanagrafica INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica=an_anagrafiche.idanagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id=an_tipianagrafiche_anagrafiche.idtipoanagrafica INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang=1 AND an_tipianagrafiche_lang.id_record=an_tipianagrafiche.id) WHERE an_referenti.email != '' ".$where.' ORDER BY ragione_sociale';
+        // Tutte le sedi
+        $addResults($fetchEmails('an_sedi', 'email', 'nomesede'));
 
-        $referenti = $dbo->fetchArray($q);
-        foreach ($referenti as $referente) {
-            $results[] = [
-                'value' => $referente['email'],
-                'label' => $referente['ragione_sociale'].' <'.$referente['email'].'>',
-            ];
-        }
+        // Tutti i referenti
+        $addResults($fetchEmails('an_referenti', 'email', 'nome'));
 
         echo json_encode($results);
 

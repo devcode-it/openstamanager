@@ -84,7 +84,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
     HAVING
-        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale > 0
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
     UNION
     SELECT
         `vb_venditabanco`.`data` as data_competenza_iva,
@@ -113,7 +113,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
     GROUP BY
         `co_iva`.`id`, `id`, `an_anagrafiche`.`idanagrafica`
     HAVING
-        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).'
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
     ) AS tabella
     GROUP BY
     `data_competenza_iva`, `iva`, `id`, `data_registrazione`, `data`, `numero_esterno`, `codice_tipo_documento_fe`, `percentuale`, `descrizione`, `numero`, `ragione_sociale`
@@ -152,7 +152,7 @@ WHERE
 GROUP BY
     `co_iva`.`id`, `co_documenti`.`id`
 HAVING
-    data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale > 0
+    data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
 ORDER BY
     CAST( IF(`dir`="entrata", `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED)';
 }

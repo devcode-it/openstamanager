@@ -296,7 +296,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('DELETE FROM `an_sedi` WHERE `id`='.prepare($id_record));
+        $dbo->delete('an_sedi', ['id' => $id_record]);
 
         flash()->info(tr('Automezzo eliminato e articoli riportati in magazzino!'));
 

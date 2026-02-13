@@ -32,7 +32,7 @@ class Logout extends Resource implements CreateInterface
 
         if (!empty($request['token']) && !empty($user)) {
             // Cancellazione della chiave
-            $database->query('DELETE FROM `zz_tokens` WHERE `token` = '.prepare($request['token']).' AND `id_utente` = '.prepare($user['id']));
+            $database->delete('zz_tokens', ['token' => $request['token'], 'id_utente' => $user['id']]);
         } else {
             $response = [
                 'status' => API\Response::getStatus()['unauthorized']['code'],

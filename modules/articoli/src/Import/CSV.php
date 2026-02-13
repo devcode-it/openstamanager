@@ -348,15 +348,15 @@ class CSV extends CSVImporter
 
                     if ($direzione) {
                         // Elimina solo i prezzi nella direzione specificata
-                        $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id).' AND dir = '.prepare($direzione));
+                        $database->delete('mg_prezzi_articoli', ['id_articolo' => $articolo->id, 'id_anagrafica' => $anagrafica->id, 'dir' => $direzione]);
                     } else {
                         // Se la direzione non è specificata, elimina tutti i prezzi per questa combinazione
-                        $database->query('DELETE FROM mg_prezzi_articoli WHERE id_articolo = '.prepare($articolo->id).' AND id_anagrafica = '.prepare($anagrafica->id));
+                        $database->delete('mg_prezzi_articoli', ['id_articolo' => $articolo->id, 'id_anagrafica' => $anagrafica->id]);
                     }
                 }
 
                 if (!empty($record['codice_fornitore']) && !empty($record['descrizione_fornitore'])) {
-                    $database->query('DELETE FROM mg_fornitore_articolo WHERE id_articolo = '.prepare($articolo->id).' AND id_fornitore = '.prepare($anagrafica->id));
+                    $database->delete('mg_fornitore_articolo', ['id_articolo' => $articolo->id, 'id_fornitore' => $anagrafica->id]);
                 }
             }
 

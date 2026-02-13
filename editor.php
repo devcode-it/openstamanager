@@ -89,7 +89,7 @@ if (empty($record) || !$has_access) {
 
     $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
     if (!empty($advanced_sessions)) {
-        $dbo->query('DELETE FROM zz_semaphores WHERE id_utente='.prepare(auth_osm()->getUser()['id']).' AND posizione='.prepare($id_module.', '.$id_record));
+        $dbo->delete('zz_semaphores', ['id_utente' => auth_osm()->getUser()['id'], 'posizione' => $id_module.', '.$id_record]);
 
         $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(auth_osm()->getUser()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
 

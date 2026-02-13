@@ -677,11 +677,6 @@ function getNextNumeroProgressivo($table, $field, $data, $id_segment, $options =
         $maschera = Generator::getMaschera($id_segment);
     }
 
-    // Se la maschera è '#', ritorna '#' (per ordini di vendita)
-    if ($maschera === '#') {
-        return '#';
-    }
-
     // Calcola le condizioni in base alla maschera
     $has_month = str_contains($maschera, 'm');
     $has_year = str_contains($maschera, 'YYYY') || str_contains($maschera, 'yy');

@@ -23,6 +23,7 @@ include_once __DIR__.'/../../../core.php';
 $rs = $dbo->fetchArray('
 SELECT 
 	`co_contratti`.`id`,
+    `co_contratti`.`idsede_destinazione`,
     ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
     `co_contratti`.`nome`, 
     DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, 
@@ -30,11 +31,13 @@ SELECT
     `data_conclusione`, 
     `ore_preavviso_rinnovo`, 
     `giorni_preavviso_rinnovo`, 
-    (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = `co_contratti`.`idanagrafica`) AS ragione_sociale 
+    `ragione_sociale`,
+    `citta`
 FROM 
 	`co_contratti` 
     INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` 
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica`
 WHERE 
 	`rinnovabile` = 1 
     AND YEAR(`data_conclusione`) > 1970 
@@ -88,7 +91,15 @@ if (!empty($rs)) {
     <tr class="'.$class.'">
         <td>
             '.Modules::link('Contratti', $r['id'], $r['nome']).'<br>
-            <small class="help-block">'.$r['ragione_sociale'].'</small>
+            <small class="help-block">'.$r['ragione_sociale'].' - ';
+        if ($r['idsede_destinazione'] == 0) {
+            echo $r['citta'];
+        } else {
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede_destinazione']));
+
+            echo $rsp2[0]['descrizione'];
+        }
+        echo '</small>
         </td>
         <td class="text-center">'.$data_accettazione.'</td>
         <td class="text-center">'.$data_conclusione.'</td>

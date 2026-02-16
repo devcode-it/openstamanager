@@ -213,6 +213,7 @@ foreach ($righe as $key => $riga) {
                     echo '
                     <td class="text-center" style="vertical-align: middle">
                         '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
+                        <br><small class="text-muted">'.(strlen($riga->aliquota->getTranslation('title')) > 15 ? substr($riga->aliquota->getTranslation('title'), 0, 15).'...' : $riga->aliquota->getTranslation('title')).'</small>
                     </td>';
                 }
                 // Imponibile

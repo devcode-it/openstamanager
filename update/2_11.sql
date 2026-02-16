@@ -16,3 +16,14 @@ INSERT INTO `zz_oauth2` (`name`, `class`, `client_id`, `client_secret`, `config`
 
 -- Aggiunto campo nome in Ordini
 ALTER TABLE `or_ordini` ADD `nome` VARCHAR(100) NOT NULL; 
+
+-- Aggiunto flag Attivo in Iva
+ALTER TABLE `co_iva` ADD `enabled` BOOLEAN NOT NULL DEFAULT TRUE AFTER `default`;
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Iva'), 'id', 'id', 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Iva'), 'Attivo', 'IF(`enabled`=1, \'SI\', \'NO\')', 10, 1);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views`), 'Attivo'),
+(2, (SELECT MAX(`id`) FROM `zz_views`), 'Enabled');

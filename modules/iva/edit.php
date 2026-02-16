@@ -104,6 +104,10 @@ if ($record['esente'] && empty($record['codice_natura_fe'])) {
                 <div class="col-md-4">
 					{[ "type": "select", "label": "<?php echo tr('Esigibilità (Fatturazione Elettronica)'); ?>", "name": "esigibilita", "value": "$esigibilita$", "values": <?php echo json_encode($esigibilita); ?>, "required": 1, "readonly": "<?php echo $is_readonly; ?>", "extra": "<?php echo $attr; ?>" ]}
 				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "$enabled$" ]}
+                </div>
 			</div>
 
             <div class="row">

@@ -40,6 +40,7 @@ switch ($resource) {
 
         if (empty($filter)) {
             $where[] = '`deleted_at` IS NULL';
+            $where[] = '`enabled` = 1';
 
             // Escludo le aliquote esenti senza codice natura iva o con codice natura obsoleto (N2, N3, N6 senza sottocodice)
             $where[] = '(`esente` = 0 OR (`esente` = 1 AND `codice_natura_fe` IS NOT NULL AND `codice_natura_fe` NOT IN ("N2", "N3", "N6")))';

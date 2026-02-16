@@ -31,6 +31,7 @@ switch (filter('op')) {
         $codice_natura_fe = post('codice_natura_fe') ?: null;
         $esigibilita = post('esigibilita');
         $descrizione = post('descrizione');
+        $enabled = post('enabled');
 
         $aliquota = Aliquota::where('id', '=', (new Aliquota())->getByField('title', $descrizione))->where('codice', '=', $codice)->where('id', '!=', $iva->id)->first();
         if (!$aliquota) {
@@ -41,6 +42,7 @@ switch (filter('op')) {
             $iva->codice = $codice;
             $iva->codice_natura_fe = $codice_natura_fe;
             $iva->esigibilita = $esigibilita;
+            $iva->enabled = $enabled;
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $iva->name = $descrizione;
             }

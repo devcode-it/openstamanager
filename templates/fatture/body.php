@@ -197,9 +197,9 @@ foreach ($righe as $riga) {
             '_CODICE_CIG_' => $codice_cig ? ', CIG: '.$codice_cig : null,
             '_CODICE_CUP_' => $codice_cup ? ', CUP: '.$codice_cup : null,
         ]);
-
-        echo '
-        <br><small>'.$extra_riga.'</small>';
+        $text = '<br><small>'.$extra_riga.'</small>';
+        echo $text;
+        $autofill->count($text, true);
     }
 
     echo '

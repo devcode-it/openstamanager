@@ -37,7 +37,7 @@ switch (filter('op')) {
         }
 
         // Verifica se esiste già una categoria con lo stesso nome
-        $categoria_esistente = (new Categoria())->getByField('title', $nome);
+        $categoria_esistente = Categoria::where('name', $nome)->where('id', '!=', $id_record)->where('parent', '=', $id_original)->first();
 
         if (!empty($categoria_esistente) && $categoria_esistente != $id_record) {
             // Mostra un messaggio di errore con link alla categoria esistente
@@ -47,35 +47,36 @@ switch (filter('op')) {
 
             $link = Modules::link('Categorie', $categoria_esistente->id, $nome);
             flash()->error($message.': '.$link);
-            break;
-        }
-
-        if (isset($nome) && isset($nota) && isset($colore)) {
-            $categoria->colore = $colore;
-            $categoria->parent = $id_original ?: null;
-            $categoria->is_articolo = $is_articolo;
-            $categoria->is_impianto = $is_impianto;
-            $categoria->save();
-
-            $categoria->setTranslation('title', $nome);
-            $categoria->setTranslation('note', $nota);
-            // Aggiorna i flag delle sottocategorie se è un parent
-            $subcategorie = Categoria::where('parent', '=', $id_record)->get();
-            if (!empty($subcategorie)) {
-                foreach ($subcategorie as $sub) {
-                    $sub->is_articolo = $is_articolo;
-                    $sub->is_impianto = $is_impianto;
-                    $sub->save();
-                }
-
-                flash()->info(tr('Salvataggio completato! Aggiornate anche _NUM_ sottocategorie.', [
-                    '_NUM_' => count($subcategorie),
-                ]));
-            } else {
-                flash()->info(tr('Salvataggio completato!'));
-            }
         } else {
-            flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+
+            if (isset($nome) && isset($nota) && isset($colore)) {
+                $categoria->colore = $colore;
+                $categoria->parent = $id_original ?: null;
+                $categoria->is_articolo = $is_articolo;
+                $categoria->is_impianto = $is_impianto;
+                $categoria->name = $nome;
+                $categoria->save();
+
+                $categoria->setTranslation('title', $nome);
+                $categoria->setTranslation('note', $nota);
+                // Aggiorna i flag delle sottocategorie se è un parent
+                $subcategorie = Categoria::where('parent', '=', $id_record)->get();
+                if (!empty($subcategorie)) {
+                    foreach ($subcategorie as $sub) {
+                        $sub->is_articolo = $is_articolo;
+                        $sub->is_impianto = $is_impianto;
+                        $sub->save();
+                    }
+
+                    flash()->info(tr('Salvataggio completato! Aggiornate anche _NUM_ sottocategorie.', [
+                        '_NUM_' => count($subcategorie),
+                    ]));
+                } else {
+                    flash()->info(tr('Salvataggio completato!'));
+                }
+            } else {
+                flash()->error(tr('Ci sono stati alcuni errori durante il salvataggio!'));
+            }
         }
 
         // Redirect alla categoria se si sta modificando una sottocategoria
@@ -126,13 +127,12 @@ switch (filter('op')) {
             ]));
         }
 
-        if (isAjaxRequest()) {
-            echo json_encode(['id' => $id_record, 'text' => $nome]);
-        } else {
-            // Redirect alla categoria se si sta aggiungendo una sottocategoria
+        if (!empty($id_original)) {
             $database->commitTransaction();
             redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
             exit;
+        } else {
+            echo json_encode(['id' => $id_record, 'text' => $nome]);
         }
 
         break;

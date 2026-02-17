@@ -21,12 +21,7 @@
 use Models\Module;
 use Models\Setting;
 
-$skip_permissions = true;
 include_once __DIR__.'/../../core.php';
-
-if (!AuthOSM::check()) {
-    redirect_url(base_path_osm().'/index.php');
-}
 
 $pageTitle = tr('Utente');
 
@@ -47,6 +42,7 @@ if (!empty($rs)) {
 
 $api = base_url().'/api/?token='.$token;
 $module = Module::where('name', 'Utenti e permessi')->first();
+$first_module = AuthOSM::firstModule();
 
 echo '
 <div class="card card-widget widget-user">
@@ -215,7 +211,7 @@ function salvaImpostazione(id, valore){
         dataType: "JSON",
         data: {
             op: "update_setting",
-            id_module: '.$module->id.',
+            id_module: '.$first_module.',
             id: id,
             valore: valore,
         },

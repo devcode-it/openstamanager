@@ -153,7 +153,7 @@ if (!empty($sessioni)) {
         <td style="border-right:1px solid #aaa;">'.((Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->eq(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine'])) || Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_inizio'])->gt(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $sessione['orario_fine']))) ? '<i  title="'.tr('Questa sessione non ha una durata valida.').'" class="fa fa-warning tip text-warning"></i>' : '').' 
         </td>
         <td style="border-right:1px solid #aaa;"> 
-            {[ "type": "number", "name": "ore_'.$sessione['id'].'", "value": "'.numberFormat($ore, 'qta').'", "disabled": "1" ]}
+            {[ "type": "number", "name": "ore_'.$sessione['id'].'", "value": "'.numberFormat($ore, 'qta').'", "min-value": "0", "disabled": "'.$block_edit.'" ]}
 
                 <div class="extra hide">
                     <table class="table table-sm table-bordered">
@@ -465,7 +465,7 @@ $("#tecnici .tipo_icon_after").on("change", function() {
     aggiornaSessioneInline($(this).closest("tr").data("id"));
 });
 
-$("[id^=data_inizio_], [id^=data_fine_]").on("dp.hide", function (e) {
+$("[id^=data_inizio_], [id^=data_fine_], [id^=ore_]").on("dp.hide change", function (e) {
     aggiornaSessioneInline($(this).closest("tr").data("id"));
 });
 
@@ -483,6 +483,7 @@ function aggiornaSessioneInline(id) {
     var id_sessione = id;
     var data_inizio = $("#data_inizio_" + id_sessione).val();
     var data_fine = $("#data_fine_" + id_sessione).val();
+    var ore = $("#ore_" + id_sessione).val();
     var km = $("#sessione_km_" + id_sessione).val();
     var sconto_unitario = $("#sconto_unitario_" + id_sessione).val();
     var tipo_sconto = $("[id^=tipo_sconto_unitario_" + id_sessione + "]").val()
@@ -499,6 +500,7 @@ function aggiornaSessioneInline(id) {
             id_sessione: id_sessione,
             data_inizio: data_inizio,
             data_fine: data_fine,
+            ore: ore,
             km: km,
             sconto_unitario: sconto_unitario,
             tipo_sconto: tipo_sconto,

@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Models\Module;
 use Models\OperationLog;
@@ -1254,6 +1255,11 @@ switch (post('op')) {
 
         $sessione->orario_inizio = post('data_inizio');
         $sessione->orario_fine = post('data_fine');
+        if (post('ore') != round($sessione->ore,2)) {
+            $sessione->orario_fine = Carbon::parse(post('data_inizio'))->addSeconds(round(post('ore') * 3600, 2))->format('Y-m-d H:i:s');
+        } else {
+            $sessione->orario_fine = post('data_fine');
+        }
 
         $sessione->km = post('km');
 

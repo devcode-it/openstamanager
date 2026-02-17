@@ -42,3 +42,7 @@ DELETE FROM `zz_views` WHERE `name` = 'Descrizione' AND `id_module` = (SELECT `i
 -- Fix colonna mancante dt_statiddt
 ALTER TABLE `dt_statiddt` ADD `can_delete` INT NOT NULL DEFAULT '1' AFTER `is_fatturabile`; 
 UPDATE `dt_statiddt` SET `can_delete` = 0 WHERE `name` IN ('Bozza', 'Evaso', 'Fatturato', 'Parzialmente fatturato', 'Parzialmente evaso')
+
+-- Fix riferimenti plugin
+UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto") WHERE (`zz_plugins`.`name` = "Fatturazione elettronica" AND `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto")); 
+UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Anagrafiche") WHERE (`zz_plugins`.`name` = "Dichiarazioni d'intento"); 

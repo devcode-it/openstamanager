@@ -347,9 +347,10 @@ if (!empty($interventi)) {
 
 $budget = $documento->totale_imponibile;
 $righe = $documento->getRighe();
+$totale_ore_contratto = 0;
 foreach ($righe as $riga) {
     if ($riga->um == 'ore') {
-        $totale_ore_contratto = $riga->qta;
+        $totale_ore_contratto += $riga->qta;
     }
 }
 

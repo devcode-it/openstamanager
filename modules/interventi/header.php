@@ -110,9 +110,9 @@ echo '
 <hr>
 <div class="row">
     <div class="col-md-4">
-        <div class="card card-outline card-primary shadow">
+        <div class="card card-primary card-outline shadow">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-vcard"></i> <span style="color: #000;">'.tr('Cliente').'</span></h3>
+                <h3 class="card-title"><i class="fa fa-vcard"></i> <span class="text-dark">'.tr('Cliente').'</span></h3>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -133,11 +133,11 @@ echo '
                         </p>
 
                         <div class="mt-3">
-                            '.($sede['telefono'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$sede['telefono'].'</a>' : '').'
-                            '.($sede['email'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-primary"></i> '.$sede['email'].'</a>' : '').'
+                            '.($sede['telefono'] ? '<a class="btn btn-light btn-sm mr-1 mb-1" href="tel:'.$sede['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$sede['telefono'].'</a>' : '').'
+                            '.($sede['email'] ? '<a class="btn btn-light btn-sm mr-1 mb-1" href="mailto:'.$sede['email'].'"><i class="fa fa-envelope text-primary"></i> '.$sede['email'].'</a>' : '').'
                             '.($referente['nome'] ? '<div class="mt-2"><i class="fa fa-user-o text-muted"></i> '.$referente['nome'].'</div>' : '').'
-                            '.($referente['telefono'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$referente['telefono'].'</a>' : '').'
-                            '.($referente['email'] ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-primary"></i> '.$referente['email'].'</a>' : '').'
+                            '.($referente['telefono'] ? '<a class="btn btn-light btn-sm mr-1 mb-1" href="tel:'.$referente['telefono'].'" target="_blank"><i class="fa fa-phone text-primary"></i> '.$referente['telefono'].'</a>' : '').'
+                            '.($referente['email'] ? '<a class="btn btn-light btn-sm mr-1 mb-1" href="mailto:'.$referente['email'].'"><i class="fa fa-envelope text-primary"></i> '.$referente['email'].'</a>' : '').'
                         </div>
                     </div>
                 </div>
@@ -150,15 +150,18 @@ $show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getU
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 $stato = Modules\Interventi\Stato::find($intervento->stato->id);
+$stato_colore = $stato->colore;
+$stato_testo_colore = color_inverse($stato_colore);
+
 echo '
     <div class="col-md-4">
-        <div class="card card-outline card-primary shadow">
+        <div class="card card-primary card-outline shadow">
 
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="card-title"><i class="fa fa-wrench"></i> <span style="color: #000;">'.tr('Attività').'</span> <strong class="text-primary">'.$intervento->codice.'</strong> <span style="color: #000;">'.tr('del').'</span> <strong>'.Translator::dateToLocale($intervento->data_richiesta).'</strong></h3>
+                    <h3 class="card-title"><i class="fa fa-wrench"></i> <span class="text-dark">'.tr('Attività').'</span> <strong class="text-primary">'.$intervento->codice.'</strong> <span class="text-dark">'.tr('del').'</span> <strong>'.Translator::dateToLocale($intervento->data_richiesta).'</strong></h3>
                     <div class="ml-auto">
-                        <button type="button" class="btn btn-sm" style="background-color: '.$stato->colore.'; color: <?php echo color_inverse($stato->colore); ?>;">
+                        <button type="button" class="btn btn-sm" style="background-color: '.$stato_colore.'; color: '.$stato_testo_colore.';">
                             <i class="fa fa-calendar-check-o mr-1"></i> '.$intervento->stato->name.'
                         </button>
                     </div>
@@ -170,28 +173,28 @@ echo '
                     <div class="col-md-3 text-center">
                         <div class="d-flex flex-column">
                             <span class="text-muted small mb-1">'.tr('Sessioni').'</span>
-                            <span class="badge badge-light p-2 font-weight-bold"><i class="fa fa-user text-primary mr-1"></i> '.$intervento->sessioni->count().'</span>
+                            <span class="badge bg-light p-2 fw-bold"><i class="fa fa-user text-primary mr-1"></i> '.$intervento->sessioni->count().'</span>
                         </div>
                     </div>
 
                     <div class="col-md-3 text-center">
                         <div class="d-flex flex-column">
                             <span class="text-muted small mb-1">'.tr('Ore').'</span>
-                            <span class="badge badge-light p-2 font-weight-bold"><i class="fa fa-hourglass text-primary mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('ore')).'</span>
+                            <span class="badge bg-light p-2 fw-bold"><i class="fa fa-hourglass text-primary mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('ore')).'</span>
                         </div>
                     </div>
 
                     <div class="col-md-3 text-center">
                         <div class="d-flex flex-column">
                             <span class="text-muted small mb-1">'.tr('Distanza').'</span>
-                            <span class="badge badge-light p-2 font-weight-bold"><i class="fa fa-truck text-primary mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
+                            <span class="badge bg-light p-2 fw-bold"><i class="fa fa-truck text-primary mr-1"></i> '.Translator::numberToLocale($intervento->sessioni->sum('km')).' '.tr('km').'</span>
                         </div>
                     </div>
 
                     <div class="col-md-3 text-center">
                         <div class="d-flex flex-column">
                             <span class="text-muted small mb-1">'.tr('Importo').'</span>
-                            <span class="badge badge-light p-2 font-weight-bold"><i class="fa fa-money text-primary mr-1"></i> '.($show_prezzi ? moneyFormat($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile, 2) : '-').'</span>
+                            <span class="badge bg-light p-2 fw-bold"><i class="fa fa-money text-primary mr-1"></i> '.($show_prezzi ? moneyFormat($prezzi_ivati ? $intervento->totale : $intervento->totale_imponibile, 2) : '-').'</span>
                         </div>
                     </div>
                 </div>
@@ -214,7 +217,7 @@ if (count($interventi_programmati) != 0) {
         $diffTime = (new Carbon($intervento_programmato->data_richiesta))->diffForHumans();
         // Remove the "days" label by using a regex to extract just the number
         $diffTime = preg_replace('/(\d+)\s+giorni?.*/', '$1', $diffTime);
-        echo ' <a class="btn btn-outline-primary btn-sm mr-1 mb-1" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank"><i class="fa fa-calendar-check-o mr-1"></i>'.$intervento_programmato->codice.' <span class="badge badge-light ml-1">('.$diffTime.')</span></a>';
+        echo ' <a class="btn btn-outline-primary btn-sm mr-1 mb-1" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank"><i class="fa fa-calendar-check-o mr-1"></i>'.$intervento_programmato->codice.' <span class="badge bg-light ml-1">('.$diffTime.')</span></a>';
     }
     echo ' </div>';
 }
@@ -224,17 +227,21 @@ echo '
 if ($contratto) {
     echo '
                 <div class="mb-3 status-item contratto-item">
-                    <div class="d-flex align-items-center">
-                        <span class="status-icon badge badge-info mr-2"><i class="fa fa-book"></i></span>
-                        <span class="status-text">'.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => '<strong>'.$contratto->numero.'</strong>', '_DATA_' => Translator::dateToLocale($contratto->data_bozza)])).'</span>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span class="status-icon badge badge-info mr-2"><i class="fa fa-book"></i></span>
+                            <span class="status-text">'.Modules::link('Contratti', $contratto->id, tr('Contratto num. _NUM_ del _DATA_', ['_NUM_' => '<strong>'.$contratto->numero.'</strong>', '_DATA_' => Translator::dateToLocale($contratto->data_bozza)])).'</span>
+                        </div>';
+    if ($ore_previste > 0) {
+        echo '
+                        <span>'.Translator::numberToLocale($ore_erogate, 2).'/'.$ore_previste.' '.tr('ore').'</span>';
+    }
+    echo '
                     </div>';
     if ($ore_previste > 0) {
         echo '
-                    <div class="mt-1 ml-4">
-                        <span class="badge badge-light">'.Translator::numberToLocale($ore_erogate, 2).'/'.$ore_previste.' '.tr('ore').'</span>
-                        <div class="progress mt-1" style="height:6px; border-radius:3px;">
-                            <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ore.'%"></div>
-                        </div>
+                    <div class="progress mt-1" style="height: 6px; border-radius:3px;">
+                        <div class="progress-bar bg-'.$color.'" style="width:'.$perc_ore.'%"></div>
                     </div>';
     }
     echo '
@@ -279,15 +286,15 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
 
 echo '
     <div class="col-md-4">
-        <div class="card card-outline card-primary shadow">
+        <div class="card card-primary card-outline shadow">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-map"></i> <span style="color: #000;">'.tr('Geolocalizzazione').'</span></h3>
+                <h3 class="card-title"><i class="fa fa-map"></i> <span class="text-dark">'.tr('Geolocalizzazione').'</span></h3>
             </div>
             <div class="card-body">';
 
 if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
     echo '
-                <div id="map-edit" style="width: 100%; min-height: 150px; border-radius: 4px; border: 1px solid #eee;"></div>
+                <div id="map-edit" class="w-100 rounded border border-light-subtle" style="min-height: 150px;"></div>
 
                 <div class="clearfix"></div>
                 <div class="mt-3">
@@ -463,7 +470,7 @@ echo '
             $map_container.css("height", "320px");
             alignMaxHeight(".module-header .card");
             $("#" + map_id).css("height", "85%");
-            $("#" + map_id).css("border", "none");
+            $("#" + map_id).removeClass("border border-light-subtle");
 
             $map_container.find(".load").addClass("hidden");
             $map_container.find(".go-to").removeClass("hidden");

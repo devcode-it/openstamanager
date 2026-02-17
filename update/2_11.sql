@@ -27,3 +27,11 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), 'Attivo'),
 (2, (SELECT MAX(`id`) FROM `zz_views`), 'Enabled');
+
+-- Aggiunta impostazione Limita conteggio ore ad oggi nell'intestazione
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Limita conteggio ore ad oggi nell''intestazione', '0', 'boolean', 1, 'Attività');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Limita conteggio ore ad oggi nell''intestazione', 'Conteggia nell''intestazione attività solo le ore di lavoro dall''inizio al giorno corrente; se disabilitato conteggia tutte le ore collegate a un documento.'),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Limita conteggio ore ad oggi nell''intestazione', 'Conteggia nell''intestazione attività solo le ore di lavoro dall''inizio al giorno corrente; se disabilitato conteggia tutte le ore collegate a un documento.');

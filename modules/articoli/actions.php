@@ -64,13 +64,9 @@ switch (post('op')) {
         if (empty(post('coefficiente'))) {
             $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
         }
-        $articolo->idconto_vendita = post('idconto_vendita');
-        $articolo->idconto_acquisto = post('idconto_acquisto');
-        $articolo->abilita_serial = post('abilita_serial_add');
+        $articolo->servizio = post('servizio');
 
         $articolo->um = post('um');
-        $articolo->um_secondaria = post('um_secondaria');
-        $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
         $articolo->id_marca = post('id_marca');
         $articolo->id_modello = post('id_modello');
         $articolo->save();
@@ -144,7 +140,6 @@ switch (post('op')) {
                     'prezzo_vendita' => post('prezzo_vendita'),
                     'idiva_vendita' => post('idiva_vendita') ?: null,
                     'iva_vendita' => $iva ? $iva->getTranslation('title') : null,
-                    'um_secondaria' => post('um_secondaria'),
                     'um' => post('um'),
                 ],
             ]);

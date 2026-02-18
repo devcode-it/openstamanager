@@ -25,6 +25,8 @@ use Tasks\Manager;
 
 class InvoiceHookTask extends Manager
 {
+    private const MAX_ATTEMPTS = 3;
+
     public function execute()
     {
         $result = [
@@ -51,126 +53,138 @@ class InvoiceHookTask extends Manager
 
             foreach ($fatture as $fattura) {
                 try {
-                    // Verifica che la fattura elettronica sia ancora valida
-                    $fattura_elettronica = new FatturaElettronica($fattura->id);
-                    if (!$fattura_elettronica->isGenerated()) {
-                        // Fattura elettronica non più valida, rimuovi dalla coda
-                        $fattura->hook_send = false;
-                        $fattura->codice_stato_fe = 'GEN';
-                        $fattura->data_stato_fe = date('Y-m-d H:i:s');
-                        $fattura->fe_retry_count = 0;
-                        $fattura->save();
-                        continue;
-                    }
-
-                    $response_invio = Interaction::sendInvoice($fattura->id);
-
-                    if ($response_invio['code'] == 200 || $response_invio['code'] == 301) {
-                        // Invio riuscito
-                        $fattura->hook_send = false;
-                        $fattura->fe_retry_count = 0;
-                        $fattura->save();
-                        ++$inviate;
-                    } else {
-                        // Incrementa il contatore dei tentativi
-                        $fattura->fe_retry_count = ($fattura->fe_retry_count ?? 0) + 1;
-
-                        // Verifica se sono stati raggiunti i 3 tentativi
-                        if ($fattura->fe_retry_count >= 3) {
-                            // Rimuovi dalla coda e imposta errore definitivo
-                            $fattura->hook_send = false;
-                            $fattura->codice_stato_fe = 'ERR';
-                            $fattura->save();
-                            ++$errori;
-                            $fatture_errore[] = $fattura->numero_esterno.' ('.$response_invio['message'].')';
-                        } else {
-                            // Mantieni nella coda per un nuovo tentativo
-                            $fattura->codice_stato_fe = 'QUEUE';
-                            $fattura->data_stato_fe = date('Y-m-d H:i:s');
-                            $fattura->save();
-                            ++$in_attesa;
-                        }
-                    }
+                    $this->processInvoice($fattura, $inviate, $errori, $in_attesa, $fatture_errore);
                 } catch (\UnexpectedValueException) {
-                    // Fattura elettronica non valida, rimuovi dalla coda
-                    $fattura->hook_send = false;
-                    $fattura->codice_stato_fe = 'GEN';
-                    $fattura->fe_retry_count = 0;
-                    $fattura->save();
+                    $this->resetInvoice($fattura);
                 } catch (\Exception $e) {
-                    // Incrementa il contatore dei tentativi
-                    $fattura->fe_retry_count = ($fattura->fe_retry_count ?? 0) + 1;
-
-                    // Verifica se sono stati raggiunti i 3 tentativi
-                    if ($fattura->fe_retry_count >= 3) {
-                        // Errore generico, rimuovi dalla coda e imposta errore definitivo
-                        $fattura->hook_send = false;
-                        $fattura->codice_stato_fe = 'ERR';
-                        $fattura->save();
-                        ++$errori;
-                        $fatture_errore[] = $fattura->numero_esterno.' (errore: '.$e->getMessage().')';
-
-                        // Log dell'errore per debugging
-                        logger_osm()->error('Errore invio FE per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
-                    } else {
-                        // Mantieni nella coda per un nuovo tentativo
-                        $fattura->codice_stato_fe = 'QUEUE';
-                        $fattura->data_stato_fe = date('Y-m-d H:i:s');
-                        $fattura->save();
-                        ++$in_attesa;
-
-                        // Log dell'errore per debugging
-                        logger_osm()->warning('Tentativo '.$fattura->fe_retry_count.'/3 per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
-                    }
+                    $this->handleInvoiceException($fattura, $e, $errori, $in_attesa, $fatture_errore);
                 }
             }
 
-            // Costruzione messaggio di risposta
-            if ($inviate > 0 && $errori == 0 && $in_attesa == 0) {
-                $result['message'] = tr('_NUM_ fatture elettroniche inviate correttamente!', ['_NUM_' => $inviate]);
-            } elseif ($inviate > 0 && $errori == 0 && $in_attesa > 0) {
-                $result['response'] = 2;
-                $result['message'] = tr('_SENT_ fatture inviate correttamente, _WAIT_ in attesa di nuovo tentativo (max 3)', [
-                    '_SENT_' => $inviate,
-                    '_WAIT_' => $in_attesa,
-                ]);
-            } elseif ($inviate > 0 && $errori > 0) {
-                $result['response'] = 2;
-                $result['message'] = tr('_SENT_ fatture inviate, _ERR_ con errori, _WAIT_ in attesa di nuovo tentativo (max 3): _LIST_', [
-                    '_SENT_' => $inviate,
-                    '_ERR_' => $errori,
-                    '_WAIT_' => $in_attesa,
-                    '_LIST_' => implode(', ', $fatture_errore),
-                ]);
-            } elseif ($errori > 0 && $in_attesa > 0) {
-                $result['response'] = 2;
-                $result['message'] = tr('Errori nell\'invio di _ERR_ fatture, _WAIT_ in attesa di nuovo tentativo (max 3): _LIST_', [
-                    '_ERR_' => $errori,
-                    '_WAIT_' => $in_attesa,
-                    '_LIST_' => implode(', ', $fatture_errore),
-                ]);
-            } elseif ($errori > 0) {
-                $result['response'] = 2;
-                $result['message'] = tr('Errori nell\'invio di _ERR_ fatture: _LIST_', [
-                    '_ERR_' => $errori,
-                    '_LIST_' => implode(', ', $fatture_errore),
-                ]);
-            } elseif ($in_attesa > 0) {
-                $result['response'] = 2;
-                $result['message'] = tr('_WAIT_ fatture in attesa di nuovo tentativo (max 3)', [
-                    '_WAIT_' => $in_attesa,
-                ]);
-            }
+            $this->buildResultMessage($result, $inviate, $errori, $in_attesa, $fatture_errore);
         } catch (\Exception $e) {
             $result['response'] = 2;
             $result['message'] = tr('Errore durante l\'invio delle fatture elettroniche: _ERR_', [
                 '_ERR_' => $e->getMessage(),
             ]).'<br>';
 
-            // Log dell'errore critico
             logger_osm()->error('Errore critico nel task invio FE: '.$e->getMessage());
         }
 
         return $result;
+    }
+
+    private function processInvoice($fattura, &$inviate, &$errori, &$in_attesa, &$fatture_errore)
+    {
+        $fattura_elettronica = new FatturaElettronica($fattura->id);
+        if (!$fattura_elettronica->isGenerated()) {
+            $this->resetInvoice($fattura);
+            return;
+        }
+
+        $response_invio = Interaction::sendInvoice($fattura->id);
+
+        if ($response_invio['code'] == 200 || $response_invio['code'] == 301) {
+            $fattura->hook_send = false;
+            $fattura->fe_attempt = 0;
+            $fattura->save();
+            ++$inviate;
+        } else {
+            $this->handleFailedAttempt($fattura, $response_invio['message'], $errori, $in_attesa, $fatture_errore);
+        }
+    }
+
+    private function resetInvoice($fattura)
+    {
+        $fattura->hook_send = false;
+        $fattura->codice_stato_fe = 'GEN';
+        $fattura->data_stato_fe = date('Y-m-d H:i:s');
+        $fattura->fe_attempt = 0;
+        $fattura->save();
+    }
+
+    private function handleFailedAttempt($fattura, $message, &$errori, &$in_attesa, &$fatture_errore)
+    {
+        $fattura->fe_attempt = ($fattura->fe_attempt ?? 0) + 1;
+
+        if ($fattura->fe_attempt >= self::MAX_ATTEMPTS) {
+            $this->markAsFailed($fattura, $message, $errori, $fatture_errore);
+        } else {
+            $this->keepInQueue($fattura, $in_attesa);
+        }
+    }
+
+    private function markAsFailed($fattura, $message, &$errori, &$fatture_errore)
+    {
+        $fattura->hook_send = false;
+        $fattura->codice_stato_fe = 'ERR';
+        $fattura->fe_failed_at = date('Y-m-d H:i:s');
+        $fattura->save();
+        ++$errori;
+        $fatture_errore[] = $fattura->numero_esterno.' ('.$message.')';
+    }
+
+    private function keepInQueue($fattura, &$in_attesa)
+    {
+        $fattura->codice_stato_fe = 'QUEUE';
+        $fattura->data_stato_fe = date('Y-m-d H:i:s');
+        $fattura->save();
+        ++$in_attesa;
+    }
+
+    private function handleInvoiceException($fattura, \Exception $e, &$errori, &$in_attesa, &$fatture_errore)
+    {
+        $fattura->fe_attempt = ($fattura->fe_attempt ?? 0) + 1;
+
+        if ($fattura->fe_attempt >= self::MAX_ATTEMPTS) {
+            $this->markAsFailed($fattura, 'errore: '.$e->getMessage(), $errori, $fatture_errore);
+            logger_osm()->error('Errore invio FE per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
+        } else {
+            $this->keepInQueue($fattura, $in_attesa);
+            logger_osm()->warning('Tentativo '.$fattura->fe_attempt.'/'.self::MAX_ATTEMPTS.' per fattura '.$fattura->numero_esterno.': '.$e->getMessage());
+        }
+    }
+
+    private function buildResultMessage(&$result, $inviate, $errori, $in_attesa, $fatture_errore)
+    {
+        if ($inviate > 0 && $errori == 0 && $in_attesa == 0) {
+            $result['message'] = tr('_NUM_ fatture elettroniche inviate correttamente!', ['_NUM_' => $inviate]);
+        } elseif ($inviate > 0 && $errori == 0 && $in_attesa > 0) {
+            $result['response'] = 2;
+            $result['message'] = tr('_SENT_ fatture inviate correttamente, _WAIT_ in attesa di nuovo tentativo (max _MAX_)', [
+                '_SENT_' => $inviate,
+                '_WAIT_' => $in_attesa,
+                '_MAX_' => self::MAX_ATTEMPTS,
+            ]);
+        } elseif ($inviate > 0 && $errori > 0) {
+            $result['response'] = 2;
+            $result['message'] = tr('_SENT_ fatture inviate, _ERR_ con errori, _WAIT_ in attesa di nuovo tentativo (max _MAX_): _LIST_', [
+                '_SENT_' => $inviate,
+                '_ERR_' => $errori,
+                '_WAIT_' => $in_attesa,
+                '_MAX_' => self::MAX_ATTEMPTS,
+                '_LIST_' => implode(', ', $fatture_errore),
+            ]);
+        } elseif ($errori > 0 && $in_attesa > 0) {
+            $result['response'] = 2;
+            $result['message'] = tr('Errori nell\'invio di _ERR_ fatture, _WAIT_ in attesa di nuovo tentativo (max _MAX_): _LIST_', [
+                '_ERR_' => $errori,
+                '_WAIT_' => $in_attesa,
+                '_MAX_' => self::MAX_ATTEMPTS,
+                '_LIST_' => implode(', ', $fatture_errore),
+            ]);
+        } elseif ($errori > 0) {
+            $result['response'] = 2;
+            $result['message'] = tr('Errori nell\'invio di _ERR_ fatture: _LIST_', [
+                '_ERR_' => $errori,
+                '_LIST_' => implode(', ', $fatture_errore),
+            ]);
+        } elseif ($in_attesa > 0) {
+            $result['response'] = 2;
+            $result['message'] = tr('_WAIT_ fatture in attesa di nuovo tentativo (max _MAX_)', [
+                '_WAIT_' => $in_attesa,
+                '_MAX_' => self::MAX_ATTEMPTS,
+            ]);
+        }
     }
 }

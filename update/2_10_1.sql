@@ -48,4 +48,7 @@ UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `
 UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Anagrafiche") WHERE (`zz_plugins`.`name` = "Dichiarazioni d'intento");
 
 -- Aggiunta campo per tracciare il numero di tentativi di invio FE
-ALTER TABLE `co_documenti` ADD `fe_retry_count` INT NOT NULL DEFAULT '0' AFTER `hook_send`; 
+ALTER TABLE `co_documenti` ADD `fe_attempt` INT NOT NULL DEFAULT '0' AFTER `hook_send`;
+
+-- Aggiunta campo per tracciare la data di fallimento definitivo dopo 3 tentativi
+ALTER TABLE `co_documenti` ADD `fe_failed_at` TIMESTAMP NULL AFTER `fe_attempt`; 

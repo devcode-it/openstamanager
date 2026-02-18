@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Models\Cache;
 use Models\Module;
 use Models\OperationLog;
 use Modules\Aggiornamenti\Controlli\DatiFattureElettroniche;
@@ -821,14 +822,38 @@ $operations['change_segment'] = [
 ];
 
 if (Interaction::isEnabled()) {
+    // Verifica lo stato del cron
+    $cron_active = false;
+    $ultima_esecuzione = Cache::where('name', 'Ultima esecuzione del cron')->first();
+
+    if ($ultima_esecuzione && $ultima_esecuzione->content) {
+        try {
+            $data_ultima_esecuzione = Carbon::parse($ultima_esecuzione->content);
+            $ora_attuale = Carbon::now();
+            $ore_trascorse = $data_ultima_esecuzione->diffInHours($ora_attuale);
+
+            if ($ore_trascorse <= 1) {
+                $cron_active = true;
+            }
+        } catch (\Exception) {
+            // Se il contenuto non è una data valida
+            $cron_active = false;
+        }
+    }
+
+    $hook_send_class = $cron_active ? 'btn btn-lg btn-warning' : 'btn btn-lg btn-warning disabled';
+    $hook_send_title = $cron_active ? '' : 'title="'.tr('Il cron non è configurato correttamente. Configurare il cron prima di utilizzare questa funzione.').'"';
+    $hook_send_icon = $cron_active ? 'fa fa-paper-plane' : 'fa fa-exclamation-triangle';
+
     $operations['hook_send'] = [
-        'text' => '<span><i class="fa fa-paper-plane"></i> '.tr('Invia FE').'</span>',
+        'text' => '<span><i class="'.$hook_send_icon.'"></i> '.tr('Invia FE').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero aggiungere queste fatture alla coda di invio per le fatture elettroniche?'),
             'button' => tr('Procedi'),
-            'class' => 'btn btn-lg btn-warning',
+            'class' => $hook_send_class,
         ],
+        'attributes' => $hook_send_title,
     ];
 }
 

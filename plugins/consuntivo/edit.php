@@ -401,11 +401,13 @@ if (!empty($totale_ore_contratto)) {
         </div>
     </div>
 </div>';
-}
-echo '
+} else {
+    echo'
 <div class="alert alert-info">
     <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
-</div>
+</div>';
+}
+echo '
 <div class="row">
     <div class="col-md-6">
         <table class="table text-left table-striped table-bordered">

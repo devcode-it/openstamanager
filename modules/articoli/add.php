@@ -50,26 +50,23 @@ if (!empty($id_um_predefinita)) {
     </div>
 
     <div class="row">
-		<div class="col-md-12">
-			{[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>", "charcounter": 1 ]}
-		</div>
+  <div class="col-md-12">
+   {[ "type": "textarea", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1, "value": "<?php echo htmlentities(filter('descrizione')) ?: ''; ?>", "charcounter": 1 ]}
+  </div>
+ </div>
 
-		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|is_articolo=1" ]}
-		</div>
-
-		<div class="col-md-3">
-			{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>||hide" ]}
-		</div>
-
-        <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+    <div class="row">
+        <div class="col-md-4">
+            {[ "type": "checkbox", "label": "<?php echo tr('Servizio'); ?>", "name": "servizio", "id": "servizio", "help": "<?php echo tr('Se selezionato, l\'articolo viene considerato un servizio'); ?>", "value": "0" ]}
+        </div>
+        <div class="col-md-4">
+            {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "id": "qta", "decimals": "qta", "value": "<?php echo htmlentities(filter('qta')) ?: ''; ?>" ]}
         </div>
 
-        <div class="col-md-3">
-            {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=0|hide" ]}
+        <div class="col-md-4">
+            {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "sede", "id": "sede", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
         </div>
-	</div>
+    </div>
 
 <?php
 $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiuntivi"');
@@ -84,6 +81,24 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
             </div>
         </div>
         <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "categoria", "required": 0, "ajax-source": "categorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>|is_articolo=1" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "subcategoria", "id": "subcategoria_add", "ajax-source": "sottocategorie", "icon-after": "add|<?php echo Module::where('name', 'Categorie')->first()->id; ?>||hide" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "ajax-source": "marche", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>" ]}
+                </div>
+
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "id": "id_modello_add", "ajax-source": "modelli", "icon-after": "add|<?php echo Module::where('name', 'Marche')->first()->id; ?>|id_original=0|hide" ]}
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo tr('Prezzo di acquisto'); ?>", "name": "prezzo_acquisto", "icon-after": "<?php echo currency(); ?>", "value": "<?php echo htmlentities(filter('prezzo_acquisto')) ?: 0; ?>" ]}
@@ -108,38 +123,7 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Quantità iniziale'); ?>", "name": "qta", "decimals": "qta", "value": "<?php echo htmlentities(filter('qta')) ?: ''; ?>" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "sede", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
-                </div>
-
-                <div class="col-md-4">
-					{[ "type": "checkbox", "label": "<?php echo tr('Abilita serial number'); ?>", "name": "abilita_serial_add", "help": "<?php echo tr('Abilita serial number in fase di aggiunta articolo in fattura o ddt'); ?>", "value": "<?php echo setting('Serial number abilitato di default'); ?>","placeholder": "<?php echo tr('Serial number'); ?>" ]}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
                     {[ "type": "select", "label": "<?php echo tr('Unità di misura'); ?>", "name": "um", "value": "<?php echo $um_predefinita; ?>", "ajax-source": "misure", "icon-after": "add|<?php echo Module::where('name', 'Unità di misura')->first()->id; ?>" ]}
-                </div>
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('U.m. secondaria'); ?>", "name": "um_secondaria", "value": "", "ajax-source": "misure", "help": "<?php echo tr("Unità di misura da utilizzare nelle stampe di Ordini fornitori in relazione all'articolo"); ?>" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "number", "label": "<?php echo tr('Fattore moltiplicativo'); ?>", "name": "fattore_um_secondaria", "value": "", "decimals": "qta", "help": "<?php echo tr("Fattore moltiplicativo per l'unità di misura da utilizzare nelle stampe di Ordini fornitori"); ?>" ]}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "ajax-source": "conti-acquisti" ]}
-                </div>
-
-                <div class="col-md-4">
-                    {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "ajax-source": "conti-vendite" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -271,6 +255,18 @@ function scorpora_iva_add() {
 
 $("#genera_barcode").click(function(){
     $(".modal #barcode").attr("disabled", $(this).is(":checked")).val("");
+});
+
+// Gestione campo Servizio
+$(document).ready(function() {
+    $('#servizio').click(function() {
+        $("#qta").attr("disabled", $('#servizio').is(":checked"));
+        $("#sede").attr("disabled", $('#servizio').is(":checked"));
+    });
+
+    // Inizializza lo stato all'avvio
+    $("#qta").attr("disabled", $('#servizio').is(":checked"));
+    $("#sede").attr("disabled", $('#servizio').is(":checked"));
 });
 
 // Espandi automaticamente la sezione "Informazioni aggiuntive" se sono precompilati dati dall'ImportFE

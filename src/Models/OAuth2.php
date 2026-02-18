@@ -111,19 +111,20 @@ class OAuth2 extends Model
             $this->save();
 
             throw new \InvalidArgumentException();
+        } else {
+            $this->state = null;
+            $this->save();
+
+            // Try to get an access token using the authorization code grant
+            $access_token = $provider->getAccessToken('authorization_code', [
+                'code' => $code,
+            ]);
+            $refresh_token = $access_token->getRefreshToken();
+
+            $this->updateTokens($access_token, $refresh_token);
+
+            return ['access_token' => $access_token];
         }
-        $this->state = null;
-        $this->save();
-
-        // Try to get an access token using the authorization code grant
-        $access_token = $provider->getAccessToken('authorization_code', [
-            'code' => $code,
-        ]);
-        $refresh_token = $access_token->getRefreshToken();
-
-        $this->updateTokens($access_token, $refresh_token);
-
-        return ['access_token' => $access_token];
 
         return null;
     }
@@ -147,7 +148,7 @@ class OAuth2 extends Model
     {
         $this->checkTokens();
 
-        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token']) : '';
+        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token']) : null;
     }
 
     /**
@@ -189,7 +190,7 @@ class OAuth2 extends Model
      */
     protected function checkTokens()
     {
-        $access_token = $this->access_token ? unserialize($this->access_token) : '';
+        $access_token = $this->access_token ? unserialize($this->access_token) : null;
 
         if (!empty($access_token) && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso

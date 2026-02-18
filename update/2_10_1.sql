@@ -44,5 +44,8 @@ ALTER TABLE `dt_statiddt` ADD `can_delete` INT NOT NULL DEFAULT '1' AFTER `is_fa
 UPDATE `dt_statiddt` SET `can_delete` = 0 WHERE `name` IN ('Bozza', 'Evaso', 'Fatturato', 'Parzialmente fatturato', 'Parzialmente evaso');
 
 -- Fix riferimenti plugin
-UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto") WHERE (`zz_plugins`.`name` = "Fatturazione elettronica" AND `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto")); 
-UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Anagrafiche") WHERE (`zz_plugins`.`name` = "Dichiarazioni d'intento"); 
+UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto") WHERE (`zz_plugins`.`name` = "Fatturazione elettronica" AND `idmodule_to` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Fatture di acquisto"));
+UPDATE `zz_plugins` SET `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Anagrafiche") WHERE (`zz_plugins`.`name` = "Dichiarazioni d'intento");
+
+-- Aggiunta campo per tracciare il numero di tentativi di invio FE
+ALTER TABLE `co_documenti` ADD `fe_retry_count` INT NOT NULL DEFAULT '0' AFTER `hook_send`; 

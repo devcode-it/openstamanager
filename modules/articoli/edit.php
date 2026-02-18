@@ -21,6 +21,20 @@ include_once __DIR__.'/../../core.php';
 
 use Models\Module;
 use Modules\Iva\Aliquota;
+use Models\Plugin;
+
+if ($articolo->servizio) {
+    $ignore = Plugin::where('name', 'Movimenti')
+        ->orWhere('name', 'Giacenze')
+        ->get();
+
+    foreach ($ignore as $plugin) {
+        echo '
+        <script>
+            $("li.btn-default.nav-item:has(#link-tab_'.$plugin->id.')").addClass("disabled");
+        </script>';
+    }
+}
 
 ?><form action="" method="post" id="edit-form" enctype="multipart/form-data">
 	<input type="hidden" name="backto" value="record-edit">

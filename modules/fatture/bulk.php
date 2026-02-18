@@ -182,6 +182,11 @@ switch (post('op')) {
                     $fattura->hook_send = true;
                     $fattura->save();
 
+                    // Logging dell'operazione di aggiunta alla coda di invio
+                    OperationLog::setInfo('id_module', $id_module);
+                    OperationLog::setInfo('id_record', $fattura->id);
+                    OperationLog::build('hook-send');
+
                     $added[] = $fattura->numero_esterno;
                 } else {
                     // Se la FE non è generata ma lo stato è vuoto, impostalo a GEN

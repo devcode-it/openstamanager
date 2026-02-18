@@ -131,88 +131,105 @@ if (empty($documento)) {
     return;
 }
 
-$interventi = Intervento::where($id_documento, $id_record)->get();
+$interventi = Intervento::where($id_documento, $id_record)
+    ->with(['stato', 'sessioni.tipo', 'sessioni.anagrafica', 'articoli.articolo', 'righe'])
+    ->get();
 $totale_ore_completate = 0;
 
 if (!empty($interventi)) {
     echo '
-<table class="table table-bordered table-sm">
-    <tr>
-        <th>'.tr('Attività').'</th>
-        <th width="125">'.tr('Ore').'</th>
-        <th width="125">'.tr('Km').'</th>
-        <th width="145">'.tr('Costo').'</th>
-        <th width="145">'.tr('Tot. scontato').'</th>
-    </tr>';
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <i class="fa fa-list-alt"></i> '.tr('Riepilogo Interventi').'
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>'.tr('Attività').'</th>
+                    <th width="125">'.tr('Ore').'</th>
+                    <th width="125">'.tr('Km').'</th>
+                    <th width="145">'.tr('Costo').'</th>
+                    <th width="145">'.tr('Tot. scontato').'</th>
+                </tr>
+            </thead>
+            <tbody>';
 
     // Tabella con i dati
     foreach ($interventi as $intervento) {
         $totale_ore_completate += !empty($intervento->stato->is_bloccato) ? $intervento->ore_totali : 0;
         // Riga per il singolo intervento
         echo '
-    <tr style="background:'.$intervento->stato->colore.';">
-        <td>
-            <a href="javascript:;" class="btn btn-primary btn-xs" onclick="$(\'#dettagli_'.$intervento->id.'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');"><i class="fa fa-plus"></i></a>
-            '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
+                <tr style="background:'.$intervento->stato->colore.';">
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="$(\'#dettagli_'.$intervento->id.'\').toggleClass(\'hide\'); $(this).find(\'i\').toggleClass(\'fa-plus\').toggleClass(\'fa-minus\');">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        '.Modules::link('Interventi', $intervento->id, tr('Intervento num. _NUM_ del _DATE_', [
             '_NUM_' => $intervento->codice,
             '_DATE_' => Translator::dateToLocale($intervento->inizio),
         ])).'
-        </td>
+                    </td>
 
-        <td class="text-right">
-            '.($intervento->ore_totali <= 0 ? '<i class="fa fa-warning tip" style="position:relative;margin-left:-16px;" title="'.tr('Questa sessione è vuota').'" ></i> ' : '').numberFormat($intervento->ore_totali).'
-        </td>
+                    <td class="text-right">
+                        '.($intervento->ore_totali <= 0 ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Questa sessione è vuota').'"></i> ' : '').numberFormat($intervento->ore_totali).'
+                    </td>
 
-        <td class="text-right">
-            '.numberFormat($intervento->km_totali).'
-        </td>
+                    <td class="text-right">
+                        '.numberFormat($intervento->km_totali).'
+                    </td>
 
-        <td class="text-right">
-            '.moneyFormat($intervento->spesa).'
-        </td>
+                    <td class="text-right">
+                        '.moneyFormat($intervento->spesa).'
+                    </td>
 
-        <td class="text-right">
-            '.moneyFormat($intervento->totale_imponibile).'
-        </td>
-    </tr>';
+                    <td class="text-right">
+                        '.moneyFormat($intervento->totale_imponibile).'
+                    </td>
+                </tr>';
         // Riga con dettagli
         echo '
-    <tr class="hide" id="dettagli_'.$intervento->id.'">
-        <td colspan="5">';
+                <tr class="hide" id="dettagli_'.$intervento->id.'">
+                    <td colspan="5" class="p-3">';
         // Lettura sessioni di lavoro con cache
         $sessioni = getSessioniCache($intervento, $sessioni_cache);
         if (!$sessioni->isEmpty()) {
             echo '
-            <table class="table table-striped table-sm table-bordered">
-                <tr>
-                    <th>'.tr('Tecnico').'</th>
-                    <th width="210">'.tr('Tipo attività').'</th>
-                    <th width="110">'.tr('Ore').'</th>
-                    <th width="110">'.tr('Km').'</th>
-                    <th width="110">'.tr('Costo ore').'</th>
-                    <th width="110">'.tr('Costo km').'</th>
-                    <th width="110">'.tr('Diritto ch.').'</th>
-                    <th width="110">'.tr('Prezzo ore').'</th>
-                    <th width="110">'.tr('Prezzo km').'</th>
-                    <th width="110">'.tr('Diritto ch.').'</th>
-                </tr>';
+                <div class="mb-3">
+                    <h6 class="font-weight-bold text-primary"><i class="fa fa-users"></i> '.tr('Sessioni di lavoro').'</h6>
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Tecnico').'</th>
+                                <th width="210">'.tr('Tipo attività').'</th>
+                                <th width="110">'.tr('Ore').'</th>
+                                <th width="110">'.tr('Km').'</th>
+                                <th width="110">'.tr('Costo ore').'</th>
+                                <th width="110">'.tr('Costo km').'</th>
+                                <th width="110">'.tr('Diritto ch.').'</th>
+                                <th width="110">'.tr('Prezzo ore').'</th>
+                                <th width="110">'.tr('Prezzo km').'</th>
+                                <th width="110">'.tr('Diritto ch.').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
             foreach ($sessioni as $sessione) {
                 // Visualizzo lo sconto su ore o km se c'è
                 $sconto_ore = getHtmlSconto($sessione->sconto_totale_manodopera);
                 $sconto_km = getHtmlSconto($sessione->sconto_totale_viaggio);
                 echo '
-                <tr>
-                    <td>'.$sessione->anagrafica->ragione_sociale.'</td>
-                    <td>'.$sessione->tipo->getTranslation('title').'</td>
-                    <td class="text-right">'.numberFormat($sessione->ore).'</td>
-                    <td class="text-right">'.numberFormat($sessione->km).'</td>
-                    <td class="text-right danger">'.moneyFormat($sessione->costo_manodopera).'</td>
-                    <td class="text-right danger">'.moneyFormat($sessione->costo_viaggio).'</td>
-                    <td class="text-right danger">'.moneyFormat($sessione->costo_diritto_chiamata).'</td>
-                    <td class="text-right success">'.moneyFormat($sessione->prezzo_manodopera).$sconto_ore.'</td>
-                    <td class="text-right success">'.moneyFormat($sessione->prezzo_viaggio).$sconto_km.'</td>
-                    <td class="text-right success">'.moneyFormat($sessione->prezzo_diritto_chiamata).'</td>
-                </tr>';
+                            <tr>
+                                <td>'.$sessione->anagrafica->ragione_sociale.'</td>
+                                <td>'.$sessione->tipo->getTranslation('title').'</td>
+                                <td class="text-right">'.numberFormat($sessione->ore).'</td>
+                                <td class="text-right">'.numberFormat($sessione->km).'</td>
+                                <td class="text-right text-danger">'.moneyFormat($sessione->costo_manodopera).'</td>
+                                <td class="text-right text-danger">'.moneyFormat($sessione->costo_viaggio).'</td>
+                                <td class="text-right text-danger">'.moneyFormat($sessione->costo_diritto_chiamata).'</td>
+                                <td class="text-right text-success">'.moneyFormat($sessione->prezzo_manodopera).$sconto_ore.'</td>
+                                <td class="text-right text-success">'.moneyFormat($sessione->prezzo_viaggio).$sconto_km.'</td>
+                                <td class="text-right text-success">'.moneyFormat($sessione->prezzo_diritto_chiamata).'</td>
+                            </tr>';
                 
                 // Calcola totali sessione
                 $totali_sessione = calcolaTotaliSessione($sessione);
@@ -238,30 +255,37 @@ if (!empty($interventi)) {
                 $stati_intervento[$stato_title]['ricavo'] = ($stati_intervento[$stato_title]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
             }
             echo '
-            </table>';
+                        </tbody>
+                    </table>
+                </div>';
         }
         // Lettura articoli utilizzati
         $articoli = $intervento->articoli;
         if (!$articoli->isEmpty()) {
             echo '
-            <table class="table table-striped table-sm table-bordered">
-                <tr>
-                    <th>'.tr('Materiale').'</th>
-                    <th width="120">'.tr('Q.tà').'</th>
-                    <th width="150">'.tr('Prezzo di acquisto').'</th>
-                    <th width="150">'.tr('Prezzo di vendita').'</th>
-                </tr>';
+                <div class="mb-3">
+                    <h6 class="font-weight-bold text-primary"><i class="fa fa-box"></i> '.tr('Materiale utilizzato').'</h6>
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Materiale').'</th>
+                                <th width="120">'.tr('Q.tà').'</th>
+                                <th width="150">'.tr('Prezzo di acquisto').'</th>
+                                <th width="150">'.tr('Prezzo di vendita').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
             foreach ($articoli as $articolo) {
                 $sconto = getHtmlSconto($articolo->sconto);
                 echo '
-                <tr>
-                    <td>
-                        '.Modules::link('Articoli', $articolo->idarticolo, $articolo->descrizione).'
-                    </td>
-                    <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
-                    <td class="text-right danger">'.moneyFormat($articolo->spesa).'</td>
-                    <td class="text-right success">'.moneyFormat($articolo->imponibile).$sconto.'</td>
-                </tr>';
+                            <tr>
+                                <td>
+                                    '.Modules::link('Articoli', $articolo->idarticolo, $articolo->descrizione).'
+                                </td>
+                                <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
+                                <td class="text-right text-danger">'.moneyFormat($articolo->spesa).'</td>
+                                <td class="text-right text-success">'.moneyFormat($articolo->imponibile).$sconto.'</td>
+                            </tr>';
                 // Raggruppamento per articolo con lo stesso prezzo
                 $qta = $articolo->qta > 0 ? $articolo->qta : 1;
                 $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / $qta);
@@ -276,30 +300,37 @@ if (!empty($interventi)) {
                 $materiali_art[$descrizione][$ricavo][$costo]['ricavo'] += $articolo->imponibile - $articolo->sconto;
             }
             echo '
-            </table>';
+                        </tbody>
+                    </table>
+                </div>';
         }
         // Lettura spese aggiuntive
         $righe = $intervento->righe;
         if (!$righe->isEmpty()) {
             echo '
-            <table class="table table-striped table-sm table-bordered">
-                <tr>
-                    <th>'.tr('Altre spese').'</th>
-                    <th width="120">'.tr('Q.tà').'</th>
-                    <th width="150">'.tr('Prezzo di acquisto').'</th>
-                    <th width="150">'.tr('Prezzo di vendita').'</th>
-                </tr>';
+                <div class="mb-3">
+                    <h6 class="font-weight-bold text-primary"><i class="fa fa-receipt"></i> '.tr('Altre spese').'</h6>
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>'.tr('Altre spese').'</th>
+                                <th width="120">'.tr('Q.tà').'</th>
+                                <th width="150">'.tr('Prezzo di acquisto').'</th>
+                                <th width="150">'.tr('Prezzo di vendita').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
             foreach ($righe as $riga) {
                 $sconto = getHtmlSconto($riga->sconto);
                 echo '
-                <tr>
-                    <td>
-                        '.$riga->descrizione.'
-                    </td>
-                    <td class="text-right">'.numberFormat($riga->qta, 'qta').'</td>
-                    <td class="text-right danger">'.moneyFormat($riga->spesa).'</td>
-                    <td class="text-right success">'.moneyFormat($riga->imponibile).$sconto.'</td>
-                </tr>';
+                            <tr>
+                                <td>
+                                    '.$riga->descrizione.'
+                                </td>
+                                <td class="text-right">'.numberFormat($riga->qta, 'qta').'</td>
+                                <td class="text-right text-danger">'.moneyFormat($riga->spesa).'</td>
+                                <td class="text-right text-success">'.moneyFormat($riga->imponibile).$sconto.'</td>
+                            </tr>';
                 // Raggruppamento per riga
                 $descrizione_riga = $riga->descrizione;
                 $materiali_righe[$descrizione_riga]['qta'] = ($materiali_righe[$descrizione_riga]['qta'] ?? 0) + $riga->qta;
@@ -307,11 +338,13 @@ if (!empty($interventi)) {
                 $materiali_righe[$descrizione_riga]['ricavo'] = ($materiali_righe[$descrizione_riga]['ricavo'] ?? 0) + $riga->imponibile - $riga->sconto;
             }
             echo '
-            </table>';
+                        </tbody>
+                    </table>
+                </div>';
         }
         echo '
-        </td>
-    </tr>';
+                    </td>
+                </tr>';
     }
     $array_interventi = $interventi->toArray();
     $totale_km = sum(array_column($array_interventi, 'km_totali'));
@@ -321,28 +354,31 @@ if (!empty($interventi)) {
     $totale_ore = sum(array_column($array_interventi, 'ore_totali'));
     // Totali
     echo '
-    <tr>
-        <td class="text-right">
-            <b><big>'.tr('Totale').'</big></b>
-        </td>';
+                <tr class="font-weight-bold">
+                    <td class="text-right">
+                        '.tr('Totale').'
+                    </td>';
     echo '
-        <td class="text-right">
-            <big><b>'.numberFormat($totale_ore).'</b></big>
-        </td>';
+                    <td class="text-right">
+                        '.numberFormat($totale_ore).'
+                    </td>';
     echo '
-        <td class="text-right">
-            <big><b>'.numberFormat($totale_km).'</b></big>
-        </td>';
+                    <td class="text-right">
+                        '.numberFormat($totale_km).'
+                    </td>';
     echo '
-        <td class="text-right">
-            <big><b>'.moneyFormat($totale_costo).'</b></big>
-        </td>';
+                    <td class="text-right">
+                        '.moneyFormat($totale_costo).'
+                    </td>';
     echo '
-        <td class="text-right">
-            <big><b>'.moneyFormat($totale).'</b></big>
-        </td>
-    </tr>
-</table>';
+                    <td class="text-right">
+                        '.moneyFormat($totale).'
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>';
 }
 
 $budget = $documento->totale_imponibile;
@@ -357,202 +393,263 @@ foreach ($righe as $riga) {
 $diff = sum($budget, -$totale) - $documento->provvigione;
 
 if ($diff > 0) {
-    $bilancio = '<span class="text-success"><big>+ '.moneyFormat($diff).'</big></span>';
+    $bilancio_class = 'bg-success';
+    $bilancio_icon = 'fa-arrow-up';
 } elseif ($diff < 0) {
-    $bilancio = '<span class="text-danger"><big>'.moneyFormat($diff).'</big></span>';
+    $bilancio_class = 'bg-danger';
+    $bilancio_icon = 'fa-arrow-down';
 } else {
-    $bilancio = '<span><big>'.moneyFormat($diff).'</big></span>';
+    $bilancio_class = 'bg-secondary';
+    $bilancio_icon = 'fa-minus';
 }
 echo '
-<div class="well text-center">
-    <h4>
-        <b>'.tr('Rapporto budget/spesa').'</b>:<br>
-        '.$bilancio.'
-    </h4>
-    <br><br>
+<div class="card mb-4">
+    <div class="card-body text-center '.$bilancio_class.' text-white">
+        <h4 class="mb-0">
+            <i class="fa '.$bilancio_icon.'"></i> '.tr('Rapporto budget/spesa').':<br>
+            <strong>'.moneyFormat($diff).'</strong>
+        </h4>
+    </div>
 </div>';
 if (!empty($totale_ore_contratto)) {
     echo '
-<div>
-    <div class="row">
-        <div class="col-md-4 offset-md-4 text-center">
-            <table class="table text-left table-striped table-bordered">
-                <tr>
-                    <td>'.tr('Ore a contratto').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
-                </tr>
-                <tr>
-                    <td>'.tr('Ore erogate totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore).'</td>
-                </tr>
-                <tr>
-                    <td>'.tr('Ore residue totali').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
-                </tr>
-                <tr>
-                    <td>'.tr('Ore erogate concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale($totale_ore_completate).'</td>
-                </tr>
-                <tr>
-                    <td>'.tr('Ore residue concluse').':</td>
-                    <td class="text-right">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
-                </tr>
-            </table>
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <i class="fa fa-clock"></i> '.tr('Riepilogo ore').'
+    </div>
+    <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        <tr>
+                            <td>'.tr('Ore a contratto').':</td>
+                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                        </tr>
+                        <tr>
+                            <td>'.tr('Ore erogate totali').':</td>
+                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore).'</td>
+                        </tr>
+                        <tr>
+                            <td>'.tr('Ore residue totali').':</td>
+                            <td class="text-right font-weight-bold text-primary">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
+                        </tr>
+                        <tr>
+                            <td>'.tr('Ore erogate concluse').':</td>
+                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore_completate).'</td>
+                        </tr>
+                        <tr>
+                            <td>'.tr('Ore residue concluse').':</td>
+                            <td class="text-right font-weight-bold text-primary">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>';
 } else {
     echo'
 <div class="alert alert-info">
-    <p>'.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.</p>
+    <i class="fa fa-info-circle"></i> '.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.
 </div>';
 }
 echo '
 <div class="row">
     <div class="col-md-6">
-        <table class="table text-left table-striped table-bordered">
-            <tr>
-                <th>'.tr('Tipologia').'</th>
-                <th width="10%">'.tr('Ore').'</th>
-                <th width="16%">'.tr('Costo').'</th>
-                <th width="16%">'.tr('Ricavo').'</th>
-                <th width="10%">'.tr('Margine').'</th>
-                <th width="10%">'.tr('Ricarico').'</th>
-            </tr>';
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fa fa-list"></i> '.tr('Tipologia').'
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Tipologia').'</th>
+                            <th width="10%">'.tr('Ore').'</th>
+                            <th width="16%">'.tr('Costo').'</th>
+                            <th width="16%">'.tr('Ricavo').'</th>
+                            <th width="10%">'.tr('Margine').'</th>
+                            <th width="10%">'.tr('Ricarico').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 ksort($tipologie);
 foreach ($tipologie as $key => $tipologia) {
     $margini = calcolaMargini($tipologia['costo'], $tipologia['ricavo']);
-    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
+    $bg_class = $margini['margine'] > 0 ? 'bg-success text-white' : 'bg-danger text-white';
     echo '
-            <tr>
-                <td>'.$key.'</td>
-                <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($tipologia['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($tipologia['ricavo']).' €</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
-            </tr>';
+                        <tr>
+                            <td>'.$key.'</td>
+                            <td class="text-right">'.Translator::numberToLocale($tipologia['ore']).'</td>
+                            <td class="text-right">'.Translator::numberToLocale($tipologia['costo']).' €</td>
+                            <td class="text-right">'.Translator::numberToLocale($tipologia['ricavo']).' €</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
+                        </tr>';
 }
 echo '
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        <table class="table text-left table-striped table-bordered">
-            <tr>
-                <th>'.tr('Tecnici').'</th>
-                <th width="7%">'.tr('km').'</th>
-                <th width="10%">'.tr('Ore').'</th>
-                <th width="16%">'.tr('Costo').'</th>
-                <th width="16%">'.tr('Ricavo').'</th>
-                <th width="10%">'.tr('Margine').'</th>
-                <th width="10%">'.tr('Ricarico').'</th>
-            </tr>';
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <i class="fa fa-users"></i> '.tr('Tecnici').'
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Tecnici').'</th>
+                            <th width="7%">'.tr('km').'</th>
+                            <th width="10%">'.tr('Ore').'</th>
+                            <th width="16%">'.tr('Costo').'</th>
+                            <th width="16%">'.tr('Ricavo').'</th>
+                            <th width="10%">'.tr('Margine').'</th>
+                            <th width="10%">'.tr('Ricarico').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 ksort($tecnici);
 foreach ($tecnici as $key => $tecnico) {
     $margini = calcolaMargini($tecnico['costo'], $tecnico['ricavo']);
-    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
+    $bg_class = $margini['margine'] > 0 ? 'bg-success text-white' : 'bg-danger text-white';
     echo '
-            <tr>
-                <td>'.$key.'</td>
-                <td class="text-right">'.(int) $tecnico['km'].'</td>
-                <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
-            </tr>';
+                        <tr>
+                            <td>'.$key.'</td>
+                            <td class="text-right">'.(int) $tecnico['km'].'</td>
+                            <td class="text-right">'.Translator::numberToLocale($tecnico['ore']).'</td>
+                            <td class="text-right">'.Translator::numberToLocale($tecnico['costo']).' €</td>
+                            <td class="text-right">'.Translator::numberToLocale($tecnico['ricavo']).' €</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
+                        </tr>';
 }
 echo '
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="col-md-6">
-        <table class="table text-left table-striped table-bordered">
-            <tr>
-                <th>'.tr('Stato').'</th>
-                <th width="10%">'.tr('Ore').'</th>
-                <th width="16%">'.tr('Costo').'</th>
-                <th width="16%">'.tr('Ricavo').'</th>
-                <th width="10%">'.tr('Margine').'</th>
-                <th width="10%">'.tr('Ricarico').'</th>
-            </tr>';
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <i class="fa fa-flag"></i> '.tr('Stato').'
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Stato').'</th>
+                            <th width="10%">'.tr('Ore').'</th>
+                            <th width="16%">'.tr('Costo').'</th>
+                            <th width="16%">'.tr('Ricavo').'</th>
+                            <th width="10%">'.tr('Margine').'</th>
+                            <th width="10%">'.tr('Ricarico').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 ksort($stati_intervento);
 foreach ($stati_intervento as $key => $stato) {
     $margini = calcolaMargini($stato['costo'], $stato['ricavo']);
-    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
+    $bg_class = $margini['margine'] > 0 ? 'bg-success text-white' : 'bg-danger text-white';
     echo '
-            <tr>
-                <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
-                <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($stato['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($stato['ricavo']).' €</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
-            </tr>';
+                        <tr>
+                            <td><div class="img-circle" style="width:18px; height:18px; position:relative; bottom:-2px; background:'.$stato['colore'].'; float:left;"></div> '.$key.'</td>
+                            <td class="text-right">'.Translator::numberToLocale($stato['ore']).'</td>
+                            <td class="text-right">'.Translator::numberToLocale($stato['costo']).' €</td>
+                            <td class="text-right">'.Translator::numberToLocale($stato['ricavo']).' €</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
+                        </tr>';
 }
 echo '
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        <table class="table text-left table-striped table-bordered">
-            <tr>
-                <th>'.tr('Materiale').'</th>
-                <th width="8%">'.tr('Qtà').'</th>
-                <th width="16%">'.tr('Costo').'</th>
-                <th width="16%">'.tr('Ricavo').'</th>
-                <th width="10%">'.tr('Margine').'</th>
-                <th width="10%">'.tr('Ricarico').'</th>
-            </tr>';
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <i class="fa fa-box"></i> '.tr('Materiale').'
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>'.tr('Materiale').'</th>
+                            <th width="8%">'.tr('Qtà').'</th>
+                            <th width="16%">'.tr('Costo').'</th>
+                            <th width="16%">'.tr('Ricavo').'</th>
+                            <th width="10%">'.tr('Margine').'</th>
+                            <th width="10%">'.tr('Ricarico').'</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 ksort($materiali_art);
 foreach ($materiali_art as $key => $materiali_array1) {
     foreach ($materiali_array1 as $materiali_array2) {
         foreach ($materiali_array2 as $materiale) {
             $margini = calcolaMargini($materiale['costo'], $materiale['ricavo']);
-            $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
+            $bg_class = $margini['margine'] > 0 ? 'bg-success text-white' : 'bg-danger text-white';
             echo '
-            <tr>
-                <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
-                <td class="text-center">'.$materiale['qta'].'</td>
-                <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
-            </tr>';
+                        <tr>
+                            <td>'.Modules::link('Articoli', $materiale['id'], $key).'</td>
+                            <td class="text-center">'.$materiale['qta'].'</td>
+                            <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
+                            <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
+                        </tr>';
         }
     }
 }
 ksort($materiali_righe);
 foreach ($materiali_righe as $key => $materiale) {
     $margini = calcolaMargini($materiale['costo'], $materiale['ricavo']);
-    $bg_class = $margini['margine'] > 0 ? 'bg-success' : 'bg-danger';
+    $bg_class = $margini['margine'] > 0 ? 'bg-success text-white' : 'bg-danger text-white';
     echo '
-            <tr>
-                <td>'.$key.'</td>
-                <td class="text-center">'.$materiale['qta'].'</td>
-                <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
-                <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
-            </tr>';
+                        <tr>
+                            <td>'.$key.'</td>
+                            <td class="text-center">'.$materiale['qta'].'</td>
+                            <td class="text-right">'.Translator::numberToLocale($materiale['costo']).' €</td>
+                            <td class="text-right">'.Translator::numberToLocale($materiale['ricavo']).' €</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['margine_prc'].'%)</td>
+                            <td class="text-right '.$bg_class.'">'.Translator::numberToLocale($margini['margine']).' € ('.$margini['ricarico_prc'].'%)</td>
+                        </tr>';
 }
 echo '
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>';
 
 // Tabella totale delle ore,km,costi e totale scontato suddivisi per i mesi in cui sono stati effettuati gli interventi
 echo '
-<div class="row">
-    <div class="col-md-12">
-        <table class="table text-left table-striped table-bordered">
-            <tr>
-                <th>'.tr('Mese').'</th>
-                <th width="10%">'.tr('Ore').'</th>
-                <th width="10%">'.tr('Km').'</th>
-                <th width="16%">'.tr('Costo').'</th>
-                <th width="16%">'.tr('Totale scontato').'</th>
-            </tr>';
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+        <i class="fa fa-calendar"></i> '.tr('Riepilogo mensile').'
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>'.tr('Mese').'</th>
+                    <th width="10%">'.tr('Ore').'</th>
+                    <th width="10%">'.tr('Km').'</th>
+                    <th width="16%">'.tr('Costo').'</th>
+                    <th width="16%">'.tr('Totale scontato').'</th>
+                </tr>
+            </thead>
+            <tbody>';
 $interventi_per_mese = [];
 $totals = ['ore' => 0, 'km' => 0, 'costo' => 0, 'totale' => 0];
 
@@ -589,24 +686,24 @@ foreach ($interventi as $intervento) {
 ksort($interventi_per_mese);
 foreach ($interventi_per_mese as $mese => $dati) {
     echo '
-            <tr>
-                <td>'.ucfirst(Carbon\Carbon::createFromFormat('Y-m', $mese)->translatedFormat('F Y')).'</td>
-                <td class="text-right">'.Translator::numberToLocale($dati['ore']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($dati['km']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($dati['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($dati['totale']).' €</td>
-            </tr>';
+                <tr>
+                    <td>'.ucfirst(Carbon\Carbon::createFromFormat('Y-m', $mese)->translatedFormat('F Y')).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($dati['ore']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($dati['km']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($dati['costo']).' €</td>
+                    <td class="text-right">'.Translator::numberToLocale($dati['totale']).' €</td>
+                </tr>';
 }
 
 echo '
-            <tr class="table-info font-weight-bold">
-                <td>'.tr('Totali').'</td>
-                <td class="text-right">'.Translator::numberToLocale($totals['ore']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($totals['km']).'</td>
-                <td class="text-right">'.Translator::numberToLocale($totals['costo']).' €</td>
-                <td class="text-right">'.Translator::numberToLocale($totals['totale']).' €</td>
-            </tr>';
-echo '
+                <tr class="table-info font-weight-bold">
+                    <td>'.tr('Totali').'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totals['ore']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totals['km']).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totals['costo']).' €</td>
+                    <td class="text-right">'.Translator::numberToLocale($totals['totale']).' €</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>';
@@ -615,8 +712,8 @@ echo '
     Stampa consuntivo
 */
 echo '
-<div class="text-center">
-    '.Prints::getLink('Consuntivo '.$text, $id_record, 'btn-primary', tr('Stampa consuntivo')).'
+<div class="text-center mb-4">
+    '.Prints::getLink('Consuntivo '.$text, $id_record, 'btn-primary btn-lg', tr('Stampa consuntivo')).'
 </div>';
 
 // Aggiunta interventi se il documento é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
@@ -625,21 +722,30 @@ $query = getQueryInterventiDisponibili($record['idanagrafica']);
 $count = $dbo->fetchNum($query);
 
 echo '<hr>
-<form action="" method="post" id="aggiungi-intervento">
-    <input type="hidden" name="op" value="addintervento">
-    <input type="hidden" name="backto" value="record-edit">
-
-    <div class="row">
-        <div class="col-md-8">
-            {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo documento').' ('.$count.')", "name": "idintervento", "values": "query='.$query.'", "required":"1" ]}
-        </div>
-
-    <!-- PULSANTI -->
-		<div class="col-md-4">
-            <p style="margin-top:-5px;" >&nbsp;</p>
-            <button type="button" class="btn btn-primary" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al documento?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.(($record['is_pianificabile'] && !$block_edit) ? '' : 'disabled').'>
-                <i class="fa fa-plus"></i> '.tr('Aggiungi').'
-            </button>
-		</div>
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <i class="fa fa-plus"></i> '.tr('Aggiungi intervento').'
     </div>
-</form>';
+    <div class="card-body">
+        <form action="" method="post" id="aggiungi-intervento">
+            <input type="hidden" name="op" value="addintervento">
+            <input type="hidden" name="backto" value="record-edit">
+
+            <div class="row">
+                <div class="col-md-8">
+                    {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo documento').' ('.$count.')", "name": "idintervento", "values": "query='.$query.'", "required":"1" ]}
+                </div>
+
+                <!-- PULSANTI -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#aggiungi-intervento\').parsley().validate() && confirm(\''.tr('Aggiungere questo intervento al documento?').'\') ){ $(\'#aggiungi-intervento\').submit(); }" '.(($record['is_pianificabile'] && !$block_edit) ? '' : 'disabled').'>
+                            <i class="fa fa-plus"></i> '.tr('Aggiungi').'
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>';

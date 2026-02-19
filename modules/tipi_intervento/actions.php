@@ -24,6 +24,8 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
+        $descrizione = post('descrizione');
+
         if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
             $tipo->name = $descrizione;
         }
@@ -102,11 +104,12 @@ switch (post('op')) {
         $costo_orario_tecnico = post('costo_orario_tecnico');
         $costo_km_tecnico = post('costo_km_tecnico');
         $costo_diritto_chiamata_tecnico = post('costo_diritto_chiamata_tecnico');
+        $descrizione = post('descrizione');
 
         $tipo = Tipo::build($codice, $calcola_km, $tempo_standard, $costo_orario, $costo_km, $costo_diritto_chiamata, $costo_orario_tecnico, $costo_km_tecnico, $costo_diritto_chiamata_tecnico);
         $tipo->name = $descrizione;
-        $tipo->setTranslation('title', post('descrizione'));
         $tipo->save();
+        $tipo->setTranslation('title', $descrizione);
 
         $id_record = $tipo->id;
 

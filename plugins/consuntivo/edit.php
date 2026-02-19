@@ -25,6 +25,7 @@ use Modules\Contratti\Contratto;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
+use Modules\TipiIntervento\Tipo;
 
 $tipologie = [];
 $tecnici = [];
@@ -412,40 +413,141 @@ echo '
     </div>
 </div>';
 if (!empty($totale_ore_contratto)) {
+    // Raggruppa le ore per tipo di attività
+    $tipologie_ore_per_riga = [];
+    
+    foreach ($interventi as $intervento) {
+        $sessioni = getSessioniCache($intervento, $sessioni_cache);
+        
+        foreach ($sessioni as $sessione) {
+            $tipo_title = $sessione->tipo->getTranslation('title');
+            
+            if (!isset($tipologie_ore_per_riga[$tipo_title])) {
+                $tipologie_ore_per_riga[$tipo_title] = [
+                    'ore_totali' => 0,
+                    'ore_completate' => 0,
+                ];
+            }
+            
+            $tipologie_ore_per_riga[$tipo_title]['ore_totali'] += $sessione->ore;
+            
+            if (!empty($intervento->stato->is_bloccato)) {
+                $tipologie_ore_per_riga[$tipo_title]['ore_completate'] += $sessione->ore;
+            }
+        }
+    }
+    
+    // Raggruppa le ore a contratto per tipo di attività dalle righe del documento
+    $ore_contratto_per_tipo = [];
+    foreach ($righe as $riga) {
+        if ($riga->um == 'ore') {
+            $id_tipointervento = $riga->id_tipointervento ?? null;
+            
+            if (!empty($id_tipointervento)) {
+                $tipo_intervento = Tipo::where('id', $id_tipointervento)->first()->name;
+                if ($tipo_intervento) {
+                    if (!isset($ore_contratto_per_tipo[$tipo_intervento])) {
+                        $ore_contratto_per_tipo[$tipo_intervento] = 0;
+                    }
+                    $ore_contratto_per_tipo[$tipo_intervento] += $riga->qta;
+                }
+            }
+        }
+    }
+    
+    // Crea una mappatura tra tipi attività sessioni e tipi attività contratto (case-insensitive)
+    $mappa_tipi = [];
+    foreach ($tipologie_ore_per_riga as $tipo_sessione => $dati) {
+        // Cerca una corrispondenza diretta case-insensitive
+        foreach ($ore_contratto_per_tipo as $tipo_contratto => $ore) {
+            if (strcasecmp($tipo_sessione, $tipo_contratto) == 0) {
+                $mappa_tipi[$tipo_sessione] = $tipo_contratto;
+                break;
+            }
+        }
+        // Se non trovato, usa null
+        if (!isset($mappa_tipi[$tipo_sessione])) {
+            $mappa_tipi[$tipo_sessione] = null;
+        }
+    }
+    
     echo '
 <div class="card mb-4">
     <div class="card-header bg-info text-white">
-        <i class="fa fa-clock"></i> '.tr('Riepilogo ore').'
+        <i class="fa fa-clock"></i> '.tr('Riepilogo ore per tipo di attività').'
     </div>
-    <div class="card-body">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                        <tr>
-                            <td>'.tr('Ore a contratto').':</td>
-                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore_contratto).'</td>
-                        </tr>
-                        <tr>
-                            <td>'.tr('Ore erogate totali').':</td>
-                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore).'</td>
-                        </tr>
-                        <tr>
-                            <td>'.tr('Ore residue totali').':</td>
-                            <td class="text-right font-weight-bold text-primary">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore)).'</td>
-                        </tr>
-                        <tr>
-                            <td>'.tr('Ore erogate concluse').':</td>
-                            <td class="text-right font-weight-bold">'.Translator::numberToLocale($totale_ore_completate).'</td>
-                        </tr>
-                        <tr>
-                            <td>'.tr('Ore residue concluse').':</td>
-                            <td class="text-right font-weight-bold text-primary">'.Translator::numberToLocale(floatval($totale_ore_contratto) - floatval($totale_ore_completate)).'</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>'.tr('Tipo attività').'</th>
+                    <th width="15%">'.tr('Ore a contratto').'</th>
+                    <th width="15%">'.tr('Ore erogate').'</th>
+                    <th width="15%">'.tr('Ore residue').'</th>
+                    <th width="15%">'.tr('Ore concluse').'</th>
+                    <th width="15%">'.tr('Ore residue concluse').'</th>
+                </tr>
+            </thead>
+            <tbody>';
+    
+    // Mostra le righe raggruppate per tipo di attività delle sessioni
+    foreach ($tipologie_ore_per_riga as $tipo => $dati) {
+        // Cerca le ore a contratto per questo tipo di attività usando la mappatura
+        $ore_contratto = 0;
+        $tipo_riga_mappato = $mappa_tipi[$tipo] ?? null;
+        
+        if ($tipo_riga_mappato !== null && isset($ore_contratto_per_tipo[$tipo_riga_mappato])) {
+            $ore_contratto = $ore_contratto_per_tipo[$tipo_riga_mappato];
+        }
+        
+        $ore_erogate = $dati['ore_totali'];
+        $ore_concluse = $dati['ore_completate'];
+        
+        $ore_residue = floatval($ore_contratto) - floatval($ore_erogate);
+        $ore_residue_concluse = floatval($ore_contratto) - floatval($ore_concluse);
+        
+        $bg_class_residue = $ore_residue >= 0 ? 'text-primary' : 'text-danger';
+        $bg_class_residue_concluse = $ore_residue_concluse >= 0 ? 'text-primary' : 'text-danger';
+        
+        echo '
+                <tr>
+                    <td><strong>'.$tipo.'</strong></td>
+                    <td class="text-right font-weight-bold">'.Translator::numberToLocale($ore_contratto).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($ore_erogate).'</td>
+                    <td class="text-right font-weight-bold '.$bg_class_residue.'">'.Translator::numberToLocale($ore_residue).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($ore_concluse).'</td>
+                    <td class="text-right font-weight-bold '.$bg_class_residue_concluse.'">'.Translator::numberToLocale($ore_residue_concluse).'</td>
+                </tr>';
+    }
+    
+    // Calcola i totali usando la mappatura
+    $totale_ore_erogate = 0;
+    $totale_ore_concluse = 0;
+    
+    // Calcola i totali basandosi sui tipi di attività delle sessioni
+    foreach ($tipologie_ore_per_riga as $tipo => $dati) {
+        $totale_ore_erogate += $dati['ore_totali'];
+        $totale_ore_concluse += $dati['ore_completate'];
+    }
+    
+    $totale_ore_residue = floatval($totale_ore_contratto) - floatval($totale_ore_erogate);
+    $totale_ore_residue_concluse = floatval($totale_ore_contratto) - floatval($totale_ore_concluse);
+    
+    $bg_class_residue_totali = $totale_ore_residue >= 0 ? 'text-primary' : 'text-danger';
+    $bg_class_residue_concluse_totali = $totale_ore_residue_concluse >= 0 ? 'text-primary' : 'text-danger';
+    
+    // Riga totali
+    echo '
+                <tr class="table-dark font-weight-bold">
+                    <td class="border-0">'.tr('TOTALE').'</td>
+                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_erogate).'</td>
+                    <td class="text-right '.$bg_class_residue_totali.' border-0">'.Translator::numberToLocale($totale_ore_residue).'</td>
+                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_concluse).'</td>
+                    <td class="text-right '.$bg_class_residue_concluse_totali.' border-0">'.Translator::numberToLocale($totale_ore_residue_concluse).'</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>';
 } else {

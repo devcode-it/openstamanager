@@ -261,6 +261,7 @@ switch (post('op')) {
         $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->id_iva = post('idiva');
+        $riga->id_tipointervento = post('id_tipointervento') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));

@@ -266,6 +266,10 @@ echo '
                 
                 <div class="col-md-4">
                     {[ "type": "date", "label": "'.tr('Data fine competenza').'", "name": "data_fine_competenza", "value": "'.$result['data_fine_competenza'].'" ]}
+                </div>
+                
+                <div class="col-md-4">
+                    {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "id_tipointervento", "value": "'.$result['id_tipointervento'].'", "ajax-source": "tipiintervento", "placeholder": "'.tr('Seleziona un tipo di intervento...').'" ]}
                 </div>';
 
 if (isset($result['type']) && isset($result['id'])) {

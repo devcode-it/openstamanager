@@ -82,12 +82,23 @@ class Intervento extends Document
     public function getOreTotaliAttribute()
     {
         if (!isset($this->info['ore_totali'])) {
-            $sessioni = $this->sessioni()->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')->where('non_conteggiare', 0);
+            $sessioni = $this->sessioni;
 
             $this->info['ore_totali'] = $sessioni->sum('ore');
         }
 
         return $this->info['ore_totali'];
+    }
+
+    public function getOreTotaliDaConteggiareAttribute()
+    {
+        if (!isset($this->info['ore_totali_da_conteggiare'])) {
+            $sessioni = $this->sessioni()->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')->where('non_conteggiare', 0);
+
+            $this->info['ore_totali_da_conteggiare'] = $sessioni->sum('ore');
+        }
+
+        return $this->info['ore_totali_da_conteggiare'];
     }
 
     public function getKmTotaliAttribute()
@@ -197,6 +208,7 @@ class Intervento extends Document
 
         $result = array_merge($array, [
             'ore_totali' => $this->ore_totali,
+            'ore_totali_da_conteggiare' => $this->ore_totali_da_conteggiare,
             'km_totali' => $this->km_totali,
         ]);
 

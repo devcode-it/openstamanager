@@ -27,7 +27,7 @@ $rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento-
 
 $rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
 $totale_ore = $rs[0]['totale_ore'];
-$totale_ore_impiegate = $records->sum('ore_totali');
+$totale_ore_impiegate = $records->sum('ore_totali_da_conteggiare');
 
 if ($pricing || !empty($totale_ore)) {
     // Totale imponibile

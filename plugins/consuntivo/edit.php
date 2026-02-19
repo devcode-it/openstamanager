@@ -157,7 +157,7 @@ if (!empty($interventi)) {
 
     // Tabella con i dati
     foreach ($interventi as $intervento) {
-        $totale_ore_completate += !empty($intervento->stato->is_bloccato) ? $intervento->ore_totali : 0;
+        $totale_ore_completate += !empty($intervento->stato->is_bloccato) ? $intervento->ore_totali_da_conteggiare : 0;
         // Riga per il singolo intervento
         echo '
                 <tr style="background:'.$intervento->stato->colore.';">
@@ -172,7 +172,7 @@ if (!empty($interventi)) {
                     </td>
 
                     <td class="text-right">
-                        '.($intervento->ore_totali <= 0 ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Questa sessione è vuota').'"></i> ' : '').numberFormat($intervento->ore_totali).'
+                        '.($intervento->ore_totali_da_conteggiare <= 0 ? '<i class="fa fa-exclamation-triangle text-warning" title="'.tr('Questa sessione è vuota').'"></i> ' : '').numberFormat($intervento->ore_totali_da_conteggiare).'
                     </td>
 
                     <td class="text-right">
@@ -351,7 +351,7 @@ if (!empty($interventi)) {
     $totale_costo = sum(array_column($array_interventi, 'spesa'));
     $totale_addebito = sum(array_column($array_interventi, 'imponibile'));
     $totale = sum(array_column($array_interventi, 'totale_imponibile'));
-    $totale_ore = sum(array_column($array_interventi, 'ore_totali'));
+    $totale_ore = sum(array_column($array_interventi, 'ore_totali_da_conteggiare'));
     // Totali
     echo '
                 <tr class="font-weight-bold">

@@ -55,7 +55,15 @@ $perc_ore = 0;
 $color = 'danger';
 if ($intervento->id_contratto) {
     $contratto = Contratto::find($intervento->id_contratto);
-    $ore_erogate = $contratto->interventi->sum('ore_totali');
+    // Se metodo_conteggio è 1, conta solo le sessioni fino a data odierna
+    if ($metodo_conteggio == 1) {
+        $ore_erogate = \Modules\Interventi\Components\Sessione::join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
+            ->where('in_interventi.id_contratto', $contratto->id)
+            ->where('orario_inizio', '<', Carbon::tomorrow())
+            ->sum('ore');
+    } else {
+        $ore_erogate = $contratto->interventi->sum('ore_ore_totali_da_conteggiaretotali');
+    }
     $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
     $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste ?: 1) : 0;
     if ($perc_ore < 75) {

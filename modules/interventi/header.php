@@ -63,7 +63,7 @@ if ($intervento->id_contratto) {
             ->where('orario_inizio', '<', Carbon::tomorrow())
             ->sum('ore');
     } else {
-        $ore_erogate = $contratto->interventi->sum('ore_totali');
+        $ore_erogate = $contratto->interventi->sum('ore_ore_totali_da_conteggiaretotali');
     }
     $ore_previste = $contratto->getRighe()->where('um', 'ore')->sum('qta');
     $perc_ore = $ore_previste != 0 ? ($ore_erogate * 100) / ($ore_previste ?: 1) : 0;

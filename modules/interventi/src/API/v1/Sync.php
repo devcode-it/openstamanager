@@ -24,7 +24,11 @@ use API\Interfaces\RetrieveInterface;
 use API\Interfaces\UpdateInterface;
 use API\Resource;
 use Carbon\Carbon;
+use Modules\Anagrafiche\Anagrafica;
+use Modules\Interventi\Components\Sessione;
+use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
+use Modules\TipiIntervento\Tipo as TipoSessione;
 
 class Sync extends Resource implements RetrieveInterface, UpdateInterface
 {
@@ -33,12 +37,32 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $database = database();
         $user = $this->getUser();
 
+        // Controllo permessi per il modulo Interventi
+        $module = \Models\Module::where('name', 'Interventi')->first();
+        $permission = \Modules::getPermission($module->id);
+        
+        // Verifica se l'utente ha permessi di lettura per il modulo Interventi
+        if (!in_array($permission, ['r', 'rw']) || (!$user->anagrafica->isTipo('Tecnico') && !$user->anagrafica->isTipo('Cliente'))) {
+            return [
+                'custom' => '',
+            ];
+        }
+
         // Normalizzazione degli interventi a database
         $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.idanagrafica=in_interventi.idanagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');
         $database->query('UPDATE in_interventi_tecnici SET uid = id WHERE uid IS NULL');
+        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE description=""');
 
         // Individuazione degli interventi
-        $query = 'SELECT in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, richiesta, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, summary FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE DATE(orario_inizio) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE() + INTERVAL 3 MONTH AND deleted_at IS NULL';
+        $query = 'SELECT 
+            in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS cliente, in_interventi_tecnici.description, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, summary 
+        FROM 
+            in_interventi_tecnici 
+        INNER JOIN 
+            in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+        LEFT JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`id`
+        WHERE 
+            DATE(orario_inizio) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE() + INTERVAL 3 MONTH AND in_interventi.deleted_at IS NULL';
 
         if ($user->anagrafica->isTipo('Tecnico')) {
             $query .= ' AND in_interventi_tecnici.idtecnico = '.prepare($user['idanagrafica']);
@@ -55,9 +79,9 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $result .= "PRODID:-// OpenSTAManager\n";
 
         foreach ($rs as $r) {
-            $richiesta = str_replace("\r\n", "\n", strip_tags((string) $r['richiesta']));
-            $richiesta = str_replace("\r", "\n", $richiesta);
-            $richiesta = str_replace("\n", '\\n', $richiesta);
+            $description = str_replace("\r\n", "\n", strip_tags((string) $r['description']));
+            $description = str_replace("\r", "\n", $description);
+            $description = str_replace("\n", '\\n', $description);
 
             $r['summary'] = str_replace("\r\n", "\n", $r['summary']);
 
@@ -72,7 +96,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\n";
             $result .= 'DTEND:'.$fine->format('Ymd\THis')."\n";
             $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
-            $result .= 'DESCRIPTION:'.html_entity_decode($richiesta, ENT_QUOTES, 'UTF-8')."\n";
+            $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\n";
             $result .= "END:VEVENT\n";
         }
 
@@ -88,21 +112,29 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $database = database();
         $user = $this->getUser();
 
+        // Controllo permessi per il modulo Interventi
+        $module = \Models\Module::where('name', 'Interventi')->first();
+        $permission = \Modules::getPermission($module->id);
+        
+        // Verifica se l'utente ha permessi di scrittura per il modulo Interventi
+        if (!in_array($permission, ['rw'])) {
+            return;
+        }
+
         // Normalizzazione degli interventi a database
         $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.idanagrafica=in_interventi.idanagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');
         $database->query('UPDATE in_interventi_tecnici SET uid = id WHERE uid IS NULL');
+        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE description=""');
 
         // Interpretazione degli eventi
         $idtecnico = $user['idanagrafica'];
 
-        $response = API\Response::getRequest(true);
+        $response = \API\Response::getRequest(true);
 
         $ical = new \iCalEasyReader();
         $events = $ical->load($response);
 
         foreach ($events['VEVENT'] as $event) {
-            $description = $event['DESCRIPTION'];
-
             // Individuazione idriga di in_interventi_tecnici
             if (string_contains($event['UID'], '-')) {
                 $idriga = 'NEW';
@@ -110,80 +142,65 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                 $idriga = $event['UID'];
             }
 
+            $start = is_array($event['DTSTART']) ? $event['DTSTART']['VALUE'] : $event['DTSTART'];
+            $end = is_array($event['DTEND']) ? $event['DTEND']['VALUE'] : $event['DTEND'];
+
             // Timestamp di inizio
-            $orario_inizio = \DateTime::createFromFormat('Ymd\\THi', $event['DTSTART'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
+            $orario_inizio = \DateTime::createFromFormat('Ymd\\THis', $start)->format(\Intl\Formatter::getStandardFormats()['timestamp']);
 
             // Timestamp di fine
-            $orario_fine = \DateTime::createFromFormat('Ymd\\THi', $event['DTEND'])->format(Intl\Formatter::getStandardFormats()['timestamp']);
+            $orario_fine = \DateTime::createFromFormat('Ymd\\THis', $end)->format(\Intl\Formatter::getStandardFormats()['timestamp']);
 
             // Descrizione
-            $richiesta = $event['DESCRIPTION'];
-            $richiesta = str_replace('\\r\\n', "\n", $richiesta);
-            $richiesta = str_replace('\\n', "\n", $richiesta);
+            $description = is_array($event['DESCRIPTION']) ? $event['DESCRIPTION']['VALUE']: $event['DESCRIPTION'];
+            // Rimozione prefisso tipo "text/html,2":TESTO per ottenere solo TESTO
+            if (preg_match('/^[^:]+:(.*)$/', $description, $matches)) {
+                $description = $matches[1];
+            }
+            $description = str_replace('\\r\\n', "\n", $description);
+            $description = str_replace('\\n', "\n", $description);
 
             $summary = trim((string) $event['SUMMARY']);
             $summary = str_replace('\\r\\n', "\n", $summary);
             $summary = str_replace('\\n', "\n", $summary);
 
-            // Nuova attività
+            // Creazione nuova attività o modifica attività creata dal calendario
             if ($idriga == 'NEW') {
-                $rs_copie = $database->fetchArray('SELECT * FROM in_interventi_tecnici WHERE uid = '.prepare($event['UID']));
+                $sessione = Sessione::where('uid', $event['UID'])->first();
 
-                if (!empty($rs_copie)) {
-                    $idintervento = $rs_copie[0]['idintervento'];
-
-                    $database->update('in_interventi_tecnici', [
-                        'orario_inizio' => $orario_inizio,
-                        'orario_fine' => $orario_fine,
-                        'summary' => $summary,
-                    ], [
-                        'uid' => $event['UID'],
-                        'idtecnico' => $idtecnico,
-                    ]);
-
-                    $database->query('UPDATE in_interventi SET richiesta='.prepare($richiesta).', oggetto='.prepare($summary).' WHERE idintervento = (SELECT idintervento FROM in_interventi_tecnici WHERE idintervento = '.prepare($idintervento).' AND idtecnico = '.prepare($idtecnico).' LIMIT 0,1)');
-
-                    $idriga = $rs_copie[0]['id'];
+                if ($sessione) {
+                    $sessione->orario_inizio = $orario_inizio;
+                    $sessione->orario_fine = $orario_fine;
+                    $sessione->summary = $summary;
+                    $sessione->description = $description;
+                    $sessione->save();
                 } else {
-                    $idintervento = get_new_idintervento();
-                    $stato = Stato::where('name', 'Chiamato')->first()->id;
+                    $anagrafica = Anagrafica::find(setting('Azienda predefinita'));
+                    $tipo = $anagrafica->idtipointervento_default ?: TipoSessione::first();
+                    $stato = Stato::find(setting('Stato predefinito dell\'attività'));
+                    $data_richiesta = Carbon::now();
 
-                    $database->insert('in_interventi', [
-                        'idintervento' => $idintervento,
-                        'idanagrafica' => setting('Azienda predefinita'),
-                        'data_richiesta' => Carbon::now(),
-                        'richiesta' => $richiesta,
-                        'idtipointervento' => 0,
-                        'idstatointervento' => $stato,
-                        'oggetto' => $summary,
-                    ]);
+                    $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
+                    $intervento->richiesta = $description;
+                    $intervento->save();
 
-                    $database->insert('in_interventi', [
-                        'idintervento' => $idintervento,
-                        'idtecnico' => $idtecnico,
-                        'orario_inizio' => $orario_inizio,
-                        'orario_fine' => $orario_fine,
-                        'summary' => $summary,
-                        'uid' => $event['UID'],
-                    ]);
-
-                    $idriga = $database->lastInsertedID();
+                    add_tecnico($intervento->id, $idtecnico, $orario_inizio, $orario_fine);
+                    $sessione = Sessione::where('idintervento', $intervento->id)->get()->last();
+                    $sessione->summary = $summary;
+                    $sessione->description = $description;
+                    $sessione->uid = $event['UID'];
+                    $sessione->save();
                 }
             }
 
-            // Modifica attività esistente
+            // Modifica attività creata in OSM
             else {
-                $database->update('in_interventi_tecnici', [
-                    'orario_inizio' => $orario_inizio,
-                    'orario_fine' => $orario_fine,
-                    'summary' => $summary,
-                ], [
-                    'id' => $idriga,
-                    'idtecnico' => $idtecnico,
-                ]);
-
-                $query = 'UPDATE in_interventi SET richiesta='.prepare($richiesta).', oggetto='.prepare($summary).' WHERE idintervento = (SELECT idintervento FROM in_interventi_tecnici WHERE id = '.prepare($idriga).' AND idtecnico = '.prepare($idtecnico).' LIMIT 0,1)';
-                $database->query($query);
+                $sessione = Sessione::find($idriga);
+                $sessione->orario_inizio = $orario_inizio;
+                $sessione->orario_fine = $orario_fine;
+                $sessione->summary = $summary;
+                $sessione->description = $description;
+                $sessione->save();
             }
         }
     }

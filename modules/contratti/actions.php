@@ -637,9 +637,12 @@ switch (post('op')) {
             $contratto->id_sottocategoria = $documento->id_sottocategoria;
 
             // Calcola le date del nuovo contratto
-            $diff = $documento->data_conclusione->diffAsCarbonInterval($documento->data_accettazione);
-            $contratto->data_accettazione = $documento->data_conclusione->copy()->addDays(1);
-            $contratto->data_conclusione = $contratto->data_accettazione->copy()->add($diff);
+            $diff = abs($documento->data_conclusione->diffInDays($documento->data_accettazione));
+            if (!empty($documento->data_conclusione)) {
+                $contratto->data_accettazione = $documento->data_conclusione->copy()->addDays(1);
+            }
+            
+            $contratto->data_conclusione = $contratto->data_accettazione->copy()->addDays($diff);
             $contratto->data_bozza = Carbon::now();
             
             // Disabilita il calcolo automatico della data di conclusione
@@ -649,7 +652,7 @@ switch (post('op')) {
             $stato = Stato::where('name', 'Bozza')->first();
             $contratto->stato()->associate($stato);
 
-            $contratto->save();
+            $contratto->saveQuietly();
             $id_record = $contratto->id;
 
             // Copia i tipi di intervento dal contratto precedente
@@ -701,8 +704,6 @@ switch (post('op')) {
         } elseif (!empty($documento->sconto_finale_percentuale)) {
             $contratto->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
-
-        $contratto->save();
 
         // Se è un rinnovo, copia solo le righe selezionate
         if ($is_renewal) {

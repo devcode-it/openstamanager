@@ -66,6 +66,10 @@ if (!$is_anagrafica_deleted) {
                 <i class="fa fa-truck"></i> '.tr('Ddt').'
             </a>
 
+            <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=contratto" data-toggle="modal" data-title="'.tr('Crea contratto').'">
+                <i class="fa fa-file-o"></i> '.tr('Contratto').'
+            </a>
+
             <a class="btn dropdown-item" data-href="'.$structure->fileurl('crea_documento.php').'?id_module='.$id_module.'&id_record='.$id_record.'&documento=fattura" data-toggle="modal" data-title="'.tr('Crea fattura').'">
                 <i class="fa fa-file"></i> '.tr('Fattura').'
             </a>

@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
@@ -42,6 +43,10 @@ if (get('documento') == 'fattura') {
     $final_module = 'Interventi';
     $op = $module->name == 'Ordini cliente' ? 'add_documento' : 'add_intervento';
     $tipo_documento_finale = Intervento::class;
+} elseif (get('documento') == 'contratto') {
+    $final_module = 'Contratti';
+    $op = 'add_documento';
+    $tipo_documento_finale = Contratto::class;
 } else {
     $final_module = $module->name == 'Ordini cliente' ? 'Ddt in uscita' : 'Ddt in entrata';
     $op = 'add_ordine';

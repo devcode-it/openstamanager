@@ -139,7 +139,7 @@ $totale_ore_completate = 0;
 if (!empty($interventi)) {
     echo '
 <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-info text-white">
         <i class="fa fa-list-alt"></i> '.tr('Riepilogo Interventi').'
     </div>
     <div class="card-body p-0">
@@ -458,7 +458,7 @@ echo '
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-list"></i> '.tr('Tipologia').'
             </div>
             <div class="card-body p-0">
@@ -496,7 +496,7 @@ echo '
     </div>
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-users"></i> '.tr('Tecnici').'
             </div>
             <div class="card-body p-0">
@@ -538,7 +538,7 @@ echo '
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-warning text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-flag"></i> '.tr('Stato').'
             </div>
             <div class="card-body p-0">
@@ -723,7 +723,7 @@ $count = $dbo->fetchNum($query);
 
 echo '<hr>
 <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-info text-white">
         <i class="fa fa-plus"></i> '.tr('Aggiungi intervento').'
     </div>
     <div class="card-body">

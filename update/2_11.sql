@@ -41,3 +41,5 @@ ALTER TABLE `in_interventi_tecnici` ADD `description` TEXT NOT NULL AFTER `summa
 
 -- Aggiunta colonna id_tipointervento alla tabella co_righe_contratti
 ALTER TABLE `co_righe_contratti` ADD `id_tipointervento` INT(11) NULL;
+
+ALTER TABLE `co_contratti_tipiintervento` ADD `abilitato` TINYINT(1) NOT NULL DEFAULT 1;

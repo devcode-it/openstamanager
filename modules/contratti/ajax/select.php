@@ -141,4 +141,50 @@ switch ($resource) {
             $custom['link'] = 'module:Categorie contratti';
         }
         break;
+    
+    /*
+     * Opzioni utilizzate:
+     * - id_record
+     */
+    case 'tipiintervento_abilitati':
+        $id_record = $options['id_record'] ?? get('id_record') ?? $superselect['id_record'];
+        
+        $query = 'SELECT
+                    `in_tipiintervento`.`id` AS id,
+                    `in_tipiintervento_lang`.`title` AS descrizione
+                FROM
+                    `co_contratti_tipiintervento`
+                    INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento`
+                    LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+                WHERE
+                    `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_record).'
+                    AND `co_contratti_tipiintervento`.`abilitato` = 1
+                ORDER BY
+                    `in_tipiintervento_lang`.`title`';
+        
+        $where = [];
+        $custom = [];
+        
+        if (!empty($search)) {
+            $search_fields[] = '`in_tipiintervento_lang`.`title` LIKE '.prepare('%'.$search.'%');
+        }
+        
+        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
+        $rs = $data['results'];
+        
+        $results = [];
+        foreach ($rs as $r) {
+            $results[] = [
+                'id' => $r['id'],
+                'text' => $r['descrizione'],
+                'descrizione' => $r['descrizione'],
+            ];
+        }
+        
+        $results = [
+            'results' => $results,
+            'recordsFiltered' => $data['recordsFiltered'],
+        ];
+        
+        break;
 }

@@ -269,7 +269,7 @@ echo '
                 </div>
                 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "id_tipointervento", "value": "'.$result['id_tipointervento'].'", "ajax-source": "tipiintervento", "placeholder": "'.tr('Seleziona un tipo di intervento...').'" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "id_tipointervento", "value": "'.$result['id_tipointervento'].'", "ajax-source": "tipiintervento_abilitati", "placeholder": "'.tr('Seleziona un tipo di intervento...').'", "select-options": '.(!empty($options['select-options']['tipiintervento']) ? json_encode($options['select-options']['tipiintervento']) : '[]').' ]}
                 </div>';
 
 if (isset($result['type']) && isset($result['id'])) {

@@ -40,6 +40,9 @@ $options = [
             'permetti_movimento_a_zero' => 1,
             'idagente' => $documento->idagente,
         ],
+        'tipiintervento' => [
+            'id_record' => $id_record,
+        ],
     ],
 ];
 
@@ -55,6 +58,21 @@ $result = [
     'provvigione_default' => 0,
     'tipo_provvigione_default' => 'PRC',
 ];
+
+// Lettura dei parametri GET per precompilare i campi
+if (!empty(get('descrizione'))) {
+    $result['descrizione'] = get('descrizione');
+}
+if (!empty(get('prezzo_unitario'))) {
+    $result['prezzo'] = get('prezzo_unitario');
+    $result['prezzo_unitario_corrente'] = get('prezzo_unitario');
+}
+if (!empty(get('um'))) {
+    $result['um'] = get('um');
+}
+if (!empty(get('id_tipointervento'))) {
+    $result['id_tipointervento'] = get('id_tipointervento');
+}
 
 // Leggo la provvigione predefinita per l'anagrafica
 $result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE idanagrafica='.prepare($documento->idagente))['provvigione_default'];

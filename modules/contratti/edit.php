@@ -154,7 +154,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "idtipointervento", "ajax-source": "tipiintervento", "value": "$idtipointervento$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "idtipointervento", "ajax-source": "tipiintervento_abilitati", "select-options": {"id_record": <?php echo $id_record; ?>}, "value": "<?php echo empty($record['idtipointervento']) || $record['idtipointervento'] == 0 ? '' : $record['idtipointervento']; ?>" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -277,8 +277,8 @@ echo '
 
 $idtipiintervento = ['-1'];
 
-// Loop fra i tipi di attività e i relativi costi del tipo intervento
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `idcontratto`='.prepare($id_record).' AND (`co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario` OR `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km` OR `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`) ORDER BY `in_tipiintervento_lang`.`title`');
+// Loop fra i tipi di attività e i relativi costi del tipo intervento (solo quelli personalizzati)
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `idcontratto`='.prepare($id_record).' AND ((`co_contratti_tipiintervento`.`costo_ore` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario`) OR (`co_contratti_tipiintervento`.`costo_km` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km`) OR (`co_contratti_tipiintervento`.`costo_dirittochiamata` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`)) ORDER BY `in_tipiintervento_lang`.`title`');
 
 if (!empty($rs)) {
     echo '
@@ -290,10 +290,11 @@ if (!empty($rs)) {
                             <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
                             <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-                            <th width="40"></th>
+                            <th width="120"></th>
                         </tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
+        $abilitato = !empty($rs[$i]['abilitato']);
         echo '
                             <tr>
                                 <td>'.$rs[$i]['title'].'</td>
@@ -310,9 +311,15 @@ if (!empty($rs)) {
                                     {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata'].'" ]}
                                 </td>
 
-                                <td>
-                                    <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-warning btn-xs" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
                                     <i class="fa fa-download"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-'.($abilitato ? 'success' : 'secondary').' btn-xs" data-card-widget="tooltip" title="'.($abilitato ? tr('Disabilita') : tr('Abilita')).'" onclick="toggleTipoAttivita('.$rs[$i]['idtipointervento'].', this)">
+                                    <i class="fa fa-'.($abilitato ? 'check' : 'times').'"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-xs" data-card-widget="tooltip" title="'.tr('Aggiungi riga ore di').'" onclick="aggiungiRigaOre('.$rs[$i]['idtipointervento'].', \''.$rs[$i]['title'].'\')" '.(!$abilitato ? 'style="display:none;"' : '').'>
+                                    <i class="fa fa-plus"></i>
                                     </button>
                                 </td>
 
@@ -328,8 +335,8 @@ echo '
                     <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non modificati').'</button>
 					<div class="hide">';
 
-// Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli a 0)
-$rs = $dbo->fetchArray('SELECT * FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', array_map(prepare(...), $idtipiintervento)).') AND `idcontratto`='.prepare($id_record).' ORDER BY `title`');
+// Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli non modificati)
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km` AS `costo_km_standard`, `in_tipiintervento`.`costo_diritto_chiamata`, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', array_map(prepare(...), $idtipiintervento)).') AND `idcontratto`='.prepare($id_record).' AND ((`co_contratti_tipiintervento`.`costo_ore` IS NULL OR `co_contratti_tipiintervento`.`costo_ore` = `in_tipiintervento`.`costo_orario`) AND (`co_contratti_tipiintervento`.`costo_km` IS NULL OR `co_contratti_tipiintervento`.`costo_km` = `in_tipiintervento`.`costo_km`) AND (`co_contratti_tipiintervento`.`costo_dirittochiamata` IS NULL OR `co_contratti_tipiintervento`.`costo_dirittochiamata` = `in_tipiintervento`.`costo_diritto_chiamata`)) ORDER BY `title`');
 
 if (!empty($rs)) {
     echo '
@@ -342,10 +349,11 @@ if (!empty($rs)) {
 								<th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 								<th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
 
-                                <th width="40"></th>
+                                <th width="120"></th>
 							</tr>';
 
     for ($i = 0; $i < sizeof($rs); ++$i) {
+        $abilitato = !empty($rs[$i]['abilitato']);
         echo '
                             <tr>
                                 <td>'.$rs[$i]['title'].'</td>
@@ -355,17 +363,20 @@ if (!empty($rs)) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_standard'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'" , "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
                                 </td>
 
-                                <td>
-                                <button type="button" class="btn btn-warning" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
-                                    <i class="fa fa-download"></i>
-                                </button>
+                                <td class="text-center">
+                                <button type="button" class="btn btn-'.($abilitato ? 'success' : 'secondary').' btn-xs" data-card-widget="tooltip" title="'.($abilitato ? tr('Disabilita') : tr('Abilita')).'" onclick="toggleTipoAttivita('.$rs[$i]['idtipointervento'].', this)">
+                                    <i class="fa fa-'.($abilitato ? 'check' : 'times').'"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-xs" data-card-widget="tooltip" title="'.tr('Aggiungi riga ore di').'" onclick="aggiungiRigaOre('.$rs[$i]['idtipointervento'].', \''.$rs[$i]['title'].'\')" '.(!$abilitato ? 'style="display:none;"' : '').'>
+                                    <i class="fa fa-plus"></i>
+                                    </button>
                                 </td>
 
                             </tr>';
@@ -528,6 +539,85 @@ $(document).ready(function() {
     caricaRighe(null);
     content_was_modified = false;
 });
+
+/**
+ * Funzione per abilitare/disabilitare un tipo di attività nel contratto
+ */
+function toggleTipoAttivita(idTipoIntervento, button) {
+    $.ajax({
+        url: globals.rootdir + "/modules/contratti/actions.php",
+        type: "POST",
+        data: {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            op: "toggle_tipo_attivita",
+            idtipointervento: idTipoIntervento
+        },
+        success: function(data) {
+            var response = JSON.parse(data);
+            if (response.status === "success") {
+                // Aggiorna l\'aspetto del pulsante
+                var icon = $(button).find("i");
+                var addButton = $(button).next();
+                if (response.abilitato) {
+                    $(button).removeClass("btn-secondary").addClass("btn-success");
+                    icon.removeClass("fa-times").addClass("fa-check");
+                    $(button).attr("title", "'.tr('Disabilita').'");
+                    addButton.show();
+                } else {
+                    $(button).removeClass("btn-success").addClass("btn-secondary");
+                    icon.removeClass("fa-check").addClass("fa-times");
+                    $(button).attr("title", "'.tr('Abilita').'");
+                    addButton.hide();
+                }
+            } else {
+                swal({
+                    type: "error",
+                    title: "'.tr('Errore').'",
+                    text: response.message
+                });
+            }
+        },
+        error: function() {
+            swal({
+                type: "error",
+                title: "'.tr('Errore').'",
+                text: "'.tr('Si è verificato un errore durante l\'operazione').'"
+            });
+        }
+    });
+}
+
+/**
+ * Funzione per aggiungere una riga precompilata con "ore di" + tipo di intervento
+ */
+function aggiungiRigaOre(idTipoIntervento, titoloTipo) {
+    // Recupera il costo orario del tipo di intervento dal contratto
+    $.ajax({
+        url: globals.rootdir + "/modules/contratti/ajax.php",
+        type: "GET",
+        data: {
+            op: "get_costo_ore",
+            id_record: globals.id_record,
+            idtipointervento: idTipoIntervento
+        },
+        success: function(data) {
+            var response = JSON.parse(data);
+            var costoOre = response.costo_ore || 0;
+
+            // Apri il modal per aggiungere una riga
+            var options = "is_riga=1&descrizione=" + encodeURIComponent("'.tr('Ore di').' " + titoloTipo) + "&prezzo_unitario=" + costoOre + "&id_tipointervento=" + idTipoIntervento + "&um=" + encodeURIComponent("'.tr('Ore').'");
+            openModal("'.tr('Aggiungi riga').'", globals.rootdir + "/modules/contratti/row-add.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&" + options);
+        },
+        error: function() {
+            swal({
+                type: "error",
+                title: "'.tr('Errore').'",
+                text: "'.tr('Si è verificato un errore durante il recupero del costo orario').'"
+            });
+        }
+    });
+}
 
 $("#idanagrafica_c").change(function() {
     updateSelectOption("idanagrafica", $(this).val());

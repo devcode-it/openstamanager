@@ -590,6 +590,33 @@ switch (post('op')) {
 
         break;
 
+    case 'toggle_tipo_attivita':
+        // Recupera lo stato attuale
+        $current = $dbo->fetchOne('SELECT `abilitato` FROM `co_contratti_tipiintervento` WHERE `idcontratto` = '.prepare($id_record).' AND `idtipointervento` = '.prepare(post('idtipointervento')));
+
+        if ($current) {
+            // Inverti lo stato
+            $nuovo_stato = $current['abilitato'] == 1 ? 0 : 1;
+            $dbo->update('co_contratti_tipiintervento', [
+                'abilitato' => $nuovo_stato,
+            ], [
+                'idcontratto' => $id_record,
+                'idtipointervento' => post('idtipointervento'),
+            ]);
+
+            echo json_encode([
+                'status' => 'success',
+                'abilitato' => $nuovo_stato == 1,
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => tr('Tipo di attività non trovato'),
+            ]);
+        }
+
+        break;
+
     case 'import':
         $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare(post('idcontratto')).' AND idtipointervento='.prepare(post('idtipointervento')));
 
@@ -602,7 +629,7 @@ switch (post('op')) {
                 .' `costo_ore_tecnico`=(SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('idtipointervento')).'), '
                 .' `costo_km_tecnico`=(SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('idtipointervento')).'), '
                 .' `costo_dirittochiamata_tecnico`=(SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('idtipointervento')).') '
-                .' WHERE `idcontratto`='.prepare(post('idcontratto')).' AND `id`='.prepare(post('idtipointervento')));
+                .' WHERE `idcontratto`='.prepare(post('idcontratto')).' AND `idtipointervento`='.prepare(post('idtipointervento')));
 
             if ($result) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));

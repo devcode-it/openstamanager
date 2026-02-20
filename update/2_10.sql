@@ -503,3 +503,7 @@ CREATE TABLE IF NOT EXISTS `an_automezzi_danni` (
     PRIMARY KEY (`id`),
     INDEX(`idsede`)
 );
+
+-- Aggiunta colonne minimo e massimo alla tabella mg_listini_articoli per gestire i prezzi per range
+ALTER TABLE `mg_listini_articoli` ADD `minimo` decimal(15,6) DEFAULT NULL;
+ALTER TABLE `mg_listini_articoli` ADD `massimo` decimal(15,6) DEFAULT NULL;

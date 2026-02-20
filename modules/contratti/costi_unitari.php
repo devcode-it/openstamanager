@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/init.php';
 
 $block_edit = $record['is_bloccato'];
 

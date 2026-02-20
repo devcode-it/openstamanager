@@ -297,8 +297,8 @@ class Contratto extends Document
             // Carica solo gli interventi con stato bloccato
             $interventi = $this->interventi()->with('stato')->get();
             foreach ($interventi as $intervento) {
-                if ($intervento->stato && $intervento->stato->is_bloccato == 1 && $intervento->idstato != $stato_intervento->id) {
-                    $intervento->idstato = $stato_intervento->id;
+                if ($intervento->stato && $intervento->stato->is_bloccato == 1 && $intervento->idstatointervento != $stato_intervento->id) {
+                    $intervento->idstatointervento = $stato_intervento->id;
                     $intervento->saveQuietly();
                 }
             }

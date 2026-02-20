@@ -512,84 +512,6 @@ switch (post('op')) {
 
         break;
 
-        // Rinnovo contratto
-    case 'renew':
-        $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
-
-        $new_contratto = $contratto->replicate();
-
-        $new_contratto->idcontratto_prev = $contratto->id;
-        $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
-        $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
-        $new_contratto->data_bozza = Carbon::now();
-        $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $new_contratto->id_segment);
-
-        $stato = Stato::where('name', 'Bozza')->first();
-        $new_contratto->stato()->associate($stato);
-
-        $new_contratto->save();
-        $new_idcontratto = $new_contratto->id;
-
-        // Correzioni dei prezzi per gli interventi
-        $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $new_idcontratto]);
-        $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($id_record));
-        $new_contratto->save();
-
-        // Replico le righe del contratto
-        $righe = $contratto->getRighe();
-        foreach ($righe as $riga) {
-            $new_riga = $riga->replicate();
-            $new_riga->qta_evasa = 0;
-            $new_riga->idcontratto = $new_contratto->id;
-
-            $new_riga->save();
-        }
-
-        // Replicazione degli impianti
-        $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($id_record));
-        $dbo->sync('my_impianti_contratti', ['idcontratto' => $new_idcontratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
-
-        // Replicazione dei promemoria
-        $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($id_record));
-        $giorni = $contratto->data_conclusione->diffInDays($contratto->data_accettazione);
-        foreach ($promemoria as $p) {
-            $dbo->insert('co_promemoria', [
-                'idcontratto' => $new_idcontratto,
-                'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
-                'idtipointervento' => $p['idtipointervento'],
-                'richiesta' => $p['richiesta'],
-                'idimpianti' => $p['idimpianti'],
-            ]);
-            $id_promemoria = $dbo->lastInsertedID();
-
-            $promemoria = Promemoria::find($p['id']);
-            $righe = $promemoria->getRighe();
-            foreach ($righe as $riga) {
-                $new_riga = $riga->replicate();
-                $new_riga->id_promemoria = $id_promemoria;
-                $new_riga->save();
-            }
-
-            // Copia degli allegati
-            $allegati = $promemoria->uploads();
-            foreach ($allegati as $allegato) {
-                $allegato->copia([
-                    'id_module' => $id_module,
-                    'id_plugin' => Plugin::where('name', 'Pianificazione interventi')->first()->id,
-                    'id_record' => $id_promemoria,
-                ]);
-            }
-        }
-
-        // Cambio stato precedente contratto in concluso (non più pianificabile)
-        $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($id_record));
-
-        flash()->info(tr('Contratto rinnovato!'));
-
-        $id_record = $new_idcontratto;
-
-        break;
-
     case 'toggle_tipo_attivita':
         // Recupera lo stato attuale
         $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipiintervento` WHERE `idcontratto` = '.prepare($id_record).' AND `idtipointervento` = '.prepare(post('idtipointervento')));
@@ -661,14 +583,17 @@ switch (post('op')) {
         }
         $documento = $class::find($id_documento);
 
+        // Verifica se è un rinnovo di contratto
+        $is_renewal = $documento instanceof Contratto && post('is_evasione') == '1';
+
         // Individuazione sede
         $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
         $idsede_partenza = $idsede_partenza ?: 0;
         $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
         $idsede_destinazione = $idsede_destinazione ?: 0;
 
-        // Creazione del contratto al volo
-        if (post('create_document') == 'on') {
+        // Creazione del contratto al volo (solo se non è un rinnovo)
+        if (post('create_document') == 'on' && !$is_renewal) {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
             $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
@@ -689,6 +614,86 @@ switch (post('op')) {
             $contratto->save();
 
             $id_record = $contratto->id;
+        } elseif ($is_renewal) {
+            // Creazione del nuovo contratto per il rinnovo
+            $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
+
+            $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
+            $contratto->idsede_partenza = $idsede_partenza;
+            $contratto->idsede_destinazione = $idsede_destinazione;
+            $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
+            $contratto->giorni_preavviso_rinnovo = setting('Giorni di preavviso di default');
+            $contratto->id_documento_fe = $documento->id_documento_fe;
+            $contratto->codice_cup = $documento->codice_cup;
+            $contratto->codice_cig = $documento->codice_cig;
+            $contratto->num_item = $documento->num_item;
+            $contratto->idcontratto_prev = $documento->id;
+
+            $contratto->descrizione = $documento->descrizione;
+            $contratto->esclusioni = $documento->esclusioni;
+            $contratto->idreferente = $documento->idreferente;
+            $contratto->idagente = $documento->idagente;
+            $contratto->id_categoria = $documento->id_categoria;
+            $contratto->id_sottocategoria = $documento->id_sottocategoria;
+
+            // Calcola le date del nuovo contratto
+            $diff = $documento->data_conclusione->diffAsCarbonInterval($documento->data_accettazione);
+            $contratto->data_accettazione = $documento->data_conclusione->copy()->addDays(1);
+            $contratto->data_conclusione = $contratto->data_accettazione->copy()->add($diff);
+            $contratto->data_bozza = Carbon::now();
+            
+            // Disabilita il calcolo automatico della data di conclusione
+            $contratto->validita = null;
+            $contratto->tipo_validita = null;
+
+            $stato = Stato::where('name', 'Bozza')->first();
+            $contratto->stato()->associate($stato);
+
+            $contratto->save();
+            $id_record = $contratto->id;
+
+            // Copia i tipi di intervento dal contratto precedente
+            $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $id_record]);
+            $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($documento->id));
+
+            // Copia gli impianti dal contratto precedente
+            $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($documento->id));
+            $dbo->sync('my_impianti_contratti', ['idcontratto' => $id_record], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+
+            // Replicazione dei promemoria
+            $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($documento->id));
+            $giorni = $documento->data_conclusione->diffInDays($documento->data_accettazione);
+            foreach ($promemoria as $p) {
+                $dbo->insert('co_promemoria', [
+                    'idcontratto' => $id_record,
+                    'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
+                    'idtipointervento' => $p['idtipointervento'],
+                    'richiesta' => $p['richiesta'],
+                    'idimpianti' => $p['idimpianti'],
+                ]);
+                $id_promemoria = $dbo->lastInsertedID();
+
+                $promemoria_obj = Promemoria::find($p['id']);
+                $righe = $promemoria_obj->getRighe();
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->id_promemoria = $id_promemoria;
+                    $new_riga->save();
+                }
+
+                // Copia degli allegati
+                $allegati = $promemoria_obj->uploads();
+                foreach ($allegati as $allegato) {
+                    $allegato->copia([
+                        'id_module' => $id_module,
+                        'id_plugin' => Plugin::where('name', 'Pianificazione interventi')->first()->id,
+                        'id_record' => $id_promemoria,
+                    ]);
+                }
+            }
+
+            // Aggiorna lo stato del contratto precedente a concluso
+            $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($documento->id));
         }
 
         if (!empty($documento->sconto_finale)) {
@@ -699,12 +704,23 @@ switch (post('op')) {
 
         $contratto->save();
 
-        $righe = $documento->getRighe();
-        foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
-                $qta = post('qta_da_evadere')[$riga->id];
+        // Se è un rinnovo, copia solo le righe selezionate
+        if ($is_renewal) {
+            $righe_selezionate = $documento->getRighe()->filter(function($riga) {
+                return post('evadere')[$riga->id] == 'on' && !empty(post('qta_da_evadere')[$riga->id]);
+            });
 
-                $copia = $riga->copiaIn($contratto, $qta);
+            foreach ($righe_selezionate as $riga) {
+                $qta = post('qta_da_evadere')[$riga->id];
+ 
+                $copia = $riga->replicate();
+                $copia->setDocument($contratto);
+                $copia->qta_evasa = 0;
+                $copia->qta = $qta;
+                $copia->original_id = null;
+                $copia->original_type = null;
+                $copia->original_document_id = null;
+                $copia->original_document_type = null;
 
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
@@ -717,6 +733,74 @@ switch (post('op')) {
             }
         }
 
+        // Gestione delle ore residue selezionate
+        $tipi_attivita_selezionati = post('evadere_ore') ?: [];
+        $tipi_attivita = post('tipi_attivita') ?: [];
+            
+        if (!empty($tipi_attivita_selezionati) && !empty($tipi_attivita)) {
+            // Prepara la lista dei tipi di attività per la query
+            $tipi_attivita_list = [];
+            foreach ($tipi_attivita as $id_tipo) {
+                $tipi_attivita_list[] = prepare($id_tipo);
+            }
+            
+            // Recupera i dettagli dei tipi di attività selezionati
+            $tipi_attivita_dettagli = $dbo->fetchArray('SELECT
+                `co_contratti_tipiintervento`.`idtipointervento`,
+                `in_tipiintervento_lang`.`title` AS descrizione,
+                COALESCE(SUM(`co_righe_contratti`.`qta`), 0) AS ore_totali,
+                COALESCE(SUM(`in_interventi_tecnici`.`ore`), 0) AS ore_utilizzate
+            FROM `co_contratti_tipiintervento`
+            INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`idtipointervento` = `in_tipiintervento`.`id`
+            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti_tipiintervento`.`idcontratto`
+                AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`idtipointervento`
+            LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`idcontratto`
+            LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                AND `in_interventi_tecnici`.`idtipointervento` = `co_contratti_tipiintervento`.`idtipointervento`
+            WHERE `co_contratti_tipiintervento`.`idcontratto` = '.prepare($documento->id).'
+                AND `co_contratti_tipiintervento`.`idtipointervento` IN ('.implode(',', $tipi_attivita_list).')
+            GROUP BY `co_contratti_tipiintervento`.`idtipointervento`, `in_tipiintervento_lang`.`title`');
+
+            foreach ($tipi_attivita_dettagli as $tipo) {
+                $idtipointervento = $tipo['idtipointervento'];
+                
+                // Verifica se questo tipo di attività è stato selezionato
+                if (!empty($tipi_attivita_selezionati[$idtipointervento]) && $tipi_attivita_selezionati[$idtipointervento] == 'on') {
+                    $qta_ore = post('qta_da_evadere_ore')[$idtipointervento] ?? 0;
+                    
+                    if ($qta_ore > 0) {
+                        // Recupera la riga originale del contratto precedente per questo tipo di attività
+                        $riga_originale = $documento->getRighe()
+                            ->where('id_tipointervento', $idtipointervento)
+                            ->first();
+                        
+                        if ($riga_originale) {
+                            // Crea una copia della riga originale con la quantità selezionata
+                            $copia = $riga_originale->replicate();
+                            $copia->setDocument($contratto);
+                            $copia->qta_evasa = 0;
+                            $copia->qta = $qta_ore;
+                            $copia->original_id = null;
+                            $copia->original_type = null;
+                            $copia->original_document_id = null;
+                            $copia->original_document_type = null;
+                            
+                            // Aggiunge alla descrizione il riferimento al contratto precedente
+                            $data_contratto = $documento->data_conclusione ? dateFormat($documento->data_conclusione) : dateFormat($documento->data_bozza);
+                            $copia->descrizione = $riga_originale->descrizione.' (Residue da attività numero '.$documento->numero.' del '.$data_contratto.')';
+                            
+                            // Applica uno sconto del 100%
+                            $copia->setSconto(100, 'PRC');
+                            
+                            $copia->save();
+                        }
+                    }
+                }
+            }
+            
+        }
+
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
             $contratto->idstato = post('id_stato');
@@ -726,9 +810,13 @@ switch (post('op')) {
         ricalcola_costiagg_ordine($id_record);
 
         // Messaggio informativo
-        $message = tr('_DOC_ aggiunto!', [
-            '_DOC_' => $documento->getReference(),
-        ]);
+        if ($is_renewal) {
+            $message = tr('Contratto rinnovato correttamente!');
+        } else {
+            $message = tr('_DOC_ aggiunto!', [
+                '_DOC_' => $documento->getReference(),
+            ]);
+        }
         flash()->info($message);
 
         break;

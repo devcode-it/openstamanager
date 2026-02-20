@@ -42,8 +42,8 @@ if (!$is_anagrafica_deleted) {
     <div class="tip" data-widget="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', [
         '_STATE_LIST_' => $stati_bloccati,
     ]).'" id="rinnova">
-        <button type="button" class="btn btn-warning ask '.($rinnova ? '' : 'disabled').'" data-backto="record-edit" data-op="renew" data-msg="'.tr('Rinnovare questo contratto?').'" data-button="'.tr('Rinnova').'" data-class="btn btn-lg btn-warning">
-            <i class="fa fa-refresh"></i> '.tr('Rinnova').'...
+        <button type="button" class="btn btn-warning '.($rinnova ? '' : 'disabled').'" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_documento='.$id_record.'" data-widget="modal" data-title="'.tr('Rinnova contratto').'">
+            <i class="fa fa-refresh"></i> '.tr('Rinnova').'
         </button>
     </div>';
 }

@@ -161,6 +161,10 @@ switch (post('op')) {
                 $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
                 $new_contratto->data_bozza = Carbon::now();
 
+                // Disabilita il calcolo automatico della data di conclusione
+                $new_contratto->validita = null;
+                $new_contratto->tipo_validita = null;
+
                 $stato = StatoContratto::where('name', 'Bozza')->first();
                 $new_contratto->stato()->associate($stato);
 

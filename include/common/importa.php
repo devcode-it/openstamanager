@@ -60,6 +60,9 @@ $id_iva = $id_iva ?: setting('Iva predefinita');
 
 $righe_totali = $documento->getRighe();
 
+// Verifica se è un rinnovo di contratto
+$is_renewal = !empty($options['is_renewal']);
+
 $id_module_interventi = Module::where('name', 'Interventi')->first()->id;
 $id_module_ordini_f = Module::where('name', 'Ordini fornitore')->first()->id;
 if ($final_module->id == $id_module_interventi) {
@@ -71,8 +74,14 @@ if ($final_module->id == $id_module_interventi) {
     $righe = $righe_totali;
     $righe_evase = collect();
 } else {
-    $righe = $righe_totali->where('qta_rimanente', '>', 0);
-    $righe_evase = $righe_totali->where('qta_rimanente', '=', 0);
+    // Se è un rinnovo di contratto, includi tutte le righe (anche quelle evase)
+    if ($is_renewal) {
+        $righe = $righe_totali;
+        $righe_evase = collect();
+    } else {
+        $righe = $righe_totali->where('qta_rimanente', '>', 0);
+        $righe_evase = $righe_totali->where('qta_rimanente', '=', 0);
+    }
 }
 
 $link = !empty($documento_finale) ? base_path_osm().'/editor.php?id_module='.$final_module->id.'&id_record='.$documento_finale->id : base_path_osm().'/controller.php?id_module='.$final_module->id;
@@ -88,7 +97,7 @@ echo '
     <input type="hidden" name="is_evasione" value="1">';
 
 // Creazione fattura dal documento
-if (!empty($options['create_document'])) {
+if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
     echo '
     <div class="card card-primary">
         <div class="card-header with-border">
@@ -422,11 +431,16 @@ foreach ($righe as $i => $riga) {
         $qta_rimanente = $riga['qta_rimanente'];
     }
 
-    // Calcola disponibilità per questa riga
+    // Per il rinnovo, usa la quantità totale invece di quella rimanente
+    if ($is_renewal) {
+        $qta_rimanente = $riga['qta'];
+    }
+
+    // Calcola disponibilità per questa riga (non applicare nel rinnovo)
     $qta_disponibile = null;
     $qta_disponibile_originale = null;
     $qta_da_evadere = $qta_rimanente;
-    if ($abilita_controllo_disponibilita && $riga->isArticolo() && !$riga['is_descrizione']) {
+    if ($abilita_controllo_disponibilita && $riga->isArticolo() && !$riga['is_descrizione'] && !$is_renewal) {
         $id_articolo = $riga->idarticolo;
         $info_disponibilita = $disponibilita_articoli[$id_articolo] ?? null;
 
@@ -457,7 +471,7 @@ foreach ($righe as $i => $riga) {
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'entrata' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] ? '' : $riga['qta_rimanente']).'" />';
+                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] || $is_renewal ? '' : $riga['qta_rimanente']).'" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
@@ -571,8 +585,8 @@ echo '
         </div>
     </div>';
 
-// Elenco righe evase completametne
-if (!$righe_evase->isEmpty()) {
+// Elenco righe evase completametne (non mostrare nel rinnovo)
+if (!$righe_evase->isEmpty() && !$is_renewal) {
     echo '
     <div class="card card-primary collapsable collapsed-card">
         <div class="card-header with-border">
@@ -600,6 +614,59 @@ if (!$righe_evase->isEmpty()) {
                 </tr>';
     }
 
+    echo '
+            </tbody>
+        </table>
+        </div>
+    </div>';
+}
+
+// Card Ore residue per i contratti
+if (!empty($options['tipi_attivita'])) {
+    echo '
+    <div class="card card-primary">
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Ore residue').'</h3>
+        </div>
+        
+        <div class="card-body p-0">
+        <table class="table table-striped table-hover table-sm">
+            <thead>
+                <tr>
+                    <th width="2%"><input id="import_all_ore" type="checkbox" checked/></th>
+                    <th>'.tr('Tipo attività').'</th>
+                    <th width="15%" class="text-center">'.tr('Ore totali').'</th>
+                    <th width="15%" class="text-center">'.tr('Ore utilizzate').'</th>
+                    <th width="15%" class="text-center">'.tr('Ore residue').'</th>
+                    <th width="12%">'.tr('Q.tà da riportare').'</th>
+                </tr>
+            </thead>
+            <tbody>';
+    
+    foreach ($options['tipi_attivita'] as $i => $tipo) {
+        $ore_residue = max(0, $tipo['ore_totali'] - $tipo['ore_utilizzate']);
+
+        // Visualizza solo i tipi di attività con ore totali valorizzate e ore residue disponibili
+        if ($tipo['ore_totali'] > 0 && $ore_residue > 0) {
+            echo '
+                <tr data-local_id="'.$i.'">
+                    <td style="vertical-align:middle">
+                        <input class="check" type="checkbox" checked id="checked_ore_'.$i.'" name="evadere_ore['.$tipo['idtipointervento'].']" value="on" onclick="ricalcolaTotaleOre();" />
+                        <input type="hidden" class="tipi_attivita" name="tipi_attivita[]" value="'.$tipo['idtipointervento'].'"/>
+                    </td>
+                    <td style="vertical-align:middle">'.$tipo['descrizione'].'</td>
+                    <td class="text-center" style="vertical-align:middle">'.numberFormat($tipo['ore_totali'], 2).'</td>
+                    <td class="text-center" style="vertical-align:middle">'.numberFormat($tipo['ore_utilizzate'], 2).'</td>
+                    <td class="text-center '.($ore_residue > 0 ? '' : 'text-warning').'" style="vertical-align:middle">'.numberFormat($ore_residue, 2).'</td>
+                    <td class="text-center" style="vertical-align:middle; padding: 0;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 8px;">
+                            {[ "type": "number", "name": "qta_da_evadere_ore['.$tipo['idtipointervento'].']", "id": "qta_ore_'.$i.'", "required": 1, "value": "'.$ore_residue.'", "decimals": "2", "min-value": "0", "extra": "onkeyup=\"ricalcolaTotaleOre();\"" ]}
+                        </div>
+                    </td>
+                </tr>';
+        }
+    }
+    
     echo '
             </tbody>
         </table>
@@ -863,4 +930,40 @@ echo '
             });
         }
     });
+
+    $("#modals #import_all_ore").click(function(){
+        if( $(this).is(":checked") ){
+            $(".check").each(function(){
+                if( !$(this).is(":checked") && $(this).attr("id").indexOf("checked_ore") >= 0 ){
+                    $(this).trigger("click");
+                }
+            });
+        }else{
+            $(".check").each(function(){
+                if( $(this).is(":checked") && $(this).attr("id").indexOf("checked_ore") >= 0 ){
+                    $(this).trigger("click");
+                }
+            });
+        }
+        ricalcolaTotaleOre();
+    });
+
+    function ricalcolaTotaleOre() {
+        let totale_ore = 0.00;
+        let totale_qta = 0;
+
+        $("#modals input[name*=qta_ore_]").each(function() {
+            let qta = $(this).val().toEnglish();
+            let r = $(this).attr("id").replace("qta_ore_", "");
+            
+            if (!$("#checked_ore_" + r).is(":checked") || isNaN(qta)) {
+                qta = 0;
+            }
+
+            totale_ore += qta;
+            totale_qta += qta;
+        });
+
+        $("#modals #totale").html(totale_ore.toLocale(2) + " " + globals.currency);
+    }
 </script>';

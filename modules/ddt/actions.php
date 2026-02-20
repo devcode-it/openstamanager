@@ -74,6 +74,11 @@ switch (filter('op')) {
                 $idrivalsainps = post('id_rivalsa_inps');
                 $idritenutaacconto = post('id_ritenuta_acconto');
                 $bollo = post('bollo');
+
+                $numero = post('numero');
+                if (!empty($numero)) {
+                    $ddt->numero = $numero;
+                }
             } else {
                 $idrivalsainps = 0;
                 $idritenutaacconto = 0;

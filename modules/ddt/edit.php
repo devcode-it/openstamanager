@@ -166,7 +166,7 @@ echo '
                             if ($dir == 'uscita') {
                                 echo '
                         <div class="col-md-2">
-                            {[ "type": "span", "label": "'.tr('Numero ddt').'", "class": "text-center", "value": "$numero$" ]}
+                            {[ "type": "text", "label": "'.tr('Numero ddt').'", "name": "numero", "class": "text-center", "value": "$numero$" ]}
                         </div>';
                             }
 ?>

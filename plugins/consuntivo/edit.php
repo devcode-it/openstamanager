@@ -140,7 +140,7 @@ $totale_ore_completate = 0;
 if (!empty($interventi)) {
     echo '
 <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-info text-white">
         <i class="fa fa-list-alt"></i> '.tr('Riepilogo Interventi').'
     </div>
     <div class="card-body p-0">
@@ -490,18 +490,37 @@ if (!empty($totale_ore_contratto)) {
             </thead>
             <tbody>';
     
-    // Mostra le righe raggruppate per tipo di attività delle sessioni
-    foreach ($tipologie_ore_per_riga as $tipo => $dati) {
-        // Cerca le ore a contratto per questo tipo di attività usando la mappatura
+    // Unisci i tipi di attività dalle sessioni e dal contratto
+    $tipologie_unite = array_unique(array_merge(array_keys($tipologie_ore_per_riga), array_keys($ore_contratto_per_tipo)));
+    
+    // Crea mappatura inversa per trovare il tipo di sessione corrispondente al tipo contratto
+    $mappa_inversa = [];
+    foreach ($mappa_tipi as $tipo_sessione => $tipo_contratto) {
+        if ($tipo_contratto !== null) {
+            $mappa_inversa[$tipo_contratto] = $tipo_sessione;
+        }
+    }
+    
+    // Mostra le righe raggruppate per tipo di attività
+    foreach ($tipologie_unite as $tipo) {
+        // Cerca le ore a contratto per questo tipo di attività
         $ore_contratto = 0;
-        $tipo_riga_mappato = $mappa_tipi[$tipo] ?? null;
-        
-        if ($tipo_riga_mappato !== null && isset($ore_contratto_per_tipo[$tipo_riga_mappato])) {
-            $ore_contratto = $ore_contratto_per_tipo[$tipo_riga_mappato];
+        if (isset($ore_contratto_per_tipo[$tipo])) {
+            $ore_contratto = $ore_contratto_per_tipo[$tipo];
+        } elseif (isset($mappa_inversa[$tipo]) && isset($ore_contratto_per_tipo[$mappa_inversa[$tipo]])) {
+            $ore_contratto = $ore_contratto_per_tipo[$mappa_inversa[$tipo]];
         }
         
-        $ore_erogate = $dati['ore_totali'];
-        $ore_concluse = $dati['ore_completate'];
+        // Cerca i dati delle sessioni per questo tipo di attività
+        $dati_sessioni = null;
+        if (isset($tipologie_ore_per_riga[$tipo])) {
+            $dati_sessioni = $tipologie_ore_per_riga[$tipo];
+        } elseif (isset($mappa_inversa[$tipo]) && isset($tipologie_ore_per_riga[$mappa_inversa[$tipo]])) {
+            $dati_sessioni = $tipologie_ore_per_riga[$mappa_inversa[$tipo]];
+        }
+        
+        $ore_erogate = $dati_sessioni ? $dati_sessioni['ore_totali'] : 0;
+        $ore_concluse = $dati_sessioni ? $dati_sessioni['ore_completate'] : 0;
         
         $ore_residue = floatval($ore_contratto) - floatval($ore_erogate);
         $ore_residue_concluse = floatval($ore_contratto) - floatval($ore_concluse);
@@ -520,11 +539,9 @@ if (!empty($totale_ore_contratto)) {
                 </tr>';
     }
     
-    // Calcola i totali usando la mappatura
+    // Calcola i totali basandosi sui tipi di attività delle sessioni
     $totale_ore_erogate = 0;
     $totale_ore_concluse = 0;
-    
-    // Calcola i totali basandosi sui tipi di attività delle sessioni
     foreach ($tipologie_ore_per_riga as $tipo => $dati) {
         $totale_ore_erogate += $dati['ore_totali'];
         $totale_ore_concluse += $dati['ore_completate'];
@@ -538,13 +555,13 @@ if (!empty($totale_ore_contratto)) {
     
     // Riga totali
     echo '
-                <tr class="table-dark font-weight-bold">
-                    <td class="border-0">'.tr('TOTALE').'</td>
-                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_contratto).'</td>
-                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_erogate).'</td>
-                    <td class="text-right '.$bg_class_residue_totali.' border-0">'.Translator::numberToLocale($totale_ore_residue).'</td>
-                    <td class="text-right border-0">'.Translator::numberToLocale($totale_ore_concluse).'</td>
-                    <td class="text-right '.$bg_class_residue_concluse_totali.' border-0">'.Translator::numberToLocale($totale_ore_residue_concluse).'</td>
+                <tr class="table-info font-weight-bold">
+                    <td>'.tr('TOTALE').'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_contratto).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_erogate).'</td>
+                    <td class="text-right '.$bg_class_residue_totali.'">'.Translator::numberToLocale($totale_ore_residue).'</td>
+                    <td class="text-right">'.Translator::numberToLocale($totale_ore_concluse).'</td>
+                    <td class="text-right '.$bg_class_residue_concluse_totali.'">'.Translator::numberToLocale($totale_ore_residue_concluse).'</td>
                 </tr>
             </tbody>
         </table>
@@ -560,7 +577,7 @@ echo '
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-list"></i> '.tr('Tipologia').'
             </div>
             <div class="card-body p-0">
@@ -598,7 +615,7 @@ echo '
     </div>
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-users"></i> '.tr('Tecnici').'
             </div>
             <div class="card-body p-0">
@@ -640,7 +657,7 @@ echo '
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-warning text-white">
+            <div class="card-header bg-info text-white">
                 <i class="fa fa-flag"></i> '.tr('Stato').'
             </div>
             <div class="card-body p-0">
@@ -825,7 +842,7 @@ $count = $dbo->fetchNum($query);
 
 echo '<hr>
 <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-info text-white">
         <i class="fa fa-plus"></i> '.tr('Aggiungi intervento').'
     </div>
     <div class="card-body">

@@ -592,13 +592,13 @@ switch (post('op')) {
 
     case 'toggle_tipo_attivita':
         // Recupera lo stato attuale
-        $current = $dbo->fetchOne('SELECT `abilitato` FROM `co_contratti_tipiintervento` WHERE `idcontratto` = '.prepare($id_record).' AND `idtipointervento` = '.prepare(post('idtipointervento')));
+        $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipiintervento` WHERE `idcontratto` = '.prepare($id_record).' AND `idtipointervento` = '.prepare(post('idtipointervento')));
 
         if ($current) {
             // Inverti lo stato
-            $nuovo_stato = $current['abilitato'] == 1 ? 0 : 1;
+            $nuovo_stato = $current['is_abilitato'] == 1 ? 0 : 1;
             $dbo->update('co_contratti_tipiintervento', [
-                'abilitato' => $nuovo_stato,
+                'is_abilitato' => $nuovo_stato,
             ], [
                 'idcontratto' => $id_record,
                 'idtipointervento' => post('idtipointervento'),
@@ -606,7 +606,7 @@ switch (post('op')) {
 
             echo json_encode([
                 'status' => 'success',
-                'abilitato' => $nuovo_stato == 1,
+                'is_abilitato' => $nuovo_stato == 1,
             ]);
         } else {
             echo json_encode([

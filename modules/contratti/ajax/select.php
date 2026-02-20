@@ -158,7 +158,7 @@ switch ($resource) {
                     LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
                     `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_record).'
-                    AND `co_contratti_tipiintervento`.`abilitato` = 1
+                    AND `co_contratti_tipiintervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipiintervento_lang`.`title`';
         

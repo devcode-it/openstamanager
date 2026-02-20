@@ -130,7 +130,7 @@ class Contratto extends Document
                 'costo_ore_tecnico' => $tipo->costo_orario_tecnico,
                 'costo_km_tecnico' => $tipo->costo_km_tecnico,
                 'costo_dirittochiamata_tecnico' => $tipo->costo_diritto_chiamata_tecnico,
-                'abilitato' => 1,
+                'is_abilitato' => 1,
             ]);
         }
     }

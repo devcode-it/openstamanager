@@ -264,130 +264,17 @@ echo '
     </div>
 
 
-	<!-- COSTI -->
-	<div class="card card-primary">
-		<div class="card-header">
-			<h3 class="card-title"><?php echo tr('Costi unitari'); ?></h3>
-		</div>
+ 	<!-- COSTI -->
+ 	<div class="card card-primary">
+ 		<div class="card-header">
+ 			<h3 class="card-title"><?php echo tr('Costi unitari'); ?></h3>
+ 		</div>
 
-		<div class="card-body">
-			<div class="row">
-				<div class="col-md-12 col-lg-12">
+ 		<div class="card-body">
+ 			<div class="row">
+ 				<div class="col-md-12 col-lg-12" id="costi_unitari"></div>
 <?php
-
-$idtipiintervento = ['-1'];
-
-// Loop fra i tipi di attività e i relativi costi del tipo intervento (solo quelli personalizzati)
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `idcontratto`='.prepare($id_record).' AND ((`co_contratti_tipiintervento`.`costo_ore` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_ore` != `in_tipiintervento`.`costo_orario`) OR (`co_contratti_tipiintervento`.`costo_km` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_km` != `in_tipiintervento`.`costo_km`) OR (`co_contratti_tipiintervento`.`costo_dirittochiamata` IS NOT NULL AND `co_contratti_tipiintervento`.`costo_dirittochiamata` != `in_tipiintervento`.`costo_diritto_chiamata`)) ORDER BY `in_tipiintervento_lang`.`title`');
-
-if (!empty($rs)) {
-    echo '
-                    <table class="table table-striped table-sm table-bordered">
-                        <tr>
-                            <th width="300">'.tr('Tipo attività').'</th>
-
-                            <th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-                            <th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-                            <th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-
-                            <th width="120"></th>
-                        </tr>';
-
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        $abilitato = !empty($rs[$i]['abilitato']);
-        echo '
-                            <tr>
-                                <td>'.$rs[$i]['title'].'</td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_ore'].'" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km'].'" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_dirittochiamata'].'" ]}
-                                </td>
-
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-warning btn-xs" data-card-widget="tooltip" title="Importa valori da tariffe standard" onclick="if( confirm(\'Importare i valori dalle tariffe standard?\') ){ $.post( \''.base_path_osm().'/modules/contratti/actions.php\', { op: \'import\', idcontratto: \''.$id_record.'\', idtipointervento: \''.$rs[$i]['idtipointervento'].'\' }, function(data){ location.href=\''.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'\'; } ); }">
-                                    <i class="fa fa-download"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-'.($abilitato ? 'success' : 'secondary').' btn-xs" data-card-widget="tooltip" title="'.($abilitato ? tr('Disabilita') : tr('Abilita')).'" onclick="toggleTipoAttivita('.$rs[$i]['idtipointervento'].', this)">
-                                    <i class="fa fa-'.($abilitato ? 'check' : 'times').'"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-info btn-xs" data-card-widget="tooltip" title="'.tr('Aggiungi riga ore di').'" onclick="aggiungiRigaOre('.$rs[$i]['idtipointervento'].', \''.$rs[$i]['title'].'\')" '.(!$abilitato ? 'style="display:none;"' : '').'>
-                                    <i class="fa fa-plus"></i>
-                                    </button>
-                                </td>
-
-                            </tr>';
-
-        $idtipiintervento[] = prepare($rs[$i]['idtipointervento']);
-    }
-    echo '
-                    </table>';
-}
-
-echo '
-                    <button type="button" onclick="$(this).next().toggleClass(\'hide\');" class="btn btn-info btn-sm"><i class="fa fa-th-list"></i> '.tr('Mostra tipi di attività non modificati').'</button>
-					<div class="hide">';
-
-// Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli non modificati)
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipiintervento`.*, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km` AS `costo_km_standard`, `in_tipiintervento`.`costo_diritto_chiamata`, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipiintervento`.`idtipointervento` NOT IN('.implode(',', array_map(prepare(...), $idtipiintervento)).') AND `idcontratto`='.prepare($id_record).' AND ((`co_contratti_tipiintervento`.`costo_ore` IS NULL OR `co_contratti_tipiintervento`.`costo_ore` = `in_tipiintervento`.`costo_orario`) AND (`co_contratti_tipiintervento`.`costo_km` IS NULL OR `co_contratti_tipiintervento`.`costo_km` = `in_tipiintervento`.`costo_km`) AND (`co_contratti_tipiintervento`.`costo_dirittochiamata` IS NULL OR `co_contratti_tipiintervento`.`costo_dirittochiamata` = `in_tipiintervento`.`costo_diritto_chiamata`)) ORDER BY `title`');
-
-if (!empty($rs)) {
-    echo '
-                        <div class="clearfix">&nbsp;</div>
-						<table class="table table-striped table-sm table-bordered">
-							<tr>
-								<th width="300">'.tr('Tipo attività').'</th>
-
-								<th>'.tr('Addebito orario').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-								<th>'.tr('Addebito km').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-								<th>'.tr('Addebito diritto ch.').' <span class="tip" title="'.tr('Addebito al cliente').'"><i class="fa fa-question-circle-o"></i></span></th>
-
-                                <th width="120"></th>
-							</tr>';
-
-    for ($i = 0; $i < sizeof($rs); ++$i) {
-        $abilitato = !empty($rs[$i]['abilitato']);
-        echo '
-                            <tr>
-                                <td>'.$rs[$i]['title'].'</td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_ore['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_orario'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_km['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_km_standard'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
-                                </td>
-
-                                <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['idtipointervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
-                                </td>
-
-                                <td class="text-center">
-                                <button type="button" class="btn btn-'.($abilitato ? 'success' : 'secondary').' btn-xs" data-card-widget="tooltip" title="'.($abilitato ? tr('Disabilita') : tr('Abilita')).'" onclick="toggleTipoAttivita('.$rs[$i]['idtipointervento'].', this)">
-                                    <i class="fa fa-'.($abilitato ? 'check' : 'times').'"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-info btn-xs" data-card-widget="tooltip" title="'.tr('Aggiungi riga ore di').'" onclick="aggiungiRigaOre('.$rs[$i]['idtipointervento'].', \''.$rs[$i]['title'].'\')" '.(!$abilitato ? 'style="display:none;"' : '').'>
-                                    <i class="fa fa-plus"></i>
-                                    </button>
-                                </td>
-
-                            </tr>';
-    }
-    echo '
-                        </table>';
-}
-echo '
-
-					</div>
-				</div>
+echo'
 			</div>
 		</div>
 	</div>
@@ -504,8 +391,22 @@ function caricaRighe(id_riga) {
     });
 }
 
+/**
+ * Funzione dedicata al caricamento dinamico via AJAX della sezione costi unitari.
+ */
+function caricaCostiUnitari() {
+    let container = $("#costi_unitari");
+
+    localLoading(container, true);
+    return $.get("'.$structure->fileurl('costi_unitari.php').'?id_module='.$id_module.'&id_record='.$id_record.'", function(data) {
+        container.html(data);
+        localLoading(container, false);
+    });
+}
+
 $(document).ready(function() {
     caricaRighe(null);
+    caricaCostiUnitari();
 
     $("#data_accettazione").on("dp.change", function() {
         if($(this).val()){
@@ -556,20 +457,8 @@ function toggleTipoAttivita(idTipoIntervento, button) {
         success: function(data) {
             var response = JSON.parse(data);
             if (response.status === "success") {
-                // Aggiorna l\'aspetto del pulsante
-                var icon = $(button).find("i");
-                var addButton = $(button).next();
-                if (response.abilitato) {
-                    $(button).removeClass("btn-secondary").addClass("btn-success");
-                    icon.removeClass("fa-times").addClass("fa-check");
-                    $(button).attr("title", "'.tr('Disabilita').'");
-                    addButton.show();
-                } else {
-                    $(button).removeClass("btn-success").addClass("btn-secondary");
-                    icon.removeClass("fa-check").addClass("fa-times");
-                    $(button).attr("title", "'.tr('Abilita').'");
-                    addButton.hide();
-                }
+                // Ricarica solo la sezione costi unitari
+                caricaCostiUnitari();
             } else {
                 swal({
                     type: "error",

@@ -29,16 +29,26 @@ switch ($resource) {
         $id_intervento = $superselect['id_intervento'] ?? null;
         
         if (!empty($id_contratto)) {
-            // Se c'è un contratto: mostra SOLO tipi presenti nelle righe del contratto
-            $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
-                FROM `in_tipiintervento`
-                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
-                |where|
-                ORDER BY `title`';
+            // Verifica se il contratto ha righe con tipi di intervento specificati
+            $righe_contratto = $dbo->fetchOne('SELECT COUNT(*) AS count FROM `co_righe_contratti` WHERE `idcontratto` = '.prepare($id_contratto).' AND `id_tipointervento` IS NOT NULL');
             
-            // Filtro: mostra SOLO tipi presenti nelle righe del contratto
-            $where[] = '`co_righe_contratti`.`idcontratto` = '.prepare($id_contratto);
+            if ($righe_contratto['count'] > 0) {
+                // Se il contratto ha righe con tipi di intervento: mostra SOLO tipi presenti nelle righe del contratto
+                $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
+                    FROM `in_tipiintervento`
+                    LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                    INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
+                    |where|
+                    ORDER BY `title`';
+            } else {
+                // Se il contratto non ha righe con tipi di intervento: mostra i tipi abilitati per il contratto
+                $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
+                    FROM `in_tipiintervento`
+                    LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                    INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto).' AND `co_contratti_tipiintervento`.`is_abilitato` = 1
+                    |where|
+                    ORDER BY `title`';
+            }
         } else {
             // Altrimenti mostra tutti i tipi di intervento
             $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard` 
@@ -52,11 +62,9 @@ switch ($resource) {
             $filter[] = '`in_tipiintervento`.`id`='.prepare($element);
         }
 
-        // Applica il filtro deleted_at solo se non c'è un contratto
-        if (empty($id_contratto)) {
-            if (empty($filter)) {
-                $where[] = '`in_tipiintervento`.`deleted_at` IS NULL';
-            }
+        // Applica il filtro deleted_at sempre, tranne quando si filtrano elementi specifici
+        if (empty($filter)) {
+            $where[] = '`in_tipiintervento`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {

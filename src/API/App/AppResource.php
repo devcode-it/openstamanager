@@ -44,7 +44,7 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      */
     public function retrieve($request)
     {
-        $id = $request['id'];
+        $id = get('id', true) ?: $request['id'];
         $last_sync_at = $request['last_sync_at'] && $request['last_sync_at'] != 'undefined' ? new Carbon($request['last_sync_at']) : null;
 
         // Gestione delle operazioni di cleanup
@@ -70,7 +70,25 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
             ];
         }
 
-        // Gestione della visualizzazione dei dettagli del record
+        // Supporto per ID multipli separati da virgola
+        $ids = explode(',', $id);
+        if (count($ids) > 1) {
+            $results = [];
+            foreach ($ids as $single_id) {
+                $single_id = trim($single_id);
+                if (!empty($single_id)) {
+                    $details = $this->retrieveRecord($single_id);
+                    $details = $this->forceToString($details);
+                    $results[$single_id] = $details;
+                }
+            }
+
+            return [
+                'records' => $results,
+            ];
+        }
+
+        // Gestione della visualizzazione dei dettagli del record (singolo)
         $details = $this->retrieveRecord($id);
         $details = $this->forceToString($details);
 

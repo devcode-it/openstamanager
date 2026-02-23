@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.10.1 (2026-02-24)](#2101-2026-02-24)
 - [2.10.0 (2026-02-05)](#210-2026-02-05)
 - [2.9.8 (2025-12-23)](#298-2025-12-23)
 - [2.9.7 (2025-12-09)](#297-2025-12-09)
@@ -67,6 +68,57 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.10.1 (2026-02-24)
+### Modificato (Changed)
+- Ottimizzazione invio fatture elettroniche da coda di invio con campo fe_failed_at
+- Invio fatture elettroniche da bulk ora prevede tre tentativi di invio prima di rimuovere le fatture dalla coda
+- Ottimizzazione query con Laravel
+- Ottimizzazione plugin consuntivo
+- Ottimizzazione classi documenti e generazione numero progressivo
+- Miglioria modale di aggiunta articolo
+- Miglioria grafica header interventi
+- Miglioria grafica tasti azione su righe
+- Migliorata la gestione di modifica iva massiva righe documenti
+- Copia righe documenti disponibile anche per documenti bloccati
+
+### Fixed
+- Corretta visualizzazione documenti collegati a contratti per attività collegate al contratto
+- Corretto conteggio ore in header
+- Corretta distinzione somma ore sessioni da conteggiare per consuntivo
+- Corretto logging invio fatture da coda di invio
+- Se l'articolo è un servizio, disabilito i plugin Movimenti e Giacenze
+- Corretta impostazione OAuth2
+- Corretta vulnerabilità Unauthenticated privilege escalation
+- Corretto calcolo ore totali contratto che non venivano sommate
+- Corretto reset cache hooks per evitare avviso cron non impostato correttamente
+- Corretti riferimenti plugin per importazione XML acquisto con modulo Fatture di vendita disabilitato
+- Corretta modifica nome categorie e sottocategorie per sottocategorie duplicate
+- Corretto conteggio righe per CIG e CUP in calcolo righe per generazione fattura
+- Corretta selezione stato ordine in creazione documento
+- Corretto errore 500 se display non definito (#1765)
+- Corretta visualizzazione costi sessione
+- Corretto caricamento plugin consuntivo nel caso di documento eliminato
+- Corrette stampa liquidazione IVA e registro IVA
+- Corretta funzione in update.php per prevenire attacchi XSS
+- Corretta visualizzazione quantità disponibile per sede in select articoli nei documenti
+- Corretta sanitizzazione per prevenire SQL injection
+- Corretta generazione fattura elettronica per sedi committente paesi esteri
+- Corretti calcoli automatici orari in modifica sessione
+- Corretta selezione tecnico in automezzi limitata ad anagrafiche di tipo tecnico
+- Corretta selezione data in aggiunta danno plugin Danni in Automezzi (#1758)
+- Corretto errore visualizzazione modello in vista Articoli (#1756)
+- Corretto l'accesso alla visualizzazione della pagina info dell'utente non loggato
+- Corrette vulnerabilità minori
+- Corretta corrispondenza anagrafica in controllo di integrità XML e documenti di vendita
+- Corretto riferimento fattura di acquisto nel caso di autofatture
+- Corretta gestione errori in fase di invio email
+- Corretto percorso suggerito per la configurazione del cron, non veniva riportata la root dir
+- Corretta esclusione file .env dalla release
+- Corretta visualizzazione costi sessione
+- Corretta larghezza campo codice in stampa DDT
+- Corretto dettaglio prezzi sessioni e calcolo sconto
+- Corretta creazione immagine docker
 
 ## 2.10.0 (2026-02-05)
 ### Aggiunto (Added)

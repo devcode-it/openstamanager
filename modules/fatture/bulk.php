@@ -840,7 +840,7 @@ if (Interaction::isEnabled()) {
             if ($ore_trascorse <= 1) {
                 $cron_active = true;
             }
-        } catch (\Exception) {
+        } catch (Exception) {
             // Se il contenuto non è una data valida
             $cron_active = false;
         }

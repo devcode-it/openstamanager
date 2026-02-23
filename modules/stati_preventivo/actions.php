@@ -66,7 +66,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('co_statipreventivi');        
+        $stato->delete('co_statipreventivi');
 
         flash()->info(tr('Stato preventivo eliminato.'));
 

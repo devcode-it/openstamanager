@@ -21,7 +21,6 @@
 namespace Modules\Emails;
 
 use Notifications\EmailNotification;
-use PHPMailer\PHPMailer\Exception;
 use Tasks\Manager;
 
 class EmailTask extends Manager
@@ -63,7 +62,7 @@ class EmailTask extends Manager
                 $result['message'] = tr('Errore durante l\'invio delle email: _ERR_', [
                     '_ERR_' => $e->getMessage(),
                 ]).'<br>';
-                
+
                 // Aggiorna l'email come fallita
                 if (!empty($mail)) {
                     $mail->failed_at = date('Y-m-d H:i:s');

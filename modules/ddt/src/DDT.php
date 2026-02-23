@@ -23,11 +23,9 @@ namespace Modules\DDT;
 use Common\Components\Component;
 use Common\Document;
 use Modules\Anagrafiche\Anagrafica;
-use Modules\Fatture\Fattura;
 use Modules\Pagamenti\Pagamento;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class DDT extends Document
 {
@@ -54,7 +52,7 @@ class DDT extends Document
      *
      * @var array|null
      */
-    protected $causaleCache = null;
+    protected $causaleCache;
 
     /**
      * Crea un nuovo ddt.
@@ -68,58 +66,14 @@ class DDT extends Document
      *
      * @var int|null
      */
-    protected static $statoBozzaCache = null;
+    protected static $statoBozzaCache;
 
     /**
-     * Ottiene l'ID dello stato "Bozza" con cache.
+     * Ottiene gli stati importabili con cache.
      *
-     * @return int
+     * @return array
      */
-    protected static function getStatoBozzaId()
-    {
-        if (self::$statoBozzaCache === null) {
-            self::$statoBozzaCache = Stato::where('name', 'Bozza')->first()->id;
-        }
-
-        return self::$statoBozzaCache;
-    }
-
-    /**
-     * Ottiene la sede dell'utente in base alla direzione del documento.
-     *
-     * @param string $direzione
-     * @return int
-     */
-    protected static function getSedeUtente($direzione)
-    {
-        $user = auth_osm()->getUser();
-        
-        if (empty($user->sedi)) {
-            return 0;
-        }
-
-        return in_array(0, $user->sedi) ? 0 : $user->sedi[0];
-    }
-
-    /**
-     * Ottiene l'ID del pagamento in base alla direzione e all'anagrafica.
-     *
-     * @param Anagrafica $anagrafica
-     * @param string $direzione
-     * @return int|null
-     */
-    protected static function getIdPagamento(Anagrafica $anagrafica, $direzione)
-    {
-        $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
-        $id_pagamento = $anagrafica['idpagamento_'.$conto];
-
-        // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
-        if ($direzione == 'entrata' && empty($id_pagamento)) {
-            $id_pagamento = setting('Tipo di pagamento predefinito');
-        }
-
-        return $id_pagamento;
-    }
+    protected static $statiImportabiliCache;
 
     public static function build(Anagrafica $anagrafica, Tipo $tipo_documento, $data, $id_segment = null)
     {
@@ -168,41 +122,6 @@ class DDT extends Document
     public function getDirezioneAttribute()
     {
         return $this->tipo->dir;
-    }
-
-    /**
-     * Ottiene la causale del DDT con cache per evitare query duplicate.
-     *
-     * @return array|null
-     */
-    protected function getCausale()
-    {
-        if ($this->causaleCache === null) {
-            $database = database();
-            $this->causaleCache = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
-        }
-
-        return $this->causaleCache;
-    }
-
-    /**
-     * Ottiene gli stati importabili con cache.
-     *
-     * @return array
-     */
-    protected static $statiImportabiliCache = null;
-
-    protected function getStatiImportabili()
-    {
-        if (self::$statiImportabiliCache === null) {
-            $stati = Stato::where('is_fatturabile', 1)->get();
-            self::$statiImportabiliCache = [];
-            foreach ($stati as $stato) {
-                self::$statiImportabiliCache[] = $stato->getTranslation('title');
-            }
-        }
-
-        return self::$statiImportabiliCache;
     }
 
     public function isImportabile()
@@ -281,43 +200,6 @@ class DDT extends Document
     public function descrizioni()
     {
         return $this->hasMany(Components\Descrizione::class, 'idddt');
-    }
-
-    /**
-     * Verifica se il DDT è collegato a un ordine.
-     *
-     * @return bool
-     */
-    protected function isCollegatoAOrdine()
-    {
-        return $this->getRighe()->contains(function ($riga) {
-            return !empty($riga->original_id) && !empty($riga->original_type) && str_contains((string) $riga->original_type, 'Ordini');
-        });
-    }
-
-    /**
-     * Ottiene la quantità totale fatturata per questo DDT.
-     *
-     * @return float
-     */
-    protected function getQtaFatturata()
-    {
-        return database()->table('co_righe_documenti')
-            ->selectRaw('SUM(qta) as qta_fatturata')
-            ->where('idddt', $this->id)
-            ->value('qta_fatturata') ?? 0;
-    }
-
-    /**
-     * Verifica se ci sono fatture collegate a questo DDT.
-     *
-     * @return bool
-     */
-    protected function hasFattureCollegate()
-    {
-        return database()->table('co_righe_documenti')
-            ->where('idddt', $this->id)
-            ->exists();
     }
 
     /**
@@ -407,7 +289,8 @@ class DDT extends Document
      *
      * @param string $data
      * @param string $direzione
-     * @param int $id_segment
+     * @param int    $id_segment
+     *
      * @return string
      */
     public static function getNextNumero($data, $direzione, $id_segment)
@@ -426,7 +309,8 @@ class DDT extends Document
      *
      * @param string $data
      * @param string $direzione
-     * @param int $id_segment
+     * @param int    $id_segment
+     *
      * @return string
      */
     public static function getNextNumeroSecondario($data, $direzione, $id_segment)
@@ -465,5 +349,120 @@ class DDT extends Document
     public function getReferenceRagioneSociale()
     {
         return $this->anagrafica->ragione_sociale;
+    }
+
+    /**
+     * Ottiene l'ID dello stato "Bozza" con cache.
+     *
+     * @return int
+     */
+    protected static function getStatoBozzaId()
+    {
+        if (self::$statoBozzaCache === null) {
+            self::$statoBozzaCache = Stato::where('name', 'Bozza')->first()->id;
+        }
+
+        return self::$statoBozzaCache;
+    }
+
+    /**
+     * Ottiene la sede dell'utente in base alla direzione del documento.
+     *
+     * @param string $direzione
+     *
+     * @return int
+     */
+    protected static function getSedeUtente($direzione)
+    {
+        $user = auth_osm()->getUser();
+
+        if (empty($user->sedi)) {
+            return 0;
+        }
+
+        return in_array(0, $user->sedi) ? 0 : $user->sedi[0];
+    }
+
+    /**
+     * Ottiene l'ID del pagamento in base alla direzione e all'anagrafica.
+     *
+     * @param string $direzione
+     *
+     * @return int|null
+     */
+    protected static function getIdPagamento(Anagrafica $anagrafica, $direzione)
+    {
+        $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
+        $id_pagamento = $anagrafica['idpagamento_'.$conto];
+
+        // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
+        if ($direzione == 'entrata' && empty($id_pagamento)) {
+            $id_pagamento = setting('Tipo di pagamento predefinito');
+        }
+
+        return $id_pagamento;
+    }
+
+    /**
+     * Ottiene la causale del DDT con cache per evitare query duplicate.
+     *
+     * @return array|null
+     */
+    protected function getCausale()
+    {
+        if ($this->causaleCache === null) {
+            $database = database();
+            $this->causaleCache = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
+        }
+
+        return $this->causaleCache;
+    }
+
+    protected function getStatiImportabili()
+    {
+        if (self::$statiImportabiliCache === null) {
+            $stati = Stato::where('is_fatturabile', 1)->get();
+            self::$statiImportabiliCache = [];
+            foreach ($stati as $stato) {
+                self::$statiImportabiliCache[] = $stato->getTranslation('title');
+            }
+        }
+
+        return self::$statiImportabiliCache;
+    }
+
+    /**
+     * Verifica se il DDT è collegato a un ordine.
+     *
+     * @return bool
+     */
+    protected function isCollegatoAOrdine()
+    {
+        return $this->getRighe()->contains(fn ($riga) => !empty($riga->original_id) && !empty($riga->original_type) && str_contains((string) $riga->original_type, 'Ordini'));
+    }
+
+    /**
+     * Ottiene la quantità totale fatturata per questo DDT.
+     *
+     * @return float
+     */
+    protected function getQtaFatturata()
+    {
+        return database()->table('co_righe_documenti')
+            ->selectRaw('SUM(qta) as qta_fatturata')
+            ->where('idddt', $this->id)
+            ->value('qta_fatturata') ?? 0;
+    }
+
+    /**
+     * Verifica se ci sono fatture collegate a questo DDT.
+     *
+     * @return bool
+     */
+    protected function hasFattureCollegate()
+    {
+        return database()->table('co_righe_documenti')
+            ->where('idddt', $this->id)
+            ->exists();
     }
 }

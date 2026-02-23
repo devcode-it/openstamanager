@@ -28,7 +28,6 @@ use Modules\Interventi\Intervento;
 use Modules\Pagamenti\Pagamento;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Ordine extends Document
 {
@@ -163,7 +162,7 @@ class Ordine extends Document
         // Ottimizzazione: singola query per calcolare quantità fatturate
         $righe_ids = $righe->pluck('id')->toArray();
         $class_type = Components\Articolo::class;
-        
+
         $fatture_collegate = database()->table('co_righe_documenti')
             ->whereIn('original_id', $righe_ids)
             ->where('original_type', $class_type)
@@ -186,58 +185,9 @@ class Ordine extends Document
 
         $stato_field = $use_translation ? 'name' : 'descrizione';
         $stato = Stato::where($stato_field, $descrizione)->first()->id;
-        
+
         $this->stato()->associate($stato);
         $this->save();
-    }
-
-    /**
-     * Determina il nuovo stato dell'ordine in base alle condizioni di evasione/fatturazione.
-     *
-     * @param Component $trigger
-     * @param float $qta_evasa
-     * @param bool $parziale
-     * @param bool $parziale_fatturato
-     * @param string $nome_stato
-     * @param int $fatture_collegate_totali
-     * @return string
-     */
-    protected function determinaNuovoStato(Component $trigger, $qta_evasa, $parziale, $parziale_fatturato, $nome_stato, $fatture_collegate_totali)
-    {
-        if ($qta_evasa == 0) {
-            return 'Accettato';
-        }
-
-        $documento = $trigger->getDocument();
-
-        if ($documento instanceof \Modules\Fatture\Fattura) {
-            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-        }
-
-        if ($documento instanceof DDT) {
-            $fatture_ddt = database()->table('co_righe_documenti')
-                ->where('idddt', $documento->id)
-                ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
-                ->count();
-
-            return $fatture_ddt > 0
-                ? ($parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato')
-                : ($parziale ? 'Parzialmente evaso' : 'Evaso');
-        }
-
-        if ($fatture_collegate_totali > 0) {
-            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
-        }
-
-        if (in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato'])) {
-            return $parziale ? 'Parzialmente evaso' : 'Evaso';
-        }
-
-        if ($qta_evasa > 0) {
-            return $parziale ? 'Parzialmente evaso' : 'Evaso';
-        }
-
-        return $nome_stato;
     }
 
     // Metodi statici
@@ -287,7 +237,7 @@ class Ordine extends Document
     public function getReferenceNumber()
     {
         $visualizza_numero_cliente = setting('Visualizza numero ordine cliente');
-        
+
         return $visualizza_numero_cliente
             ? ($this->numero_cliente ?: $this->numero_esterno ?: $this->numero)
             : ($this->numero_esterno ?: $this->numero);
@@ -301,12 +251,61 @@ class Ordine extends Document
     public function getReferenceDate()
     {
         $visualizza_numero_cliente = setting('Visualizza numero ordine cliente');
-        
+
         return $visualizza_numero_cliente ? ($this->data_cliente ?: $this->data) : $this->data;
     }
 
     public function getReferenceRagioneSociale()
     {
         return $this->anagrafica->ragione_sociale;
+    }
+
+    /**
+     * Determina il nuovo stato dell'ordine in base alle condizioni di evasione/fatturazione.
+     *
+     * @param float  $qta_evasa
+     * @param bool   $parziale
+     * @param bool   $parziale_fatturato
+     * @param string $nome_stato
+     * @param int    $fatture_collegate_totali
+     *
+     * @return string
+     */
+    protected function determinaNuovoStato(Component $trigger, $qta_evasa, $parziale, $parziale_fatturato, $nome_stato, $fatture_collegate_totali)
+    {
+        if ($qta_evasa == 0) {
+            return 'Accettato';
+        }
+
+        $documento = $trigger->getDocument();
+
+        if ($documento instanceof \Modules\Fatture\Fattura) {
+            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+        }
+
+        if ($documento instanceof DDT) {
+            $fatture_ddt = database()->table('co_righe_documenti')
+                ->where('idddt', $documento->id)
+                ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                ->count();
+
+            return $fatture_ddt > 0
+                ? ($parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato')
+                : ($parziale ? 'Parzialmente evaso' : 'Evaso');
+        }
+
+        if ($fatture_collegate_totali > 0) {
+            return $parziale_fatturato ? 'Parzialmente fatturato' : 'Fatturato';
+        }
+
+        if (in_array($nome_stato, ['Parzialmente fatturato', 'Fatturato'])) {
+            return $parziale ? 'Parzialmente evaso' : 'Evaso';
+        }
+
+        if ($qta_evasa > 0) {
+            return $parziale ? 'Parzialmente evaso' : 'Evaso';
+        }
+
+        return $nome_stato;
     }
 }

@@ -31,7 +31,6 @@ use Modules\Interventi\Intervento;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Preventivo extends Document
 {
@@ -247,7 +246,7 @@ class Preventivo extends Document
     /**
      * Restituisce i dati bancari in base al pagamento.
      *
-     * @return \Modules\Banche\Banca|null
+     * @return Banca|null
      */
     public function getBanca()
     {
@@ -256,7 +255,7 @@ class Preventivo extends Document
 
         if ($pagamento && $pagamento->isRiBa()) {
             // Prima cerca la banca controparte specificata, altrimenti cerca quella predefinita
-            $banca = $this->id_banca_controparte 
+            $banca = $this->id_banca_controparte
                 ? Banca::find($this->id_banca_controparte)
                 : Banca::where('id_anagrafica', $this->idanagrafica)
                     ->where('predefined', 1)

@@ -28,7 +28,7 @@
  */
 
 echo '
-<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.($settings['header-font-size']).'px;' : '').'"  >
+<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.$settings['header-font-size'].'px;' : '').'"  >
     <div class="col-xs-6" >
         <p><b>'.$f_ragionesociale.'</b></p>
         <p>'.$f_indirizzo.'</p>

@@ -33,7 +33,6 @@ use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Traits\RecordTrait;
-use Util\Generator;
 
 class Anagrafica extends Model
 {

@@ -440,17 +440,17 @@ if (sizeof($righe) > 0) {
         <i class="fa fa-clipboard"></i> '.tr('Copia').'
     </button>';
 
-// Il tasto incolla è disponibile solo se il documento non è bloccato
-if (!$block_edit) {
-    echo '
+    // Il tasto incolla è disponibile solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
     <button type="button" class="btn btn-sm btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
         <i class="fa fa-paste"></i> '.tr('Incolla').'
     </button>';
-}
+    }
 
-// I pulsanti di modifica sono disponibili solo se il documento non è bloccato
-if (!$block_edit) {
-    echo '
+    // I pulsanti di modifica sono disponibili solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
     <button type="button" class="btn btn-sm btn-primary disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
         <i class="fa fa-copy"></i> '.tr('Duplica').'
     </button>
@@ -458,13 +458,13 @@ if (!$block_edit) {
     <button type="button" class="btn btn-sm btn-danger disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
         <i class="fa fa-trash"></i> '.tr('Elimina').'
     </button>';
-    if ($dir == 'entrata') {
-        echo '
+        if ($dir == 'entrata') {
+            echo '
     <button type="button" class="btn btn-sm btn-info disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
         <i class="fa fa-exchange"></i> '.tr('Confronta prezzi').'
     </button>';
-    }
-    echo '
+        }
+        echo '
     <button type="button" class="btn btn-sm btn-info disabled" id="aggiorna_righe" onclick="aggiornaRighe(getSelectData());">
         <i class="fa fa-refresh"></i> '.tr('Aggiorna prezzi').'
     </button>
@@ -476,7 +476,7 @@ if (!$block_edit) {
     <button type="button" class="btn btn-sm btn-primary disabled" id="stampa_barcode_righe" onclick="stampaBarcodeDDT(getSelectData());">
         <i class="fa fa-barcode"></i> '.tr('Stampa barcode').'
     </button>';
-}
+    }
     echo '
     </div>';
 } else {
@@ -774,8 +774,8 @@ $(".check").on("change", function() {
         $("#copia_righe").removeClass("disabled");
 
         // Pulsanti attivi solo se documento non bloccato';
-    if (!$block_edit) {
-        echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
@@ -784,15 +784,15 @@ $(".check").on("change", function() {
         $("#stampa_barcode_righe").removeClass("disabled");
         $("#incolla_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");';
-    }
-    echo '
+}
+echo '
     } else {
         // Pulsanti sempre disabilitati quando nessuna riga è selezionata
         $("#copia_righe").addClass("disabled");
 
         // Pulsanti disabilitati solo se documento non bloccato';
-    if (!$block_edit) {
-        echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
@@ -801,8 +801,8 @@ $(".check").on("change", function() {
         $("#stampa_barcode_righe").addClass("disabled");
         $("#incolla_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");';
-    }
-    echo '
+}
+echo '
     }
 });
 

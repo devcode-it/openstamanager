@@ -16,7 +16,7 @@
         "bootstrap-maxlength": "^2.0.0",
         "chart.js": "^4.5.1",
         "ckeditor": "4.12.1",
-        "ckeditor4": "ckeditor/ckeditor4-releases#full/4.22.1",
+        "ckeditor4": "https://github.com/ckeditor/ckeditor4-releases.git#full/4.22.1",
         "clipper-lib": "^6.4.2",
         "components-jqueryui": "^1.12.1",
         "datatables.net-bs": "^1.10.15",
@@ -59,7 +59,7 @@
         "sweetalert2": "^6.11.4",
         "toastr": "^2.1.4",
         "tooltipster": "^4.2.5",
-        "ua-parser-js": "github:Pek5892/ua-parser-js#patch-1"
+        "ua-parser-js": "https://github.com/Pek5892/ua-parser-js.git#patch-1"
     },
     "devDependencies": {
         "@babel/core": "^7.11.1",

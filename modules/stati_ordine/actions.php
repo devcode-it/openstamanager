@@ -70,7 +70,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('co_statiordine');        
+        $stato->delete('co_statiordine');
 
         flash()->info(tr('Stato ordine eliminato.'));
 

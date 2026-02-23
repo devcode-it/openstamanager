@@ -20,8 +20,8 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
-use Modules\Iva\Aliquota;
 use Models\Plugin;
+use Modules\Iva\Aliquota;
 
 if ($articolo->servizio) {
     $ignore = Plugin::where('name', 'Movimenti')

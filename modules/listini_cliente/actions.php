@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\ListiniCliente\Articolo;
-use Modules\ListiniCliente\Listino;
 use Modules\ListiniCliente\Articolo as ArticoloListino;
+use Modules\ListiniCliente\Listino;
 
 switch (filter('op')) {
     case 'update':

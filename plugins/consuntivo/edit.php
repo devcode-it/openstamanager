@@ -36,12 +36,12 @@ $materiali_righe = [];
 $sessioni_cache = [];
 
 /**
- * Funzione helper per calcolare margine, margine percentuale e ricarico percentuale
+ * Funzione helper per calcolare margine, margine percentuale e ricarico percentuale.
  */
 function calcolaMargini($costo, $ricavo)
 {
     $margine = $ricavo - $costo;
-    
+
     if ($ricavo > 0) {
         $margine_prc = (int) ((1 - ($costo / $ricavo)) * 100);
         $ricarico_prc = $costo > 0 ? (int) ((($ricavo / $costo) - 1) * 100) : 100;
@@ -49,7 +49,7 @@ function calcolaMargini($costo, $ricavo)
         $margine_prc = 0;
         $ricarico_prc = 0;
     }
-    
+
     return [
         'margine' => $margine,
         'margine_prc' => $margine_prc,
@@ -58,24 +58,24 @@ function calcolaMargini($costo, $ricavo)
 }
 
 /**
- * Funzione helper per ottenere le sessioni di un intervento con cache
+ * Funzione helper per ottenere le sessioni di un intervento con cache.
  */
 function getSessioniCache($intervento, &$cache)
 {
     $id = $intervento->id;
-    
+
     if (!isset($cache[$id])) {
         $cache[$id] = $intervento->sessioni()
             ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
             ->where('non_conteggiare', 0)
             ->get();
     }
-    
+
     return $cache[$id];
 }
 
 /**
- * Funzione helper per calcolare i totali di una sessione
+ * Funzione helper per calcolare i totali di una sessione.
  */
 function calcolaTotaliSessione($sessione)
 {
@@ -88,7 +88,7 @@ function calcolaTotaliSessione($sessione)
 }
 
 /**
- * Funzione helper per generare HTML sconto
+ * Funzione helper per generare HTML sconto.
  */
 function getHtmlSconto($sconto)
 {
@@ -96,12 +96,12 @@ function getHtmlSconto($sconto)
 }
 
 /**
- * Funzione helper per ottenere la query degli interventi disponibili
+ * Funzione helper per ottenere la query degli interventi disponibili.
  */
 function getQueryInterventiDisponibili($idanagrafica)
 {
     global $dbo;
-    
+
     return 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione 
             FROM in_interventi 
             WHERE id_preventivo IS NULL 
@@ -230,23 +230,23 @@ if (!empty($interventi)) {
                                 <td class="text-right text-success">'.moneyFormat($sessione->prezzo_viaggio).$sconto_km.'</td>
                                 <td class="text-right text-success">'.moneyFormat($sessione->prezzo_diritto_chiamata).'</td>
                             </tr>';
-                
+
                 // Calcola totali sessione
                 $totali_sessione = calcolaTotaliSessione($sessione);
-                
+
                 // Raggruppamento per tipologia descrizione
                 $tipo_title = $sessione->tipo->getTranslation('title');
                 $tipologie[$tipo_title]['ore'] = ($tipologie[$tipo_title]['ore'] ?? 0) + $sessione->ore;
                 $tipologie[$tipo_title]['costo'] = ($tipologie[$tipo_title]['costo'] ?? 0) + $totali_sessione['costo'];
                 $tipologie[$tipo_title]['ricavo'] = ($tipologie[$tipo_title]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
-                
+
                 // Raggruppamento per tecnico
                 $tecnico_nome = $sessione->anagrafica->ragione_sociale;
                 $tecnici[$tecnico_nome]['ore'] = ($tecnici[$tecnico_nome]['ore'] ?? 0) + $sessione->ore;
                 $tecnici[$tecnico_nome]['km'] = ($tecnici[$tecnico_nome]['km'] ?? 0) + $sessione->km;
                 $tecnici[$tecnico_nome]['costo'] = ($tecnici[$tecnico_nome]['costo'] ?? 0) + $totali_sessione['costo'];
                 $tecnici[$tecnico_nome]['ricavo'] = ($tecnici[$tecnico_nome]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
-                
+
                 // Raggruppamento per stato intervento
                 $stato_title = $intervento->stato->getTranslation('title');
                 $stati_intervento[$stato_title]['colore'] = $intervento->stato->colore;
@@ -291,7 +291,7 @@ if (!empty($interventi)) {
                 $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / $qta);
                 $costo = (string) ($articolo->spesa / $qta);
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->descrizione;
-                
+
                 if (!isset($materiali_art[$descrizione][$ricavo][$costo])) {
                     $materiali_art[$descrizione][$ricavo][$costo] = ['id' => $articolo->id, 'qta' => 0, 'costo' => 0, 'ricavo' => 0];
                 }
@@ -449,7 +449,7 @@ if (!empty($totale_ore_contratto)) {
     </div>
 </div>';
 } else {
-    echo'
+    echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.
 </div>';
@@ -667,10 +667,10 @@ foreach ($interventi as $intervento) {
                 'totale' => 0,
             ];
         }
-        
+
         // Usa la funzione helper per calcolare i totali
         $totali_sessione = calcolaTotaliSessione($sessione);
-        
+
         $interventi_per_mese[$mese]['ore'] += $sessione->ore;
         $interventi_per_mese[$mese]['km'] += $sessione->km;
         $interventi_per_mese[$mese]['costo'] += $totali_sessione['costo'];

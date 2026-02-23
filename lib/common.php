@@ -543,11 +543,11 @@ function getImageManager()
 /**
  * Determina la banca dell'azienda da utilizzare per il documento.
  *
- * @param \Modules\Anagrafiche\Anagrafica $azienda Anagrafica dell'azienda
- * @param int $id_pagamento ID del tipo di pagamento
- * @param string $conto Tipo di conto (vendite/acquisti)
- * @param string $direzione Direzione del documento (entrata/uscita)
- * @param \Modules\Anagrafiche\Anagrafica $anagrafica_controparte Anagrafica della controparte
+ * @param Anagrafica $azienda                Anagrafica dell'azienda
+ * @param int        $id_pagamento           ID del tipo di pagamento
+ * @param string     $conto                  Tipo di conto (vendite/acquisti)
+ * @param string     $direzione              Direzione del documento (entrata/uscita)
+ * @param Anagrafica $anagrafica_controparte Anagrafica della controparte
  *
  * @return int|null ID della banca selezionata
  */
@@ -615,11 +615,11 @@ function getBancaAzienda($azienda, $id_pagamento, $conto, $direzione, $anagrafic
 /**
  * Cerca una banca dell'azienda associata al tipo di pagamento.
  *
- * @param object $database Database object
- * @param int $id_anagrafica ID dell'anagrafica
- * @param int $id_pagamento ID del tipo di pagamento
- * @param string $conto Tipo di conto (vendite/acquisti)
- * @param bool $solo_predefinita Se true, cerca solo banche predefinite
+ * @param object $database         Database object
+ * @param int    $id_anagrafica    ID dell'anagrafica
+ * @param int    $id_pagamento     ID del tipo di pagamento
+ * @param string $conto            Tipo di conto (vendite/acquisti)
+ * @param bool   $solo_predefinita Se true, cerca solo banche predefinite
  *
  * @return int|null ID della banca trovata
  */
@@ -644,7 +644,7 @@ function getBancaByPagamento($database, $id_anagrafica, $id_pagamento, $conto, $
 /**
  * Pulisce i riferimenti a banche inesistenti o eliminate dall'anagrafica.
  *
- * @param \Modules\Anagrafiche\Anagrafica $anagrafica Anagrafica da pulire
+ * @param Anagrafica $anagrafica Anagrafica da pulire
  *
  * @return void
  */
@@ -682,22 +682,22 @@ function cleanInvalidBankReferences($anagrafica)
  * Funzione generica per il calcolo del numero progressivo utilizzata da vari moduli
  * (Contratti, Ordini, Interventi, DDT, Fatture, Preventivi, Anagrafiche).
  *
- * @param string $table Nome della tabella del database
- * @param string $field Nome del campo da calcolare (numero, numero_esterno, codice)
- * @param string $data Data del documento
- * @param int $id_segment ID del segmento
- * @param array $options Opzioni aggiuntive:
- *   - 'data_field': nome del campo data (default 'data')
- *   - 'direction': direzione del documento (entrata/uscita)
- *   - 'skip_direction': direzione da saltare (ritorna stringa vuota)
- *   - 'type_document': tipo di documento per condizioni extra
- *   - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
- *   - 'type_document_table': tabella del tipo documento
- *   - 'conditions_extra': array di condizioni extra SQL
- *   - 'use_setting': usa setting() invece di Generator::getMaschera() (default false)
- *   - 'setting_key': chiave del setting per la maschera (se use_setting = true)
- *   - 'date_pattern': pattern della data per Generator::generate()
- *   - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
+ * @param string $table      Nome della tabella del database
+ * @param string $field      Nome del campo da calcolare (numero, numero_esterno, codice)
+ * @param string $data       Data del documento
+ * @param int    $id_segment ID del segmento
+ * @param array  $options    Opzioni aggiuntive:
+ *                           - 'data_field': nome del campo data (default 'data')
+ *                           - 'direction': direzione del documento (entrata/uscita)
+ *                           - 'skip_direction': direzione da saltare (ritorna stringa vuota)
+ *                           - 'type_document': tipo di documento per condizioni extra
+ *                           - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
+ *                           - 'type_document_table': tabella del tipo documento
+ *                           - 'conditions_extra': array di condizioni extra SQL
+ *                           - 'use_setting': usa setting() invece di Generator::getMaschera() (default false)
+ *                           - 'setting_key': chiave del setting per la maschera (se use_setting = true)
+ *                           - 'date_pattern': pattern della data per Generator::generate()
+ *                           - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
  *
  * @return string Il prossimo numero progressivo
  */
@@ -785,20 +785,20 @@ function getNextNumeroProgressivo($table, $field, $data, $id_segment, $options =
  * (Ordini, DDT, Fatture). Il numero secondario viene solitamente utilizzato per
  * i documenti di vendita (entrata).
  *
- * @param string $table Nome della tabella del database
- * @param string $field Nome del campo da calcolare (numero_esterno)
- * @param string $data Data del documento
- * @param int $id_segment ID del segmento
- * @param array $options Opzioni aggiuntive:
- *   - 'data_field': nome del campo data (default 'data')
- *   - 'direction': direzione del documento (entrata/uscita)
- *   - 'skip_direction': direzione da saltare (ritorna stringa vuota, default 'uscita')
- *   - 'type_document': tipo di documento per condizioni extra
- *   - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
- *   - 'type_document_table': tabella del tipo documento
- *   - 'conditions_extra': array di condizioni extra SQL
- *   - 'date_pattern': pattern della data per Generator::generate()
- *   - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
+ * @param string $table      Nome della tabella del database
+ * @param string $field      Nome del campo da calcolare (numero_esterno)
+ * @param string $data       Data del documento
+ * @param int    $id_segment ID del segmento
+ * @param array  $options    Opzioni aggiuntive:
+ *                           - 'data_field': nome del campo data (default 'data')
+ *                           - 'direction': direzione del documento (entrata/uscita)
+ *                           - 'skip_direction': direzione da saltare (ritorna stringa vuota, default 'uscita')
+ *                           - 'type_document': tipo di documento per condizioni extra
+ *                           - 'type_document_field': campo del tipo documento (es. idtipoddt, idtipoordine)
+ *                           - 'type_document_table': tabella del tipo documento
+ *                           - 'conditions_extra': array di condizioni extra SQL
+ *                           - 'date_pattern': pattern della data per Generator::generate()
+ *                           - 'use_date_pattern': usa Generator::dateToPattern() per il pattern data
  *
  * @return string Il prossimo numero secondario progressivo
  */

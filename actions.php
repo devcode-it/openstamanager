@@ -562,7 +562,7 @@ if ($structure->permission == 'rw') {
             elseif (!empty($customs)) {
                 $dbo->delete('zz_field_record', [
                     'id_record' => $id_record,
-                    'id_field' => array_column($customs, 'id')
+                    'id_field' => array_column($customs, 'id'),
                 ]);
             }
         }

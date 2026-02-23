@@ -117,13 +117,13 @@ switch ($op) {
             $id_record = $dbo->lastInsertedID();
 
             $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_categorie_impianti).' AND id_record = '.prepare($id_categoria));
-            
+
             $id_checks_categoria = array_column($checks_categoria, 'id');
             $utenti_checks = [];
             if (!empty($id_checks_categoria)) {
                 $utenti_checks = $dbo->table('zz_check_user')->whereIn('id_check', $id_checks_categoria)->get()->groupBy('id_check');
             }
-            
+
             foreach ($checks_categoria as $check_categoria) {
                 $id_parent_new = null;
                 if ($check_categoria['id_parent']) {
@@ -206,7 +206,7 @@ switch ($op) {
         ]);
 
         $checks_categoria = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_categorie_impianti).' AND id_record = '.prepare(post('id_categoria')));
-        
+
         $id_parents = array_filter(array_column($checks_categoria, 'id_parent'));
         $parents_map = [];
         if (!empty($id_parents)) {
@@ -215,7 +215,7 @@ switch ($op) {
                 $parents_map[$parent['id']] = $parent;
             }
         }
-        
+
         foreach ($checks_categoria as $check_categoria) {
             $id_parent_new = null;
             if ($check_categoria['id_parent'] && isset($parents_map[$check_categoria['id_parent']])) {

@@ -18,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Header di default.
  * I contenuti di questo file vengono utilizzati per generare l'header delle stampe nel caso non esista un file header.php all'interno della stampa.
  *
@@ -28,7 +28,7 @@
  */
 
 echo '
-<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.($settings['header-font-size']).'px;' : '').'"  >
+<div class="row" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.$settings['header-font-size'].'px;' : '').'"  >
     <div class="col-xs-6" >
         <p><b>'.$f_ragionesociale.'</b></p>
         <p>'.$f_indirizzo.'</p>

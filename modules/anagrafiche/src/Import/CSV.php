@@ -475,7 +475,7 @@ class CSV extends CSVImporter
 
         if (empty($id_banca)) {
             $database->query('INSERT INTO `co_banche` (`iban`, `nome`, `id_anagrafica`)
-                VALUES ('.prepare($iban).', '.prepare("Banca da importazione ".$anagrafica->ragione_sociale).', '.prepare($anagrafica->id).')');
+                VALUES ('.prepare($iban).', '.prepare('Banca da importazione '.$anagrafica->ragione_sociale).', '.prepare($anagrafica->id).')');
             $id_banca = $database->lastInsertedID();
         }
 

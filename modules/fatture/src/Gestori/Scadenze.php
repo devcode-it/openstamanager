@@ -90,21 +90,21 @@ class Scadenze
     {
         $scadenze = $this->fattura->scadenze;
         $assicurazioni = [];
-        
+
         // Ottimizzazione: raccogli tutte le anagrafiche delle scadenze e carica le assicurazioni in una sola query
         $id_anagrafiche = $scadenze->pluck('idanagrafica')->unique()->filter()->values();
         $assicurazioni_map = [];
-        
+
         if ($id_anagrafiche->isNotEmpty()) {
             $assicurazioni_list = AssicurazioneCrediti::whereIn('id_anagrafica', $id_anagrafiche)->get();
-            
+
             // Crea una mappa per accesso rapido
             foreach ($assicurazioni_list as $assicurazione) {
                 $key = $assicurazione->id_anagrafica.'_'.$assicurazione->data_inizio.'_'.$assicurazione->data_fine;
                 $assicurazioni_map[$key] = $assicurazione;
             }
         }
-        
+
         foreach ($scadenze as $scadenza) {
             $key = $scadenza->idanagrafica.'_'.$scadenza->scadenza->format('Y-m-d').'_'.$scadenza->scadenza->format('Y-m-d');
             if (isset($assicurazioni_map[$key])) {

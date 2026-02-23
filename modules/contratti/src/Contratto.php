@@ -31,7 +31,6 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Contratto extends Document
 {

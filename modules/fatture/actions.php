@@ -105,7 +105,7 @@ switch ($op) {
         $fattura->tipo()->associate($tipo);
 
         $data_fattura_precedente = Fattura::whereHas('stato', function ($query) {
-                $query->where('name', 'Emessa');
+            $query->where('name', 'Emessa');
             })
             ->whereHas('tipo', function ($query) {
                 $query->where('dir', 'entrata');
@@ -858,10 +858,10 @@ switch ($op) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            Modules\Fatture\Components\Articolo::where('id', $id_riga)->update(['order' => $i + 1])
-                ?: Modules\Fatture\Components\Riga::where('id', $id_riga)->update(['order' => $i + 1])
-                ?: Modules\Fatture\Components\Descrizione::where('id', $id_riga)->update(['order' => $i + 1])
-                ?: Modules\Fatture\Components\Sconto::where('id', $id_riga)->update(['order' => $i + 1]);
+            Articolo::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Riga::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Descrizione::where('id', $id_riga)->update(['order' => $i + 1])
+                ?: Sconto::where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -1278,12 +1278,12 @@ switch ($op) {
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-                $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
+                $piano_sconto = Anagrafica::find($id_anagrafica)->pianoSconto($dir);
                 if (!empty($piano_sconto)) {
                     $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
                 }
 
-                $provvigione = Modules\Anagrafiche\Anagrafica::find($fattura->idagente)->provvigione_default;
+                $provvigione = Anagrafica::find($fattura->idagente)->provvigione_default;
 
                 $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: null;
                 $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: null;
@@ -1408,7 +1408,7 @@ switch ($op) {
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
+            $piano_sconto = Anagrafica::find($id_anagrafica)->pianoSconto($dir);
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }

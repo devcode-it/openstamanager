@@ -79,6 +79,7 @@ class InvoiceHookTask extends Manager
         $fattura_elettronica = new FatturaElettronica($fattura->id);
         if (!$fattura_elettronica->isGenerated()) {
             $this->resetInvoice($fattura);
+
             return;
         }
 

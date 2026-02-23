@@ -311,7 +311,7 @@ switch (post('op')) {
             ->where('co_pianodeiconti3.id', $id_conto)
             ->whereBetween('co_movimenti.data', [$start, $end])
             ->update([
-                'co_movimenti.totale_reddito' => $dbo->raw('(co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)')
+                'co_movimenti.totale_reddito' => $dbo->raw('(co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)'),
             ]);
 
         break;

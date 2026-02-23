@@ -542,7 +542,7 @@ if (sizeof($righe) > 0) {
     <button type="button" class="btn btn-sm btn-info disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
         <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
     </button>';
-}
+    }
     echo '
     </div>';
 } else {
@@ -746,8 +746,8 @@ $(".check").on("change", function() {
         $("#copia_righe").removeClass("disabled");
 
         // Pulsanti attivi solo se documento non bloccato';
-    if (!$block_edit) {
-        echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
@@ -755,15 +755,15 @@ $(".check").on("change", function() {
         $("#modifica_iva_righe").removeClass("disabled");
         $("#incolla_righe").removeClass("disabled");
         $("#elimina").addClass("disabled");';
-    }
-    echo '
+}
+echo '
     } else {
         // Pulsanti sempre disabilitati quando nessuna riga è selezionata
         $("#copia_righe").addClass("disabled");
 
         // Pulsanti disabilitati solo se documento non bloccato';
-    if (!$block_edit) {
-        echo '
+if (!$block_edit) {
+    echo '
         $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
@@ -771,8 +771,8 @@ $(".check").on("change", function() {
         $("#modifica_iva_righe").addClass("disabled");
         $("#incolla_righe").addClass("disabled");
         $("#elimina").removeClass("disabled");';
-    }
-    echo '
+}
+echo '
     }
 });
 

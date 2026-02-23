@@ -38,7 +38,6 @@ use Plugins\DichiarazioniIntento\Dichiarazione;
 use Plugins\ExportFE\FatturaElettronica;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Fattura extends Document
 {
@@ -81,69 +80,6 @@ class Fattura extends Document
         $this->gestoreScadenze = new GestoreScadenze($this);
         $this->gestoreMovimenti = new GestoreMovimenti($this);
         $this->gestoreBollo = new GestoreBollo($this);
-    }
-
-    /**
-     * Ottiene l'ID di uno stato con caching per evitare query ripetute.
-     *
-     * @param string $nome
-     *
-     * @return int|null
-     */
-    protected static function getIdStato($nome)
-    {
-        if (!isset(self::$statiCache[$nome])) {
-            self::$statiCache[$nome] = Stato::where('name', $nome)->first()?->id;
-        }
-
-        return self::$statiCache[$nome];
-    }
-
-    /**
-     * Ottiene la dichiarazione d'intento valida per l'anagrafica.
-     * Ottimizza le query duplicate per la ricerca delle dichiarazioni.
-     *
-     * @param Anagrafica $anagrafica
-     *
-     * @return Dichiarazione|null
-     */
-    protected static function getDichiarazioneIntentoValida(Anagrafica $anagrafica)
-    {
-        $now = Carbon::now();
-        
-        // Query base per dichiarazioni valide
-        $query = $anagrafica->dichiarazioni()
-            ->whereColumn('massimale', '>', 'totale')
-            ->where('data_inizio', '<', $now)
-            ->where('data_fine', '>', $now);
-        
-        // Prima cerca la dichiarazione predefinita
-        if (!empty($anagrafica->id_dichiarazione_intento_default)) {
-            $dichiarazione = (clone $query)
-                ->where('id', $anagrafica->id_dichiarazione_intento_default)
-                ->first();
-            
-            if ($dichiarazione) {
-                return $dichiarazione;
-            }
-        }
-        
-        // Se non trovata, cerca qualsiasi dichiarazione valida
-        return $query->first();
-    }
-
-    /**
-     * Restituisce l'array degli ID degli stati che indicano un documento non attivo.
-     *
-     * @return array
-     */
-    protected static function getIdStatiNonAttivi()
-    {
-        return [
-            self::getIdStato('Bozza'),
-            self::getIdStato('Annullata'),
-            self::getIdStato('Non valida'),
-        ];
     }
 
     /**
@@ -270,7 +206,7 @@ class Fattura extends Document
             $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'] ?? '';
             $causalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'] ?? '';
             $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
-            
+
             $model->idporto = $porto;
             $model->idcausalet = $causalet;
             $model->idspedizione = $spedizione;
@@ -660,146 +596,18 @@ class Fattura extends Document
         }
 
         parent::save($options);
-        
+
         // Operazioni al cambiamento di stato
         $this->gestioneCambiamentoStato($id_stato_precedente, $id_stato_attuale, $stati_non_attivi, $id_stato_pagato, $options);
-        
+
         // Aggiornamento data competenza movimenti
         $this->aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi);
-        
+
         // Gestione dichiarazioni d'intento
         $this->gestioneDichiarazioniIntento($dichiarazione_precedente);
-        
+
         // Generazione automatica fattura elettronica
         $this->gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale);
-    }
-
-    /**
-     * Gestisce le operazioni relative al cambiamento di stato della fattura.
-     *
-     * @param int|null $id_stato_precedente
-     * @param int|null $id_stato_attuale
-     * @param array $stati_non_attivi
-     * @param int|null $id_stato_pagato
-     * @param array $options
-     */
-    protected function gestioneCambiamentoStato($id_stato_precedente, $id_stato_attuale, $stati_non_attivi, $id_stato_pagato, $options)
-    {
-        // Bozza o Annullato -> Stato diverso da Bozza o Annullato
-        if (
-            (in_array($id_stato_precedente, $stati_non_attivi)
-            && !in_array($id_stato_attuale, $stati_non_attivi))
-            || ($options[0] ?? null) == 'forza_emissione'
-        ) {
-            // Registrazione scadenze
-            $this->registraScadenze($id_stato_attuale == $id_stato_pagato);
-
-            // Registrazione movimenti
-            $this->gestoreMovimenti->registra();
-        }
-        // Stato qualunque -> Bozza o Annullato
-        elseif (in_array($id_stato_attuale, $stati_non_attivi)) {
-            // Rimozione delle scadenza
-            $this->rimuoviScadenze();
-
-            // Rimozione dei movimenti
-            $this->gestoreMovimenti->rimuovi();
-
-            // Rimozione dei movimenti contabili (Prima nota)
-            $this->movimentiContabili()->delete();
-        }
-    }
-
-    /**
-     * Aggiorna la data competenza dei movimenti quando cambia.
-     *
-     * @param int|null $id_stato_attuale
-     * @param array $stati_non_attivi
-     */
-    protected function aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi)
-    {
-        if (isset($this->changes['data_competenza']) && !in_array($id_stato_attuale, $stati_non_attivi)) {
-            Movimento::where('iddocumento', $this->id)
-                ->where('primanota', 0)
-                ->update(['data' => $this->data_competenza]);
-        }
-    }
-
-    /**
-     * Gestisce le operazioni sulle dichiarazioni d'intento.
-     *
-     * @param Dichiarazione|null $dichiarazione_precedente
-     */
-    protected function gestioneDichiarazioniIntento($dichiarazione_precedente)
-    {
-        if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
-            // Correzione dichiarazione precedente
-            $dichiarazione_precedente->fixTotale();
-            $dichiarazione_precedente->save();
-
-            // Correzione nuova dichiarazione
-            $dichiarazione = Dichiarazione::find($this->id_dichiarazione_intento);
-            if (!empty($dichiarazione)) {
-                $dichiarazione->fixTotale();
-                $dichiarazione->save();
-            }
-        }
-    }
-
-    /**
-     * Gestisce la generazione automatica della fattura elettronica.
-     *
-     * @param int|null $id_stato_precedente
-     * @param int|null $id_stato_bozza
-     * @param int|null $id_stato_emessa
-     * @param int|null $id_stato_attuale
-     */
-    protected function gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale)
-    {
-        if ($this->direzione == 'entrata' && $id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) {
-            $stato_fe = StatoFE::find($this->codice_stato_fe);
-            $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile'] ?? 0);
-            $this->refresh();
-
-            // Generazione automatica della Fattura Elettronica
-            $checks = FatturaElettronica::controllaFattura($this);
-            $fattura_elettronica = new FatturaElettronica($this->id);
-            
-            if ($abilita_genera && empty($checks)) {
-                $fattura_elettronica->save();
-
-                if (!$fattura_elettronica->isValid()) {
-                    $errors = $fattura_elettronica->getErrors();
-                    if (is_array($errors) && !empty($errors)) {
-                        flash()->error(tr('Errori nella generazione della fattura elettronica: _ERRORS_', [
-                            '_ERRORS_' => implode(', ', $errors),
-                        ]));
-                    } else {
-                        flash()->error(tr('Errori nella generazione della fattura elettronica'));
-                    }
-                }
-            } elseif (!empty($checks)) {
-                // Rimozione eventuale fattura generata erroneamente
-                if ($abilita_genera) {
-                    $fattura_elettronica->delete();
-                }
-                $error_messages = [];
-                foreach ($checks as $check) {
-                    if (!empty($check['errors'])) {
-                        foreach ($check['errors'] as $error) {
-                            if (!empty($error)) {
-                                $error_messages[] = strip_tags((string) $error);
-                            }
-                        }
-                    }
-                }
-                if (!empty($error_messages)) {
-                    flash()->warning(tr('Controlli fattura elettronica falliti: _ERRORS_', [
-                        '_ERRORS_' => implode(', ', $error_messages),
-                    ]));
-                }
-            }
-        }
     }
 
     public function delete()
@@ -854,7 +662,7 @@ class Fattura extends Document
 
         $riga = $this->rigaSpeseIncasso;
         $id_riga_esclusa = $riga?->id ?? 0;
-        
+
         $first_riga_fattura = $this->getRighe()
             ->where('id', '!=', $id_riga_esclusa)
             ->where('is_descrizione', '0')
@@ -1088,4 +896,192 @@ class Fattura extends Document
         return $totale;
     }
 
+    /**
+     * Ottiene l'ID di uno stato con caching per evitare query ripetute.
+     *
+     * @param string $nome
+     *
+     * @return int|null
+     */
+    protected static function getIdStato($nome)
+    {
+        if (!isset(self::$statiCache[$nome])) {
+            self::$statiCache[$nome] = Stato::where('name', $nome)->first()?->id;
+        }
+
+        return self::$statiCache[$nome];
+    }
+
+    /**
+     * Ottiene la dichiarazione d'intento valida per l'anagrafica.
+     * Ottimizza le query duplicate per la ricerca delle dichiarazioni.
+     *
+     * @return Dichiarazione|null
+     */
+    protected static function getDichiarazioneIntentoValida(Anagrafica $anagrafica)
+    {
+        $now = Carbon::now();
+
+        // Query base per dichiarazioni valide
+        $query = $anagrafica->dichiarazioni()
+            ->whereColumn('massimale', '>', 'totale')
+            ->where('data_inizio', '<', $now)
+            ->where('data_fine', '>', $now);
+
+        // Prima cerca la dichiarazione predefinita
+        if (!empty($anagrafica->id_dichiarazione_intento_default)) {
+            $dichiarazione = (clone $query)
+                ->where('id', $anagrafica->id_dichiarazione_intento_default)
+                ->first();
+
+            if ($dichiarazione) {
+                return $dichiarazione;
+            }
+        }
+
+        // Se non trovata, cerca qualsiasi dichiarazione valida
+        return $query->first();
+    }
+
+    /**
+     * Restituisce l'array degli ID degli stati che indicano un documento non attivo.
+     *
+     * @return array
+     */
+    protected static function getIdStatiNonAttivi()
+    {
+        return [
+            self::getIdStato('Bozza'),
+            self::getIdStato('Annullata'),
+            self::getIdStato('Non valida'),
+        ];
+    }
+
+    /**
+     * Gestisce le operazioni relative al cambiamento di stato della fattura.
+     *
+     * @param int|null $id_stato_precedente
+     * @param int|null $id_stato_attuale
+     * @param array    $stati_non_attivi
+     * @param int|null $id_stato_pagato
+     * @param array    $options
+     */
+    protected function gestioneCambiamentoStato($id_stato_precedente, $id_stato_attuale, $stati_non_attivi, $id_stato_pagato, $options)
+    {
+        // Bozza o Annullato -> Stato diverso da Bozza o Annullato
+        if (
+            (in_array($id_stato_precedente, $stati_non_attivi)
+            && !in_array($id_stato_attuale, $stati_non_attivi))
+            || ($options[0] ?? null) == 'forza_emissione'
+        ) {
+            // Registrazione scadenze
+            $this->registraScadenze($id_stato_attuale == $id_stato_pagato);
+
+            // Registrazione movimenti
+            $this->gestoreMovimenti->registra();
+        }
+        // Stato qualunque -> Bozza o Annullato
+        elseif (in_array($id_stato_attuale, $stati_non_attivi)) {
+            // Rimozione delle scadenza
+            $this->rimuoviScadenze();
+
+            // Rimozione dei movimenti
+            $this->gestoreMovimenti->rimuovi();
+
+            // Rimozione dei movimenti contabili (Prima nota)
+            $this->movimentiContabili()->delete();
+        }
+    }
+
+    /**
+     * Aggiorna la data competenza dei movimenti quando cambia.
+     *
+     * @param int|null $id_stato_attuale
+     * @param array    $stati_non_attivi
+     */
+    protected function aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi)
+    {
+        if (isset($this->changes['data_competenza']) && !in_array($id_stato_attuale, $stati_non_attivi)) {
+            Movimento::where('iddocumento', $this->id)
+                ->where('primanota', 0)
+                ->update(['data' => $this->data_competenza]);
+        }
+    }
+
+    /**
+     * Gestisce le operazioni sulle dichiarazioni d'intento.
+     *
+     * @param Dichiarazione|null $dichiarazione_precedente
+     */
+    protected function gestioneDichiarazioniIntento($dichiarazione_precedente)
+    {
+        if (!empty($dichiarazione_precedente) && $dichiarazione_precedente->id != $this->id_dichiarazione_intento) {
+            // Correzione dichiarazione precedente
+            $dichiarazione_precedente->fixTotale();
+            $dichiarazione_precedente->save();
+
+            // Correzione nuova dichiarazione
+            $dichiarazione = Dichiarazione::find($this->id_dichiarazione_intento);
+            if (!empty($dichiarazione)) {
+                $dichiarazione->fixTotale();
+                $dichiarazione->save();
+            }
+        }
+    }
+
+    /**
+     * Gestisce la generazione automatica della fattura elettronica.
+     *
+     * @param int|null $id_stato_precedente
+     * @param int|null $id_stato_bozza
+     * @param int|null $id_stato_emessa
+     * @param int|null $id_stato_attuale
+     */
+    protected function gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale)
+    {
+        if ($this->direzione == 'entrata' && $id_stato_precedente == $id_stato_bozza && $id_stato_attuale == $id_stato_emessa) {
+            $stato_fe = StatoFE::find($this->codice_stato_fe);
+            $abilita_genera = empty($this->codice_stato_fe) || intval($stato_fe['is_generabile'] ?? 0);
+            $this->refresh();
+
+            // Generazione automatica della Fattura Elettronica
+            $checks = FatturaElettronica::controllaFattura($this);
+            $fattura_elettronica = new FatturaElettronica($this->id);
+
+            if ($abilita_genera && empty($checks)) {
+                $fattura_elettronica->save();
+
+                if (!$fattura_elettronica->isValid()) {
+                    $errors = $fattura_elettronica->getErrors();
+                    if (is_array($errors) && !empty($errors)) {
+                        flash()->error(tr('Errori nella generazione della fattura elettronica: _ERRORS_', [
+                            '_ERRORS_' => implode(', ', $errors),
+                        ]));
+                    } else {
+                        flash()->error(tr('Errori nella generazione della fattura elettronica'));
+                    }
+                }
+            } elseif (!empty($checks)) {
+                // Rimozione eventuale fattura generata erroneamente
+                if ($abilita_genera) {
+                    $fattura_elettronica->delete();
+                }
+                $error_messages = [];
+                foreach ($checks as $check) {
+                    if (!empty($check['errors'])) {
+                        foreach ($check['errors'] as $error) {
+                            if (!empty($error)) {
+                                $error_messages[] = strip_tags((string) $error);
+                            }
+                        }
+                    }
+                }
+                if (!empty($error_messages)) {
+                    flash()->warning(tr('Controlli fattura elettronica falliti: _ERRORS_', [
+                        '_ERRORS_' => implode(', ', $error_messages),
+                    ]));
+                }
+            }
+        }
+    }
 }

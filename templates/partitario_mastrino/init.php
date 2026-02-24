@@ -31,7 +31,7 @@ if (get('lev') == '3') {
     $conto2 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti2 WHERE id='.prepare($conto3['idpianodeiconti2']));
     $conto1 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti1 WHERE id='.prepare($conto2['idpianodeiconti1']));
     // Movimenti
-    $records = $dbo->fetchArray('SELECT * FROM co_movimenti WHERE idconto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' ORDER BY co_movimenti.data');
+    $records = $dbo->fetchArray('SELECT co_movimenti.* FROM co_movimenti LEFT JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id WHERE co_movimenti.idconto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' ORDER BY co_movimenti.data, CAST(co_documenti.numero AS UNSIGNED)');
 
     // Calcolo saldo iniziale se non è presente nessun movimento di apertura tra i movimenti del periodo
     $has_movimento_apertura = false;

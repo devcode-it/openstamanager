@@ -83,8 +83,8 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
-    HAVING
-        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
+        HAVING
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' AND totale != 0
     UNION
     SELECT
         `vb_venditabanco`.`data` as data_competenza_iva,
@@ -112,8 +112,8 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `vb_stati_vendita`.`descrizione` = "Pagato"
     GROUP BY
         `co_iva`.`id`, `id`, `an_anagrafiche`.`idanagrafica`
-    HAVING
-        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
+        HAVING
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' AND totale != 0
     ) AS tabella
     GROUP BY
     `data_competenza_iva`, `iva`, `id`, `data_registrazione`, `data`, `numero_esterno`, `codice_tipo_documento_fe`, `percentuale`, `descrizione`, `numero`, `ragione_sociale`
@@ -151,8 +151,8 @@ WHERE
     `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY
     `co_iva`.`id`, `co_documenti`.`id`
-HAVING
-    data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).', totale != 0
+    HAVING
+        data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' AND totale != 0
 ORDER BY
     CAST( IF(`dir`="entrata", `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED)';
 }

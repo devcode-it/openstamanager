@@ -590,6 +590,12 @@ echo '
                     .selectSetNew(data.id_contratto, data.descrizione_contratto);
             }
 
+            // Impostazione del cliente finale da anagrafica
+            if(data.idclientefinale) {
+                input("idclientefinale").getElement()
+                    .selectSetNew(data.idclientefinale, data.idclientefinale_descrizione);
+            }
+
             caricaMappa(data.lat, data.lng);
 		}
 

@@ -25,6 +25,8 @@ use Modules\Banche\Banca;
 
 include_once __DIR__.'/../../core.php';
 
+$id_cliente_finale = $record['idclientefinale'] ?? null;
+
 $is_fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $is_cliente = in_array($id_cliente, $tipi_anagrafica);
 $is_tecnico = in_array($id_tecnico, $tipi_anagrafica);
@@ -583,16 +585,22 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                     {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
                                 </div>
                                 <div class="col-md-6">
+                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
+                                </div>
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
-                                </div>
-                                <div class="col-md-6">
-                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
                                 </div>';
+
 
     // Collegamento con il conto
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));

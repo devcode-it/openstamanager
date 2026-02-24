@@ -39,3 +39,6 @@ ALTER TABLE `in_interventi_tecnici` ADD `description` TEXT NOT NULL AFTER `summa
 ALTER TABLE `co_righe_contratti` ADD `id_tipointervento` INT(11) NULL;
 
 ALTER TABLE `co_contratti_tipiintervento` ADD `is_abilitato` TINYINT(1) NOT NULL DEFAULT 1;
+
+-- Aggiunta gestione per conto di in scheda anagrafica
+ALTER TABLE `an_anagrafiche` ADD `idclientefinale` INT NOT NULL AFTER `idanagrafica`; 

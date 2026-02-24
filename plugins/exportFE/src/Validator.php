@@ -667,7 +667,7 @@ class Validator
                     'č' => 'c',
                 ]);
 
-                $output = str_replace(["\r", "\n"], '', $output);
+                $output = str_replace(["\r", "\n"], ' ', $output);
 
                 $output = self::sanitizeXML2($output);
             }

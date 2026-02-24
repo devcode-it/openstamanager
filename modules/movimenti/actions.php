@@ -86,7 +86,9 @@ switch (post('op')) {
                     $articolo = Articolo::find($id_articolo);
 
                     if ($articolo) {
-                        $descrizione = tr('Inventario - Rettifica giacenza');
+                        $descrizione = tr('Inventario - Rettifica giacenza (Q.r. _QTA_)', [
+                            '_QTA_' => $nuova_giacenza
+                        ]);
 
                         // Registra il movimento
                         $articolo->movimenta($differenza, $descrizione, $data, 1, [

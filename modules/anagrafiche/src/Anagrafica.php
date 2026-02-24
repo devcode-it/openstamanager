@@ -357,6 +357,28 @@ class Anagrafica extends Model
         return $this->hasMany(Intervento::class, 'idanagrafica');
     }
 
+    public function pianoScontoVendite()
+    {
+        return $this->belongsTo(\Modules\PianiSconto\PianoSconto::class, 'id_piano_sconto_vendite');
+    }
+
+    public function pianoScontoAcquisti()
+    {
+        return $this->belongsTo(\Modules\PianiSconto\PianoSconto::class, 'id_piano_sconto_acquisti');
+    }
+
+    /**
+     * Restituisce il piano di sconto in base alla direzione.
+     *
+     * @param string $dir
+     *
+     * @return \Modules\PianiSconto\PianoSconto|null
+     */
+    public function pianoSconto($dir)
+    {
+        return ($dir == 'entrata') ? $this->pianoScontoVendite : $this->pianoScontoAcquisti;
+    }
+
     // Metodi statici
 
     /**

@@ -122,6 +122,10 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
         // Data (larghezza fissa)
         elseif (preg_match('/^Data/', (string) $field)) {
             $attr_td .= " width='100'";
+            if(!empty($id_plugin)){
+                //Traduzione intestazione plugins
+                $field = tr($field);
+            }
         }
 
         // Immagine
@@ -142,6 +146,9 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
             $field = str_replace('mailto_', '', $field);
         } elseif (preg_match('/^tel_/', (string) $field)) {
             $field = str_replace('tel_', '', $field);
+        }elseif(!empty($id_plugin)){
+            //Traduzione intestazione plugins
+            $field = tr($field);
         }
 
         if (isMobile()) {

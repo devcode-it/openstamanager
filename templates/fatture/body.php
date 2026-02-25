@@ -31,9 +31,6 @@ $rows_per_page = $fattura_accompagnatoria ? 20 : 25;
 
 // Calcolo ottimizzato delle righe da sottrarre
 $c = 0;
-foreach ($v_iva as $desc_iva => $tot_iva) {
-    ++$c;
-}
 
 // Calcolo ottimizzato delle righe intestazione
 if ($f_sitoweb || $f_pec) {
@@ -102,9 +99,9 @@ foreach ($righe as $riga) {
     ++$num;
     $r = $riga->toArray();
 
-    $v_totale[$r['desc_iva']] = sum($v_totale[$r['desc_iva']], $riga->totale_imponibile + $riga->rivalsainps);
+    $v_totale[$r['desc_iva']] += $riga->totale_imponibile + $riga->rivalsainps;
     $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
-    $v_iva[$r['desc_iva']] = sum($v_iva[$r['desc_iva']], $v_totale[$r['desc_iva']] * $aliquota / 100);
+    $v_iva[$r['desc_iva']] += ($riga->totale_imponibile + $riga->rivalsainps) * $aliquota / 100;
 
     echo '
     <tr>

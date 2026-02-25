@@ -163,7 +163,9 @@ class Articolo extends Model
             return false;
         }
 
-        global $user;
+        // Recupero l'utente corrente
+        $user = auth_osm()->getUser();
+        $id_utente = $user->id;
 
         // Movimento il magazzino solo se l'articolo non è un servizio
         if (empty($this->servizio)) {
@@ -175,7 +177,7 @@ class Articolo extends Model
                 'movimento' => $descrizone,
                 'data' => $data,
                 'manuale' => $manuale,
-                'idutente' => $user->id,
+                'idutente' => $id_utente,
             ], $array));
         }
         $id = database()->lastInsertedID();

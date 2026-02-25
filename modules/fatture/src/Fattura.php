@@ -332,7 +332,10 @@ class Fattura extends Document
      */
     public function getPesoCalcolatoAttribute()
     {
-        $righe = $this->getRighe()->load(['articolo']);
+        $righe = $this->getRighe();
+        $righe->filter(fn ($item) => $item->isArticolo())->each(function ($item) {
+            $item->load(['articolo']);
+        });
 
         $peso_lordo = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->peso_lordo * $item->qta : 0);
 
@@ -347,7 +350,10 @@ class Fattura extends Document
     public function getVolumeCalcolatoAttribute()
     {
         // Eager loading per evitare N+1 queries
-        $righe = $this->getRighe()->load(['articolo']);
+        $righe = $this->getRighe();
+        $righe->filter(fn ($item) => $item->isArticolo())->each(function ($item) {
+            $item->load(['articolo']);
+        });
 
         $volume = $righe->sum(fn ($item) => $item->isArticolo() ? $item->articolo->volume * $item->qta : 0);
 

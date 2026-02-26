@@ -408,6 +408,7 @@ globals.dashboard = {
         end_time: "'.((setting('Ora fine sul calendario') != '00:00:00' && !empty(setting('Ora fine sul calendario'))) ? setting('Ora fine sul calendario') : '23:59:59').'",
         write_permission: '.intval($modulo_interventi->permission == 'rw').',
         tooltip: '.intval(setting('Utilizzare i tooltip sul calendario')).',
+        tooltip_delay: '.intval(setting('Ritardo apertura tooltip dashboard (ms)')).',
         calendar: null,
         timeFormat: "H:mm",
         select: {
@@ -760,7 +761,7 @@ echo '
                         contentAsHTML: true,
                         hideOnClick: true,
                         speed: 200,
-                        delay: 300,
+                        delay: globals.dashboard.tooltip_delay,
                         maxWidth: 400,
                         theme: "tooltipster-shadow",
                         touchDevices: true,

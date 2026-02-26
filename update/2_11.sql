@@ -42,3 +42,11 @@ ALTER TABLE `co_contratti_tipiintervento` ADD `is_abilitato` TINYINT(1) NOT NULL
 
 -- Aggiunta gestione per conto di in scheda anagrafica
 ALTER TABLE `an_anagrafiche` ADD `idclientefinale` INT NOT NULL AFTER `idanagrafica`; 
+
+-- Aggiunta impostazione per il ritardo di apertura dei tooltip sulla Dashboard
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Ritardo apertura tooltip dashboard (ms)', '300', 'integer', 1, 'Dashboard');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Ritardo apertura tooltip dashboard (ms)', 'Definisce il ritardo in millisecondi prima che il tooltip venga mostrato al passaggio del mouse sugli eventi del calendario nella Dashboard.'),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Dashboard tooltip opening delay (ms)', 'Defines the delay in milliseconds before the tooltip is shown when hovering over calendar events in the Dashboard.');

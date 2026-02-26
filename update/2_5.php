@@ -986,6 +986,7 @@ $traduzioni = [
     ['zz_settings_lang', 'Total tables restricted to selection', 'Totali delle tabelle ristretti alla selezione', ''],
     ['zz_settings_lang', 'Use sales prices inclusive of VAT', 'Utilizza prezzi di vendita comprensivi di IVA', 'Enable management with VAT-inclusive amounts for sales prices'],
     ['zz_settings_lang', 'Use tooltips on the calendar', 'Utilizzare i tooltip sul calendario', ''],
+    ['zz_settings_lang', 'Dashboard tooltip opening delay (ms)', 'Ritardo apertura tooltip dashboard (ms)', 'Defines the delay in milliseconds before the tooltip is shown when hovering over calendar events in the Dashboard.'],
     ['zz_settings_lang', 'Currency', 'Valuta', ''],
     ['zz_settings_lang', 'Check intervention number', 'Verifica numero intervento', 'Display the message that verifies the continuity of numbers for the activities.'],
     ['zz_settings_lang', 'Dashboard view', 'Vista dashboard', ''],

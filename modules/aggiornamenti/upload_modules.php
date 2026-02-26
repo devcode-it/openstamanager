@@ -219,3 +219,4 @@ delete($extraction_dir);
 
 // Redirect
 redirect_url(base_path_osm().'/editor.php?id_module='.$id_module);
+exit();

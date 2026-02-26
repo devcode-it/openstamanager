@@ -44,7 +44,6 @@ function redirect_url($url, $type = 'php')
     switch ($type) {
         case 'php':
             header('Location: '.$url);
-            exit();
             break;
         case 'js':
             echo '<script type="text/javascript">location.href="'.$url.'";</script>';

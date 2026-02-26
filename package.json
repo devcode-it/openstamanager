@@ -68,7 +68,7 @@
         "cwd": "^0.10.0",
         "del": "^6.0.0",
         "globby": "^14.0.1",
-        "gulp": "^4.0.2",
+        "gulp": "^5.0.1",
         "gulp-autoprefixer": "^9.0.0",
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.0.0",

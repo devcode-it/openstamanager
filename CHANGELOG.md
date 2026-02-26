@@ -4,8 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.10.1 (2026-02-24)](#2101-2026-02-24)
-- [2.10.0 (2026-02-05)](#210-2026-02-05)
+- [2.10.1 (2026-02-26)](#2101-2026-02-26)
+- [2.10 (2026-02-05)](#210-2026-02-05)
 - [2.9.8 (2025-12-23)](#298-2025-12-23)
 - [2.9.7 (2025-12-09)](#297-2025-12-09)
 - [2.9.6 (2025-11-26)](#296-2025-11-26)
@@ -69,7 +69,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
-## 2.10.1 (2026-02-24)
+## 2.10.1 (2026-02-26)
 ### Modificato (Changed)
 - Ottimizzazione invio fatture elettroniche da coda di invio con campo fe_failed_at
 - Invio fatture elettroniche da bulk ora prevede tre tentativi di invio prima di rimuovere le fatture dalla coda
@@ -120,7 +120,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretto dettaglio prezzi sessioni e calcolo sconto
 - Corretta creazione immagine docker
 
-## 2.10.0 (2026-02-05)
+## 2.10 (2026-02-05)
 ### Aggiunto (Added)
 - Aggiunto controllo sui widget personalizzati in aggiornamenti
 - Aggiunta variabile interventi {email_user} per gestione reply_to in email

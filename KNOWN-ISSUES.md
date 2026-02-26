@@ -11,7 +11,7 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
-#### 2.10.1 - 24/02/2026
+#### 2.10.1 - 26/02/2026
 
 ##### Problemi noti
 - Corretto Unauthenticated privilege escalation (vulnerabilità critica)

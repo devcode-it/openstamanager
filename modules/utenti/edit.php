@@ -371,14 +371,24 @@ function update_permissions(id, value, color){
         }
     );
 }
-var mySkins=["skin-blue","skin-black","skin-red","skin-yellow","skin-purple","skin-green","skin-blue-light","skin-black-light","skin-red-light","skin-yellow-light","skin-purple-light","skin-green-light"];
+function applySidebarTheme(theme){
+    var sidebar = $(".main-sidebar");
+    if (!sidebar.length) {
+        return;
+    }
 
-function changeSkin(cls){
-    $.each(mySkins,function(i){
-        $("body").removeClass(mySkins[i])
+    var classes = (sidebar.attr("class") || "").split(/\s+/);
+    var filtered = $.grep(classes, function(cls) {
+        return cls && cls !== "sidebar-dark-secondary" && cls.indexOf("bg-") !== 0;
     });
-    $("body").addClass("skin-"+cls);
-    return false;
+
+    if (theme) {
+        filtered.push("bg-" + theme);
+    } else {
+        filtered.push("sidebar-dark-secondary");
+    }
+
+    sidebar.attr("class", filtered.join(" "));
 }
 
 $("#id_module_start").change(function(){
@@ -386,9 +396,9 @@ $("#id_module_start").change(function(){
 });
 
 $("#theme").change(function(){
-    update_theme($(this).val());
-    if ($(this).val())
-        changeSkin($(this).val());
+    var themeValue = $(this).val();
+    applySidebarTheme(themeValue);
+    update_theme(themeValue);
 });
 
 function update_id_module_start(value){
@@ -407,7 +417,7 @@ function update_id_module_start(value){
 
 function update_theme(value){
     $.get(
-        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_theme&theme=" + value,
+        globals.rootdir + "/actions.php?id_module='.$id_module.'&id_record='.$id_record.'&op=update_theme&theme=" + encodeURIComponent(value || ""),
         function(data){
             if(data == "ok") {
                 toastr["success"]("'.tr('Tema aggiornato!').'");

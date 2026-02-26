@@ -94,7 +94,7 @@ foreach ($aliquote as $aliquota => $record) {
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
-        <td>'.$record['descrizione'].'</td>
+        <td>'.$record['descrizione'].' '.tr('(Split payment)').'</td>
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';

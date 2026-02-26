@@ -45,9 +45,15 @@ echo '
 
     </tr>';
 
-$iva[$record['descrizione']]['detraibile'][] = $record['iva_detraibile'];
-$iva[$record['descrizione']]['indetraibile'][] = $record['iva_indetraibile'];
-$totale[$record['descrizione']][] = $record['subtotale'];
+if ($record['split_payment']) {
+    $iva[$record['descrizione'].' '.tr('(Split payment)')]['detraibile'][] = $record['iva_detraibile'];
+    $iva[$record['descrizione'].' '.tr('(Split payment)')]['indetraibile'][] = $record['iva_indetraibile'];
+    $totale[$record['descrizione'].' '.tr('(Split payment)')][] = $record['subtotale'];
+} else {
+    $iva[$record['descrizione']]['detraibile'][] = $record['iva_detraibile'];
+    $iva[$record['descrizione']]['indetraibile'][] = $record['iva_indetraibile'];
+    $totale[$record['descrizione']][] = $record['subtotale'];
+}
 
 $numero = $record['numero'];
 $data_registrazione = $record['data_registrazione'];

@@ -50,3 +50,12 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Ritardo apertura tooltip dashboard (ms)', 'Definisce il ritardo in millisecondi prima che il tooltip venga mostrato al passaggio del mouse sugli eventi del calendario nella Dashboard.'),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Dashboard tooltip opening delay (ms)', 'Defines the delay in milliseconds before the tooltip is shown when hovering over calendar events in the Dashboard.');
+
+-- Registrazione risorse API per automezzi e articoli automezzo
+INSERT INTO `zz_api_resources` (`version`, `type`, `resource`, `class`, `enabled`) VALUES
+('app-v1', 'retrieve', 'automezzi', 'API\\App\\v1\\Automezzi', 1),
+('app-v1', 'retrieve', 'automezzi-cleanup', 'API\\App\\v1\\Automezzi', 1),
+('app-v1', 'retrieve', 'automezzo', 'API\\App\\v1\\Automezzi', 1),
+('app-v1', 'retrieve', 'articoli-automezzo', 'API\\App\\v1\\ArticoliAutomezzo', 1),
+('app-v1', 'retrieve', 'articoli-automezzo-cleanup', 'API\\App\\v1\\ArticoliAutomezzo', 1),
+('app-v1', 'retrieve', 'articolo-automezzo', 'API\\App\\v1\\ArticoliAutomezzo', 1);

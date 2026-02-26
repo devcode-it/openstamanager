@@ -58,6 +58,8 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
         'checklists' => Checklists::class,
         'pagamenti' => Pagamenti::class,
         'allegati-interventi' => AllegatiInterventi::class,
+        'automezzi' => Automezzi::class,
+        'articoli-automezzo' => ArticoliAutomezzo::class,
     ];
 
     /**

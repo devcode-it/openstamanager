@@ -106,7 +106,7 @@ switch ($op) {
 
         $data_fattura_precedente = Fattura::whereHas('stato', function ($query) {
             $query->where('name', 'Emessa');
-            })
+        })
             ->whereHas('tipo', function ($query) {
                 $query->where('dir', 'entrata');
             })

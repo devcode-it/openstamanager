@@ -218,5 +218,6 @@ if (file_exists($extraction_dir.'/VERSION')) {
 delete($extraction_dir);
 
 // Redirect
+$database->commitTransaction();
 redirect_url(base_path_osm().'/editor.php?id_module='.$id_module);
 exit();

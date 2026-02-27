@@ -3,6 +3,7 @@
 return [
     'an_anagrafiche',
     'an_anagrafiche_agenti',
+    'an_anagrafiche_tipiintervento',
     'an_assicurazione_crediti',
     'an_automezzi_danni',
     'an_automezzi_gestori',

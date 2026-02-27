@@ -71,6 +71,15 @@ switch ($resource) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
+        if (!empty($superselect['idtipiintervento'])) {
+            $where[] = '`in_tipiintervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
+        } else if (!empty($superselect['idanagrafica'])) {
+            $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica=".prepare($superselect['idanagrafica']));
+            if (sizeof($rs) > 0) {
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
+            }
+        }
+
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
@@ -215,6 +224,13 @@ switch ($resource) {
 
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+        }
+
+        if (!empty($superselect['idanagrafica'])) {
+            $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica=".prepare($superselect['idanagrafica']));
+            if (sizeof($rs) > 0) {
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
+            }
         }
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);

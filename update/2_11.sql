@@ -59,3 +59,11 @@ INSERT INTO `zz_api_resources` (`version`, `type`, `resource`, `class`, `enabled
 ('app-v1', 'retrieve', 'articoli-automezzo', 'API\\App\\v1\\ArticoliAutomezzo', 1),
 ('app-v1', 'retrieve', 'articoli-automezzo-cleanup', 'API\\App\\v1\\ArticoliAutomezzo', 1),
 ('app-v1', 'retrieve', 'articolo-automezzo', 'API\\App\\v1\\ArticoliAutomezzo', 1);
+
+CREATE TABLE `an_anagrafiche_tipiintervento` (
+  `idanagrafica` int NOT NULL,
+  `idtipointervento` varchar(25) NOT NULL
+);
+
+ALTER TABLE `an_anagrafiche_tipiintervento`
+  ADD PRIMARY KEY (`idanagrafica`,`idtipointervento`);

@@ -105,6 +105,15 @@ switch (post('op')) {
 
         $anagrafica->save();
 
+        // Aggiorno i tipi attività utilizzabili
+        $idtipiintervento = (array) post('idtipiintervento');
+        $dbo->query('DELETE FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($id_record));
+        foreach ($idtipiintervento as $idtipointervento) {
+            if (!empty($idtipointervento) && $idtipointervento != '-1') {
+                $dbo->query('INSERT INTO an_anagrafiche_tipiintervento(idtipointervento, idanagrafica) VALUES('.prepare($idtipointervento).', '.prepare($id_record).')');
+            }
+        }
+
         // Aggiorno gli agenti collegati
         $idagenti = array_filter((array) post('idagenti'), fn ($value) => $value !== '' && $value !== null);
         $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => $idagenti]);

@@ -109,6 +109,10 @@ class Contratto extends Document
         $presenti = database()->fetchArray('SELECT idtipointervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
         $id_presenti = array_column($presenti, 'idtipointervento');
 
+        // Recupera i tipi di intervento abilitati per l'anagrafica del contratto
+        $tipi_abilitati_anagrafica = database()->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($this->idanagrafica));
+        $id_tipi_abilitati = array_column($tipi_abilitati_anagrafica, 'idtipointervento');
+
         // Aggiunta associazioni costi unitari al contratto per i tipi non presenti
         $tipi = TipoSessione::whereNull('deleted_at')
             ->whereNotIn('id', $id_presenti)
@@ -121,6 +125,9 @@ class Contratto extends Document
         // Costruisci l'array di inserimento in un'unica operazione
         $database = database();
         foreach ($tipi as $tipo) {
+            // Verifica se il tipo di intervento è abilitato per l'anagrafica
+            $is_abilitato = in_array($tipo->id, $id_tipi_abilitati) ? 1 : 0;
+            
             $database->insert('co_contratti_tipiintervento', [
                 'idcontratto' => $this->id,
                 'idtipointervento' => $tipo->id,
@@ -130,7 +137,7 @@ class Contratto extends Document
                 'costo_ore_tecnico' => $tipo->costo_orario_tecnico,
                 'costo_km_tecnico' => $tipo->costo_km_tecnico,
                 'costo_dirittochiamata_tecnico' => $tipo->costo_diritto_chiamata_tecnico,
-                'is_abilitato' => 1,
+                'is_abilitato' => $is_abilitato,
             ]);
         }
     }

@@ -589,14 +589,31 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento", "value": "$idtipointervento_default$" ]}
+                                <div class="col-md-6">';
+                                    $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='".$id_record."'");
+                                    $idtipiintervento = array('-1');
+                                    for( $i=0; $i<sizeof($rs); $i++ ){
+                                        array_push( $idtipiintervento, $rs[$i]['idtipointervento'] );
+                                    }
+                                    
+                                    // Prepara la query per il tipo attività predefinita filtrata
+                                    $where_clause = '';
+                                    $tipi_utilizzabili_filtro = array_filter($idtipiintervento, function($val) { return $val != '-1'; });
+                                    if (!empty($tipi_utilizzabili_filtro)) {
+                                        $where_clause = 'WHERE in_tipiintervento.id IN ('.implode(',', array_map('intval', $tipi_utilizzabili_filtro)).')';
+                                    }
+                                    
+                                    echo '
+                                    {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipiintervento.id, title as descrizione FROM in_tipiintervento LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode( ",", $idtipiintervento ).'" ]}
                                 </div>
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
+                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento",  "select-options": '.json_encode(['idtipiintervento' => '']).', "value": "$idtipointervento_default$" ]}
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
+                                </div>
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                                 </div>';
@@ -945,5 +962,9 @@ if (empty($record['deleted_at'])) {
         });
 
         $('#ragione_sociale, #cognome').trigger('keyup');
+
+        $('#idtipiintervento').change(function() {
+            updateSelectOption("idtipiintervento", $('#idtipiintervento option:selected').map(function() { return $(this).val(); }).get());
+	    });
     });
 </script>

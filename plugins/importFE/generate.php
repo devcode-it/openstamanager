@@ -314,7 +314,7 @@ if (!empty($data_registrazione)) {
 $data_registrazione_value = !empty($data_registrazione) ? $data_registrazione->format('Y-m-d') : $dati_generali['Data'];
 echo '
             <div class="col-md-3">
-                {[ "type": "date", "label": "'.tr('Data di ricezione').'", "name": "data_registrazione", "required": 1, "value": "'.$data_registrazione_value.'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
+                {[ "type": "date", "label": "'.tr('Data di registrazione').'", "name": "data_registrazione", "required": 1, "value": "'.$data_registrazione_value.'", "max-date": "-now-", "min-date": "'.$dati_generali['Data'].'" ]}
             </div>';
 
 if (!empty($anagrafica)) {

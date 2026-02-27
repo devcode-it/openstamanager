@@ -807,7 +807,7 @@ $operations['change_bank'] = [
     'data' => [
         'title' => tr('Aggiornare la banca?'),
         'msg' => tr('Per ciascuna fattura selezionata, verrà aggiornata la banca').'
-        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).' AND deleted_at IS NULL" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

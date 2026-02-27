@@ -108,6 +108,11 @@ class Autofill
         $space = $this->space;
         $number = 0;
 
+        // Protezione contro divisione per zero
+        if ($this->max_rows <= 0) {
+            return 0;
+        }
+
         // Algoritmo per il calcolo delle pagine
         if ($space <= $this->max_rows) {
             // Prima pagina - calcolo diretto

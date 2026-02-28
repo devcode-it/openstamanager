@@ -2,18 +2,20 @@
 
 namespace API\Controllers;
 
-use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\State\ProcessorInterface;
 use DTO\DataTablesLoadRequest\Column;
 use DTO\DataTablesLoadRequest\DataTablesLoadRequest;
 use DTO\DataTablesLoadResponse\DataTablesLoadResponse;
 use Models\Module;
 use Util\Query;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+
 #[Post(
     uriTemplate: '/datatables/list/{id_module}/{id_plugin}/{id_parent}',
-    processor: DataTablesController::class,
+    controller: DataTablesController::class,
     input: DataTablesLoadRequest::class,
     output: DataTablesLoadResponse::class,
 )]
@@ -21,11 +23,34 @@ class DataTablesResource
 {
 }
 
-final class DataTablesController implements ProcessorInterface
+final class DataTablesController extends BaseController
 {
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): DataTablesLoadResponse
+    public function __invoke(Request $request): JsonResponse
     {
-        if (!$data instanceof DataTablesLoadRequest) {
+        $request_body = $this->_cast($request, DataTablesLoadRequest::class);
+
+        $id_module = (int) $request_body->getIdModule();
+        $id_plugin = (int) $request_body->getIdPlugin();
+        $id_parent = (int) $request_body->getIdParent();
+
+        $module = \Modules::get($id_module);
+        \Modules::setCurrent($id_module);
+        
+        $plugin = null;
+        if (!empty($id_plugin)) {
+            \Plugins::setCurrent($id_plugin);
+            $plugin = \Plugins::get($id_plugin);
+        }
+
+        $structure = $plugin ?? $module;
+
+        return new JsonResponse($this->retrieveRecords($structure, $request_body, $id_module, $id_plugin, $id_parent));
+    }
+
+    /*
+    public function process(mixed $request, Operation $operation, array $uriVariables = [], array $context = []): DataTablesLoadResponse
+    {
+        if (!$request instanceof DataTablesLoadRequest) {
             throw new \InvalidArgumentException();
         }
 
@@ -44,21 +69,23 @@ final class DataTablesController implements ProcessorInterface
 
         $structure = $plugin ?? $module;
 
-        return $this->retrieveRecords($structure, $data, $id_module, $id_plugin, $id_parent);
-    }
+        return $this->retrieveRecords($structure, $request, $id_module, $id_plugin, $id_parent);
+    }*/
 
-    private function retrieveRecords($structure, DataTablesLoadRequest $data, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
+    private function retrieveRecords($structure, DataTablesLoadRequest $request, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
     {
         // Informazioni fondamentali
-        $order = $data->order ? $data->order[0] : [];
+        $order = $request->order ? $request->order[0] : [];
 
         if (!empty($order)) {
-            $order['column'] = $order['column'] - 1;
+            $order->column = $order->column - 1;
         }
+
+        $order_array = $order->toArray();
 
         $query_structure = Query::readQuery($structure);
 
-        $response = new DataTablesLoadResponse($data->draw);
+        $response = new DataTablesLoadResponse($request->draw);
 
         $query = Query::getQuery($structure, [], [], [], $query_structure);
         if (empty($query)) {
@@ -67,7 +94,7 @@ final class DataTablesController implements ProcessorInterface
 
         // Ricerca
         $search = [];
-        $columns = $data->columns;
+        $columns = $request->columns;
         array_shift($columns);
         for ($i = 0; $i < count($columns); ++$i) {
             $col = Column::fromArray($columns[$i]);
@@ -80,7 +107,7 @@ final class DataTablesController implements ProcessorInterface
         $response->recordsTotal = database()->fetchNum($query);
 
         // CONTEGGIO RECORD FILTRATI (senza LIMIT)
-        $query_filtered = Query::getQuery($structure, $search, $order, [], $query_structure);
+        $query_filtered = Query::getQuery($structure, $search, $order_array, [], $query_structure);
         if (empty($id_plugin)) {
             $query_filtered = \Modules::replaceAdditionals($id_module, $query_filtered);
         }
@@ -93,11 +120,11 @@ final class DataTablesController implements ProcessorInterface
         $response->avg = Query::getAverages($structure, $search);
 
         $limit = [
-            'start' => $data->start,
-            'length' => $data->length,
+            'start' => $request->start,
+            'length' => $request->length,
         ];
         // RISULTATI VISIBILI (con LIMIT)
-        $query = Query::getQuery($structure, $search, $order, $limit, $query_structure);
+        $query = Query::getQuery($structure, $search, $order_array, $limit, $query_structure);
 
         // Filtri derivanti dai permessi (eventuali)
         if (empty($id_plugin)) {
@@ -154,7 +181,7 @@ final class DataTablesController implements ProcessorInterface
 
         $result = [
             'id' => $r['id'],
-            '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID
+            '<span class="hide" request-id="'.$r['id'].'"></span>', // Colonna ID
         ];
 
         foreach ($query_structure['fields'] as $pos => $field) {
@@ -162,9 +189,9 @@ final class DataTablesController implements ProcessorInterface
 
             if (!empty($r['_bg_'])) {
                 if (preg_match('/-light$/', (string) $r['_bg_'])) {
-                    $column['data-background'] = substr((string) $r['_bg_'], 0, -6); // Remove the "-light" suffix from the word
+                    $column['request-background'] = substr((string) $r['_bg_'], 0, -6); // Remove the "-light" suffix from the word
                 } else {
-                    $column['data-background'] = $r['_bg_'];
+                    $column['request-background'] = $r['_bg_'];
                 }
             }
 
@@ -211,7 +238,7 @@ final class DataTablesController implements ProcessorInterface
                 }
 
                 $column['class'] = 'text-center small';
-                $column['data-background'] = $r[$field];
+                $column['request-background'] = $r[$field];
             }
 
             // Icona di stampa
@@ -245,8 +272,8 @@ final class DataTablesController implements ProcessorInterface
             }
 
             // Colore del testo
-            if (!empty($column['data-background'])) {
-                $column['data-color'] ??= color_inverse(trim((string) $column['data-background']));
+            if (!empty($column['request-background'])) {
+                $column['request-color'] ??= color_inverse(trim((string) $column['request-background']));
             } elseif (preg_match('/^mailto_(.+?)$/', trim((string) $field), $m)) {
                 $column['class'] = '';
                 $value = ($r[$field] ? '<a class="btn btn-default btn-sm btn-block" style="font-weight:normal;" href="mailto:'.$r[$field].'" target="_blank"><i class="fa fa-envelope text-primary"></i> '.$r[$field].'</a>' : '');
@@ -269,13 +296,13 @@ final class DataTablesController implements ProcessorInterface
 
                 // Link per i moduli
                 if (empty($id_plugin)) {
-                    $column['data-link'] = base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                    $column['request-link'] = base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
                 }
                 // Link per i plugin
                 else {
-                    $column['data-link'] = base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
+                    $column['request-link'] = base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
 
-                    $column['data-type'] = 'dialog';
+                    $column['request-type'] = 'dialog';
                 }
             }
 

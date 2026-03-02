@@ -33,9 +33,10 @@ function duplicaOrdine() {
 </script>';
 
 if (!$is_anagrafica_deleted) {
-    $stati = $dbo->fetchArray('SELECT `title` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+    $stati = Modules\Ordini\Stato::where('is_fatturabile', '1')->get();
+
     foreach ($stati as $stato) {
-        $stati_importabili[] = $stato['title'];
+        $stati_importabili[] = $stato->name;
     }
 
     echo '

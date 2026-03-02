@@ -139,9 +139,13 @@ class DDT extends Document
             $model->idpagamento = $id_pagamento;
         }
 
-        $model->numero = static::getNextNumero($data, $direzione, $id_segment);
-        $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
-
+        if ($direzione == 'entrata') {
+            $model->numero_esterno = '';
+        } else {
+            $model->numero = static::getNextNumero($data, $direzione, $id_segment);
+            $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);
+        }
+        
         // Imposto la sede in base alla direzione
         $id_sede = self::getSedeUtente($direzione);
         if ($direzione == 'entrata') {

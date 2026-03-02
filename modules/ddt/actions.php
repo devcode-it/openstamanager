@@ -56,9 +56,8 @@ switch (filter('op')) {
         $ddt->idcausalet = post('idcausalet');
         $ddt->save();
 
-        flash()->info(tr('Aggiunto ddt in _TYPE_ numero _NUM_!', [
+        flash()->info(tr('Aggiunto ddt in _TYPE_!', [
             '_TYPE_' => ($dir == 'entrata' ? 'uscita' : 'entrata'),
-            '_NUM_' => ($dir == 'entrata' ? $ddt->numero_esterno : $ddt->numero),
         ]));
 
         break;
@@ -123,18 +122,21 @@ switch (filter('op')) {
 
             $ddt->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
+            // Assegna il numero progressivo se il DDT viene evaso
+            $stato = Stato::find($idstatoddt);
+
+            if ($stato->name == 'Evaso' && $dir == 'entrata' && empty($ddt->numero_esterno)) {
+                $ddt->numero_esterno = DDT::getNextNumeroSecondario($ddt->data, $dir, $ddt->id_segment);
+            }
             $ddt->save();
 
-            $query = 'SELECT `title` FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($idstatoddt);
-            $rs = $dbo->fetchArray($query);
-
-            // Ricalcolo inps, ritenuta e bollo (se l'ddt non è stato evaso)
+            // Ricalcolo inps, ritenuta e bollo (se il ddt non è stato evaso)
             if ($dir == 'entrata') {
-                if ($rs[0]['descrizione'] != 'Pagato') {
+                if ($stato->name != 'Pagato') {
                     ricalcola_costiagg_ddt($id_record);
                 }
             } else {
-                if ($rs[0]['descrizione'] != 'Pagato') {
+                if ($stato->name != 'Pagato') {
                     ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
                 }
             }
@@ -578,6 +580,9 @@ switch (filter('op')) {
         $copia->idsede_partenza = $ddt->idsede_partenza;
         $copia->idsede_destinazione = $ddt->idsede_destinazione;
 
+        // Assegna il numero progressivo poiché il DDT viene creato già evaso
+        $copia->numero_esterno = DDT::getNextNumeroSecondario($copia->data, $dir, $copia->id_segment);
+
         $copia->save();
 
         // Copia righe
@@ -612,8 +617,9 @@ switch (filter('op')) {
     case 'copy':
         $new = $ddt->replicate();
 
-        $new->numero = DDT::getNextNumero($new->data, $dir, $ddt->id_segment);
-        $new->numero_esterno = DDT::getNextNumeroSecondario($new->data, $dir, $new->id_segment);
+        // Il numero progressivo viene assegnato solo al momento dell'evasione
+        $new->numero = '';
+        $new->numero_esterno = '';
 
         $stato = Stato::where('name', 'Bozza')->first()->id;
         $new->stato()->associate($stato);

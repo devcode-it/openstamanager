@@ -12,14 +12,14 @@ $rs = $dbo->fetchArray('SELECT id FROM co_documenti');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
     if ($rivalsainps != '') {
-        $dbo->query('UPDATE co_righe_documenti SET idrivalsainps="'.$rivalsainps.'", rivalsainps=( (subtotale-sconto) /100 * 4 ) WHERE iddocumento="'.$rs[$i]['id'].'"');
+        $dbo->query('UPDATE co_righe_documenti SET idrivalsainps='.prepare($rivalsainps).', rivalsainps=( (subtotale-sconto) /100 * 4 ) WHERE iddocumento='.prepare($rs[$i]['id']));
     } else {
-        $dbo->query('UPDATE co_righe_documenti SET idrivalsainps="0", rivalsainps=0 WHERE iddocumento="'.$rs[$i]['id'].'"');
+        $dbo->query('UPDATE co_righe_documenti SET idrivalsainps="0", rivalsainps=0 WHERE iddocumento='.prepare($rs[$i]['id']));
     }
 
     if ($ritenuta != '') {
-        $dbo->query('UPDATE co_righe_documenti SET idritenutaacconto="'.$ritenuta.'", ritenutaacconto=( (subtotale+rivalsainps-sconto) /100 * 20 ) WHERE iddocumento="'.$rs[$i]['id'].'"');
+        $dbo->query('UPDATE co_righe_documenti SET idritenutaacconto='.prepare($ritenuta).', ritenutaacconto=( (subtotale+rivalsainps-sconto) /100 * 20 ) WHERE iddocumento='.prepare($rs[$i]['id']));
     } else {
-        $dbo->query('UPDATE co_righe_documenti SET idritenutaacconto="0", ritenutaacconto=0 WHERE iddocumento="'.$rs[$i]['id'].'"');
+        $dbo->query('UPDATE co_righe_documenti SET idritenutaacconto="0", ritenutaacconto=0 WHERE iddocumento='.prepare($rs[$i]['id']));
     }
 }

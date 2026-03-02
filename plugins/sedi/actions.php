@@ -107,7 +107,7 @@ switch ($operazione) {
         // Salva le tariffe specifiche per la sede
         salvaTariffeSede($id_record, $id_parent);
 
-        $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.$id_record);
+        $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.prepare($id_record));
         $id_referenti = (array) post('id_referenti');
         $refs = array_diff($referenti, $id_referenti);
 

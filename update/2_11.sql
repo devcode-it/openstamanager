@@ -67,3 +67,11 @@ CREATE TABLE `an_anagrafiche_tipiintervento` (
 
 ALTER TABLE `an_anagrafiche_tipiintervento`
   ADD PRIMARY KEY (`idanagrafica`,`idtipointervento`);
+
+-- Aggiunta impostazione per l'applicazione del diritto di chiamata
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Applica diritto di chiamata una volta al giorno', '1', 'boolean', 1, 'Attività');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Applica diritto di chiamata una volta al giorno', ''),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Apply call right once a day', '');

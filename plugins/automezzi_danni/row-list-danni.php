@@ -47,7 +47,7 @@ echo '
 if (!empty($danni)) {
     $disabled = $user->gruppo == 'Tecnici' ? 'disabled' : '';
     foreach ($danni as $danno) {
-        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.$danno['id'].' AND id_plugin='.$id_plugin);
+        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.prepare($danno['id']).' AND id_plugin='.prepare($id_plugin));
         echo '
         <tr>
             <td class="text-center">'.Translator::dateToLocale($danno['data']).'</td>

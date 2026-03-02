@@ -66,10 +66,10 @@ foreach ($fatture as $fattura) {
     $conto_fornitore = $fattura->anagrafica->idconto_fornitore;
 
     if ($conto_fornitore) {
-        $dbo->query('UPDATE co_movimenti SET idconto = '.$conto_fornitore.' WHERE iddocumento = '.$fattura->id.' AND idconto = '.$riepilogativo_fornitori);
+        $dbo->query('UPDATE co_movimenti SET idconto = '.prepare($conto_fornitore).' WHERE iddocumento = '.prepare($fattura->id).' AND idconto = '.prepare($riepilogativo_fornitori));
     }
     if ($conto_cliente) {
-        $dbo->query('UPDATE co_movimenti SET idconto = '.$conto_cliente.' WHERE iddocumento = '.$fattura->id.' AND idconto = '.$riepilogativo_clienti);
+        $dbo->query('UPDATE co_movimenti SET idconto = '.prepare($conto_cliente).' WHERE iddocumento = '.prepare($fattura->id).' AND idconto = '.prepare($riepilogativo_clienti));
     }
 }
 
@@ -81,9 +81,9 @@ foreach ($fatture_senzanome as $fattura) {
         $anagrafica = $documento->anagrafica()->withTrashed()->first();
         if ($anagrafica) {
             $conto = ($documento->tipo->dir == 'uscita' ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente);
-            $dbo->query('UPDATE co_movimenti SET idconto = '.$conto.' WHERE iddocumento = '.$documento->id.' AND idconto = '.$fattura['idconto']);
+            $dbo->query('UPDATE co_movimenti SET idconto = '.prepare($conto).' WHERE iddocumento = '.prepare($documento->id).' AND idconto = '.prepare($fattura['idconto']));
         }
     } else {
-        $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.$fattura['iddocumento']);
+        $dbo->query('DELETE FROM co_movimenti WHERE iddocumento = '.prepare($fattura['iddocumento']));
     }
 }

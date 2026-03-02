@@ -50,7 +50,7 @@ echo '
 if (!empty($manutenzioni)) {
     $disabled = $user->gruppo == 'Tecnici' ? 'disabled' : '';
     foreach ($manutenzioni as $manutenzione) {
-        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.$manutenzione['id'].' AND id_plugin='.$id_plugin);
+        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.prepare($manutenzione['id']).' AND id_plugin='.prepare($id_plugin));
         echo '
         <tr>
             <td>'.$manutenzione['descrizione'].'</td>

@@ -26,7 +26,7 @@ $numero = $documento->numero_esterno ?: $documento->numero;
 $id_modulo_banche = Module::where('name', 'Banche')->first()->id;
 $id_modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
 
-$mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHERE idanagrafica = '.$record['idanagrafica']);
+$mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']));
 $scadenza_in_chiusura = 0;
 
 foreach ($scadenze as $scadenza) {

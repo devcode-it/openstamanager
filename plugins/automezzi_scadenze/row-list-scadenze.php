@@ -52,7 +52,7 @@ echo '
 if (!empty($scadenze)) {
     $disabled = $user->gruppo == 'Tecnici' ? 'disabled' : '';
     foreach ($scadenze as $scadenza) {
-        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.$scadenza['id'].' AND id_plugin='.$id_plugin);
+        $n_file = $dbo->fetchNum('SELECT * FROM zz_files WHERE id_record='.prepare($scadenza['id']).' AND id_plugin='.prepare($id_plugin));
         echo '
         <tr>
             <td>'.$scadenza['descrizione'].'</td>

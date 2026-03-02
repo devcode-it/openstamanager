@@ -40,7 +40,7 @@ switch ($resource) {
         // Elenco sedi con <option>
     case 'get_sedi_select':
         $idanagrafica = get('idanagrafica');
-        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica='".$idanagrafica."' ".Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
+        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica=".prepare($idanagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 

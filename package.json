@@ -55,7 +55,7 @@
         "select2": "^4.0.3",
         "signature_pad": "^2.3.0",
         "sjcl": "^1.0.8",
-        "smartwizard": "^4.2.2",
+        "smartwizard": "^6.0.6",
         "sweetalert2": "^6.11.4",
         "toastr": "^2.1.4",
         "tooltipster": "^4.2.5",

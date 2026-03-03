@@ -927,10 +927,14 @@ switch ($op) {
         $id_conto = post('id_conto');
 
         if ($class == Modules\Interventi\Intervento::class) {
-            $riga = Descrizione::build($fattura);
-            $riga->descrizione = post('descrizione_intervento');
-            $riga->idintervento = $documento->id;
-            $riga->save();
+            // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, non aggiunge la riga descrittiva
+            $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
+            if (!empty($descrizione_personalizzata)) {
+                $riga = Descrizione::build($fattura);
+                $riga->descrizione = post('descrizione_intervento');
+                $riga->idintervento = $documento->id;
+                $riga->save();
+            }
 
             $copia_descrizione = post('copia_descrizione');
             if (!empty($copia_descrizione) && !empty($documento->descrizione)) {

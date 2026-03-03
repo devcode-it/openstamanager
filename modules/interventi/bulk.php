@@ -189,10 +189,9 @@ switch (post('op')) {
                 }
             }
 
-            $descrizione = str_replace("'", ' ', strip_tags((string) $module->replacePlaceholders($intervento['id'], setting('Descrizione personalizzata in fatturazione')))) ?: tr('Attività numero _NUM_ del _DATE_', [
-                '_NUM_' => $intervento['codice_intervento'],
-                '_DATE_' => Translator::dateToLocale($intervento['data']),
-            ]);
+            // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, non aggiunge la riga descrittiva
+            $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
+            $descrizione = !empty($descrizione_personalizzata) ? str_replace("'", ' ', strip_tags((string) $module->replacePlaceholders($intervento['id'], $descrizione_personalizzata))) : '';
 
             aggiungi_intervento_in_fattura($intervento['id'], $id_documento, $descrizione, $id_iva, $id_conto);
             $fatturati[] = $intervento['id'];

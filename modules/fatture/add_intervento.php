@@ -87,7 +87,10 @@ foreach ($rs as $key => $value) {
 
     $rs[$key]['prezzo'] = Translator::numberToLocale($prezzo);
     $rs[$key]['descrizione_intervento'] = str_replace("'", ' ', strip_tags((string) $rs[$key]['descrizione_intervento']));
-    $rs[$key]['info'] = str_replace("'", ' ', strip_tags((string) $module_interventi->replacePlaceholders($value['id'], setting('Descrizione personalizzata in fatturazione')))) ?: $rs[$key]['info'];
+    
+    // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, non aggiunge la riga descrittiva
+    $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
+    $rs[$key]['info'] = !empty($descrizione_personalizzata) ? str_replace("'", ' ', strip_tags((string) $module_interventi->replacePlaceholders($value['id'], $descrizione_personalizzata))) : '';
 }
 
 // Intervento

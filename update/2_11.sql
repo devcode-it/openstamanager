@@ -75,3 +75,6 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Applica diritto di chiamata una volta al giorno', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Apply call right once a day', '');
+
+-- Valorizzazione dell'impostazione "Descrizione personalizzata in fatturazione" se vuota
+UPDATE `zz_settings` SET `valore` = 'Attività numero {numero} del {data}' WHERE `nome` = 'Descrizione personalizzata in fatturazione' AND (`valore` IS NULL OR `valore` = '');

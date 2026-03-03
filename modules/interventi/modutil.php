@@ -191,11 +191,13 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             }
         }
 
-        // Riga di descrizione
-        $riga = Descrizione::build($fattura);
-        $riga->descrizione = $descrizione;
-        $riga->idintervento = $id_intervento;
-        $riga->save();
+        // Riga di descrizione (solo se non vuota)
+        if (!empty($descrizione)) {
+            $riga = Descrizione::build($fattura);
+            $riga->descrizione = $descrizione;
+            $riga->idintervento = $id_intervento;
+            $riga->save();
+        }
 
         // Ore di lavoro raggruppate per costo orario
         $sessioni = $intervento->sessioni;

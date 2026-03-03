@@ -297,9 +297,15 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
                 INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
                 LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `in_interventi`.`id` = '.prepare($documento->id));
-
-        $descrizione_intervento = str_replace("'", ' ', strip_tags((string) $original_module->replacePlaceholders($documento->id, setting('Descrizione personalizzata in fatturazione')))) ?: $rs['info'];
+                `in_interventi`.`id` = '.prepare($documento->id)); 
+        // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, usa un valore di default
+        $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
+        if (!empty($descrizione_personalizzata)) {
+            $descrizione_intervento = str_replace("'", ' ', strip_tags((string) $original_module->replacePlaceholders($documento->id, $descrizione_personalizzata)));
+        } else {
+            // Valore di default quando l'impostazione è vuota (verrà ignorato in actions.php)
+            $descrizione_intervento = $rs['info'];
+        }
 
         // Intervento
         echo '

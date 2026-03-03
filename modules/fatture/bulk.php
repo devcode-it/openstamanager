@@ -502,7 +502,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
-            $emails = database()->fetchOne("SELECT COUNT(id) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id.' GROUP BY `em_emails`.`id_record`')['count'];
+            $emails = database()->fetchOne("SELECT COUNT(`em_emails`.`id`) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id.' GROUP BY `em_emails`.`id_record`')['count'];
 
             if (($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == '') && empty($emails)) {
                 try {
@@ -533,7 +533,7 @@ switch (post('op')) {
             $documento = Fattura::find($id);
             $documento->id_banca_azienda = post('id_banca');
             $documento->save();
-            array_push($list, $fattura->numero_esterno);
+            array_push($list, $documento->numero_esterno);
         }
 
         flash()->info(tr('Banca aggiornata per le Fatture _LIST_ !', [

@@ -117,3 +117,81 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), 'Data pagamento rate'),
 (2, (SELECT MAX(`id`) FROM `zz_views`), 'Payment dates');
 
+-- Creazione tabella stati impianti
+CREATE TABLE IF NOT EXISTS `my_statiimpianti` (
+    `id`         INT(11)      NOT NULL AUTO_INCREMENT,
+    `name`       VARCHAR(255) NULL,
+    `icona`      VARCHAR(255) NOT NULL DEFAULT '',
+    `colore`     VARCHAR(7)   NOT NULL DEFAULT '#ffffff',
+    `can_delete` TINYINT(1)   NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` DATETIME     NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Tabella traduzioni stati impianti
+CREATE TABLE IF NOT EXISTS `my_statiimpianti_lang` (
+    `id`         INT(11)      NOT NULL AUTO_INCREMENT,
+    `id_lang`    INT(11)      NOT NULL,
+    `id_record`  INT(11)      NOT NULL,
+    `title`      VARCHAR(255) NOT NULL DEFAULT '',
+    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `id_lang` (`id_lang`),
+    KEY `id_record` (`id_record`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Registrazione modulo Stati Impianti sotto Tabelle (parent = id di 'Tabelle')
+INSERT INTO `zz_modules` (`name`, `directory`, `attachments_directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
+('Stati impianti', 'stati_impianti', 'stati_impianti',
+'
+SELECT
+    |select|
+FROM
+    `my_statiimpianti`
+    LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND |lang|)
+WHERE
+    1=1 AND deleted_at IS NULL
+HAVING
+    2=2',
+'', 'fa fa-circle-o', '2.11', '2.11', 1, (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle') AS `tmp_tabelle`), 1, 1);
+
+-- Traduzione nome modulo
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_modules`), 'Stati impianti', 'Stati impianti'),
+(2, (SELECT MAX(`id`) FROM `zz_modules`), 'Plant statuses', 'Plant statuses');
+
+-- Viste del modulo
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
+((SELECT MAX(`id`) FROM `zz_modules`), 'id',          '`my_statiimpianti`.`id`', 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Descrizione', '`my_statiimpianti_lang`.`title`',  2, 1),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Icona',       '`my_statiimpianti`.`icona`',       3, 1),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Colore',      '`my_statiimpianti`.`colore`',      4, 1);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'id'), 'id'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'id'), 'id'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Descrizione'), 'Descrizione'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Descrizione'), 'Description'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Icona'),       'Icona'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Icona'),       'Icon'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Colore'),      'Colore'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Colore'),      'Color');
+
+-- Inserimento stati predefiniti: Attivo (verde) e Disattivato (rosso)
+INSERT INTO `my_statiimpianti` (`name`, `icona`, `colore`) VALUES
+('Attivo',      'fa fa-check-circle', '#28a745'),
+('Disattivato', 'fa fa-times-circle', '#dc3545');
+
+INSERT INTO `my_statiimpianti_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Attivo'),      'Attivo'),
+(2, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Attivo'),      'Active'),
+(1, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Disattivato'), 'Disattivato'),
+(2, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Disattivato'), 'Disabled');
+
+-- Aggiunta colonna id_stato in my_impianti (FK verso my_statiimpianti)
+ALTER TABLE `my_impianti`
+    ADD COLUMN `id_stato` INT(11) NULL DEFAULT NULL AFTER `id`,
+    ADD CONSTRAINT `fk_my_impianti_stato` FOREIGN KEY (`id_stato`) REFERENCES `my_statiimpianti` (`id`) ON UPDATE CASCADE ON DELETE SET NULL;

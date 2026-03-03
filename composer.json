@@ -125,6 +125,7 @@
             "Modules\\CategorieDocumentali\\": ["modules/categorie_documenti/custom/src/", "modules/categorie_documenti/src/"],
             "Modules\\PianiSconto\\": ["modules/piano_sconto/custom/src/", "modules/piano_sconto/src/"],
             "Modules\\Impianti\\": ["modules/impianti/custom/src/", "modules/impianti/src/"],
+            "Modules\\StatiImpianti\\": ["modules/stati_impianti/custom/src/", "modules/stati_impianti/src/"],
             "Modules\\Importazione\\": ["modules/import/custom/src/", "modules/import/src/"],
             "Modules\\Impostazioni\\": ["modules/impostazioni/custom/src/", "modules/impostazioni/src/"],
             "Modules\\Partitario\\": ["modules/partitario/custom/src/", "modules/partitario/src/"],

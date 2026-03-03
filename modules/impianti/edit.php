@@ -23,6 +23,7 @@ use Modules\Impianti\Impianto;
 
 $id_modulo_categorie_impianti = Module::where('name', 'Categorie')->first()->id;
 $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
+$id_modulo_stati_impianti = Module::where('name', 'Stati impianti')->first()->id;
 
 $impianto = Impianto::find($id_record);
 $img = !empty($impianto) ? $impianto->image : null;
@@ -73,16 +74,21 @@ $img = !empty($impianto) ? $impianto->image : null;
 						</div>
 					</div>
 					<div class ="row">
-						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marche", "select-options": <?php echo json_encode(['is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
-						</div>
-						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value": "$id_modello$","ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca'], 'is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
-						</div>
-						<div class="col-md-4">
-							{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
-						</div>
+					<div class="col-md-3">
+						{[ "type": "select", "label": "<?php echo tr('Marca'); ?>", "name": "id_marca", "value": "$id_marca$", "ajax-source": "marche", "select-options": <?php echo json_encode(['is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>" ]}
 					</div>
+					<div class="col-md-3">
+						{[ "type": "select", "label": "<?php echo tr('Modello'); ?>", "name": "id_modello", "value": "$id_modello$","ajax-source": "modelli", "select-options": <?php echo json_encode(['id_marca' => $record['id_marca'], 'is_impianto' => true]); ?>, "icon-after": "add|<?php echo $id_modulo_marca_impianti; ?>|id_original=<?php echo $record['id_marca']; ?>" ]}
+					</div>
+					<div class="col-md-3">
+						{[ "type": "text", "label": "<?php echo tr('Proprietario'); ?>", "name": "proprietario", "value": "$proprietario$" ]}
+					</div>
+					<div class="col-md-3">
+						<?php echo Modules::link('Stati impianti', $record['id_stato'], null, null, 'class="pull-right"'); ?>
+						{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "value": "$id_stato$", "values": "query=SELECT `my_statiimpianti`.`id`, `my_statiimpianti_lang`.`title` AS descrizione, `my_statiimpianti`.`colore` AS _bgcolor_ FROM `my_statiimpianti` LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND `my_statiimpianti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `my_statiimpianti`.`deleted_at` IS NULL ORDER BY `my_statiimpianti_lang`.`title`", "icon-after": "add|<?php echo $id_modulo_stati_impianti; ?>" ]}
+					</div>
+				</div>
+
 					<div class="row">
 						<div class="col-md-6">
                             <?php echo (!empty($record['id_categoria'])) ?

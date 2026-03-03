@@ -55,6 +55,7 @@ switch ($op) {
                 'piano' => post('piano'),
                 'interno' => post('interno'),
                 'occupante' => post('occupante'),
+                'id_stato' => post('id_stato') ?: null,
             ], ['id' => $id_record]);
 
             flash()->info(tr('Informazioni salvate correttamente!'));

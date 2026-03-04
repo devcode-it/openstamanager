@@ -115,7 +115,7 @@ class Mastrino extends Model
     public function aggiornaScadenzario($movimenti = null, $scadenza = null, $singola = false)
     {
         // Aggiornamento dello scadenzario disponibile solo da Mastrino di PrimaNota
-        if (empty($this->primanota)) {
+        if ($this->primanota == 0 || $this->is_apertura == 1 || $this->is_chiusura == 1) {
             return;
         }
         $movimenti = $movimenti ?: $this->movimenti;

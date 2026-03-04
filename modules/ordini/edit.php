@@ -484,6 +484,8 @@ function caricaRighe(id_riga) {
 // Funzioni per i documenti collegati
 var documentiCaricati = false;
 
+var count = 0;
+
 function caricaConteggioDocumenti() {
     $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
         id_module: globals.id_module,
@@ -492,10 +494,16 @@ function caricaConteggioDocumenti() {
     })
     .done(function(data) {
         var title = $("#documenti-collegati-title");
-        if (data.count > 0) {
-            title.html("'.tr('Documenti collegati').' (" + data.count + ")");
+        count = data.count;
+        if (count > 0) {
+            title.html("'.tr('Documenti collegati').' (" + count + ")");
         } else {
             title.html("'.tr('Documenti collegati').'");
+        }
+        if (count > 0) {
+            $("#alert-eliminazione-documenti").show();
+        } else {
+            $("#alert-eliminazione-documenti").hide();
         }
     })
     .fail(function() {
@@ -622,12 +630,10 @@ input("ordinamento").on("change", function(){
     }
 });
 </script>';
-if (!empty($elementi)) {
-    echo '
-<div class="alert alert-danger">
+echo '
+<div class="alert alert-danger" id="alert-eliminazione-documenti" style="display: none;">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
 </div>';
-}
 
 ?>
 

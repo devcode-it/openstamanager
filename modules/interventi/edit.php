@@ -800,7 +800,7 @@ echo '
         })
         .done(function(data) {
             var response;
-
+ 
             // Se la risposta è già un oggetto (jQuery ha fatto il parsing automatico)
             if (typeof data === "object") {
                 response = data;
@@ -816,12 +816,19 @@ echo '
                     return;
                 }
             }
-
+ 
+            count = response.count;
+            
             // Mostra sempre la card, aggiorna il titolo con il conteggio se ci sono documenti
-            if (response.count > 0) {
-                $("#documenti-collegati-title").text("'.tr('Documenti collegati').': " + response.count);
+            if (count > 0) {
+                $("#documenti-collegati-title").text("'.tr('Documenti collegati').': " + count);
             } else {
                 $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
+            }
+            if (count > 0) {
+                $("#alert-eliminazione-documenti").show();
+            } else {
+                $("#alert-eliminazione-documenti").hide();
             }
             $("#documenti-collegati-card").show();
         })
@@ -867,6 +874,10 @@ echo '
 </script>';
 
 ?>
+
+<div class="alert alert-danger" id="alert-eliminazione-documenti" style="display: none;">
+    <?php echo tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale'); ?>
+</div>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

@@ -732,6 +732,24 @@ switch (post('op')) {
 
                 $copia->save();
             }
+        } else {
+            $righe = $documento->getRighe();
+            foreach ($righe as $riga) {
+                if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+                    $qta = post('qta_da_evadere')[$riga->id];
+
+                    $copia = $riga->copiaIn($contratto, $qta);
+
+                    // Aggiornamento seriali dalla riga dell'ordine
+                    if ($copia->isArticolo()) {
+                        $serials = is_array(post('serial')[$riga->id]) ? post('serial')[$riga->id] : [];
+
+                        $copia->serials = $serials;
+                    }
+
+                    $copia->save();
+                }
+            }
         }
 
         // Gestione delle ore residue selezionate

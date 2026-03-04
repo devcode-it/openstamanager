@@ -763,10 +763,11 @@ class DocumentiCollegati
 
     /**
      * Conta i documenti collegati a un record specifico
+     * Conta sia i documenti precedenti che quelli successivi nel flusso di evasione
      *
      * @param int $id_record ID del record
      * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
-     * @return int Numero di documenti collegati
+     * @return int Numero di documenti collegati (precedenti + successivi)
      */
     public static function countDocumenti($id_record, $tipo_record = 'intervento')
     {
@@ -774,24 +775,33 @@ class DocumentiCollegati
             return 0;
         }
 
-        // In base al tipo di record, esegui il conteggio appropriato
-        switch ($tipo_record) {
-            case 'intervento':
-                return self::countDocumentiIntervento($id_record);
-            case 'fattura_vendita':
-                return self::countDocumentiFatturaVendita($id_record);
-            case 'fattura_acquisto':
-                return self::countDocumentiFatturaAcquisto($id_record);
-            case 'contratto':
-                return self::countDocumentiContratto($id_record);
-            case 'preventivo':
-                return self::countDocumentiPreventivo($id_record);
-            case 'ordine':
-                return self::countDocumentiOrdine($id_record);
-            case 'ddt':
-                return self::countDocumentiDDT($id_record);
-            default:
-                return 0;
+        try {
+            // Recupera i documenti precedenti e successivi
+            $documenti_precedenti = self::getDocumentiPrecedenti($id_record, $tipo_record);
+            $documenti_successivi = self::getDocumentiSuccessivi($id_record, $tipo_record);
+
+            // Conta sia i documenti precedenti che quelli successivi
+            return count($documenti_precedenti) + count($documenti_successivi);
+        } catch (\Exception $e) {
+            // In caso di errore, torna ai metodi di conteggio tradizionali
+            switch ($tipo_record) {
+                case 'intervento':
+                    return self::countDocumentiIntervento($id_record);
+                case 'fattura_vendita':
+                    return self::countDocumentiFatturaVendita($id_record);
+                case 'fattura_acquisto':
+                    return self::countDocumentiFatturaAcquisto($id_record);
+                case 'contratto':
+                    return self::countDocumentiContratto($id_record);
+                case 'preventivo':
+                    return self::countDocumentiPreventivo($id_record);
+                case 'ordine':
+                    return self::countDocumentiOrdine($id_record);
+                case 'ddt':
+                    return self::countDocumentiDDT($id_record);
+                default:
+                    return 0;
+            }
         }
     }
 

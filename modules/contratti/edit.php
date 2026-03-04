@@ -736,4 +736,4 @@ input("rinnovabile").on("change", function() {
         $(".rinnovo-field").show();
     }
 });
-</script>';
+</script>

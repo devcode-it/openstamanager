@@ -1262,6 +1262,69 @@ class DocumentiCollegati
             }
         }
 
+        // Per gli interventi, controlla se ci sono documenti precedenti tramite id_contratto, id_ordine o id_preventivo
+        if ($tipo_record == 'intervento') {
+            // Recupera i campi dell'intervento
+            $query_intervento = 'SELECT id_contratto, id_ordine, id_preventivo FROM in_interventi WHERE id = '.prepare($id_record);
+            $intervento = $dbo->fetchOne($query_intervento);
+            
+            if ($intervento) {
+                // Se c'è un contratto collegato
+                if (!empty($intervento['id_contratto'])) {
+                    $doc_info = self::getInfoDocumento($intervento['id_contratto'], 'Modules\\Contratti\\Contratto');
+                    if ($doc_info) {
+                        // Verifica che non sia già stato aggiunto
+                        $già_presente = false;
+                        foreach ($documenti_precedenti as $doc) {
+                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
+                                $già_presente = true;
+                                break;
+                            }
+                        }
+                        if (!$già_presente) {
+                            $documenti_precedenti[] = $doc_info;
+                        }
+                    }
+                }
+                
+                // Se c'è un ordine collegato
+                if (!empty($intervento['id_ordine'])) {
+                    $doc_info = self::getInfoDocumento($intervento['id_ordine'], 'Modules\\Ordini\\Ordine');
+                    if ($doc_info) {
+                        // Verifica che non sia già stato aggiunto
+                        $già_presente = false;
+                        foreach ($documenti_precedenti as $doc) {
+                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
+                                $già_presente = true;
+                                break;
+                            }
+                        }
+                        if (!$già_presente) {
+                            $documenti_precedenti[] = $doc_info;
+                        }
+                    }
+                }
+                
+                // Se c'è un preventivo collegato
+                if (!empty($intervento['id_preventivo'])) {
+                    $doc_info = self::getInfoDocumento($intervento['id_preventivo'], 'Modules\\Preventivi\\Preventivo');
+                    if ($doc_info) {
+                        // Verifica che non sia già stato aggiunto
+                        $già_presente = false;
+                        foreach ($documenti_precedenti as $doc) {
+                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
+                                $già_presente = true;
+                                break;
+                            }
+                        }
+                        if (!$già_presente) {
+                            $documenti_precedenti[] = $doc_info;
+                        }
+                    }
+                }
+            }
+        }
+
         return $documenti_precedenti;
     }
 
@@ -1309,6 +1372,42 @@ class DocumentiCollegati
             foreach ($risultati as $risultato) {
                 $tipo_doc = self::getTipoDaTabella($tabella);
                 $doc_info = self::getInfoDocumento($risultato['id'], $tipo_doc);
+                if ($doc_info) {
+                    $documenti_successivi[] = $doc_info;
+                }
+            }
+        }
+
+        // controlla in in_interventi se ci sono interventi con id_contratto = $id_record
+        if ($tipo_record == 'contratto') {
+            $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_contratto = '.prepare($id_record);
+            $risultati = $dbo->fetchArray($query);
+            foreach ($risultati as $risultato) {
+                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
+                if ($doc_info) {
+                    $documenti_successivi[] = $doc_info;
+                }
+            }
+        }
+
+        // controlla in in_interventi se ci sono interventi con id_ordine = $id_record
+        if ($tipo_record == 'ordine') {
+            $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_ordine = '.prepare($id_record);
+            $risultati = $dbo->fetchArray($query);
+            foreach ($risultati as $risultato) {
+                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
+                if ($doc_info) {
+                    $documenti_successivi[] = $doc_info;
+                }
+            }
+        }
+
+        // controlla in in_interventi se ci sono interventi con id_preventivo = $id_record
+        if ($tipo_record == 'preventivo') {
+            $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_preventivo = '.prepare($id_record);
+            $risultati = $dbo->fetchArray($query);
+            foreach ($risultati as $risultato) {
+                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
                 if ($doc_info) {
                     $documenti_successivi[] = $doc_info;
                 }

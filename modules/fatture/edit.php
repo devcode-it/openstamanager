@@ -1008,6 +1008,24 @@ if ($dir == 'entrata') {
 <div class="alert alert-info text-center">'.tr('Per allegare un documento alla fattura elettronica caricare il file PDF specificando come categoria "Allegati Fattura Elettronica"').'.</div>';
 }
 
+    ?>
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati') ?></span></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso') ?>
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
+    </div>
+</div>
+<?php
+
+
 echo '
 <script type="text/javascript">
 
@@ -1115,6 +1133,69 @@ echo '
                 backto: "record-edit",
             }, "post")
         })
+    });
+
+    // Funzioni per i documenti collegati
+    var documentiCaricati = false;
+
+    function caricaConteggioDocumenti() {
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            count_only: 1
+        })
+        .done(function(data) {
+            var title = $("#documenti-collegati-title");
+            if (data.count > 0) {
+                title.html("'.tr('Documenti collegati').' (" + data.count + ")");
+            } else {
+                title.html("'.tr('Documenti collegati').'");
+            }
+        })
+        .fail(function() {
+            var title = $("#documenti-collegati-title");
+            title.html("'.tr('Documenti collegati').'");
+        });
+    }
+
+    function caricaDocumentiCollegati() {
+        $("#documenti-collegati-loading").show();
+        $("#documenti-collegati-content").hide();
+        
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record
+        })
+        .done(function(data) {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html(data).show();
+            documentiCaricati = true;
+        })
+        .fail(function() {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html("<div class=\"alert alert-danger\">'.tr('Errore durante il caricamento dei documenti collegati').'</div>").show();
+        });
+    }
+
+    $(document).ready(function() {
+        // Carica il conteggio dei documenti collegati
+        caricaConteggioDocumenti();
+
+        // Carica i documenti quando la card viene espansa
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            if (!documentiCaricati) {
+                caricaDocumentiCollegati();
+            }
+        });
+
+        // Aggiorna l\'icona quando la card viene espansa/collassata
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-plus").addClass("fa-minus");
+        });
+
+        $("#documenti-collegati-card").on("collapsed.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-minus").addClass("fa-plus");
+        });
     });
 </script>';
 

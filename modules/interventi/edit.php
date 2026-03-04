@@ -231,7 +231,7 @@ echo '
                 </div>
             </div>';
 // Nascondo le note interne ai clienti
-if ($user->gruppo != 'Clienti') {
+if ($user['gruppo'] != 'Clienti') {
     echo '
             <div class="row">
                 <div class="col-md-12">
@@ -457,6 +457,22 @@ if (!$block_edit) {
 </div>
 
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato'] && !setting('Permetti l\'inserimento di allegati in attività completate')) ? '"readonly": 1' : '"readonly": 0'; ?> )}
+
+<!-- Documenti collegati - Caricamento ottimizzato via AJAX -->
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati') ?></span></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso') ?>
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
+    </div>
+</div>
 
 <!-- EVENTUALE FIRMA GIA' EFFETTUATA -->
 <div class="text-center row">
@@ -752,56 +768,107 @@ echo '
             return false;
         }
     });
-</script>';
 
-// Collegamenti diretti
-// Fatture collegate a questo intervento
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.*, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_statidocumento_lang`.`title` AS stato_documento, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN (SELECT `iddocumento` FROM `co_righe_documenti` WHERE `idintervento` = '.prepare($id_record).') ORDER BY `data`');
+    // Gestione ottimizzata dei documenti collegati via AJAX
+    var documentiCaricati = false;
 
-if (!empty($elementi)) {
-    echo '
-<div class="card card-warning collapsable collapsed-card">
-    <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-        '_NUM_' => count($elementi),
-    ]).'</h3>
-        <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
-        </div>
-    </div>
-    <div class="card-body">
-        <ul>';
+    // Carica il conteggio dei documenti all\'avvio
+    caricaConteggioDocumenti();
 
-    foreach ($elementi as $fattura) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
-            '_DOC_' => $fattura['tipo_documento'],
-            '_NUM_' => !empty($fattura['numero_esterno']) ? $fattura['numero_esterno'] : $fattura['numero'],
-            '_DATE_' => Translator::dateToLocale($fattura['data']),
-            '_STATE_' => $fattura['stato_documento'],
-        ]);
+    // Carica i documenti quando il card viene espanso
+    $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+        if (!documentiCaricati) {
+            caricaDocumentiCollegati();
+        }
+    });
 
-        $modulo = ($fattura['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        $id = $fattura['id'];
+    // Fallback: se l\'evento AdminLTE non funziona, usa il click diretto
+    $("#documenti-collegati-toggle").on("click", function() {
+        if (!documentiCaricati) {
+            setTimeout(function() {
+                // Carica i documenti indipendentemente dallo stato della card
+                caricaDocumentiCollegati();
+            }, 300);
+        }
+    });
 
-        echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+    function caricaConteggioDocumenti() {
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            count_only: 1
+        })
+        .done(function(data) {
+            var response;
+
+            // Se la risposta è già un oggetto (jQuery ha fatto il parsing automatico)
+            if (typeof data === "object") {
+                response = data;
+            } else {
+                // Prova a fare il parsing manuale
+                try {
+                    var cleanData = data.trim();
+                    response = JSON.parse(cleanData);
+                } catch (e) {
+                    // In caso di errore, mantieni la card visibile con il titolo generico
+                    $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
+                    $("#documenti-collegati-card").show();
+                    return;
+                }
+            }
+
+            // Mostra sempre la card, aggiorna il titolo con il conteggio se ci sono documenti
+            if (response.count > 0) {
+                $("#documenti-collegati-title").text("'.tr('Documenti collegati').': " + response.count);
+            } else {
+                $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
+            }
+            $("#documenti-collegati-card").show();
+        })
+        .fail(function(xhr, status, error) {
+            // In caso di errore di rete, mantieni la card visibile con il titolo generico
+            $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
+            $("#documenti-collegati-card").show();
+        });
     }
 
-    echo '
-        </ul>
-    </div>
-</div>';
-}
+    function caricaDocumentiCollegati() {
+        if (documentiCaricati) return;
 
-if (!empty($elementi)) {
-    echo '
-<div class="alert alert-danger">
-    '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
-</div>';
-}
+        $("#documenti-collegati-loading").show();
+        $("#documenti-collegati-content").hide();
+
+        var url = globals.rootdir + "/ajax_documenti_collegati.php";
+        console.log("Caricamento documenti collegati da:", url);
+        
+        $.get(url, {
+            id_module: globals.id_module,
+            id_record: globals.id_record
+        })
+        .done(function(data) {
+            console.log("Risposta ricevuta:", data);
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html(data).show();
+            documentiCaricati = true;
+        })
+        .fail(function(xhr, status, error) {
+            console.error("Errore nel caricamento dei documenti:", status, error);
+            console.error("Risposta del server:", xhr.responseText);
+            $("#documenti-collegati-loading").hide();
+            var errorMsg = "'.tr('Errore nel caricamento dei documenti collegati').'";
+            if (xhr.responseText) {
+                errorMsg += ": " + xhr.responseText;
+            } else {
+                errorMsg += ": " + error;
+            }
+            $("#documenti-collegati-content").html("<div class=\'alert alert-danger\'>" + errorMsg + "</div>").show();
+        });
+    }
+</script>';
 
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
+

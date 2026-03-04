@@ -423,6 +423,22 @@ echo '
 
 {( "name": "log_sms", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
+ <!-- Documenti collegati -->
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
+    <div class="card-header with-border">
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title">'.tr('Documenti collegati').'</span></h3>
+        <div class="card-tools pull-right">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento documenti collegati in corso').'
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
+    </div>
+</div>
+
 <script>
 async function saveForm() {
     // Salvataggio via AJAX
@@ -465,6 +481,71 @@ function caricaRighe(id_riga) {
     });
 }
 
+// Funzioni per i documenti collegati
+var documentiCaricati = false;
+
+function caricaConteggioDocumenti() {
+    $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+        id_module: globals.id_module,
+        id_record: globals.id_record,
+        count_only: 1
+    })
+    .done(function(data) {
+        var title = $("#documenti-collegati-title");
+        if (data.count > 0) {
+            title.html("'.tr('Documenti collegati').' (" + data.count + ")");
+        } else {
+            title.html("'.tr('Documenti collegati').'");
+        }
+    })
+    .fail(function() {
+        var title = $("#documenti-collegati-title");
+        title.html("'.tr('Documenti collegati').'");
+    });
+}
+
+function caricaDocumentiCollegati() {
+    $("#documenti-collegati-loading").show();
+    $("#documenti-collegati-content").hide();
+    
+    $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+        id_module: globals.id_module,
+        id_record: globals.id_record
+    })
+    .done(function(data) {
+        $("#documenti-collegati-loading").hide();
+        $("#documenti-collegati-content").html(data).show();
+        documentiCaricati = true;
+    })
+    .fail(function() {
+        $("#documenti-collegati-loading").hide();
+        $("#documenti-collegati-content").html("<div class=\"alert alert-danger\">'.tr('Errore durante il caricamento dei documenti collegati').'</div>").show();
+    });
+}
+
+$(document).ready(function() {
+    caricaRighe(null);
+
+    // Carica il conteggio dei documenti collegati
+    caricaConteggioDocumenti();
+
+    // Carica i documenti quando la card viene espansa
+    $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+        if (!documentiCaricati) {
+            caricaDocumentiCollegati();
+        }
+    });
+
+    // Aggiorna l\'icona quando la card viene espansa/collassata
+    $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+        $("#documenti-collegati-toggle i").removeClass("fa-plus").addClass("fa-minus");
+    });
+
+    $("#documenti-collegati-card").on("collapsed.lte.cardwidget", function() {
+        $("#documenti-collegati-toggle i").removeClass("fa-minus").addClass("fa-plus");
+    });
+});
+
 $("#idsede").change(function(){
     updateSelectOption("idsede_destinazione", $(this).val());
     $("#idreferente").selectReset();
@@ -485,28 +566,6 @@ $("#idanagrafica").change(function() {
                 .selectSetNew(data.id_pagamento, data.desc_pagamento);
         }
     }
-});
-
-$(document).ready(function() {
-    caricaRighe(null);
-
-	$("#codice_cig, #codice_cup").bind("keyup change", function(e) {
-		if ($("#codice_cig").val() == "" && $("#codice_cup").val() == "" ){
-			$("#numero_cliente").prop("required", false);
-		} else{
-			$("#numero_cliente").prop("required", true);
-		}
-	});
-
-    $("#id_articolo").on("change", function(e) {
-        e.preventDefault();
-
-        setTimeout(function(){
-            $("#barcode").focus();
-        }, 100);
-    });
-
-    $("#barcode").focus();
 });
 
 async function salvaArticolo() {
@@ -563,41 +622,6 @@ input("ordinamento").on("change", function(){
     }
 });
 </script>';
-
-// Collegamenti diretti
-// Fatture o ddt collegati a questo ordine
-if (!empty($elementi)) {
-    echo '
-<div class="card card-warning collapsable collapsed-card">
-    <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-        '_NUM_' => count($elementi),
-    ]).'</h3>
-        <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
-        </div>
-    </div>
-    <div class="card-body">
-        <ul>';
-
-    foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
-            '_DOC_' => $elemento['tipo_documento'],
-            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
-        ]);
-
-        echo '
-            <li>'.Modules::link($elemento['modulo'], $elemento['id'], $descrizione).'</li>';
-    }
-
-    echo '
-            </ul>
-        </div>
-    </div>';
-}
-
 if (!empty($elementi)) {
     echo '
 <div class="alert alert-danger">

@@ -48,7 +48,7 @@ echo '
             {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-", "data-edit-value": "'.($record['data'] ?? '').'" ]}
         </div>
         <div class="col-md-8">
-            {[ "type": "text", "label": "'.tr('Luogo').'", "name": "luogo", "required": 1, "value": "'.($record['dove'] ?? '').'" ]}
+            {[ "type": "text", "label": "'.tr('Luogo').'", "name": "luogo", "required": 1, "value": "'.($record['luogo'] ?? '').'" ]}
         </div>
     </div>
 

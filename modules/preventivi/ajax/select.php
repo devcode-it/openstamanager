@@ -60,7 +60,7 @@ switch ($resource) {
                 $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $allowed_stati)
                     ? $superselect['stato']
                     : 'is_pianificabile';
-                $where[] = '('.$stato.' = 1)';
+                $where[] = '(`'.str_replace('`', '', $stato).'` = 1)';
             }
 
             if (!empty($search)) {

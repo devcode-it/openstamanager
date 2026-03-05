@@ -64,8 +64,8 @@ switch (post('op')) {
             $id_anagrafica = $anagrafica->id;
 
             // Proseguo solo se i documenti scelti sono fatturabili
-            $ordine = $dbo->fetchOne('SELECT `or_statiordine_lang`.`title` AS stato FROM `or_ordini` INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id`=`or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `or_ordini`.`id`='.prepare($id))['stato'];
-            if (!in_array($ordine, ['Fatturato', 'Evaso', 'Bozza', 'In attesa di conferma', 'Annullato'])) {
+            $stato = $documento_import->stato;
+            if ($stato->is_fatturabile) {
                 $righe = $documento_import->getRighe();
                 if (!empty($righe)) {
                     ++$numero_totale;

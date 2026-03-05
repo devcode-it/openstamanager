@@ -25,8 +25,8 @@ include_once __DIR__.'/core.php';
 session_write_close();
 
 // Authorization information
-$state = $_GET['state'];
-$code = $_GET['code'];
+$state = filter('state');
+$code = filter('code');
 
 // Account individuato via state
 if (!empty($state)) {
@@ -57,10 +57,10 @@ if (empty($response['authorization_url'])) {
     $redirect = $response['authorization_url'];
 }
 
-if (empty($_GET['error'])) {
+if (empty(filter('error'))) {
     redirect_url($redirect);
     exit;
 }
-echo strip_tags($_GET['error']).'<br>'.strip_tags($_GET['error_description']).'
+echo strip_tags(filter('error')).'<br>'.strip_tags(filter('error_description')).'
 <br><br>
 <a href="'.$redirect.'">'.tr('Riprova').'</a>';

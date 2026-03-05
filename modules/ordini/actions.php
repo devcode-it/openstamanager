@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Articoli\Barcode;
 use Modules\Iva\Aliquota;
 use Modules\Ordini\Components\Articolo;
 use Modules\Ordini\Components\Descrizione;
@@ -78,10 +79,6 @@ switch (post('op')) {
                 $bollo = 0;
             }
 
-            // Leggo la descrizione del pagamento
-            $query = 'SELECT `title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($idpagamento);
-            $rs = $dbo->fetchArray($query);
-            $pagamento = $rs[0]['descrizione'];
 
             $ordine->nome = post('nome');
             $ordine->idanagrafica = post('idanagrafica');
@@ -119,7 +116,14 @@ switch (post('op')) {
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             // Verifica la presenza di ordini con lo stesso numero
-            $ordini = $dbo->fetchArray('SELECT * FROM `or_ordini` WHERE `numero_cliente`='.prepare(post('numero_cliente'))."AND `numero_cliente` IS NOT NULL AND `numero_cliente` != '' AND `id`!=".prepare($id_record).' AND `idanagrafica`='.prepare(post('idanagrafica'))." AND DATE_FORMAT(`or_ordini`.`data`, '%Y')=".prepare(Carbon::parse(post('data'))->copy()->format('Y')));
+            $query = 'SELECT * FROM `or_ordini` WHERE `numero_cliente` = :numero_cliente AND `numero_cliente` IS NOT NULL AND `numero_cliente` != \'\' AND `id` != :id_record AND `idanagrafica` = :idanagrafica AND DATE_FORMAT(`or_ordini`.`data`, \'%Y\') = :anno';
+            $params = [
+                ':numero_cliente' => post('numero_cliente'),
+                ':id_record' => $id_record,
+                ':idanagrafica' => post('idanagrafica'),
+                ':anno' => Carbon::parse(post('data'))->copy()->format('Y'),
+            ];
+            $ordini = $dbo->fetchArray($query, $params);
 
             if (!empty($ordini)) {
                 $documento = '';
@@ -144,18 +148,16 @@ switch (post('op')) {
             $ordine->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             $ordine->save();
-
-            if ($dbo->query($query)) {
-                $query = 'SELECT `title` FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_statiordine`.`id`='.prepare($idstatoordine);
-                $rs = $dbo->fetchArray($query);
+            if ($ordine) {
+                $stato = \Modules\Ordini\Stato::find($idstatoordine);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
                 if ($dir == 'entrata') {
-                    if ($rs[0]['name'] != 'Evaso') {
+                    if ($stato->name != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record);
                     }
                 } else {
-                    if ($rs[0]['name'] != 'Evaso') {
+                    if ($stato->name != 'Evaso') {
                         ricalcola_costiagg_ordine($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
                     }
                 }
@@ -511,7 +513,12 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `or_righe_ordini` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            $query = 'UPDATE `or_righe_ordini` SET `order` = :order_value WHERE id = :id_riga';
+            $params = [
+                ':order_value' => $i + 1,
+                ':id_riga' => $id_riga,
+            ];
+            $dbo->query($query, $params);
         }
 
         break;
@@ -766,16 +773,23 @@ switch (post('op')) {
         $save_inline_barcode = true;
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
+            $barcode_articolo = Barcode::where('barcode', $barcode)->first();
+            $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
+            
             if (empty($id_articolo)) {
-                $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+                $id_articolo = ArticoloOriginale::where('deleted_at', null)
+                    ->where('attivo', 1)
+                    ->where('barcode', '')
+                    ->where('codice', $barcode)
+                    ->value('id');
                 $save_inline_barcode = false;
             }
         }
 
         if (!empty($id_articolo)) {
             $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
-            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
+            $articolo = ArticoloOriginale::find($id_articolo);
+            $qta_articolo = $articolo ? $articolo->qta : 0;
 
             $originale = ArticoloOriginale::find($id_articolo);
 
@@ -817,13 +831,18 @@ switch (post('op')) {
             } else {
                 $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
             }
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $ordine->idagente])['provvigione_default'];
+            $agente = Anagrafica::find($ordine->idagente);
+            $provvigione = $agente ? $agente->provvigione_default : 0;
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $anagrafica_model = Anagrafica::find($id_anagrafica);
+            $piano_sconto = $anagrafica_model ? database()->table('mg_piani_sconto')
+                ->select('prc_guadagno')
+                ->where('id', $anagrafica_model->$join)
+                ->first() : null;
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
@@ -936,9 +955,13 @@ switch (post('op')) {
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $anagrafica_model = Anagrafica::find($id_anagrafica);
+            $piano_sconto = $anagrafica_model ? database()->table('mg_piani_sconto')
+                ->select('prc_guadagno')
+                ->where('id', $anagrafica_model->$join)
+                ->first() : null;
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');

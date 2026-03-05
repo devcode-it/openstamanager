@@ -23,6 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Articoli\Barcode;
 use Modules\DDT\Components\Articolo;
 use Modules\DDT\Components\Descrizione;
 use Modules\DDT\Components\Riga;
@@ -548,7 +549,12 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `dt_righe_ddt` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            $query = 'UPDATE `dt_righe_ddt` SET `order` = :order_value WHERE id = :id_riga';
+            $params = [
+                ':order_value' => $i + 1,
+                ':id_riga' => $id_riga,
+            ];
+            $dbo->query($query, $params);
         }
 
         break;
@@ -695,18 +701,23 @@ switch (filter('op')) {
         $save_inline_barcode = true;
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
+            $barcode_articolo = Barcode::where('barcode', $barcode)->first();
+            $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
+            
             if (empty($id_articolo)) {
-                $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
+                $id_articolo = ArticoloOriginale::where('deleted_at', null)
+                    ->where('attivo', 1)
+                    ->where('barcode', '')
+                    ->where('codice', $barcode)
+                    ->value('id');
                 $save_inline_barcode = false;
             }
         }
 
         if (!empty($id_articolo)) {
             $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
-            $qta_articolo = $dbo->selectOne('mg_articoli', 'qta', ['id' => $id_articolo])['qta'];
-
             $originale = ArticoloOriginale::find($id_articolo);
+            $qta_articolo = $originale ? $originale->qta : 0;
 
             if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
                 $response['error'] = tr('Quantità a magazzino non sufficiente');
@@ -760,9 +771,13 @@ switch (filter('op')) {
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+                $anagrafica_model = Anagrafica::find($id_anagrafica);
+                $piano_sconto = $anagrafica_model ? database()->table('mg_piani_sconto')
+                    ->select('prc_guadagno')
+                    ->where('id', $anagrafica_model->$join)
+                    ->first() : null;
                 if (!empty($piano_sconto)) {
-                    $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                    $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
                 }
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
@@ -875,9 +890,13 @@ switch (filter('op')) {
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $anagrafica_model = Anagrafica::find($id_anagrafica);
+            $piano_sconto = $anagrafica_model ? database()->table('mg_piani_sconto')
+                ->select('prc_guadagno')
+                ->where('id', $anagrafica_model->$join)
+                ->first() : null;
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');

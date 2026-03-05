@@ -53,6 +53,7 @@ switch ($resource) {
                     ? $superselect['stato']
                     : 'is_fatturabile';
                 $where[] = '`or_statiordine`.'.$stato.' = 1';
+                $where[] = '`or_statiordine`.`'.str_replace('`', '', $stato).'` = 1';
             }
         }
 

@@ -25,8 +25,8 @@ use Modules\Contratti\Contratto;
 $contratto = Contratto::find($id_record);
 
 $id_anagrafica = $contratto->idanagrafica;
-$righe = $_GET['righe'];
-
+$righe_ids = array_map('intval', explode(',', $_GET['righe'] ?? ''));
+$placeholders = implode(',', array_fill(0, count($righe_ids), '?'));
 $righe = $dbo->fetchArray(
     'SELECT 
         `mg_articoli_lang`.`title`, 
@@ -37,7 +37,8 @@ $righe = $dbo->fetchArray(
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_contratti`.`idarticolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
-        `co_righe_contratti`.`id` IN ('.$righe.')'
+        `co_righe_contratti`.`id` IN ('.$placeholders.')',
+    $righe_ids
 );
 ?>
 <form action="" method="post" id="add-form">

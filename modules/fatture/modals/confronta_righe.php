@@ -26,8 +26,8 @@ $documento = Fattura::find($id_record);
 
 $id_anagrafica = $documento->idanagrafica;
 $direzione = $documento->direzione;
-$righe = $_GET['righe'];
-
+$righe_ids = array_map('intval', explode(',', $_GET['righe'] ?? ''));
+$placeholders = implode(',', array_fill(0, count($righe_ids), '?'));
 $righe = $dbo->fetchArray(
     'SELECT 
         `mg_articoli_lang`.`title`,
@@ -38,7 +38,8 @@ $righe = $dbo->fetchArray(
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
-        `co_righe_documenti`.`id` IN ('.$righe.')'
+        `co_righe_documenti`.`id` IN ('.$placeholders.')',
+    $righe_ids
 );
 ?>
 <form action="" method="post" id="add-form">

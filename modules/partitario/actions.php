@@ -36,19 +36,39 @@ switch (post('op')) {
         if (post('id_conto') !== null) {
             if ($lvl == '2') {
                 // Controllo che non sia stato usato un numero non valido del conto
-                $query = 'SELECT idpianodeiconti1, numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND idpianodeiconti1='.prepare($id_conto);
-                $rs = $dbo->fetchArray($query);
+                $query = 'SELECT idpianodeiconti1, numero FROM co_pianodeiconti2 WHERE numero = :numero AND idpianodeiconti1 = :id_conto';
+                $params = [
+                    ':numero' => $numero,
+                    ':id_conto' => $id_conto,
+                ];
+                $rs = $dbo->fetchArray($query, $params);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1, dir) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', '.prepare($dir).')';
+                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1, dir) VALUES (:numero, :descrizione, :id_conto, :dir)';
+                    $params = [
+                        ':numero' => $numero,
+                        ':descrizione' => $descrizione,
+                        ':id_conto' => $id_conto,
+                        ':dir' => $dir,
+                    ];
                 }
             } else {
                 // Controllo che non sia stato usato un numero non valido del conto
-                $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND idpianodeiconti2='.prepare($id_conto);
-                $rs = $dbo->fetchArray($query);
+                $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero = :numero AND idpianodeiconti2 = :id_conto';
+                $params = [
+                    ':numero' => $numero,
+                    ':id_conto' => $id_conto,
+                ];
+                $rs = $dbo->fetchArray($query, $params);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($id_conto).'), '.$percentuale.')';
+                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES (:numero, :descrizione, :id_conto, (SELECT dir FROM co_pianodeiconti2 WHERE id = :id_conto), :percentuale)';
+                    $params = [
+                        ':numero' => $numero,
+                        ':descrizione' => $descrizione,
+                        ':id_conto' => $id_conto,
+                        ':percentuale' => $percentuale,
+                    ];
                 }
             }
 
@@ -75,22 +95,50 @@ switch (post('op')) {
 
         if ($conto_bloccato) {
             if ($lvl == 2) {
-                $original_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id = :idconto';
+                $params = [
+                    ':idconto' => $idconto,
+                ];
             } else {
-                $original_query = 'SELECT descrizione FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti3 WHERE id = :idconto';
+                $params = [
+                    ':idconto' => $idconto,
+                ];
             }
-            $original = $dbo->fetchOne($original_query);
+            $original = $dbo->fetchOne($original_query, $params);
             $descrizione = $original['descrizione'];
         }
 
         if ($lvl == 2) {
-            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero = :numero AND NOT id = :idconto AND idpianodeiconti1 = :idpianodeiconti';
+            $params = [
+                ':numero' => $numero,
+                ':idconto' => $idconto,
+                ':idpianodeiconti' => $idpianodeiconti,
+            ];
 
-            $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', dir='.prepare($dir).' WHERE id='.prepare($idconto);
+            $update_query = 'UPDATE co_pianodeiconti2 SET numero = :numero, descrizione = :descrizione, dir = :dir WHERE id = :idconto';
+            $params = [
+                ':numero' => $numero,
+                ':descrizione' => $descrizione,
+                ':dir' => $dir,
+                ':idconto' => $idconto,
+            ];
         } else {
-            $duplicate_query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti2='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero = :numero AND NOT id = :idconto AND idpianodeiconti2 = :idpianodeiconti';
+            $params = [
+                ':numero' => $numero,
+                ':idconto' => $idconto,
+                ':idpianodeiconti' => $idpianodeiconti,
+            ];
 
-            $update_query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', percentuale_deducibile='.prepare($percentuale).' WHERE id='.prepare($idconto);
+            $update_query = 'UPDATE co_pianodeiconti3 SET numero = :numero, descrizione = :descrizione, percentuale_deducibile = :percentuale WHERE id = :idconto';
+            $params = [
+                ':numero' => $numero,
+                ':descrizione' => $descrizione,
+                ':percentuale' => $percentuale,
+                ':idconto' => $idconto,
+            ];
         }
 
         // Controllo che non sia stato usato un numero non valido del conto
@@ -200,7 +248,13 @@ switch (post('op')) {
         $data_fine = $_SESSION['period_start'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($idconto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $query = 'SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= :data_inizio AND data < :data_fine AND co_pianodeiconti3.id != :idconto_chiusura AND is_chiusura = 0 GROUP BY co_pianodeiconti3.id HAVING totale != 0';
+        $params = [
+            ':data_inizio' => $data_inizio,
+            ':data_fine' => $data_fine,
+            ':idconto_chiusura' => $idconto_chiusura,
+        ];
+        $conti = $dbo->fetchArray($query, $params);
 
         $mastrino = Mastrino::build(tr('Apertura conto'), $_SESSION['period_start'], 0, true);
 

@@ -27,8 +27,20 @@ switch (filter('op')) {
         $percentuale_imponibile = filter('percentuale_imponibile');
 
         if (isset($descrizione) && isset($percentuale) && isset($percentuale_imponibile)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_ritenutaacconto` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `co_ritenutaacconto` SET `descrizione`='.prepare($descrizione).', `percentuale`='.prepare($percentuale).', `percentuale_imponibile`='.prepare($percentuale_imponibile).' WHERE `id`='.prepare($id_record));
+            $query = 'SELECT * FROM `co_ritenutaacconto` WHERE `descrizione` = :descrizione AND `id` != :id_record';
+            $params = [
+                ':descrizione' => $descrizione,
+                ':id_record' => $id_record,
+            ];
+            if ($dbo->fetchNum($query, $params) == 0) {
+                $query = 'UPDATE `co_ritenutaacconto` SET `descrizione` = :descrizione, `percentuale` = :percentuale, `percentuale_imponibile` = :percentuale_imponibile WHERE `id` = :id_record';
+                $params = [
+                    ':descrizione' => $descrizione,
+                    ':percentuale' => $percentuale,
+                    ':percentuale_imponibile' => $percentuale_imponibile,
+                    ':id_record' => $id_record,
+                ];
+                $dbo->query($query, $params);
                 flash()->info(tr('Salvataggio completato!'));
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con la stessa descrizione!", [
@@ -47,8 +59,18 @@ switch (filter('op')) {
         $percentuale_imponibile = filter('percentuale_imponibile');
 
         if (isset($descrizione) && isset($percentuale) && isset($percentuale_imponibile)) {
-            if ($dbo->fetchNum('SELECT * FROM `co_ritenutaacconto` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_imponibile).')');
+            $query = 'SELECT * FROM `co_ritenutaacconto` WHERE `descrizione` = :descrizione';
+            $params = [
+                ':descrizione' => $descrizione,
+            ];
+            if ($dbo->fetchNum($query, $params) == 0) {
+                $query = 'INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES (:descrizione, :percentuale, :percentuale_imponibile)';
+                $params = [
+                    ':descrizione' => $descrizione,
+                    ':percentuale' => $percentuale,
+                    ':percentuale_imponibile' => $percentuale_imponibile,
+                ];
+                $dbo->query($query, $params);
                 $id_record = $dbo->lastInsertedID();
 
                 flash()->info(tr('Aggiunta nuova tipologia di _TYPE_', [

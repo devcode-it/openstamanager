@@ -37,8 +37,15 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($totale).')';
-                if ($dbo->query($query)) {
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES (:idmastrino, :nome, :descrizione, :idconto, :totale)';
+                $params = [
+                    ':idmastrino' => $idmastrino,
+                    ':nome' => $nome,
+                    ':descrizione' => $descrizione,
+                    ':idconto' => $idconto,
+                    ':totale' => $totale,
+                ];
+                if ($dbo->query($query, $params)) {
                     $id_record = $idmastrino;
                 }
             }
@@ -65,8 +72,15 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES('.prepare($idmastrino).', '.prepare($nome).', '.prepare($descrizione).', '.prepare($idconto).', '.prepare($totale).')';
-                if ($dbo->query($query)) {
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES (:idmastrino, :nome, :descrizione, :idconto, :totale)';
+                $params = [
+                    ':idmastrino' => $idmastrino,
+                    ':nome' => $nome,
+                    ':descrizione' => $descrizione,
+                    ':idconto' => $idconto,
+                    ':totale' => $totale,
+                ];
+                if ($dbo->query($query, $params)) {
                     $id_record = $idmastrino;
                 }
             }

@@ -26,7 +26,7 @@ $intervento = Intervento::find($id_record);
 
 $id_anagrafica = $intervento->idanagrafica;
 $direzione = $intervento->direzione;
-$righe_ids = array_map('intval', explode(',', $_GET['righe'] ?? ''));
+$righe_ids = array_map('intval', explode(',', filter('righe') ?? ''));
 $placeholders = implode(',', array_fill(0, count($righe_ids), '?'));
 $righe = $dbo->fetchArray(
     'SELECT 

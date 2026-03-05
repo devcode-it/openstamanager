@@ -308,8 +308,18 @@ if (!function_exists('aggiungi_movimento')) {
             $importo_cliente = sum($importo_cliente, -$iva_fattura, 2);
         }
 
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES('.prepare($idmastrino).', '.prepare($data).', '.prepare($iddocumento).", '', ".prepare($descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')').', '.prepare($idconto_controparte).', '.prepare(($importo_cliente + $totale_bolli) * $segno_mov1_cliente).', '.prepare($primanota).' )';
-        $dbo->query($query2);
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+        $params = [
+            ':idmastrino' => $idmastrino,
+            ':data' => $data,
+            ':iddocumento' => $iddocumento,
+            ':id_anagrafica' => '',
+            ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
+            ':idconto' => $idconto_controparte,
+            ':totale' => ($importo_cliente + $totale_bolli) * $segno_mov1_cliente,
+            ':primanota' => $primanota,
+        ];
+        $dbo->query($query2, $params);
 
         // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
         // Lettura descrizione conto ricavi/spese per ogni riga del documento

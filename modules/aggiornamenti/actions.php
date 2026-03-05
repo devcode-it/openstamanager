@@ -64,22 +64,66 @@ switch (filter('op')) {
             break;
         }
 
-        $debug_queries = implode('<br>', $queries);
+        // WHITELIST: Permetti solo pattern SQL sicuri
+        $allowed_patterns = [
+            '/^ALTER\s+TABLE\s+`?[\w]+`?\s+(ADD|MODIFY|CHANGE|DROP)\s+(COLUMN\s+)?`?[\w]+`?/i',
+            '/^CREATE\s+(UNIQUE\s+)?INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?\s*\(/i',
+            '/^DROP\s+INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?$/i',
+            '/^UPDATE\s+`?zz_views`?\s+SET\s+/i',
+            '/^INSERT\s+INTO\s+`?zz_\w+`?\s*\(/i',
+            '/^DELETE\s+FROM\s+`?zz_\w+`?\s+WHERE\s+/i',
+        ];
 
-        $dbo->query('SET FOREIGN_KEY_CHECKS=0');
+        $safe_queries = [];
+        $rejected = [];
+
+        foreach ($queries as $query) {
+            $is_safe = false;
+            foreach ($allowed_patterns as $pattern) {
+                if (preg_match($pattern, trim($query))) {
+                    $is_safe = true;
+                    break;
+                }
+            }
+
+            if ($is_safe) {
+                $safe_queries[] = $query;
+            } else {
+                $rejected[] = $query;
+            }
+        }
+
+        if (!empty($rejected)) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Query non permesse rilevate. Operazione bloccata per motivi di sicurezza.'),
+                'rejected_count' => count($rejected),
+            ]);
+            break;
+        }
+
+        if (empty($safe_queries)) {
+            echo json_encode([
+                'success' => false,
+                'message' => tr('Nessuna query valida da eseguire dopo la validazione.'),
+            ]);
+            break;
+        }
+
+        $debug_queries = implode('<br>', $safe_queries);
 
         $errors = [];
         $executed = 0;
 
-        foreach ($queries as $query) {
+        foreach ($safe_queries as $query) {
             try {
                 $dbo->query($query);
                 ++$executed;
             } catch (Exception $e) {
-                $errors[] = $query.' - '.$e->getMessage();
+                // Sanifica il messaggio di errore per evitare leak di informazioni
+                $errors[] = tr('Errore durante l\'esecuzione di una query.');
             }
         }
-        $dbo->query('SET FOREIGN_KEY_CHECKS=1');
 
         if (empty($errors)) {
             $success_message = tr('Tutte le query sono state eseguite con successo (_NUM_ query).', [

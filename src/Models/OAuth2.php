@@ -148,7 +148,7 @@ class OAuth2 extends Model
     {
         $this->checkTokens();
 
-        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token']) : null;
+        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token'], ['allowed_classes' => [AccessToken::class]]) : null;
     }
 
     /**
@@ -190,7 +190,7 @@ class OAuth2 extends Model
      */
     protected function checkTokens()
     {
-        $access_token = $this->access_token ? unserialize($this->access_token) : null;
+        $access_token = $this->access_token ? unserialize($this->access_token, ['allowed_classes' => [AccessToken::class]]) : null;
 
         if (!empty($access_token) && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso

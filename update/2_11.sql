@@ -224,3 +224,20 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (2, (SELECT MAX(`id`)-1 FROM `zz_settings`), 'Account for IVA on purchases with reverse charge', ''),
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Conto per Iva su vendite Reverse charge', ''),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'Account for IVA on sales with reverse charge', '');
+
+-- Aggiunta stampa GDPR
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`,  `enabled`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name`='Anagrafiche'), '1', 'GDPR', 'GDPR', 'idanagrafica', '', 'fa fa-print', '', '', '0', '0',  '1');
+
+-- Traduzioni stampa GDPR
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
+(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'GDPR'), 'GDPR', 'GDPR'),
+(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'GDPR'), 'GDPR', 'GDPR');
+
+-- Aggiunta impostazione Condizioni GDPR
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES
+('Condizioni GDPR', '', 'ckeditor', 1, 'Generali');
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Condizioni GDPR', 'Condizioni generali da includere nella stampa GDPR'),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'GDPR Terms', 'General terms to include in GDPR print');

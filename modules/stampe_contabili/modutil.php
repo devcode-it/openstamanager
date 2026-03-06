@@ -102,6 +102,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         $iva_vendite_esigibile = $dbo->fetchArray('
         SELECT
             `id`,
+            `id_segment`,
             `cod_iva`,
             `aliquota`,
             `descrizione`,
@@ -111,6 +112,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             (
             SELECT
                 `co_documenti`.`id` AS id,
+                `co_documenti`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -136,6 +138,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         UNION
             SELECT
                 `vb_venditabanco`.`id` AS id,
+                `vb_venditabanco`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -161,11 +164,13 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             `cod_iva`,
             `aliquota`,
             `descrizione`,
-            `id`');
+            `id`,
+            `id_segment`');
 
         $iva_vendite = $dbo->fetchArray('
         SELECT
             `id`,
+            `id_segment`,
             `cod_iva`,
             `aliquota`,
             `descrizione`,
@@ -175,6 +180,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             (
             SELECT
                 `co_documenti`.`id` AS id,
+                `co_documenti`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -200,6 +206,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         UNION
             SELECT
                 `vb_venditabanco`.`id` AS id,
+                `vb_venditabanco`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -223,11 +230,13 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             `cod_iva`,
             `aliquota`,
             `descrizione`,
-            `id`');
+            `id`,
+            `id_segment`');
     } else {
         // Calcolo IVA solo su fatture (senza vendite al banco)
         $iva_vendite_esigibile = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -254,6 +263,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
 
         $iva_vendite = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -282,6 +292,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
     // Calcolo IVA non esigibile (split payment)
     $iva_vendite_nonesigibile = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -309,6 +320,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
     // Calcolo IVA detraibile (acquisti)
     $iva_acquisti_detraibile = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -336,6 +348,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
     // Calcolo IVA non detraibile (acquisti)
     $iva_acquisti_nondetraibile = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -363,6 +376,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
     // Calcolo IVA acquisti totale
     $iva_acquisti = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -398,6 +412,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         // Con vendite al banco - query più complesse
         $iva_vendite_anno_precedente = $dbo->fetchArray('
         SELECT
+            `id_segment`,
             `cod_iva`,
             `aliquota`,
             `descrizione`,
@@ -406,6 +421,8 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             (
             SELECT
+                `co_documenti`.`id` AS id,
+                `co_documenti`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -430,6 +447,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 data_competenza_iva BETWEEN '.prepare($anno_precedente_start).' AND '.prepare($anno_precedente_end).'
         UNION
             SELECT
+                `vb_venditabanco`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -452,10 +470,12 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         GROUP BY
             `cod_iva`,
             `aliquota`,
-            `descrizione`');
+            `descrizione`,
+            `id_segment`');
 
         $iva_vendite_periodo_precedente = $dbo->fetchArray('
         SELECT
+            `id_segment`,
             `cod_iva`,
             `aliquota`,
             `descrizione`,
@@ -464,6 +484,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             (
             SELECT
+                `co_documenti`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -488,6 +509,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 data_competenza_iva BETWEEN '.prepare($periodo_precedente_start).' AND '.prepare($periodo_precedente_end).'
         UNION
             SELECT
+                `vb_venditabanco`.`id_segment` AS id_segment,
                 `co_iva`.`codice_natura_fe` AS cod_iva,
                 `co_iva`.`percentuale` AS aliquota,
                 `co_iva_lang`.`title` AS descrizione,
@@ -510,11 +532,13 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         GROUP BY
             `cod_iva`,
             `aliquota`,
-            `descrizione`');
+            `descrizione`,
+            `id_segment`');
     } else {
         // Solo fatture - query semplificate
         $iva_vendite_anno_precedente = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -541,6 +565,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
 
         $iva_vendite_periodo_precedente = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -569,6 +594,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
     // Query per acquisti dei periodi precedenti
     $iva_acquisti_anno_precedente = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -595,6 +621,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
 
     $iva_acquisti_periodo_precedente = $dbo->fetchArray('
         SELECT
+            `co_documenti`.`id_segment` AS id_segment,
             `co_iva`.`codice_natura_fe` AS cod_iva,
             `co_iva`.`percentuale` AS aliquota,
             `co_iva_lang`.`title` AS descrizione,
@@ -674,6 +701,64 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         $totale_iva_maggiorata = $totale_iva + $maggiorazione;
     }
 
+    // Raggruppo i dati IVA per segmento (vendite)
+    $iva_vendite_esigibile_per_segmento = [];
+    $iva_vendite_per_segmento = [];
+    $iva_vendite_nonesigibile_per_segmento = [];
+
+    foreach ($iva_vendite_esigibile as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_vendite_esigibile_per_segmento[$id_segment])) {
+            $iva_vendite_esigibile_per_segmento[$id_segment] = [];
+        }
+        $iva_vendite_esigibile_per_segmento[$id_segment][] = $record;
+    }
+
+    foreach ($iva_vendite as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_vendite_per_segmento[$id_segment])) {
+            $iva_vendite_per_segmento[$id_segment] = [];
+        }
+        $iva_vendite_per_segmento[$id_segment][] = $record;
+    }
+
+    foreach ($iva_vendite_nonesigibile as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_vendite_nonesigibile_per_segmento[$id_segment])) {
+            $iva_vendite_nonesigibile_per_segmento[$id_segment] = [];
+        }
+        $iva_vendite_nonesigibile_per_segmento[$id_segment][] = $record;
+    }
+
+    // Raggruppo i dati IVA per segmento (acquisti)
+    $iva_acquisti_detraibile_per_segmento = [];
+    $iva_acquisti_nondetraibile_per_segmento = [];
+    $iva_acquisti_per_segmento = [];
+
+    foreach ($iva_acquisti_detraibile as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_acquisti_detraibile_per_segmento[$id_segment])) {
+            $iva_acquisti_detraibile_per_segmento[$id_segment] = [];
+        }
+        $iva_acquisti_detraibile_per_segmento[$id_segment][] = $record;
+    }
+
+    foreach ($iva_acquisti_nondetraibile as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_acquisti_nondetraibile_per_segmento[$id_segment])) {
+            $iva_acquisti_nondetraibile_per_segmento[$id_segment] = [];
+        }
+        $iva_acquisti_nondetraibile_per_segmento[$id_segment][] = $record;
+    }
+
+    foreach ($iva_acquisti as $record) {
+        $id_segment = $record['id_segment'];
+        if (!isset($iva_acquisti_per_segmento[$id_segment])) {
+            $iva_acquisti_per_segmento[$id_segment] = [];
+        }
+        $iva_acquisti_per_segmento[$id_segment][] = $record;
+    }
+
     return [
         'iva_vendite_esigibile' => $iva_vendite_esigibile,
         'iva_vendite' => $iva_vendite,
@@ -708,6 +793,12 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         'periodo_precedente_end' => $periodo_precedente_end,
         'anno_precedente_start' => $anno_precedente_start,
         'anno_precedente_end' => $anno_precedente_end,
+        'iva_vendite_esigibile_per_segmento' => $iva_vendite_esigibile_per_segmento,
+        'iva_vendite_per_segmento' => $iva_vendite_per_segmento,
+        'iva_vendite_nonesigibile_per_segmento' => $iva_vendite_nonesigibile_per_segmento,
+        'iva_acquisti_detraibile_per_segmento' => $iva_acquisti_detraibile_per_segmento,
+        'iva_acquisti_nondetraibile_per_segmento' => $iva_acquisti_nondetraibile_per_segmento,
+        'iva_acquisti_per_segmento' => $iva_acquisti_per_segmento,
     ];
 }
 

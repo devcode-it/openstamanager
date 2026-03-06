@@ -241,3 +241,11 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALU
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_settings`), 'Condizioni GDPR', 'Condizioni generali da includere nella stampa GDPR'),
 (2, (SELECT MAX(`id`) FROM `zz_settings`), 'GDPR Terms', 'General terms to include in GDPR print');
+
+-- Aggiornamento nome segmenti fatture
+UPDATE `zz_segments_lang` SET `title`='Vendite' WHERE `title` LIKE 'Standard vendite';
+UPDATE `zz_segments_lang` SET `title`='Sales' WHERE `title` LIKE 'Standard sales';
+UPDATE `zz_segments` SET `name`='Vendite' WHERE `name` LIKE 'Standard vendite';
+UPDATE `zz_segments_lang` SET `title`='Acquisti' WHERE `title` LIKE 'Standard acquisti';
+UPDATE `zz_segments_lang` SET `title`='Purchases' WHERE `title` LIKE 'Standard purchases';
+UPDATE `zz_segments` SET `name`='Acquisti' WHERE `name` LIKE 'Standard acquisti';

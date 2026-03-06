@@ -38,6 +38,13 @@ $periodo = $dati_liquidazione['periodo'];
 $vendita_banco = $dati_liquidazione['vendita_banco'];
 $maggiorazione = $dati_liquidazione['maggiorazione'];
 
+$iva_vendite_esigibile_per_segmento = $dati_liquidazione['iva_vendite_esigibile_per_segmento'];
+$iva_vendite_per_segmento = $dati_liquidazione['iva_vendite_per_segmento'];
+$iva_vendite_nonesigibile_per_segmento = $dati_liquidazione['iva_vendite_nonesigibile_per_segmento'];
+$iva_acquisti_detraibile_per_segmento = $dati_liquidazione['iva_acquisti_detraibile_per_segmento'];
+$iva_acquisti_nondetraibile_per_segmento = $dati_liquidazione['iva_acquisti_nondetraibile_per_segmento'];
+$iva_acquisti_per_segmento = $dati_liquidazione['iva_acquisti_per_segmento'];
+
 // Estrae le date calcolate
 $periodo_precedente_start = $dati_liquidazione['periodo_precedente_start'];
 $periodo_precedente_end = $dati_liquidazione['periodo_precedente_end'];
@@ -58,3 +65,7 @@ $acconto_iva_periodo_precedente_utilizzato = $dati_liquidazione['acconto_iva_per
 $totale_iva_vendite_periodo_precedente = $dati_liquidazione['totale_iva_vendite_periodo_precedente'];
 $totale_iva_acquisti_periodo_precedente = $dati_liquidazione['totale_iva_acquisti_periodo_precedente'];
 $totale_iva_periodo_precedente = $dati_liquidazione['totale_iva_periodo_precedente'];
+
+// Recupero i segmenti per le fatture di vendita e acquisto
+$segmenti_vendite = $dbo->fetchArray('SELECT id, name FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = "Fatture di vendita") ORDER BY id');
+$segmenti_acquisti = $dbo->fetchArray('SELECT id, name FROM zz_segments WHERE id_module = (SELECT id FROM zz_modules WHERE name = "Fatture di acquisto") ORDER BY id');

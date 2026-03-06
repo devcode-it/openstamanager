@@ -167,7 +167,7 @@ class Movimento extends Model
             $movimento_cliente->totale = $importo;
             $movimento_cliente->save();
 
-            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, null);
+            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, $scadenza);
             $movimento_contropartita->totale = -$importo;
             $movimento_contropartita->save();
         } else {
@@ -176,7 +176,7 @@ class Movimento extends Model
             $movimento_fornitore->totale = -$importo;
             $movimento_fornitore->save();
 
-            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, null);
+            $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, $scadenza);
             $movimento_contropartita->totale = $importo;
             $movimento_contropartita->save();
         }

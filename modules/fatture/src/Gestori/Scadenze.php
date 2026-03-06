@@ -147,7 +147,7 @@ class Scadenze
         }
 
         // Pagamento automatico se scadenza = data fattura e flag attivo
-        if (!$is_pagato && $scadenza->scadenza->format('Y-m-d') == $fattura->data->format('Y-m-d')) {
+        if (!$is_pagato && $scadenza->scadenza->format('Y-m-d') <= date('Y-m-d') && $importo) {
             $pagamento = \Modules\Pagamenti\Pagamento::find($id_pagamento);
             if (!empty($pagamento) && $pagamento->registra_pagamento_automatico) {
                 $importo_da_registrare = abs($importo);

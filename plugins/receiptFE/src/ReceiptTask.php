@@ -69,6 +69,7 @@ class ReceiptTask extends Manager
         // Caricamento elenco di ricevute imporate
         $completed = $completed_cache->content;
         $count = (is_array($todo) ? count($todo) : 0);
+        $errors = 0;
 
         // Esecuzione di 10 imporazioni
         for ($i = 0; $i < 25 && $i < $count; ++$i) {
@@ -77,7 +78,18 @@ class ReceiptTask extends Manager
             if ($element !== null) {
                 // Importazione ricevuta
                 $name = $element['name'];
-                $fattura = Ricevuta::process($name);
+                try {
+                    $fattura = Ricevuta::process($name);
+                } catch (\Throwable $e) {
+                    ++$errors;
+                    $this->task->log('error', 'Errore importazione ricevuta FE', [
+                        'file' => $name,
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+
+                    continue;
+                }
 
                 if ($fattura !== null) {
                     $completed[] = $element;
@@ -97,11 +109,11 @@ class ReceiptTask extends Manager
             ];
         }
 
-        // Esecuzione dell'importazione
-        foreach ($list as $element) {
-            $name = $element['name'];
-
-            Ricevuta::process($name);
+        if ($errors > 0) {
+            $result = [
+                'response' => 2,
+                'message' => tr('Importazione completata con errori su alcune ricevute'),
+            ];
         }
 
         return $result;

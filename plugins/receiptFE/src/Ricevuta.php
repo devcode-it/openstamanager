@@ -203,6 +203,33 @@ class Ricevuta
     }
 
     /**
+     * Restituisce la lista normalizzata degli errori presenti nella ricevuta.
+     *
+     * @return array
+     */
+    protected function getListaErrori()
+    {
+        $lista_errori = $this->xml['ListaErrori']['Errore'] ?? [];
+        if (empty($lista_errori) || !is_array($lista_errori)) {
+            return [];
+        }
+
+        return XML::forceArray($lista_errori);
+    }
+
+    /**
+     * Restituisce il primo errore disponibile nella ricevuta.
+     *
+     * @return array
+     */
+    protected function getErrorePrincipale()
+    {
+        $lista_errori = $this->getListaErrori();
+
+        return $lista_errori[0] ?? [];
+    }
+
+    /**
      * Aggiorna lo stato della fattura relativa alla ricevuta in modo tale da rispecchiare i dati richiesti.
      */
     public function saveStato($codice, $id_allegato)
@@ -216,6 +243,9 @@ class Ricevuta
         }
 
         $descrizione = null;
+        $suggerimento = null;
+        $errore_principale = $this->getErrorePrincipale();
+
         // Processo la ricevuta e salvo data ricezione, codice e messaggio
         switch ($codice) {
             case 'RC':
@@ -245,8 +275,8 @@ class Ricevuta
                 break;
             case 'NS':
                 // Scartata
-                $descrizione = $this->xml['ListaErrori']['Errore']['Descrizione'];
-                $suggerimento = $this->xml['ListaErrori']['Errore']['Suggerimento'];
+                $descrizione = $errore_principale['Descrizione'] ?? null;
+                $suggerimento = $errore_principale['Suggerimento'] ?? null;
                 break;
             default:
                 // Codice non gestito
@@ -256,7 +286,7 @@ class Ricevuta
 
         // Se la fattura presenta già una ricevuta principale con un codice che non di scarto e il codice delle ricevuta da importare è 00404 (Fattura duplicata), non aggiorno la ricevuta.
         $codici_scarto = ['EC02', 'ERR', 'ERVAL', 'NS'];
-        if ($this->xml['ListaErrori']['Errore']['Codice'] == 00404 && !empty($fattura->id_ricevuta_principale) && !in_array($fattura->codice_stato_fe, $codici_scarto)) {
+        if (($errore_principale['Codice'] ?? null) == '00404' && !empty($fattura->id_ricevuta_principale) && !in_array($fattura->codice_stato_fe, $codici_scarto)) {
             return;
         }
         $data = $this->xml['DataOraRicezione'];
@@ -282,9 +312,10 @@ class Ricevuta
         // Individuazione codice per il nome dell'allegato
         $codice_nome = $codice_stato;
         if ($codice_nome == 'NS') {
-            $lista_errori = $this->xml['ListaErrori'];
-            $errore = $lista_errori[0] ?: $lista_errori;
-            $codice_nome = $codice_nome.' - '.$errore['Errore']['Codice'];
+            $errore = $this->getErrorePrincipale();
+            if (!empty($errore['Codice'])) {
+                $codice_nome = $codice_nome.' - '.$errore['Codice'];
+            }
         }
 
         $upload = $this->saveAllegato($codice_nome);

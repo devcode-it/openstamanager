@@ -56,7 +56,16 @@ class MissingReceiptTask extends Manager
             foreach ($ricevute as $ricevuta) {
                 $name = $ricevuta['name'];
 
-                Ricevuta::process($name);
+                try {
+                    Ricevuta::process($name);
+                } catch (\Throwable $e) {
+                    $this->task->log('error', 'Errore importazione ricevuta FE mancante', [
+                        'file' => $name,
+                        'id_fattura' => $fattura->id,
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                }
             }
         }
     }

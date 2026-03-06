@@ -77,6 +77,7 @@ class Movimenti
         $is_acquisto = $direzione == 'uscita';
         $split_payment = $this->fattura->split_payment;
         $is_nota = $this->fattura->isNota();
+        $is_autofattura = $this->fattura->isAutofattura();
 
         // Totali utili per i movimenti
         $totale = $this->fattura->totale;
@@ -99,9 +100,9 @@ class Movimenti
          */
         $anagrafica = $this->fattura->anagrafica;
 
-        $id_conto = $is_acquisto ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente;
+        $id_conto = $is_acquisto || $is_autofattura ? $anagrafica->idconto_fornitore : $anagrafica->idconto_cliente;
         if (empty($id_conto)) {
-            $id_conto = $is_acquisto ? setting('Conto per Riepilogativo fornitori') : setting('Conto per Riepilogativo clienti');
+            $id_conto = $is_acquisto || $is_autofattura ? setting('Conto per Riepilogativo fornitori') : setting('Conto per Riepilogativo clienti');
         }
         $id_conto_controparte = $id_conto; // Salvataggio del conto dell'anagrafica per usi successivi
 

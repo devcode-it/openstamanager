@@ -64,6 +64,7 @@ switch (filter('op')) {
             break;
         }
 
+        // TODO: Blindare maggiormente le query che il gestionale ha generato per la correzione dei conflitti a database
         // WHITELIST: Permetti solo pattern SQL sicuri
         $allowed_patterns = [
             '/^ALTER\s+TABLE\s+`?[\w]+`?\s+(ADD|MODIFY|CHANGE|DROP)\s+(COLUMN\s+)?`?[\w]+`?/i',

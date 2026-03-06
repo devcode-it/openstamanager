@@ -56,8 +56,8 @@ switch ($resource) {
                 $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
                 $where[] = '`co_preventivi`.`default_revision`=1';
 
-                $allowed_stati = ['is_pianificabile', 'is_completato', 'is_fatturabile', 'is_concluso'];
-                $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $allowed_stati)
+                $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile', 'is_concluso'];
+                $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                     ? $superselect['stato']
                     : 'is_pianificabile';
                 $where[] = '(`'.str_replace('`', '', $stato).'` = 1)';

@@ -25,7 +25,7 @@ use Modules\Contratti\Contratto;
 $contratto = Contratto::find($id_record);
 
 $id_anagrafica = $contratto->idanagrafica;
-$righe_ids = array_map('intval', explode(',', $_GET['righe'] ?? ''));
+$righe_ids = array_map('intval', explode(',', get('righe', true) ?? ''));
 $placeholders = implode(',', array_fill(0, count($righe_ids), '?'));
 $righe = $dbo->fetchArray(
     'SELECT 

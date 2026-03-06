@@ -53,8 +53,8 @@ switch ($resource) {
 
         if (empty($elements)) {
             $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
-            $allowed_stati = ['is_pianificabile', 'is_completato', 'is_fatturabile'];
-            $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $allowed_stati)
+            $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile'];
+            $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                 ? $superselect['stato']
                 : 'is_pianificabile';
             $where[] = '`idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `'.str_replace('`', '', $stato).'` = 1)';

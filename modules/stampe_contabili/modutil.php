@@ -732,38 +732,41 @@ function creaMovimentoLiquidazioneIva($date_start, $date_end)
 
         // Recupera i conti dalle impostazioni
         $id_conto_erario = setting('Conto per erario Iva');
-        $id_conto_iva_debito = setting('Conto per Iva su vendite');
-        $id_conto_iva_credito = setting('Conto per Iva su acquisti');
+        $id_conto_iva_vendite = setting('Conto per Iva su vendite');
+        $id_conto_iva_acquisti = setting('Conto per Iva su acquisti');
 
-        if (empty($id_conto_erario) || empty($id_conto_iva_debito) || empty($id_conto_iva_credito)) {
+        if (empty($id_conto_erario) || empty($id_conto_iva_acquisti) || empty($id_conto_iva_vendite)) {
             throw new Exception('Conti IVA non configurati nelle impostazioni');
         }
 
         // Crea il mastrino
-        $descrizione = 'Liquidazione IVA dal '.dateFormat($date_start).' al '.dateFormat($date_end);
+        $descrizione = 'Rilevazione IVA dal '.dateFormat($date_start).' al '.dateFormat($date_end);
         $mastrino = Mastrino::build($descrizione, $date_end, false, true);
         $mastrino->save();
 
         $importo_finale = abs($importi['importo_finale']);
+        $totale_iva_acquisti = abs($importi['totale_iva_acquisti']);
+        $totale_iva_vendite = abs($importi['totale_iva_vendite']);
 
+        // Azzero il conto IVA acquisti
+        $movimento_avere = Movimento::build($mastrino, $id_conto_iva_acquisti);
+        $movimento_avere->setTotale($totale_iva_acquisti, 0);
+        $movimento_avere->save();
+
+        // Azzero il conto IVA vendite
+        $movimento_dare = Movimento::build($mastrino, $id_conto_iva_vendite);
+        $movimento_dare->setTotale(0, $totale_iva_vendite);
+        $movimento_dare->save();
+
+        // Differenza tra IVA a debito e a credito
         if ($importi['is_debito']) {
-            // IVA a debito: DARE Conto IVA vendite, AVERE Erario IVA
-            $movimento_dare = Movimento::build($mastrino, $id_conto_iva_debito);
-            $movimento_dare->setTotale(0, $importo_finale);
-            $movimento_dare->save();
-
             $movimento_avere = Movimento::build($mastrino, $id_conto_erario);
             $movimento_avere->setTotale($importo_finale, 0);
             $movimento_avere->save();
         } else {
-            // IVA a credito: DARE Erario IVA, AVERE Conto IVA acquisti
             $movimento_dare = Movimento::build($mastrino, $id_conto_erario);
             $movimento_dare->setTotale(0, $importo_finale);
             $movimento_dare->save();
-
-            $movimento_avere = Movimento::build($mastrino, $id_conto_iva_credito);
-            $movimento_avere->setTotale($importo_finale, 0);
-            $movimento_avere->save();
         }
 
         return $mastrino->idmastrino;

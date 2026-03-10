@@ -1315,7 +1315,10 @@ function eseguiAzioneGlobale(buttonElement) {
         // Determina i parametri da passare in base al tipo di controllo
         let params = {};
         if (controlloClass === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile") {
-            params = {action: "remove_all_both"};
+            params = {
+                action: "remove_all_both",
+                limit: 100,
+            };
         }
 
         eseguiRisoluzioneGlobale(button, controlloId, controlloClass, function() {
@@ -1338,6 +1341,12 @@ function eseguiAzioneGlobale(buttonElement) {
 */
 function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCallback, errorCallback, params = {}) {
     let restore = buttonLoading(button);
+
+    if (controlloClass === "Modules\\\\Aggiornamenti\\\\Controlli\\\\IntegritaFile") {
+        eseguiRisoluzioneGlobaleIntegritaFile(button, restore, controlloId, controlloClass, successCallback, errorCallback, params);
+
+        return;
+    }
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -1393,6 +1402,100 @@ function eseguiRisoluzioneGlobale(button, controlloId, controlloClass, successCa
             buttonRestore(button, restore);
 
             // Chiama il callback di errore
+            if (typeof errorCallback === "function") {
+                errorCallback();
+            }
+        }
+    });
+}
+
+function eseguiRisoluzioneGlobaleIntegritaFile(button, restore, controlloId, controlloClass, successCallback, errorCallback, params = {}) {
+    let cardElement = $("#controllo-" + controlloId);
+    let bodyElement = cardElement.find(".card-body");
+
+    $.ajax({
+        url: globals.rootdir + "/actions.php",
+        type: "POST",
+        dataType: "JSON",
+        data: {
+            id_module: globals.id_module,
+            op: "controlli-action-global",
+            controllo: controlloClass,
+            params: params,
+        },
+        success: function(results) {
+            let summary = results.summary || "'.tr('Elaborazione in corso').'.";
+            bodyElement.css(\'padding\', \'10px 12px\').html(`
+                <div class="alert alert-info mb-0">
+                    <i class="fa fa-spinner fa-spin mr-2"></i>${summary}
+                </div>
+            `);
+
+            if (results.more) {
+                if ((results.resolved_in_batch || 0) === 0) {
+                    let stopHtml = `
+                        <div class="alert alert-warning mb-0">
+                            <h4><i class="fa fa-exclamation-triangle text-warning"></i> '.tr('Operazione interrotta').'</h4>
+                            <p>'.tr('Il batch corrente non ha ridotto i record pendenti. Verificare permessi file o vincoli sui record prima di riprovare.').'</p>
+                        </div>
+                    `;
+
+                    bodyElement.html(stopHtml);
+                    buttonRestore(button, restore);
+
+                    if (typeof errorCallback === "function") {
+                        errorCallback();
+                    }
+
+                    return;
+                }
+
+                eseguiRisoluzioneGlobaleIntegritaFile(button, restore, controlloId, controlloClass, successCallback, errorCallback, params);
+
+                return;
+            }
+
+            let controllo = {
+                id: controlloId,
+                class: controlloClass,
+                name: cardElement.data("controllo-name"),
+            };
+
+            avviaControllo(controllo).done(function() {
+                if (typeof successCallback === "function") {
+                    successCallback();
+                }
+            }).fail(function(xhr, r, error) {
+                let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error.message : error;
+                let refreshErrorHtml = `
+                    <div class="alert alert-danger">
+                        <h4><i class="fa fa-exclamation-triangle text-danger"></i> '.tr('Errore durante l\'aggiornamento del controllo').'</h4>
+                        <p>'.tr('Si è verificato un errore').': ${errorMessage}</p>
+                    </div>
+                `;
+
+                bodyElement.prepend(refreshErrorHtml);
+
+                if (typeof errorCallback === "function") {
+                    errorCallback();
+                }
+            }).always(function() {
+                buttonRestore(button, restore);
+            });
+        },
+        error: function(xhr, r, error) {
+            let errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error.message : error;
+
+            let errorHtml = `
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-exclamation-triangle text-danger"></i> '.tr('Errore durante la risoluzione').'</h4>
+                    <p>'.tr('Si è verificato un errore').': ${errorMessage}</p>
+                </div>
+            `;
+
+            bodyElement.prepend(errorHtml);
+            buttonRestore(button, restore);
+
             if (typeof errorCallback === "function") {
                 errorCallback();
             }

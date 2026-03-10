@@ -25,6 +25,8 @@ use Util\FileSystem;
 
 class IntegritaFile extends Controllo
 {
+    protected const GLOBAL_BATCH_SIZE = 100;
+
     public function getName()
     {
         return tr('Integrità file allegati');
@@ -106,36 +108,9 @@ class IntegritaFile extends Controllo
         $action = $params['action'] ?? '';
 
         if ($action === 'remove_orphan_file' && $record['tipo'] === 'file_orfano') {
-            $file_path = base_dir().'/files/'.$record['percorso_completo'];
-
-            if (file_exists($file_path)) {
-                if (unlink($file_path)) {
-                    return tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
-                }
-
-                return tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
-            }
-
-            return tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+            return $this->removeOrphanFile($record)['message'];
         } elseif ($action === 'remove_orphan_record' && $record['tipo'] === 'file_mancante') {
-            // Estraggo l'ID del record dal campo id (formato: missing_file_123)
-            $upload_id = str_replace('missing_file_', '', $record['id']);
-
-            try {
-                $upload = Upload::find($upload_id);
-                if ($upload) {
-                    $upload->delete();
-
-                    return tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                }
-
-                return tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
-            } catch (\Exception $e) {
-                return tr('Errore nella rimozione del record _FILE_: _ERROR_', [
-                    '_FILE_' => $record['nome_file'],
-                    '_ERROR_' => $e->getMessage(),
-                ]);
-            }
+            return $this->removeOrphanRecord($record)['message'];
         }
 
         return tr('Azione non supportata per questo tipo di record');
@@ -182,87 +157,135 @@ class IntegritaFile extends Controllo
                 }
             }
         } elseif ($action === 'remove_all_both') {
-            // Esegui entrambe le operazioni a blocchi di 100 per evitare timeout
+            $limit = !empty($params['limit']) ? (int) $params['limit'] : self::GLOBAL_BATCH_SIZE;
+            $limit = $limit > 0 ? $limit : self::GLOBAL_BATCH_SIZE;
 
-            // Separa i record per tipo
-            $orphan_files = [];
-            $orphan_records = [];
+            $pending_records = $this->getPendingGlobalRecords();
+            $total_before = count($pending_records);
+            $batch = array_slice($pending_records, 0, $limit);
 
-            foreach ($this->results as $record) {
-                if ($record['tipo'] === 'file_orfano') {
-                    $orphan_files[] = $record;
-                } elseif ($record['tipo'] === 'file_mancante') {
-                    $orphan_records[] = $record;
-                }
-            }
-
-            $batch_size = 100;
             $processed_files = 0;
             $processed_records = 0;
 
-            // 1. Rimuovi file orfani a blocchi
-            $file_batches = array_chunk($orphan_files, $batch_size);
-            foreach ($file_batches as $batch) {
-                foreach ($batch as $record) {
-                    $file_path = base_dir().'/files/'.$record['percorso_completo'];
-
-                    if (file_exists($file_path)) {
-                        if (unlink($file_path)) {
-                            ++$processed_files;
-                            $results[$record['id']] = tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]);
-                        } else {
-                            $results[$record['id']] = tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]);
-                        }
-                    } else {
-                        $results[$record['id']] = tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]);
+            foreach ($batch as $record) {
+                if ($record['tipo'] === 'file_orfano') {
+                    $result = $this->removeOrphanFile($record);
+                    $results[$record['id']] = $result['message'];
+                    if ($result['success']) {
+                        ++$processed_files;
                     }
-                }
-
-                // Pausa breve tra i blocchi per evitare sovraccarico
-                if (count($file_batches) > 1) {
-                    usleep(100000); // 0.1 secondi
+                } elseif ($record['tipo'] === 'file_mancante') {
+                    $result = $this->removeOrphanRecord($record);
+                    $results[$record['id']] = $result['message'];
+                    if ($result['success']) {
+                        ++$processed_records;
+                    }
                 }
             }
 
-            // 2. Rimuovi record orfani a blocchi
-            $record_batches = array_chunk($orphan_records, $batch_size);
-            foreach ($record_batches as $batch) {
-                foreach ($batch as $record) {
-                    $upload_id = str_replace('missing_file_', '', $record['id']);
+            $this->results = [];
+            $this->check();
+            $remaining = count($this->getPendingGlobalRecords());
+            $resolved_in_batch = max(0, $total_before - $remaining);
 
-                    try {
-                        $upload = Upload::find($upload_id);
-                        if ($upload) {
-                            $upload->delete();
-                            ++$processed_records;
-                            $results[$record['id']] = tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]);
-                        } else {
-                            $results[$record['id']] = tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]);
-                        }
-                    } catch (\Exception $e) {
-                        $results[$record['id']] = tr('Errore nella rimozione del record _FILE_: _ERROR_', [
-                            '_FILE_' => $record['nome_file'],
-                            '_ERROR_' => $e->getMessage(),
-                        ]);
-                    }
-                }
-
-                // Pausa breve tra i blocchi per evitare sovraccarico del database
-                if (count($record_batches) > 1) {
-                    usleep(100000); // 0.1 secondi
-                }
-            }
-
-            // Aggiungi un messaggio di riepilogo
-            if ($processed_files > 0 || $processed_records > 0) {
-                $results['summary'] = tr('Operazione completata: _FILES_ file e _RECORDS_ record rimossi con successo', [
+            return [
+                'batch_size' => $limit,
+                'processed' => count($batch),
+                'processed_files' => $processed_files,
+                'processed_records' => $processed_records,
+                'resolved_in_batch' => $resolved_in_batch,
+                'remaining' => $remaining,
+                'more' => $remaining > 0,
+                'results' => $results,
+                'summary' => tr('Blocco completato: _FILES_ file e _RECORDS_ record rimossi con successo. Record ancora da verificare: _REMAINING_.', [
                     '_FILES_' => $processed_files,
                     '_RECORDS_' => $processed_records,
-                ]);
-            }
+                    '_REMAINING_' => $remaining,
+                ]),
+                'total_before' => $total_before,
+            ];
         }
 
         return $results;
+    }
+
+    /**
+     * Restituisce i record ancora correggibili globalmente, dando priorità ai file orfani.
+     */
+    protected function getPendingGlobalRecords()
+    {
+        $orphan_files = [];
+        $orphan_records = [];
+
+        foreach ($this->results as $record) {
+            if ($record['tipo'] === 'file_orfano') {
+                $orphan_files[] = $record;
+            } elseif ($record['tipo'] === 'file_mancante') {
+                $orphan_records[] = $record;
+            }
+        }
+
+        return array_merge($orphan_files, $orphan_records);
+    }
+
+    /**
+     * Rimuove un file orfano dal filesystem.
+     */
+    protected function removeOrphanFile($record)
+    {
+        $file_path = base_dir().'/files/'.$record['percorso_completo'];
+
+        if (file_exists($file_path)) {
+            if (unlink($file_path)) {
+                return [
+                    'success' => true,
+                    'message' => tr('File _FILE_ rimosso con successo', ['_FILE_' => $record['nome_file']]),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => tr('Errore nella rimozione del file _FILE_', ['_FILE_' => $record['nome_file']]),
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => tr('File _FILE_ non trovato', ['_FILE_' => $record['nome_file']]),
+        ];
+    }
+
+    /**
+     * Rimuove un record orfano dal database.
+     */
+    protected function removeOrphanRecord($record)
+    {
+        $upload_id = str_replace('missing_file_', '', $record['id']);
+
+        try {
+            $upload = Upload::find($upload_id);
+            if ($upload) {
+                $upload->delete();
+
+                return [
+                    'success' => true,
+                    'message' => tr('Record _FILE_ rimosso dal database con successo', ['_FILE_' => $record['nome_file']]),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => tr('Record _FILE_ non trovato nel database', ['_FILE_' => $record['nome_file']]),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => tr('Errore nella rimozione del record _FILE_: _ERROR_', [
+                    '_FILE_' => $record['nome_file'],
+                    '_ERROR_' => $e->getMessage(),
+                ]),
+            ];
+        }
     }
 
     /**

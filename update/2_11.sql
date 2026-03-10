@@ -249,3 +249,49 @@ UPDATE `zz_segments` SET `name`='Vendite' WHERE `name` LIKE 'Standard vendite';
 UPDATE `zz_segments_lang` SET `title`='Acquisti' WHERE `title` LIKE 'Standard acquisti';
 UPDATE `zz_segments_lang` SET `title`='Purchases' WHERE `title` LIKE 'Standard purchases';
 UPDATE `zz_segments` SET `name`='Acquisti' WHERE `name` LIKE 'Standard acquisti';
+
+-- Nuova colonna stato impianto
+ALTER TABLE `my_statiimpianti` ADD `is_abilitato` BOOLEAN NOT NULL DEFAULT TRUE AFTER `deleted_at`; 
+
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `my_impianti`
+    LEFT JOIN `an_anagrafiche` AS clienti ON `clienti`.`idanagrafica` = `my_impianti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche` AS tecnici ON `tecnici`.`idanagrafica` = `my_impianti`.`idtecnico`
+    LEFT JOIN `zz_categorie` ON `zz_categorie`.`id` = `my_impianti`.`id_categoria`
+    LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
+    LEFT JOIN `zz_categorie` as sub ON sub.`id` = `my_impianti`.`id_sottocategoria`
+    LEFT JOIN `zz_categorie_lang` as sub_lang ON (sub.`id` = sub_lang.`id_record` AND sub_lang.|lang|)
+    LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nomesede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.idsede
+    LEFT JOIN `zz_marche` as marca ON `marca`.`id` = `my_impianti`.`id_marca`
+    LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `my_impianti`.`id_modello`
+    LEFT JOIN `my_statiimpianti` ON `my_impianti`.`id_stato`=`my_statiimpianti`.`id`
+    LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND `my_statiimpianti_lang`.|lang|)
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY
+    `matricola`" WHERE `name` = 'Impianti';
+
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Stato', '`my_statiimpianti_lang`.`title`', '13', '1', '0', '0', '0', '', '', '1', '0', '0', '0');
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views`), 'Stato'),
+(2, (SELECT MAX(`id`) FROM `zz_views`), 'Status');
+
+-- Segmenti impianti
+INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Disabilitati', '1=1 AND `my_statiimpianti`.`is_abilitato`=0', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Abilitati', '1=1 AND (`my_statiimpianti`.`is_abilitato`=1 OR `my_statiimpianti`.`is_abilitato` IS NULL)', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Tutti', '1=1', 'WHR', '####', '', '', 1, 0, 0, 0, 0, 0, 1);
+
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
+(NULL, '1', (SELECT MAX(`id`) FROM `zz_segments`), 'Tutti'),
+(NULL, '2', (SELECT MAX(`id`) FROM `zz_segments`), 'All'),
+(NULL, '1', (SELECT MAX(`id`)-1 FROM `zz_segments`), 'Abilitati'),
+(NULL, '2', (SELECT MAX(`id`)-1 FROM `zz_segments`), 'Enabled'),
+(NULL, '1', (SELECT MAX(`id`)-2 FROM `zz_segments`), 'Disabilitati'),
+(NULL, '2', (SELECT MAX(`id`)-2 FROM `zz_segments`), 'Disabled');

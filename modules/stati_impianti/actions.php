@@ -35,6 +35,7 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
+            $stato->is_abilitato = post('is_abilitato');
             $stato->save();
 
             $stato->setTranslation('title', $descrizione);

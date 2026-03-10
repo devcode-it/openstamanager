@@ -742,25 +742,6 @@ function incollaRighe() {
     }).catch(function(err) { swal({ title: "'.tr('Errore').'", text: "'.tr('Impossibile leggere dagli appunti').': " + err, type: "error" }); });
 }
 
-$(document).ready(function() {
-	sortable(".sortable", {
-        axis: "y",
-        handle: ".handle",
-        cursor: "move",
-        dropOnEmpty: true,
-        scroll: true,
-    })[0].addEventListener("sortupdate", function(e) {
-        let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
-
-        $.post(globals.rootdir + "/actions.php", {
-            id_module: globals.id_module,
-            id_record: globals.id_record,
-            op: "update_position",
-            order: order.join(","),
-        });
-    });
-});
-
 $(".check").on("change", function() {
     let checked = 0;
     $(".check").each(function() {

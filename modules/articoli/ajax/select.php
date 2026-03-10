@@ -340,37 +340,50 @@ switch ($resource) {
 
     case 'serial-articolo':
         // Query per selezionare i serial disponibili in magazzino
-        // Un serial è disponibile se l'ultimo movimento cronologico è dir='uscita' (articolo entrato in magazzino)
-        $query = 'SELECT serial AS id, serial AS descrizione FROM mg_prodotti |where|';
+        // Un serial è disponibile se il suo ultimo movimento cronologico ha dir='uscita'
+        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`, '1000-01-01')";
+
+        $movimenti_seriali = 'SELECT
+            `mg_prodotti`.`id`,
+            `mg_prodotti`.`id_articolo`,
+            `mg_prodotti`.`serial`,
+            `mg_prodotti`.`dir`,
+            '.$data_movimento.' AS `data_movimento`
+        FROM `mg_prodotti`
+            LEFT JOIN `co_righe_documenti` ON `mg_prodotti`.`id_riga_documento` = `co_righe_documenti`.`id`
+            LEFT JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+            LEFT JOIN `dt_righe_ddt` ON `mg_prodotti`.`id_riga_ddt` = `dt_righe_ddt`.`id`
+            LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
+            LEFT JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+        WHERE `mg_prodotti`.`serial` IS NOT NULL';
+
+        $query = 'SELECT `seriali_disponibili`.`serial` AS id, `seriali_disponibili`.`serial` AS descrizione
+        FROM (
+            SELECT
+                `movimenti`.`id_articolo`,
+                `movimenti`.`serial`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`movimenti`.`dir` ORDER BY `movimenti`.`data_movimento` DESC, `movimenti`.`id` DESC), ",", 1) AS `ultimo_dir`
+            FROM ('.$movimenti_seriali.') AS `movimenti`
+            GROUP BY `movimenti`.`id_articolo`, `movimenti`.`serial`
+        ) AS `seriali_disponibili`
+        |where|
+        ORDER BY `seriali_disponibili`.`serial` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = 'serial='.prepare($element);
+            $filter[] = '`seriali_disponibili`.`serial`='.prepare($element);
         }
+
+        $where[] = '`seriali_disponibili`.`id_articolo`='.prepare($superselect['idarticolo']);
 
         if (!empty($filter)) {
-            $query .= ' OR (('.implode(' OR ', $filter).') AND mg_prodotti.dir=\'entrata\')';
+            $where[] = '(`seriali_disponibili`.`ultimo_dir`=\'uscita\' OR ('.implode(' OR ', $filter).'))';
+        } else {
+            $where[] = '`seriali_disponibili`.`ultimo_dir`=\'uscita\'';
         }
 
-        $where[] = 'mg_prodotti.id_articolo='.prepare($superselect['idarticolo']);
-        $where[] = 'mg_prodotti.dir=\'uscita\'';
-
-        $where[] = 'mg_prodotti.id = (
-            SELECT m.id
-            FROM mg_prodotti AS m
-            LEFT JOIN co_righe_documenti rd ON rd.id = m.id_riga_documento
-            LEFT JOIN co_documenti doc ON doc.id = rd.iddocumento
-            LEFT JOIN dt_righe_ddt rdt ON rdt.id = m.id_riga_ddt
-            LEFT JOIN dt_ddt ddt ON ddt.id = rdt.idddt
-            LEFT JOIN or_righe_ordini ro ON ro.id = m.id_riga_ordine
-            LEFT JOIN or_ordini ord ON ord.id = ro.idordine
-            WHERE m.id_articolo = mg_prodotti.id_articolo
-            AND m.serial = mg_prodotti.serial
-            ORDER BY COALESCE(doc.data, ddt.data, ord.data, m.created_at) DESC, m.id DESC
-            LIMIT 1
-        )';
-
         if (!empty($search)) {
-            $search_fields[] = '`mg_prodotti`.`serial` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`seriali_disponibili`.`serial` LIKE '.prepare('%'.$search.'%');
         }
 
         break;

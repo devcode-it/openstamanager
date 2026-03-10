@@ -734,20 +734,18 @@ function getNextNumeroProgressivo($table, $field, $data, $id_segment, $options =
 
     // Calcola le condizioni in base alla maschera
     $has_month = str_contains($maschera, 'm');
-    $has_year = str_contains($maschera, 'YYYY') || str_contains($maschera, 'yy');
+    $data_timestamp = $data !== null ? strtotime((string) $data) : null;
 
     // Costruisci le condizioni
     $conditions = [];
 
-    // Condizione per anno (solo se data è specificata)
-    if ($has_year && $data !== null) {
-        $data_timestamp = strtotime((string) $data);
+    // Condizione per anno (sempre se la data è specificata)
+    if ($data_timestamp !== null) {
         $conditions[] = 'YEAR('.$options['data_field'].') = '.prepare(date('Y', $data_timestamp));
     }
 
     // Condizione per mese (solo se data è specificata)
-    if ($has_month && $data !== null) {
-        $data_timestamp = strtotime((string) $data);
+    if ($has_month && $data_timestamp !== null) {
         $conditions[] = 'MONTH('.$options['data_field'].') = '.prepare(date('m', $data_timestamp));
     }
 

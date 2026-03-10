@@ -740,7 +740,7 @@ switch (post('op')) {
                     // Forza l'impostazione dei prezzi di acquisto sovrascrivendo quelli di vendita
                     $copia->setPrezzoUnitario($prezzo_unitario, $copia->aliquota->id);
                     $copia->setSconto($sconto_percentuale, 'PRC');
-                } else {
+                } elseif (!$riga->isDescrizione()) {
                     // Per righe non-articolo, usa il costo unitario se presente, altrimenti mantieni il prezzo di vendita come costo
                     $costo_unitario = $riga->costo_unitario ?: $riga->prezzo_unitario;
                     $copia->setPrezzoUnitario($costo_unitario, $copia->aliquota->id);

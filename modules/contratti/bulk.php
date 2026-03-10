@@ -119,11 +119,12 @@ switch (post('op')) {
                         $copia = $riga->copiaIn($fattura, $qta);
 
                         // Fix per idconto righe fattura
-                        $articolo = ArticoloOriginale::find($copia->idarticolo);
-                        $copia->id_conto = ($articolo->idconto_vendita ?: $idconto);
+                        $copia->id_conto = $idconto;
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
+                            $articolo = ArticoloOriginale::find($copia->idarticolo);
+                            $copia->id_conto = !empty($articolo->idconto_vendita) ? $articolo->idconto_vendita : $idconto;
                             $copia->serials = $riga->serials;
                         }
                         $copia->save();

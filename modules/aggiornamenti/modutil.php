@@ -81,9 +81,11 @@ if (!function_exists('customTables')) {
     {
         $tables = include base_dir().'/update/tables.php';
 
-        // Carica e accoda le tabelle dai file tables.php presenti nelle cartelle update dei moduli
-        $modules_dir = base_dir().'/modules/';
-        $module_tables_files = glob($modules_dir.'*/update/tables.php') ?: [];
+        // Carica e accoda le tabelle dai file tables.php presenti nelle cartelle update di moduli e plugin
+        $module_tables_files = array_merge(
+            glob(base_dir().'/modules/*/update/tables.php') ?: [],
+            glob(base_dir().'/plugins/*/update/tables.php') ?: []
+        );
 
         if (!empty($module_tables_files)) {
             foreach ($module_tables_files as $module_tables_file) {
@@ -107,13 +109,12 @@ if (!function_exists('customTables')) {
             $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
         }
 
-        // Carica e accoda le tabelle dai file mysql.json presenti nelle sottocartelle di modules/
-        $database_json_files = glob($modules_dir.'*/'.$file_to_check_database) ?: [];
+        // Carica e accoda le tabelle dai file JSON del database presenti nelle sottocartelle di moduli e plugin
+        $database_json_files = aggiornamentiGetDatabaseReferenceFiles($file_to_check_database);
 
         if (!empty($database_json_files)) {
             foreach ($database_json_files as $database_json_file) {
-                $database_contents = file_get_contents($database_json_file);
-                $database_data = json_decode($database_contents, true);
+                $database_data = aggiornamentiReadJsonFile($database_json_file);
 
                 if (!empty($database_data) && is_array($database_data)) {
                     // Estrai i nomi delle tabelle dalle chiavi del JSON
@@ -316,6 +317,369 @@ if (!function_exists('customStructureWithFiles')) {
     }
 }
 
+if (!function_exists('aggiornamentiReadJsonFile')) {
+    function aggiornamentiReadJsonFile($file_path)
+    {
+        if (!file_exists($file_path)) {
+            return [];
+        }
+
+        $contents = file_get_contents($file_path);
+        $data = json_decode($contents, true);
+
+        return is_array($data) ? $data : [];
+    }
+}
+
+if (!function_exists('aggiornamentiGetReferenceJsonFiles')) {
+    function aggiornamentiGetReferenceJsonFiles($module_filename, $plugin_filename = null)
+    {
+        $plugin_filename = $plugin_filename ?: $module_filename;
+
+        return array_merge(
+            glob(base_dir().'/modules/*/'.$module_filename) ?: [],
+            glob(base_dir().'/plugins/*/'.$plugin_filename) ?: []
+        );
+    }
+}
+
+if (!function_exists('aggiornamentiGetComponentTypeFromPath')) {
+    function aggiornamentiGetComponentTypeFromPath($path)
+    {
+        return str_contains((string) $path, '/plugins/') ? 'plugin' : 'module';
+    }
+}
+
+if (!function_exists('aggiornamentiGetComponentDisplayName')) {
+    function aggiornamentiGetComponentDisplayName($component_dir)
+    {
+        $component_files = [
+            $component_dir.'/MODULE',
+            $component_dir.'/PLUGIN',
+        ];
+
+        foreach ($component_files as $component_file) {
+            if (!file_exists($component_file)) {
+                continue;
+            }
+
+            $info = Util\Ini::readFile($component_file);
+            $name = trim((string) ($info['name'] ?? ''));
+
+            if ($name !== '') {
+                return $name;
+            }
+        }
+
+        return basename($component_dir);
+    }
+}
+
+if (!function_exists('aggiornamentiNormalizeModuleDefinitions')) {
+    function aggiornamentiNormalizeModuleDefinitions($module_data, $default_name = '')
+    {
+        $normalized = [];
+        $default_name = trim((string) $default_name);
+
+        if (empty($module_data) || !is_array($module_data)) {
+            return $normalized;
+        }
+
+        $is_single_definition = array_key_exists('options', $module_data)
+            || array_key_exists('options2', $module_data)
+            || array_key_exists('name', $module_data);
+
+        if ($is_single_definition) {
+            $module_name = trim((string) ($module_data['name'] ?? $default_name));
+
+            if ($module_name !== '') {
+                $normalized[$module_name] = [
+                    'options' => $module_data['options'] ?? '',
+                    'options2' => $module_data['options2'] ?? '',
+                ];
+            }
+
+            return $normalized;
+        }
+
+        foreach ($module_data as $module_name => $data) {
+            if (!is_array($data)) {
+                continue;
+            }
+
+            $resolved_name = trim((string) ($data['name'] ?? $module_name));
+
+            if ($resolved_name === '') {
+                continue;
+            }
+
+            $normalized[$resolved_name] = [
+                'options' => $data['options'] ?? '',
+                'options2' => $data['options2'] ?? '',
+            ];
+        }
+
+        return $normalized;
+    }
+}
+
+if (!function_exists('aggiornamentiGetPremiumModuleDefinitions')) {
+    function aggiornamentiGetPremiumModuleDefinitions()
+    {
+        $result = [
+            'definitions' => [],
+            'component_names' => [],
+            'component_types' => [],
+            'folders' => [],
+        ];
+
+        $module_json_files = aggiornamentiGetReferenceJsonFiles('modules.json', 'module.json');
+
+        foreach ($module_json_files as $module_json_file) {
+            $component_dir = dirname($module_json_file);
+            $folder_name = basename($component_dir);
+            $component_name = aggiornamentiGetComponentDisplayName($component_dir);
+            $component_type = aggiornamentiGetComponentTypeFromPath($module_json_file);
+            $module_data = aggiornamentiNormalizeModuleDefinitions(
+                aggiornamentiReadJsonFile($module_json_file),
+                $folder_name
+            );
+
+            $result['component_names'][$folder_name] = $component_name;
+            $result['component_types'][$folder_name] = $component_type;
+
+            foreach ($module_data as $module_name => $data) {
+                $result['definitions'][$module_name] = [
+                    'options' => $data['options'] ?? '',
+                    'options2' => $data['options2'] ?? '',
+                    'folder' => $folder_name,
+                    'component_name' => $component_name,
+                ];
+                $result['folders'][$module_name] = $folder_name;
+            }
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('aggiornamentiMergeSettingsReferenceData')) {
+    function aggiornamentiMergeSettingsReferenceData($data_settings)
+    {
+        $data_settings = is_array($data_settings) ? $data_settings : [];
+        $premium_settings = [];
+
+        foreach (aggiornamentiGetReferenceJsonFiles('settings.json') as $settings_json_file) {
+            $settings_data = aggiornamentiReadJsonFile($settings_json_file);
+
+            if (empty($settings_data) || !is_array($settings_data)) {
+                continue;
+            }
+
+            $component_dir = dirname($settings_json_file);
+            $component_name = aggiornamentiGetComponentDisplayName($component_dir);
+            $component_type = aggiornamentiGetComponentTypeFromPath($settings_json_file);
+
+            foreach ($settings_data as $setting_name => $setting_type) {
+                $setting_key = trim((string) $setting_name);
+
+                if ($setting_key === '') {
+                    continue;
+                }
+
+                $premium_settings[$setting_key] = [
+                    'name' => $component_name,
+                    'type' => $component_type,
+                ];
+            }
+
+            $data_settings = array_merge($data_settings, $settings_data);
+        }
+
+        foreach (aggiornamentiGetCurrentPluginSettingsMetadata() as $setting_key => $plugin_setting) {
+            if (!isset($premium_settings[$setting_key])) {
+                $premium_settings[$setting_key] = $plugin_setting;
+            }
+        }
+
+        return [
+            'data' => $data_settings,
+            'premium_settings' => $premium_settings,
+        ];
+    }
+}
+
+if (!function_exists('aggiornamentiGetCurrentPluginSettingsMetadata')) {
+    function aggiornamentiGetCurrentPluginSettingsMetadata()
+    {
+        $database = database();
+        $default_lang = $database->fetchOne("SELECT valore FROM zz_settings WHERE nome = 'Lingua'")['valore'] ?? 1;
+        $result = [];
+
+        $query = 'SELECT DISTINCT
+            zs.nome,
+            COALESCE(zpl.title, zp.name) AS plugin_name
+        FROM zz_settings zs
+        INNER JOIN zz_plugins zp ON 1=1
+        LEFT JOIN zz_plugins_lang zpl ON (
+            zp.id = zpl.id_record
+            AND zpl.id_lang = '.prepare($default_lang).'
+        )
+        WHERE LOWER(TRIM(zs.sezione)) = LOWER(TRIM(COALESCE(zpl.title, zp.name)))
+            OR LOWER(TRIM(zs.sezione)) = LOWER(TRIM(zp.name))';
+
+        foreach ($database->fetchArray($query) as $setting) {
+            $setting_key = trim((string) $setting['nome']);
+            $plugin_name = trim((string) $setting['plugin_name']);
+
+            if ($setting_key === '' || $plugin_name === '') {
+                continue;
+            }
+
+            $result[$setting_key] = [
+                'name' => $plugin_name,
+                'type' => 'plugin',
+            ];
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('aggiornamentiGetDatabaseReferenceFiles')) {
+    function aggiornamentiGetDatabaseReferenceFiles($file_to_check_database)
+    {
+        $component_dirs = array_merge(
+            glob(base_dir().'/modules/*', GLOB_ONLYDIR) ?: [],
+            glob(base_dir().'/plugins/*', GLOB_ONLYDIR) ?: []
+        );
+        $files = [];
+
+        foreach ($component_dirs as $component_dir) {
+            $preferred_file = $component_dir.'/'.$file_to_check_database;
+            $fallback_file = $component_dir.'/mysql.json';
+
+            if (file_exists($preferred_file)) {
+                $files[] = $preferred_file;
+            } elseif ($file_to_check_database !== 'mysql.json' && file_exists($fallback_file)) {
+                $files[] = $fallback_file;
+            }
+        }
+
+        return $files;
+    }
+}
+
+if (!function_exists('aggiornamentiMatchModuleNameByFolder')) {
+    function aggiornamentiMatchModuleNameByFolder($folder_name, $modules_json_data)
+    {
+        $module_name = $folder_name;
+
+        if (!empty($modules_json_data) && is_array($modules_json_data)) {
+            foreach ($modules_json_data as $name => $module_info) {
+                if (stripos(strtolower((string) $folder_name), strtolower((string) $name)) !== false) {
+                    $module_name = $name;
+                    break;
+                }
+
+                if (stripos(strtolower((string) $folder_name), strtolower(str_replace(' ', '', (string) $name))) !== false) {
+                    $module_name = $name;
+                    break;
+                }
+            }
+        }
+
+        return $module_name;
+    }
+}
+
+if (!function_exists('aggiornamentiMergeDatabaseReferenceData')) {
+    function aggiornamentiMergeDatabaseReferenceData($data, $file_to_check_database)
+    {
+        $data = is_array($data) ? $data : [];
+        $premium_fields = [];
+        $modules_json_data = aggiornamentiReadJsonFile(base_dir().'/modules.json');
+
+        foreach (aggiornamentiGetDatabaseReferenceFiles($file_to_check_database) as $database_json_file) {
+            $database_data = aggiornamentiReadJsonFile($database_json_file);
+
+            if (empty($database_data)) {
+                continue;
+            }
+
+            $component_dir = dirname($database_json_file);
+            $folder_name = basename($component_dir);
+            $component_type = aggiornamentiGetComponentTypeFromPath($database_json_file);
+
+            if ($component_type === 'plugin') {
+                $plugin_modules = aggiornamentiNormalizeModuleDefinitions(
+                    aggiornamentiReadJsonFile($component_dir.'/module.json'),
+                    $folder_name
+                );
+                $module_name = count($plugin_modules) === 1
+                    ? array_key_first($plugin_modules)
+                    : aggiornamentiGetComponentDisplayName($component_dir);
+            } else {
+                $module_name = aggiornamentiMatchModuleNameByFolder($folder_name, $modules_json_data);
+
+                if ($module_name === $folder_name) {
+                    $module_name = aggiornamentiGetComponentDisplayName($component_dir);
+                }
+            }
+
+            foreach ($database_data as $table => $table_data) {
+                if (!isset($data[$table])) {
+                    $data[$table] = $table_data;
+                } else {
+                    foreach ($table_data as $field_name => $field_data) {
+                        if ($field_name === 'foreign_keys' && is_array($field_data)) {
+                            if (!isset($data[$table]['foreign_keys'])) {
+                                $data[$table]['foreign_keys'] = [];
+                            }
+
+                            foreach ($field_data as $fk_name => $fk_data) {
+                                if (!isset($data[$table]['foreign_keys'][$fk_name])) {
+                                    $data[$table]['foreign_keys'][$fk_name] = $fk_data;
+                                }
+                            }
+                        } elseif (is_array($field_data)) {
+                            if (!isset($data[$table][$field_name])) {
+                                $data[$table][$field_name] = $field_data;
+                            } else {
+                                $data[$table][$field_name] = array_merge($data[$table][$field_name], $field_data);
+                            }
+                        } else {
+                            $data[$table][$field_name] = $field_data;
+                        }
+                    }
+                }
+            }
+
+            foreach ($database_data as $table => $table_data) {
+                if (!is_array($table_data)) {
+                    continue;
+                }
+
+                foreach ($table_data as $field_name => $field_data) {
+                    if (!isset($premium_fields[$table])) {
+                        $premium_fields[$table] = [];
+                    }
+
+                    $premium_fields[$table][$field_name] = [
+                        'name' => $module_name,
+                        'type' => $component_type,
+                    ];
+                }
+            }
+        }
+
+        return [
+            'data' => $data,
+            'premium_fields' => $premium_fields,
+        ];
+    }
+}
+
 /*
  * Ottiene l'elenco delle viste personalizzate non previste dal gestionale.
  *
@@ -345,7 +709,7 @@ if (!function_exists('customViewsNotStandard')) {
             ];
         }
 
-        $views_data = json_decode(file_get_contents($views_json_path), true);
+        $views_data = aggiornamentiReadJsonFile($views_json_path);
 
         if (is_array($views_data)) {
             // Il file views.json è organizzato per nome modulo
@@ -368,70 +732,36 @@ if (!function_exists('customViewsNotStandard')) {
             }
         }
 
-        // Carica e accoda le viste dai file views.json presenti nelle sottocartelle di modules/
-        $modules_dir = base_dir().'/modules/';
-        $views_json_files = glob($modules_dir.'*/views.json') ?: [];
+        // Carica e accoda le viste dai file views.json presenti nelle sottocartelle di moduli e plugin
+        $views_json_files = aggiornamentiGetReferenceJsonFiles('views.json');
+        $premium_modules_data = aggiornamentiGetPremiumModuleDefinitions();
 
-        // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
-        $premium_modules = [];
+        // Traccia i moduli che provengono dai file modules.json/module.json nelle sottocartelle (moduli premium)
+        $premium_modules = array_fill_keys(array_keys($premium_modules_data['definitions']), true);
 
         // Traccia tutte le viste definite nei file views.json delle sottocartelle (per mostrarle sempre)
         $premium_views = [];
 
-        // Traccia il nome leggibile del modulo premium principale per ogni sottocartella
-        $premium_module_main_name = [];
+        // Traccia il nome leggibile del componente premium principale per ogni sottocartella
+        $premium_module_main_name = $premium_modules_data['component_names'];
+
+        // Traccia il tipo di componente principale per ogni sottocartella
+        $premium_component_types = $premium_modules_data['component_types'];
 
         // Traccia la sottocartella di appartenenza per ogni modulo premium
-        $premium_module_folder = [];
-
-        // Prima carica i moduli dai file modules.json per identificare quelli premium
-        $module_json_files = glob($modules_dir.'*/modules.json') ?: [];
-        if (!empty($module_json_files)) {
-            foreach ($module_json_files as $module_json_file) {
-                $module_contents = file_get_contents($module_json_file);
-                $module_data = json_decode($module_contents, true);
-
-                if (!empty($module_data) && is_array($module_data)) {
-                    // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/modules.json")
-                    $folder_name = basename(dirname($module_json_file));
-
-                    // Leggi il nome del modulo dal file MODULE presente nella sottocartella
-                    $module_file_path = dirname($module_json_file).'/MODULE';
-                    $main_module_name = null;
-
-                    if (file_exists($module_file_path)) {
-                        $module_file_content = file_get_contents($module_file_path);
-                        // Estrai il valore del campo "name" dal file MODULE
-                        if (preg_match('/name\s*=\s*"([^"]+)"/', $module_file_content, $matches)) {
-                            $main_module_name = $matches[1];
-                        }
-                    }
-
-                    if ($main_module_name !== null) {
-                        $premium_module_main_name[$folder_name] = $main_module_name;
-                    }
-
-                    foreach ($module_data as $module_name => $data) {
-                        if (is_array($data)) {
-                            $premium_modules[$module_name] = true;
-                            // Traccia la sottocartella di appartenenza per questo modulo
-                            $premium_module_folder[$module_name] = $folder_name;
-                        }
-                    }
-                }
-            }
-        }
+        $premium_module_folder = $premium_modules_data['folders'];
 
         if (!empty($views_json_files)) {
             foreach ($views_json_files as $views_json_file) {
-                $views_contents = file_get_contents($views_json_file);
-                $views_data = json_decode($views_contents, true);
+                $views_data = aggiornamentiReadJsonFile($views_json_file);
 
                 if (!empty($views_data) && is_array($views_data)) {
                     // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/views.json")
                     $folder_name = basename(dirname($views_json_file));
+                    $component_name = $premium_module_main_name[$folder_name] ?? aggiornamentiGetComponentDisplayName(dirname($views_json_file));
+                    $component_type = $premium_component_types[$folder_name] ?? aggiornamentiGetComponentTypeFromPath($views_json_file);
 
-                    // Accoda le viste del modulo a quelle principali
+                    // Accoda le viste del componente a quelle principali
                     foreach ($views_data as $module_name => $module_views) {
                         $module_key = trim((string) $module_name);
 
@@ -446,11 +776,14 @@ if (!function_exists('customViewsNotStandard')) {
                                 continue;
                             }
 
-                            // Traccia questa vista come vista premium con il nome della sottocartella
+                            // Traccia questa vista come vista premium con il nome leggibile del componente
                             if (!isset($premium_views[$module_key])) {
                                 $premium_views[$module_key] = [];
                             }
-                            $premium_views[$module_key][$view_key] = $folder_name;
+                            $premium_views[$module_key][$view_key] = [
+                                'name' => $component_name,
+                                'type' => $component_type,
+                            ];
 
                             // Se view_query è un array (struttura estesa), estrai il campo 'id'
                             if (is_array($view_query) && isset($view_query['id'])) {
@@ -518,11 +851,10 @@ if (!function_exists('customViewsNotStandard')) {
             if (isset($premium_views[$module_name]) && isset($premium_views[$module_name][$view_name])) {
                 // Questa è una vista premium, mostrala sempre con l'etichetta blu usando il nome leggibile del modulo principale
                 $is_custom = true;
-                // Ottieni il nome della sottocartella
-                $folder_name = $premium_views[$module_name][$view_name];
-                // Usa il nome leggibile del modulo principale se disponibile, altrimenti usa il nome del modulo
-                $module_display_name = $premium_module_main_name[$folder_name] ?? $view['module_display_name'];
-                $reason = 'Vista modulo '.$module_display_name;
+                $premium_view_info = $premium_views[$module_name][$view_name];
+                $module_display_name = $premium_view_info['name'] ?? $view['module_display_name'];
+                $reason_prefix = (($premium_view_info['type'] ?? 'module') === 'plugin') ? 'Vista plugin ' : 'Vista modulo ';
+                $reason = $reason_prefix.$module_display_name;
                 $expected_query = trim((string) $standard_views[$module_name][$view_name]);
 
                 $expected_query = preg_replace('/<br\s*\/?>/i', '', $expected_query);
@@ -537,7 +869,8 @@ if (!function_exists('customViewsNotStandard')) {
                     // Usa il nome leggibile del modulo principale se disponibile
                     $folder_name = $premium_module_folder[$module_name] ?? '';
                     $module_display_name = $premium_module_main_name[$folder_name] ?? $module_name;
-                    $reason = 'Vista modulo '.$module_display_name;
+                    $reason_prefix = (($premium_component_types[$folder_name] ?? 'module') === 'plugin') ? 'Vista plugin ' : 'Vista modulo ';
+                    $reason = $reason_prefix.$module_display_name;
                 } else {
                     $reason = 'Modulo non previsto';
                 }
@@ -667,7 +1000,7 @@ if (!function_exists('customModulesNotStandard')) {
             ];
         }
 
-        $modules_data = json_decode(file_get_contents($modules_json_path), true);
+        $modules_data = aggiornamentiReadJsonFile($modules_json_path);
 
         if (is_array($modules_data)) {
             // Il file modules.json è organizzato per nome modulo
@@ -681,67 +1014,15 @@ if (!function_exists('customModulesNotStandard')) {
             }
         }
 
-        // Carica i moduli dai file modules.json presenti nelle sottocartelle di modules/ (moduli premium)
-        // NOTA: Non li aggiungiamo a $standard_modules per poterli mostrare nella lista come premium
-        $modules_dir = base_dir().'/modules/';
-        $module_json_files = glob($modules_dir.'*/modules.json') ?: [];
-
-        // Traccia i moduli che provengono dai file modules.json nelle sottocartelle (moduli premium)
-        $premium_modules = [];
-
-        // Traccia tutti i moduli definiti nei file modules.json delle sottocartelle (per mostrarli sempre)
+        // Traccia tutti i moduli definiti nei file modules.json/module.json delle sottocartelle (per mostrarli sempre)
         $premium_modules_all = [];
+        $premium_modules_data = aggiornamentiGetPremiumModuleDefinitions();
 
-        // Traccia il nome leggibile del modulo premium principale per ogni sottocartella
-        $premium_module_main_name = [];
-
-        // Traccia la sottocartella di appartenenza per ogni modulo premium
-        $premium_module_folder = [];
-
-        if (!empty($module_json_files)) {
-            foreach ($module_json_files as $module_json_file) {
-                $module_contents = file_get_contents($module_json_file);
-                $module_data = json_decode($module_contents, true);
-
-                if (!empty($module_data) && is_array($module_data)) {
-                    // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/modules.json")
-                    $folder_name = basename(dirname($module_json_file));
-
-                    // Leggi il nome del modulo dal file MODULE presente nella sottocartella
-                    $module_file_path = dirname($module_json_file).'/MODULE';
-                    $main_module_name = null;
-
-                    if (file_exists($module_file_path)) {
-                        $module_file_content = file_get_contents($module_file_path);
-                        // Estrai il valore del campo "name" dal file MODULE
-                        if (preg_match('/name\s*=\s*"([^"]+)"/', $module_file_content, $matches)) {
-                            $main_module_name = $matches[1];
-                        }
-                    }
-
-                    if ($main_module_name !== null) {
-                        $premium_module_main_name[$folder_name] = $main_module_name;
-                    }
-
-                    // Traccia i moduli premium senza aggiungerli a $standard_modules
-                    foreach ($module_data as $module_name => $data) {
-                        if (is_array($data)) {
-                            // Traccia questo modulo come premium
-                            $premium_modules[$module_name] = [
-                                'options' => $data['options'] ?? '',
-                                'options2' => $data['options2'] ?? '',
-                            ];
-                            // Traccia tutti i moduli premium per mostrarli sempre
-                            $premium_modules_all[$module_name] = [
-                                'options' => $data['options'] ?? '',
-                                'options2' => $data['options2'] ?? '',
-                            ];
-                            // Traccia la sottocartella di appartenenza per questo modulo
-                            $premium_module_folder[$module_name] = $folder_name;
-                        }
-                    }
-                }
-            }
+        foreach ($premium_modules_data['definitions'] as $module_name => $data) {
+            $premium_modules_all[$module_name] = [
+                'options' => $data['options'] ?? '',
+                'options2' => $data['options2'] ?? '',
+            ];
         }
 
         // Ottieni tutti i moduli presenti nel database

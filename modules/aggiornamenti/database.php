@@ -88,45 +88,6 @@ switch ($database->getType()) {
         break;
 }
 
-// Carica il file modules.json per ottenere i nomi corretti dei moduli
-$modules_json_file = base_dir().'/modules.json';
-$modules_json_data = [];
-if (file_exists($modules_json_file)) {
-    $modules_json_contents = file_get_contents($modules_json_file);
-    $modules_json_data = json_decode($modules_json_contents, true);
-}
-
-// Funzione per ottenere il nome del modulo dal file di riferimento appropriato
-if (!function_exists('getModuleNameFromReference')) {
-    function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data)
-    {
-        $module_name = $folder_name; // Default: usa il nome della cartella
-
-        // Verifica se esiste il file di riferimento
-        if (file_exists($reference_file)) {
-            $reference_contents = file_get_contents($reference_file);
-            $reference_data = json_decode($reference_contents, true);
-
-            if (!empty($reference_data) && is_array($reference_data)) {
-                foreach ($reference_data as $name => $module_info) {
-                    // Cerca una corrispondenza parziale o esatta
-                    if (stripos(strtolower((string) $folder_name), strtolower((string) $name)) !== false) {
-                        $module_name = $name;
-                        break;
-                    }
-                    // Seconda prova: cerca se il nome del modulo (senza spazi) è contenuto nel nome della cartella
-                    if (stripos(strtolower((string) $folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
-                        $module_name = $name;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $module_name;
-    }
-}
-
 // Traccia da quale modulo proviene ogni campo (per identificare i campi premium)
 $premium_fields = [];
 
@@ -157,78 +118,10 @@ if (file_exists(base_dir().'/'.$file_to_check_database)) {
     return;
 }
 
-// Carica e accoda le definizioni del database dai file mysql.json presenti nelle sottocartelle di modules/
-$modules_dir = base_dir().'/modules/';
-$database_json_files = glob($modules_dir.'*/'.$file_to_check_database);
-
-// Se non sono stati trovati file con il nome specifico per la versione del database, cerca anche mysql.json di default
-if (empty($database_json_files) && $file_to_check_database !== 'mysql.json') {
-    $database_json_files = glob($modules_dir.'*/mysql.json');
-}
-
-if (!empty($database_json_files)) {
-    foreach ($database_json_files as $database_json_file) {
-        $database_contents = file_get_contents($database_json_file);
-        $database_data = json_decode($database_contents, true);
-
-        if (!empty($database_data) && is_array($database_data)) {
-            // Estrai il nome della cartella dal percorso del file
-            $path_parts = explode('/', $database_json_file);
-            $folder_name = $path_parts[count($path_parts) - 2];
-
-            // Ottieni il nome del modulo dal file modules.json
-            $module_name = getModuleNameFromReference($modules_json_file, $folder_name, $modules_json_data);
-
-            // Accoda le definizioni del modulo a quelle principali
-            // Unisci i campi delle tabelle invece di sovrascrivere le tabelle intere
-            foreach ($database_data as $table => $table_data) {
-                if (!isset($data[$table])) {
-                    // Se la tabella non esiste, aggiungila
-                    $data[$table] = $table_data;
-                } else {
-                    // Se la tabella esiste, unisci i campi
-                    foreach ($table_data as $field_name => $field_data) {
-                        if ($field_name === 'foreign_keys' && is_array($field_data)) {
-                            // Unisci le chiavi esterne
-                            if (!isset($data[$table]['foreign_keys'])) {
-                                $data[$table]['foreign_keys'] = [];
-                            }
-                            // Unisci le chiavi esterne senza sovrascrivere quelle esistenti
-                            foreach ($field_data as $fk_name => $fk_data) {
-                                if (!isset($data[$table]['foreign_keys'][$fk_name])) {
-                                    $data[$table]['foreign_keys'][$fk_name] = $fk_data;
-                                }
-                            }
-                        } elseif (is_array($field_data)) {
-                            // Unisci i campi della tabella
-                            if (!isset($data[$table][$field_name])) {
-                                $data[$table][$field_name] = $field_data;
-                            } else {
-                                // Se il campo esiste, unisci i dati (array_merge ricorsivo)
-                                $data[$table][$field_name] = array_merge($data[$table][$field_name], $field_data);
-                            }
-                        } else {
-                            // Se non è un array, sovrascrivi
-                            $data[$table][$field_name] = $field_data;
-                        }
-                    }
-                }
-            }
-
-            // Traccia i campi provenienti da questo modulo premium
-            foreach ($database_data as $table => $table_data) {
-                if (is_array($table_data)) {
-                    foreach ($table_data as $field_name => $field_data) {
-                        if (!isset($premium_fields[$table])) {
-                            $premium_fields[$table] = [];
-                        }
-                        $premium_fields[$table][$field_name] = $module_name;
-                    }
-                }
-            }
-        }
-    }
-}
+// Carica e accoda le definizioni del database dai file JSON presenti nelle sottocartelle di moduli e plugin
+$database_reference_data = aggiornamentiMergeDatabaseReferenceData($data, $file_to_check_database);
+$data = $database_reference_data['data'];
+$premium_fields = $database_reference_data['premium_fields'];
 
 if (empty($data)) {
     echo '
@@ -431,7 +324,10 @@ function generateDropForeignKeyQuery($table, $name)
 function renderTableRow($name, $badge_text, $badge_color, $query, $is_premium = false, $module_name = '')
 {
     if ($is_premium) {
-        $badge_html = '<span class="badge badge-primary">Campo modulo '.$module_name.'</span>';
+        $premium_type = is_array($module_name) ? ($module_name['type'] ?? 'module') : 'module';
+        $premium_name = is_array($module_name) ? ($module_name['name'] ?? '') : $module_name;
+        $premium_label = ($premium_type === 'plugin') ? 'Campo plugin ' : 'Campo modulo ';
+        $badge_html = '<span class="badge badge-primary">'.$premium_label.$premium_name.'</span>';
     } else {
         $badge_html = '<span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>';
     }
@@ -708,11 +604,11 @@ if (!empty($grouped_errors)) {
                 foreach ($errors as $name => $diff) {
                     if (!isset($diff['key']) && $name != 'foreign_keys') {
                         if (isset($premium_fields[$table][$name])) {
-                            $module_name = $premium_fields[$table][$name];
+                            $premium_info = $premium_fields[$table][$name];
                             $campi_modulo_premium[] = [
                                 'tabella' => $table,
                                 'campo' => $name,
-                                'modulo' => $module_name,
+                                'origine' => $premium_info,
                                 'valore' => $diff['expected'] ?? '',
                             ];
                         }
@@ -737,7 +633,7 @@ if (!empty($grouped_errors)) {
 <div class="mb-3">
     <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: #007bff;" onclick="$(this).next().slideToggle();">
         <div>
-            <strong>'.$tabella.' ('.tr('Campi modulo premium').')</strong>
+            <strong>'.$tabella.' ('.tr('Campi premium').')</strong>
             <span class="badge badge-primary ml-2">'.count($campi).'</span>
         </div>
         <i class="fa fa-chevron-down"></i>
@@ -748,15 +644,19 @@ if (!empty($grouped_errors)) {
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Campo').'</th>
-                        <th>'.tr('Modulo').'</th>
+                        <th>'.tr('Componente').'</th>
                     </tr>
                 </thead>
                 <tbody>';
             foreach ($campi as $campo) {
+                $origine = $campo['origine'];
+                $origine_type = is_array($origine) ? ($origine['type'] ?? 'module') : 'module';
+                $origine_name = is_array($origine) ? ($origine['name'] ?? '') : $origine;
+                $origine_label = ($origine_type === 'plugin') ? 'Campo plugin ' : 'Campo modulo ';
                 echo '
                     <tr>
                         <td class="column-name">'.$campo['campo'].'</td>
-                        <td><span class="badge badge-primary">Campo modulo '.$campo['modulo'].'</span></td>
+                        <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
                     </tr>';
             }
             echo '

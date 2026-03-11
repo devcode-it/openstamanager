@@ -66,22 +66,9 @@ $(document).ready(function () {
 // Carica il file di riferimento principale per le impostazioni
 $contents = file_get_contents(base_dir().'/settings.json');
 $data_settings = json_decode($contents, true);
-
-// Carica e accoda le impostazioni dai file settings.json presenti nelle sottocartelle di modules/
-$modules_dir = base_dir().'/modules/';
-$settings_json_files = glob($modules_dir.'*/settings.json');
-
-if (!empty($settings_json_files)) {
-    foreach ($settings_json_files as $settings_json_file) {
-        $settings_contents = file_get_contents($settings_json_file);
-        $settings_data = json_decode($settings_contents, true);
-
-        if (!empty($settings_data) && is_array($settings_data)) {
-            // Accoda le impostazioni del modulo a quelle principali
-            $data_settings = array_merge($data_settings, $settings_data);
-        }
-    }
-}
+$settings_reference_data = aggiornamentiMergeSettingsReferenceData($data_settings);
+$data_settings = $settings_reference_data['data'];
+$premium_settings = $settings_reference_data['premium_settings'];
 
 $settings = Update::getSettings();
 $results_settings = settings_diff($data_settings, $settings);
@@ -101,7 +88,7 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
     }
 
     foreach ($results_settings_added as $key => $setting) {
-        if ($setting['current'] == null) {
+        if ($setting['current'] == null && !isset($premium_settings[$key])) {
             ++$settings_info_count;
         }
     }
@@ -162,8 +149,17 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
 
     foreach ($results_settings_added as $key => $setting) {
         if ($setting['current'] == null) {
-            $badge_text = 'Impostazione non prevista';
-            $badge_color = 'info';
+            if (isset($premium_settings[$key])) {
+                $premium_setting = $premium_settings[$key];
+                $badge_text = (($premium_setting['type'] ?? 'module') === 'plugin')
+                    ? 'Impostazione plugin '.$premium_setting['name']
+                    : 'Impostazione modulo '.$premium_setting['name'];
+                $badge_color = 'primary';
+            } else {
+                $badge_text = 'Impostazione non prevista';
+                $badge_color = 'info';
+            }
+
             echo '
                     <tr>
                         <td class="column-name">

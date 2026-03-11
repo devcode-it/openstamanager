@@ -406,8 +406,8 @@ if (function_exists('customComponents')) {
 
     if ($has_view_data_issues) {
         foreach ($custom_views_not_standard as $view) {
-            // Verifica se la reason inizia con "Vista modulo"
-            if (str_starts_with((string) $view['reason'], 'Vista modulo ')) {
+            // Verifica se la reason identifica una vista proveniente da modulo/plugin premium
+            if (str_starts_with((string) $view['reason'], 'Vista modulo ') || str_starts_with((string) $view['reason'], 'Vista plugin ')) {
                 ++$view_premium_count;
             } else {
                 match ($view['reason']) {
@@ -462,8 +462,8 @@ if (function_exists('customComponents')) {
                             <tbody>';
 
         foreach ($custom_views_not_standard as $index => $view) {
-            // Verifica se la reason inizia con "Vista modulo" per assegnare il badge blu
-            if (str_starts_with((string) $view['reason'], 'Vista modulo ')) {
+            // Verifica se la reason identifica una vista proveniente da modulo/plugin premium per assegnare il badge blu
+            if (str_starts_with((string) $view['reason'], 'Vista modulo ') || str_starts_with((string) $view['reason'], 'Vista plugin ')) {
                 $badge_class = 'badge-primary';
             } else {
                 $badge_class = match ($view['reason']) {
@@ -699,117 +699,9 @@ if (function_exists('customComponents')) {
                 $data = json_decode($contents, true);
             }
 
-            // Carica il file modules.json per ottenere i nomi corretti dei moduli
-            $modules_json_file = base_dir().'/modules.json';
-            $modules_json_data = [];
-            if (file_exists($modules_json_file)) {
-                $modules_json_contents = file_get_contents($modules_json_file);
-                $modules_json_data = json_decode($modules_json_contents, true);
-            }
-
-            // Funzione per ottenere il nome del modulo dal file di riferimento appropriato
-            if (!function_exists('getModuleNameFromReference')) {
-                function getModuleNameFromReference($reference_file, $folder_name, $modules_json_data)
-                {
-                    $module_name = $folder_name; // Default: usa il nome della cartella
-
-                    // Verifica se esiste il file di riferimento
-                    if (file_exists($reference_file)) {
-                        $reference_contents = file_get_contents($reference_file);
-                        $reference_data = json_decode($reference_contents, true);
-
-                        if (!empty($reference_data) && is_array($reference_data)) {
-                            foreach ($reference_data as $name => $module_info) {
-                                // Cerca una corrispondenza parziale o esatta
-                                if (stripos(strtolower((string) $folder_name), strtolower((string) $name)) !== false) {
-                                    $module_name = $name;
-                                    break;
-                                }
-                                // Seconda prova: cerca se il nome del modulo (senza spazi) è contenuto nel nome della cartella
-                                if (stripos(strtolower((string) $folder_name), strtolower(str_replace(' ', '', $name))) !== false) {
-                                    $module_name = $name;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    return $module_name;
-                }
-            }
-
-            // Carica e accoda le definizioni del database dai file mysql.json presenti nelle sottocartelle di modules/
-            $modules_dir = base_dir().'/modules/';
-            $database_json_files = glob($modules_dir.'*/'.$file_to_check_database);
-
-            // Se non sono stati trovati file con il nome specifico per la versione del database, cerca anche mysql.json di default
-            if (empty($database_json_files) && $file_to_check_database !== 'mysql.json') {
-                $database_json_files = glob($modules_dir.'*/mysql.json');
-            }
-
-            if (!empty($database_json_files)) {
-                foreach ($database_json_files as $database_json_file) {
-                    $database_contents = file_get_contents($database_json_file);
-                    $database_data = json_decode($database_contents, true);
-
-                    if (!empty($database_data) && is_array($database_data)) {
-                        // Estrai il nome della cartella dal percorso del file
-                        $path_parts = explode('/', $database_json_file);
-                        $folder_name = $path_parts[count($path_parts) - 2];
-
-                        // Ottieni il nome del modulo dal file modules.json
-                        $module_name = getModuleNameFromReference($modules_json_file, $folder_name, $modules_json_data);
-
-                        // Unisci le definizioni del database del modulo a quelle principali
-                        // Unisci i campi delle tabelle invece di sovrascrivere le tabelle intere
-                        foreach ($database_data as $table => $table_data) {
-                            if (!isset($data[$table])) {
-                                // Se la tabella non esiste, aggiungila
-                                $data[$table] = $table_data;
-                            } else {
-                                // Se la tabella esiste, unisci i campi
-                                foreach ($table_data as $field_name => $field_data) {
-                                    if ($field_name === 'foreign_keys' && is_array($field_data)) {
-                                        // Unisci le chiavi esterne
-                                        if (!isset($data[$table]['foreign_keys'])) {
-                                            $data[$table]['foreign_keys'] = [];
-                                        }
-                                        // Unisci le chiavi esterne senza sovrascrivere quelle esistenti
-                                        foreach ($field_data as $fk_name => $fk_data) {
-                                            if (!isset($data[$table]['foreign_keys'][$fk_name])) {
-                                                $data[$table]['foreign_keys'][$fk_name] = $fk_data;
-                                            }
-                                        }
-                                    } elseif (is_array($field_data)) {
-                                        // Unisci i campi della tabella
-                                        if (!isset($data[$table][$field_name])) {
-                                            $data[$table][$field_name] = $field_data;
-                                        } else {
-                                            // Se il campo esiste, unisci i dati (array_merge ricorsivo)
-                                            $data[$table][$field_name] = array_merge($data[$table][$field_name], $field_data);
-                                        }
-                                    } else {
-                                        // Se non è un array, sovrascrivi
-                                        $data[$table][$field_name] = $field_data;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Traccia i campi provenienti da questo modulo premium
-                        foreach ($database_data as $table => $table_data) {
-                            if (is_array($table_data)) {
-                                foreach ($table_data as $field_name => $field_data) {
-                                    if (!isset($premium_fields[$table])) {
-                                        $premium_fields[$table] = [];
-                                    }
-                                    $premium_fields[$table][$field_name] = $module_name;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            $database_reference_data = aggiornamentiMergeDatabaseReferenceData($data, $file_to_check_database);
+            $data = $database_reference_data['data'];
+            $premium_fields = $database_reference_data['premium_fields'];
 
             if (!empty($data)) {
                 $info = Update::getDatabaseStructure();
@@ -818,22 +710,9 @@ if (function_exists('customComponents')) {
 
                 $contents_settings = file_get_contents(base_dir().'/settings.json');
                 $data_settings = json_decode($contents_settings, true);
-
-                // Carica e accoda le impostazioni dai file settings.json presenti nelle sottocartelle di modules/
-                $modules_dir = base_dir().'/modules/';
-                $settings_json_files = glob($modules_dir.'*/settings.json');
-
-                if (!empty($settings_json_files)) {
-                    foreach ($settings_json_files as $settings_json_file) {
-                        $settings_contents = file_get_contents($settings_json_file);
-                        $settings_data = json_decode($settings_contents, true);
-
-                        if (!empty($settings_data) && is_array($settings_data)) {
-                            // Accoda le impostazioni del modulo a quelle principali
-                            $data_settings = array_merge($data_settings, $settings_data);
-                        }
-                    }
-                }
+                $settings_reference_data = aggiornamentiMergeSettingsReferenceData($data_settings);
+                $data_settings = $settings_reference_data['data'];
+                $premium_settings = $settings_reference_data['premium_settings'];
 
                 $settings = Update::getSettings();
                 $results_settings = settings_diff($data_settings, $settings);
@@ -842,17 +721,15 @@ if (function_exists('customComponents')) {
                 $contents_widgets = file_get_contents(base_dir().'/widgets.json');
                 $data_widgets = json_decode($contents_widgets, true);
 
-                // Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di modules/
-                $modules_dir = base_dir().'/modules/';
-                $widgets_json_files = glob($modules_dir.'*/widgets.json');
+                // Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di moduli e plugin
+                $widgets_json_files = aggiornamentiGetReferenceJsonFiles('widgets.json');
 
                 if (!empty($widgets_json_files)) {
                     foreach ($widgets_json_files as $widgets_json_file) {
-                        $widgets_contents = file_get_contents($widgets_json_file);
-                        $widgets_data = json_decode($widgets_contents, true);
+                        $widgets_data = aggiornamentiReadJsonFile($widgets_json_file);
 
                         if (!empty($widgets_data) && is_array($widgets_data)) {
-                            // Accoda i widgets del modulo a quelli principali
+                            // Accoda i widgets del componente a quelli principali
                             $data_widgets = array_merge($data_widgets, $widgets_data);
                         }
                     }
@@ -924,7 +801,7 @@ if (function_exists('customComponents')) {
 
                     // Conta le impostazioni non previste
                     foreach ($results_settings_added as $key => $setting) {
-                        if ($setting['current'] == null) {
+                        if ($setting['current'] == null && !isset($premium_settings[$key])) {
                             ++$database_info_count; // Impostazione non prevista
                         }
                     }
@@ -962,7 +839,11 @@ if (function_exists('customComponents')) {
     }
 
     // Determina il colore in base all'avviso più grave
-    $database_colors = Utils::determineCardColor($database_danger_count, $database_warning_count || $database_file_missing ? 1 : 0, $database_info_count > 0 ? 1 : 0);
+    $database_colors = Utils::determineCardColor(
+        $database_danger_count,
+        $database_warning_count || $database_file_missing ? 1 : 0,
+        ($database_info_count > 0 || $database_premium_count > 0) ? 1 : 0
+    );
     $database_card_color = $database_colors['color'];
     $database_icon = $database_colors['icon'];
 
@@ -1016,7 +897,7 @@ if (function_exists('customComponents')) {
         }
 
         foreach ($results_settings_added as $key => $setting) {
-            if ($setting['current'] == null) {
+            if ($setting['current'] == null && !isset($premium_settings[$key])) {
                 ++$settings_info_count;
             }
         }

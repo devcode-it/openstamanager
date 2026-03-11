@@ -75,17 +75,15 @@ $(document).ready(function () {
 $contents_widgets = file_get_contents(base_dir().'/widgets.json');
 $data_widgets = json_decode($contents_widgets, true);
 
-// Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di modules/
-$modules_dir = base_dir().'/modules/';
-$widgets_json_files = glob($modules_dir.'*/widgets.json');
+// Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di moduli e plugin
+$widgets_json_files = aggiornamentiGetReferenceJsonFiles('widgets.json');
 
 if (!empty($widgets_json_files)) {
     foreach ($widgets_json_files as $widgets_json_file) {
-        $widgets_contents = file_get_contents($widgets_json_file);
-        $widgets_data = json_decode($widgets_contents, true);
+        $widgets_data = aggiornamentiReadJsonFile($widgets_json_file);
 
         if (!empty($widgets_data) && is_array($widgets_data)) {
-            // Accoda i widgets del modulo a quelli principali
+            // Accoda i widgets del componente a quelli principali
             $data_widgets = array_merge($data_widgets, $widgets_data);
         }
     }

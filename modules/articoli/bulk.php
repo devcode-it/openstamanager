@@ -510,6 +510,75 @@ switch (post('op')) {
         flash()->info(tr('Articoli '.(post('attivo') ? 'attivati' : 'disattivati').' correttamente!'));
 
         break;
+
+    case 'merge_products':
+        $id_articolo_principale = post('id_articolo_principale');
+
+        if (!in_array($id_articolo_principale, $id_records)) {
+            flash()->error(tr('L\'articolo principale deve essere tra quelli selezionati'));
+            break;
+        }
+
+        // Verifica che ci siano almeno 2 articoli da unire
+        $id_articoli_da_unire = array_diff($id_records, [$id_articolo_principale]);
+        if (empty($id_articoli_da_unire)) {
+            flash()->error(tr('Selezionare almeno un articolo da unire'));
+            break;
+        }
+
+        try {
+            foreach ($id_articoli_da_unire as $id_articolo_da_unire) {
+                // Trasferimento movimenti di magazzino
+                database()->table('mg_movimenti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe documenti
+                database()->table('co_righe_documenti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe ordini
+                database()->table('or_righe_ordini')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe preventivi
+                database()->table('co_righe_preventivi')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe DDT
+                database()->table('dt_righe_ddt')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe contratti
+                database()->table('co_righe_contratti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento righe interventi
+                database()->table('in_righe_interventi')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento prodotti
+                database()->table('mg_prodotti')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
+                // Trasferimento prezzi articoli
+                database()->table('mg_prezzi_articoli')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
+                // Trasferimento listini articoli
+                database()->table('mg_listini_articoli')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
+                // Trasferimento fornitori
+                database()->table('mg_fornitore_articolo')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
+                // Trasferimento barcode
+                database()->table('mg_articoli_barcode')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Trasferimento provvigioni
+                database()->table('co_provvigioni')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                // Aggiornamento riferimenti combinazioni
+                database()->table('mg_articoli')->where('id_combinazione', $id_articolo_da_unire)->update(['id_combinazione' => $id_articolo_principale]);
+                // Trasferimento attributi
+                database()->table('mg_articolo_attributo')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
+
+                // Eliminazione articolo (soft delete)
+                Articolo::find($id_articolo_da_unire)->delete();
+            }
+
+            $qta_attuale = floatval($articolo_principale->qta);
+            $qta_movimenti = database()->fetchOne('
+                SELECT COALESCE(SUM(`qta`), 0) AS `totale` 
+                FROM `mg_movimenti` 
+                WHERE `idarticolo` = '.prepare($id_articolo_principale)
+            )['totale'];
+            
+            $nuova_qta = $qta_attuale + $qta_movimenti;
+            database()->table('mg_articoli')->where('id', $id_articolo_principale)->update(['qta' => $nuova_qta]);
+
+            flash()->info(tr('Articoli uniti correttamente!'));
+        } catch (Exception $e) {
+            flash()->error(tr('Errore durante l\'unione degli articoli: ').$e->getMessage());
+        }
+
+        break;
 }
 
 $operations['change_vat'] = [
@@ -641,6 +710,21 @@ $operations['change_active'] = [
     ],
 ];
 
+$operations['create_estimate'] = [
+    'text' => '<span><i class="fa fa-plus"></i> '.tr('Crea preventivo').'</span>',
+    'data' => [
+        'title' => tr('Creare preventivo?'),
+        'msg' => tr('Ogni articolo selezionato, verrà aggiunto al preventivo').'
+        <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
+        {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
+        {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "ajax-source": "tipiintervento", "required": 1 ]}
+        {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
 $operations['delete_bulk'] = [
     'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
     'data' => [
@@ -660,20 +744,6 @@ $operations['export_csv'] = [
     ],
 ];
 
-$operations['create_estimate'] = [
-    'text' => '<span><i class="fa fa-plus"></i> '.tr('Crea preventivo').'</span>',
-    'data' => [
-        'title' => tr('Creare preventivo?'),
-        'msg' => tr('Ogni articolo selezionato, verrà aggiunto al preventivo').'
-        <br><br>{[ "type": "text", "label": "'.tr('Nome preventivo').'", "name": "nome", "required": 1 ]}
-        {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
-        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
-        {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "ajax-source": "tipiintervento", "required": 1 ]}
-        {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
-        'button' => tr('Procedi'),
-        'class' => 'btn btn-lg btn-warning',
-    ],
-];
 
 $operations['generate_barcode_bulk'] = [
     'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',
@@ -717,6 +787,18 @@ $operations['print_labels'] = [
         {[ "type": "number", "label": "'.tr('Q.tà').'", "name": "qta", "required": 1, "value": "1", "decimals":"0", "help":"'.tr('Definisci quante etichette stampare per questo barcode').'" ]}
         <br>
         {[ "type": "select", "label": "'.tr('Tipologia stampa').'", "name": "tipologia", "required": 1, "values": "list=\"singola\":\"Singola\",\"a4\":\"Formato A4\"", "value": "singola" ]}<br>',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => true,
+    ],
+];
+
+$operations['merge_products'] = [
+    'text' => '<span><i class="fa fa-pencil"></i> '.tr('Unisci articoli').' <span class="badge bg-warning">Beta</span></span>',
+    'data' => [
+        'title' => tr('Unire i seguenti articoli?'),
+        'msg' => tr('Tutti gli articoli selezionati verranno unificati in un unico articolo, è necessario selezionare l\'articolo principale che conterrà le informazioni finali.').'<br><br>
+        {[ "type": "select", "label": "'.tr('Articolo principale').'", "name": "id_articolo_principale", "required": 1, "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1]).', "value": "", "select-options-escape": true ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,

@@ -11,6 +11,61 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
+#### 2.10.2 - In rilascio
+
+##### Problemi noti
+- Corretto Remote Code Execution via Insecure Deserialization in OAuth2 (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/d2e38cbdf
+
+- Corretto Time-Based Blind SQL Injection via `options[stato]` Parameter
+https://github.com/devcode-it/openstamanager/commit/50b9089c5
+https://github.com/devcode-it/openstamanager/commit/679c40fa5
+
+- Corretto SQL Injection via righe Parameter in confronta_righe Modals
+https://github.com/devcode-it/openstamanager/commit/3d5bd597f
+
+- Corretto SQL Injection via Aggiornamenti Module
+https://github.com/devcode-it/openstamanager/commit/43970676b
+
+- Corrette vulnerabilità SQL injection attraverso l'utilizzo della funzione prepare() per l'escaping delle variabili nelle query SQL
+https://github.com/devcode-it/openstamanager/commit/047dcfab9
+
+- Corrette vulnerabilità minori
+https://github.com/devcode-it/openstamanager/commit/9fa295094
+
+- Fix sicurezza
+https://github.com/devcode-it/openstamanager/commit/e45e971de
+
+- Corretto generazione fatture con righe descrittive da bulk
+https://github.com/devcode-it/openstamanager/commit/7e2743901
+
+- Corretto creazione ordine fornitore da preventivo per righe descrittive
+https://github.com/devcode-it/openstamanager/commit/f368cf1ef
+
+- Corretto generazione progressivo per maschere senza riferimento all'anno
+https://github.com/devcode-it/openstamanager/commit/faa1c9cbb
+
+- Corretto evasione seriali nel caso di seriali senza documento di acquisto associato
+https://github.com/devcode-it/openstamanager/commit/b787b4a8f
+
+- Corretto blocco campi numero e data per fatture elettroniche importate
+https://github.com/devcode-it/openstamanager/commit/0a7ae1eba
+
+- Corretto generazione movimenti applicando data registrazione fattura
+https://github.com/devcode-it/openstamanager/commit/e5adb169c
+
+- Corretto procedura di installazione dei moduli aggiuntivi
+https://github.com/devcode-it/openstamanager/commit/10a37e375
+
+- Corretto impostazione di max_rows a 0 per prevenzione divisione per 0
+https://github.com/devcode-it/openstamanager/commit/2393fcb55
+
+- Corrette le etichette delle date di registrazione/ricezione
+https://github.com/devcode-it/openstamanager/commit/32134c1c6
+
+
+---
+
 #### 2.10.1 - 26/02/2026
 
 ##### Problemi noti
@@ -39,9 +94,6 @@ https://github.com/devcode-it/openstamanager/commit/b3a4f4380
 - Corretta stampa registro IVA note di credito
 https://github.com/devcode-it/openstamanager/commit/93b5a2de1
 
-- Corretto calcolo ore totali contratto che non venivano sommate
-https://github.com/devcode-it/openstamanager/commit/3aaa39e21
-
 - Corretto errore 500 se display non definito (#1765)
 https://github.com/devcode-it/openstamanager/commit/15bececd5
 
@@ -51,14 +103,8 @@ https://github.com/devcode-it/openstamanager/commit/1092859df
 - Corretta corrispondenza anagrafica in controllo di integrità XML e documenti di vendita
 https://github.com/devcode-it/openstamanager/commit/4af28973e
 
-- Corretta gestione errori in fase di invio email
-https://github.com/devcode-it/openstamanager/commit/4f94685fa
-
 - Corretto percorso suggerito per la configurazione del cron, non veniva riportata la root dir
 https://github.com/devcode-it/openstamanager/commit/163f88fef
-
-- Corretta esclusione file .env dalla release
-https://github.com/devcode-it/openstamanager/commit/38951c002
 
 #### 2.10 - 05/02/2026
 
@@ -108,15 +154,6 @@ https://github.com/devcode-it/openstamanager/commit/6d69f9fa8
 - Corretti allegati fatture elettroniche
 https://github.com/devcode-it/openstamanager/commit/0ef3a71f5
 
-#### 2.9.6 - 26/11/2025
-
-##### Problemi noti
-- Corretta gestione assenza file modules.json e views.json
-https://github.com/devcode-it/openstamanager/commit/19483b4b5
-
-- Corretta aggiunta record multilingua mancanti a database
-https://github.com/devcode-it/openstamanager/commit/499e8e065
-
 #### 2.9.5 - 12/11/2025
 
 ##### Problemi noti
@@ -131,9 +168,6 @@ https://github.com/devcode-it/openstamanager/commit/51cfe9606
 ##### Problemi noti
 - Corretta generazione stampe contabili definitive
 https://github.com/devcode-it/openstamanager/commit/96b9eac0b
-
-- Corretta generazione query risoluzione problemi database
-https://github.com/devcode-it/openstamanager/commit/e98d4b398
 
 #### 2.9.3 - 14/10/2025
 
@@ -171,17 +205,8 @@ https://github.com/devcode-it/openstamanager/commit/8633f354f
 #### 2.9.1 - 08/09/2025
 
 ##### Problemi noti
-- Inizializzazione stampa barcode causava errori
-https://github.com/devcode-it/openstamanager/commit/f13db1cf8
-
-- Import righe con quantità a 0 non gestito correttamente
-https://github.com/devcode-it/openstamanager/commit/96f98c5d4
-
 - Query di installazione causavano errori
 https://github.com/devcode-it/openstamanager/commit/3e1b54c4f
-
-- Caricamento altre operazioni stato dei servizi causava errori
-https://github.com/devcode-it/openstamanager/commit/47c9bb18f
 
 #### 2.9-beta - 08/08/2025
 
@@ -221,9 +246,6 @@ https://github.com/devcode-it/openstamanager/commit/7be63d2ee
 
 - Importazione sequenziale fatture di acquisto non funzionava
 https://github.com/devcode-it/openstamanager/commit/8633f354f
-
-- Calcolo data prossima esecuzione task non corretto
-https://github.com/devcode-it/openstamanager/commit/d8b4429bd
 
 - Risolta inaggiornabilità/installabilità moduli con templates
 https://github.com/devcode-it/openstamanager/commit/fd7f020d4
@@ -268,15 +290,6 @@ https://github.com/devcode-it/openstamanager/commit/e6dae1a8a1d954448b04eda28692
 - Registrazioni contabili con conto impostato Riepilogativo clienti o Riepilogativo fornitori
 https://github.com/devcode-it/openstamanager/commit/37d8c7c34fc4e81f3a4f2f79c180365b7d447891
 
-#### 2.5.3 - 07/08/2024
-
-##### Problemi noti
-- Non è possibile modificare la descrizione di una riga articolo inserita in un contratto, ddt, attività, ordine e preventivo.
-https://github.com/devcode-it/openstamanager/commit/b82efb339f8df5da4f2279e25d72904778d2a8d3
-
-- La ricerca globale non funziona.
-https://github.com/devcode-it/openstamanager/commit/5c86d3b7489431b2e8001841b07769cd26e4c24c
-
 #### 2.4.54 - 03/02/2024
 
 ##### Problemi noti
@@ -299,12 +312,10 @@ oppure aggiornare alla **v.2.5** di OpenSTAManager.
 
 ##### Problemi noti
 - Colonna **id_module_start** mancante per tabella **zz_groups**
-- Icona non aggiornata per il modulo **Causali movimenti**
 
 ##### Soluzione
-Eseguire a database le seguenti query di allineamento:
+Eseguire a database la seguente query di allineamento:
 ```bash
-UPDATE `zz_modules` SET `icon` = 'fa fa-exchange'  WHERE `title` = 'Causali movimenti';
 ALTER TABLE `zz_groups` ADD `id_module_start` INT NULL AFTER `editable`;
 ```
 

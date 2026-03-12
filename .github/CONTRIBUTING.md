@@ -18,19 +18,15 @@ Se ti serve un aiuto, crea una issue su GitHub.
 
 Per migliorare il sistema con cui sviluppiamo il codice, abbiamo deciso di adottare alcune linee guida per facilitare la collaborazione tra più persone.
 
-
-### Standard del codice
-
-Per lo standard ufficiale riguardante i nomi e le strutture da utilizzare, visita la sezione [Standard](https://github.com/devcode-it/openstamanager/blob/master/.github/STANDARD.md).
-
 ### Codice di condotta
 
 Per il momento non abbiamo adottato un vero e proprio codice di condotta, ma ti chiediamo di essere il più civile possibile nel comunicare con gli altri per questo progetto.
 
 ### Stile del codice
 
-Utilizziamo principalmente due strumenti per mantenere consistente nel tempo lo stile del codice:
+Utilizziamo principalmente tre strumenti per mantenere consistente nel tempo lo stile del codice:
 - [PHP CS Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+- [Rector](https://github.com/rectorphp/rector)
 - [EditorConfig](https://editorconfig.org)
 
 PHP CS Fixer viene utilizzato per formattare automaticamente il codice PHP e aumentare la sua comprensibilità.
@@ -78,3 +74,20 @@ Cerchiamo di essere disponibili quanto possibile, ma non sempre riusciamo a risp
 ## Testing
 
 Abbiamo creato un **[repository per i tests automatici](https://github.com/devcode-it/openstamanager-tests)** apposito contenente scripts in Python per eseguire i test automatici.
+
+## Struttura del codice
+
+Per comprendere meglio la struttura del codice e le convenzioni utilizzate nel progetto, consulta la guida **[agents.md](../agents.md)** che contiene informazioni dettagliate su:
+
+- Versioning e migrazioni del database
+- Punti di ingresso principali
+- Struttura delle directory
+- Convenzioni per il database
+- Architettura ORM e classi
+- Hooks e task schedulati
+- Struttura dei moduli
+- Sistema HTMLBuilder per i form
+- Funzioni helper e variabili globali
+- Best practice per lo sviluppo
+
+Questa guida è utile sia per i nuovi sviluppatori che per chi desidera contribuire al progetto.

@@ -263,7 +263,7 @@ function getDatatablesButtons(table) {
                         data_edit = data.replace('.', ''); // Fix specifico per i numeri italiani
                         data_edit = data_edit.replace(',', '.');
 
-                        return data_edit.match(/^[0-9\.]+$/) ? data_edit : data;
+                        return data_edit;
                     }
                 }
             }

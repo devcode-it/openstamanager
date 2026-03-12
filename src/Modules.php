@@ -317,7 +317,7 @@ class Modules
 
         // Aggiunta automatica dell'icona di riferimento
         if (!string_contains($testo, '<i ')) {
-            $testo = $testo.' <i class="fa fa-external-link"></i>';
+            $icona = '<i class="fa fa-external-link"></i> ';
         }
 
         $module = self::get(Module::where('name', $modulo)->orWhere('id', $modulo)->first()->id);
@@ -327,7 +327,7 @@ class Modules
         if (!empty($module) && in_array($module->permission, ['r', 'rw'])) {
             $link = !empty($id_record) ? 'editor.php?id_module='.$module->id.'&id_record='.$id_record : 'controller.php?id_module='.$module->id;
 
-            return '<a href="'.base_path_osm().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$testo.'</a>';
+            return '<a href="'.base_path_osm().'/'.$link.$params.'#'.$anchor.'" '.$extra.'>'.$icona.'</a>'.$testo;
         }
 
         return $alternativo;

@@ -355,7 +355,7 @@ class FatturaElettronica
      *
      * @return Fattura
      */
-    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura, $is_ritenuta_pagata = false, $tipo = null)
+    public function saveFattura($id_pagamento, $id_sezionale, $id_tipo, $data_registrazione, $ref_fattura, $is_ritenuta_pagata = false, $tipo = null, $idsede_destinazione = 0)
     {
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
         $data = self::parseDate($dati_generali['Data']);
@@ -370,6 +370,9 @@ class FatturaElettronica
         $fattura->numero_esterno = $numero_esterno;
         $fattura->idpagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
+
+        // Sede destinazione per movimentazione
+        $fattura->idsede_destinazione = $idsede_destinazione;
 
         // Verifica se è presente EsigibilitaIVA = 'S' nei riepiloghi IVA per abilitare lo split payment
         if ($this->hasSplitPaymentEsigibilita()) {
@@ -443,7 +446,7 @@ class FatturaElettronica
 
     public function save($info = [], $tipo = null)
     {
-        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata'], $tipo);
+        $this->saveFattura($info['id_pagamento'], $info['id_segment'], $info['id_tipo'], $info['data_registrazione'], $info['ref_fattura'], $info['is_ritenuta_pagata'], $tipo, $info['idsede_destinazione'] ?? 0);
 
         $this->saveRighe($info['articoli'], $info['iva'], $info['conto'], $info['movimentazione'], $info['crea_articoli'], $info['tipo_riga_riferimento'], $info['id_riga_riferimento'], $info['tipo_riga_riferimento_vendita'], $info['id_riga_riferimento_vendita'], $info['update_info'], $info['serial']);
 

@@ -390,7 +390,12 @@ echo '
             </div>
 
             <div class="col-md-3">
-                {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo \'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
+                {[ "type": "checkbox", "label": "'.tr('Creazione seriali').'", "name": "flag_crea_seriali", "value": "'.setting('Creazione seriali in import FE').'", "help": "'.tr('Nel caso di righe contenenti serial number, il gestionale procede alla loro registrazione. Controllare che l\'XML della fattura di acquisto contenga il nodo\'CodiceTipo\' valorizzato con \'serial\' o \'Serial\' ').'." ]}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "help": "'.tr('Sede di destinazione per la movimentazione degli articoli').'" ]}
             </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];

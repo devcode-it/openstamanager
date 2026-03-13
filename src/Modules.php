@@ -315,8 +315,19 @@ class Modules
         $testo = isset($testo) ? nl2br($testo) : tr('Visualizza scheda');
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
 
-        // Aggiunta automatica dell'icona di riferimento
-        if (!string_contains($testo, '<i ')) {
+        // Verifica se il testo contiene un'icona
+        $has_icon = string_contains($testo, '<i ');
+
+        // Estrai solo l'icona se presente (per mostrare solo l'icona nel link)
+        $icona = '';
+        if ($has_icon) {
+            // Estrai il tag i (icona) dal testo
+            preg_match('/<i[^>]*>.*?<\/i>/', $testo, $matches);
+            $icona = !empty($matches[0]) ? $matches[0] : '';
+            // Rimuovi l'icona dal testo
+            $testo = preg_replace('/<i[^>]*>.*?<\/i>/', '', $testo);
+        } else {
+            // Aggiunta automatica dell'icona di riferimento
             $icona = '<i class="fa fa-external-link"></i> ';
         }
 

@@ -295,3 +295,6 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', (SELECT MAX(`id`)-1 FROM `zz_segments`), 'Enabled'),
 (NULL, '1', (SELECT MAX(`id`)-2 FROM `zz_segments`), 'Disabilitati'),
 (NULL, '2', (SELECT MAX(`id`)-2 FROM `zz_segments`), 'Disabled');
+
+-- forza impostazione aggiornamento prezzi e fornitore in fase di import FE
+UPDATE `zz_settings` SET `valore` = "Aggiorna prezzo di acquisto + imposta fornitore predefinito" WHERE `nome` = "Aggiorna info di acquisto";

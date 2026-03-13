@@ -512,6 +512,68 @@ class FatturaOrdinaria extends FatturaElettronica
                         $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
                         $dettaglio_predefinito->save();
 
+                        // Aggiornamento o creazione fornitore-articolo (codice e barcode)
+                        $codice_fornitore = null;
+                        $barcode_fornitore = null;
+
+                        // Cerca tra tutti i codici quello che inizia per "cod" (case-insensitive) per il codice fornitore
+                        foreach ($codici as $codice_item) {
+                            $codice_valore = strtolower($codice_item['CodiceTipo']);
+                            if (str_starts_with($codice_valore, 'cod')) {
+                                $codice_fornitore = $codice_item['CodiceValore'];
+                                break;
+                            }
+                        }
+
+                        // Cerca tra tutti i codici quelli con tipo barcode, ean o en per il barcode
+                        foreach ($codici as $codice_item) {
+                            $tipo_codice = strtolower($codice_item['CodiceTipo'] ?? '');
+                            if (in_array($tipo_codice, ['barcode', 'ean', 'en'])) {
+                                $barcode_fornitore = $codice_item['CodiceValore'];
+                                break;
+                            }
+                        }
+
+                        // Usiamo la descrizione della riga per il campo descrizione del fornitore
+                        $descrizione_fornitore = $riga['Descrizione'];
+
+                        // Se abbiamo trovato un codice o barcode, salviamo nella tabella mg_fornitore_articolo
+                        if (!empty($codice_fornitore) || !empty($barcode_fornitore) || !empty($descrizione_fornitore)) {
+                            $fornitore_articolo = database()->table('mg_fornitore_articolo')
+                                ->where('id_articolo', $articolo->id)
+                                ->where('id_fornitore', $anagrafica->idanagrafica)
+                                ->first();
+
+                            if (empty($fornitore_articolo)) {
+                                // Creiamo un nuovo record - inseriamo solo i campi non nulli
+                                $insert_data = [
+                                    'id_articolo' => $articolo->id,
+                                    'id_fornitore' => $anagrafica->idanagrafica,
+                                    'codice_fornitore' => $codice_fornitore ?: '',
+                                    'descrizione' => $descrizione_fornitore,
+                                ];
+                                if (!empty($barcode_fornitore)) {
+                                    $insert_data['barcode_fornitore'] = $barcode_fornitore;
+                                }
+                                database()->insert('mg_fornitore_articolo', $insert_data);
+                            } else {
+                                // Aggiorniamo il record esistente
+                                $update_data = [];
+                                if (!empty($codice_fornitore)) {
+                                    $update_data['codice_fornitore'] = $codice_fornitore;
+                                }
+                                if (!empty($barcode_fornitore)) {
+                                    $update_data['barcode_fornitore'] = $barcode_fornitore;
+                                }
+                                if (!empty($descrizione_fornitore)) {
+                                    $update_data['descrizione'] = $descrizione_fornitore;
+                                }
+                                if (!empty($update_data)) {
+                                    database()->table('mg_fornitore_articolo')->where('id', $fornitore_articolo->id)->update($update_data);
+                                }
+                            }
+                        }
+
                         // Aggiornamento fornitore predefinito
                         if ($update_info[$key] == 'update_all') {
                             // Aggiornamento prezzo di acquisto e fornitore predefinito

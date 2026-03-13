@@ -534,7 +534,14 @@ if (!empty($righe)) {
         if ($codice_principale === null && !empty($codici[0])) {
             $codice_principale = $codici[0]['CodiceValore'];
         }
-        
+
+        // Costruzione array per visualizzazione codici articolo
+        $codici_articoli = [];
+        foreach ($codici as $codice) {
+            $tipo = $codice['CodiceTipo'];
+            $codici_articoli[] = '<strong>'.$codice['CodiceValore'].'</strong> ('.$tipo.')';
+        }
+
         if (!empty($codice_principale)) {
             if (!empty($anagrafica) && empty($id_articolo)) {
                 $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE ((`codice_fornitore` = '.prepare($codice_principale).' OR `barcode_fornitore` = '.prepare($barcode).') AND id_fornitore = '.prepare($anagrafica->id).' AND DELETED_AT IS NULL)');
@@ -651,7 +658,7 @@ if (!empty($righe)) {
 
             echo'
                 '.$badge_html.'
-                <small class="text-muted padded" id="riferimento_'.$key.'"></small>';
+                <small class="pull-right text-muted padded" id="riferimento_'.$key.'"></small>';
         if (!empty($riferimento_fe)) {
             echo '<small class="pull-right text-muted padded">'.implode('<br>', $riferimento_fe).'</small>';
         }

@@ -428,20 +428,7 @@ switch (filter('op')) {
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
-
-                    if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice['CodiceValore']).' AND `deleted_at` IS NULL')['id'];
-                    }
-
-                    // Controllo se esistono articoli con barcode corrispondente al codice
-                    if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`idarticolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo` WHERE `mg_articoli_barcode`.`barcode` = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['idarticolo'];
-                    }
-
-                    if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`idarticolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['idarticolo'];
-                    }
+                    $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`idarticolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['idarticolo'];
                 }
 
                 if (!empty($id_articolo)) {

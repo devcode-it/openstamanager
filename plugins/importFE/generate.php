@@ -504,38 +504,38 @@ if (!empty($righe)) {
 
         // Visualizzazione codici articoli
         $codici = $riga['CodiceArticolo'] ?: [];
-        $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
-
-        $codici_articoli = [];
         $serial = [];
-        $i = 0;
-        foreach ($codici as $codice) {
-            $codici_articoli[] = (($i == 0) ? '<b>' : '').$codice['CodiceValore'].' ('.$codice['CodiceTipo'].')'.(($i == 0) ? '</b>' : '');
-            if (str_contains((string) $codice['CodiceTipo'], 'serial') || str_contains((string) $codice['CodiceTipo'], 'Serial')) {
-                $serial[] = $codice['CodiceValore'];
-            }
-            ++$i;
-        }
 
         // Individuazione articolo con codice relativo
         $id_articolo = null;
-        // Prendo il codice articolo dal primo nodo CodiceValore che trovo
-        $codice_principale = $codici[0]['CodiceValore'];
-        if (!empty($codice_principale)) {
-            if (!empty($anagrafica) && empty($id_articolo)) {
-                $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE `codice_fornitore` = '.prepare($codice_principale).' AND id_fornitore = '.prepare($anagrafica->id));
-                $id_articolo = $result['id'] ?? null;
-                if (empty($id_articolo)) {
-                    $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' AND `id_fornitore` = '.prepare($anagrafica->id));
-                    $id_articolo = $result['id'] ?? null;
-                }
+        $codice_principale = null;
+
+        foreach ($codici as $codice) {
+            $tipo = strtolower($codice['CodiceTipo']);
+            if (str_starts_with($tipo, 'cod')) {
+                $codice_principale = $codice['CodiceValore'];
             }
 
-            if (empty($id_articolo)) {
-                $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE `codice` = '.prepare($codice_principale));
+            if (str_starts_with($tipo, 'serial')) {
+                $serial[] = $codice['CodiceValore'];
+            }
+
+            if (str_starts_with($tipo, 'barcode') || str_starts_with($tipo, 'ean') || str_starts_with($tipo, 'en')) {
+                $barcode = $codice['CodiceValore'];
+            }
+        }
+
+        // Fallback al primo codice se non trovato
+        if ($codice_principale === null && !empty($codici[0])) {
+            $codice_principale = $codici[0]['CodiceValore'];
+        }
+        
+        if (!empty($codice_principale)) {
+            if (!empty($anagrafica) && empty($id_articolo)) {
+                $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE ((`codice_fornitore` = '.prepare($codice_principale).' OR `barcode_fornitore` = '.prepare($barcode).') AND id_fornitore = '.prepare($anagrafica->id).' AND DELETED_AT IS NULL)');
                 $id_articolo = $result['id'] ?? null;
                 if (empty($id_articolo)) {
-                    $result = $database->fetchOne('SELECT `id` FROM `mg_articoli` WHERE REPLACE(`codice`, " ", "") = '.prepare($codice_principale));
+                    $result = $database->fetchOne('SELECT `id_articolo` AS id FROM `mg_fornitore_articolo` WHERE ((REPLACE(`codice_fornitore`, " ", "") = '.prepare($codice_principale).' OR `barcode_fornitore` = '.prepare($barcode).') AND id_fornitore = '.prepare($anagrafica->id).' AND DELETED_AT IS NULL)');
                     $id_articolo = $result['id'] ?? null;
                 }
             }
@@ -691,7 +691,7 @@ if (!empty($righe)) {
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">
-                                {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
+                                {["type": "select", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'uscita', 'idanagrafica' => $anagrafica ? $anagrafica->id : '']).', "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'|codice='.($codice_principale ? urlencode((string) $codice_principale) : '').'&descrizione='.($riga['Descrizione'] ? urlencode((string) $riga['Descrizione']) : '').'&prezzo_acquisto='.($riga['PrezzoUnitario'] ? urlencode((string) $riga['PrezzoUnitario']) : '').'", "value": "'.$id_articolo.'", "label": "'.tr('Articolo').'","extra": "data-id=\''.$key.'\'" ]}
                             </div>
 
                             <div class="col-md-3">

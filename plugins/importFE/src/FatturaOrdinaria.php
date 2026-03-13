@@ -287,33 +287,29 @@ class FatturaOrdinaria extends FatturaElettronica
                     }
                 }
 
-                $articolo = ArticoloOriginale::where('codice', $codice)->first();
+                $nome_categoria = 'Importazione automatica';
+                $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
+                if (empty($categoria)) {
+                    $categoria = Categoria::build();
+                    $categoria->name = $nome_categoria;
+                    $categoria->save();
+                    $categoria->setTranslation('title', $nome_categoria);
+                }
 
-                if (empty($articolo)) {
-                    $nome_categoria = 'Importazione automatica';
-                    $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
-                    if (empty($categoria)) {
-                        $categoria = Categoria::build();
-                        $categoria->name = $nome_categoria;
-                        $categoria->save();
-                        $categoria->setTranslation('title', $nome_categoria);
-                    }
+                $articolo = ArticoloOriginale::build($codice, $categoria);
+                $articolo->setTranslation('title', $riga['Descrizione']);
+                $articolo->um = $riga['UnitaMisura'];
+                $articolo->idconto_acquisto = $conto[$key] ?: null;
+                $articolo->abilita_serial = setting('Serial number abilitato di default');
 
-                    $articolo = ArticoloOriginale::build($codice, $categoria);
-                    $articolo->setTranslation('title', $riga['Descrizione']);
-                    $articolo->um = $riga['UnitaMisura'];
-                    $articolo->idconto_acquisto = $conto[$key] ?: null;
-                    $articolo->abilita_serial = setting('Serial number abilitato di default');
+                $articolo->save();
 
-                    $articolo->save();
-
-                    // Se abbiamo identificato un barcode, lo salviamo nella tabella mg_articoli_barcode
-                    if (!empty($barcode)) {
-                        database()->insert('mg_articoli_barcode', [
-                            'idarticolo' => $articolo->id,
-                            'barcode' => $barcode,
-                        ]);
-                    }
+                // Se abbiamo identificato un barcode, lo salviamo nella tabella mg_articoli_barcode
+                if (!empty($barcode)) {
+                    database()->insert('mg_articoli_barcode', [
+                        'idarticolo' => $articolo->id,
+                        'barcode' => $barcode,
+                    ]);
                 }
             }
 

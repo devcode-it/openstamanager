@@ -631,11 +631,24 @@ if (!empty($righe)) {
 
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'" data-sconto_unitario="'.$sconto_unitario.'">
-            <td>
-                '.(empty($codice_principale) ? '<div style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Creazione automatica articolo non disponibile').'</div>' : '<label class="badge badge-success pull-right text-muted articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;" >'.tr('Crea automaticamente questo articolo').'</span></label>').'
-                <small class="pull-right text-muted" id="riferimento_'.$key.'"></small>';
+            <td>';
+                // Badge per creazione automatica articolo
+                $badge_html = '';
+                if (empty($codice_principale)) {
+                    $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Non idoneo').'</div>';
+                } elseif (!empty($id_articolo)) {
+                    // Articolo già presente nel sistema
+                    $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-info pull-right text-white articolo-warning hidden">'.tr('Articolo già presente').'</div>';
+                } else {
+                    // Nuovo articolo da creare
+                    $badge_html = '<label id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-success pull-right text-white articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;">'.tr('Nuovo articolo').'</span></label>';
+                }
+
+            echo'
+                '.$badge_html.'
+                <small class="text-muted padded" id="riferimento_'.$key.'"></small>';
         if (!empty($riferimento_fe)) {
-            echo '<small class="pull-right text-muted">'.implode('<br>', $riferimento_fe).'</small>';
+            echo '<small class="pull-right text-muted padded">'.implode('<br>', $riferimento_fe).'</small>';
         }
 
         echo $riga['Descrizione'].'<br>
@@ -1053,6 +1066,22 @@ $("[id^=\'articoli\']").change(function() {
 
     verificaSerial($(this));
 
+    // Gestione dinamica del badge articolo
+    let id_riga = $(this).data("id");
+    let badgeElement = $("#articolo-badge-" + id_riga);
+    if ($(this).val()) {
+        // Articolo selezionato - mostra "Articolo già presente"
+        badgeElement.removeClass("badge-success badge-warning").addClass("badge-info");
+        badgeElement.removeClass("text-white text-muted").addClass("text-white");
+        badgeElement.html("Articolo già presente");
+        badgeElement.css("padding", "7px");
+    } else {
+        // Nessun articolo selezionato - mostra "Nuovo articolo" con checkbox
+        badgeElement.removeClass("badge-info badge-warning").addClass("badge-success");
+        badgeElement.removeClass("text-muted").addClass("text-white");
+        badgeElement.html("<input class=\"check\" type=\"checkbox\" name=\"crea_articoli["+id_riga+"]\"/> <span style=\"position:relative;top:-2px;\">Nuovo articolo</span>");
+        badgeElement.css("padding", "7px");
+    }
 
     if($(this).val()){
        $("#update_info"+$(this).data("id")).prop(\'disabled\', false);

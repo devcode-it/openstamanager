@@ -4113,3 +4113,7 @@ table.dataTable thead th:nth-child(6) {
         transform: rotate(90deg);
     }
 }
+
+.padded {
+    padding: 5px;
+}

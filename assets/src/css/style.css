@@ -4105,9 +4105,6 @@ table.dataTable thead th:nth-child(6) {
     padding-left: 0;
     margin: 0;
 }
-.list-unstyled li {
-    padding: 5px 0;
-}
 @media (max-width: 768px) {
     .flusso-evasione {
         flex-direction: column;

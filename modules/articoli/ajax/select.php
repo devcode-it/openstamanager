@@ -336,6 +336,9 @@ switch ($resource) {
         if (!empty($search)) {
             $search_fields[] = '`an_anagrafiche`.`ragione_sociale` LIKE '.prepare('%'.$search.'%');
         }
+
+        $custom['link'] = 'module:Anagrafiche';
+
         break;
 
     case 'serial-articolo':

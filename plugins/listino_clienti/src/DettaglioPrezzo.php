@@ -92,8 +92,7 @@ class DettaglioPrezzo extends Model
             ->where('id_anagrafica', $id_anagrafica)
             ->where('dir', $direzione)
             ->whereNull('minimo')
-            ->whereNull('massimo')
-            ->whereNull('deleted_at');
+            ->whereNull('massimo');
     }
 
     public static function dettagli($id_articolo, $id_anagrafica, $direzione, $qta = null)

@@ -565,6 +565,7 @@ class FatturaOrdinaria extends FatturaElettronica
                                     $update_data['descrizione'] = $descrizione_fornitore;
                                 }
                                 if (!empty($update_data)) {
+                                    $update_data['deleted_at'] = 'null';
                                     database()->table('mg_fornitore_articolo')->where('id', $fornitore_articolo->id)->update($update_data);
                                 }
                             }

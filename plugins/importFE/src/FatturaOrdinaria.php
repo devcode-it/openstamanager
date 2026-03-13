@@ -270,6 +270,23 @@ class FatturaOrdinaria extends FatturaElettronica
             // Creazione articolo relativo
             if (!empty($codici) && !empty($crea_articoli[$key]) && empty($articolo)) {
                 $codice = $codici[0]['CodiceValore'];
+                $barcode = null;
+
+                // Verifico se il codice è un barcode (EAN, EN, o altri tipi di codice a barre)
+                $tipo_codice = $codici[0]['CodiceTipo'] ?? '';
+                if (in_array(strtoupper($tipo_codice), ['EAN', 'EN', 'BARCODE', 'GTIN', 'UPC', 'JAN'])) {
+                    // Il codice è un barcode: salvo il barcode e genero un progressivo come codice articolo
+                    $barcode = $codice;
+                    $codice = database()->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
+                } else {
+                    // Verifico anche se il codice sembra essere un barcode (formato numerico tipico di EAN/GTIN)
+                    // EAN-13 ha 13 cifre, EAN-8 ha 8 cifre, UPC ha 12 cifre
+                    if (preg_match('/^[0-9]{8,14}$/', $codice) && strlen($codice) != 6) {
+                        $barcode = $codice;
+                        $codice = database()->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
+                    }
+                }
+
                 $articolo = ArticoloOriginale::where('codice', $codice)->first();
 
                 if (empty($articolo)) {
@@ -287,7 +304,16 @@ class FatturaOrdinaria extends FatturaElettronica
                     $articolo->um = $riga['UnitaMisura'];
                     $articolo->idconto_acquisto = $conto[$key] ?: null;
                     $articolo->abilita_serial = setting('Serial number abilitato di default');
+
                     $articolo->save();
+
+                    // Se abbiamo identificato un barcode, lo salviamo nella tabella mg_articoli_barcode
+                    if (!empty($barcode)) {
+                        database()->insert('mg_articoli_barcode', [
+                            'idarticolo' => $articolo->id,
+                            'barcode' => $barcode,
+                        ]);
+                    }
                 }
             }
 
@@ -719,3 +745,4 @@ class FatturaOrdinaria extends FatturaElettronica
         ];
     }
 }
+

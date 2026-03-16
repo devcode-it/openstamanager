@@ -52,3 +52,6 @@ ALTER TABLE `co_documenti` ADD `fe_attempt` INT NOT NULL DEFAULT '0' AFTER `hook
 
 -- Aggiunta campo per tracciare la data di fallimento definitivo dopo 3 tentativi
 ALTER TABLE `co_documenti` ADD `fe_failed_at` TIMESTAMP NULL AFTER `fe_attempt`; 
+
+-- Aggiornamento campo uid di interventi tecnici
+ALTER TABLE `in_interventi_tecnici` CHANGE `uid` `uid` VARCHAR(255) NULL DEFAULT NULL;

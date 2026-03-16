@@ -34,15 +34,24 @@ $esigibilita = [
     ],
 ];
 
-$query = 'SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva` = :id_record
-UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = :id_record
-UNION SELECT `co_righe_contratti`.`id` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = :id_record
-UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = :id_record
-UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = :id_record
-UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = :id_record
-UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = :id_record OR `an_anagrafiche`.`idiva_acquisti` = :id_record';
-$params = [':id_record' => $id_record];
-$res = $dbo->fetchNum($query, $params);
+$id = prepare($id_record);
+
+$res = $dbo->fetchNum('
+    SELECT (
+        SELECT COUNT(*) FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.$id.'
+    ) + (
+        SELECT COUNT(*) FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.$id.' OR `an_anagrafiche`.`idiva_acquisti` = '.$id.'
+    ) AS total');
 $is_readonly = 0;
 if ($res) {
     $is_readonly = '1';

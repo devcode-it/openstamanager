@@ -56,6 +56,14 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        /*
+         * Tutti i log applicativi (Laravel + logger_osm()) scrivono in logs/
+         * nella root del progetto, insieme a error.log e cron-*.log.
+         * Non usare storage_path() per i log: in OpenSTAManager
+         * puoi trovare tutto in logs/ e non in storage/logs/.
+         * La cartella storage/logs/ viene mantenuta vuota perché Laravel
+         * la ricrea automaticamente al bootstrap.
+         */
         'single' => [
             'driver' => 'single',
             'path' => base_path('logs/app.log'),

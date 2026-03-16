@@ -345,6 +345,14 @@ class HTMLBuilder
 
         $json = (array) json_decode($string, true);
 
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            logger_osm()->warning('HTMLBuilder: tag con JSON malformato', [
+                'error'  => json_last_error_msg(),
+                'type'   => $type,
+                'source' => $string,
+            ]);
+        }
+
         return $json;
     }
 

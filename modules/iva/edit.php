@@ -36,7 +36,7 @@ $esigibilita = [
 
 $id = prepare($id_record);
 
-$res = $dbo->fetchNum('
+$res = $dbo->fetchOne('
     SELECT (
         SELECT COUNT(*) FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva` = '.$id.'
     ) + (
@@ -51,9 +51,9 @@ $res = $dbo->fetchNum('
         SELECT COUNT(*) FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.$id.'
     ) + (
         SELECT COUNT(*) FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.$id.' OR `an_anagrafiche`.`idiva_acquisti` = '.$id.'
-    ) AS total');
+    ) AS total')['total'];
 $is_readonly = 0;
-if ($res) {
+if ($res > 0) {
     $is_readonly = '1';
 }
 

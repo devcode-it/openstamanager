@@ -26,7 +26,7 @@ echo '
 <br>
 <h5 class="text-center"><b>'.tr('Riepilogo attività selezionate', [], ['upper' => true]).'</b></h5>
 
-<table class="table border-bottom">
+<table class="table">
     <thead>
         <tr>
             <th colspan="2" class="text-muted"><small>'.tr('Documento', [], ['upper' => true]).'</small></th>

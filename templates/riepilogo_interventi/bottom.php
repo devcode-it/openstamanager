@@ -37,9 +37,9 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
 }
 
 echo '
-        <tr>
-            <th width="5%" style="border-right: 0"></th>
-            <th class="text-right text-muted" style="border-left: 0;">
+        <tr style="background-color: #eee;">
+            <th width="5%" class="border-end-0"></th>
+            <th class="text-right text-muted border-start-0">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
             <th class="text-center">'.$somma_km.'</td>
@@ -49,18 +49,18 @@ echo '
             <th class="text-center">'.($pricing ? moneyFormat($somma_totale_imponibile, $d_totali) : '-').'</th>
         </tr>
 
-        <tr>
-            <th width="5%" style="border-right: 0"></th>
-            <th class="text-right text-muted" style="border-left: 0;">
+        <tr style="background-color: #eee;">
+            <th width="5%" class="border-end-0"></th>
+            <th class="text-right text-muted border-start-0">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_iva, $d_totali) : '-').'</th>
         </tr>
 
-        <tr>
-            <th width="5%" style="border-right: 0"></th>
-            <th class="text-right text-muted" style="border-left: 0;">
+        <tr style="background-color: #eee;">
+            <th width="5%" class="border-end-0"></th>
+            <th class="text-right text-muted border-start-0">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
@@ -68,3 +68,93 @@ echo '
         </tr>
     </tbody>
 </table>';
+
+// Sezione riepilogativa materiali e sessioni
+if (!empty($riepilogo_materiali) || !empty($riepilogo_sessioni)) {
+    echo '
+<div class="mt-5">
+    <div class="row">';
+
+    // Riepilogo materiali
+    if (!empty($riepilogo_materiali)) {
+        echo '
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="text-center"><b>'.tr('Riepilogo materiale utilizzato', [], ['upper' => true]).'</b></h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th class="small-bold">'.tr('Descrizione').'</th>
+                                <th class="text-center small-bold">'.tr('Qta').'</th>
+                                <th class="text-center small-bold">'.tr('Prezzo unitario').'</th>
+                                <th class="text-center small-bold">'.tr('Totale').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        foreach ($riepilogo_materiali as $descrizione => $dati) {
+            echo '
+                            <tr>
+                                <td>'.$descrizione.'</td>
+                                <td class="text-center">'.Translator::numberToLocale($dati['qta'], $d_qta).' '.$dati['um'].'</td>
+                                <td class="text-center">'.($pricing ? moneyFormat($dati['prezzo'], $d_importi) : '-').'</td>
+                                <td class="text-center fw-bold">'.($pricing ? moneyFormat($dati['totale'], $d_importi) : '-').'</td>
+                            </tr>';
+        }
+
+        echo '
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>';
+    }
+
+    // Riepilogo sessioni per tipo di attività
+    if (!empty($riepilogo_sessioni)) {
+        echo '
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="text-center"><b>'.tr('Riepilogo ore per tipo di attività', [], ['upper' => true]).'</b></h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th class="small-bold">'.tr('Tipo attività').'</th>
+                                <th class="text-center small-bold">'.tr('Ore totali').'</th>
+                                <th class="text-center small-bold">'.tr('Prezzo totale').'</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        foreach ($riepilogo_sessioni as $tipo => $dati) {
+            if (setting('Formato ore in stampa') == 'Sessantesimi') {
+                $ore_formatted = Translator::numberToHours($dati['ore']);
+            } else {
+                $ore_formatted = Translator::numberToLocale($dati['ore'], $d_qta);
+            }
+            echo '
+                            <tr>
+                                <td>'.$tipo.'</td>
+                                <td class="text-center">'.$ore_formatted.'</td>
+                                <td class="text-center fw-bold">'.($pricing ? moneyFormat($dati['prezzo_totale'], $d_importi) : '-').'</td>
+                            </tr>';
+        }
+
+        echo '
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>';
+    }
+
+    echo '
+    </div>
+</div>';
+}

@@ -468,17 +468,6 @@ ALTER TABLE `co_statipreventivi` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `co_statipreventivi_lang` ADD CONSTRAINT `co_statipreventivi_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_statipreventivi`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Stati dei preventivi
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_statipreventivi`
-    LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND |lang|)
-WHERE 
-    1=1
-HAVING 
-    2=2" WHERE `name` = 'Stati dei preventivi';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statipreventivi`.`id`' WHERE `zz_modules`.`name` = 'Stati dei preventivi' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella co_tipidocumento_lang

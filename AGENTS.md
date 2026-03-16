@@ -278,7 +278,8 @@ VALUES (1, LAST_INSERT_ID(), 'Mio Plugin');
 ### Registering Settings (`zz_settings`)
 
 ```sql
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`)
+VALUES
 (NULL, 'Abilita funzionalità X', '0', 'boolean', 1, 'Generali', 10, 0);
 
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`)

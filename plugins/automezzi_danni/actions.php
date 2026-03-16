@@ -63,7 +63,7 @@ switch (post('op')) {
 
         $dbo->delete('an_automezzi_danni', ['id' => $idscadenza]);
 
-        flash()->info(tr('Scadenza eliminata correttamente!'));
+        flash()->info(tr('Danno eliminato correttamente!'));
 
         break;
 }

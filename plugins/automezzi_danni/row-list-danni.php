@@ -39,6 +39,7 @@ echo '
             <th width="15%" class="text-center">'.tr('Data').'</th>
             <th width="25%">'.tr('Luogo').'</th>
             <th>'.tr('Descrizione').'</th>
+            <th width="10%" class="text-center">'.tr('Allegati').'</th>
             <th width="12%" class="text-center">'.tr('Azioni').'</th>
         </tr>
     </thead>
@@ -53,6 +54,7 @@ if (!empty($danni)) {
             <td class="text-center">'.Translator::dateToLocale($danno['data']).'</td>
             <td>'.$danno['luogo'].'</td>
             <td>'.$danno['descrizione'].'</td>
+            <td class="text-center">'.($n_file ? $n_file.' <i class="text-info fa fa-file"></i>' : '').'</td>
             <td class="text-center">
                 <button class="btn btn-xs btn-warning" data-href="'.$plugin->fileurl('modals/manage_danno.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id='.$id_record.'&iddanno='.$danno['id'].'" data-card-widget="modal" data-title="'.tr('Modifica danno').'" '.$disabled.'>
                     <i class="fa fa-edit"></i>

@@ -143,12 +143,7 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        $query = 'SELECT * FROM `mg_articoli` WHERE (`id_categoria` = :id OR `id_sottocategoria` = :id OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent` = :id)) AND `deleted_at` IS NULL';
-        $params = [
-            ':id' => $id,
-        ];
-        
-        if ($dbo->fetchNum($query, $params) == 0) {
+        if ($dbo->fetchNum('SELECT * FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `zz_categorie` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
             $dbo->delete('zz_categorie', ['id' => $id]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

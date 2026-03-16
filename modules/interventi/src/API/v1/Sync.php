@@ -166,9 +166,9 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
             // Creazione nuova attività o modifica attività creata dal calendario
             if ($idriga == 'NEW') {
-                $sessione = Sessione::where('uid', $event['UID'])->first();
+                $sessione = Sessione::where('uid', $event['UID'])->get();
 
-                if ($sessione) {
+                if ($sessione->count()) {
                     $sessione->orario_inizio = $orario_inizio;
                     $sessione->orario_fine = $orario_fine;
                     $sessione->summary = $summary;

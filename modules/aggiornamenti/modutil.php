@@ -371,7 +371,7 @@ if (!function_exists('aggiornamentiGetComponentDisplayName')) {
             }
         }
 
-        return basename($component_dir);
+        return basename((string) $component_dir);
     }
 }
 
@@ -436,7 +436,7 @@ if (!function_exists('aggiornamentiGetPremiumModuleDefinitions')) {
         $module_json_files = aggiornamentiGetReferenceJsonFiles('modules.json', 'module.json');
 
         foreach ($module_json_files as $module_json_file) {
-            $component_dir = dirname($module_json_file);
+            $component_dir = dirname((string) $module_json_file);
             $folder_name = basename($component_dir);
             $component_name = aggiornamentiGetComponentDisplayName($component_dir);
             $component_type = aggiornamentiGetComponentTypeFromPath($module_json_file);
@@ -476,7 +476,7 @@ if (!function_exists('aggiornamentiMergeSettingsReferenceData')) {
                 continue;
             }
 
-            $component_dir = dirname($settings_json_file);
+            $component_dir = dirname((string) $settings_json_file);
             $component_name = aggiornamentiGetComponentDisplayName($component_dir);
             $component_type = aggiornamentiGetComponentTypeFromPath($settings_json_file);
 
@@ -607,7 +607,7 @@ if (!function_exists('aggiornamentiMergeDatabaseReferenceData')) {
                 continue;
             }
 
-            $component_dir = dirname($database_json_file);
+            $component_dir = dirname((string) $database_json_file);
             $folder_name = basename($component_dir);
             $component_type = aggiornamentiGetComponentTypeFromPath($database_json_file);
 
@@ -757,8 +757,8 @@ if (!function_exists('customViewsNotStandard')) {
 
                 if (!empty($views_data) && is_array($views_data)) {
                     // Estrai il nome della sottocartella (es. "vendita_banco" da "/path/to/modules/vendita_banco/views.json")
-                    $folder_name = basename(dirname($views_json_file));
-                    $component_name = $premium_module_main_name[$folder_name] ?? aggiornamentiGetComponentDisplayName(dirname($views_json_file));
+                    $folder_name = basename(dirname((string) $views_json_file));
+                    $component_name = $premium_module_main_name[$folder_name] ?? aggiornamentiGetComponentDisplayName(dirname((string) $views_json_file));
                     $component_type = $premium_component_types[$folder_name] ?? aggiornamentiGetComponentTypeFromPath($views_json_file);
 
                     // Accoda le viste del componente a quelle principali

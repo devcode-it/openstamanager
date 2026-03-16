@@ -78,7 +78,6 @@ switch (post('op')) {
                 $bollo = 0;
             }
 
-
             $ordine->idanagrafica = post('idanagrafica');
             $ordine->idreferente = post('idreferente');
             $ordine->data = post('data') ?: null;
@@ -147,7 +146,7 @@ switch (post('op')) {
 
             $ordine->save();
             if ($ordine) {
-                $stato = \Modules\Ordini\Stato::find($idstatoordine);
+                $stato = Modules\Ordini\Stato::find($idstatoordine);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
                 if ($dir == 'entrata') {
@@ -773,7 +772,7 @@ switch (post('op')) {
         if (!empty($barcode)) {
             $barcode_articolo = Barcode::where('barcode', $barcode)->first();
             $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
-            
+
             if (empty($id_articolo)) {
                 $id_articolo = ArticoloOriginale::where('deleted_at', null)
                     ->where('attivo', 1)

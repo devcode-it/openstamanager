@@ -145,7 +145,7 @@ switch (filter('op')) {
         $params = [
             ':id' => $id,
         ];
-        
+
         if ($dbo->fetchNum($query, $params) == 0) {
             $dbo->delete('zz_categorie', ['id' => $id]);
 

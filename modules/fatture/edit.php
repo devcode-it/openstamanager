@@ -373,11 +373,11 @@ echo '
 ?>
 
 				<div class="col-md-2">
-					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo ($dir == 'uscita') ? 1 : 0; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>", "disabled": "<?php echo ($dir == 'uscita' && $fattura->progressivo_invio ? 1 : 0); ?>" ]}
+					{[ "type": "text", "label": "<?php echo $label; ?>", "required": "<?php echo ($dir == 'uscita') ? 1 : 0; ?>", "name": "numero_esterno", "class": "text-center", "value": "$numero_esterno$", "help": "<?php echo (empty($record['numero_esterno']) and $dir == 'entrata') ? tr('Il numero della fattura sarà generato automaticamente in fase di emissione.') : ''; ?>", "disabled": "<?php echo $dir == 'uscita' && $fattura->progressivo_invio ? 1 : 0; ?>" ]}
 				</div>
 
 				<div class="col-md-2">
-					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "name": "data", "required": 1, "value": "$data$", "disabled": "<?php echo ($dir == 'uscita' && $fattura->progressivo_invio ? 1 : 0); ?>" ]}
+					{[ "type": "date", "label": "<?php echo tr('Data emissione'); ?>", "name": "data", "required": 1, "value": "$data$", "disabled": "<?php echo $dir == 'uscita' && $fattura->progressivo_invio ? 1 : 0; ?>" ]}
 				</div>
 
 				<div class="col-md-2" <?php echo ($dir == 'entrata') ? 'hidden' : ''; ?>>

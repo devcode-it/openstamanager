@@ -69,10 +69,10 @@ if (get('op') == 'getmappa') {
         $val = html_entity_decode((string) $rs1[$i]['idanagrafica']);
         $id_sede = $dbo->selectOne('in_interventi', '*', ['id' => $rs1[$i]['id']])['idsede_destinazione'];
         if ($id_sede) {
-            $query = "SELECT *, nomesede AS ragione_sociale FROM an_sedi WHERE id=".prepare($id_sede);
+            $query = 'SELECT *, nomesede AS ragione_sociale FROM an_sedi WHERE id='.prepare($id_sede);
             $rs = $dbo->fetchArray($query);
         } else {
-            $query = "SELECT *, ragione_sociale FROM an_anagrafiche WHERE idanagrafica=".prepare($val);
+            $query = 'SELECT *, ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($val);
             $rs = $dbo->fetchArray($query);
         }
 

@@ -696,7 +696,7 @@ switch (filter('op')) {
         if (!empty($barcode)) {
             $barcode_articolo = Barcode::where('barcode', $barcode)->first();
             $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
-            
+
             if (empty($id_articolo)) {
                 $id_articolo = ArticoloOriginale::where('deleted_at', null)
                     ->where('attivo', 1)

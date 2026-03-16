@@ -81,7 +81,7 @@ switch (filter('op')) {
         foreach ($queries as $query) {
             $is_safe = false;
             foreach ($allowed_patterns as $pattern) {
-                if (preg_match($pattern, trim($query))) {
+                if (preg_match($pattern, trim((string) $query))) {
                     $is_safe = true;
                     break;
                 }
@@ -120,7 +120,7 @@ switch (filter('op')) {
             try {
                 $dbo->query($query);
                 ++$executed;
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Sanifica il messaggio di errore per evitare leak di informazioni
                 $errors[] = tr('Errore durante l\'esecuzione di una query.');
             }

@@ -37,7 +37,7 @@ if (get('lev') == '3') {
     // Movimenti
     $records = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale FROM co_movimenti LEFT JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id WHERE co_movimenti.idconto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).'
     GROUP BY 
-        `co_movimenti`.`iddocumento`, `co_movimenti`.`idmastrino` '.$group_by.'
+        `co_movimenti`.`idmastrino` '.$group_by.'
     ORDER BY 
         co_movimenti.data, CAST(co_documenti.numero AS UNSIGNED), CAST(co_documenti.numero_esterno AS UNSIGNED)');
 

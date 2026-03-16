@@ -42,7 +42,7 @@ WHERE
     `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND
     `co_movimenti`.`data` <= '.prepare($_SESSION['period_end']).'
 GROUP BY 
-    `co_movimenti`.`iddocumento`, `co_movimenti`.`idmastrino` '.$group_by.'
+    `co_movimenti`.`idmastrino` '.$group_by.'
 ORDER BY 
     `co_movimenti`.`data` DESC, `co_movimenti`.`id` DESC';
 $movimenti = $dbo->fetchArray($query);

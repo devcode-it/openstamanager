@@ -30,10 +30,14 @@ if (get('lev') == '3') {
     $conto3 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id='.prepare($id_record));
     $conto2 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti2 WHERE id='.prepare($conto3['idpianodeiconti2']));
     $conto1 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti1 WHERE id='.prepare($conto2['idpianodeiconti1']));
+
+    // Se il conto è di stato patrimoniale, devo raggruppare i movimenti anche per segno
+    $group_by = $conto1['descrizione'] == 'Patrimoniale' ? ', IF(`totale`>0, 1, 0)' : '';
+
     // Movimenti
     $records = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale FROM co_movimenti LEFT JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id WHERE co_movimenti.idconto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).'
     GROUP BY 
-        co_movimenti.idmastrino, IF(`totale`>0, 1, 0)
+        `co_movimenti`.`iddocumento`, `co_movimenti`.`idmastrino` '.$group_by.'
     ORDER BY 
         co_movimenti.data, CAST(co_documenti.numero AS UNSIGNED), CAST(co_documenti.numero_esterno AS UNSIGNED)');
 

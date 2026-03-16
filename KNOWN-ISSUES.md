@@ -63,6 +63,17 @@ https://github.com/devcode-it/openstamanager/commit/2393fcb55
 - Corrette le etichette delle date di registrazione/ricezione
 https://github.com/devcode-it/openstamanager/commit/32134c1c6
 
+- Corretto pagamenti automatici importFE
+https://github.com/devcode-it/openstamanager/commit/20ca9143d
+
+- Corretto movimento automatico rilevazione IVA
+https://github.com/devcode-it/openstamanager/commit/b62da4979
+
+- Corretto errore duplica ordine cliente/fornitore (#1773)
+https://github.com/devcode-it/openstamanager/commit/7586b7330
+
+- Corretto redirect in aggiornamento che impediva la corretta installazione dei moduli
+https://github.com/devcode-it/openstamanager/commit/db9e8d890
 
 ---
 

@@ -25,6 +25,20 @@ use Illuminate\Database\Eloquent\Model;
 use Traits\RecordTrait;
 use Util\Query;
 
+/**
+ * Colonna/vista configurabile per le liste dei moduli.
+ *
+ * ## Campi traducibili – regola Dual Write
+ * I campi in {@see View::$translated_fields} NON risiedono in questa tabella.
+ * Risiedono in `zz_views_lang` (id_record, id_lang, title).
+ *
+ * Ogni INSERT su `zz_views` DEVE essere seguito da un INSERT su `zz_views_lang`:
+ * ```php
+ * $id = $dbo->insert('zz_views', ['id_module' => $id_module, 'name' => 'campo', 'query' => '...']);
+ * $dbo->insert('zz_views_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Etichetta']);
+ * ```
+ * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ */
 class View extends Model
 {
     use SimpleModelTrait;

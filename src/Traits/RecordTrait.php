@@ -24,6 +24,31 @@ use Models\Locale;
 use Models\Module;
 use Models\Plugin;
 
+/**
+ * Gestione dei campi traducibili tramite tabelle `_lang`.
+ *
+ * ## Contratto Dual Write
+ * I Model che usano questo trait hanno campi traducibili (es. `title`, `descrizione`, `help`)
+ * che NON risiedono nella tabella principale ma in una tabella `<tabella>_lang` separata:
+ *
+ * ```
+ * Tabella principale:  zz_modules      (id, name, enabled, ...)
+ * Tabella traduzioni:  zz_modules_lang (id, id_record, id_lang, title)
+ * ```
+ *
+ * **Regola**: ogni INSERT sulla tabella principale DEVE essere seguito da un INSERT
+ * sulla tabella `_lang` corrispondente per ogni lingua disponibile.
+ * In caso contrario il campo traducibile risulterà vuoto nell'interfaccia.
+ *
+ * ## Metodi disponibili
+ * - {@see setTranslation()} – scrive/aggiorna una traduzione
+ * - {@see getTranslation()} – legge una traduzione
+ * - {@see save()}           – override: sincronizza automaticamente i `_lang` al salvataggio
+ *
+ * ## Quali Model usano questo trait
+ * Tutti i Model con la proprietà `$translated_fields` definita:
+ * `Module`, `Setting`, `View`, `Plugin`, `PrintTemplate` e i Model dei moduli in `src/`.
+ */
 trait RecordTrait
 {
     abstract public function getModuleAttribute();

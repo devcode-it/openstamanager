@@ -31,6 +31,20 @@ use Traits\LocalPoolTrait;
 use Traits\ManagerTrait;
 use Traits\RecordTrait;
 
+/**
+ * Modulo installato nel gestionale.
+ *
+ * ## Campi traducibili – regola Dual Write
+ * I campi in {@see Module::$translated_fields} NON risiedono in questa tabella.
+ * Risiedono in `zz_modules_lang` (id_record, id_lang, title).
+ *
+ * Ogni INSERT su `zz_modules` DEVE essere seguito da un INSERT su `zz_modules_lang`:
+ * ```php
+ * $id = $dbo->insert('zz_modules', ['name' => 'mio_modulo', 'enabled' => 1]);
+ * $dbo->insert('zz_modules_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Mio Modulo']);
+ * ```
+ * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ */
 class Module extends Model
 {
     use SimpleModelTrait;

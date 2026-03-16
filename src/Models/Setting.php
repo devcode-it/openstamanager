@@ -25,6 +25,20 @@ use Illuminate\Database\Eloquent\Model;
 use Traits\LocalPoolTrait;
 use Traits\RecordTrait;
 
+/**
+ * Impostazione di sistema.
+ *
+ * ## Campi traducibili – regola Dual Write
+ * I campi in {@see Setting::$translated_fields} NON risiedono in questa tabella.
+ * Risiedono in `zz_settings_lang` (id_record, id_lang, title, help).
+ *
+ * Ogni INSERT su `zz_settings` DEVE essere seguito da un INSERT su `zz_settings_lang`:
+ * ```php
+ * $id = $dbo->insert('zz_settings', ['nome' => 'mia_impostazione', 'valore' => '', 'tipo' => 'text']);
+ * $dbo->insert('zz_settings_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Mia impostazione']);
+ * ```
+ * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ */
 class Setting extends Model
 {
     use SimpleModelTrait;

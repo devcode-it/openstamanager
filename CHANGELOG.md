@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.10.2 (2026-03-17)](#2102-2026-03-17)
 - [2.10.1 (2026-02-26)](#2101-2026-02-26)
 - [2.10 (2026-02-05)](#210-2026-02-05)
 - [2.9.8 (2025-12-23)](#298-2025-12-23)
@@ -68,6 +69,38 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.10.2 (2026-03-17)
+### Modificato (Changed)
+- Ottimizzata la lettura dei file JSON dei moduli premium
+- Ottimizzata l'importazione delle ricevute FE per evitare interruzioni in caso di ricevuta di scarto
+- Modificata l'etichetta "Data di registrazione" con "Data di ricezione"
+
+### Fixed
+- Corretto link ai moduli per migliore accessibilità, il link è ora stato ridotto all'icona spostata prima della descrizione
+- Corretta conversione valore negativi in esportazione fatture in XLS
+- Corretta generazione fatture con righe descrittive da bulk
+- Corretta creazione ordine fornitore da preventivo per righe descrittive
+- Corretta generazione progressivo per maschere senza riferimento all'anno
+- Corretto evasione seriali nel caso di seriali senza documento di acquisto associato
+- Corretto movimento automatico rilevazione IVA
+- Corretto filtro per anagrafica in stampa scadenzario
+- Corrette vulnerabilità minori
+- Corretta vulnerabilità Time-Based Blind SQL Injection via `options[stato]` Parameter
+- Corretta vulnerabilità Remote Code Execution via Insecure Deserialization in OAuth2
+- Corretta vulnerabilità SQL Injection via righe Parameter in confronta_righe Modals
+- Corretta vulnerabilità SQL Injection via Aggiornamenti Module
+- Corretto blocco campi numero e data per fatture elettroniche importate
+- Corretta generazione movimenti applicando data registrazione fattura
+- Corretta funzione ricalcolo scadenze per movimenti di apertura e chiusura
+- Corretta eliminazione fatture collegate a interventi
+- Corretta eliminazione fatture da bulk
+- Corretto errore duplica ordine cliente/fornitore (#1773)
+- Corrette vulnerabilità SQL injection attraverso l'utilizzo della funzione prepare() per l'escaping delle variabili nelle query SQL
+- Corretta impostazione di max_rows a 0 per prevenzione divisione per 0
+- Corrette le etichette delle date di registrazione/ricezione
+- Corretto applicazione tema in tempo reale al cambio della select, senza attendere refresh della pagina
+- Corretto redirect in aggiornamento
 
 ## 2.10.1 (2026-02-26)
 ### Modificato (Changed)

@@ -74,7 +74,7 @@ $endpoint = setting('Endpoint ibanapi.com');
                 </div>
 
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('Codice SIA azienda'); ?>", "name": "codice_sia", "class": "alphanumeric-mask", "maxlength": 5, "value": "$codice_sia$", "help":"<?php echo tr('Società Interbancaria per l\'Automazione. Questo campo è necessario per la generazione delle Ri.Ba.<br>E\' composto da 5 caratteri alfanumerici.'); ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('Codice SIA azienda'); ?>", "name": "codice_sia", "class": "sia-code-mask", "maxlength": 5, "value": "$codice_sia$", "help":"<?php echo tr('Società Interbancaria per l\'Automazione. Questo campo è necessario per la generazione delle Ri.Ba.<br>E\' composto da 5 caratteri alfanumerici.'); ?>" ]}
                 </div>
             </div>
 

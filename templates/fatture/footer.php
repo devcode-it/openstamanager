@@ -151,7 +151,7 @@ if (!empty($v_iva)) {
             echo '
                             <tr>
                                 <td>
-                                    <small>'.$desc_iva." ".($documento->split_payment ? tr('(Split payment)') : '')."</small>
+                                    <small>'.$desc_iva.' '.($documento->split_payment ? tr('(Split payment)') : '')."</small>
                                 </td>
 
                                 <td class='text-right'>

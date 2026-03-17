@@ -43,7 +43,7 @@ use Traits\RecordTrait;
  * $id = $dbo->insert('zz_modules', ['name' => 'mio_modulo', 'enabled' => 1]);
  * $dbo->insert('zz_modules_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Mio Modulo']);
  * ```
- * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ * Per aggiornare una traduzione usa {@see RecordTrait::setTranslation()}.
  */
 class Module extends Model
 {

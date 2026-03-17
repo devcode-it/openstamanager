@@ -42,6 +42,10 @@ function initMaskInput(input) {
         $input.inputmask('Regex', {
             regex: "[A-Za-z0-9#_|\/\\-.]*",
         });
+    } else if ($input.hasClass('sia-code-mask')) {
+        $input.inputmask('Regex', {
+            regex: "[A-Za-z0-9#_|\/\\-.\\$]*",
+        });
     } else if ($input.hasClass('math-mask')) {
         $input.inputmask('Regex', {
             regex: "[0-9,.+\-]*",

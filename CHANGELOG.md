@@ -75,6 +75,8 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Ottimizzata la lettura dei file JSON dei moduli premium
 - Ottimizzata l'importazione delle ricevute FE per evitare interruzioni in caso di ricevuta di scarto
 - Modificata l'etichetta "Data di registrazione" con "Data di ricezione"
+- Migliorata la gestione dei log Laravel spostandoli in logs/app.log con rotazione giornaliera a 30 giorni
+- Miglioria grafica stampa riepilogo intervento con tabelle di riepilogo sessioni e materiale utilizzato
 
 ### Fixed
 - Corretto link ai moduli per migliore accessibilità, il link è ora stato ridotto all'icona spostata prima della descrizione
@@ -101,6 +103,15 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corrette le etichette delle date di registrazione/ricezione
 - Corretto applicazione tema in tempo reale al cambio della select, senza attendere refresh della pagina
 - Corretto redirect in aggiornamento
+- Corretto aggiornamento campo uid in interventi tecnici
+- Corretto raggruppamento per fattura in mastrini piano dei conti
+- Corretta query vista modulo Stati dei preventivi
+- Corretto conteggio documenti collegati ad aliquota IVA
+- Corretta query eliminazione categorie
+- Corretta eliminazione IVA da bulk
+- Corretto raggruppamento movimenti piano dei conti
+- Corretti raggruppamenti movimenti contabili
+- Aggiunto warning nel log per tag con JSON malformato
 
 ## 2.10.1 (2026-02-26)
 ### Modificato (Changed)

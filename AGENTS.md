@@ -167,8 +167,12 @@ src/Models/
 A Hook is a PHP class that responds to an external event. Hooks are polled and executed by their corresponding scheduled Task.
 
 ```sql
-INSERT INTO `zz_hooks` (`name`, `class`, `enabled`, `id_module`)
-VALUES ('Mio Hook', 'Modules\\MioModulo\\MioHook', 1, NULL);
+INSERT INTO `zz_hooks` (`name`, `class`, `enabled`, `id_module`) VALUES
+('Mio Hook', 'Modules\\MioModulo\\MioHook', 1, NULL);
+
+INSERT INTO `zz_hooks_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, LAST_INSERT_ID(), 'Mio Hook'),
+(2, LAST_INSERT_ID(), 'My Hook');
 ```
 
 ### Scheduled Tasks / Cron (`zz_tasks`)
@@ -176,8 +180,12 @@ VALUES ('Mio Hook', 'Modules\\MioModulo\\MioHook', 1, NULL);
 A Task is a PHP class executed by `cron.php` according to a cron expression.
 
 ```sql
-INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`)
-VALUES ('Mio Task', 'Modules\\MioModulo\\MioTask', '0 */6 * * *', 1);
+INSERT INTO `zz_tasks` (`name`, `class`, `expression`, `enabled`) VALUES
+('Mio Task', 'Modules\\MioModulo\\MioTask', '0 */6 * * *', 1);
+
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, LAST_INSERT_ID(), 'Mio Task'),
+(2, LAST_INSERT_ID(), 'My Task');
 ```
 
 ---
@@ -227,62 +235,63 @@ switch (post('op')) {
 ### Registering a Module (`zz_modules`)
 
 ```sql
-INSERT INTO `zz_modules`
-  (`name`, `directory`, `attachments_directory`, `options`, `icon`,
-   `version`, `compatibility`, `order`, `parent`, `default`, `enabled`)
-VALUES (
-  'MioModulo',
-  'mio_modulo',
-  'mio_modulo',
-  'SELECT |select| FROM `mia_tabella` WHERE 1=1 HAVING 2=2',
-  'fa fa-cogs',
-  '2.12',
-  '2.*',
-  1,
-  (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tabelle'),
-  1,
-  1
-);
+INSERT INTO `zz_modules` (`name`, `directory`, `attachments_directory`, `options`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
+('MioModulo', 'mio_modulo', 'mio_modulo', 'SELECT |select| FROM `mia_tabella` WHERE 1=1 HAVING 2=2', 'fa fa-cogs', '2.12', '2.*', 1, null, 1, 1);
 
-INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`)
-VALUES (1, LAST_INSERT_ID(), 'Mio Modulo', 'Mio Modulo - {campo}');
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+(1, LAST_INSERT_ID(), 'Mio Modulo', 'Mio Modulo - {campo}'),
+(2, LAST_INSERT_ID(), 'My Module', 'My Module - {field}');
+
 ```
 
 ### Registering List Columns (`zz_views`)
 
 ```sql
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'id',              'mia_tabella.id',              1, 0, 0, 1, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'Nome',            'mia_tabella.nome',            2, 1, 0, 1, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'Data',            'mia_tabella.data',            3, 1, 0, 1, 1);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'id', 'mia_tabella.id', 1, 0, 0, 1, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'Nome', 'mia_tabella.nome', 2, 1, 0, 1, 1),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'Data', 'mia_tabella.data', 3, 1, 0, 1, 1);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'id'), '#'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'id'), '#'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'Nome'), 'Nome'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'Nome'), 'Name'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'Data'), 'Data'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo') AND `name` = 'Data'), 'Date');
 ```
 
 ### Registering a Plugin (`zz_plugins`)
 
 ```sql
-INSERT INTO `zz_plugins`
-  (`name`, `idmodule_from`, `idmodule_to`, `position`, `enabled`, `directory`)
-VALUES (
-  'MioPlugin',
-  (SELECT id FROM zz_modules WHERE name = 'ModuloHost'),
-  (SELECT id FROM zz_modules WHERE name = 'ModuloTarget'),
-  'tab',
-  1,
-  'mio_plugin'
-);
+INSERT INTO `zz_plugins` (`name`, `idmodule_from`, `idmodule_to`, `position`, `enabled`, `directory`) VALUES
+('MioPlugin', (SELECT id FROM zz_modules WHERE name = 'MioModulo'), (SELECT id FROM zz_modules WHERE name = 'MioModulo'), 'tab', 1, 'mio_plugin');
 
-INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`)
-VALUES (1, LAST_INSERT_ID(), 'Mio Plugin');
+INSERT INTO `zz_plugins_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, LAST_INSERT_ID(), 'Mio Plugin'),
+(2, LAST_INSERT_ID(), 'My Plugin');
 ```
 
 ### Registering Settings (`zz_settings`)
 
 ```sql
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
-(NULL, 'Abilita funzionalità X', '0', 'boolean', 1, 'Generali', 10, 0);
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
+('Abilita funzionalità X', '0', 'boolean', 1, 'Generali', 10, 0);
 
-INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`)
-VALUES (1, LAST_INSERT_ID(), 'Enable Feature X', 'Help text');
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, LAST_INSERT_ID(), 'Abilita funzionalità X', 'Testo di aiuto'),
+(2, LAST_INSERT_ID(), 'Enable Feature X', 'Help text');
+```
+
+### Registering Widgets (`zz_widgets`)
+
+```sql
+INSERT INTO `zz_widgets` (`name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `enabled`, `order`, `help`) VALUES
+('Mio Widget', 'stats', (SELECT `id` FROM `zz_modules` WHERE `name` = 'MioModulo'), 'controller_top', 'col-md-6', 'SELECT COUNT(*) AS dato FROM mia_tabella WHERE 1=1', '#4ccc4c', 'fa fa-check', '', '', 'javascript', '',  1, 1, NULL);
+
+INSERT INTO `zz_widgets_lang` (`id_lang`, `id_record`, `title`, `text`) VALUES
+(1, LAST_INSERT_ID(), 'Mio Widget', 'Statistiche'),
+(2, LAST_INSERT_ID(), 'My Widget', 'Statistics');
 ```
 
 ---
@@ -423,7 +432,7 @@ flash()->warning(tr('Warning: document already sent.'));
 ### Path Helpers
 
 ```php
-base_path()        // Root-relative URL for links
+base_path_osm()        // Root-relative URL for links
 base_dir()         // Absolute filesystem path
 redirect_url($url) // HTTP redirect
 ```
@@ -570,7 +579,7 @@ flash()->success(tr('...'))
 flash()->error(tr('...'))
 
 // Path helpers
-base_path()
+base_path_osm()
 base_dir()
 redirect_url($url)
 

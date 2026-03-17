@@ -11,7 +11,7 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
-#### 2.10.2 - In rilascio
+#### 2.10.2 - 17/03/2026
 
 ##### Problemi noti
 - Corretto Remote Code Execution via Insecure Deserialization in OAuth2 (vulnerabilità critica)

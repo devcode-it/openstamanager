@@ -739,7 +739,7 @@ if (function_exists('customComponents')) {
                 $results_widgets = widgets_diff($data_widgets, $widgets);
                 $results_widgets_added = widgets_diff($widgets, $data_widgets);
 
-                if (!empty($results) || !empty($results_added) || !empty($results_settings) || !empty($results_settings_added) || !empty($results_widgets) || !empty($results_widgets_added)) {
+                if (!empty($results) || !empty($results_added)) {
                     $database_has_errors = true;
 
                     // Conta i tipi di errori nei risultati (campi mancanti/modificati)
@@ -787,46 +787,6 @@ if (function_exists('customComponents')) {
                         // Conta le chiavi esterne non previste
                         foreach ($foreign_keys as $name => $diff) {
                             ++$database_info_count; // Chiave esterna non prevista
-                        }
-                    }
-
-                    // Conta i tipi di errori nelle impostazioni
-                    foreach ($results_settings as $key => $setting) {
-                        if (!$setting['current']) {
-                            ++$database_danger_count; // Impostazione mancante
-                        } else {
-                            ++$database_warning_count; // Impostazione modificata
-                        }
-                    }
-
-                    // Conta le impostazioni non previste
-                    foreach ($results_settings_added as $key => $setting) {
-                        if ($setting['current'] == null && !isset($premium_settings[$key])) {
-                            ++$database_info_count; // Impostazione non prevista
-                        }
-                    }
-
-                    // Conta i tipi di errori nei widgets
-                    foreach ($results_widgets as $module_key => $module_widgets) {
-                        if (is_array($module_widgets)) {
-                            foreach ($module_widgets as $widget_name => $widget) {
-                                if (!$widget['current']) {
-                                    ++$database_danger_count; // Widget mancante
-                                } else {
-                                    ++$database_warning_count; // Widget modificato
-                                }
-                            }
-                        }
-                    }
-
-                    // Conta i widgets non previsti
-                    foreach ($results_widgets_added as $module_key => $module_widgets) {
-                        if (is_array($module_widgets)) {
-                            foreach ($module_widgets as $widget_name => $widget) {
-                                if ($widget['current'] == null) {
-                                    ++$database_info_count; // Widget non previsto
-                                }
-                            }
                         }
                     }
 

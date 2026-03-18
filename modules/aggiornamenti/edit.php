@@ -679,16 +679,147 @@ if (function_exists('customComponents')) {
             </div>';
 
     // Card Campi personalizzati (Controllo Database)
-    // Conta gli errori del database
-    $database_error_count = 0;
-    $database_has_errors = false;
+    // Conta gli errori del database sommando i conteggi delle badge mostrate in database.php
     $database_danger_count = 0;
     $database_warning_count = 0;
     $database_info_count = 0;
     $database_premium_count = 0;
 
+    // Includi i campi personalizzati nel conteggio info
+    $database_info_count += count($custom_fields);
+
     // Traccia da quale modulo proviene ogni campo (per identificare i campi premium)
     $premium_fields = [];
+    $premium_foreign_keys = [];
+
+    // Funzione helper per raggruppare gli errori per tabella (stessa logica di database.php)
+    function editGroupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data)
+    {
+        $grouped = [];
+
+        // Processa i risultati principali (campi mancanti/modificati)
+        if ($results) {
+            foreach ($results as $table => $errors) {
+                if (!isset($grouped[$table])) {
+                    $grouped[$table] = [
+                        'campi_mancanti' => [],
+                        'campi_modificati' => [],
+                        'campi_non_previsti' => [],
+                        'chiavi_mancanti' => [],
+                        'chiavi_non_previste' => [],
+                        'chiavi_esterne_mancanti' => [],
+                        'chiavi_esterne_non_previste' => [],
+                        'chiavi_esterne_modificate' => [],
+                        'tabella_assente' => false,
+                    ];
+                }
+
+                // Verifica se la tabella è assente
+                if (array_key_exists('current', $errors) && $errors['current'] == null) {
+                    $grouped[$table]['tabella_assente'] = true;
+                    continue;
+                }
+
+                $foreign_keys = $errors['foreign_keys'] ?? [];
+                unset($errors['foreign_keys']);
+
+                // Processa i campi
+                foreach ($errors as $name => $diff) {
+                    // Salta i campi premium
+                    if (isset($premium_fields[$table][$name])) {
+                        continue;
+                    }
+
+                    if (array_key_exists('key', $diff)) {
+                        if ($diff['key']['expected'] == '') {
+                            $grouped[$table]['chiavi_non_previste'][$name] = $diff;
+                        } else {
+                            $grouped[$table]['chiavi_mancanti'][$name] = $diff;
+                        }
+                    } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
+                        $grouped[$table]['campi_mancanti'][$name] = $diff;
+                    } else {
+                        $grouped[$table]['campi_modificati'][$name] = $diff;
+                    }
+                }
+
+                // Processa le chiavi esterne
+                $expected_fks = $data[$table]['foreign_keys'] ?? [];
+                foreach ($foreign_keys as $name => $diff) {
+                    // Salta le chiavi esterne premium
+                    if (isset($premium_foreign_keys[$table][$name])) {
+                        continue;
+                    }
+
+                    if (is_array($diff) && isset($diff['expected'])) {
+                        $grouped[$table]['chiavi_esterne_mancanti'][$name] = $diff;
+                    } elseif (is_array($diff) && isset($diff['current'])) {
+                        if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
+                            $grouped[$table]['chiavi_esterne_non_previste'][$name] = $diff;
+                        }
+                    } else {
+                        $grouped[$table]['chiavi_esterne_modificate'][$name] = $diff;
+                    }
+                }
+            }
+        }
+
+        // Processa i risultati aggiunti (campi non previsti)
+        if ($results_added) {
+            foreach ($results_added as $table => $errors) {
+                if (!isset($grouped[$table])) {
+                    $grouped[$table] = [
+                        'campi_mancanti' => [],
+                        'campi_modificati' => [],
+                        'campi_non_previsti' => [],
+                        'chiavi_mancanti' => [],
+                        'chiavi_non_previste' => [],
+                        'chiavi_esterne_mancanti' => [],
+                        'chiavi_esterne_non_previste' => [],
+                        'chiavi_esterne_modificate' => [],
+                        'tabella_assente' => false,
+                    ];
+                }
+
+                $foreign_keys = $errors['foreign_keys'] ?? [];
+                unset($errors['foreign_keys']);
+
+                // Processa i campi non previsti
+                foreach ($errors as $name => $diff) {
+                    if (!isset($results[$table][$name])) {
+                        if (isset($diff['key'])) {
+                            // Chiave non prevista
+                            if (!isset($premium_fields[$table][$name])) {
+                                $grouped[$table]['chiavi_non_previste'][$name] = $diff;
+                            }
+                        } elseif ($name != 'foreign_keys') {
+                            // Campo non previsto
+                            if (!isset($premium_fields[$table][$name])) {
+                                $grouped[$table]['campi_non_previsti'][$name] = $diff;
+                            }
+                        }
+                    }
+                }
+
+                // Processa le chiavi esterne non previste
+                $expected_fks = $data[$table]['foreign_keys'] ?? [];
+                foreach ($foreign_keys as $name => $diff) {
+                    // Salta le chiavi esterne premium
+                    if (isset($premium_foreign_keys[$table][$name])) {
+                        continue;
+                    }
+
+                    if (is_array($diff) && isset($diff['current'])) {
+                        if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
+                            $grouped[$table]['chiavi_esterne_non_previste'][$name] = $diff;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $grouped;
+    }
 
     try {
         if (!$database_file_missing) {
@@ -702,6 +833,7 @@ if (function_exists('customComponents')) {
             $database_reference_data = aggiornamentiMergeDatabaseReferenceData($data, $file_to_check_database);
             $data = $database_reference_data['data'];
             $premium_fields = $database_reference_data['premium_fields'];
+            $premium_foreign_keys = $database_reference_data['premium_foreign_keys'];
 
             if (!empty($data)) {
                 $info = Update::getDatabaseStructure();
@@ -739,58 +871,29 @@ if (function_exists('customComponents')) {
                 $results_widgets = widgets_diff($data_widgets, $widgets);
                 $results_widgets_added = widgets_diff($widgets, $data_widgets);
 
-                if (!empty($results) || !empty($results_added)) {
-                    $database_has_errors = true;
+                // Raggruppa gli errori per tabella (stessa logica di database.php)
+                $grouped_errors = editGroupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data);
 
-                    // Conta i tipi di errori nei risultati (campi mancanti/modificati)
-                    foreach ($results as $table => $errors) {
-                        $foreign_keys = $errors['foreign_keys'] ?: [];
-                        unset($errors['foreign_keys']);
+                // Somma i conteggi per tutte le tabelle (stesso calcolo delle badge in database.php)
+                foreach ($grouped_errors as $table => $errors) {
+                    // Calcola i conteggi per questa tabella
+                    $danger_count = count($errors['campi_mancanti'] ?? []) + count($errors['chiavi_mancanti'] ?? []) + count($errors['chiavi_esterne_mancanti'] ?? []);
+                    $warning_count = count($errors['campi_modificati'] ?? []) + count($errors['chiavi_esterne_modificate'] ?? []);
+                    $info_count = count($errors['campi_non_previsti'] ?? []) + count($errors['chiavi_non_previste'] ?? []) + count($errors['chiavi_esterne_non_previste'] ?? []);
 
-                        // Filtra i campi premium prima del conteggio
-                        $filtered_errors = [];
-                        foreach ($errors as $name => $diff) {
-                            // Verifica se il campo proviene da un modulo premium
-                            if (!isset($premium_fields[$table][$name])) {
-                                $filtered_errors[$name] = $diff;
-                            }
-                        }
+                    // Somma ai conteggi globali
+                    $database_danger_count += $danger_count;
+                    $database_warning_count += $warning_count;
+                    $database_info_count += $info_count;
 
-                        // Usa la funzione di utilità per contare gli errori
-                        $error_counts = Utils::countErrorsByType($filtered_errors, $foreign_keys);
-                        $database_danger_count += $error_counts['danger'];
-                        $database_warning_count += $error_counts['warning'];
-                        $database_info_count += $error_counts['info'];
+                    // Aggiungi i campi premium e le chiavi esterne premium ai conteggi
+                    $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+                    $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
+                    
+                    // Aggiorna i conteggi se ci sono elementi premium (solo in primary, non in info)
+                    if ($premium_fields_count > 0 || $premium_fks_count > 0) {
+                        $database_premium_count += $premium_fields_count + $premium_fks_count;
                     }
-
-                    // Conta i tipi di errori nei risultati aggiunti (campi non previsti)
-                    foreach ($results_added as $table => $errors) {
-                        $foreign_keys = $errors['foreign_keys'] ?: [];
-                        unset($errors['foreign_keys']);
-
-                        // Conta i campi non previsti
-                        foreach ($errors as $name => $diff) {
-                            if (!isset($results[$table][$name])) {
-                                if (isset($diff['key'])) {
-                                    ++$database_info_count; // Chiave non prevista
-                                } else {
-                                    // Verifica se il campo proviene da un modulo premium
-                                    if (isset($premium_fields[$table][$name])) {
-                                        ++$database_premium_count; // Campo modulo premium
-                                    } else {
-                                        ++$database_info_count; // Campo non previsto
-                                    }
-                                }
-                            }
-                        }
-
-                        // Conta le chiavi esterne non previste
-                        foreach ($foreign_keys as $name => $diff) {
-                            ++$database_info_count; // Chiave esterna non prevista
-                        }
-                    }
-
-                    $database_error_count = $database_danger_count + $database_warning_count + $database_info_count + $database_premium_count;
                 }
             }
         }
@@ -802,7 +905,7 @@ if (function_exists('customComponents')) {
     $database_colors = Utils::determineCardColor(
         $database_danger_count,
         $database_warning_count || $database_file_missing ? 1 : 0,
-        ($database_info_count > 0 || $database_premium_count > 0) ? 1 : 0
+        ($database_info_count > 0) ? 1 : 0
     );
     $database_card_color = $database_colors['color'];
     $database_icon = $database_colors['icon'];
@@ -846,6 +949,7 @@ if (function_exists('customComponents')) {
     $settings_danger_count = 0;
     $settings_warning_count = 0;
     $settings_info_count = 0;
+    $settings_premium_count = 0;
 
     if ($has_settings_data_issues) {
         foreach ($results_settings as $key => $setting) {
@@ -857,20 +961,29 @@ if (function_exists('customComponents')) {
         }
 
         foreach ($results_settings_added as $key => $setting) {
-            if ($setting['current'] == null && !isset($premium_settings[$key])) {
-                ++$settings_info_count;
+            if ($setting['current'] == null) {
+                if (isset($premium_settings[$key])) {
+                    ++$settings_premium_count;
+                } else {
+                    ++$settings_info_count;
+                }
             }
         }
     }
 
     // Determina il colore della card in base all'avviso più grave
-    $settings_danger = ($settings_file_missing && $settings_warning_count > 0) ? 1 : 0;
-    $settings_warning = ($settings_warning_count > 0 || $settings_file_missing) ? 1 : 0;
-    $settings_colors = Utils::determineCardColor($settings_danger, $settings_warning, $settings_info_count > 0 ? 1 : 0);
+    $settings_danger = ($settings_file_missing || $settings_danger_count > 0) ? 1 : 0;
+    $settings_warning = ($settings_warning_count > 0) ? 1 : 0;
+    $settings_colors = Utils::determineCardColor($settings_danger, $settings_warning, ($settings_info_count > 0) ? 1 : 0);
     $settings_card_color = $settings_colors['color'];
     $settings_icon = $settings_colors['icon'];
 
     $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
+    
+    // Aggiungi badge per le impostazioni premium
+    if ($settings_premium_count > 0) {
+        $settings_badge_html .= '<span class="badge badge-primary ml-2">'.$settings_premium_count.'</span>';
+    }
 
     echo '
             <div class="card card-outline card-'.$settings_card_color.' requirements-card mb-2 collapsable collapsed-card">
@@ -941,8 +1054,8 @@ if (function_exists('customComponents')) {
     }
 
     // Determina il colore della card in base all'avviso più grave
-    $widgets_danger = ($widgets_file_missing && $widgets_warning_count > 0) ? 1 : 0;
-    $widgets_warning = ($widgets_warning_count > 0 || $widgets_file_missing) ? 1 : 0;
+    $widgets_danger = ($widgets_file_missing || $widgets_danger_count > 0) ? 1 : 0;
+    $widgets_warning = ($widgets_warning_count > 0) ? 1 : 0;
     $widgets_colors = Utils::determineCardColor($widgets_danger, $widgets_warning, $widgets_info_count > 0 ? 1 : 0);
     $widgets_card_color = $widgets_colors['color'];
     $widgets_icon = $widgets_colors['icon'];

@@ -598,6 +598,7 @@ if (!function_exists('aggiornamentiMergeDatabaseReferenceData')) {
     {
         $data = is_array($data) ? $data : [];
         $premium_fields = [];
+        $premium_foreign_keys = [];
         $modules_json_data = aggiornamentiReadJsonFile(base_dir().'/modules.json');
 
         foreach (aggiornamentiGetDatabaseReferenceFiles($file_to_check_database) as $database_json_file) {
@@ -671,11 +672,32 @@ if (!function_exists('aggiornamentiMergeDatabaseReferenceData')) {
                     ];
                 }
             }
+
+            // Traccia le chiavi esterne premium separatamente
+            foreach ($database_data as $table => $table_data) {
+                if (!is_array($table_data)) {
+                    continue;
+                }
+
+                if (isset($table_data['foreign_keys']) && is_array($table_data['foreign_keys'])) {
+                    if (!isset($premium_foreign_keys[$table])) {
+                        $premium_foreign_keys[$table] = [];
+                    }
+
+                    foreach ($table_data['foreign_keys'] as $fk_name => $fk_data) {
+                        $premium_foreign_keys[$table][$fk_name] = [
+                            'name' => $module_name,
+                            'type' => $component_type,
+                        ];
+                    }
+                }
+            }
         }
 
         return [
             'data' => $data,
             'premium_fields' => $premium_fields,
+            'premium_foreign_keys' => $premium_foreign_keys,
         ];
     }
 }

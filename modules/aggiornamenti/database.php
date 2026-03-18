@@ -122,6 +122,32 @@ if (file_exists(base_dir().'/'.$file_to_check_database)) {
 $database_reference_data = aggiornamentiMergeDatabaseReferenceData($data, $file_to_check_database);
 $data = $database_reference_data['data'];
 $premium_fields = $database_reference_data['premium_fields'];
+$premium_foreign_keys = $database_reference_data['premium_foreign_keys'];
+
+// Rimuovi i campi premium dai dati di riferimento prima del controllo
+// Questo garantisce che il confronto avvenga solo con i campi standard definiti nel file mysql.json della root
+foreach ($premium_fields as $table => $fields) {
+    if (isset($data[$table])) {
+        foreach ($fields as $field_name => $premium_info) {
+            // Salta le chiavi esterne (vengono gestite separatamente)
+            if ($field_name === 'foreign_keys') {
+                continue;
+            }
+            // Rimuovi il campo premium dai dati di riferimento
+            unset($data[$table][$field_name]);
+        }
+    }
+}
+
+// Rimuovi le chiavi esterne premium dai dati di riferimento prima del controllo
+foreach ($premium_foreign_keys as $table => $fks) {
+    if (isset($data[$table]['foreign_keys'])) {
+        foreach ($fks as $fk_name => $premium_info) {
+            // Rimuovi la chiave esterna premium dai dati di riferimento
+            unset($data[$table]['foreign_keys'][$fk_name]);
+        }
+    }
+}
 
 if (empty($data)) {
     echo '
@@ -150,7 +176,7 @@ try {
 }
 
 // Funzione helper per raggruppare gli errori per tabella
-function groupErrorsByTable($results, $results_added, $premium_fields, $data)
+function groupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data)
 {
     $grouped = [];
 
@@ -203,6 +229,11 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $data)
             // Processa le chiavi esterne
             $expected_fks = $data[$table]['foreign_keys'] ?? [];
             foreach ($foreign_keys as $name => $diff) {
+                // Salta le chiavi esterne premium
+                if (isset($premium_foreign_keys[$table][$name])) {
+                    continue;
+                }
+
                 if (is_array($diff) && isset($diff['expected'])) {
                     $grouped[$table]['chiavi_esterne_mancanti'][$name] = $diff;
                 } elseif (is_array($diff) && isset($diff['current'])) {
@@ -256,6 +287,11 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $data)
             // Processa le chiavi esterne non previste
             $expected_fks = $data[$table]['foreign_keys'] ?? [];
             foreach ($foreign_keys as $name => $diff) {
+                // Salta le chiavi esterne premium
+                if (isset($premium_foreign_keys[$table][$name])) {
+                    continue;
+                }
+
                 if (is_array($diff) && isset($diff['current'])) {
                     if (!IntegrityChecker::foreignKeyExistsByContent($diff['current'], $expected_fks)) {
                         $grouped[$table]['chiavi_esterne_non_previste'][$name] = $diff;
@@ -537,7 +573,7 @@ function renderUnifiedTable($errors, $table, $data, &$query_conflitti)
 }
 
 // Raggruppa gli errori per tabella
-$grouped_errors = groupErrorsByTable($results, $results_added, $premium_fields, $data);
+$grouped_errors = groupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data);
 
 if (!empty($grouped_errors)) {
     echo '
@@ -551,6 +587,9 @@ if (!empty($grouped_errors)) {
     </div>
 </div>';
 
+    // Prepara un array per tracciare quali tabelle hanno già una card
+    $tables_with_card = [];
+
     foreach ($grouped_errors as $table => $errors) {
         // Calcola i conteggi
         $danger_count = count($errors['campi_mancanti'] ?? []) + count($errors['chiavi_mancanti'] ?? []) + count($errors['chiavi_esterne_mancanti'] ?? []);
@@ -563,12 +602,22 @@ if (!empty($grouped_errors)) {
             continue;
         }
 
+        // Aggiungi i campi premium e le chiavi esterne premium ai conteggi
+        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+        $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
+        
+        // Aggiorna i conteggi se ci sono elementi premium
+        if ($premium_fields_count > 0 || $premium_fks_count > 0) {
+            $info_count += $premium_fields_count + $premium_fks_count;
+            $error_count = $danger_count + $warning_count + $info_count;
+        }
+
         $badge_html = Utils::generateBadgeHtml($danger_count, $warning_count, $info_count);
         $border_color = Utils::determineBorderColor($danger_count, $warning_count);
 
         echo '
 <div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header" style="border-left-color: '.$border_color.';" onclick="$(this).next().slideToggle();">
+    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header" style="border-left-color: '.$border_color.';" onclick="$(this).next().slideToggle(); return false;">
         <div>
             <strong>'.$table.'</strong>
             '.$badge_html.'
@@ -587,85 +636,66 @@ if (!empty($grouped_errors)) {
             echo renderUnifiedTable($errors, $table, $data, $query_conflitti);
         }
 
-        echo '
-    </div>
-</div>';
-    }
-
-    // Visualizza i campi dei moduli premium raggruppati per tabella
-    $campi_modulo_premium = [];
-    if ($results_added) {
-        foreach ($results_added as $table => $errors) {
-            if (!empty($errors)) {
-                if (array_key_exists('current', $errors) && $errors['current'] == null) {
-                    continue;
-                }
-
-                foreach ($errors as $name => $diff) {
-                    if (!isset($diff['key']) && $name != 'foreign_keys') {
-                        if (isset($premium_fields[$table][$name])) {
-                            $premium_info = $premium_fields[$table][$name];
-                            $campi_modulo_premium[] = [
-                                'tabella' => $table,
-                                'campo' => $name,
-                                'origine' => $premium_info,
-                                'valore' => $diff['expected'] ?? '',
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (!empty($campi_modulo_premium)) {
-        // Raggruppa per tabella
-        $campi_premium_per_tabella = [];
-        foreach ($campi_modulo_premium as $campo) {
-            if (!isset($campi_premium_per_tabella[$campo['tabella']])) {
-                $campi_premium_per_tabella[$campo['tabella']] = [];
-            }
-            $campi_premium_per_tabella[$campo['tabella']][] = $campo;
-        }
-
-        foreach ($campi_premium_per_tabella as $tabella => $campi) {
+        // Aggiungi i campi premium e le chiavi esterne premium alla fine della tabella se esistono
+        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+        $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
+        
+        if ($premium_fields_count > 0 || $premium_fks_count > 0) {
             echo '
-<div class="mb-3">
-    <div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: #007bff;" onclick="$(this).next().slideToggle();">
-        <div>
-            <strong>'.$tabella.' ('.tr('Campi premium').')</strong>
-            <span class="badge badge-primary ml-2">'.count($campi).'</span>
-        </div>
-        <i class="fa fa-chevron-down"></i>
-    </div>
-    <div class="module-aggiornamenti db-section-content">
         <div class="table-responsive">
-            <table class="table table-hover table-striped table-sm mb-2">
+            <table class="table table-hover table-striped table-sm">
                 <thead class="thead-light">
                     <tr>
                         <th>'.tr('Campo').'</th>
                         <th>'.tr('Componente').'</th>
                     </tr>
                 </thead>
-                <tbody>';
-            foreach ($campi as $campo) {
-                $origine = $campo['origine'];
-                $origine_type = is_array($origine) ? ($origine['type'] ?? 'module') : 'module';
-                $origine_name = is_array($origine) ? ($origine['name'] ?? '') : $origine;
-                $origine_label = ($origine_type === 'plugin') ? 'Campo plugin ' : 'Campo modulo ';
-                echo '
-                    <tr>
-                        <td class="column-name">'.$campo['campo'].'</td>
-                        <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
-                    </tr>';
+                    <tbody>';
+            
+            // Aggiungi i campi premium
+            if (isset($premium_fields[$table]) && !empty($premium_fields[$table])) {
+                foreach ($premium_fields[$table] as $field_name => $premium_info) {
+                    // Salta le chiavi esterne (vengono gestite qui sotto)
+                    if ($field_name === 'foreign_keys') {
+                        continue;
+                    }
+                    $origine_type = is_array($premium_info) ? ($premium_info['type'] ?? 'module') : 'module';
+                    $origine_name = is_array($premium_info) ? ($premium_info['name'] ?? '') : $premium_info;
+                    $origine_label = ($origine_type === 'plugin') ? 'Campo plugin ' : 'Campo modulo ';
+                    echo '
+                        <tr>
+                            <td class="column-name">'.$field_name.'</td>
+                            <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
+                        </tr>';
+                }
             }
+            
+            // Aggiungi le chiavi esterne premium
+            if (isset($premium_foreign_keys[$table]) && !empty($premium_foreign_keys[$table])) {
+                foreach ($premium_foreign_keys[$table] as $fk_name => $premium_info) {
+                    $origine_type = is_array($premium_info) ? ($premium_info['type'] ?? 'module') : 'module';
+                    $origine_name = is_array($premium_info) ? ($premium_info['name'] ?? '') : $premium_info;
+                    $origine_label = ($origine_type === 'plugin') ? 'Chiave esterna plugin ' : 'Chiave esterna modulo ';
+                    echo '
+                        <tr>
+                            <td class="column-name">'.$fk_name.'</td>
+                            <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
+                        </tr>';
+                }
+            }
+            
             echo '
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>';
+        }
+
+        echo '
     </div>
 </div>';
-        }
+
+        // Segna questa tabella come già processata
+        $tables_with_card[$table] = true;
     }
 } else {
     echo '
@@ -704,6 +734,88 @@ function buttonRestore(button, loadingResult) {
     $this.prop("disabled", false);
 }
 </script>';
+}
+
+// Visualizza le tabelle che hanno solo elementi premium (senza altri errori)
+foreach ($premium_fields as $table => $fields) {
+    // Salta se questa tabella è già stata processata
+    if (isset($tables_with_card[$table])) {
+        continue;
+    }
+
+    // Controlla se ci sono campi premium (escludendo le chiavi esterne)
+    $premium_fields_count = count(array_filter(array_keys($fields), function($k) { return $k !== "foreign_keys"; }));
+    $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
+    
+    if ($premium_fields_count == 0 && $premium_fks_count == 0) {
+        continue;
+    }
+
+    echo '
+<div class="mb-3">
+<div class="d-flex align-items-center justify-content-between p-2 module-aggiornamenti db-section-header-dynamic" style="border-left-color: #007bff;" onclick="$(this).next().slideToggle(); return false;">
+    <div>
+        <strong>'.$table.'</strong>
+        <span class="badge badge-primary ml-2">'.($premium_fields_count + $premium_fks_count).'</span>
+    </div>
+    <i class="fa fa-chevron-down"></i>
+</div>
+<div class="module-aggiornamenti db-section-content" style="display: none;">';
+
+    // Aggiungi i campi premium e le chiavi esterne premium in una sola tabella
+    if ($premium_fields_count > 0 || $premium_fks_count > 0) {
+        echo '
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>'.tr('Campo').'</th>
+                    <th>'.tr('Componente').'</th>
+                </tr>
+            </thead>
+                <tbody>';
+        
+        // Aggiungi i campi premium
+        if ($premium_fields_count > 0) {
+            foreach ($fields as $field_name => $premium_info) {
+                // Salta le chiavi esterne (vengono gestite qui sotto)
+                if ($field_name === 'foreign_keys') {
+                    continue;
+                }
+                $origine_type = is_array($premium_info) ? ($premium_info['type'] ?? 'module') : 'module';
+                $origine_name = is_array($premium_info) ? ($premium_info['name'] ?? '') : $premium_info;
+                $origine_label = ($origine_type === 'plugin') ? 'Campo plugin ' : 'Campo modulo ';
+                echo '
+                    <tr>
+                        <td class="column-name">'.$field_name.'</td>
+                        <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
+                    </tr>';
+            }
+        }
+        
+        // Aggiungi le chiavi esterne premium
+        if ($premium_fks_count > 0 && isset($premium_foreign_keys[$table])) {
+            foreach ($premium_foreign_keys[$table] as $fk_name => $premium_info) {
+                $origine_type = is_array($premium_info) ? ($premium_info['type'] ?? 'module') : 'module';
+                $origine_name = is_array($premium_info) ? ($premium_info['name'] ?? '') : $premium_info;
+                $origine_label = ($origine_type === 'plugin') ? 'Chiave esterna plugin ' : 'Chiave esterna modulo ';
+                echo '
+                    <tr>
+                        <td class="column-name">'.$fk_name.'</td>
+                        <td><span class="badge badge-primary">'.$origine_label.$origine_name.'</span></td>
+                    </tr>';
+            }
+        }
+        
+        echo '
+                </tbody>
+            </table>
+    </div>';
+    }
+
+    echo '
+</div>
+</div>';
 }
 
 // Log dell'esecuzione del controllo database

@@ -201,66 +201,148 @@ function highlightDifferences($current, $expected)
     ];
 }
 
-if (function_exists('customComponents')) {
-    $custom = customComponents();
-    $custom_files = function_exists('customStructureWithFiles') ? customStructureWithFiles() : [];
-    $tables = function_exists('customTables') ? customTables() : [];
-    $custom_fields = function_exists('customFields') ? customFields() : [];
+// ============================================================================
+// FUNZIONI HELPER PER CONTROLLI PERSONALIZZAZIONI
+// ============================================================================
 
-    // Controllo checksum
+/**
+ * Carica i dati di personalizzazione dal sistema
+ */
+function loadCustomizationData()
+{
+    return [
+        'custom' => function_exists('customComponents') ? customComponents() : [],
+        'custom_files' => function_exists('customStructureWithFiles') ? customStructureWithFiles() : [],
+        'tables' => function_exists('customTables') ? customTables() : [],
+        'custom_fields' => function_exists('customFields') ? customFields() : [],
+        'custom_views_not_standard' => function_exists('customViewsNotStandard') ? customViewsNotStandard() : [],
+        'custom_modules_not_standard' => function_exists('customModulesNotStandard') ? customModulesNotStandard() : [],
+    ];
+}
+
+/**
+ * Verifica i checksum dei file
+ */
+function verifyFileChecksums()
+{
     $checksum_errors = [];
     $checksum_errors_grouped = [];
     $checksum_file = base_dir().'/checksum.json';
-    if (file_exists($checksum_file)) {
-        $contents = file_get_contents($checksum_file);
-        $checksum = json_decode($contents, true);
-        if (!empty($checksum)) {
-            foreach ($checksum as $file => $md5) {
-                $verifica = md5_file(base_dir().'/'.$file);
-                if ($verifica != $md5) {
-                    $checksum_errors[] = $file;
 
-                    // Raggruppa per cartella
-                    $path_parts = explode('/', (string) $file);
-                    $file_name = array_pop($path_parts);
-                    $folder_path = implode('/', $path_parts);
+    if (!file_exists($checksum_file)) {
+        return compact('checksum_errors', 'checksum_errors_grouped');
+    }
 
-                    if (!isset($checksum_errors_grouped[$folder_path])) {
-                        $checksum_errors_grouped[$folder_path] = [];
-                    }
-                    $checksum_errors_grouped[$folder_path][] = $file_name;
-                }
+    $contents = file_get_contents($checksum_file);
+    $checksum = json_decode($contents, true);
+
+    if (empty($checksum)) {
+        return compact('checksum_errors', 'checksum_errors_grouped');
+    }
+
+    foreach ($checksum as $file => $md5) {
+        $verifica = md5_file(base_dir().'/'.$file);
+        if ($verifica != $md5) {
+            $checksum_errors[] = $file;
+
+            // Raggruppa per cartella
+            $path_parts = explode('/', (string) $file);
+            $file_name = array_pop($path_parts);
+            $folder_path = implode('/', $path_parts);
+
+            if (!isset($checksum_errors_grouped[$folder_path])) {
+                $checksum_errors_grouped[$folder_path] = [];
             }
+            $checksum_errors_grouped[$folder_path][] = $file_name;
         }
     }
 
-    $custom_views_not_standard = function_exists('customViewsNotStandard') ? customViewsNotStandard() : [];
-    $custom_modules_not_standard = function_exists('customModulesNotStandard') ? customModulesNotStandard() : [];
+    return compact('checksum_errors', 'checksum_errors_grouped');
+}
 
-    // Verifica se mancano i file di riferimento per viste, moduli, impostazioni e widgets
-    $views_file_missing = !file_exists(base_dir().'/views.json');
-    $modules_file_missing = !file_exists(base_dir().'/modules.json');
-    $settings_file_missing = !file_exists(base_dir().'/settings.json');
-    $widgets_file_missing = !file_exists(base_dir().'/widgets.json');
-
-    // Verifica se manca il file di riferimento per il database
-    $file_to_check_database = 'mysql.json';
+/**
+ * Determina il file di riferimento del database in base al tipo e versione
+ */
+function getDatabaseReferenceFile($database)
+{
     if ($database->getType() === 'MariaDB') {
-        $file_to_check_database = 'mariadb_10_x.json';
-    } elseif ($database->getType() === 'MySQL') {
+        return 'mariadb_10_x.json';
+    }
+
+    if ($database->getType() === 'MySQL') {
         $mysql_min_version = '8.0.0';
         $mysql_max_version = '8.3.99';
-        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
-    }
-    $database_file_missing = !file_exists(base_dir().'/'.$file_to_check_database);
+        $version = $database->getMySQLVersion();
 
-    // Determina se ci sono errori per ogni sezione
-    $has_file_errors = !empty($custom_files) || !empty($checksum_errors);
-    $has_table_errors = !empty($tables);
-    $has_view_errors = !empty($custom_views_not_standard) || $views_file_missing;
-    $has_module_errors = !empty($custom_modules_not_standard) || $modules_file_missing;
-    $has_field_errors = !empty($custom_fields) || $database_file_missing;
-    $has_any_errors = !empty($custom) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
+        if (version_compare($version, $mysql_min_version, '>=') && version_compare($version, $mysql_max_version, '<=')) {
+            return 'mysql.json';
+        }
+
+        return 'mysql_8_3.json';
+    }
+
+    return 'mysql.json';
+}
+
+/**
+ * Verifica i file di riferimento mancanti
+ */
+function checkMissingReferenceFiles($database)
+{
+    $file_to_check_database = getDatabaseReferenceFile($database);
+
+    return [
+        'views_file_missing' => !file_exists(base_dir().'/views.json'),
+        'modules_file_missing' => !file_exists(base_dir().'/modules.json'),
+        'settings_file_missing' => !file_exists(base_dir().'/settings.json'),
+        'widgets_file_missing' => !file_exists(base_dir().'/widgets.json'),
+        'database_file_missing' => !file_exists(base_dir().'/'.$file_to_check_database),
+        'file_to_check_database' => $file_to_check_database,
+    ];
+}
+
+/**
+ * Determina gli errori per ogni sezione
+ */
+function determineErrorStatus($customization_data, $checksum_data, $reference_files)
+{
+    $has_file_errors = !empty($customization_data['custom_files']) || !empty($checksum_data['checksum_errors']);
+    $has_table_errors = !empty($customization_data['tables']);
+    $has_view_errors = !empty($customization_data['custom_views_not_standard']) || $reference_files['views_file_missing'];
+    $has_module_errors = !empty($customization_data['custom_modules_not_standard']) || $reference_files['modules_file_missing'];
+    $has_field_errors = !empty($customization_data['custom_fields']) || $reference_files['database_file_missing'];
+    $has_any_errors = !empty($customization_data['custom']) || $has_file_errors || $has_table_errors || $has_view_errors || $has_module_errors || $has_field_errors;
+
+    return compact(
+        'has_file_errors',
+        'has_table_errors',
+        'has_view_errors',
+        'has_module_errors',
+        'has_field_errors',
+        'has_any_errors'
+    );
+}
+
+// ============================================================================
+// CARICAMENTO E ELABORAZIONE DATI
+// ============================================================================
+
+if (function_exists('customComponents')) {
+    // Carica dati di personalizzazione
+    $customization_data = loadCustomizationData();
+    extract($customization_data);
+
+    // Verifica checksum file
+    $checksum_data = verifyFileChecksums();
+    extract($checksum_data);
+
+    // Verifica file di riferimento mancanti
+    $reference_files = checkMissingReferenceFiles($database);
+    extract($reference_files);
+
+    // Determina lo stato degli errori
+    $error_status = determineErrorStatus($customization_data, $checksum_data, $reference_files);
+    extract($error_status);
 
     // Determina il colore in base all'avviso piu grave
     $customizations_colors = Utils::determineCardColor(0, $has_any_errors ? 1 : 0, 0);
@@ -282,25 +364,59 @@ if (function_exists('customComponents')) {
                     </div>
                     <div class="card-body">';
 
-    // Card File
-    $modified_files_count = count($checksum_errors_grouped);
-    $custom_files_count = count($custom_files);
+    // ========================================================================
+    // CARD FILE PERSONALIZZATI
+    // ========================================================================
 
-    // Determina il colore in base all'avviso piu grave
-    // File modificati e personalizzati sono entrambi warning
-    $file_warning = ($modified_files_count > 0 || $custom_files_count > 0) ? 1 : 0;
-    $file_colors = Utils::determineCardColor(0, $file_warning, 0);
-    $file_card_color = $file_colors['color'];
-    $file_icon = $file_colors['icon'];
+    /**
+     * Renderizza la card per i file personalizzati
+     */
+    function renderCustomFilesCard($checksum_errors_grouped, $custom_files, $has_file_errors)
+    {
+        $modified_files_count = count($checksum_errors_grouped);
+        $custom_files_count = count($custom_files);
 
-    echo '
+        $file_warning = ($modified_files_count > 0 || $custom_files_count > 0) ? 1 : 0;
+        $file_colors = Utils::determineCardColor(0, $file_warning, 0);
+        $file_card_color = $file_colors['color'];
+        $file_icon = $file_colors['icon'];
+
+        $badges = '';
+        if ($modified_files_count > 0) {
+            $badges .= '<span class="badge badge-warning ml-2">'.$modified_files_count.'</span>';
+        }
+        if ($custom_files_count > 0) {
+            $badges .= '<span class="badge badge-warning ml-2">'.$custom_files_count.'</span>';
+        }
+
+        $body_content = '';
+        if ($has_file_errors) {
+            $body_content .= '<div class="table-responsive"><table class="table table-hover table-striped table-sm"><thead class="thead-light"><tr><th width="30%">'.tr('Percorso').'</th><th width="15%">'.tr('Tipo').'</th><th width="55%">'.tr('File').'</th></tr></thead><tbody>';
+
+            // File con checksum diverso
+            foreach ($checksum_errors_grouped as $folder => $files) {
+                $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $files));
+                $body_content .= '<tr><td><strong>'.$folder.'</strong></td><td><span class="badge badge-warning badge-lg">'.tr('File modificato').'</span></td><td>'.$files_list.'</td></tr>';
+            }
+
+            // File personalizzati
+            foreach ($custom_files as $element) {
+                $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $element['files']));
+                $body_content .= '<tr><td><strong>'.$element['path'].'/custom</strong></td><td><span class="badge badge-warning badge-lg">'.tr('Cartella custom').'</span></td><td>'.$files_list.'</td></tr>';
+            }
+
+            $body_content .= '</tbody></table></div>';
+        } else {
+            $body_content = '<p class="text-success mb-0"><i class="fa fa-check-circle"></i> '.tr('Nessun file personalizzato rilevato').'</p>';
+        }
+
+        return '
         <div class="card card-outline card-'.$file_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$file_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$file_card_color.'">
                     <i class="fa '.$file_icon.' mr-2 requirements-icon"></i>
                     '.tr('File personalizzati').'
-                    '.($modified_files_count > 0 ? '<span class="badge badge-warning ml-2">'.$modified_files_count.'</span>' : '').'
-                    '.($custom_files_count > 0 ? '<span class="badge badge-warning ml-2">'.$custom_files_count.'</span>' : '').'
+                    '.$badges.'
                 </h3>
                 <div class="card-tools pull-right">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -308,73 +424,41 @@ if (function_exists('customComponents')) {
                     </button>
                 </div>
             </div>
-            <div class="card-body">';
-
-    if ($has_file_errors) {
-        echo '
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped table-sm">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th width="30%">'.tr('Percorso').'</th>
-                                    <th width="15%">'.tr('Tipo').'</th>
-                                    <th width="55%">'.tr('File').'</th>
-                                </tr>
-                            </thead>
-                            <tbody>';
-
-        // Mostra file con checksum diverso raggruppati per cartella in warning
-        foreach ($checksum_errors_grouped as $folder => $files) {
-            $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $files));
-
-            echo '
-                                <tr>
-                                    <td><strong>'.$folder.'</strong></td>
-                                    <td><span class="badge badge-warning badge-lg">'.tr('File modificato').'</span></td>
-                                    <td>'.$files_list.'</td>
-                                </tr>';
-        }
-
-        // Mostra file personalizzati in warning
-        foreach ($custom_files as $element) {
-            $files_list = implode(', ', array_map(fn ($file) => '<code>'.$file.'</code>', $element['files']));
-
-            echo '
-                                <tr>
-                                    <td><strong>'.$element['path'].'/custom</strong></td>
-                                    <td><span class="badge badge-warning badge-lg">'.tr('Cartella custom').'</span></td>
-                                    <td>'.$files_list.'</td>
-                                </tr>';
-        }
-
-        echo '
-                            </tbody>
-                        </table>
-                    </div>';
-    } else {
-        echo '
-                    <p class="text-success mb-0">
-                        <i class="fa fa-check-circle"></i> '.tr('Nessun file personalizzato rilevato').'
-                    </p>';
+            <div class="card-body">
+                '.$body_content.'
+            </div>
+        </div>';
     }
 
-    echo '
-                </div>
-        </div>';
+    echo renderCustomFilesCard($checksum_errors_grouped, $custom_files, $has_file_errors);
 
-    // Card Tabelle
-    $table_count = count($tables);
-    $table_colors = Utils::determineCardColor(0, 0, $table_count > 0 ? 1 : 0);
-    $table_card_color = $table_colors['color'];
-    $table_icon = $table_colors['icon'];
+    // ========================================================================
+    // CARD TABELLE NON PREVISTE
+    // ========================================================================
 
-    echo '
+    /**
+     * Renderizza la card per le tabelle non previste
+     */
+    function renderUnexpectedTablesCard($tables, $has_table_errors)
+    {
+        $table_count = count($tables);
+        $table_colors = Utils::determineCardColor(0, 0, $table_count > 0 ? 1 : 0);
+        $table_card_color = $table_colors['color'];
+        $table_icon = $table_colors['icon'];
+
+        $badge_html = $table_count > 0 ? '<span class="badge badge-info ml-2">'.$table_count.'</span>' : '';
+
+        $body_content = $has_table_errors
+            ? implode(', ', array_map(fn ($table) => '<code class="module-aggiornamenti table-code">'.$table.'</code>', $tables))
+            : '<p class="text-success mb-0"><i class="fa fa-check-circle"></i> '.tr('Nessuna tabella non prevista rilevata').'</p>';
+
+        return '
         <div class="card card-outline card-'.$table_card_color.' requirements-card mb-2 collapsable collapsed-card">
             <div class="card-header with-border requirements-card-header requirements-card-header-'.$table_card_color.'">
                 <h3 class="card-title requirements-card-title requirements-card-title-'.$table_card_color.'">
                     <i class="fa '.$table_icon.' mr-2 requirements-icon"></i>
                     '.tr('Tabelle non previste').'
-                    '.($table_count > 0 ? '<span class="badge badge-info ml-2">'.$table_count.'</span>' : '').'
+                    '.$badge_html.'
                 </h3>
                 <div class="card-tools pull-right">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -382,24 +466,15 @@ if (function_exists('customComponents')) {
                     </button>
                 </div>
             </div>
-            <div class="card-body">';
-
-    if ($has_table_errors) {
-        $tables_list = implode(', ', array_map(fn ($table) => '<code class="module-aggiornamenti table-code">'.$table.'</code>', $tables));
-        echo '
-                    <p class="mb-0">
-                        '.$tables_list.'
-                    </p>';
-    } else {
-        echo '
-                    <p class="text-success mb-0">
-                        <i class="fa fa-check-circle"></i> '.tr('Nessuna tabella non prevista rilevata').'
-                    </p>';
+            <div class="card-body">
+                <p class="mb-0">
+                    '.$body_content.'
+                </p>
+            </div>
+        </div>';
     }
 
-    echo '
-                </div>
-        </div>';
+    echo renderUnexpectedTablesCard($tables, $has_table_errors);
 
     // Card Viste
     $has_view_data_issues = !empty($custom_views_not_standard) && !$views_file_missing;

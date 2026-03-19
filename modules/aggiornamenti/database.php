@@ -26,9 +26,74 @@ use Modules\Aggiornamenti\Utils;
 
 $query_conflitti = [];
 
+// ========================================================================
+// FUNZIONI HELPER PER CONTROLLO DATABASE
+// ========================================================================
+
 function saveQueriesToSession($queries)
 {
     $_SESSION['query_conflitti'] = $queries;
+}
+
+/**
+ * Determina il file di riferimento database in base al tipo di DBMS
+ * (Definita anche in edit.php, ma qui con if !function_exists per evitare conflitti)
+ */
+if (!function_exists('getDatabaseReferenceFile')) {
+    function getDatabaseReferenceFile($database)
+    {
+        switch ($database->getType()) {
+            case 'MariaDB':
+                return 'mariadb_10_x.json';
+            case 'MySQL':
+                $mysql_min_version = '8.0.0';
+                $mysql_max_version = '8.3.99';
+                $version = $database->getMySQLVersion();
+                return (version_compare($version, $mysql_min_version, '>=') && version_compare($version, $mysql_max_version, '<='))
+                    ? 'mysql.json'
+                    : 'mysql_8_3.json';
+            default:
+                return 'mysql.json';
+        }
+    }
+}
+
+/**
+ * Carica il file di riferimento database principale
+ */
+function loadMainDatabaseReference($file_to_check_database)
+{
+    if (!file_exists(base_dir().'/'.$file_to_check_database)) {
+        return null;
+    }
+
+    $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
+    $data = json_decode($contents, true);
+    return is_array($data) ? $data : [];
+}
+
+/**
+ * Rimuove i campi premium dai dati di riferimento
+ */
+function removePremiumFieldsFromData(&$data, $premium_fields, $premium_foreign_keys)
+{
+    foreach ($premium_fields as $table => $fields) {
+        if (isset($data[$table])) {
+            foreach ($fields as $field_name => $premium_info) {
+                if ($field_name !== 'foreign_keys') {
+                    unset($data[$table][$field_name]);
+                }
+            }
+        }
+    }
+
+    foreach ($premium_foreign_keys as $table => $fks) {
+        if (isset($data[$table]['foreign_keys'])) {
+            foreach ($fks as $fk_name => $premium_info) {
+                unset($data[$table]['foreign_keys'][$fk_name]);
+            }
+        }
+    }
 }
 
 // Funzioni per il controllo database (wrapper per compatibilità)
@@ -45,6 +110,10 @@ if (!function_exists('settings_diff')) {
         return IntegrityChecker::settingsDiff($expected, $current);
     }
 }
+
+// ========================================================================
+// LOGICA PRINCIPALE
+// ========================================================================
 
 $file = basename(__FILE__);
 $effettua_controllo = filter('effettua_controllo');
@@ -74,47 +143,14 @@ $(document).ready(function () {
     return;
 }
 
-switch ($database->getType()) {
-    case 'MariaDB':
-        $file_to_check_database = 'mariadb_10_x.json';
-        break;
-    case 'MySQL':
-        $mysql_min_version = '8.0.0';
-        $mysql_max_version = '8.3.99';
-        $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
-        break;
-    default:
-        $file_to_check_database = 'mysql.json';
-        break;
-}
-
-// Traccia da quale modulo proviene ogni campo (per identificare i campi premium)
-$premium_fields = [];
-
-// NOTA: Il controllo delle chiavi esterne è stato migliorato per confrontare il contenuto
-// invece del nome. Questo risolve il problema in cui chiavi esterne con lo stesso
-// contenuto ma nomi diversi venivano segnalate come "non previste".
-// Le funzioni IntegrityChecker::foreignKeyExistsByContent() e IntegrityChecker::getForeignKeyHash()
-// vengono utilizzate per confrontare le chiavi esterne basandosi sul loro contenuto
-// (colonna, tabella di riferimento, colonna di riferimento, regole di delete/update).
+$file_to_check_database = getDatabaseReferenceFile($database);
 
 // Carica il file di riferimento principale per il database
-$data = [];
-if (file_exists(base_dir().'/'.$file_to_check_database)) {
-    $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
-    $root_data = json_decode($contents, true);
+$data = loadMainDatabaseReference($file_to_check_database);
 
-    if (!empty($root_data) && is_array($root_data)) {
-        $data = array_merge($root_data, $data);
-    }
-} else {
-    echo '
-<div class="alert alert-danger alert-database">
-    <i class="fa fa-times"></i> '.tr('File di riferimento del database non trovato: _FILE_', [
-        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-    ]).'
-</div>';
-
+if ($data === null) {
+    echo '<div class="alert alert-danger alert-database"><i class="fa fa-times"></i> '.tr('File di riferimento del database non trovato: _FILE_', ['_FILE_' => '<b>'.$file_to_check_database.'</b>']).'.'.
+    '</div>';
     return;
 }
 
@@ -124,39 +160,12 @@ $data = $database_reference_data['data'];
 $premium_fields = $database_reference_data['premium_fields'];
 $premium_foreign_keys = $database_reference_data['premium_foreign_keys'];
 
-// Rimuovi i campi premium dai dati di riferimento prima del controllo
-// Questo garantisce che il confronto avvenga solo con i campi standard definiti nel file mysql.json della root
-foreach ($premium_fields as $table => $fields) {
-    if (isset($data[$table])) {
-        foreach ($fields as $field_name => $premium_info) {
-            // Salta le chiavi esterne (vengono gestite separatamente)
-            if ($field_name === 'foreign_keys') {
-                continue;
-            }
-            // Rimuovi il campo premium dai dati di riferimento
-            unset($data[$table][$field_name]);
-        }
-    }
-}
-
-// Rimuovi le chiavi esterne premium dai dati di riferimento prima del controllo
-foreach ($premium_foreign_keys as $table => $fks) {
-    if (isset($data[$table]['foreign_keys'])) {
-        foreach ($fks as $fk_name => $premium_info) {
-            // Rimuovi la chiave esterna premium dai dati di riferimento
-            unset($data[$table]['foreign_keys'][$fk_name]);
-        }
-    }
-}
+// Rimuovi i campi premium dai dati di riferimento
+removePremiumFieldsFromData($data, $premium_fields, $premium_foreign_keys);
 
 if (empty($data)) {
-    echo '
-<div class="alert alert-warning alert-database">
-    <i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', [
-        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-    ]).'.
-</div>';
-
+    echo '<div class="alert alert-warning alert-database"><i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', ['_FILE_' => '<b>'.$file_to_check_database.'</b>']).'.'.
+    '</div>';
     return;
 }
 

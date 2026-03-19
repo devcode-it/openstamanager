@@ -496,12 +496,6 @@ if (!function_exists('aggiornamentiMergeSettingsReferenceData')) {
             $data_settings = array_merge($data_settings, $settings_data);
         }
 
-        foreach (aggiornamentiGetCurrentPluginSettingsMetadata() as $setting_key => $plugin_setting) {
-            if (!isset($premium_settings[$setting_key])) {
-                $premium_settings[$setting_key] = $plugin_setting;
-            }
-        }
-
         return [
             'data' => $data_settings,
             'premium_settings' => $premium_settings,
@@ -509,40 +503,145 @@ if (!function_exists('aggiornamentiMergeSettingsReferenceData')) {
     }
 }
 
-if (!function_exists('aggiornamentiGetCurrentPluginSettingsMetadata')) {
-    function aggiornamentiGetCurrentPluginSettingsMetadata()
+if (!function_exists('aggiornamentiGetCurrentPremiumSettings')) {
+    function aggiornamentiGetCurrentPremiumSettings($settings, $premium_settings, $data_settings = [])
     {
-        $database = database();
-        $default_lang = $database->fetchOne("SELECT valore FROM zz_settings WHERE nome = 'Lingua'")['valore'] ?? 1;
-        $result = [];
+        $current_premium_settings = [];
 
-        $query = 'SELECT DISTINCT
-            zs.nome,
-            COALESCE(zpl.title, zp.name) AS plugin_name
-        FROM zz_settings zs
-        INNER JOIN zz_plugins zp ON 1=1
-        LEFT JOIN zz_plugins_lang zpl ON (
-            zp.id = zpl.id_record
-            AND zpl.id_lang = '.prepare($default_lang).'
-        )
-        WHERE LOWER(TRIM(zs.sezione)) = LOWER(TRIM(COALESCE(zpl.title, zp.name)))
-            OR LOWER(TRIM(zs.sezione)) = LOWER(TRIM(zp.name))';
+        foreach ((array) $settings as $setting_name => $current_type) {
+            $setting_key = trim((string) $setting_name);
 
-        foreach ($database->fetchArray($query) as $setting) {
-            $setting_key = trim((string) $setting['nome']);
-            $plugin_name = trim((string) $setting['plugin_name']);
-
-            if ($setting_key === '' || $plugin_name === '') {
+            if ($setting_key === '' || !isset($premium_settings[$setting_key])) {
                 continue;
             }
 
-            $result[$setting_key] = [
-                'name' => $plugin_name,
-                'type' => 'plugin',
+            $current_premium_settings[$setting_key] = [
+                'current' => $current_type,
+                'expected' => $data_settings[$setting_key] ?? null,
+                'premium_setting' => $premium_settings[$setting_key],
             ];
         }
 
-        return $result;
+        return $current_premium_settings;
+    }
+}
+
+if (!function_exists('aggiornamentiMergeWidgetsReferenceData')) {
+    function aggiornamentiMergeWidgetsReferenceData($data_widgets)
+    {
+        $data_widgets = is_array($data_widgets) ? $data_widgets : [];
+        $premium_widgets = [];
+
+        foreach (aggiornamentiGetReferenceJsonFiles('widgets.json') as $widgets_json_file) {
+            $widgets_data = aggiornamentiReadJsonFile($widgets_json_file);
+
+            if (empty($widgets_data) || !is_array($widgets_data)) {
+                continue;
+            }
+
+            $component_dir = dirname((string) $widgets_json_file);
+            $component_name = aggiornamentiGetComponentDisplayName($component_dir);
+            $component_type = aggiornamentiGetComponentTypeFromPath($widgets_json_file);
+
+            foreach ($widgets_data as $module_name => $module_widgets) {
+                if (!is_array($module_widgets)) {
+                    continue;
+                }
+
+                foreach ($module_widgets as $widget_name => $widget_query) {
+                    $widget_key = $module_name.':'.$widget_name;
+
+                    $premium_widgets[$widget_key] = [
+                        'name' => $component_name,
+                        'type' => $component_type,
+                    ];
+                }
+
+                // Accoda i widgets del componente a quelli principali
+                if (!isset($data_widgets[$module_name])) {
+                    $data_widgets[$module_name] = [];
+                }
+                $data_widgets[$module_name] = array_merge($data_widgets[$module_name], $module_widgets);
+            }
+        }
+
+        return [
+            'data' => $data_widgets,
+            'premium_widgets' => $premium_widgets,
+        ];
+    }
+}
+
+if (!function_exists('aggiornamentiFindPremiumWidgetReference')) {
+    function aggiornamentiFindPremiumWidgetReference($module_name, $widget_name, $premium_widgets, $data_widgets = [])
+    {
+        $module_key = trim((string) $module_name);
+        $widget_key = trim((string) $widget_name);
+
+        if ($module_key === '' || $widget_key === '') {
+            return null;
+        }
+
+        $reference_key = $module_key.':'.$widget_key;
+        if (isset($premium_widgets[$reference_key])) {
+            return [
+                'key' => $reference_key,
+                'module_name' => $module_key,
+                'widget_name' => $widget_key,
+                'expected_query' => $data_widgets[$module_key][$widget_key] ?? null,
+                'premium_widget' => $premium_widgets[$reference_key],
+            ];
+        }
+
+        foreach ($premium_widgets as $premium_key => $premium_info) {
+            $premium_parts = explode(':', (string) $premium_key, 2);
+
+            if (count($premium_parts) !== 2 || trim((string) $premium_parts[1]) !== $widget_key) {
+                continue;
+            }
+
+            $premium_module_name = trim((string) $premium_parts[0]);
+
+            return [
+                'key' => $premium_key,
+                'module_name' => $premium_module_name,
+                'widget_name' => $widget_key,
+                'expected_query' => $data_widgets[$premium_module_name][$widget_key] ?? null,
+                'premium_widget' => $premium_info,
+            ];
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('aggiornamentiGetCurrentPremiumWidgets')) {
+    function aggiornamentiGetCurrentPremiumWidgets($widgets, $premium_widgets, $data_widgets = [])
+    {
+        $current_premium_widgets = [];
+
+        foreach ((array) $widgets as $module_key => $module_widgets) {
+            if (!is_array($module_widgets)) {
+                continue;
+            }
+
+            foreach ($module_widgets as $widget_name => $current_query) {
+                $premium_reference = aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets);
+
+                if ($premium_reference === null) {
+                    continue;
+                }
+
+                $current_premium_widgets[$module_key][$widget_name] = [
+                    'current' => $current_query,
+                    'expected' => $premium_reference['expected_query'],
+                    'premium_widget' => $premium_reference['premium_widget'],
+                    'reference_module_name' => $premium_reference['module_name'],
+                ];
+            }
+        }
+
+        return $current_premium_widgets;
     }
 }
 

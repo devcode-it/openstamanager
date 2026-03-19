@@ -57,6 +57,11 @@ function widgets_diff($expected, $current)
     return IntegrityChecker::widgetsDiff($expected, $current);
 }
 
+function widgets_added($current, $expected)
+{
+    return IntegrityChecker::widgetsAdded($current, $expected);
+}
+
 // Inizializzazione del modulo corrente
 $module = Module::find($id_module);
 
@@ -847,29 +852,20 @@ if (function_exists('customComponents')) {
                 $premium_settings = $settings_reference_data['premium_settings'];
 
                 $settings = Update::getSettings();
+                $current_premium_settings = aggiornamentiGetCurrentPremiumSettings($settings, $premium_settings, $data_settings);
                 $results_settings = settings_diff($data_settings, $settings);
                 $results_settings_added = settings_diff($settings, $data_settings);
 
                 $contents_widgets = file_get_contents(base_dir().'/widgets.json');
                 $data_widgets = json_decode($contents_widgets, true);
-
-                // Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di moduli e plugin
-                $widgets_json_files = aggiornamentiGetReferenceJsonFiles('widgets.json');
-
-                if (!empty($widgets_json_files)) {
-                    foreach ($widgets_json_files as $widgets_json_file) {
-                        $widgets_data = aggiornamentiReadJsonFile($widgets_json_file);
-
-                        if (!empty($widgets_data) && is_array($widgets_data)) {
-                            // Accoda i widgets del componente a quelli principali
-                            $data_widgets = array_merge($data_widgets, $widgets_data);
-                        }
-                    }
-                }
+                $widgets_reference_data = aggiornamentiMergeWidgetsReferenceData($data_widgets);
+                $data_widgets = $widgets_reference_data['data'];
+                $premium_widgets = $widgets_reference_data['premium_widgets'];
 
                 $widgets = Update::getWidgets();
+                $current_premium_widgets = aggiornamentiGetCurrentPremiumWidgets($widgets, $premium_widgets, $data_widgets);
                 $results_widgets = widgets_diff($data_widgets, $widgets);
-                $results_widgets_added = widgets_diff($widgets, $data_widgets);
+                $results_widgets_added = widgets_added($widgets, $data_widgets);
 
                 // Raggruppa gli errori per tabella (stessa logica di database.php)
                 $grouped_errors = editGroupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data);
@@ -943,7 +939,7 @@ if (function_exists('customComponents')) {
             </div>';
 
     // Card Impostazioni personalizzate
-    $has_settings_data_issues = !empty($results_settings) || !empty($results_settings_added);
+    $has_settings_data_issues = !empty($results_settings) || !empty($results_settings_added) || !empty($current_premium_settings);
 
     // Conta gli avvisi per tipo
     $settings_danger_count = 0;
@@ -953,6 +949,10 @@ if (function_exists('customComponents')) {
 
     if ($has_settings_data_issues) {
         foreach ($results_settings as $key => $setting) {
+            if (isset($premium_settings[$key])) {
+                continue;
+            }
+
             if (!$setting['current']) {
                 ++$settings_danger_count;
             } else {
@@ -961,14 +961,16 @@ if (function_exists('customComponents')) {
         }
 
         foreach ($results_settings_added as $key => $setting) {
+            if (isset($premium_settings[$key])) {
+                continue;
+            }
+
             if ($setting['current'] == null) {
-                if (isset($premium_settings[$key])) {
-                    ++$settings_premium_count;
-                } else {
-                    ++$settings_info_count;
-                }
+                ++$settings_info_count;
             }
         }
+
+        $settings_premium_count = count($current_premium_settings);
     }
 
     // Determina il colore della card in base all'avviso più grave
@@ -1022,17 +1024,22 @@ if (function_exists('customComponents')) {
             </div>';
 
     // Card Widgets personalizzati
-    $has_widgets_data_issues = !empty($results_widgets) || !empty($results_widgets_added);
+    $has_widgets_data_issues = !empty($results_widgets) || !empty($results_widgets_added) || !empty($current_premium_widgets);
 
     // Conta gli avvisi per tipo
     $widgets_danger_count = 0;
     $widgets_warning_count = 0;
     $widgets_info_count = 0;
+    $widgets_premium_count = 0;
 
     if ($has_widgets_data_issues) {
         foreach ($results_widgets as $module_key => $module_widgets) {
             if (is_array($module_widgets)) {
                 foreach ($module_widgets as $widget_name => $widget) {
+                    if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                        continue;
+                    }
+
                     if (!$widget['current']) {
                         ++$widgets_danger_count;
                     } else {
@@ -1045,11 +1052,19 @@ if (function_exists('customComponents')) {
         foreach ($results_widgets_added as $module_key => $module_widgets) {
             if (is_array($module_widgets)) {
                 foreach ($module_widgets as $widget_name => $widget) {
-                    if ($widget['current'] == null) {
+                    if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                        continue;
+                    }
+
+                    if ($widget['expected'] == null) {
                         ++$widgets_info_count;
                     }
                 }
             }
+        }
+
+        foreach ($current_premium_widgets as $module_widgets) {
+            $widgets_premium_count += count((array) $module_widgets);
         }
     }
 
@@ -1061,6 +1076,11 @@ if (function_exists('customComponents')) {
     $widgets_icon = $widgets_colors['icon'];
 
     $widgets_badge_html = Utils::generateBadgeHtml($widgets_danger_count, $widgets_warning_count, $widgets_info_count);
+    
+    // Aggiungi badge per i widgets premium
+    if ($widgets_premium_count > 0) {
+        $widgets_badge_html .= '<span class="badge badge-primary ml-2">'.$widgets_premium_count.'</span>';
+    }
 
     echo '
             <div class="card card-outline card-'.$widgets_card_color.' requirements-card mb-2 collapsable collapsed-card">

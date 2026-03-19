@@ -28,7 +28,13 @@ use Update;
 
 $query_conflitti = [];
 
-// Funzioni per il controllo database (wrapper per compatibilità)
+// ========================================================================
+// FUNZIONI HELPER PER CONTROLLO WIDGETS
+// ========================================================================
+
+/**
+ * Wrapper per compatibilità - Calcola differenze widgets
+ */
 if (!function_exists('widgets_diff')) {
     function widgets_diff($expected, $current)
     {
@@ -36,12 +42,148 @@ if (!function_exists('widgets_diff')) {
     }
 }
 
-// Funzione per trovare i widgets aggiunti (non previsti)
+/**
+ * Wrapper per compatibilità - Trova widgets aggiunti
+ */
 if (!function_exists('widgets_added')) {
     function widgets_added($current, $expected)
     {
         return IntegrityChecker::widgetsAdded($current, $expected);
     }
+}
+
+/**
+ * Carica e prepara i dati di riferimento per i widgets
+ */
+function loadWidgetsReferenceData()
+{
+    $contents_widgets = file_get_contents(base_dir().'/widgets.json');
+    $data_widgets = json_decode($contents_widgets, true);
+    $widgets_reference_data = aggiornamentiMergeWidgetsReferenceData($data_widgets);
+
+    return [
+        'data' => $widgets_reference_data['data'],
+        'premium_widgets' => $widgets_reference_data['premium_widgets'],
+    ];
+}
+
+/**
+ * Calcola i conteggi per i widgets
+ */
+function calculateWidgetsCounts($results_widgets, $results_widgets_added, $current_premium_widgets, $premium_widgets, $data_widgets)
+{
+    $danger_count = 0;
+    $warning_count = 0;
+    $info_count = 0;
+    $premium_count = 0;
+
+    foreach ($results_widgets as $module_key => $module_widgets) {
+        if (is_array($module_widgets)) {
+            foreach ($module_widgets as $widget_name => $widget) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+                if (!isset($widget['current']) || !$widget['current']) {
+                    ++$danger_count;
+                } else {
+                    ++$warning_count;
+                }
+            }
+        }
+    }
+
+    foreach ($results_widgets_added as $module_key => $module_widgets) {
+        if (is_array($module_widgets)) {
+            foreach ($module_widgets as $widget_name => $widget) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+                if (!isset($widget['expected']) || $widget['expected'] == null) {
+                    ++$info_count;
+                }
+            }
+        }
+    }
+
+    foreach ($current_premium_widgets as $module_widgets) {
+        $premium_count += count((array) $module_widgets);
+    }
+
+    return compact('danger_count', 'warning_count', 'info_count', 'premium_count');
+}
+
+/**
+ * Renderizza una riga di widget mancante o modificato
+ */
+function renderWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets, &$query_conflitti)
+{
+    if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+        return '';
+    }
+
+    $badge_text = '';
+    $badge_color = '';
+
+    if (!isset($widget['current']) || !$widget['current']) {
+        $query = "INSERT INTO `zz_widgets` (`name`, `id_module`, `query`) VALUES ('".$widget_name."', '".$module_key."', '".$widget['expected']."')";
+        $query_conflitti[] = $query.';';
+        $badge_text = 'Widget mancante';
+        $badge_color = 'danger';
+    } else {
+        $query = 'UPDATE `zz_widgets` SET `query` = '.prepare($widget['expected']).' WHERE `name` = '.prepare($widget_name).' AND `id_module` = '.prepare($module_key);
+        $query_conflitti[] = $query.';';
+        $badge_text = 'Widget modificato';
+        $badge_color = 'warning';
+    }
+
+    return '
+                    <tr>
+                        <td class="column-name">'.$widget_name.'</td>
+                        <td>'.$module_key.'</td>
+                        <td class="text-center"><span class="badge badge-'.$badge_color.'">'.$badge_text.'</span></td>
+                        <td class="column-conflict">'.$query.';</td>
+                    </tr>';
+}
+
+/**
+ * Renderizza una riga di widget non previsto
+ */
+function renderUnexpectedWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets)
+{
+    if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+        return '';
+    }
+
+    if (!isset($widget['expected']) || $widget['expected'] == null) {
+        return '
+                    <tr>
+                        <td class="column-name">'.$widget_name.'</td>
+                        <td>'.$module_key.'</td>
+                        <td class="text-center"><span class="badge badge-info">Widget non previsto</span></td>
+                        <td class="column-conflict">'.($widget['expected'] ?? '').'</td>
+                    </tr>';
+    }
+
+    return '';
+}
+
+/**
+ * Renderizza una riga di widget premium
+ */
+function renderPremiumWidgetRow($module_key, $widget_name, $widget)
+{
+    $premium_widget = $widget['premium_widget'] ?? [];
+    $badge_text = (($premium_widget['type'] ?? 'module') === 'plugin')
+        ? 'Widget plugin '.$premium_widget['name']
+        : 'Widget modulo '.$premium_widget['name'];
+
+    return '
+                    <tr>
+                        <td class="column-name">'.$widget_name.'</td>
+                        <td>'.$module_key.'</td>
+                        <td class="text-center"><span class="badge badge-primary">'.$badge_text.'</span></td>
+                        <td class="column-conflict">'.($widget['expected'] ?? $widget['current'] ?? '').'</td>
+                    </tr>';
 }
 
 $file = basename(__FILE__);
@@ -72,14 +214,10 @@ $(document).ready(function () {
     return;
 }
 
-// Carica il file di riferimento principale per i widgets
-$contents_widgets = file_get_contents(base_dir().'/widgets.json');
-$data_widgets = json_decode($contents_widgets, true);
-
-// Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di moduli e plugin
-$widgets_reference_data = aggiornamentiMergeWidgetsReferenceData($data_widgets);
-$data_widgets = $widgets_reference_data['data'];
-$premium_widgets = $widgets_reference_data['premium_widgets'];
+// Carica i dati di riferimento per i widgets
+$reference_data = loadWidgetsReferenceData();
+$data_widgets = $reference_data['data'];
+$premium_widgets = $reference_data['premium_widgets'];
 
 $widgets = Update::getWidgets();
 $current_premium_widgets = aggiornamentiGetCurrentPremiumWidgets($widgets, $premium_widgets, $data_widgets);
@@ -87,52 +225,17 @@ $results_widgets = widgets_diff($data_widgets, $widgets);
 $results_widgets_added = widgets_added($widgets, $data_widgets);
 
 if (!empty($results_widgets) || !empty($results_widgets_added) || !empty($current_premium_widgets)) {
-    $widgets_danger_count = 0;
-    $widgets_warning_count = 0;
-    $widgets_info_count = 0;
-    $widgets_premium_count = 0;
-
-    foreach ($results_widgets as $module_key => $module_widgets) {
-        if (is_array($module_widgets)) {
-            foreach ($module_widgets as $widget_name => $widget) {
-                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
-                    continue;
-                }
-
-                if (!isset($widget['current']) || !$widget['current']) {
-                    ++$widgets_danger_count;
-                } else {
-                    ++$widgets_warning_count;
-                }
-            }
-        }
-    }
-
-    foreach ($results_widgets_added as $module_key => $module_widgets) {
-        if (is_array($module_widgets)) {
-            foreach ($module_widgets as $widget_name => $widget) {
-                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
-                    continue;
-                }
-
-                if (!isset($widget['expected']) || $widget['expected'] == null) {
-                    ++$widgets_info_count;
-                }
-            }
-        }
-    }
-
-    foreach ($current_premium_widgets as $module_widgets) {
-        $widgets_premium_count += count((array) $module_widgets);
-    }
+    // Calcola i conteggi
+    $counts = calculateWidgetsCounts($results_widgets, $results_widgets_added, $current_premium_widgets, $premium_widgets, $data_widgets);
+    $widgets_danger_count = $counts['danger_count'];
+    $widgets_warning_count = $counts['warning_count'];
+    $widgets_info_count = $counts['info_count'];
+    $widgets_premium_count = $counts['premium_count'];
 
     $widgets_badge_html = Utils::generateBadgeHtml($widgets_danger_count, $widgets_warning_count, $widgets_info_count);
-    
-    // Aggiungi badge per i widgets premium
     if ($widgets_premium_count > 0) {
         $widgets_badge_html .= '<span class="badge badge-primary ml-2">'.$widgets_premium_count.'</span>';
     }
-    
     $widgets_border_color = Utils::determineBorderColor($widgets_danger_count, $widgets_warning_count);
 
     echo '
@@ -156,102 +259,32 @@ if (!empty($results_widgets) || !empty($results_widgets_added) || !empty($curren
                     </tr>
                 </thead>
                 <tbody>';
+
+    // Renderizza widgets mancanti o modificati
     foreach ($results_widgets as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
-                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
-                    continue;
-                }
-
-                $badge_text = '';
-                $badge_color = '';
-                if (!isset($widget['current']) || !$widget['current']) {
-                    $query = "INSERT INTO `zz_widgets` (`name`, `id_module`, `query`) VALUES ('".$widget_name."', '".$module_key."', '".$widget['expected']."')";
-                    $query_conflitti[] = $query.';';
-                    $badge_text = 'Widget mancante';
-                    $badge_color = 'danger';
-                } else {
-                    $query = 'UPDATE `zz_widgets` SET `query` = '.prepare($widget['expected']).' WHERE `name` = '.prepare($widget_name).' AND `id_module` = '.prepare($module_key);
-                    $query_conflitti[] = $query.';';
-                    $badge_text = 'Widget modificato';
-                    $badge_color = 'warning';
-                }
-
-                echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$widget_name.'
-                        </td>
-                        <td>
-                            '.$module_key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.$query.';
-                        </td>
-                    </tr>';
+                echo renderWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets, $query_conflitti);
             }
         }
     }
 
+    // Renderizza widgets non previsti
     foreach ($results_widgets_added as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
-                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
-                    continue;
-                }
-
-                if (!isset($widget['expected']) || $widget['expected'] == null) {
-                    $badge_text = 'Widget non previsto';
-                    $badge_color = 'info';
-                    echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$widget_name.'
-                        </td>
-                        <td>
-                            '.$module_key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.($widget['expected'] ?? '').'
-                        </td>
-                    </tr>';
-                }
+                echo renderUnexpectedWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets);
             }
         }
     }
 
+    // Renderizza widgets premium
     foreach ($current_premium_widgets as $module_key => $module_widgets) {
         if (!is_array($module_widgets)) {
             continue;
         }
-
         foreach ($module_widgets as $widget_name => $widget) {
-            $premium_widget = $widget['premium_widget'] ?? [];
-            $badge_text = (($premium_widget['type'] ?? 'module') === 'plugin')
-                ? 'Widget plugin '.$premium_widget['name']
-                : 'Widget modulo '.$premium_widget['name'];
-
-            echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$widget_name.'
-                        </td>
-                        <td>
-                            '.$module_key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-primary">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.($widget['expected'] ?? $widget['current'] ?? '').'
-                        </td>
-                    </tr>';
+            echo renderPremiumWidgetRow($module_key, $widget_name, $widget);
         }
     }
 

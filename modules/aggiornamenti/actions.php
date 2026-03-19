@@ -34,65 +34,102 @@ use Modules\Aggiornamenti\Controlli\ReaValidi;
 use Modules\Aggiornamenti\Controlli\TabelleLanguage;
 use Modules\Aggiornamenti\UpdateHook;
 
+// ========================================================================
+// FUNZIONI HELPER PER VALIDAZIONE QUERY
+// ========================================================================
+
+/**
+ * Definisce i pattern SQL sicuri per la validazione
+ */
+function getAllowedSqlPatterns()
+{
+    return [
+        '/^ALTER\s+TABLE\s+`?[\w]+`?\s+(ADD|MODIFY|CHANGE|DROP)\s+(COLUMN\s+)?`?[\w]+`?/i',
+        '/^CREATE\s+(UNIQUE\s+)?INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?\s*\(/i',
+        '/^DROP\s+INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?$/i',
+        '/^UPDATE\s+`?zz_views`?\s+SET\s+/i',
+        '/^INSERT\s+INTO\s+`?zz_\w+`?\s*\(/i',
+        '/^DELETE\s+FROM\s+`?zz_\w+`?\s+WHERE\s+/i',
+    ];
+}
+
+/**
+ * Valida una singola query rispetto ai pattern sicuri
+ */
+function isQuerySafe($query, $allowed_patterns)
+{
+    foreach ($allowed_patterns as $pattern) {
+        if (preg_match($pattern, trim((string) $query))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Filtra le query sicure da quelle pericolose
+ */
+function filterSafeQueries($queries, $allowed_patterns)
+{
+    $safe_queries = [];
+    $rejected = [];
+
+    foreach ($queries as $query) {
+        if (isQuerySafe($query, $allowed_patterns)) {
+            $safe_queries[] = $query;
+        } else {
+            $rejected[] = $query;
+        }
+    }
+
+    return compact('safe_queries', 'rejected');
+}
+
+/**
+ * Esegue le query sicure e ritorna i risultati
+ */
+function executeQueries($safe_queries, $dbo)
+{
+    $errors = [];
+    $executed = 0;
+
+    foreach ($safe_queries as $query) {
+        try {
+            $dbo->query($query);
+            ++$executed;
+        } catch (Exception) {
+            $errors[] = tr('Errore durante l\'esecuzione di una query.');
+        }
+    }
+
+    return compact('errors', 'executed');
+}
+
+// ========================================================================
+// LOGICA PRINCIPALE
+// ========================================================================
+
 $id = post('id');
 
 switch (filter('op')) {
     case 'risolvi-conflitti-database':
         $queries_json = post('queries');
         if (empty($queries_json)) {
-            echo json_encode([
-                'success' => false,
-                'message' => tr('Nessuna query ricevuta.'),
-            ]);
+            echo json_encode(['success' => false, 'message' => tr('Nessuna query ricevuta.')]);
             break;
         }
 
         $queries = json_decode($queries_json, true);
         if (empty($queries)) {
-            echo json_encode([
-                'success' => false,
-                'message' => tr('Nessuna query da eseguire.'),
-            ]);
+            echo json_encode(['success' => false, 'message' => tr('Nessuna query da eseguire.')]);
             break;
         }
 
-        if (empty($queries)) {
-            echo json_encode([
-                'success' => false,
-                'message' => tr('Nessuna query valida da eseguire.'),
-            ]);
-            break;
-        }
-
-        // TODO: Blindare maggiormente le query che il gestionale ha generato per la correzione dei conflitti a database
-        // WHITELIST: Permetti solo pattern SQL sicuri
-        $allowed_patterns = [
-            '/^ALTER\s+TABLE\s+`?[\w]+`?\s+(ADD|MODIFY|CHANGE|DROP)\s+(COLUMN\s+)?`?[\w]+`?/i',
-            '/^CREATE\s+(UNIQUE\s+)?INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?\s*\(/i',
-            '/^DROP\s+INDEX\s+`?[\w]+`?\s+ON\s+`?[\w]+`?$/i',
-            '/^UPDATE\s+`?zz_views`?\s+SET\s+/i',
-            '/^INSERT\s+INTO\s+`?zz_\w+`?\s*\(/i',
-            '/^DELETE\s+FROM\s+`?zz_\w+`?\s+WHERE\s+/i',
-        ];
-
-        $safe_queries = [];
-        $rejected = [];
-
-        foreach ($queries as $query) {
-            $is_safe = false;
-            foreach ($allowed_patterns as $pattern) {
-                if (preg_match($pattern, trim((string) $query))) {
-                    $is_safe = true;
-                    break;
-                }
-            }
-
-            if ($is_safe) {
-                $safe_queries[] = $query;
-            } else {
-                $rejected[] = $query;
-            }
-        }
+        // Valida le query
+        $allowed_patterns = getAllowedSqlPatterns();
+        $filter_result = filterSafeQueries($queries, $allowed_patterns);
+        $safe_queries = $filter_result['safe_queries'];
+        $rejected = $filter_result['rejected'];
 
         if (!empty($rejected)) {
             echo json_encode([
@@ -104,36 +141,21 @@ switch (filter('op')) {
         }
 
         if (empty($safe_queries)) {
-            echo json_encode([
-                'success' => false,
-                'message' => tr('Nessuna query valida da eseguire dopo la validazione.'),
-            ]);
+            echo json_encode(['success' => false, 'message' => tr('Nessuna query valida da eseguire dopo la validazione.')]);
             break;
         }
 
+        // Esegui le query
         $debug_queries = implode('<br>', $safe_queries);
-
-        $errors = [];
-        $executed = 0;
-
-        foreach ($safe_queries as $query) {
-            try {
-                $dbo->query($query);
-                ++$executed;
-            } catch (Exception) {
-                // Sanifica il messaggio di errore per evitare leak di informazioni
-                $errors[] = tr('Errore durante l\'esecuzione di una query.');
-            }
-        }
+        $execution_result = executeQueries($safe_queries, $dbo);
+        $errors = $execution_result['errors'];
+        $executed = $execution_result['executed'];
 
         if (empty($errors)) {
-            $success_message = tr('Tutte le query sono state eseguite con successo (_NUM_ query).', [
-                '_NUM_' => $executed,
-            ]);
-
+            $success_message = tr('Tutte le query sono state eseguite con successo (_NUM_ query).', ['_NUM_' => $executed]);
             flash()->info($success_message);
 
-            // Log dell'operazione di risoluzione conflitti database
+            // Log dell'operazione
             OperationLog::setInfo('id_module', $id_module ?? null);
             OperationLog::setInfo('options', json_encode([
                 'queries_executed' => $executed,

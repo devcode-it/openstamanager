@@ -18,34 +18,45 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
+// ========================================================================
+// FUNZIONI HELPER PER RICERCA FILE PERSONALIZZATI
+// ========================================================================
+
+/**
+ * Cerca file personalizzati in una directory
+ */
+function findCustomFilesInDirectory($base_path)
+{
+    $files = glob($base_path.'/*.{php,html}', GLOB_BRACE) ?: [];
+    $recursive_files = glob($base_path.'/**/*.{php,html}', GLOB_BRACE) ?: [];
+    return array_merge($files, $recursive_files);
+}
+
+/**
+ * Estrae il percorso base da un file personalizzato
+ */
+function extractBasePathFromCustomFile($file)
+{
+    $file = str_replace(base_dir().'/', '', $file);
+    return explode('/custom/', $file)[0];
+}
+
+/**
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
  */
-
 if (!function_exists('customStructure')) {
     function customStructure()
     {
         $results = [];
-
-        $dirs = [
-            'modules',
-            'templates',
-            'plugins',
-        ];
+        $dirs = ['modules', 'templates', 'plugins'];
 
         // Controlli di personalizzazione fisica
         foreach ($dirs as $dir) {
-            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE) ?: [];
-            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
-
-            $files = array_merge($files, $recursive_files);
-
+            $files = findCustomFilesInDirectory(base_dir().'/'.$dir.'/*/custom');
             foreach ($files as $file) {
-                $file = str_replace(base_dir().'/', '', $file);
-                $result = explode('/custom/', $file)[0];
-
+                $result = extractBasePathFromCustomFile($file);
                 if (!in_array($result, $results)) {
                     $results[] = $result;
                 }
@@ -53,15 +64,9 @@ if (!function_exists('customStructure')) {
         }
 
         // Gestione cartella include
-        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE) ?: [];
-        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
-
-        $files = array_merge($files, $recursive_files);
-
+        $files = findCustomFilesInDirectory(base_dir().'/include/custom');
         foreach ($files as $file) {
-            $file = str_replace(base_dir().'/', '', $file);
-            $result = explode('/custom/', $file)[0];
-
+            $result = extractBasePathFromCustomFile($file);
             if (!in_array($result, $results)) {
                 $results[] = $result;
             }
@@ -250,7 +255,27 @@ if (!function_exists('customViews')) {
     }
 }
 
-/*
+/**
+ * Raggruppa file personalizzati per percorso
+ */
+function groupCustomFilesByPath($files)
+{
+    $grouped = [];
+    foreach ($files as $file) {
+        $file = str_replace(base_dir().'/', '', $file);
+        $path_parts = explode('/custom/', $file);
+        $base_path = $path_parts[0];
+        $file_name = basename($file);
+
+        if (!isset($grouped[$base_path])) {
+            $grouped[$base_path] = [];
+        }
+        $grouped[$base_path][] = $file_name;
+    }
+    return $grouped;
+}
+
+/**
  * Ottiene l'elenco dei file presenti nelle cartelle custom.
  *
  * @return array
@@ -259,32 +284,12 @@ if (!function_exists('customStructureWithFiles')) {
     function customStructureWithFiles()
     {
         $results = [];
-
-        $dirs = [
-            'modules',
-            'templates',
-            'plugins',
-        ];
+        $dirs = ['modules', 'templates', 'plugins'];
 
         // Controlli di personalizzazione fisica
         foreach ($dirs as $dir) {
-            $files = glob(base_dir().'/'.$dir.'/*/custom/*.{php,html}', GLOB_BRACE) ?: [];
-            $recursive_files = glob(base_dir().'/'.$dir.'/*/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
-
-            $files = array_merge($files, $recursive_files);
-
-            $grouped_files = [];
-            foreach ($files as $file) {
-                $file = str_replace(base_dir().'/', '', $file);
-                $path_parts = explode('/custom/', $file);
-                $base_path = $path_parts[0];
-                $file_name = basename($file);
-
-                if (!isset($grouped_files[$base_path])) {
-                    $grouped_files[$base_path] = [];
-                }
-                $grouped_files[$base_path][] = $file_name;
-            }
+            $files = findCustomFilesInDirectory(base_dir().'/'.$dir.'/*/custom');
+            $grouped_files = groupCustomFilesByPath($files);
 
             foreach ($grouped_files as $path => $file_list) {
                 $results[] = [
@@ -295,18 +300,9 @@ if (!function_exists('customStructureWithFiles')) {
         }
 
         // Gestione cartella include
-        $files = glob(base_dir().'/include/custom/*.{php,html}', GLOB_BRACE) ?: [];
-        $recursive_files = glob(base_dir().'/include/custom/**/*.{php,html}', GLOB_BRACE) ?: [];
-
-        $files = array_merge($files, $recursive_files);
-
+        $files = findCustomFilesInDirectory(base_dir().'/include/custom');
         if (!empty($files)) {
-            $include_files = [];
-            foreach ($files as $file) {
-                $file = str_replace(base_dir().'/', '', $file);
-                $include_files[] = basename($file);
-            }
-
+            $include_files = array_map(fn ($file) => basename(str_replace(base_dir().'/', '', $file)), $files);
             $results[] = [
                 'path' => 'include',
                 'files' => $include_files,

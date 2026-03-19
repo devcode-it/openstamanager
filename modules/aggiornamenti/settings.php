@@ -27,12 +27,138 @@ use Update;
 
 $query_conflitti = [];
 
-// Funzioni per il controllo database (wrapper per compatibilità)
+// ========================================================================
+// FUNZIONI HELPER PER CONTROLLO IMPOSTAZIONI
+// ========================================================================
+
+/**
+ * Wrapper per compatibilità - Calcola differenze impostazioni
+ */
 if (!function_exists('settings_diff')) {
     function settings_diff($expected, $current)
     {
         return IntegrityChecker::settingsDiff($expected, $current);
     }
+}
+
+/**
+ * Carica e prepara i dati di riferimento per le impostazioni
+ */
+function loadSettingsReferenceData()
+{
+    $contents = file_get_contents(base_dir().'/settings.json');
+    $data_settings = json_decode($contents, true);
+    $settings_reference_data = aggiornamentiMergeSettingsReferenceData($data_settings);
+
+    return [
+        'data' => $settings_reference_data['data'],
+        'premium_settings' => $settings_reference_data['premium_settings'],
+    ];
+}
+
+/**
+ * Calcola i conteggi per le impostazioni
+ */
+function calculateSettingsCounts($results_settings, $results_settings_added, $current_premium_settings, $premium_settings)
+{
+    $danger_count = 0;
+    $warning_count = 0;
+    $info_count = 0;
+    $premium_count = count($current_premium_settings);
+
+    foreach ($results_settings as $key => $setting) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+        if (!$setting['current']) {
+            ++$danger_count;
+        } else {
+            ++$warning_count;
+        }
+    }
+
+    foreach ($results_settings_added as $key => $setting) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+        if ($setting['current'] == null) {
+            ++$info_count;
+        }
+    }
+
+    return compact('danger_count', 'warning_count', 'info_count', 'premium_count');
+}
+
+/**
+ * Renderizza una riga di impostazione mancante o modificata
+ */
+function renderSettingRow($key, $setting, $premium_settings, &$query_conflitti)
+{
+    if (isset($premium_settings[$key])) {
+        return '';
+    }
+
+    $badge_text = '';
+    $badge_color = '';
+
+    if (!$setting['current']) {
+        $valore_value = ($setting['expected'] === null) ? 'NULL' : prepare($setting['expected']);
+        $query = 'INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('.prepare($key).', '.$valore_value.", 'string', 1, 'Generali')";
+        $query_conflitti[] = $query.';';
+        $badge_text = 'Impostazione mancante';
+        $badge_color = 'danger';
+    } else {
+        $query = 'UPDATE `zz_settings` SET `tipo` = '.prepare($setting['expected']).' WHERE `nome` = '.prepare($key);
+        $query_conflitti[] = $query.';';
+        $badge_text = 'Impostazione modificata';
+        $badge_color = 'warning';
+    }
+
+    return '
+                    <tr>
+                        <td class="column-name">'.$key.'</td>
+                        <td class="text-center"><span class="badge badge-'.$badge_color.'">'.$badge_text.'</span></td>
+                        <td class="column-conflict">'.$query.';</td>
+                    </tr>';
+}
+
+/**
+ * Renderizza una riga di impostazione non prevista
+ */
+function renderUnexpectedSettingRow($key, $setting, $premium_settings)
+{
+    if (isset($premium_settings[$key])) {
+        return '';
+    }
+
+    if ($setting['current'] == null) {
+        return '
+                    <tr>
+                        <td class="column-name">'.$key.'</td>
+                        <td class="text-center"><span class="badge badge-info">Impostazione non prevista</span></td>
+                        <td class="column-conflict">'.$setting['expected'].'</td>
+                    </tr>';
+    }
+
+    return '';
+}
+
+/**
+ * Renderizza una riga di impostazione premium
+ */
+function renderPremiumSettingRow($key, $setting)
+{
+    $premium_setting = $setting['premium_setting'] ?? [];
+    $badge_text = (($premium_setting['type'] ?? 'module') === 'plugin')
+        ? 'Impostazione plugin '.$premium_setting['name']
+        : 'Impostazione modulo '.$premium_setting['name'];
+
+    return '
+                    <tr>
+                        <td class="column-name">'.$key.'</td>
+                        <td class="text-center"><span class="badge badge-primary">'.$badge_text.'</span></td>
+                        <td class="column-conflict">'.($setting['expected'] ?? $setting['current'] ?? '').'</td>
+                    </tr>';
 }
 
 $file = basename(__FILE__);
@@ -63,12 +189,10 @@ $(document).ready(function () {
     return;
 }
 
-// Carica il file di riferimento principale per le impostazioni
-$contents = file_get_contents(base_dir().'/settings.json');
-$data_settings = json_decode($contents, true);
-$settings_reference_data = aggiornamentiMergeSettingsReferenceData($data_settings);
-$data_settings = $settings_reference_data['data'];
-$premium_settings = $settings_reference_data['premium_settings'];
+// Carica i dati di riferimento per le impostazioni
+$reference_data = loadSettingsReferenceData();
+$data_settings = $reference_data['data'];
+$premium_settings = $reference_data['premium_settings'];
 
 $settings = Update::getSettings();
 $current_premium_settings = aggiornamentiGetCurrentPremiumSettings($settings, $premium_settings, $data_settings);
@@ -76,34 +200,12 @@ $results_settings = settings_diff($data_settings, $settings);
 $results_settings_added = settings_diff($settings, $data_settings);
 
 if (!empty($results_settings) || !empty($results_settings_added) || !empty($current_premium_settings)) {
-    $settings_danger_count = 0;
-    $settings_warning_count = 0;
-    $settings_info_count = 0;
-    $settings_premium_count = 0;
-
-    foreach ($results_settings as $key => $setting) {
-        if (isset($premium_settings[$key])) {
-            continue;
-        }
-
-        if (!$setting['current']) {
-            ++$settings_danger_count;
-        } else {
-            ++$settings_warning_count;
-        }
-    }
-
-    foreach ($results_settings_added as $key => $setting) {
-        if (isset($premium_settings[$key])) {
-            continue;
-        }
-
-        if ($setting['current'] == null) {
-            ++$settings_info_count;
-        }
-    }
-
-    $settings_premium_count = count($current_premium_settings);
+    // Calcola i conteggi
+    $counts = calculateSettingsCounts($results_settings, $results_settings_added, $current_premium_settings, $premium_settings);
+    $settings_danger_count = $counts['danger_count'];
+    $settings_warning_count = $counts['warning_count'];
+    $settings_info_count = $counts['info_count'];
+    $settings_premium_count = $counts['premium_count'];
 
     $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
     if ($settings_premium_count > 0) {
@@ -131,83 +233,20 @@ if (!empty($results_settings) || !empty($results_settings_added) || !empty($curr
                     </tr>
                 </thead>
                 <tbody>';
+
+    // Renderizza impostazioni mancanti o modificate
     foreach ($results_settings as $key => $setting) {
-        if (isset($premium_settings[$key])) {
-            continue;
-        }
-
-        $badge_text = '';
-        $badge_color = '';
-        if (!$setting['current']) {
-            // Gestisci il caso di valore null
-            $valore_value = ($setting['expected'] === null) ? 'NULL' : prepare($setting['expected']);
-            $query = 'INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('.prepare($key).', '.$valore_value.", 'string', 1, 'Generali')";
-            $query_conflitti[] = $query.';';
-            $badge_text = 'Impostazione mancante';
-            $badge_color = 'danger';
-        } else {
-            $query = 'UPDATE `zz_settings` SET `tipo` = '.prepare($setting['expected']).' WHERE `nome` = '.prepare($key);
-            $query_conflitti[] = $query.';';
-            $badge_text = 'Impostazione modificata';
-            $badge_color = 'warning';
-        }
-
-        echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.$query.';
-                        </td>
-                    </tr>';
+        echo renderSettingRow($key, $setting, $premium_settings, $query_conflitti);
     }
 
+    // Renderizza impostazioni non previste
     foreach ($results_settings_added as $key => $setting) {
-        if (isset($premium_settings[$key])) {
-            continue;
-        }
-
-        if ($setting['current'] == null) {
-            $badge_text = 'Impostazione non prevista';
-            $badge_color = 'info';
-
-            echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.$setting['expected'].'
-                        </td>
-                    </tr>';
-        }
+        echo renderUnexpectedSettingRow($key, $setting, $premium_settings);
     }
 
+    // Renderizza impostazioni premium
     foreach ($current_premium_settings as $key => $setting) {
-        $premium_setting = $setting['premium_setting'] ?? [];
-        $badge_text = (($premium_setting['type'] ?? 'module') === 'plugin')
-            ? 'Impostazione plugin '.$premium_setting['name']
-            : 'Impostazione modulo '.$premium_setting['name'];
-
-        echo '
-                    <tr>
-                        <td class="column-name">
-                            '.$key.'
-                        </td>
-                        <td class="text-center">
-                            <span class="badge badge-primary">'.$badge_text.'</span>
-                        </td>
-                        <td class="column-conflict">
-                            '.($setting['expected'] ?? $setting['current'] ?? '').'
-                        </td>
-                    </tr>';
+        echo renderPremiumSettingRow($key, $setting);
     }
 
     echo '

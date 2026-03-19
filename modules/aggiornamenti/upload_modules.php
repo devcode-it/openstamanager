@@ -24,6 +24,7 @@ use Models\Module;
 use Models\Plugin;
 use Util\Zip;
 
+// Validazione preliminare
 if (!setting('Attiva aggiornamenti')) {
     exit(tr('Accesso negato'));
 }
@@ -38,8 +39,200 @@ if (!extension_loaded('zip')) {
 
 $extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 
-// Aggiornamento del progetto
+// ============================================================================
+// FUNZIONI HELPER PER GESTIONE COMPONENTI
+// ============================================================================
+
+/**
+ * Crea un Finder ottimizzato per cercare file di configurazione
+ */
+function createComponentFinder($extraction_dir)
+{
+    return Symfony\Component\Finder\Finder::create()
+        ->files()
+        ->ignoreDotFiles(true)
+        ->ignoreVCS(true)
+        ->in($extraction_dir);
+}
+
+/**
+ * Estrae il tipo di componente dal nome del file
+ */
+function getComponentType($filename)
+{
+    $types = [
+        'MODULE' => 'module',
+        'PLUGIN' => 'plugin',
+        'TEMPLATES' => 'template',
+    ];
+
+    return $types[$filename] ?? null;
+}
+
+/**
+ * Ottiene la configurazione del componente in base al tipo
+ */
+function getComponentConfig($type)
+{
+    $configs = [
+        'module' => [
+            'directory' => 'modules',
+            'table' => 'zz_modules',
+        ],
+        'plugin' => [
+            'directory' => 'plugins',
+            'table' => 'zz_plugins',
+        ],
+        'template' => [
+            'directory' => 'templates',
+            'table' => 'zz_prints',
+        ],
+    ];
+
+    return $configs[$type] ?? [];
+}
+
+/**
+ * Verifica se un componente è già installato
+ */
+function isComponentInstalled($type, $info)
+{
+    switch ($type) {
+        case 'module':
+            return Module::where('name', $info['name'])->first();
+        case 'plugin':
+            return Plugin::where('name', $info['name'])->first();
+        case 'template':
+            return isset(Prints::getPrints()[$info['name']]);
+        default:
+            return false;
+    }
+}
+
+/**
+ * Prepara i dati per l'inserimento nel database
+ */
+function prepareInsertData($type, $info)
+{
+    $baseData = [
+        'directory' => $info['directory'],
+        'name' => $info['name'],
+        'options' => $info['options'] ?? '',
+        'version' => $info['version'] ?? '',
+        'compatibility' => $info['compatibility'] ?? '',
+        'order' => 100,
+        'enabled' => 1,
+    ];
+
+    switch ($type) {
+        case 'module':
+            return array_merge($baseData, [
+                'default' => 0,
+                'icon' => $info['icon'] ?? '',
+                'parent' => Module::where('name', $info['parent'] ?? '')->first()?->id,
+            ]);
+
+        case 'plugin':
+            return array_merge($baseData, [
+                'default' => 0,
+                'idmodule_from' => Module::where('name', $info['module_from'] ?? '')->first()?->id,
+                'idmodule_to' => Module::where('name', $info['module_to'] ?? '')->first()?->id,
+                'position' => $info['position'] ?? '',
+            ]);
+
+        case 'template':
+            return array_merge($baseData, [
+                'id_module' => Module::where('name', $info['module'] ?? '')->first()?->id,
+                'is_record' => $info['is_record'] ?? 0,
+                'icon' => $info['icon'] ?? '',
+                'predefined' => 0,
+            ]);
+
+        default:
+            return $baseData;
+    }
+}
+
+/**
+ * Prepara i dati per la tabella _lang
+ */
+function prepareLangData($type, $info)
+{
+    $baseLangData = [
+        'title' => $info['title'] ?? $info['name'],
+        'id_lang' => Models\Locale::getDefault()->id,
+    ];
+
+    if ($type === 'template') {
+        $baseLangData['filename'] = $info['filename'] ?? '';
+    }
+
+    return $baseLangData;
+}
+
+/**
+ * Inserisce il componente nel database
+ */
+function insertComponent($type, $info, $table, $dbo)
+{
+    $installed = isComponentInstalled($type, $info);
+
+    if (!empty($installed)) {
+        flash()->error(tr('Aggiornamento completato!'));
+        return;
+    }
+
+    $insertData = prepareInsertData($type, $info);
+    $langData = prepareLangData($type, $info);
+
+    $dbo->insert($table, $insertData);
+    $id_record = $dbo->lastInsertedID();
+
+    $langData['id_record'] = $id_record;
+    $dbo->insert("{$table}_lang", $langData);
+
+    flash()->error(tr('Installazione completata!'));
+}
+
+/**
+ * Elabora un singolo componente (modulo, plugin o template)
+ */
+function processComponent($file, $dbo)
+{
+    $filename = basename($file->getRealPath());
+    $type = getComponentType($filename);
+
+    if (!$type) {
+        return;
+    }
+
+    $info = Util\Ini::readFile($file->getRealPath());
+    $config = getComponentConfig($type);
+
+    // Copia i file nella cartella relativa
+    copyr(dirname($file->getRealPath()), base_dir().'/'.$config['directory'].'/'.$info['directory']);
+
+    // Inserisce il componente nel database
+    insertComponent($type, $info, $config['table'], $dbo);
+}
+
+// ============================================================================
+// ELABORAZIONE PRINCIPALE
+// ============================================================================
+
+// Aggiornamento del progetto (versione completa)
 if (file_exists($extraction_dir.'/VERSION')) {
+    handleProjectUpdate($extraction_dir);
+} else {
+    // Elaborazione componenti (moduli, plugin, template)
+    handleComponentsUpload($extraction_dir, $dbo);
+}
+
+/**
+ * Gestisce l'aggiornamento completo del progetto
+ */
+function handleProjectUpdate($extraction_dir)
+{
     // Salva il file di configurazione
     $config = file_get_contents(base_dir().'/config.inc.php');
 
@@ -57,160 +250,20 @@ if (file_exists($extraction_dir.'/VERSION')) {
 
     // Ripristina il file di configurazione dell'installazione
     file_put_contents(base_dir().'/config.inc.php', $config);
-} else {
-    $finder = Symfony\Component\Finder\Finder::create()
-        ->files()
-        ->ignoreDotFiles(true)
-        ->ignoreVCS(true)
-        ->in($extraction_dir);
+}
 
-    $files_module = $finder->name('MODULE');
+/**
+ * Gestisce il caricamento di componenti (moduli, plugin, template)
+ */
+function handleComponentsUpload($extraction_dir, $dbo)
+{
+    $finder = createComponentFinder($extraction_dir);
 
-    foreach ($files_module as $file) {
-        // Informazioni dal file di configurazione
-        $info = Util\Ini::readFile($file->getRealPath());
+    // Elabora tutti i file di configurazione trovati
+    $configFiles = $finder->name('MODULE')->name('PLUGIN')->name('TEMPLATES');
 
-        // Informazioni aggiuntive per il database
-        $insert = [];
-
-        // Modulo
-        if (basename($file->getRealPath()) == 'MODULE') {
-            $directory = 'modules';
-            $table = 'zz_modules';
-
-            $installed = Module::where('name', $info['name'])->first();
-        }
-
-        // Copia dei file nella cartella relativa
-        copyr(dirname($file->getRealPath()), base_dir().'/'.$directory.'/'.$info['directory']);
-
-        // Eventuale registrazione nel database
-        if (empty($installed)) {
-            $dbo->insert($table, array_merge($insert, [
-                'directory' => $info['directory'],
-                'name' => $info['name'],
-                'options' => $info['options'],
-                'version' => $info['version'],
-                'compatibility' => $info['compatibility'],
-                'order' => 100,
-                'default' => 0,
-                'enabled' => 1,
-                'icon' => $info['icon'],
-                'parent' => Module::where('name', $info['parent'])->first()->id,
-            ]));
-            $id_record = $dbo->lastInsertedID();
-            $dbo->insert($table.'_lang', array_merge($insert, [
-                'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-                'id_record' => $id_record,
-                'id_lang' => Models\Locale::getDefault()->id,
-            ]));
-
-            flash()->error(tr('Installazione completata!'));
-        } else {
-            flash()->error(tr('Aggiornamento completato!'));
-        }
-    }
-
-    $finder = Symfony\Component\Finder\Finder::create()
-        ->files()
-        ->ignoreDotFiles(true)
-        ->ignoreVCS(true)
-        ->in($extraction_dir);
-
-    $files_plugin_template = $finder->name('PLUGIN')->name('TEMPLATES');
-
-    foreach ($files_plugin_template as $file) {
-        // Informazioni dal file di configurazione
-        $info = Util\Ini::readFile($file->getRealPath());
-
-        // Informazioni aggiuntive per il database
-        $insert = [];
-        $insert_lang = [];
-
-        // Plugin
-        if (basename($file->getRealPath()) == 'PLUGIN') {
-            $directory = 'plugins';
-            $table = 'zz_plugins';
-
-            $installed = Plugin::where('name', $info['name'])->first()->id;
-            $insert['idmodule_from'] = Module::where('name', $info['module_from'])->first()->id;
-            $insert['idmodule_to'] = Module::where('name', $info['module_to'])->first()->id;
-            $insert['position'] = $info['position'];
-            $insert['default'] = 0;
-        }
-
-        // Templates
-        elseif (basename($file->getRealPath()) == 'TEMPLATES') {
-            $directory = 'templates';
-            $table = 'zz_prints';
-
-            $installed = Prints::getPrints()[$info['name']];
-            $insert['id_module'] = Module::where('name', $info['module'])->first()->id;
-            $insert['is_record'] = $info['is_record'];
-            $insert_lang['filename'] = $info['filename'];
-            $insert['icon'] = $info['icon'];
-            $insert['predefined'] = 0;
-        }
-
-        // Modules
-        else {
-            $insert['default'] = 0;
-        }
-
-        // Copia dei file nella cartella relativa
-        copyr(dirname($file->getRealPath()), base_dir().'/'.$directory.'/'.$info['directory']);
-
-        // Eventuale registrazione nel database
-        if (basename($file->getRealPath()) == 'PLUGIN') {
-            if (empty($installed)) {
-                $dbo->insert($table, array_merge($insert, [
-                    'directory' => $info['directory'],
-                    'name' => $info['name'],
-                    'options' => $info['options'],
-                    'idmodule_from' => $insert['idmodule_from'],
-                    'idmodule_to' => $insert['idmodule_to'],
-                    'position' => $insert['position'],
-                    'version' => $info['version'],
-                    'compatibility' => $info['compatibility'],
-                    'order' => 100,
-                    'enabled' => 1,
-                ]));
-                $id_record = $dbo->lastInsertedID();
-                $dbo->insert($table.'_lang', array_merge($insert_lang, [
-                    'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-                    'id_record' => $id_record,
-                    'id_lang' => Models\Locale::getDefault()->id,
-                ]));
-                flash()->error(tr('Installazione completata!'));
-            } else {
-                flash()->error(tr('Aggiornamento completato!'));
-            }
-        } else {
-            if (empty($installed)) {
-                $dbo->insert($table, array_merge($insert, [
-                    'directory' => $info['directory'],
-                    'name' => $info['name'],
-                    'options' => $info['options'],
-                    'version' => $info['version'],
-                    'compatibility' => $info['compatibility'],
-                    'id_module' => $insert['id_module'],
-                    'is_record' => $insert['is_record'],
-                    'icon' => $insert['icon'],
-                    'order' => 100,
-                    'enabled' => 1,
-                ]));
-                $id_record = $dbo->lastInsertedID();
-                $dbo->insert($table.'_lang', array_merge($insert_lang, [
-                    'title' => !empty($info['title']) ? $info['title'] : $info['name'],
-                    'id_record' => $id_record,
-                    'filename' => $insert_lang['filename'],
-                    'id_lang' => Models\Locale::getDefault()->id,
-                ]));
-                flash()->error(tr('Installazione completata!'));
-            } else {
-                flash()->error(tr('Aggiornamento completato!'));
-            }
-        }
+    foreach ($configFiles as $file) {
+        processComponent($file, $dbo);
     }
 }
 

@@ -20,6 +20,67 @@
 
 include_once __DIR__.'/../../core.php';
 
+// ========================================================================
+// FUNZIONI HELPER PER CONTROLLI
+// ========================================================================
+
+/**
+ * Carica i dati di ultima esecuzione per i controlli
+ */
+function loadLastExecutionData()
+{
+    return [
+        'showCollapsed' => 1,
+    ];
+}
+
+/**
+ * Genera il badge HTML per il conteggio degli errori
+ */
+function generateErrorBadgeHtml($count, $type = 'danger')
+{
+    if ($count <= 0) {
+        return '';
+    }
+    return ' <span class="badge badge-'.$type.' ml-2">'.$count.'</span>';
+}
+
+/**
+ * Determina le classi CSS per la card in base ai tipi di errore
+ */
+function determineCardClasses($hasDanger, $hasWarning, $hasInfo)
+{
+    if ($hasDanger) {
+        return [
+            'cardClass' => 'card-outline card-danger requirements-card mb-2 collapsable collapsed-card',
+            'headerClass' => 'requirements-card-header requirements-card-header-danger',
+            'titleClass' => 'requirements-card-title requirements-card-title-danger',
+            'icon' => 'fa-times-circle',
+        ];
+    } elseif ($hasWarning) {
+        return [
+            'cardClass' => 'card-outline card-warning requirements-card mb-2 collapsable collapsed-card',
+            'headerClass' => 'requirements-card-header requirements-card-header-warning',
+            'titleClass' => 'requirements-card-title requirements-card-title-warning',
+            'icon' => 'fa-exclamation-circle',
+        ];
+    } elseif ($hasInfo) {
+        return [
+            'cardClass' => 'card-outline card-info requirements-card mb-2 collapsable collapsed-card',
+            'headerClass' => 'requirements-card-header requirements-card-header-info',
+            'titleClass' => 'requirements-card-title requirements-card-title-info',
+            'icon' => 'fa-info-circle',
+        ];
+    } else {
+        return [
+            'cardClass' => 'card-outline card-success requirements-card mb-2 collapsable collapsed-card',
+            'headerClass' => 'requirements-card-header requirements-card-header-success',
+            'titleClass' => 'requirements-card-title requirements-card-title-success',
+            'icon' => 'fa-check-circle',
+        ];
+    }
+}
+
 // Aggiunta della classe per il modulo
 echo '<div class="module-aggiornamenti">';
 
@@ -50,10 +111,16 @@ echo '
 </div>
 
 <script>
+// ========================================================================
+// VARIABILI GLOBALI
+// ========================================================================
 var content = $("#controlli");
 var loader = $("#progress");
 var showCollapsed = 1;
 
+// ========================================================================
+// INIZIALIZZAZIONE
+// ========================================================================
 $(document).ready(function () {
     loader.hide();
 
@@ -62,6 +129,10 @@ $(document).ready(function () {
         caricaCardCollassate();
     }
 })
+
+// ========================================================================
+// FUNZIONI DI CARICAMENTO DATI
+// ========================================================================
 
 /**
 * Carica le card collassate senza eseguire i controlli
@@ -135,10 +206,14 @@ function ricaricaEsecuzione(id) {
     });
 }
 
+// ========================================================================
+// FUNZIONI DI ESECUZIONE CONTROLLI
+// ========================================================================
+
 /**
-*
-* @param button
-*/
+ * Avvia tutti i controlli in sequenza
+ * @param button
+ */
 function avviaControlli(button) {
     var restore = buttonLoading(button);
 
@@ -215,9 +290,9 @@ function avviaControlli(button) {
 }
 
 /**
-*
-* @param controllo
-*/
+ * Avvia un singolo controllo e aggiorna la card con i risultati
+ * @param controllo
+ */
 function avviaControllo(controllo) {
     return $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -429,10 +504,9 @@ function avviaControllo(controllo) {
 }
 
 /**
-* Avvia un singolo controllo
-* @param id
-* @param controlloClass
-*/
+ * Avvia un singolo controllo da un pulsante nella card
+ * @param id
+ */
 function avviaControlloSingolo(id) {
     // Recupera la card e i dati dal data attribute
     let cardElement = $("#controllo-" + id);
@@ -682,12 +756,16 @@ function avviaControlloSingolo(id) {
     });
 }
 
+// ========================================================================
+// FUNZIONI DI AZIONE E CORREZIONE
+// ========================================================================
+
 /**
-*
-* @param controllo
-* @param records
-* @param params
-*/
+ * Esegue un azione di correzione per un singolo record
+ * @param controllo
+ * @param records
+ * @param params
+ */
 function eseguiAzione(controllo, records, params) {
     return $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -746,10 +824,14 @@ function eseguiAzione(controllo, records, params) {
     });
 }
 
+// ========================================================================
+// FUNZIONI UTILITY
+// ========================================================================
+
 /**
-*
-* @param percent
-*/
+ * Imposta la percentuale della barra di progresso
+ * @param percent
+ */
 function setPercentage(percent) {
     $("#custom-progress-bar").css("width", percent + "%");
     $("#custom-progress-bar").attr("aria-valuenow", percent);
@@ -774,12 +856,12 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 /**
-*
-* @param controllo
-* @param success
-* @param records
-* @returns {*|jQuery|HTMLElement}
-*/
+ * Inizializza una card di controllo con i dati forniti
+ * @param controllo
+ * @param success
+ * @param records
+ * @returns {*|jQuery|HTMLElement}
+ */
 function initcard(controllo, success, records) {
     let cssClass = "card-outline card-info";
     let headerClass = "requirements-card-header requirements-card-header-info";
@@ -967,11 +1049,11 @@ function initcard(controllo, success, records) {
 }
 
 /**
-*
-* @param controllo
-* @param card
-* @param record
-*/
+ * Aggiunge una riga alla tabella della card
+ * @param controllo
+ * @param card
+ * @param record
+ */
 function addRiga(controllo, card, record) {
     let body = card.find("tbody");
     let hasOptions = record.options && record.options.length > 0;
@@ -1103,10 +1185,10 @@ function addRiga(controllo, card, record) {
 }
 
 /**
-* Verifica se un controllo supporta azioni globali
-* @param controllo
-* @returns {boolean}
-*/
+ * Verifica se un controllo supporta azioni globali
+ * @param controllo
+ * @returns {boolean}
+ */
 function hasGlobalActions(controllo) {
     // Lista dei controlli che supportano azioni globali
     const controlliConAzioniGlobali = [
@@ -1124,10 +1206,10 @@ function hasGlobalActions(controllo) {
 }
 
 /**
-* Restituisce il messaggio di conferma specifico per ogni controllo
-* @param controlloClass
-* @returns {object}
-*/
+ * Restituisce il messaggio di conferma specifico per ogni controllo
+ * @param controlloClass
+ * @returns {object}
+ */
 function getMessaggioConferma(controlloClass) {
     const messaggi = {
         "Modules\\\\Aggiornamenti\\\\Controlli\\\\PianoConti": {

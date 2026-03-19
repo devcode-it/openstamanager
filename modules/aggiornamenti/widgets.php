@@ -19,6 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+include_once __DIR__.'/modutil.php';
 
 use Models\OperationLog;
 use Modules\Aggiornamenti\IntegrityChecker;
@@ -76,31 +77,28 @@ $contents_widgets = file_get_contents(base_dir().'/widgets.json');
 $data_widgets = json_decode($contents_widgets, true);
 
 // Carica e accoda i widgets dai file widgets.json presenti nelle sottocartelle di moduli e plugin
-$widgets_json_files = aggiornamentiGetReferenceJsonFiles('widgets.json');
-
-if (!empty($widgets_json_files)) {
-    foreach ($widgets_json_files as $widgets_json_file) {
-        $widgets_data = aggiornamentiReadJsonFile($widgets_json_file);
-
-        if (!empty($widgets_data) && is_array($widgets_data)) {
-            // Accoda i widgets del componente a quelli principali
-            $data_widgets = array_merge($data_widgets, $widgets_data);
-        }
-    }
-}
+$widgets_reference_data = aggiornamentiMergeWidgetsReferenceData($data_widgets);
+$data_widgets = $widgets_reference_data['data'];
+$premium_widgets = $widgets_reference_data['premium_widgets'];
 
 $widgets = Update::getWidgets();
+$current_premium_widgets = aggiornamentiGetCurrentPremiumWidgets($widgets, $premium_widgets, $data_widgets);
 $results_widgets = widgets_diff($data_widgets, $widgets);
 $results_widgets_added = widgets_added($widgets, $data_widgets);
 
-if (!empty($results_widgets) || !empty($results_widgets_added)) {
+if (!empty($results_widgets) || !empty($results_widgets_added) || !empty($current_premium_widgets)) {
     $widgets_danger_count = 0;
     $widgets_warning_count = 0;
     $widgets_info_count = 0;
+    $widgets_premium_count = 0;
 
     foreach ($results_widgets as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+
                 if (!isset($widget['current']) || !$widget['current']) {
                     ++$widgets_danger_count;
                 } else {
@@ -113,14 +111,28 @@ if (!empty($results_widgets) || !empty($results_widgets_added)) {
     foreach ($results_widgets_added as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
-                if (!isset($widget['current']) || $widget['current'] == null) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+
+                if (!isset($widget['expected']) || $widget['expected'] == null) {
                     ++$widgets_info_count;
                 }
             }
         }
     }
 
+    foreach ($current_premium_widgets as $module_widgets) {
+        $widgets_premium_count += count((array) $module_widgets);
+    }
+
     $widgets_badge_html = Utils::generateBadgeHtml($widgets_danger_count, $widgets_warning_count, $widgets_info_count);
+    
+    // Aggiungi badge per i widgets premium
+    if ($widgets_premium_count > 0) {
+        $widgets_badge_html .= '<span class="badge badge-primary ml-2">'.$widgets_premium_count.'</span>';
+    }
+    
     $widgets_border_color = Utils::determineBorderColor($widgets_danger_count, $widgets_warning_count);
 
     echo '
@@ -147,6 +159,10 @@ if (!empty($results_widgets) || !empty($results_widgets_added)) {
     foreach ($results_widgets as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+
                 $badge_text = '';
                 $badge_color = '';
                 if (!isset($widget['current']) || !$widget['current']) {
@@ -183,6 +199,10 @@ if (!empty($results_widgets) || !empty($results_widgets_added)) {
     foreach ($results_widgets_added as $module_key => $module_widgets) {
         if (is_array($module_widgets)) {
             foreach ($module_widgets as $widget_name => $widget) {
+                if (aggiornamentiFindPremiumWidgetReference($module_key, $widget_name, $premium_widgets, $data_widgets) !== null) {
+                    continue;
+                }
+
                 if (!isset($widget['expected']) || $widget['expected'] == null) {
                     $badge_text = 'Widget non previsto';
                     $badge_color = 'info';
@@ -198,11 +218,40 @@ if (!empty($results_widgets) || !empty($results_widgets_added)) {
                             <span class="badge badge-'.$badge_color.'">'.$badge_text.'</span>
                         </td>
                         <td class="column-conflict">
-                            '.$widget['expected'] ?? ''.'
+                            '.($widget['expected'] ?? '').'
                         </td>
                     </tr>';
                 }
             }
+        }
+    }
+
+    foreach ($current_premium_widgets as $module_key => $module_widgets) {
+        if (!is_array($module_widgets)) {
+            continue;
+        }
+
+        foreach ($module_widgets as $widget_name => $widget) {
+            $premium_widget = $widget['premium_widget'] ?? [];
+            $badge_text = (($premium_widget['type'] ?? 'module') === 'plugin')
+                ? 'Widget plugin '.$premium_widget['name']
+                : 'Widget modulo '.$premium_widget['name'];
+
+            echo '
+                    <tr>
+                        <td class="column-name">
+                            '.$widget_name.'
+                        </td>
+                        <td>
+                            '.$module_key.'
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-primary">'.$badge_text.'</span>
+                        </td>
+                        <td class="column-conflict">
+                            '.($widget['expected'] ?? $widget['current'] ?? '').'
+                        </td>
+                    </tr>';
         }
     }
 

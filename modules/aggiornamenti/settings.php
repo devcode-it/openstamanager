@@ -71,15 +71,21 @@ $data_settings = $settings_reference_data['data'];
 $premium_settings = $settings_reference_data['premium_settings'];
 
 $settings = Update::getSettings();
+$current_premium_settings = aggiornamentiGetCurrentPremiumSettings($settings, $premium_settings, $data_settings);
 $results_settings = settings_diff($data_settings, $settings);
 $results_settings_added = settings_diff($settings, $data_settings);
 
-if (!empty($results_settings) || !empty($results_settings_added)) {
+if (!empty($results_settings) || !empty($results_settings_added) || !empty($current_premium_settings)) {
     $settings_danger_count = 0;
     $settings_warning_count = 0;
     $settings_info_count = 0;
+    $settings_premium_count = 0;
 
     foreach ($results_settings as $key => $setting) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+
         if (!$setting['current']) {
             ++$settings_danger_count;
         } else {
@@ -88,12 +94,21 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
     }
 
     foreach ($results_settings_added as $key => $setting) {
-        if ($setting['current'] == null && !isset($premium_settings[$key])) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+
+        if ($setting['current'] == null) {
             ++$settings_info_count;
         }
     }
 
+    $settings_premium_count = count($current_premium_settings);
+
     $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
+    if ($settings_premium_count > 0) {
+        $settings_badge_html .= '<span class="badge badge-primary ml-2">'.$settings_premium_count.'</span>';
+    }
     $settings_border_color = Utils::determineBorderColor($settings_danger_count, $settings_warning_count);
 
     echo '
@@ -117,6 +132,10 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
                 </thead>
                 <tbody>';
     foreach ($results_settings as $key => $setting) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+
         $badge_text = '';
         $badge_color = '';
         if (!$setting['current']) {
@@ -148,17 +167,13 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
     }
 
     foreach ($results_settings_added as $key => $setting) {
+        if (isset($premium_settings[$key])) {
+            continue;
+        }
+
         if ($setting['current'] == null) {
-            if (isset($premium_settings[$key])) {
-                $premium_setting = $premium_settings[$key];
-                $badge_text = (($premium_setting['type'] ?? 'module') === 'plugin')
-                    ? 'Impostazione plugin '.$premium_setting['name']
-                    : 'Impostazione modulo '.$premium_setting['name'];
-                $badge_color = 'primary';
-            } else {
-                $badge_text = 'Impostazione non prevista';
-                $badge_color = 'info';
-            }
+            $badge_text = 'Impostazione non prevista';
+            $badge_color = 'info';
 
             echo '
                     <tr>
@@ -173,6 +188,26 @@ if (!empty($results_settings) || !empty($results_settings_added)) {
                         </td>
                     </tr>';
         }
+    }
+
+    foreach ($current_premium_settings as $key => $setting) {
+        $premium_setting = $setting['premium_setting'] ?? [];
+        $badge_text = (($premium_setting['type'] ?? 'module') === 'plugin')
+            ? 'Impostazione plugin '.$premium_setting['name']
+            : 'Impostazione modulo '.$premium_setting['name'];
+
+        echo '
+                    <tr>
+                        <td class="column-name">
+                            '.$key.'
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-primary">'.$badge_text.'</span>
+                        </td>
+                        <td class="column-conflict">
+                            '.($setting['expected'] ?? $setting['current'] ?? '').'
+                        </td>
+                    </tr>';
     }
 
     echo '

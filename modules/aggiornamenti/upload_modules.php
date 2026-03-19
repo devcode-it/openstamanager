@@ -183,6 +183,30 @@ function insertComponent($type, $info, $table, $dbo)
     }
 
     $insertData = prepareInsertData($type, $info);
+
+    // Validazione per i template: il modulo deve esistere
+    if ($type === 'template' && empty($insertData['id_module'])) {
+        flash()->error(tr('Errore: il modulo "_MODULE_" non è installato. Installare prima il modulo richiesto.', [
+            '_MODULE_' => $info['module'] ?? 'sconosciuto',
+        ]));
+        return;
+    }
+
+    // Validazione per i plugin: i moduli devono esistere
+    if ($type === 'plugin' && (empty($insertData['idmodule_from']) || empty($insertData['idmodule_to']))) {
+        $missing = [];
+        if (empty($insertData['idmodule_from'])) {
+            $missing[] = $info['module_from'] ?? 'sconosciuto';
+        }
+        if (empty($insertData['idmodule_to'])) {
+            $missing[] = $info['module_to'] ?? 'sconosciuto';
+        }
+        flash()->error(tr('Errore: i moduli "_MODULES_" non sono installati. Installare prima i moduli richiesti.', [
+            '_MODULES_' => implode(', ', $missing),
+        ]));
+        return;
+    }
+
     $langData = prepareLangData($type, $info);
 
     $dbo->insert($table, $insertData);

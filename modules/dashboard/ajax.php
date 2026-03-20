@@ -256,19 +256,20 @@ switch (filter('op')) {
         break;
 
     case 'tooltip_info':
-        $id = filter('id_record');
+        $id_sessione = filter('id_record');
+        $id_intervento = filter('idintervento');
         $allDay = filter('allDay');
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
 
         if ($allDay == 'false') {
-            // Lettura dati intervento di riferimento
-            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi.id='.prepare($id).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
-            $rs = $dbo->fetchArray($query);
+            // Lettura dati sessione tecnica specifica
+            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE idanagrafica=idtecnico) AS colore FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+            $rs_sessione = $dbo->fetchArray($query);
 
-            if (!empty($rs)) {
+            if (!empty($rs_sessione)) {
                 $tecnici = [];
-                foreach ($rs as $sessione) {
+                foreach ($rs_sessione as $sessione) {
                     $tecnici[] = $sessione['nome_tecnico'].' ('.Translator::timestampToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_fine']).')';
                 }
 
@@ -280,7 +281,7 @@ switch (filter('op')) {
                         `in_statiintervento`.`id` AS parent_idstato,
                         `in_statiintervento_lang`.`title` AS stato,
                         `in_interventi`.`idtipointervento` AS parent_idtipo,
-                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
+                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
                         (SELECT idzona FROM an_anagrafiche WHERE idanagrafica=in_interventi.idanagrafica) AS idzona
                     FROM
@@ -292,7 +293,7 @@ switch (filter('op')) {
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento`
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
                     WHERE
-                        `in_interventi`.`id`='.prepare($id).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+                        `in_interventi`.`id`='.prepare($id_intervento).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
                 $rs = $dbo->fetchArray($query);
 
                 // correggo info indirizzo citta cap provincia con quelle della sede di destinazione
@@ -388,7 +389,7 @@ switch (filter('op')) {
                 LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `co_preventivi`.`id`='.prepare($id);
+                `co_preventivi`.`id`='.prepare($id_intervento);
 
             $rs = $dbo->fetchArray($query);
 

@@ -782,7 +782,8 @@ echo '
                             if ($origin.data("loaded") !== true) {
                                 $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
-                                    id_record: id_record,
+                                    id_record: info.event.id,
+                                    idintervento: id_record,
                                     allDay: info.event.allDay,
                                 }, function (data, response) {
                                     if (data !== "") {

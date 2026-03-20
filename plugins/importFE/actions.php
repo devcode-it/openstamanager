@@ -166,7 +166,7 @@ switch (filter('op')) {
 
             $mastrino = Mastrino::build('Compensazione autofattura', $fattura->data, false, true);
 
-            $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_cliente);
+            $movimento1 = Movimento::build($mastrino, $fattura->anagrafica->idconto_fornitore);
             $movimento1->setTotale($fattura->totale, 0);
             $movimento1->save();
 

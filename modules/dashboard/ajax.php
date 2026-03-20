@@ -111,7 +111,7 @@ switch (filter('op')) {
 
             $results[] = [
                 'id' => $sessione['id'],
-                'title' => (($sessione['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_bloccato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnici').':</b> '.$sessione['nome_tecnico'],
+                'title' => (($sessione['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '').' '.(($sessione['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').($sessione['is_bloccato'] || $sessione['have_attachments'] ? '<br>' : '').'<b>Int. '.$sessione['codice'].'</b> '.$sessione['cliente'].'<br><b>'.tr('Tecnico').':</b> '.$sessione['nome_tecnico'],
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'extendedProps' => [
@@ -308,7 +308,7 @@ switch (filter('op')) {
                 $desc_tipointervento = $rs[0]['tipo'];
 
                 $tooltip = '<div class="tooltip-header">
-                    <div class="tooltip-header-title">'.tr('Dettagli attività').'</div>
+                    <div class="tooltip-header-title">'.tr('Dettagli sessione').'</div>
                     <div class="tooltip-close-button"><i class="fa fa-times"></i></div>
                 </div>
                 <div class="tooltip-info-section">';
@@ -326,10 +326,10 @@ switch (filter('op')) {
 
                 // Aggiunta del tipo di attività della sessione
                 if (!empty($rs_sessione[0]['tipo_sessione'])) {
-                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-cogs"></i> '.tr('Tipo attività sessione').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs_sessione[0]['tipo_sessione']).'</span></div>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-cogs"></i> '.tr('Tipo sessione').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs_sessione[0]['tipo_sessione']).'</span></div>';
                 }
 
-                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnici').':</span> <span class="tooltip-info-value">'.implode(', ', $tecnici).'</span></div>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnico').':</span> <span class="tooltip-info-value">'.implode(', ', $tecnici).'</span></div>';
                 $tooltip .= '</div>';
 
                 // Sezione impianti

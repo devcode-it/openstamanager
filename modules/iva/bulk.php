@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Iva\Aliquota;
+
 switch (post('op')) {
     case 'delete_bulk':
         $count_iva = $dbo->fetchNum('SELECT `id` FROM `co_iva` WHERE `deleted_at` IS NOT NULL');
@@ -50,10 +52,37 @@ switch (post('op')) {
             flash()->warning(tr('Nessuna tipologia iva eliminata!'));
         }
         break;
+
+    case 'change_enabled':
+        foreach ($id_records as $id) {
+            $aliquota = Aliquota::find($id);
+            $aliquota->enabled = post('enabled');
+            $aliquota->save();
+        }
+
+        flash()->info(tr('Stato aliquote iva aggiornato con successo!'));
+        
+        break;
 }
 
-$bulk = [
-    'delete_bulk' => tr('Elimina'),
+$operations['change_enabled'] = [
+    'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna stato').'</span>',
+    'data' => [
+        'title' => tr('Cambiare lo stato delle aliquote iva?'),
+        'msg' => tr('Per ciascuna aliquota iva selezionata, verrà aggiornato lo stato').'
+        <br><br>{[ "type": "checkbox", "label": "'.tr('Attivo').'", "name": "enabled" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-success',
+    ],
 ];
 
-return $bulk;
+$operations['delete_bulk'] = [
+    'text' => '<span><i class="fa fa-trash"></i> '.tr('Elimina').'</span>',
+    'data' => [
+        'msg' => tr('Vuoi davvero eliminare le aliquote iva selezionate?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-danger',
+    ],
+];
+
+return $operations;

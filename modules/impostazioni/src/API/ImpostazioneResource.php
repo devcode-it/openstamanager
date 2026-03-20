@@ -8,10 +8,10 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\QueryParameter;
 use Models\Setting;
-use Modules\Impostazioni\API\Controllers\GetImpostazioneProvider;
-use Modules\Impostazioni\API\Controllers\ListImpostazioniProvider;
-use Modules\Impostazioni\API\Controllers\ListSezioniImpostazioniProvider;
-use Modules\Impostazioni\API\Controllers\UpdateImpostazioneProcessor;
+use Modules\Impostazioni\API\Controllers\GetImpostazioneController;
+use Modules\Impostazioni\API\Controllers\ListImpostazioniController;
+use Modules\Impostazioni\API\Controllers\ListSezioniImpostazioniController;
+use Modules\Impostazioni\API\Controllers\UpdateImpostazioneController;
 use Modules\Impostazioni\API\Models\ListSezioniImpostazioniResponse;
 use Modules\Impostazioni\API\Models\UpdateImpostazioneRequest;
 use Modules\Impostazioni\API\Models\UpdateImpostazioneResponse;
@@ -21,12 +21,12 @@ use Modules\Impostazioni\API\Models\UpdateImpostazioneResponse;
     operations: [
         new Get(
             uriTemplate: '/impostazioni/sezioni',
-            provider: ListSezioniImpostazioniProvider::class,
+            controller: ListSezioniImpostazioniController::class,
             output: ListSezioniImpostazioniResponse::class,
         ),
         new GetCollection(
             uriTemplate: '/impostazioni',
-            provider: ListImpostazioniProvider::class,
+            controller: ListImpostazioniController::class,
             paginationEnabled: false,
             parameters: [
                 'ricerca' => new QueryParameter(property: 'hydra:freetextQuery', required: false),
@@ -35,12 +35,11 @@ use Modules\Impostazioni\API\Models\UpdateImpostazioneResponse;
         ),
         new Get(
             uriTemplate: '/impostazione/{id}',
-            provider: GetImpostazioneProvider::class,
+            controller: GetImpostazioneController::class,
         ),
         new Put(
             uriTemplate: '/impostazione/{id}',
-            provider: GetImpostazioneProvider::class,
-            processor: UpdateImpostazioneProcessor::class,
+            controller: UpdateImpostazioneController::class,
             input: UpdateImpostazioneRequest::class,
             output: UpdateImpostazioneResponse::class,
         ),

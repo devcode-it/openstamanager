@@ -102,7 +102,8 @@
         "setup-corepack": "npm install -g corepack && corepack enable",
         "export-openapi": "php artisan api:openapi:export --output=openapi.json",
         "fix-openapi-js": "node -e \"require('fs').writeFileSync('assets/api/src/main.js', \\\"import * as API from './index';global.window.API = API;\\\");\"",
-        "update-openapi-client": "npm run-script export-openapi && npx @openapitools/openapi-generator-cli generate -i openapi.json -g javascript -o assets/api --skip-validate-spec && npm run-script fix-openapi-js && npm install --no-save ./assets/api && cd ./assets/api && npx babel src -d dist && cd ../.. && npx browserify ./assets/api/dist/main.js -o ./assets/dist/js/api.js"
+        "copy-vendor-css-folder": "node -e \"const fs = require('fs'); const sourceFolder = './vendor/api-platform/laravel/public'; const destFolder = './assets/dist/apiplatform'; const copyFolder = (src, dest) => { if (!fs.existsSync(dest)) fs.mkdirSync(dest); fs.readdirSync(src).forEach(file => { const srcFile = path.join(src, file); const destFile = path.join(dest, file); if (fs.statSync(srcFile).isDirectory()) copyFolder(srcFile, destFile); else fs.copyFileSync(srcFile, destFile); }); }; copyFolder(sourceFolder, destFolder);\"",
+        "update-openapi-client": "npm run copy-vendor-css-folder && npm run-script export-openapi && npx @openapitools/openapi-generator-cli generate -i openapi.json -g javascript -o assets/api --skip-validate-spec && npm run-script fix-openapi-js && npm install --no-save ./assets/api && cd ./assets/api && npx babel src -d dist && cd ../.. && npx browserify ./assets/api/dist/main.js -o ./assets/dist/js/api.js"
     },
     "packageManager": "yarn@4.12.0"
 }

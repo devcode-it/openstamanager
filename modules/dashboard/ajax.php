@@ -270,7 +270,8 @@ switch (filter('op')) {
             if (!empty($rs_sessione)) {
                 $tecnici = [];
                 foreach ($rs_sessione as $sessione) {
-                    $tecnici[] = $sessione['nome_tecnico'].' ('.Translator::timestampToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_fine']).')';
+                    $tecnico = $sessione['nome_tecnico'];
+                    $orario = Translator::timestampToLocale($sessione['orario_inizio']).' - '.Translator::timeToLocale($sessione['orario_fine']);
                 }
 
                 // Lettura dati intervento
@@ -312,7 +313,7 @@ switch (filter('op')) {
                     <div class="tooltip-close-button"><i class="fa fa-times"></i></div>
                 </div>
                 <div class="tooltip-info-section">';
-                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-hashtag"></i> '.tr('Numero intervento').':</span> <span class="tooltip-info-value">'.$rs[0]['codice'].'</span></div>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-hashtag"></i> '.tr('Numero').':</span> <span class="tooltip-info-value">'.$rs[0]['codice'].'</span></div>';
 
                 $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-building"></i> '.tr('Cliente').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['ragione_sociale']).'</span></div>';
 
@@ -322,14 +323,15 @@ switch (filter('op')) {
                     $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-calendar-check-o"></i> '.tr('Data scadenza').':</span> <span class="tooltip-info-value">'.Translator::timestampToLocale($rs[0]['data_scadenza']).'</span></div>';
                 }
 
-                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-wrench"></i> '.tr('Tipo intervento').':</span> <span class="tooltip-info-value">'.nl2br((string) $desc_tipointervento).'</span></div>';
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnico').':</span> <span class="tooltip-info-value">'.$tecnico.'</span></div>';
+
+                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Sessione').':</span> <span class="tooltip-info-value">'.$orario.'</span></div>';
 
                 // Aggiunta del tipo di attività della sessione
                 if (!empty($rs_sessione[0]['tipo_sessione'])) {
-                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-cogs"></i> '.tr('Tipo sessione').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs_sessione[0]['tipo_sessione']).'</span></div>';
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-cogs"></i> '.tr('Tipo').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs_sessione[0]['tipo_sessione']).'</span></div>';
                 }
 
-                $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnico').':</span> <span class="tooltip-info-value">'.implode(', ', $tecnici).'</span></div>';
                 $tooltip .= '</div>';
 
                 // Sezione impianti

@@ -1,0 +1,195 @@
+<?php
+/*
+ * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
+ * Copyright (C) DevCode s.r.l.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+include_once __DIR__.'/../../../core.php';
+
+if (!empty(get('anteprima'))) {
+    // Lettura dati anagrafica
+    $anagrafica = Modules\Anagrafiche\Anagrafica::find($id_record);
+
+    if (empty($anagrafica)) {
+        echo tr('Anagrafica inesistente!');
+        exit;
+    }
+
+    // Impostazione delle scelte GDPR dalle variabili GET
+    $GLOBALS['gdpr_marketing_generico'] = get('marketing_generico') ?? '1';
+    $GLOBALS['gdpr_profilazione'] = get('profilazione') ?? '1';
+
+    // Gestione della stampa GDPR
+    $directory = base_dir().'/files/anagrafiche/';
+
+    // Ricerca della stampa GDPR
+    $id_print = $dbo->fetchOne('SELECT
+        `zz_prints`.`id`
+    FROM
+        `zz_prints`
+        LEFT JOIN `zz_prints_lang` ON (`zz_prints`.`id` = `zz_prints_lang`.`id_record` AND `zz_prints_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `zz_modules` ON `zz_prints`.`id_module`=`zz_modules`.`id`
+        LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE
+        `zz_modules`.`name`="Anagrafiche" AND `zz_prints`.`name`="GDPR"')['id'];
+
+    // HTML per la visualizzazione
+    echo '
+<div id="preview">
+    <button type="button" class="btn btn-success btn-block btn-lg" id="firma">
+        <i class="fa fa-pencil"></i> '.tr('Firma').'
+    </button>
+    <br>
+
+    <div class="clearfix"></div>
+
+    <iframe src="'.Prints::getPreviewLink($id_print, $id_record, $directory).'" frameborder="0" width="100%" height="550"></iframe>
+</div>';
+}
+
+
+if ((setting('Sistema di firma') == 'Base') || isMobile()) {
+    ?>
+    <form action="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>" method="post" id="form-firma" class="hide">
+        <input type="hidden" name="op" value="firma_gdpr">
+        <input type="hidden" name="backto" value="record-edit">
+
+        <!-- Campi nascosti per le scelte GDPR -->
+        <input type="hidden" name="marketing_generico" id="marketing_generico" value="<?php echo get('marketing_generico') ?? '1'; ?>">
+        <input type="hidden" name="profilazione" id="profilazione" value="<?php echo get('profilazione') ?? '1'; ?>">
+
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "<?php echo tr('Nome e cognome'); ?>", "name": "firma_nome", "required": 1 ]}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="signature-pad" class="signature-pad">
+                    <canvas id="canvas" onselectstart="return false"></canvas>
+                    <input type="hidden" name="firma_base64" id="firma_base64" value="">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-danger" data-action="clear">
+                    <i class="fa fa-eraser"></i> <?php echo tr('Cancella firma'); ?>
+                </button>
+                <button type="submit" class="btn btn-success pull-right" data-action="save">
+                    <i class="fa fa-check"></i> <?php echo tr('Salva firma'); ?>
+                </button>
+            </div>
+        </div>
+
+    </form>
+    <div class="clearfix"></div>
+
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $('#firma').on('click', function() {
+                $('#preview').addClass('hide');
+
+                $('#form-firma').removeClass('hide');
+            })
+
+            var wrapper = document.getElementById("signature-pad"),
+                clearButton = document.querySelector("[data-action=clear]"),
+                saveButton = document.querySelector("[data-action=save]"),
+                canvas = document.getElementById("canvas");
+
+            var signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255,255,255)'
+            });
+
+            function resizeCanvas() {
+                image_data = signaturePad.toDataURL();
+
+                var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear();
+
+                signaturePad.fromDataURL(image_data);
+            }
+
+            window.addEventListener("resize", resizeCanvas);
+            $('#firma').click(resizeCanvas);
+
+            clearButton.addEventListener("click", function (event) {
+                signaturePad.clear();
+            });
+
+            saveButton.addEventListener("click", function (event) {
+                if (signaturePad.isEmpty()) {
+                    alert(globals.translations.signatureMissing);
+                    event.preventDefault();
+                    return;
+                } else {
+                    image_data = signaturePad.toDataURL("image/jpeg", 100);
+                    $('#firma_base64').val(image_data);
+                }
+            });
+        });
+    </script>
+<?php
+} elseif (setting('Sistema di firma') == 'Tavoletta Wacom') {
+    echo '
+    <div id="firma-div"></div>
+
+    <script type="text/javascript">
+
+       $(document).ready( function() {
+            $("#firma").on("click", function() {
+                $("#preview").addClass("hide");
+                try {
+
+                    // Controlla se la pagina è servita tramite HTTPS
+                    if (window.location.protocol !== \'https:\') {
+                        swal("'.tr('Errore').'", "'.tr('Questa funzione richiede una connessione HTTPS.').'", "error");
+                        $("#modals > div").modal("hide");
+                    }
+
+                    // Check if navigator.hid is available
+                    if (navigator.hid) {
+                            caricaTavoletta()
+                    } else {
+                        // Handle the case when navigator.hid is undefined
+                        swal("'.tr('Errore').'", "'.tr('navigator.hid non è supportato da questo browser!').'", "error");
+                        $("#modals > div").modal("hide");
+                    }
+
+                } catch (error) {
+                    // Handle any other errors that may occur
+                    console.error("An error occurred:", error);
+                }
+            });
+        });
+
+        function caricaTavoletta(){
+            let container = $("#firma-div");
+            localLoading(container, true);
+            var marketing_generico = document.getElementById("marketing_generico").value;
+            var profilazione = document.getElementById("profilazione").value;
+            return $.get("'.$structure->fileurl('modals/firma_tavoletta_gdpr.php').'?id_module='.$id_module.'&id_record='.$id_record.'&marketing_generico=" + marketing_generico + "&profilazione=" + profilazione, function(data) {
+                container.html(data);
+                localLoading(container, false);
+            });
+        }
+    </script>';
+}

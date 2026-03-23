@@ -160,7 +160,15 @@ if (!empty($id_intervento)) {
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <label style="margin-bottom: 0;">'.tr('Cliente').'</label>
+                <span id="gdpr-badge-container" style="display: none;">
+                    <span id="gdpr-badge" class="badge badge-success" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                        <i class="fa fa-check-circle mr-1"></i><span id="gdpr-text">'.tr('GDPR Firmato').'</span>
+                    </span>
+                </span>
+            </div>
+            {[ "type": "select", "label": "", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
         </div>
 
         <div class="col-md-4">
@@ -605,9 +613,34 @@ echo '
             $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + value, function(data){
                 $("#dettagli_cliente").html(data);
             });
+
+            // Controllo firma GDPR
+            $.ajax({
+                url: globals.rootdir + "/ajax_complete.php",
+                type: "GET",
+                data: {
+                    module: "Interventi",
+                    op: "gdpr_status",
+                    id_anagrafica: value
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.has_gdpr) {
+                        $("#gdpr-badge").removeClass("badge-danger").addClass("badge-success");
+                        $("#gdpr-badge i").removeClass("fa-times-circle").addClass("fa-check-circle");
+                        $("#gdpr-text").text("'.tr('GDPR Firmato').'");
+                    } else {
+                        $("#gdpr-badge").removeClass("badge-success").addClass("badge-danger");
+                        $("#gdpr-badge i").removeClass("fa-check-circle").addClass("fa-times-circle");
+                        $("#gdpr-text").text("'.tr('GDPR Non Firmato').'");
+                    }
+                    $("#gdpr-badge-container").show();
+                }
+            });
         } else {
             $("#dettagli_cliente").html(\'<div class="alert alert-light text-center py-4"><i class="fa fa-user fa-2x text-muted mb-2"></i><h5 class="mb-2"><strong>'.tr('Cliente non selezionato').'</strong></h5><p class="text-muted mb-0">'.tr('Seleziona un cliente per visualizzare le informazioni').'</p></div>\');
             caricaMappa();
+            $("#gdpr-badge-container").hide();
         }
 
         plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
@@ -697,7 +730,6 @@ echo '
                 input("idtipointervento").getElement()
                     .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
             }
-            
             // Aggiorna anche il tipo attività delle sessioni
             if ($(this).selectData().idtipointervento) {
                 input("idtiposessione").getElement()

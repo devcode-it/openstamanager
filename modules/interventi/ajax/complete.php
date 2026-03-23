@@ -1,6 +1,7 @@
 <?php
 
 use Models\Module;
+use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Fatture\Fattura;
@@ -15,6 +16,20 @@ $op = get('op');
 $numero_documenti = 5;
 
 switch ($op) {
+    case 'gdpr_status':
+        // Controllo dello stato della firma GDPR
+        $modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first();
+        $firma_gdpr = Upload::where('id_record', $id_anagrafica)
+            ->where('id_module', $modulo_anagrafiche->id)
+            ->where('key', 'signature_gdpr')
+            ->first();
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'has_gdpr' => !empty($firma_gdpr),
+        ]);
+        break;
+
     case 'dettagli':
         // Recupero informazioni cliente
         $anagrafica = Anagrafica::find($id_anagrafica);

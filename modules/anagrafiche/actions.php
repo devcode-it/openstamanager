@@ -21,6 +21,9 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Models\PrintTemplate;
+use Models\Module;
+use Models\Upload;
 
 switch (post('op')) {
     case 'restore':
@@ -348,6 +351,99 @@ switch (post('op')) {
             $anagrafica->fixCliente($anagrafica);
         } else {
             $anagrafica->fixfornitore($anagrafica);
+        }
+
+        break;
+
+    case 'elimina_firma_gdpr':
+        // Eliminazione della firma GDPR e del file firmato
+        $uploads_firma = Upload::where('id_record', $id_record)
+            ->where('id_module', $id_module)
+            ->where('key', 'signature_gdpr')
+            ->get();
+
+        foreach ($uploads_firma as $upload) {
+            $upload->delete();
+        }
+
+        $uploads_pdf = Upload::where('id_record', $id_record)
+            ->where('id_module', $id_module)
+            ->where('name', 'GDPR_firmato')
+            ->get();
+
+        foreach ($uploads_pdf as $upload) {
+            $upload->delete();
+        }
+
+        flash()->info(tr('Firma GDPR eliminata correttamente.'));
+        break;
+
+    case 'firma_gdpr':
+        $anagrafica = Anagrafica::find($id_record);
+        if (is_writable(Uploads::getDirectory($id_module))) {
+            if (post('firma_base64') != '') {
+                // Salvataggio firma
+                $data = explode(',', post('firma_base64'));
+                $img = getImageManager()->read(base64_decode($data[1]));
+                $img->scaleDown(680, 202);
+
+                if (setting('Sistema di firma') == 'Tavoletta Wacom') {
+                    $img->brightness((float) setting('Luminosità firma Wacom'));
+                    $img->contrast((float) setting('Contrasto firma Wacom'));
+                }
+                $encoded_image = $img->toJpeg();
+                $file_content = $encoded_image->toString();
+
+                // Upload del file della firma in zz_files con categoria "GDPR"
+                $upload = Uploads::upload($file_content, [
+                    'name' => 'firma_gdpr.jpg',
+                    'category' => 'GDPR',
+                    'id_module' => $id_module,
+                    'id_record' => $id_record,
+                    'key' => 'signature_gdpr',
+                ]);
+
+                if (empty($upload)) {
+                    flash()->error(tr('Errore durante il caricamento della firma GDPR!'));
+                } else {
+                    // Salvataggio del percorso della firma in una variabile globale per il template
+                    $GLOBALS['firma_gdpr_file'] = Uploads::getDirectory($id_module).$upload->filename;
+
+                    // Salvataggio delle scelte GDPR in variabili globali per il template
+                    $GLOBALS['gdpr_marketing_generico'] = post('marketing_generico') ?? '1';
+                    $GLOBALS['gdpr_profilazione'] = post('profilazione') ?? '1';
+
+                    // Generazione del PDF della stampa GDPR con la firma
+                    $id_print = PrintTemplate::where('name', 'GDPR')->where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->first()->id;
+
+                    if (!empty($id_print)) {
+                        $directory = base_dir().'/files/anagrafiche/';
+                        $info = Prints::render($id_print, $id_record, $directory, true);
+
+                        // Salvataggio del PDF come allegato
+                        $pdf_upload = Uploads::upload($info['pdf'], [
+                            'name' => 'GDPR_firmato.pdf',
+                            'category' => 'GDPR',
+                            'id_module' => $id_module,
+                            'id_record' => $id_record,
+                        ]);
+
+                        if (!empty($pdf_upload)) {
+                            flash()->info(tr('Firma GDPR salvata correttamente.'));
+                        } else {
+                            flash()->warning(tr('Firma salvata ma errore nel salvataggio del PDF GDPR firmato.'));
+                        }
+                    } else {
+                        flash()->warning(tr('Firma salvata ma stampa GDPR non trovata.'));
+                    }
+                }
+            } else {
+                flash()->error(tr('Errore durante il salvataggio della firma GDPR.').'<br>'.tr('La firma risulta vuota.'));
+            }
+        } else {
+            flash()->error(tr("Non è stato possibile creare la cartella _DIRECTORY_ per salvare l'immagine della firma GDPR.", [
+                '_DIRECTORY_' => '<b>'.Uploads::getDirectory($id_module).'</b>',
+            ]));
         }
 
         break;

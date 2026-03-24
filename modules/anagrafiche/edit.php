@@ -796,82 +796,94 @@ if (setting('Azienda predefinita') == $id_record) {
 <div class="alert alert-info">'.tr('Per impostare il <b>logo dell\'azienda</b>, caricare un\'immagine specificando come nome "<b>Logo azienda</b>"').'.</div>';
 }
 
-// Collegamenti diretti
-// Fatture, ddt, preventivi, contratti, ordini, interventi, utenti collegati a questa anagrafica
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_statidocumento_lang`.`title` AS stato_documento, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')  WHERE `co_documenti`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `zz_users`.`idgruppo` AS id, `zz_users`.`created_at` AS data, `zz_users`.`username` AS numero, 0 AS `numero_esterno`, "" AS stato_documento, "Utente" AS tipo_documento, 0 AS `dir`, NULL AS `deleted_at` FROM `zz_users` WHERE `zz_users`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `or_ordini`.`id`, `or_ordini`.`data`, `or_ordini`.`numero`, `or_ordini`.`numero_esterno`, `or_statiordine_lang`.`title` AS stato_documento, `or_tipiordine_lang`.`title` AS tipo_documento, `or_tipiordine`.`dir`, NULL AS `deleted_at` FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN or_statiordine ON or_ordini.idstatoordine=or_statiordine.id LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_ordini`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_statiddt_lang`.`title` AS stato_documento, `dt_tipiddt_lang`.`title` AS tipo_documento, `dt_tipiddt`.`dir`, NULL AS `deleted_at` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `in_interventi`.`id`, `in_interventi`.`data_richiesta`, `in_interventi`.`codice` AS numero, 0 AS numero_esterno, `in_statiintervento_lang`.`title` AS stato_documento, "Attività" AS tipo_documento, 0 AS dir, in_interventi.deleted_at AS `deleted_at` FROM `in_interventi` LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento` LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `in_interventi`.`id` IN (SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `idtecnico` = '.prepare($id_record).') OR `in_interventi`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `co_contratti`.`id`, `co_contratti`.`data_bozza`, `co_contratti`.`numero`, 0 AS numero_esterno, `co_staticontratti_lang`.`title` AS stato_documento, "Contratto" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_contratti` LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti`.`idanagrafica` = '.prepare($id_record).'
-
-UNION
-SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`, 0 AS numero_esterno, `co_statipreventivi_lang`.`title` AS stato_documento , "Preventivo" AS tipo_documento, 0 AS dir, NULL AS `deleted_at` FROM `co_preventivi` LEFT JOIN co_statipreventivi ON co_preventivi.idstato=co_statipreventivi.id LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_record).' AND `default_revision` = 1
-
-ORDER BY `data`');
-
-if (!empty($elementi)) {
-    echo '
-<div class="card card-warning collapsable collapsed-card">
+// Documenti collegati - Caricamento via AJAX
+echo '
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-        '_NUM_' => count($elementi),
-    ]).'</h3>
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title">'.tr('Documenti collegati').'</span></h3>
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="card-body">
-        <ul>';
-
-    foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_ _STATO_', [
-            '_DOC_' => $elemento['tipo_documento'],
-            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
-            '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
-        ]);
-
-        // se non è un preventivo è un ddt o una fattura
-        // se non è un ddt è una fattura.
-        if (in_array($elemento['tipo_documento'], ['Utente'])) {
-            $modulo = 'Utenti e permessi';
-        } elseif (in_array($elemento['tipo_documento'], ['Attività'])) {
-            $modulo = 'Interventi';
-        } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
-            $modulo = 'Preventivi';
-        } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
-            $modulo = 'Contratti';
-        } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
-        } else {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        }
-
-        $id = $elemento['id'];
-
-        echo '
-            <li>'.Modules::link($modulo, $id, $descrizione).'</li>';
-    }
-
-    echo '
-        </ul>
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento documenti collegati in corso').'
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
     </div>
 </div>';
-}
+
+echo '
+<script type="text/javascript">
+    // Funzioni per i documenti collegati
+    var documentiCaricati = false;
+
+    function caricaConteggioDocumenti() {
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            count_only: 1
+        })
+        .done(function(data) {
+            var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            
+            if (data.count > 0) {
+                card.removeClass("card-secondary").addClass("card-warning");
+                title.html("'.tr('Documenti collegati').' (" + data.count + ")");
+            } else {
+                card.removeClass("card-warning").addClass("card-secondary");
+                title.html("'.tr('Documenti collegati').'");
+            }
+        })
+        .fail(function() {
+            var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            card.removeClass("card-warning").addClass("card-secondary");
+            title.html("'.tr('Documenti collegati').'");
+        });
+    }
+
+    function caricaDocumentiCollegati() {
+        $("#documenti-collegati-loading").show();
+        $("#documenti-collegati-content").hide();
+        
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record
+        })
+        .done(function(data) {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html(data).show();
+            documentiCaricati = true;
+        })
+        .fail(function() {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html("<div class=\\"alert alert-danger\\">'.tr('Errore durante il caricamento dei documenti collegati').'</div>").show();
+        });
+    }
+
+    $(document).ready(function() {
+        // Carica il conteggio dei documenti collegati
+        caricaConteggioDocumenti();
+
+        // Carica i documenti quando la card viene espansa
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            if (!documentiCaricati) {
+                caricaDocumentiCollegati();
+            }
+        });
+
+        // Aggiorna l\'icona quando la card viene espansa/collassata
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-plus").addClass("fa-minus");
+        });
+
+        $("#documenti-collegati-card").on("collapsed.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-minus").addClass("fa-plus");
+        });
+    });
+</script>';
 
 if (empty($record['deleted_at'])) {
     if (!in_array($id_azienda, $tipi_anagrafica)) {

@@ -410,75 +410,94 @@ $("#scorporaIva").click( function() {
 
 <?php
 
-// Collegamenti diretti
-// Fatture, ddt, preventivi collegati a questo articolo
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_statidocumento_lang`.`title` AS stato_documento, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, SUM(`co_righe_documenti`.`qta`) AS qta_totale, ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale, SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `co_righe_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento`  LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_record).' GROUP BY `co_documenti`.`id`
-
-UNION SELECT `dt_ddt`.`id`, `dt_ddt`.`data`, `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`, `dt_statiddt_lang`.`title` AS stato_documento, `dt_tipiddt_lang`.`title` AS tipo_documento, `dt_tipiddt`.`dir`, SUM(dt_righe_ddt.qta) AS qta_totale, ((SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario))*SUM(dt_righe_ddt.qta)) AS prezzo_totale, SUM(dt_righe_ddt.prezzo_unitario)-SUM(dt_righe_ddt.sconto_unitario) AS prezzo_unitario FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt` LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_record).' GROUP BY `dt_ddt`.`id`
-
-UNION SELECT `co_preventivi`.`id`, `co_preventivi`.`data_bozza`, `co_preventivi`.`numero`,  0 AS numero_esterno, `co_statipreventivi_lang`.`title` AS stato_documento , "Preventivo" AS tipo_documento, 0 AS dir, SUM(co_righe_preventivi.qta) AS qta_totale, ((SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario))*SUM(co_righe_preventivi.qta)) AS prezzo_totale, SUM(co_righe_preventivi.prezzo_unitario)-SUM(co_righe_preventivi.sconto_unitario) AS prezzo_unitario FROM `co_preventivi` INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id`=`co_righe_preventivi`.`idpreventivo` LEFT JOIN co_statipreventivi ON co_preventivi.idstato=co_statipreventivi.id LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_record).' GROUP BY co_preventivi.id ORDER BY `data`');
-
-if (!empty($elementi)) {
-    echo '
-<div class="card card-warning collapsable collapsed-card">
+// Documenti collegati - Caricamento via AJAX
+echo '
+<div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> '.tr('Documenti collegati: _NUM_', [
-        '_NUM_' => count($elementi),
-    ]).'</h3>
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title">'.tr('Documenti collegati').'</span></h3>
         <div class="card-tools pull-right">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i></button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
         </div>
     </div>
-    <div class="card-body">
-        <table class="table table-striped table-bordered table-extra-condensed">
-            <tr>
-                <th>'.tr('Documento').'</td>
-                <th width="12%" class="text-center">'.tr('Quantità').'</td>
-                <th width="15%" class="text-center">'.tr('Prezzo unitario').'</td>
-                <th width="15%" class="text-center">'.tr('Prezzo totale').'</td>
-            <tr>';
-
-    foreach ($elementi as $elemento) {
-        $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
-            '_DOC_' => $elemento['tipo_documento'],
-            '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-            '_DATE_' => Translator::dateToLocale($elemento['data']),
-            '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
-        ]);
-
-        // se non è un preventivo è un ddt o una fattura
-        // se non è un ddt è una fattura.
-        if (in_array($elemento['tipo_documento'], ['Preventivo'])) {
-            $modulo = 'Preventivi';
-        } elseif (!in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata', 'Ddt in entrata', 'Ddt in uscita'])) {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
-        } else {
-            $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
-        }
-
-        $id = $elemento['id'];
-
-        echo '
-            <tr>
-                <td>'.Modules::link($modulo, $id, $descrizione).'</td>
-                <td class="text-center">'.Translator::numberToLocale($elemento['qta_totale']).'</td>
-                <td class="text-right">'.moneyFormat($elemento['prezzo_unitario']).'</td>
-                <td class="text-right">'.moneyFormat($elemento['prezzo_totale']).'</td>
-            <tr>';
-    }
-
-    echo '
-        </table>
+    <div class="card-body" id="documenti-collegati-body">
+        <div class="text-center" id="documenti-collegati-loading">
+            <i class="fa fa-spinner fa-spin"></i> '.tr('Caricamento documenti collegati in corso').'
+        </div>
+        <div id="documenti-collegati-content" style="display: none;"></div>
     </div>
 </div>';
-}
 
-if (!empty($elementi)) {
-    echo '
-<div class="alert alert-danger">
-    '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
-</div>';
-}
+echo '
+<script type="text/javascript">
+    // Funzioni per i documenti collegati
+    var documentiCaricati = false;
+
+    function caricaConteggioDocumenti() {
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record,
+            count_only: 1
+        })
+        .done(function(data) {
+            var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            
+            if (data.count > 0) {
+                card.removeClass("card-secondary").addClass("card-warning");
+                title.html("'.tr('Documenti collegati').' (" + data.count + ")");
+            } else {
+                card.removeClass("card-warning").addClass("card-secondary");
+                title.html("'.tr('Documenti collegati').'");
+            }
+        })
+        .fail(function() {
+            var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            card.removeClass("card-warning").addClass("card-secondary");
+            title.html("'.tr('Documenti collegati').'");
+        });
+    }
+
+    function caricaDocumentiCollegati() {
+        $("#documenti-collegati-loading").show();
+        $("#documenti-collegati-content").hide();
+        
+        $.get(globals.rootdir + "/ajax_documenti_collegati.php", {
+            id_module: globals.id_module,
+            id_record: globals.id_record
+        })
+        .done(function(data) {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html(data).show();
+            documentiCaricati = true;
+        })
+        .fail(function() {
+            $("#documenti-collegati-loading").hide();
+            $("#documenti-collegati-content").html("<div class=\\"alert alert-danger\\">'.tr('Errore durante il caricamento dei documenti collegati').'</div>").show();
+        });
+    }
+
+    $(document).ready(function() {
+        // Carica il conteggio dei documenti collegati
+        caricaConteggioDocumenti();
+
+        // Carica i documenti quando la card viene espansa
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            if (!documentiCaricati) {
+                caricaDocumentiCollegati();
+            }
+        });
+
+        // Aggiorna l\'icona quando la card viene espansa/collassata
+        $("#documenti-collegati-card").on("expanded.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-plus").addClass("fa-minus");
+        });
+
+        $("#documenti-collegati-card").on("collapsed.lte.cardwidget", function() {
+            $("#documenti-collegati-toggle i").removeClass("fa-minus").addClass("fa-plus");
+        });
+    });
+</script>';
 ?>
 
 <a class="btn btn-danger ask" data-backto="record-list">

@@ -61,6 +61,10 @@ class DocumentiCollegati
                     return self::getDocumentiOrdine($id_record);
                 case 'ddt':
                     return self::getDocumentiDDT($id_record);
+                case 'articolo':
+                    return self::getDocumentiArticolo($id_record);
+                case 'anagrafica':
+                    return self::getDocumentiAnagrafica($id_record);
                 default:
                     return [];
             }
@@ -762,6 +766,286 @@ class DocumentiCollegati
     }
 
     /**
+     * Recupera i documenti collegati a un articolo
+     *
+     * @param int $id_articolo ID dell'articolo
+     * @return array Array di documenti collegati
+     */
+    private static function getDocumentiArticolo($id_articolo)
+    {
+        global $dbo;
+
+        $documenti = [];
+
+        // Recupera le fatture collegate
+        $query_fatture = 'SELECT
+            `co_documenti`.`id`,
+            `co_documenti`.`data`,
+            `co_documenti`.`numero`,
+            `co_documenti`.`numero_esterno`,
+            `co_tipidocumento_lang`.`title` AS tipo_documento,
+            IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
+            `co_statidocumento_lang`.`title` AS stato_documento,
+            SUM(`co_righe_documenti`.`qta`) AS qta_totale,
+            ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale,
+            SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario
+        FROM `co_documenti`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        LEFT JOIN `co_tipidocumento_lang` ON (
+            `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
+            `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+        LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        LEFT JOIN `co_statidocumento_lang` ON (
+            `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
+            `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_articolo).'
+        GROUP BY `co_documenti`.`id`
+        ORDER BY `co_documenti`.`data` DESC';
+
+        $fatture = $dbo->fetchArray($query_fatture);
+        $documenti = array_merge($documenti, $fatture);
+
+        // Recupera i DDT collegati
+        $query_ddt = 'SELECT
+            `dt_ddt`.`id`,
+            `dt_ddt`.`data`,
+            `dt_ddt`.`numero`,
+            `dt_ddt`.`numero_esterno`,
+            `dt_tipiddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_statiddt_lang`.`title` AS stato_documento,
+            SUM(`dt_righe_ddt`.`qta`) AS qta_totale,
+            ((SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`))*SUM(`dt_righe_ddt`.`qta`)) AS prezzo_totale,
+            SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`) AS prezzo_unitario
+        FROM `dt_ddt`
+        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+        LEFT JOIN `dt_tipiddt_lang` ON (
+            `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
+            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt_lang` ON (
+            `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
+            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo).'
+        GROUP BY `dt_ddt`.`id`
+        ORDER BY `dt_ddt`.`data` DESC';
+
+        $ddt = $dbo->fetchArray($query_ddt);
+        $documenti = array_merge($documenti, $ddt);
+
+        // Recupera i preventivi collegati
+        $query_preventivi = 'SELECT
+            `co_preventivi`.`id`,
+            `co_preventivi`.`data_bozza` AS data,
+            `co_preventivi`.`numero`,
+            0 AS numero_esterno,
+            \'Preventivo\' AS tipo_documento,
+            \'Preventivi\' AS modulo,
+            `co_statipreventivi_lang`.`title` AS stato_documento,
+            SUM(`co_righe_preventivi`.`qta`) AS qta_totale,
+            ((SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`))*SUM(`co_righe_preventivi`.`qta`)) AS prezzo_totale,
+            SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`) AS prezzo_unitario
+        FROM `co_preventivi`
+        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+        LEFT JOIN `co_statipreventivi_lang` ON (
+            `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
+            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_articolo).'
+        GROUP BY `co_preventivi`.`id`
+        ORDER BY `co_preventivi`.`data_bozza` DESC';
+
+        $preventivi = $dbo->fetchArray($query_preventivi);
+        $documenti = array_merge($documenti, $preventivi);
+
+        return $documenti;
+    }
+
+    /**
+     * Recupera i documenti collegati a un'anagrafica
+     *
+     * @param int $id_anagrafica ID dell'anagrafica
+     * @return array Array di documenti collegati
+     */
+    private static function getDocumentiAnagrafica($id_anagrafica)
+    {
+        global $dbo;
+
+        $documenti = [];
+
+        // Recupera le fatture collegate
+        $query_fatture = 'SELECT
+            `co_documenti`.`id`,
+            `co_documenti`.`data`,
+            `co_documenti`.`numero`,
+            `co_documenti`.`numero_esterno`,
+            `co_statidocumento_lang`.`title` AS stato_documento,
+            `co_tipidocumento_lang`.`title` AS tipo_documento,
+            `co_tipidocumento`.`dir`,
+            NULL AS `deleted_at`
+        FROM `co_documenti`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        LEFT JOIN `co_tipidocumento_lang` ON (
+            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND
+            `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id
+        LEFT JOIN `co_statidocumento_lang` ON (
+            `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
+            `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $fatture = $dbo->fetchArray($query_fatture);
+        $documenti = array_merge($documenti, $fatture);
+
+        // Recupera gli utenti collegati
+        $query_utenti = 'SELECT
+            `zz_users`.`idgruppo` AS id,
+            `zz_users`.`created_at` AS data,
+            `zz_users`.`username` AS numero,
+            0 AS `numero_esterno`,
+            "" AS stato_documento,
+            "Utente" AS tipo_documento,
+            0 AS `dir`,
+            NULL AS `deleted_at`
+        FROM `zz_users`
+        WHERE `zz_users`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $utenti = $dbo->fetchArray($query_utenti);
+        $documenti = array_merge($documenti, $utenti);
+
+        // Recupera gli ordini collegati
+        $query_ordini = 'SELECT
+            `or_ordini`.`id`,
+            `or_ordini`.`data`,
+            `or_ordini`.`numero`,
+            `or_ordini`.`numero_esterno`,
+            `or_statiordine_lang`.`title` AS stato_documento,
+            `or_tipiordine_lang`.`title` AS tipo_documento,
+            `or_tipiordine`.`dir`,
+            NULL AS `deleted_at`
+        FROM `or_ordini`
+        INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+        LEFT JOIN `or_tipiordine_lang` ON (
+            `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND
+            `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        LEFT JOIN or_statiordine ON or_ordini.idstatoordine=or_statiordine.id
+        LEFT JOIN `or_statiordine_lang` ON (
+            `or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND
+            `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `or_ordini`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $ordini = $dbo->fetchArray($query_ordini);
+        $documenti = array_merge($documenti, $ordini);
+
+        // Recupera i DDT collegati
+        $query_ddt = 'SELECT
+            `dt_ddt`.`id`,
+            `dt_ddt`.`data`,
+            `dt_ddt`.`numero`,
+            `dt_ddt`.`numero_esterno`,
+            `dt_statiddt_lang`.`title` AS stato_documento,
+            `dt_tipiddt_lang`.`title` AS tipo_documento,
+            `dt_tipiddt`.`dir`,
+            NULL AS `deleted_at`
+        FROM `dt_ddt`
+        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
+        LEFT JOIN `dt_tipiddt_lang` ON (
+            `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`idtipoddt` AND
+            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id
+        LEFT JOIN `dt_statiddt_lang` ON (
+            `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
+            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $ddt = $dbo->fetchArray($query_ddt);
+        $documenti = array_merge($documenti, $ddt);
+
+        // Recupera gli interventi collegati
+        $query_interventi = 'SELECT
+            `in_interventi`.`id`,
+            `in_interventi`.`data_richiesta` AS data,
+            `in_interventi`.`codice` AS numero,
+            0 AS numero_esterno,
+            `in_statiintervento_lang`.`title` AS stato_documento,
+            "Attività" AS tipo_documento,
+            0 AS dir,
+            in_interventi.deleted_at AS `deleted_at`
+        FROM `in_interventi`
+        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`
+        LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id
+        LEFT JOIN `in_statiintervento_lang` ON (
+            `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
+            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `in_interventi`.`id` IN (
+            SELECT `idintervento`
+            FROM `in_interventi_tecnici`
+            WHERE `idtecnico` = '.prepare($id_anagrafica).'
+        ) OR `in_interventi`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $interventi = $dbo->fetchArray($query_interventi);
+        $documenti = array_merge($documenti, $interventi);
+
+        // Recupera i contratti collegati
+        $query_contratti = 'SELECT
+            `co_contratti`.`id`,
+            `co_contratti`.`data_bozza` AS data,
+            `co_contratti`.`numero`,
+            0 AS numero_esterno,
+            `co_staticontratti_lang`.`title` AS stato_documento,
+            "Contratto" AS tipo_documento,
+            0 AS dir,
+            NULL AS `deleted_at`
+        FROM `co_contratti`
+        LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id
+        LEFT JOIN `co_staticontratti_lang` ON (
+            `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
+            `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `co_contratti`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $contratti = $dbo->fetchArray($query_contratti);
+        $documenti = array_merge($documenti, $contratti);
+
+        // Recupera i preventivi collegati
+        $query_preventivi = 'SELECT
+            `co_preventivi`.`id`,
+            `co_preventivi`.`data_bozza` AS data,
+            `co_preventivi`.`numero`,
+            0 AS numero_esterno,
+            `co_statipreventivi_lang`.`title` AS stato_documento,
+            "Preventivo" AS tipo_documento,
+            0 AS dir,
+            NULL AS `deleted_at`
+        FROM `co_preventivi`
+        LEFT JOIN co_statipreventivi ON co_preventivi.idstato=co_statipreventivi.id
+        LEFT JOIN `co_statipreventivi_lang` ON (
+            `co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND
+            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        )
+        WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
+
+        $preventivi = $dbo->fetchArray($query_preventivi);
+        $documenti = array_merge($documenti, $preventivi);
+
+        return $documenti;
+    }
+
+    /**
      * Conta i documenti collegati a un record specifico
      * Conta sia i documenti precedenti che quelli successivi nel flusso di evasione
      *
@@ -775,14 +1059,12 @@ class DocumentiCollegati
             return 0;
         }
 
-        try {
-            // Recupera i documenti precedenti e successivi
-            $documenti_precedenti = self::getDocumentiPrecedenti($id_record, $tipo_record);
-            $documenti_successivi = self::getDocumentiSuccessivi($id_record, $tipo_record);
+        $documenti_precedenti = self::getDocumentiPrecedenti($id_record, $tipo_record);
+        $documenti_successivi = self::getDocumentiSuccessivi($id_record, $tipo_record);
 
-            // Conta sia i documenti precedenti che quelli successivi
+        if (count($documenti_precedenti) + count($documenti_successivi) > 0) {
             return count($documenti_precedenti) + count($documenti_successivi);
-        } catch (\Exception $e) {
+        } else {
             // In caso di errore, torna ai metodi di conteggio tradizionali
             switch ($tipo_record) {
                 case 'intervento':
@@ -799,6 +1081,10 @@ class DocumentiCollegati
                     return self::countDocumentiOrdine($id_record);
                 case 'ddt':
                     return self::countDocumentiDDT($id_record);
+                case 'articolo':
+                    return self::countDocumentiArticolo($id_record);
+                case 'anagrafica':
+                    return self::countDocumentiAnagrafica($id_record);
                 default:
                     return 0;
             }
@@ -1132,6 +1418,124 @@ class DocumentiCollegati
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\'';
 
         $result = $dbo->fetchOne($query_interventi);
+        $total += (int) $result['total'];
+
+        return $total;
+    }
+
+    /**
+     * Conta i documenti collegati a un articolo
+     *
+     * @param int $id_articolo ID dell'articolo
+     * @return int Numero di documenti collegati
+     */
+    private static function countDocumentiArticolo($id_articolo)
+    {
+        global $dbo;
+
+        $total = 0;
+
+        // Conta le fatture collegate
+        $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
+        FROM `co_documenti`
+        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+        WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_articolo);
+
+        $result = $dbo->fetchOne($query_fatture);
+        $total += (int) $result['total'];
+
+        // Conta i DDT collegati
+        $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
+        FROM `dt_ddt`
+        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+        WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo);
+
+        $result = $dbo->fetchOne($query_ddt);
+        $total += (int) $result['total'];
+
+        // Conta i preventivi collegati
+        $query_preventivi = 'SELECT COUNT(DISTINCT `co_preventivi`.`id`) AS total
+        FROM `co_preventivi`
+        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+        WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_articolo);
+
+        $result = $dbo->fetchOne($query_preventivi);
+        $total += (int) $result['total'];
+
+        return $total;
+    }
+
+    /**
+     * Conta i documenti collegati a un'anagrafica
+     *
+     * @param int $id_anagrafica ID dell'anagrafica
+     * @return int Numero di documenti collegati
+     */
+    private static function countDocumentiAnagrafica($id_anagrafica)
+    {
+        global $dbo;
+
+        $total = 0;
+
+        // Conta le fatture collegate
+        $query_fatture = 'SELECT COUNT(*) AS total
+        FROM `co_documenti`
+        WHERE `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_fatture);
+        $total += (int) $result['total'];
+
+        // Conta gli utenti collegati
+        $query_utenti = 'SELECT COUNT(*) AS total
+        FROM `zz_users`
+        WHERE `zz_users`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_utenti);
+        $total += (int) $result['total'];
+
+        // Conta gli ordini collegati
+        $query_ordini = 'SELECT COUNT(*) AS total
+        FROM `or_ordini`
+        WHERE `or_ordini`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_ordini);
+        $total += (int) $result['total'];
+
+        // Conta i DDT collegati
+        $query_ddt = 'SELECT COUNT(*) AS total
+        FROM `dt_ddt`
+        WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_ddt);
+        $total += (int) $result['total'];
+
+        // Conta gli interventi collegati
+        $query_interventi = 'SELECT COUNT(DISTINCT `in_interventi`.`id`) AS total
+        FROM `in_interventi`
+        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`
+        WHERE `in_interventi`.`id` IN (
+            SELECT `idintervento`
+            FROM `in_interventi_tecnici`
+            WHERE `idtecnico` = '.prepare($id_anagrafica).'
+        ) OR `in_interventi`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_interventi);
+        $total += (int) $result['total'];
+
+        // Conta i contratti collegati
+        $query_contratti = 'SELECT COUNT(*) AS total
+        FROM `co_contratti`
+        WHERE `co_contratti`.`idanagrafica` = '.prepare($id_anagrafica);
+
+        $result = $dbo->fetchOne($query_contratti);
+        $total += (int) $result['total'];
+
+        // Conta i preventivi collegati
+        $query_preventivi = 'SELECT COUNT(*) AS total
+        FROM `co_preventivi`
+        WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
+
+        $result = $dbo->fetchOne($query_preventivi);
         $total += (int) $result['total'];
 
         return $total;
@@ -1605,13 +2009,93 @@ class DocumentiCollegati
     }
 
     /**
+     * Genera l'HTML per la lista dei documenti collegati
+     * Per gli articoli usa una tabella con dettagli, per gli altri usa il flusso di evasione
+     * Per le anagrafiche usa un elenco semplice
+     *
+     * @param int $id_record ID del record
+     * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', 'articolo', 'anagrafica', ecc.)
+     * @return string HTML della lista documenti
+     */
+    public static function renderDocumenti($id_record, $tipo_record = 'intervento')
+    {
+        // Per gli articoli usa il rendering tabellare con dettagli
+        if ($tipo_record == 'articolo') {
+            return self::renderDocumentiArticolo($id_record);
+        }
+        
+        // Per le anagrafiche usa un elenco semplice
+        if ($tipo_record == 'anagrafica') {
+            return self::renderDocumentiAnagrafica($id_record);
+        }
+        
+        // Per gli altri tipi usa il flusso di evasione
+        return self::renderDocumentiFlusso($id_record, $tipo_record);
+    }
+
+    /**
+     * Genera l'HTML per i documenti collegati a un articolo in formato tabellare
+     *
+     * @param int $id_articolo ID dell'articolo
+     * @return string HTML della tabella dei documenti
+     */
+    private static function renderDocumentiArticolo($id_articolo)
+    {
+        try {
+            $documenti = self::getDocumentiArticolo($id_articolo);
+            
+            if (empty($documenti)) {
+                return '<p>'.tr('Nessun documento collegato').'</p>';
+            }
+            
+            $html = '<table class="table table-striped table-bordered table-extra-condensed">';
+            $html .= '<thead>';
+            $html .= '<tr>';
+            $html .= '<th>'.tr('Documento').'</th>';
+            $html .= '<th width="12%" class="text-center">'.tr('Quantità').'</th>';
+            $html .= '<th width="15%" class="text-center">'.tr('Prezzo unitario').'</th>';
+            $html .= '<th width="15%" class="text-center">'.tr('Prezzo totale').'</th>';
+            $html .= '</tr>';
+            $html .= '</thead>';
+            $html .= '<tbody>';
+            
+            foreach ($documenti as $elemento) {
+                $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
+                    '_DOC_' => $elemento['tipo_documento'],
+                    '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+                    '_DATE_' => Translator::dateToLocale($elemento['data']),
+                    '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
+                ]);
+
+                // Usa il modulo già calcolato nella query
+                $modulo = $elemento['modulo'] ?? '';
+                $id = $elemento['id'];
+                
+                $html .= '<tr>';
+                $html .= '<td>'.Modules::link($modulo, $id, $descrizione).'</td>';
+                $html .= '<td class="text-center">'.Translator::numberToLocale($elemento['qta_totale']).'</td>';
+                $html .= '<td class="text-right">'.moneyFormat($elemento['prezzo_unitario']).'</td>';
+                $html .= '<td class="text-right">'.moneyFormat($elemento['prezzo_totale']).'</td>';
+                $html .= '</tr>';
+            }
+            
+            $html .= '</tbody>';
+            $html .= '</table>';
+            
+            return $html;
+        } catch (\Exception $e) {
+            return '<div class="alert alert-danger">'.tr('Errore nel rendering dei documenti collegati').': '.$e->getMessage().'</div>';
+        }
+    }
+
+    /**
      * Genera l'HTML per la lista dei documenti collegati con flusso di evasione
      *
      * @param int $id_record ID del record
      * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
      * @return string HTML della lista documenti con flusso
      */
-    public static function renderDocumenti($id_record, $tipo_record = 'intervento')
+    private static function renderDocumentiFlusso($id_record, $tipo_record = 'intervento')
     {
         try {
             // Recupera i documenti precedenti e successivi
@@ -1729,5 +2213,62 @@ class DocumentiCollegati
         }
 
         exit;
+    }
+    
+    /**
+     * Genera l'HTML per la lista dei documenti collegati a un'anagrafica
+     * Usa un elenco semplice (ul/li) invece del flusso di evasione
+     *
+     * @param int $id_anagrafica ID dell'anagrafica
+     * @return string HTML della lista documenti
+     */
+    private static function renderDocumentiAnagrafica($id_anagrafica)
+    {
+        try {
+            $documenti = self::getDocumentiAnagrafica($id_anagrafica);
+            
+            if (empty($documenti)) {
+                return '<p>'.tr('Nessun documento collegato').'</p>';
+            }
+            
+            $html = '<ul>';
+            
+            foreach ($documenti as $elemento) {
+                $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_ _STATO_', [
+                    '_DOC_' => $elemento['tipo_documento'],
+                    '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
+                    '_DATE_' => Translator::dateToLocale($elemento['data']),
+                    '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+                    '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
+                ]);
+                
+                // Determina il modulo in base al tipo di documento
+                if (in_array($elemento['tipo_documento'], ['Utente'])) {
+                    $modulo = 'Utenti e permessi';
+                } elseif (in_array($elemento['tipo_documento'], ['Attività'])) {
+                    $modulo = 'Interventi';
+                } elseif (in_array($elemento['tipo_documento'], ['Preventivo'])) {
+                    $modulo = 'Preventivi';
+                } elseif (in_array($elemento['tipo_documento'], ['Contratto'])) {
+                    $modulo = 'Contratti';
+                } elseif (in_array($elemento['tipo_documento'], ['Ordine cliente', 'Ordine fornitore'])) {
+                    $modulo = ($elemento['dir'] == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
+                } elseif (in_array($elemento['tipo_documento'], ['Ddt in uscita', 'Ddt in entrata'])) {
+                    $modulo = ($elemento['dir'] == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
+                } else {
+                    $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
+                }
+                
+                $id = $elemento['id'];
+                
+                $html .= '<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+            }
+            
+            $html .= '</ul>';
+            
+            return $html;
+        } catch (\Exception $e) {
+            return '<div class="alert alert-danger">'.tr('Errore nel rendering dei documenti collegati').': '.$e->getMessage().'</div>';
+        }
     }
 }

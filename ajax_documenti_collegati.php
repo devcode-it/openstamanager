@@ -103,6 +103,12 @@ try {
         case 'Ddt in uscita':
             $tipo_record = 'ddt';
             break;
+        case 'Articoli':
+            $tipo_record = 'articolo';
+            break;
+        case 'Anagrafiche':
+            $tipo_record = 'anagrafica';
+            break;
         default:
             // Per altri moduli, usa il default
             $tipo_record = 'intervento';

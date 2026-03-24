@@ -800,7 +800,7 @@ echo '
         })
         .done(function(data) {
             var response;
- 
+  
             // Se la risposta è già un oggetto (jQuery ha fatto il parsing automatico)
             if (typeof data === "object") {
                 response = data;
@@ -812,17 +812,19 @@ echo '
                 } catch (e) {
                     // In caso di errore, mantieni la card visibile con il titolo generico
                     $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
-                    $("#documenti-collegati-card").show();
+                    $("#documenti-collegati-card").removeClass("card-warning").addClass("card-secondary").show();
                     return;
                 }
             }
- 
+  
             count = response.count;
             
-            // Mostra sempre la card, aggiorna il titolo con il conteggio se ci sono documenti
+            // Aggiorna la classe della card in base al conteggio
             if (count > 0) {
-                $("#documenti-collegati-title").text("'.tr('Documenti collegati').': " + count);
+                $("#documenti-collegati-card").removeClass("card-secondary").addClass("card-warning");
+                $("#documenti-collegati-title").text("'.tr('Documenti collegati').' (" + count + ")");
             } else {
+                $("#documenti-collegati-card").removeClass("card-warning").addClass("card-secondary");
                 $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
             }
             if (count > 0) {
@@ -833,9 +835,9 @@ echo '
             $("#documenti-collegati-card").show();
         })
         .fail(function(xhr, status, error) {
-            // In caso di errore di rete, mantieni la card visibile con il titolo generico
+            // In caso di errore di rete, mantieni la card visibile con il titolo generico e header grigio
             $("#documenti-collegati-title").text("'.tr('Documenti collegati').'");
-            $("#documenti-collegati-card").show();
+            $("#documenti-collegati-card").removeClass("card-warning").addClass("card-secondary").show();
         });
     }
 

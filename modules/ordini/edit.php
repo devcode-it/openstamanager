@@ -494,10 +494,14 @@ function caricaConteggioDocumenti() {
     })
     .done(function(data) {
         var title = $("#documenti-collegati-title");
+        var card = $("#documenti-collegati-card");
         count = data.count;
+        
         if (count > 0) {
+            card.removeClass("card-secondary").addClass("card-warning");
             title.html("'.tr('Documenti collegati').' (" + count + ")");
         } else {
+            card.removeClass("card-warning").addClass("card-secondary");
             title.html("'.tr('Documenti collegati').'");
         }
         if (count > 0) {
@@ -508,6 +512,8 @@ function caricaConteggioDocumenti() {
     })
     .fail(function() {
         var title = $("#documenti-collegati-title");
+        var card = $("#documenti-collegati-card");
+        card.removeClass("card-warning").addClass("card-secondary");
         title.html("'.tr('Documenti collegati').'");
     });
 }

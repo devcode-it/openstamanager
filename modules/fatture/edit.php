@@ -1146,14 +1146,20 @@ echo '
         })
         .done(function(data) {
             var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            
             if (data.count > 0) {
+                card.removeClass("card-secondary").addClass("card-warning");
                 title.html("'.tr('Documenti collegati').' (" + data.count + ")");
             } else {
+                card.removeClass("card-warning").addClass("card-secondary");
                 title.html("'.tr('Documenti collegati').'");
             }
         })
         .fail(function() {
             var title = $("#documenti-collegati-title");
+            var card = $("#documenti-collegati-card");
+            card.removeClass("card-warning").addClass("card-secondary");
             title.html("'.tr('Documenti collegati').'");
         });
     }

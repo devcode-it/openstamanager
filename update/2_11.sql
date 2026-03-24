@@ -298,3 +298,7 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 
 -- forza impostazione aggiornamento prezzi e fornitore in fase di import FE
 UPDATE `zz_settings` SET `valore` = "Aggiorna prezzo di acquisto + imposta fornitore predefinito" WHERE `nome` = "Aggiorna info di acquisto";
+
+-- Aggiunta listino cliente per sedi
+ALTER TABLE `an_sedi` ADD `id_listino` INT NULL;
+ALTER TABLE `an_sedi` ADD CONSTRAINT `an_sedi_ibfk_5` FOREIGN KEY (`id_listino`) REFERENCES `mg_listini`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;

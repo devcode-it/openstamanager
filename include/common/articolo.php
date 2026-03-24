@@ -20,7 +20,15 @@
 
 $result['idarticolo'] ??= null;
 $qta_minima = 0;
-$id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' => $options['idanagrafica']])['id_listino'];
+$idsede_destinazione = $options['select-options']['articoli']['idsede_destinazione'] ?? null;
+
+$id_listino = null;
+if ($idsede_destinazione) {
+    $id_listino = $dbo->selectOne('an_sedi', 'id_listino', ['id' => $idsede_destinazione])['id_listino'];
+}
+if (!$id_listino) {
+    $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' => $options['idanagrafica']])['id_listino'];
+}
 
 // Articolo
 $database = database();

@@ -235,6 +235,7 @@ switch ($resource) {
         $id_articolo = get('id_articolo');
         $id_anagrafica = get('id_anagrafica');
         $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
+        $idsede_destinazione = get('idsede_destinazione');
 
         if (empty($id_articolo) || empty($id_anagrafica)) {
             return;
@@ -253,6 +254,25 @@ switch ($resource) {
             '|where|' => ' AND id_anagrafica = '.prepare($id_anagrafica),
         ]);
         $prezzi = $database->fetchArray($query_anagrafica);
+        
+        // prezzi listini sede
+        $listino_sede = [];
+        if ($idsede_destinazione) {
+            $query = 'SELECT minimo, massimo,
+                sconto_percentuale AS sconto_percentuale_listino,
+                '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+            FROM mg_listini
+            LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+            LEFT JOIN an_sedi ON mg_listini.id=an_sedi.id_listino
+            WHERE mg_listini.data_attivazione<=NOW() 
+            AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
+            AND mg_listini.attivo=1
+            AND id_articolo = '.prepare($id_articolo).'
+            AND dir = '.prepare($direzione).'
+            AND an_sedi.id = '.prepare($idsede_destinazione).'
+            ORDER BY minimo ASC, massimo DESC';
+            $listino_sede = $database->fetchArray($query);
+        }
 
         // Prezzi listini clienti
         $query = 'SELECT minimo, massimo,
@@ -269,6 +289,8 @@ switch ($resource) {
         AND idanagrafica = '.prepare($id_anagrafica).'
         ORDER BY minimo ASC, massimo DESC';
         $listino = $database->fetchArray($query);
+
+        $listini = array_merge($listino_sede, $listino);
 
         // Prezzi listini clienti sempre visibili
         $query = 'SELECT minimo, massimo,
@@ -295,7 +317,7 @@ switch ($resource) {
         // Ultimo prezzo al cliente
         $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `idarticolo`='.prepare($id_articolo).' AND `idanagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
 
-        $results = array_merge($prezzi, $listino, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
+        $results = array_merge($prezzi, $listini, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
 
         echo json_encode($results);
 

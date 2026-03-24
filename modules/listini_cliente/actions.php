@@ -36,7 +36,7 @@ switch (filter('op')) {
         $listino->save();
 
         $id_anagrafiche = (array) post('idanagrafica');
-        $dbo->query('UPDATE `an_anagrafiche` SET id_listino=0 WHERE id_listino='.prepare($id_record));
+        $dbo->query('UPDATE `an_anagrafiche` SET id_listino=null WHERE id_listino='.prepare($id_record));
         foreach ($id_anagrafiche as $id_anagrafica) {
             $dbo->query('UPDATE `an_anagrafiche` SET id_listino='.prepare($id_record).' WHERE idanagrafica='.prepare($id_anagrafica));
         }

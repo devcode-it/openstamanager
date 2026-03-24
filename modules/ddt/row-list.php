@@ -210,7 +210,7 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo()) {
             $id_anagrafica = $ddt->idanagrafica;
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $ddt->idsede_destinazione);
         }
 
         // Costi unitari

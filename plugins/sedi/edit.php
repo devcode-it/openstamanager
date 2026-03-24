@@ -125,14 +125,19 @@ echo '
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
             {[ "type": "checkbox", "label": "'.tr('Automezzo').'", "name": "is_automezzo", "id": "is_automezzo", "value": "'.$record['is_automezzo'].'", "help": "'.tr('Seleziona se questa sede rappresenta un automezzo.').'" ]}
         </div>
 
-		<div class="col-md-4">
+		 <div class="col-md-3">
+			{[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "'.$record['id_listino'].'" ]}
+		</div>
+
+		<div class="col-md-3">
 			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
 		</div>
-		<div class="col-md-4">
+
+		<div class="col-md-3">
 			{[ "type": "number", "label": "'.tr('Km').'", "name": "km", "value": "$km$", "decimals": "qta" ]}
 		</div>
 	</div>

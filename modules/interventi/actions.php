@@ -1484,9 +1484,9 @@ switch (post('op')) {
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $intervento->idsede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
-                    $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+                    $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
                 }
                 $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
                 $sconto = $prezzo_consigliato['sconto'];
@@ -1651,9 +1651,9 @@ switch (post('op')) {
                 $id_articolo = $riga->idarticolo;
 
                 if ($update_prezzo_vendita) {
-                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo);
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $intervento->idsede_destinazione);
                     if (!$prezzo_consigliato['prezzo_unitario']) {
-                        $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo);
+                        $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                     }
                     $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
                     $sconto = $prezzo_consigliato['sconto'];

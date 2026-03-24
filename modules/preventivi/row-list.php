@@ -234,7 +234,7 @@ foreach ($righe as $key => $riga) {
             if ($riga->isArticolo()) {
                 $id_anagrafica = $preventivo->idanagrafica;
                 $dir = 'entrata';
-                $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga);
+                $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $preventivo->idsede_destinazione);
             }
 
             if ($riga->isSconto()) {

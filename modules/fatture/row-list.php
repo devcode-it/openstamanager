@@ -234,7 +234,7 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo()) {
             $id_anagrafica = $fattura->idanagrafica;
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $fattura->idsede_destinazione);
         }
 
         // Costi unitari

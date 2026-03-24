@@ -332,7 +332,7 @@ function getSegmentPredefined($id_module)
  *
  * @return array
  */
-function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = null)
+function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = null, $id_sede = null)
 {
     if ($riga) {
         $qta = $riga->qta;
@@ -357,19 +357,39 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
     $prezzi = database()->fetchArray($query);
 
     // Prezzi listini clienti
-    $query = 'SELECT minimo, massimo,
-        sconto_percentuale AS sconto_percentuale_listino,
-        '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
-    FROM mg_listini
-    LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
-    LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
-    WHERE mg_listini.data_attivazione<=NOW()
-    AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
-    AND mg_listini.attivo=1
-    AND id_articolo = '.prepare($id_articolo).'
-    AND dir = '.prepare($direzione).'
-    AND idanagrafica = '.prepare($id_anagrafica);
-    $listini = database()->fetchArray($query);
+    // Prima verifica se c'è un listino associato alla sede, se fornito
+    if (!empty($id_sede)) {
+        $query = 'SELECT minimo, massimo,
+            sconto_percentuale AS sconto_percentuale_listino,
+            '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+        FROM mg_listini
+        LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+        LEFT JOIN an_sedi ON mg_listini.id=an_sedi.id_listino
+        WHERE mg_listini.data_attivazione<=NOW()
+        AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
+        AND mg_listini.attivo=1
+        AND id_articolo = '.prepare($id_articolo).'
+        AND dir = '.prepare($direzione).'
+        AND an_sedi.id = '.prepare($id_sede);
+        $listini = database()->fetchArray($query);
+    }
+
+    // Se non è stato trovato un listino per la sede o non è stato fornito id_sede, cerca il listino dell'anagrafica
+    if (empty($listini)) {
+        $query = 'SELECT minimo, massimo,
+            sconto_percentuale AS sconto_percentuale_listino,
+            '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
+        FROM mg_listini
+        LEFT JOIN mg_listini_articoli ON mg_listini.id=mg_listini_articoli.id_listino
+        LEFT JOIN an_anagrafiche ON mg_listini.id=an_anagrafiche.id_listino
+        WHERE mg_listini.data_attivazione<=NOW()
+        AND (mg_listini_articoli.data_scadenza>=NOW() OR (mg_listini_articoli.data_scadenza IS NULL AND mg_listini.data_scadenza_predefinita>=NOW()))
+        AND mg_listini.attivo=1
+        AND id_articolo = '.prepare($id_articolo).'
+        AND dir = '.prepare($direzione).'
+        AND idanagrafica = '.prepare($id_anagrafica);
+        $listini = database()->fetchArray($query);
+    }
 
     // Prezzi listini clienti sempre visibili
     $query = 'SELECT mg_listini.nome, minimo, massimo, sconto_percentuale AS sconto_percentuale_listino_visibile,

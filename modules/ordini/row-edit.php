@@ -38,6 +38,7 @@ $options = [
             'idanagrafica' => $documento->idanagrafica,
             'dir' => $documento->direzione,
             'permetti_movimento_a_zero' => 1,
+            'idsede_destinazione' => $documento->idsede_destinazione
         ],
     ],
 ];

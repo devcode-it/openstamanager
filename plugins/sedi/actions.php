@@ -102,6 +102,7 @@ switch ($operazione) {
         $sede->targa = post('targa');
         $sede->nome = post('nome');
         $sede->descrizione = post('descrizione');
+        $sede->id_listino = post('id_listino') ?: null;
         $sede->save();
 
         // Salva le tariffe specifiche per la sede

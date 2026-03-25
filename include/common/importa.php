@@ -477,7 +477,7 @@ foreach ($righe as $i => $riga) {
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'entrata' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="text" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] || $is_renewal ? '' : ($info_disponibilita['disponibile']>$riga['qta_rimanente'] ? $riga['qta_rimanente'] : $info_disponibilita['disponibile'])).'" />';
+                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] || $is_renewal ? '' : ($info_disponibilita['disponibile']>$riga['qta_rimanente'] ? $riga['qta_rimanente'] : $info_disponibilita['disponibile'])).'" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 

@@ -184,8 +184,8 @@ if ((setting('Sistema di firma') == 'Base') || isMobile()) {
         function caricaTavoletta(){
             let container = $("#firma-div");
             localLoading(container, true);
-            var marketing_generico = document.getElementById("marketing_generico").value;
-            var profilazione = document.getElementById("profilazione").value;
+            var marketing_generico = '.$GLOBALS['gdpr_marketing_generico'].';
+            var profilazione = '.$GLOBALS['gdpr_profilazione'].';
             return $.get("'.$structure->fileurl('modals/firma_tavoletta_gdpr.php').'?id_module='.$id_module.'&id_record='.$id_record.'&marketing_generico=" + marketing_generico + "&profilazione=" + profilazione, function(data) {
                 container.html(data);
                 localLoading(container, false);

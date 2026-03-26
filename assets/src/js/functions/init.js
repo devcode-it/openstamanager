@@ -107,22 +107,26 @@ function init() {
 
     restart_inputs();
 
-    sortable(".sortable", {
-          axis: "y",
-          handle: ".handle",
-          cursor: "move",
-          dropOnEmpty: true,
-          scroll: true,
-    })[0].addEventListener("sortupdate", function(e) {
-        let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
+    const sortableElement = sortable(".sortable", {
+        axis: "y",
+        handle: ".handle",
+        cursor: "move",
+        dropOnEmpty: true,
+        scroll: true,
+    })[0];
 
-        $.post(globals.rootdir + "/actions.php", {
-            id_module: globals.id_module,
-            id_record: globals.id_record,
-            op: "update_position",
-            order: order.join(","),
+    if (sortableElement) {
+        sortableElement.addEventListener("sortupdate", function(e) {
+            let order = $(".table tr[data-id]").toArray().map(a => $(a).data("id"))
+
+            $.post(globals.rootdir + "/actions.php", {
+                id_module: globals.id_module,
+                id_record: globals.id_record,
+                op: "update_position",
+                order: order.join(","),
+            });
         });
-    });
+    }
 }
 
 /**

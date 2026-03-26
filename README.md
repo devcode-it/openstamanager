@@ -227,3 +227,7 @@ Se volete contribuire attivamente con semplici migliorie o correzioni potete cer
 Questo progetto è tutelato dalla licenza [**GPL 3**](https://github.com/devcode-it/openstamanager/blob/master/LICENSE).
 
 Si richiede che qualsiasi distribuzione del software (o di sue versioni modificate) includa una copia del codice sorgente completo, una menzione adeguata al software originale **OpenSTAManager** e una copia della licenza GPL 3.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/image?repos=devcode-it/openstamanager&type=date&legend=top-left)](https://www.star-history.com/?repos=devcode-it%2Fopenstamanager&type=date&legend=top-left)

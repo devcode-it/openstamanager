@@ -62,6 +62,7 @@ class App
             'ua-parser.min.js',
             'functions.min.js',
             'custom.min.js',
+            'anagrafiche-tour.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
             'i18n/moment/|lang|.min.js',

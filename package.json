@@ -53,6 +53,7 @@
         "rbush": "^3.0.1",
         "readmore.js": "^2.0.4",
         "select2": "^4.0.3",
+        "shepherd.js": "^11.0.0",
         "signature_pad": "^2.3.0",
         "sjcl": "^1.0.8",
         "smartwizard": "^4.2.2",

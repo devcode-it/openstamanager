@@ -206,6 +206,14 @@ if (empty($record) || !$has_access) {
                         </a>
                     </div>
                 </span>';
+
+    // Pulsante per il tour guidato (solo modulo Anagrafiche)
+    if ($structure->name == 'Anagrafiche') {
+        echo '
+                    <button type="button" class="btn btn-info btn-sm" onclick="startAnagraficheTour()" title="Avvia tour guidato">
+                        <i class="fa fa-question-circle"></i>
+                    </button>';
+    }
     }
 
     echo '<div class="extra-buttons d-sm-inline">';

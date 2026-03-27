@@ -113,9 +113,9 @@ switch ($op) {
             ->where('id_segment', $fattura->id_segment)
             ->max('data');
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == Stato::where('name', 'Emessa')->first()->id) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
-            $fattura->data = $data_fattura_precedente['datamax'];
-            $fattura->data_competenza = $data_fattura_precedente['datamax'];
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == Stato::where('name', 'Emessa')->first()->id) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente)) && (!empty($data_fattura_precedente))) {
+            $fattura->data = $data_fattura_precedente;
+            $fattura->data_competenza = $data_fattura_precedente;
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
         } else {
             $fattura->data = post('data');

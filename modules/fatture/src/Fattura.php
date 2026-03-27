@@ -854,7 +854,7 @@ class Fattura extends Document
 
     public function manageRigaSpeseIncasso()
     {
-        if ($this->tipo->dir == 'uscita') {
+        if ($this->tipo->dir == 'uscita' || $this->stato->descrizione != 'Bozza') {
             return null;
         }
 
@@ -881,7 +881,7 @@ class Fattura extends Document
         }
 
         $prezzo_unitario = $this->pagamento->importo_fisso_incasso;
-        if ($this->pagamento->importo_percentuale_incasso && ($this->totale - $riga->totale)) {
+        if ($this->pagamento->importo_percentuale_incasso && ($this->totale - $riga->totale) && !$this->isAutofattura()) {
             $prezzo_unitario += ($this->totale - $riga->totale) * $this->pagamento->importo_percentuale_incasso / 100;
         }
 

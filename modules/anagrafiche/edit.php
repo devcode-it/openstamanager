@@ -18,6 +18,7 @@
  */
 
 use Carbon\Carbon;
+use Models\Locale;
 use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
@@ -33,7 +34,7 @@ $is_tecnico = in_array($id_tecnico, $tipi_anagrafica);
 $is_agente = in_array($id_agente, $tipi_anagrafica);
 $is_azienda = in_array($id_azienda, $tipi_anagrafica);
 
-if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
+if (! $is_cliente && ! $is_fornitore && ! $is_azienda && $is_tecnico) {
     $ignore = Plugin::where('name', 'Sedi aggiuntive')
         ->orWhere('name', 'Referenti')
         ->orWhere('name', 'Dichiarazioni d\'intento')
@@ -47,7 +48,7 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
     }
 }
 
-if (!$is_cliente) {
+if (! $is_cliente) {
     $ignore = Plugin::where('name', 'Impianti del cliente')
         ->orWhere('name', 'Contratti del cliente')
         ->orWhere('name', 'Ddt del cliente')
@@ -73,7 +74,7 @@ if ($is_fornitore && empty($record['idconto_fornitore'])) {
     $problemi_anagrafica[] = '<div class="row"><div class="col-md-3">'.tr('Piano dei conti mancante per il fornitore').'</div><button type="button" class="btn btn-xs btn-success" onclick="risolviConto(\'fornitore\')"><i class="fa fa-cog"></i> '.tr('Risolvi').'</button></div>';
 }
 
-if (sizeof($problemi_anagrafica) > 0) {
+if (count($problemi_anagrafica) > 0) {
     echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('ATTENZIONE: <br>_CAMPI_', [
         '_CAMPI_' => implode('', $problemi_anagrafica),
     ]).'</div>';
@@ -160,7 +161,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
 }
 
 ?>
-                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>", "validation": "codice_intermediario" ]}
+                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? ! (($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>", "validation": "codice_intermediario" ]}
                     </div>
 
                     <div class="col-md-4">
@@ -216,7 +217,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo !empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp tip' title='".((str_starts_with((string) $record['cellulare'], '+')) ? substr((string) $record['cellulare'], 1) : $record['cellulare'])."'></i>" : "<i class='fa fa-whatsapp tip' title='".tr('Compila il campo per utilizzare WhatsApp.')."'></i>"; ?>" ]}
+                                {[ "type": "telefono", "label": "<?php echo tr('Cellulare'); ?>", "name": "cellulare", "class": "text-center", "value": "$cellulare$", "icon-after": "<?php echo ! empty($record['cellulare']) ? "<btn class='clickable' onclick=sendWhatsAppMessage(".prepare($record['cellulare']).") ><i class='fa fa-whatsapp tip' title='".((str_starts_with((string) $record['cellulare'], '+')) ? substr((string) $record['cellulare'], 1) : $record['cellulare'])."'></i>" : "<i class='fa fa-whatsapp tip' title='".tr('Compila il campo per utilizzare WhatsApp.')."'></i>"; ?>" ]}
                             </div>
 
                             <div class="col-md-4">
@@ -269,7 +270,7 @@ echo '
                         <div class="clearfix"></div>
                         <br>';
 
-if (!empty($sede_cliente->gaddress) || (!empty($sede_cliente->lat) && !empty($sede_cliente->lng))) {
+if (! empty($sede_cliente->gaddress) || (! empty($sede_cliente->lat) && ! empty($sede_cliente->lng))) {
     // Modifica manuale delle informazioni
     echo '
                         <a class="btn btn-info btn-block" onclick="modificaPosizione()">
@@ -293,14 +294,14 @@ echo '
 echo '
                         <a class="btn btn-info btn-block '.(($anagrafica->isAzienda() || (empty($sede_cliente->lat) || empty($sede_cliente->lng)) || (empty($sede_azienda->lat) || empty($sede_azienda->lng))) ? 'disabled' : '').'" onclick="calcolaPercorso()">
                             <i class="fa fa-map-signs"></i> '.tr('Calcola percorso').'
-                            '.((!empty($sede_cliente->lat) && !empty($sede_azienda->lat)) ? tr('(GPS)') : '').'
+                            '.((! empty($sede_cliente->lat) && ! empty($sede_azienda->lat)) ? tr('(GPS)') : '').'
                         </a>';
 
 // Ricerca diretta su Mappa
 echo '
                         <a class="btn btn-info btn-block" onclick="cercaOpenStreetMap()">
                             <i class="fa fa-map-marker"></i> '.tr('Cerca su Mappa').'
-                            '.((!empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
+                            '.((! empty($sede_cliente->lat)) ? tr(' (GPS)') : '').'
                         </a>';
 
 echo '
@@ -488,15 +489,15 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     <ul class="nav nav-tabs nav-justified">
                         <li class="nav-item '.($is_cliente ? 'active"' : '"').'><a href="#cliente" data-card-widget="tab" class="nav-link '.($is_cliente ? '' : 'disabled').'" '.($is_cliente ? '' : 'disabled').'>'.tr('Cliente').'</a></li>
 
-                        <li class="nav-item '.(!$is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
+                        <li class="nav-item '.(! $is_cliente && $is_fornitore ? 'active"' : '"').'><a href="#fornitore" data-card-widget="tab" class="nav-link '.($is_fornitore ? '' : 'disabled').'" '.($is_fornitore ? '' : 'disabled').'>'.tr('Fornitore').'</a></li>
 
                         <li class="nav-item"><a href="#cliente_fornitore" data-card-widget="tab" class="nav-link '.($is_cliente || $is_fornitore ? '' : 'disabled').'" '.($is_cliente || $is_fornitore ? '' : 'disabled').'>'.tr('Cliente e fornitore').'</a></li>
 
-                        <li class="nav-item'.(!$is_cliente && !$is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
+                        <li class="nav-item'.(! $is_cliente && ! $is_fornitore && $is_tecnico ? 'active"' : '"').'><a href="#tecnico" data-card-widget="tab" class="nav-link '.($is_tecnico ? '' : 'disabled').'" '.($is_tecnico ? '' : 'disabled').'>'.tr('Tecnico').'</a></li>
                     </ul>
 
-                    <div class="tab-content '.(!$is_cliente && !$is_fornitore && !$is_tecnico ? 'hide' : '').'">
-                        <div class="tab-pane '.(!$is_cliente && !$is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
+                    <div class="tab-content '.(! $is_cliente && ! $is_fornitore && ! $is_tecnico ? 'hide' : '').'">
+                        <div class="tab-pane '.(! $is_cliente && ! $is_fornitore ? ' hide' : '').'" id="cliente_fornitore">
                             <div class="row">
                                 <div class="col-md-3">
                                     {[ "type": "checkbox", "label": "'.tr('Abilitare lo split payment').'", "name": "split_payment", "value": "$split_payment$", "help": "'.tr('Lo split payment è disponibile per le anagrafiche di tipologia \"Ente pubblico\" o \"Azienda\" (iscritta al Dipartimento Finanze - Scissione dei pagamenti) ed <strong>&egrave; obbligatorio</strong> per:<ul><li>Stato;</li><li>organi statali ancorch&eacute; dotati di personalit&agrave; giuridica;</li><li>enti pubblici territoriali e dei consorzi tra essi costituiti;</li><li>Camere di Commercio;</li><li>Istituti universitari;</li><li>ASL e degli enti ospedalieri;</li><li>enti pubblici di ricovero e cura aventi prevalente carattere scientifico;</li><li>enti pubblici di assistenza e beneficienza;</li><li>enti di previdenza;</li><li>consorzi tra questi costituiti.</li></ul>').'", "placeholder": "'.tr('Split payment').'", "extra" : "'.($record['tipo'] == 'Ente pubblico' || $record['tipo'] == 'Azienda' ? '' : 'disabled').'" ]}
@@ -512,9 +513,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>';
 
     $banche = Banca::where('id_anagrafica', $anagrafica->id)->get();
-    $banca_predefinita = $banche->first(fn ($item) => !empty($item['predefined']));
+    $banca_predefinita = $banche->first(fn ($item) => ! empty($item['predefined']));
     $modulo_banche = Module::where('name', 'Banche')->first()->id;
-    if (!$banche->isEmpty()) {
+    if (! $banche->isEmpty()) {
         echo '
                             <div class="row">
                                 <div class="col-md-6">
@@ -539,14 +540,14 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
                         </div>
 
-                        <div class="tab-pane '.(!$is_cliente ? 'hide' : 'active').'" id="cliente">
+                        <div class="tab-pane '.(! $is_cliente ? 'hide' : 'active').'" id="cliente">
                             <div class="row">
                                 <div class="col-md-6">
                                         {[ "type": "select", "label": "'.tr('Provenienza').'", "name": "id_provenienza", "ajax-source": "provenienze", "value": "$id_provenienza$", "icon-after": "add|'.Module::where('name', 'Provenienze')->first()->id.'" ]}
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_vendite$" ]}
+                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_vendite", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_vendite$" ]}
                                 </div>
                             </div>
 
@@ -576,7 +577,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
+                                    {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
                                 </div>
                             </div>
 
@@ -590,21 +591,23 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">';
-                                    $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica=".prepare($id_record));
-                                    $idtipiintervento = array('-1');
-                                    for( $i=0; $i<sizeof($rs); $i++ ){
-                                        array_push( $idtipiintervento, $rs[$i]['idtipointervento'] );
-                                    }
-                                    
-                                    // Prepara la query per il tipo attività predefinita filtrata
-                                    $where_clause = '';
-                                    $tipi_utilizzabili_filtro = array_filter($idtipiintervento, function($val) { return $val != '-1'; });
-                                    if (!empty($tipi_utilizzabili_filtro)) {
-                                        $where_clause = 'WHERE in_tipiintervento.id IN ('.implode(',', array_map('intval', $tipi_utilizzabili_filtro)).')';
-                                    }
-                                    
-                                    echo '
-                                    {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipiintervento.id, title as descrizione FROM in_tipiintervento LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode( ",", $idtipiintervento ).'" ]}
+    $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($id_record));
+    $idtipiintervento = ['-1'];
+    for ($i = 0; $i < count($rs); $i++) {
+        array_push($idtipiintervento, $rs[$i]['idtipointervento']);
+    }
+
+    // Prepara la query per il tipo attività predefinita filtrata
+    $where_clause = '';
+    $tipi_utilizzabili_filtro = array_filter($idtipiintervento, function ($val) {
+        return $val != '-1';
+    });
+    if (! empty($tipi_utilizzabili_filtro)) {
+        $where_clause = 'WHERE in_tipiintervento.id IN ('.implode(',', array_map('intval', $tipi_utilizzabili_filtro)).')';
+    }
+
+    echo '
+                                    {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipiintervento.id, title as descrizione FROM in_tipiintervento LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode(',', $idtipiintervento).'" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "idtipointervento_default", "ajax-source": "tipiintervento",  "select-options": '.json_encode(['idtipiintervento' => '']).', "value": "$idtipointervento_default$" ]}
@@ -618,7 +621,6 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                                 </div>';
 
-
     // Collegamento con il conto
     $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_cliente']));
 
@@ -626,7 +628,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     <p><b>'.tr('Piano dei conti cliente').'</b></p>';
 
-    if (!empty($conto['numero_conto'])) {
+    if (! empty($conto['numero_conto'])) {
         $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
         echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
     } else {
@@ -639,10 +641,10 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                         </div>';
 
     echo '
-                        <div class="tab-pane '.(!$is_fornitore ? 'hide' : (!$is_cliente ? 'active' : '')).'" id="fornitore">
+                        <div class="tab-pane '.(! $is_fornitore ? 'hide' : (! $is_cliente ? 'active' : '')).'" id="fornitore">
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_acquisti", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_acquisti$" ]}
+                                    {[ "type": "select", "label": "'.tr('Pagamento predefinito').'", "name": "idpagamento_acquisti", "values": "query=SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS descrizione FROM `co_pagamenti` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') GROUP BY `descrizione` ORDER BY `descrizione` ASC", "value": "$idpagamento_acquisti$" ]}
                                 </div>
 
                                 <div class="col-md-6">
@@ -672,7 +674,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     <p><b>'.tr('Piano dei conti fornitore').'</b></p>';
 
-    if (!empty($conto['numero_conto'])) {
+    if (! empty($conto['numero_conto'])) {
         $piano_dei_conti_fornitore = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
         echo Modules::link('Piano dei conti', null, $piano_dei_conti_fornitore, null, '', 1, 'movimenti-'.$conto['id']);
     } else {
@@ -684,7 +686,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
                         </div>
 
-                        <div class="tab-pane'.(!$is_cliente && !$is_fornitore && $is_tecnico ? ' active' : '').''.(!$is_tecnico ? ' hide' : '').'" id="tecnico">
+                        <div class="tab-pane'.(! $is_cliente && ! $is_fornitore && $is_tecnico ? ' active' : '').''.(! $is_tecnico ? ' hide' : '').'" id="tecnico">
                             <div class="row">
                                 <div class="col-md-6">
                                     {[ "type": "text", "label": "'.tr('Colore').'", "name": "colore", "id": "colore_t", "class": "colorpicker text-center", "value": "$colore$", "maxlength": "7", "icon-after": "<div class=\'img-circle square\'></div>" ]}
@@ -767,7 +769,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                 <div class="row">
                     <div class="col-md-6">
-                        {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
+                        {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
                             <?php
     if (in_array($id_azienda, $tipi_anagrafica)) {
         echo '
@@ -886,8 +888,8 @@ echo '
 </script>';
 
 if (empty($record['deleted_at'])) {
-    if (!in_array($id_azienda, $tipi_anagrafica)) {
-        if (!empty($elementi)) {
+    if (! in_array($id_azienda, $tipi_anagrafica)) {
+        if (! empty($elementi)) {
             echo '
 <div class="alert alert-danger">
     '.tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale').'.
@@ -977,6 +979,8 @@ if (empty($record['deleted_at'])) {
 
         $('#idtipiintervento').change(function() {
             updateSelectOption("idtipiintervento", $('#idtipiintervento option:selected').map(function() { return $(this).val(); }).get());
-	    });
+ 	    });
     });
 </script>
+
+<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/anagrafiche/js/anagrafiche-tour.js"></script>

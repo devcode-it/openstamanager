@@ -36,3 +36,7 @@ if (!empty($id_record)) {
         $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
     }
 }
+
+?>
+<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/scadenzario/js/scadenzario-guide.js"></script>
+<?php

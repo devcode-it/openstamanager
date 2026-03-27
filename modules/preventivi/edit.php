@@ -18,6 +18,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\Locale;
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 
@@ -44,7 +45,7 @@ if (count($preventivo->revisioni) > 1) {
 
     <div class="row">
         <div class="col-md-2 offset-md-10">
-            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) AND `co_statipreventivi`.`deleted_at` is NULL ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
+            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) AND `co_statipreventivi`.`deleted_at` is NULL ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}
         </div>
     </div>
     <?php echo '
@@ -78,7 +79,7 @@ if (count($preventivo->revisioni) > 1) {
 
             <div class="row">
                 <div class="col-md-4">';
-if (!empty($record['idreferente'])) {
+if (! empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
@@ -204,7 +205,7 @@ if ($user->gruppo != 'Clienti') {
 	</div>
 
     <?php
-        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
+        if (! empty($record['id_documento_fe']) || ! empty($record['num_item']) || ! empty($record['codice_cig']) || ! empty($record['codice_cup'])) {
             $collapsed = '';
         } else {
             $collapsed = ' collapsed-card';
@@ -259,7 +260,7 @@ echo '
 
     <div class="card-body">';
 
-if (!$block_edit) {
+if (! $block_edit) {
     // Form di inserimento riga documento
     echo '
         <form id="link_form" action="" method="post">
@@ -571,6 +572,8 @@ echo '
 </div>';
 
 ?>
+
+<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/preventivi/js/preventivi-tour.js"></script>
 
 <a class="btn btn-danger ask" data-backto="record-list">
     <i id="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>

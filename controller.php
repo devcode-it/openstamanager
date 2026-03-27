@@ -62,6 +62,16 @@ if ($structure->hasAddFile() && $structure->permission == 'rw') {
 						<button type="button" class="btn btn-primary" data-widget="modal" data-title="'.tr('Aggiungi').'..." data-href="add.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'"><i class="fa fa-plus"></i></button>';
 }
 
+// Pulsante per il tour guidato (se esiste il file tour nel modulo)
+$guide_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-guide.js';
+if (file_exists($guide_file)) {
+	$guide_function = 'show'.ucfirst($structure->directory).'Guide()';
+	echo '
+			<button type="button" class="btn btn-info btn-md" onclick="'.$guide_function.'" title="Avvia tour guidato">
+				<i class="fa fa-question-circle"></i>
+			</button>';
+}
+
 echo '
 				</h1>
 			</div>

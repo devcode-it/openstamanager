@@ -426,8 +426,8 @@ function showRestartTourButton() {
     $('.content-header .btn-group').after(restartButton);
 }
 
-// Inizializza quando il documento è pronto
-$(document).ready(function() {
+// Funzione per inizializzare il tour
+function initTour() {
     // Verifica se siamo nella pagina di modifica delle anagrafiche
     if ($('#edit-form').length > 0) {
         // Mostra il pulsante per riavviare il tour
@@ -441,4 +441,12 @@ $(document).ready(function() {
             }, 1000);
         }
     }
-});
+}
+
+// Inizializza quando il documento è pronto
+if (document.readyState === 'loading') {
+    $(document).ready(initTour);
+} else {
+    // Il documento è già caricato, esegui direttamente
+    initTour();
+}

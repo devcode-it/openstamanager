@@ -21,12 +21,13 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 use Models\Module;
+use Util\Query;
 
 // Disabilitazione dei campi
 $read_only = $structure->permission == 'r';
 $module_header_html = '';
 
-if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
+if (empty($id_record) && ! empty($id_module) && empty($id_plugin)) {
     redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
 } elseif (empty($id_record) && empty($id_module) && empty($id_plugin)) {
     redirect_url(base_path_osm().'/index.php');
@@ -34,21 +35,21 @@ if (empty($id_record) && !empty($id_module) && empty($id_plugin)) {
 
 include_once App::filepath('include|custom|', 'top.php');
 
-if (!empty($id_record)) {
-    Util\Query::setSegments(false);
-    $query = Util\Query::getQuery($structure, [
+if (! empty($id_record)) {
+    Query::setSegments(false);
+    $query = Query::getQuery($structure, [
         'id' => $id_record,
     ]);
-    Util\Query::setSegments(true);
+    Query::setSegments(true);
 }
 // Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
-if (!empty($query)) {
+if (! empty($query)) {
     if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/si', $query, $m)) {
         $query = str_replace(["\n", "\t"], ' ', $query);
         $conditions_to_remove = [];
         $condition = trim($m[0]);
 
-        if (!empty($table_name)) {
+        if (! empty($table_name)) {
             $condition = $table_name.'.'.$condition;
         }
 
@@ -62,14 +63,14 @@ if (!empty($query)) {
     }
 }
 
-$has_access = !empty($query) ? $dbo->fetchNum($query) !== 0 : true;
+$has_access = ! empty($query) ? $dbo->fetchNum($query) !== 0 : true;
 
 if ($has_access) {
     // Inclusione gli elementi fondamentali
     include_once base_dir().'/actions.php';
 }
 
-if (empty($record) || !$has_access) {
+if (empty($record) || ! $has_access) {
     echo '
         <div class="text-center">
     		<h3 class="text-muted">'.
@@ -88,7 +89,7 @@ if (empty($record) || !$has_access) {
     echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "top", "place": "editor" )}';
 
     $advanced_sessions = setting('Attiva notifica di presenza utenti sul record');
-    if (!empty($advanced_sessions)) {
+    if (! empty($advanced_sessions)) {
         $dbo->delete('zz_semaphores', ['id_utente' => auth_osm()->getUser()['id'], 'posizione' => $id_module.', '.$id_record]);
 
         $dbo->query('INSERT INTO zz_semaphores (id_utente, posizione, updated) VALUES ('.prepare(auth_osm()->getUser()['id']).', '.prepare($id_module.', '.$id_record).', NOW())');
@@ -137,12 +138,12 @@ if (empty($record) || !$has_access) {
         <div class="tab-content">
             <div id="tab_0" class="tab-pane active nav-item">';
 
-    if (!empty($record['deleted_at'])) {
+    if (! empty($record['deleted_at'])) {
         $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
 
         $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
             '_DATE_' => (($operation['created_at']) ? Translator::timestampToLocale($operation['created_at']) : Translator::timestampToLocale($record['deleted_at'])),
-            '_USER_' => ((!empty($operation['username'])) ? $operation['username'] : 'N.D.'),
+            '_USER_' => ((! empty($operation['username'])) ? $operation['username'] : 'N.D.'),
         ]).'. ';
 
         echo '
@@ -182,7 +183,7 @@ if (empty($record) || !$has_access) {
 
     // Ricavo la posizione per questo id_record
     $order = $_SESSION['module_'.$id_module]['order'] ?: [];
-    $module_query = Util\Query::getQuery($structure, $where, $order);
+    $module_query = Query::getQuery($structure, $where, $order);
     $posizioni = $module_query ? $dbo->fetchArray($module_query) : 0;
     $key = $posizioni ? array_search($id_record, array_column($posizioni, 'id')) : 0;
 
@@ -207,13 +208,15 @@ if (empty($record) || !$has_access) {
                     </div>
                 </span>';
 
-    // Pulsante per il tour guidato (solo modulo Anagrafiche)
-    if ($structure->name == 'Anagrafiche') {
-        echo '
-                    <button type="button" class="btn btn-info btn-sm" onclick="startAnagraficheTour()" title="Avvia tour guidato">
+        // Pulsante per il tour guidato (se esiste il file tour nel modulo)
+        $tour_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
+        if (file_exists($tour_file)) {
+            $tour_function = 'start'.ucfirst($structure->directory).'Tour()';
+            echo '
+                    <button type="button" class="btn btn-info btn-md" onclick="'.$tour_function.'" title="Avvia tour guidato">
                         <i class="fa fa-question-circle"></i>
                     </button>';
-    }
+        }
     }
 
     echo '<div class="extra-buttons d-sm-inline">';
@@ -221,7 +224,7 @@ if (empty($record) || !$has_access) {
     // Pulsanti personalizzati
     $buttons = $structure->filepath('buttons.php');
 
-    if (!empty($buttons)) {
+    if (! empty($buttons)) {
         include $buttons;
     }
 
@@ -238,16 +241,16 @@ if (empty($record) || !$has_access) {
     echo '
 
                         <div class="btn-group" id="save-buttons">
-                            <button type="button" class="btn btn-success" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'">
-                                <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(!empty($record['deleted_at']) ? tr('Salva e ripristina') : tr('Salva')).'
+                            <button type="button" class="btn btn-success" id="'.(! empty($record['deleted_at']) ? 'restore' : 'save').'">
+                                <i class="fa fa-'.(! empty($record['deleted_at']) ? 'undo' : 'check').'"></i> '.(! empty($record['deleted_at']) ? tr('Salva e ripristina') : tr('Salva')).'
                             </button>
                             <button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <a class="btn dropdown-item" href="#" id="'.(!empty($record['deleted_at']) ? 'restore' : 'save').'-close">
-                                    <i class="fa fa-'.(!empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
-                                    '.(!empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
+                                <a class="btn dropdown-item" href="#" id="'.(! empty($record['deleted_at']) ? 'restore' : 'save').'-close">
+                                    <i class="fa fa-'.(! empty($record['deleted_at']) ? 'undo' : 'check-square-o').'"></i>
+                                    '.(! empty($record['deleted_at']) ? tr('Ripristina e chiudi') : tr('Salva e chiudi')).'
                                 </a>
                             </div>
                         </div>
@@ -282,7 +285,7 @@ if (empty($record) || !$has_access) {
     $module_header = $structure->filepath('header.php');
     $module_header_html = '';
 
-    if (!empty($module_header)) {
+    if (! empty($module_header)) {
         ob_start();
         include $module_header;
         $module_header_html = ob_get_clean();
@@ -301,7 +304,7 @@ if (empty($record) || !$has_access) {
                 <div id="module-edit">';
 
     $path = $structure->getEditFile();
-    if (!empty($path)) {
+    if (! empty($path)) {
         include $path;
     }
 
@@ -401,7 +404,7 @@ if (empty($record) || !$has_access) {
 
         $operations = $dbo->fetchArray('SELECT `zz_operations`.*, `zz_users`.`username` FROM `zz_operations` LEFT JOIN `zz_users` ON `zz_operations`.`id_utente` = `zz_users`.`id` WHERE id_module = '.prepare($id_module).' AND id_record = '.prepare($id_record).' ORDER BY `created_at` DESC LIMIT 200');
 
-        if (!empty($operations)) {
+        if (! empty($operations)) {
             $current_date = null;
 
             foreach ($operations as $operation) {
@@ -461,13 +464,13 @@ if (empty($record) || !$has_access) {
                                         <span>'.$operation['username'].'</span>
                                     </div>';
 
-                if (!empty($operation['options'])) {
+                if (! empty($operation['options'])) {
                     $options = json_decode($operation['options'], true);
-                    if (!empty($options) && is_array($options)) {
+                    if (! empty($options) && is_array($options)) {
                         echo '<div class="text-muted small">';
                         $details = [];
                         foreach ($options as $key => $value) {
-                            if (!is_array($value) && !empty($value)) {
+                            if (! is_array($value) && ! empty($value)) {
                                 $details[] = '<span>'.ucfirst($key).': <b>'.$value.'</b></span>';
                             }
                         }
@@ -535,12 +538,12 @@ if (empty($record) || !$has_access) {
         </div>';
 }
 
-redirectOperation($id_module, !empty($id_parent) ? $id_parent : $id_record);
+redirectOperation($id_module, ! empty($id_parent) ? $id_parent : $id_record);
 
 // Widget in basso
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "id_record": "'.$id_record.'", "position": "right", "place": "editor" )}';
 
-if (!empty($record)) {
+if (! empty($record)) {
     echo '
         <hr>
         <a class="btn btn-default" href="'.base_path_osm().'/controller.php?id_module='.$id_module.'">
@@ -552,7 +555,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
-if ($read_only || !empty($block_edit)) {
+if ($read_only || ! empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 
     echo '
@@ -612,7 +615,7 @@ if ($read_only || !empty($block_edit)) {
 
 
 <?php
-if (!empty($advanced_sessions)) {
+if (! empty($advanced_sessions)) {
     ?>
 
             function getActiveUsers(){

@@ -13,7 +13,6 @@ function initDdtTour() {
                 console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
                 return;
             } else {
-                console.log('Shepherd.js è ora disponibile. Inizializzazione del tour...');
                 initDdtTourInternal();
             }
         }, 500);
@@ -48,7 +47,7 @@ function initDdtTourInternal() {
     });
 
     ddtTour.on('cancel', function() {
-        console.log('Tour ddt cancellato');
+        localStorage.setItem('ddt-tour-completed', 'true');
     });
 }
 
@@ -100,7 +99,7 @@ function addTourSteps() {
         buttons: [
             {
                 text: 'No',
-                action: ddtTour.cancel,
+                action: cancelTourAndClose,
                 classes: 'shepherd-button-secondary'
             },
             {
@@ -314,6 +313,14 @@ function showTourCompleteMessage() {
 }
 
 function completeTourAndClose() {
+    localStorage.setItem('ddt-tour-completed', 'true');
+
+    if (ddtTour) {
+        ddtTour.cancel();
+    }
+}
+
+function cancelTourAndClose() {
     localStorage.setItem('ddt-tour-completed', 'true');
 
     if (ddtTour) {

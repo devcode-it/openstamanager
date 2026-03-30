@@ -13,7 +13,6 @@ function initContrattiTour() {
                 console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
                 return;
             } else {
-                console.log('Shepherd.js è ora disponibile. Inizializzazione del tour...');
                 initContrattiTourInternal();
             }
         }, 500);
@@ -48,7 +47,7 @@ function initContrattiTourInternal() {
     });
 
     contrattiTour.on('cancel', function() {
-        console.log('Tour contratti cancellato');
+        localStorage.setItem('contratti-tour-completed', 'true');
     });
 }
 
@@ -100,7 +99,7 @@ function addTourSteps() {
         buttons: [
             {
                 text: 'No',
-                action: contrattiTour.cancel,
+                action: cancelTourAndClose,
                 classes: 'shepherd-button-secondary'
             },
             {
@@ -310,6 +309,14 @@ function showTourCompleteMessage() {
 }
 
 function completeTourAndClose() {
+    localStorage.setItem('contratti-tour-completed', 'true');
+
+    if (contrattiTour) {
+        contrattiTour.cancel();
+    }
+}
+
+function cancelTourAndClose() {
     localStorage.setItem('contratti-tour-completed', 'true');
 
     if (contrattiTour) {

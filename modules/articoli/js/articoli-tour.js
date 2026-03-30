@@ -13,7 +13,6 @@ function initArticoliTour() {
                 console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
                 return;
             } else {
-                console.log('Shepherd.js è ora disponibile. Inizializzazione del tour...');
                 initArticoliTourInternal();
             }
         }, 500);
@@ -48,7 +47,7 @@ function initArticoliTourInternal() {
     });
 
     articoliTour.on('cancel', function() {
-        console.log('Tour articoli cancellato');
+        localStorage.setItem('articoli-tour-completed', 'true');
     });
 }
 
@@ -100,7 +99,7 @@ function addTourSteps() {
         buttons: [
             {
                 text: 'No',
-                action: articoliTour.cancel,
+                action: cancelTourAndClose,
                 classes: 'shepherd-button-secondary'
             },
             {
@@ -282,6 +281,14 @@ function showTourCompleteMessage() {
 }
 
 function completeTourAndClose() {
+    localStorage.setItem('articoli-tour-completed', 'true');
+
+    if (articoliTour) {
+        articoliTour.cancel();
+    }
+}
+
+function cancelTourAndClose() {
     localStorage.setItem('articoli-tour-completed', 'true');
 
     if (articoliTour) {

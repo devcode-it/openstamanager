@@ -13,7 +13,6 @@ function initFattureTour() {
                 console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
                 return;
             } else {
-                console.log('Shepherd.js è ora disponibile. Inizializzazione del tour...');
                 initFattureTourInternal();
             }
         }, 500);
@@ -48,7 +47,7 @@ function initFattureTourInternal() {
     });
 
     fattureTour.on('cancel', function() {
-        console.log('Tour fatture cancellato');
+        localStorage.setItem('fatture-tour-completed', 'true');
     });
 }
 
@@ -100,7 +99,7 @@ function addTourSteps() {
         buttons: [
             {
                 text: 'No',
-                action: fattureTour.cancel,
+                action: cancelTourAndClose,
                 classes: 'shepherd-button-secondary'
             },
             {
@@ -327,6 +326,14 @@ function showTourCompleteMessage() {
 }
 
 function completeTourAndClose() {
+    localStorage.setItem('fatture-tour-completed', 'true');
+
+    if (fattureTour) {
+        fattureTour.cancel();
+    }
+}
+
+function cancelTourAndClose() {
     localStorage.setItem('fatture-tour-completed', 'true');
 
     if (fattureTour) {

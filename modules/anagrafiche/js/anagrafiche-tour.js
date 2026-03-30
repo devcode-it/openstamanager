@@ -19,7 +19,6 @@ function initAnagraficheTour() {
                 console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
                 return;
             } else {
-                console.log('Shepherd.js è ora disponibile. Inizializzazione del tour...');
                 // Chiama la funzione di inizializzazione
                 initAnagraficheTourInternal();
             }
@@ -64,8 +63,7 @@ function initAnagraficheTourInternal() {
 
     // Gestisci l'evento di cancellazione
     anagraficheTour.on('cancel', function() {
-        // Non salvare nulla se l'utente cancella il tour
-        console.log('Tour anagrafiche cancellato');
+        localStorage.setItem('anagrafiche-tour-completed', 'true');
     });
 }
 
@@ -129,7 +127,7 @@ function addTourSteps() {
         buttons: [
             {
                 text: 'No',
-                action: anagraficheTour.cancel,
+                action: cancelTourAndClose,
                 classes: 'shepherd-button-secondary'
             },
             {
@@ -399,6 +397,17 @@ function completeTourAndClose() {
     localStorage.setItem('anagrafiche-tour-completed', 'true');
 
     // Cancella il tour senza mostrare popup
+    if (anagraficheTour) {
+        anagraficheTour.cancel();
+    }
+}
+
+/**
+ * Cancella il tour e salva lo stato (usato per il pulsante "No")
+ */
+function cancelTourAndClose() {
+    localStorage.setItem('anagrafiche-tour-completed', 'true');
+
     if (anagraficheTour) {
         anagraficheTour.cancel();
     }

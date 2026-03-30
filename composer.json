@@ -45,7 +45,7 @@
         "illuminate/cache": "^12.0",
         "illuminate/database": "^12.0",
         "illuminate/filesystem": "^12.0",
-        "intervention/image": "^3.0",
+        "intervention/image": "^4.0",
         "jurosh/pdf-merge": "^2.1",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",

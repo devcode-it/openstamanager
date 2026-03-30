@@ -153,6 +153,11 @@ class Pagamento extends Model
         return $this->codice_modalita_pagamento_fe == 'MP12';
     }
 
+    public function isSepa()
+    {
+        return $this->codice_modalita_pagamento_fe == 'MP19' || $this->codice_modalita_pagamento_fe == 'MP20' || $this->codice_modalita_pagamento_fe == 'MP21';
+    }
+
     public function getModuleAttribute()
     {
         return 'Pagamenti';

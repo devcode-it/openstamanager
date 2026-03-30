@@ -78,6 +78,23 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $result .= "VERSION:2.0\r\n";
         $result .= "PRODID:-// OpenSTAManager\r\n";
 
+        //VTIMEZONE completo
+        $result .= "BEGIN:VTIMEZONE\r\n";
+        $result .= "TZID:Europe/Rome\r\n";
+        $result .= "BEGIN:STANDARD\r\n";
+        $result .= "DTSTART:19701025T030000\r\n";
+        $result .= "TZOFFSETFROM:+0200\r\n";
+        $result .= "TZOFFSETTO:+0100\r\n";
+        $result .= "TZNAME:CET\r\n";
+        $result .= "END:STANDARD\r\n";
+        $result .= "BEGIN:DAYLIGHT\r\n";
+        $result .= "DTSTART:19700329T020000\r\n";
+        $result .= "TZOFFSETFROM:+0100\r\n";
+        $result .= "TZOFFSETTO:+0200\r\n";
+        $result .= "TZNAME:CEST\r\n";
+        $result .= "END:DAYLIGHT\r\n";
+        $result .= "END:VTIMEZONE\r\n";
+
         foreach ($rs as $r) {
             $description = str_replace("\r\n", "\n", strip_tags((string) $r['richiesta']));
             $description = str_replace("\r", "\n", $description);
@@ -90,8 +107,8 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $result .= "BEGIN:VEVENT\r\n";
             $result .= 'UID:'.$r['idriga']."\r\n";
             $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\r\n";
-            $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\r\n";
-            $result .= 'DTEND:'.$fine->format('Ymd\THis')."\r\n";
+            $result .= 'DTSTART;TZID=Europe/Rome:'.$inizio->format('Ymd\THis')."\r\n";
+            $result .= 'DTEND;TZID=Europe/Rome:'.$fine->format('Ymd\THis')."\r\n";
             $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\r\n";
             $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\r\n";
             $result .= "END:VEVENT\r\n";

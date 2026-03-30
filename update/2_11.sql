@@ -302,3 +302,47 @@ UPDATE `zz_settings` SET `valore` = "Aggiorna prezzo di acquisto + imposta forni
 -- Aggiunta listino cliente per sedi
 ALTER TABLE `an_sedi` ADD `id_listino` INT NULL;
 ALTER TABLE `an_sedi` ADD CONSTRAINT `an_sedi_ibfk_5` FOREIGN KEY (`id_listino`) REFERENCES `mg_listini`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;
+
+-- Aggiunta colonna Validità in Contratti
+INSERT INTO `zz_views`
+    (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`)
+VALUES
+    (
+        (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'),
+        'Validità',
+        "IF(
+            IFNULL(`co_contratti`.`validita`, 0) = 0,
+            '',
+            CONCAT(
+                `co_contratti`.`validita`,
+                ' ',
+                CASE COALESCE(`co_contratti`.`tipo_validita`, 'days')
+                    WHEN 'years'  THEN IF(`co_contratti`.`validita` <= 1, 'anno',   'anni')
+                    WHEN 'months' THEN IF(`co_contratti`.`validita` <= 1, 'mese',   'mesi')
+                    WHEN 'days'   THEN IF(`co_contratti`.`validita` <= 1, 'giorno', 'giorni')
+                    ELSE ''
+                END
+            )
+        )",
+        21,
+        1,   -- ricercabile
+        0,   -- non slow
+        0,   -- no format numerico
+        0,   -- no html_format
+        NULL,
+        NULL,
+        1,   -- visibile di default
+        0,
+        0,
+        0
+    );
+
+INSERT INTO `zz_views_lang`
+    (`id_lang`, `id_record`, `title`)
+VALUES
+    (1, LAST_INSERT_ID(), 'Validità');
+
+INSERT INTO `zz_views_lang`
+    (`id_lang`, `id_record`, `title`)
+VALUES
+    (2, LAST_INSERT_ID(), 'Validity');

@@ -111,6 +111,8 @@ json_decode((string) $response);
 // Impostazioni di Content-Type e Charset Header
 if (json_last_error() == JSON_ERROR_NONE) {
     header('Content-Type: application/json; charset=UTF-8');
+} elseif (get('resource') == 'sync') {
+    header('Content-Type: text/calendar; charset=UTF-8');
 } else {
     header('Content-Type: text/plain; charset=UTF-8');
 }

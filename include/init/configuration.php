@@ -115,6 +115,24 @@ if (!empty(post('db_host'))) {
         exit;
     }
 
+    // Verifica SQL mode (ONLY_FULL_GROUP_BY deve essere disabilitato)
+    if (!empty(post('test_sqlmode'))) {
+        ob_end_clean();
+        if ($dbo->isConnected()) {
+            $result = $dbo->fetchOne('SELECT @@GLOBAL.sql_mode AS sql_mode');
+            $sql_mode = $result['sql_mode'] ?? '';
+            $has_only_full_group_by = stripos($sql_mode, 'ONLY_FULL_GROUP_BY') !== false;
+            echo json_encode([
+                'connected' => true,
+                'ok' => !$has_only_full_group_by,
+                'sql_mode' => $sql_mode,
+            ]);
+        } else {
+            echo json_encode(['connected' => false, 'ok' => false, 'sql_mode' => '']);
+        }
+        exit;
+    }
+
     // Creazione della configurazione
     if ($dbo->isConnected()) {
         $new_config = file_get_contents(base_dir().'/config.example.php');
@@ -350,12 +368,41 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
             $("#install").on("click", function(){
 
                 if($(this).closest("form").parsley().validate()){
-                    prev_html = $("#install").html();
-                    $("#install").html("<i class=\'fa fa-spinner fa-pulse fa-fw\'></i> '.tr('Attendere').'...");
-                    $("#install").prop("disabled", true);
+                    var $installBtn = $("#install");
+                    var prev_html_install = $installBtn.html();
+                    $installBtn.html("<i class=\'fa fa-spinner fa-pulse fa-fw\'></i> '.tr('Attendere').'...");
+                    $installBtn.prop("disabled", true);
                     $("#test").prop("disabled", true);
 
-                    $("#config-form").submit();
+                    // Prima verifica SQL mode
+                    $(this).closest("form").ajaxSubmit({
+                        url: "'.base_path_osm().'/index.php",
+                        data: { test_sqlmode: 1 },
+                        type: "post",
+                        success: function(data) {
+                            var result;
+                            try { result = JSON.parse(data.trim()); } catch(e) { result = null; }
+
+                            if (result && result.connected && !result.ok) {
+                                // ONLY_FULL_GROUP_BY è attivo: blocca e avvisa
+                                $installBtn.html(prev_html_install);
+                                $installBtn.prop("disabled", false);
+                                $("#test").prop("disabled", false);
+                                swal(
+                                    "'.tr('Configurazione MySQL incompatibile').'",
+                                    "'.addslashes(tr('La SQL mode del server MySQL contiene ONLY_FULL_GROUP_BY, incompatibile con OpenSTAManager.') . "\n\n" . tr('Aggiungi nel file my.ini nella sezione [mysqld]:') . "\n\nsql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\n\n" . tr('Poi riavvia MySQL e riprova.')).'",
+                                    "error"
+                                );
+                            } else {
+                                // SQL mode OK (o non connesso: lascia proseguire)
+                                $("#config-form").submit();
+                            }
+                        },
+                        error: function() {
+                            // In caso di errore AJAX, lascia proseguire (il server gestirà)
+                            $("#config-form").submit();
+                        }
+                    });
                 }
 
             });

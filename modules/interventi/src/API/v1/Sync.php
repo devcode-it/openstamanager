@@ -74,33 +74,30 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
         $result = '';
 
-        $result .= "BEGIN:VCALENDAR\n";
-        $result .= "VERSION:2.0\n";
-        $result .= "PRODID:-// OpenSTAManager\n";
+        $result .= "BEGIN:VCALENDAR\r\n";
+        $result .= "VERSION:2.0\r\n";
+        $result .= "PRODID:-// OpenSTAManager\r\n";
 
         foreach ($rs as $r) {
-            $description = str_replace("\r\n", "\n", strip_tags((string) $r['description']));
+            $description = str_replace("\r\n", "\n", strip_tags((string) $r['richiesta']));
             $description = str_replace("\r", "\n", $description);
-            $description = str_replace("\n", '\\n', $description);
-
-            $r['summary'] = str_replace("\r\n", "\n", $r['summary']);
+            $description = str_replace("\n", '\\r\\n', $description);
 
             $now = new Carbon();
             $inizio = new Carbon($r['orario_inizio']);
             $fine = new Carbon($r['orario_fine']);
 
-            $result .= "BEGIN:VEVENT\n";
-            $result .= 'UID:'.$r['idriga']."\n";
-            $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\n";
-            // $result .= 'ORGANIZER;CN='.$azienda.':MAILTO:'.$email."\n";
-            $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\n";
-            $result .= 'DTEND:'.$fine->format('Ymd\THis')."\n";
-            $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\n";
-            $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\n";
-            $result .= "END:VEVENT\n";
+            $result .= "BEGIN:VEVENT\r\n";
+            $result .= 'UID:'.$r['idriga']."\r\n";
+            $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\r\n";
+            $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\r\n";
+            $result .= 'DTEND:'.$fine->format('Ymd\THis')."\r\n";
+            $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\r\n";
+            $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\r\n";
+            $result .= "END:VEVENT\r\n";
         }
 
-        $result .= "END:VCALENDAR\n";
+        $result .= "END:VCALENDAR\r\n";
 
         return [
             'custom' => $result,

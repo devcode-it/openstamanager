@@ -263,12 +263,38 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
     }
 
     // Controlli per essere sicuro che l'utente abbia letto la licenza
+    $json_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+    $cannot_proceed_title_js = json_encode(tr('Impossibile procedere'), $json_flags);
+    $license_required_message_js = json_encode(tr('Devi accettare la licenza per proseguire!'), $json_flags);
+    $mysql_incompatible_title_js = json_encode(tr('Configurazione MySQL incompatibile'), $json_flags);
+    $mysql_incompatible_message_js = json_encode(
+        tr('La SQL mode del server MySQL contiene ONLY_FULL_GROUP_BY, incompatibile con OpenSTAManager.')
+        ."\n\n".tr('Aggiungi nel file my.ini nella sezione [mysqld]:')
+        ."\n\nsql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\n\n"
+        .tr('Poi riavvia MySQL e riprova.'),
+        $json_flags,
+    );
+    $connection_error_title_js = json_encode(tr('Errore di connessione'), $json_flags);
+    $connection_error_message_js = json_encode(tr('Impossibile connettersi al database con i parametri inseriti').'.', $json_flags);
+    $insufficient_permissions_title_js = json_encode(tr('Permessi insufficienti'), $json_flags);
+    $insufficient_permissions_message_js = json_encode(tr("L'utente MySQL non ha i permessi necessari per creare e modificare le tabelle. Verifica i permessi o usa un altro utente.").'.', $json_flags);
+    $connection_success_title_js = json_encode(tr('Connessione riuscita'), $json_flags);
+    $connection_success_message_js = json_encode(
+        tr('Connessione al database stabilita correttamente').'. '
+        .tr('Clicca su _BTN_ per procedere con l\'installazione', [
+            '_BTN_' => "'".tr('Procedi')."'",
+        ]).'.',
+        $json_flags,
+    );
+    $generic_error_prefix_js = json_encode(tr('Errore').': ', $json_flags);
+
     echo '
         <script>
         $(document).ready(function(){
             // Custom tab navigation
             function navigateToStep(stepNumber) {
                 var targetStep = "step-" + stepNumber;
+                var targetHash = "#" + targetStep;
 
                 // Remove active class from all tabs
                 $(".config-wizard-tabs li").removeClass("active");
@@ -281,6 +307,13 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
 
                 // Show target step
                 $("#" + targetStep).show();
+
+                // Keep URL hash in sync with the current step
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, "", targetHash);
+                } else {
+                    window.location.hash = targetHash;
+                }
 
                 // Scroll to top of steps
                 $("html, body").animate({ scrollTop: $("#steps").offset().top }, 500);
@@ -333,7 +366,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 // Validazione per step 2 (licenza)
                 if (currentStep === 2) {
                     if (!$("#agree").is(":checked")) {
-                        swal("'.tr('Impossibile procedere').'", "'.tr('Devi accettare la licenza per proseguire!').'", "error");
+                        swal('.$cannot_proceed_title_js.', '.$license_required_message_js.', "error");
                         return false;
                     }
                 }
@@ -343,11 +376,16 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 }
             });
 
-            // Set first tab as active by default
-            $(".config-wizard-tabs li:first").addClass("active");
-            $(".config-wizard-content > div[id^=\"step-\"]").hide();
-            $("#step-1").show();
-            updateNavigationButtons(1);
+            // Set active tab based on hash or default to first step
+            var totalSteps = $(".config-wizard-tabs li").length;
+            var hashMatch = window.location.hash.match(/^#step-([1-9][0-9]*)$/);
+            var initialStep = hashMatch ? parseInt(hashMatch[1], 10) : 1;
+
+            if (!initialStep || initialStep < 1 || initialStep > totalSteps) {
+                initialStep = 1;
+            }
+
+            navigateToStep(initialStep);
 
             // Inizializza il widget collapse per le card
             $(document).on("click", "[data-card-widget=\"collapse\"]", function(e) {
@@ -389,8 +427,8 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 $installBtn.prop("disabled", false);
                                 $("#test").prop("disabled", false);
                                 swal(
-                                    "'.tr('Configurazione MySQL incompatibile').'",
-                                    "'.addslashes(tr('La SQL mode del server MySQL contiene ONLY_FULL_GROUP_BY, incompatibile con OpenSTAManager.') . "\n\n" . tr('Aggiungi nel file my.ini nella sezione [mysqld]:') . "\n\nsql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\n\n" . tr('Poi riavvia MySQL e riprova.')).'",
+                                    '.$mysql_incompatible_title_js.',
+                                    '.$mysql_incompatible_message_js.',
                                     "error"
                                 );
                             } else {
@@ -427,17 +465,15 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             $("#install").prop("disabled", false);
 
                             if(data == 0){
-                                swal("'.tr('Errore di connessione').'", "'.tr('Impossibile connettersi al database con i parametri inseriti').'.", "error");
+                                swal('.$connection_error_title_js.', '.$connection_error_message_js.', "error");
                             } else if(data == 1){
-                                swal("'.tr('Permessi insufficienti').'", "'.tr("L'utente MySQL non ha i permessi necessari per creare e modificare le tabelle. Verifica i permessi o usa un altro utente.").'.", "error");
+                                swal('.$insufficient_permissions_title_js.', '.$insufficient_permissions_message_js.', "error");
                             } else {
-                                swal("'.tr('Connessione riuscita').'", "'.tr('Connessione al database stabilita correttamente').'. '.tr('Clicca su _BTN_ per procedere con l\'installazione', [
-        '_BTN_' => "'".tr('Procedi')."'",
-    ]).'.", "success");
+                                swal('.$connection_success_title_js.', '.$connection_success_message_js.', "success");
                             }
                         },
                         error: function(data) {
-                            alert("'.tr('Errore').': " + data);
+                            alert('.$generic_error_prefix_js.' + data);
                         }
                     });
                 }

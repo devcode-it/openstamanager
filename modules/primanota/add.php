@@ -32,7 +32,7 @@ use Modules\Fatture\Stato;
  * Questo file prevede diverse operazioni per la generazione di un singolo array `$movimenti` contenente tutti i movimenti da presentare nella Prima Nota. In particolare:
  *  - Individua Scadenze e Fatture per ID da URL
  *  - Legge le informazioni relative alle Scadenze per presentare i movimenti in Dare e Avere
- *  - Legge le informazioni relative alla Scadenze le Fatture indicate (sola della prima Scadenza insoluta se `is_insoluto` impostato):
+ *  - Legge le informazioni relative alla Scadenze le Fatture indicate (sola della prima Scadenza disponibile se `is_insoluto` impostato):
  *      - Per Fatture di vendita, il totale è Avere (a meno di Note di credito oppure insoluto)
  *      - Per Fatture di acquisto, il totale è Dare (a meno di Note di credito oppure insoluto)
  *  - Inverte Dare e Avere se l'importo indicato è negativo [TODO: documentare la casistica]
@@ -124,7 +124,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
     if (!in_array($fattura->stato->name, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
-        ++$counter;
+        $counter++;
         continue;
     }
 
@@ -138,11 +138,11 @@ foreach ($id_documenti as $id_documento) {
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
     $id_conto_aziendale = $banca->id_pianodeiconti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
-    // Se sto registrando un insoluto, leggo l'ultima scadenza pagata altrimenti leggo la scadenza della fattura
+    // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(! empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(! empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -169,44 +169,91 @@ foreach ($id_documenti as $id_documento) {
 
     $righe_documento = [];
 
-    // Riga controparte
-    foreach ($scadenze as $scadenza) {
-        // Predisposizione conto
-        if ($scadenza['tipo'] == 'ritenutaacconto') {
-            $id_conto_controparte = setting("Conto per Erario c/ritenute d'acconto");
-        } else {
-            $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
-            $id_conto_controparte = $fattura->anagrafica[$conto_field];
-        }
+    if ($is_insoluto) {
+        $scadenza_disponibile = $scadenze[0];
+
+        $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
+        $id_conto_controparte = $fattura->anagrafica[$conto_field];
+
+        $conto_banca_effetti = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare('Banca effetti all\'incasso'));
+        $id_conto_banca_effetti = $conto_banca_effetti['id'] ?? null;
+
+        $conto_spese = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare('Effetti insoluti'));
+        $id_conto_spese_insoluti = $conto_spese['id'] ?? null;
 
         $righe_documento[] = [
-            'iddocumento' => $scadenza['iddocumento'],
-            'id_scadenza' => $scadenza['id'],
+            'iddocumento' => $scadenza_disponibile['iddocumento'],
+            'id_scadenza' => $scadenza_disponibile['id'],
             'id_conto' => $id_conto_controparte,
-            'dare' => $is_importo_avere ? 0 : $scadenza['rata'],
-            'avere' => $is_importo_avere ? $scadenza['rata'] : 0,
+            'dare' => $scadenza_disponibile['rata'],
+            'avere' => 0,
+        ];
+
+        $righe_documento[] = [
+            'iddocumento' => $scadenza_disponibile['iddocumento'],
+            'id_scadenza' => $scadenza_disponibile['id'],
+            'id_conto' => $id_conto_banca_effetti,
+            'dare' => 0,
+            'avere' => $scadenza_disponibile['rata'],
+        ];
+
+        $righe_documento[] = [
+            'iddocumento' => null,
+            'id_scadenza' => null,
+            'id_conto' => $id_conto_spese_insoluti,
+            'dare' => $scadenza_disponibile['rata'],
+            'avere' => 0,
+        ];
+
+        $righe_documento[] = [
+            'iddocumento' => null,
+            'id_scadenza' => null,
+            'id_conto' => $id_conto_aziendale,
+            'dare' => 0,
+            'avere' => $scadenza_disponibile['rata'],
+        ];
+    } else {
+        // Riga controparte
+        foreach ($scadenze as $scadenza) {
+            // Predisposizione conto
+            if ($scadenza['tipo'] == 'ritenutaacconto') {
+                $id_conto_controparte = setting("Conto per Erario c/ritenute d'acconto");
+            } else {
+                $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
+                $id_conto_controparte = $fattura->anagrafica[$conto_field];
+            }
+
+            $righe_documento[] = [
+                'iddocumento' => $scadenza['iddocumento'],
+                'id_scadenza' => $scadenza['id'],
+                'id_conto' => $id_conto_controparte,
+                'dare' => $is_importo_avere ? 0 : $scadenza['rata'],
+                'avere' => $is_importo_avere ? $scadenza['rata'] : 0,
+            ];
+        }
+
+        // Riga aziendale
+        $totale = sum(array_column($scadenze, 'rata'));
+
+        $righe_documento[] = [
+            'iddocumento' => $scadenze[0]['iddocumento'],
+            'id_scadenza' => $scadenze[0]['id'],
+            'id_conto' => $id_conto_aziendale,
+            'dare' => $is_importo_avere ? $totale : 0,
+            'avere' => $is_importo_avere ? 0 : $totale,
         ];
     }
-
-    // Riga aziendale
-    $totale = sum(array_column($scadenze, 'rata'));
-
-    $righe_documento[] = [
-        'iddocumento' => $scadenze[0]['iddocumento'],
-        'id_scadenza' => $scadenze[0]['id'],
-        'id_conto' => $id_conto_aziendale,
-        'dare' => $is_importo_avere ? $totale : 0,
-        'avere' => $is_importo_avere ? 0 : $totale,
-    ];
 
     $movimenti = array_merge($movimenti, $righe_documento);
 }
 
 // Inverto dare e avere per importi negativi
 foreach ($movimenti as $key => $value) {
-    if ($movimenti[$key]['dare'] < 0 || $movimenti[$key]['avere'] < 0) {
-        $tmp = abs($movimenti[$key]['dare']);
-        $movimenti[$key]['dare'] = abs($movimenti[$key]['avere']);
+    $dare = is_numeric($movimenti[$key]['dare']) ? $movimenti[$key]['dare'] : 0;
+    $avere = is_numeric($movimenti[$key]['avere']) ? $movimenti[$key]['avere'] : 0;
+    if ($dare < 0 || $avere < 0) {
+        $tmp = abs($dare);
+        $movimenti[$key]['dare'] = abs($avere);
         $movimenti[$key]['avere'] = $tmp;
     }
 }

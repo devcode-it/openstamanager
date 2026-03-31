@@ -38,7 +38,9 @@ class Mastrino extends Model
     use SimpleModelTrait;
 
     public $incrementing = false;
+
     protected $table = 'co_movimenti';
+
     protected $primaryKey = 'idmastrino';
 
     protected $hidden = [
@@ -50,7 +52,7 @@ class Mastrino extends Model
 
     public static function build($descrizione = null, $data = null, $is_insoluto = false, $contabile = false, $id_anagrafica = null)
     {
-        $model = new static();
+        $model = new static;
 
         $model->idmastrino = self::getNextMastrino();
         $model->data = $data;
@@ -119,17 +121,18 @@ class Mastrino extends Model
             return;
         }
         $movimenti = $movimenti ?: $this->movimenti;
+        $is_insoluto = $this->is_insoluto;
 
         // Aggiornamento delle scadenze per i singoli documenti
         $documenti = $this->getUniqueDocumenti($movimenti);
         $scadenze = $this->getScadenzePerDocumenti($documenti);
 
-        if (!empty($scadenza) && $singola) {
+        if (! empty($scadenza) && $singola) {
             $scadenze = [$scadenza->iddocumento => [$scadenza->id]];
         }
 
         foreach ($movimenti as $movimento) {
-            $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento);
+            $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento, $is_insoluto);
         }
 
         // Fix dello stato della Fattura
@@ -188,13 +191,13 @@ class Mastrino extends Model
     /**
      * Funzione dedicata alla distribuzione del totale pagato del movimento nelle relative scadenze associate.
      */
-    protected function correggiScadenza(Movimento $movimento, $scadenze = null, $id_documento = null)
+    protected function correggiScadenza(Movimento $movimento, $scadenze = null, $id_documento = null, $is_insoluto = false)
     {
         $is_nota = false;
         $documento = Fattura::find($id_documento);
         $totale_da_distribuire = 0;
 
-        if (!empty($scadenze)) {
+        if (! empty($scadenze)) {
             if (empty($documento)) {
                 $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
             } else {
@@ -204,11 +207,20 @@ class Mastrino extends Model
             // Se il movimento ha una scadenza specifica, aggiorna solo quella
             if (count($scadenze) == 1) {
                 $scadenza = Scadenza::find($movimento->id_scadenza);
-                if (!empty($scadenza)) {
+                if (! empty($scadenza)) {
                     // Calcola il totale di TUTTI i movimenti per questa specifica scadenza
-                    $totale_movimenti_scadenza = Movimento::where('id_scadenza', '=', $scadenza->id)
+                    // Considerando il flag is_insoluto per sottrarre i movimenti di insoluto
+                    $totale_pagamenti = Movimento::where('id_scadenza', '=', $scadenza->id)
                         ->where('totale', '>', 0)
+                        ->where('is_insoluto', '=', 0)
                         ->sum('totale');
+
+                    $totale_insoluti = Movimento::where('id_scadenza', '=', $scadenza->id)
+                        ->where('totale', '>', 0)
+                        ->where('is_insoluto', '=', 1)
+                        ->sum('totale');
+
+                    $totale_movimenti_scadenza = $totale_pagamenti - $totale_insoluti;
 
                     $scadenza_da_pagare = abs($scadenza->da_pagare);
                     $pagato_assoluto = abs($totale_movimenti_scadenza);
@@ -229,14 +241,20 @@ class Mastrino extends Model
                 // Ordina le scadenze per data scadenza
                 $scadenze = Scadenza::whereIn('id', $scadenze)->orderBy('scadenza', 'asc')->get()->pluck('id')->toArray();
 
-                $totale_movimenti = 0;
+                $totale_pagamenti = 0;
+                $totale_insoluti = 0;
                 foreach ($scadenze as $scadenza) {
-                    $totale_movimenti += Movimento::where('id_scadenza', '=', $scadenza)
-                    ->where('totale', '>', 0)
-                    ->sum('totale');
+                    $totale_pagamenti += Movimento::where('id_scadenza', '=', $scadenza)
+                        ->where('totale', '>', 0)
+                        ->where('is_insoluto', '=', 0)
+                        ->sum('totale');
+                    $totale_insoluti += Movimento::where('id_scadenza', '=', $scadenza)
+                        ->where('totale', '>', 0)
+                        ->where('is_insoluto', '=', 1)
+                        ->sum('totale');
                 }
 
-                $totale_da_distribuire = abs($totale_movimenti);
+                $totale_da_distribuire = abs($totale_pagamenti - $totale_insoluti);
 
                 // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
                 // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive
@@ -282,7 +300,7 @@ class Mastrino extends Model
     {
         $documentIds = [];
         foreach ($movimenti as $movimento) {
-            if (!in_array($movimento->iddocumento, $documentIds)) {
+            if (! in_array($movimento->iddocumento, $documentIds)) {
                 $documentIds[] = $movimento->iddocumento;
             }
         }

@@ -29,7 +29,7 @@ $marketing_generico = get('marketing_generico') ?? '1';
 $profilazione = get('profilazione') ?? '1';
 
 echo '
-<form action="'.base_path().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="form-firma">
+<form action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="form-firma">
     <input type="hidden" name="op" value="firma_gdpr">
     <input type="hidden" name="backto" value="record-edit">
 

@@ -21,7 +21,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Common\Document;
+use Models\Locale;
 use Models\Module;
+use Models\Segment;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
@@ -32,6 +35,7 @@ use Modules\Fatture\Components\Sconto;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo;
+use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
@@ -113,7 +117,7 @@ switch ($op) {
             ->where('id_segment', $fattura->id_segment)
             ->max('data');
 
-        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == Stato::where('name', 'Emessa')->first()->id) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente)) && (!empty($data_fattura_precedente))) {
+        if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && ($stato->id == Stato::where('name', 'Emessa')->first()->id) && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente)) && (! empty($data_fattura_precedente))) {
             $fattura->data = $data_fattura_precedente;
             $fattura->data_competenza = $data_fattura_precedente;
             flash()->info(tr('Data di emissione aggiornata, come da impostazione!'));
@@ -215,7 +219,7 @@ switch ($op) {
                             <ul>';
 
                         foreach ($errors as $error) {
-                            if (!empty($error)) {
+                            if (! empty($error)) {
                                 $message .= '
                                     <li>'.$error.'</li>';
                             }
@@ -250,7 +254,7 @@ switch ($op) {
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();
-            if (!empty($count)) {
+            if (! empty($count)) {
                 flash()->warning(tr('Esiste già una fattura con lo stesso numero secondario e la stessa anagrafica collegata!'));
             }
         }
@@ -265,7 +269,7 @@ switch ($op) {
                 ->whereHas('tipo', function ($query) use ($direzione) {
                     $query->where('dir', '=', $direzione);
                 })->count();
-            if (!empty($count)) {
+            if (! empty($count)) {
                 flash()->warning(tr('Esiste già una fattura con lo stesso numero!'));
             }
         }
@@ -290,7 +294,7 @@ switch ($op) {
             $totale_documento = 0;
 
             $riepiloghi = $xml['FatturaElettronicaBody']['DatiBeniServizi']['DatiRiepilogo'];
-            if (!empty($riepiloghi) && !isset($riepiloghi[0])) {
+            if (! empty($riepiloghi) && ! isset($riepiloghi[0])) {
                 $riepiloghi = [$riepiloghi];
             }
 
@@ -409,13 +413,13 @@ switch ($op) {
         break;
 
     case 'reopen':
-        if (!empty($id_record)) {
-            $stato = Stato::where('name', 'Bozza')->first()->id;
-            $fattura->stato()->associate($stato);
+        if (! empty($id_record)) {
+            $fattura->rimuoviScadenze();
+            $fattura->movimentiContabili()->delete();
+            $stato_emessa = Stato::where('name', 'Emessa')->first();
+            $fattura->stato()->associate($stato_emessa);
             $fattura->save();
-            $stato = Stato::where('name', 'Emessa')->first()->id;
-            $fattura->stato()->associate($stato);
-            $fattura->save();
+            $fattura->registraScadenze(false);
             flash()->info(tr('Fattura riaperta!'));
         }
 
@@ -424,10 +428,10 @@ switch ($op) {
     case 'add_intervento':
         $id_intervento = post('idintervento');
 
-        if (!empty($id_record) && $id_intervento !== null) {
+        if (! empty($id_record) && $id_intervento !== null) {
             $copia_descrizione = post('copia_descrizione');
-            $intervento = Modules\Interventi\Intervento::find($id_intervento);
-            if (!empty($copia_descrizione) && !empty($intervento->descrizione)) {
+            $intervento = Intervento::find($id_intervento);
+            if (! empty($copia_descrizione) && ! empty($intervento->descrizione)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = $intervento['descrizione'];
                 $riga->idintervento = $id_intervento;
@@ -437,13 +441,13 @@ switch ($op) {
             $id_iva_intervento = post('idiva');
 
             // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
-            if (!empty($fattura->id_dichiarazione_intento)) {
+            if (! empty($fattura->id_dichiarazione_intento)) {
                 $iva_dichiarazione = $database->table('co_iva')
                     ->where('codice_natura_fe', 'N3.5')
                     ->where('deleted_at', null)
                     ->first();
 
-                if (!empty($iva_dichiarazione)) {
+                if (! empty($iva_dichiarazione)) {
                     $id_iva_intervento = $iva_dichiarazione->id;
                 }
             }
@@ -658,12 +662,12 @@ switch ($op) {
 
         // Scollegamento intervento da documento
     case 'unlink_intervento':
-        if (!empty($id_record) && post('idriga') !== null) {
+        if (! empty($id_record) && post('idriga') !== null) {
             $id_riga = post('idriga');
             $type = post('type');
             $riga = $fattura->getRiga($type, $id_riga);
 
-            if (!empty($riga)) {
+            if (! empty($riga)) {
                 try {
                     $riga->delete();
 
@@ -790,7 +794,7 @@ switch ($op) {
                 $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
                 // Determino il tipo di riga da creare
-                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
+                if ($class_name == 'Articolo' && ! empty($riga_data['idarticolo'])) {
                     // Verifico che l'articolo esista
                     $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
                     if ($articolo_originale) {
@@ -813,7 +817,7 @@ switch ($op) {
                 $riga->qta = $riga_data['qta'];
                 $riga->um = $riga_data['um'];
 
-                if (!$riga->isDescrizione()) {
+                if (! $riga->isDescrizione()) {
                     $riga->prezzo_unitario = $riga_data['prezzo_unitario'];
                     $riga->sconto_unitario = $riga_data['sconto_unitario'];
                     $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
@@ -874,11 +878,11 @@ switch ($op) {
         // Metto l'intervento in stato "Fatturato"
         if (setting('Cambia automaticamente stato attività fatturate')) {
             $stato_fatturato = Modules\Interventi\Stato::where('codice', 'FAT')->first()->id;
-            Modules\Interventi\Intervento::where('id', $id_documento)->update(['idstatointervento' => $stato_fatturato]);
+            Intervento::where('id', $id_documento)->update(['idstatointervento' => $stato_fatturato]);
         }
 
         // Individuazione del documento originale
-        if (!is_subclass_of($class, Common\Document::class)) {
+        if (! is_subclass_of($class, Document::class)) {
             return;
         }
         $documento = $class::find($id_documento);
@@ -895,7 +899,7 @@ switch ($op) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
-            if (!empty($documento->idpagamento) && $documento->idpagamento != 0) {
+            if (! empty($documento->idpagamento) && $documento->idpagamento != 0) {
                 $fattura->idpagamento = $documento->idpagamento;
             } else {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
@@ -912,9 +916,9 @@ switch ($op) {
             $id_record = $fattura->id;
         }
 
-        if (!empty($documento->sconto_finale)) {
+        if (! empty($documento->sconto_finale)) {
             $fattura->sconto_finale = $documento->sconto_finale;
-        } elseif (!empty($documento->sconto_finale_percentuale)) {
+        } elseif (! empty($documento->sconto_finale_percentuale)) {
             $fattura->sconto_finale_percentuale = $documento->sconto_finale_percentuale;
         }
 
@@ -926,7 +930,7 @@ switch ($op) {
         $id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
         $id_conto = post('id_conto');
 
-        if ($class == Modules\Interventi\Intervento::class) {
+        if ($class == Intervento::class) {
             // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, non aggiunge la riga descrittiva
             $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
             if (!empty($descrizione_personalizzata)) {
@@ -937,7 +941,7 @@ switch ($op) {
             }
 
             $copia_descrizione = post('copia_descrizione');
-            if (!empty($copia_descrizione) && !empty($documento->descrizione)) {
+            if (! empty($copia_descrizione) && ! empty($documento->descrizione)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = $documento->descrizione;
                 $riga->idintervento = $documento->id;
@@ -948,13 +952,13 @@ switch ($op) {
                 $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
 
                 // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
-                if (!empty($fattura->id_dichiarazione_intento)) {
+                if (! empty($fattura->id_dichiarazione_intento)) {
                     $iva_dichiarazione = $database->table('co_iva')
                         ->where('codice_natura_fe', 'N3.5')
                         ->where('deleted_at', null)
                         ->first();
 
-                    if (!empty($iva_dichiarazione)) {
+                    if (! empty($iva_dichiarazione)) {
                         $id_iva = $iva_dichiarazione->id;
                     }
                 }
@@ -978,13 +982,13 @@ switch ($op) {
                 $copia->ritenuta_contributi = $ritenuta_contributi;
 
                 // Se la fattura ha una dichiarazione d'intento, applica l'aliquota IVA N3.5
-                if (!empty($fattura->id_dichiarazione_intento)) {
+                if (! empty($fattura->id_dichiarazione_intento)) {
                     $iva_dichiarazione = $database->table('co_iva')
                         ->where('codice_natura_fe', 'N3.5')
                         ->where('deleted_at', null)
                         ->first();
 
-                    if (!empty($iva_dichiarazione)) {
+                    if (! empty($iva_dichiarazione)) {
                         $copia->idiva = $iva_dichiarazione->id;
                     }
                 }
@@ -1038,7 +1042,7 @@ switch ($op) {
 
         $righe = $fattura->getRighe();
         foreach ($righe as $riga) {
-            if (post('evadere')[$riga->id] == 'on' and !empty(post('qta_da_evadere')[$riga->id])) {
+            if (post('evadere')[$riga->id] == 'on' and ! empty(post('qta_da_evadere')[$riga->id])) {
                 $qta = post('qta_da_evadere')[$riga->id];
 
                 $copia = $riga->copiaIn($nota, $qta);
@@ -1149,7 +1153,7 @@ switch ($op) {
         $riga->save();
 
         // Aggiunta tipologia cliente se necessario
-        if (!$anagrafica->isTipo('Cliente')) {
+        if (! $anagrafica->isTipo('Cliente')) {
             $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first()->id;
             $tipi = $anagrafica->tipi->pluck('id')->toArray();
             $tipi[] = $tipo_cliente;
@@ -1211,7 +1215,7 @@ switch ($op) {
         $barcode = post('barcode');
         $save_inline_barcode = true;
 
-        if (!empty($barcode)) {
+        if (! empty($barcode)) {
             $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('idarticolo');
             if (empty($id_articolo)) {
                 $id_articolo = $dbo->table('mg_articoli')
@@ -1224,13 +1228,13 @@ switch ($op) {
             }
         }
 
-        if (!empty($id_articolo)) {
+        if (! empty($id_articolo)) {
             $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
             $qta_articolo = $dbo->table('mg_articoli')->where('id', $id_articolo)->value('qta');
 
             $originale = ArticoloOriginale::find($id_articolo);
 
-            if ($qta_articolo <= 0 && !$permetti_movimenti_sotto_zero && !$originale->servizio && $dir == 'entrata') {
+            if ($qta_articolo <= 0 && ! $permetti_movimenti_sotto_zero && ! $originale->servizio && $dir == 'entrata') {
                 $response['error'] = tr('Quantità a magazzino non sufficiente');
                 echo json_encode($response);
             } else {
@@ -1247,9 +1251,9 @@ switch ($op) {
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
                 $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-                if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
+                if ($dir == 'entrata' && ! empty($originale->idconto_vendita)) {
                     $id_conto = $originale->idconto_vendita;
-                } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
+                } elseif ($dir == 'uscita' && ! empty($originale->idconto_acquisto)) {
                     $id_conto = $originale->idconto_acquisto;
                 }
                 $articolo->idconto = $id_conto;
@@ -1259,7 +1263,7 @@ switch ($op) {
                     if ($originale->idiva_vendita) {
                         $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                     }
-                    $id_iva = ($fattura->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+                    $id_iva = ($fattura->anagrafica->idiva_vendite && (! $originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
                     $id_iva = ($fattura->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
@@ -1268,7 +1272,7 @@ switch ($op) {
 
                 // CALCOLO PREZZO UNITARIO
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $fattura->idsede_destinazione);
-                if (!$prezzo_consigliato['prezzo_unitario']) {
+                if (! $prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
                 }
                 $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
@@ -1282,12 +1286,12 @@ switch ($op) {
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-                $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
-                if (!empty($piano_sconto)) {
+                $piano_sconto = Anagrafica::find($id_anagrafica)->pianoSconto($dir);
+                if (! empty($piano_sconto)) {
                     $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
                 }
 
-                $provvigione = Modules\Anagrafiche\Anagrafica::find($fattura->idagente)->provvigione_default;
+                $provvigione = Anagrafica::find($fattura->idagente)->provvigione_default;
 
                 $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: null;
                 $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: null;
@@ -1316,7 +1320,7 @@ switch ($op) {
         $result = false;
         if (in_array($idtipodocumento, $tipologie)) {
             // Aggiunta tipologia cliente se necessario
-            if (!$azienda->isTipo('Cliente')) {
+            if (! $azienda->isTipo('Cliente')) {
                 $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first()->id;
                 $tipi = $azienda->tipi->pluck('id')->toArray();
                 $tipi[] = $tipo_cliente;
@@ -1346,7 +1350,7 @@ switch ($op) {
             if ($articolo->prezzo_unitario != $riga['price']) {
                 $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
                 $articolo->save();
-                ++$numero_totale;
+                $numero_totale++;
             }
         }
 
@@ -1385,7 +1389,7 @@ switch ($op) {
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $fattura->idsede_destinazione);
-                if (!$prezzo_consigliato['prezzo_unitario']) {
+                if (! $prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                 }
                 $prezzo_unitario = $prezzo_consigliato['prezzo_unitario'];
@@ -1412,14 +1416,14 @@ switch ($op) {
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
-            if (!empty($piano_sconto)) {
+            $piano_sconto = Anagrafica::find($id_anagrafica)->pianoSconto($dir);
+            if (! empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');
             $riga->save();
-            ++$numero_totale;
+            $numero_totale++;
         }
 
         // Ricalcolo inps, ritenuta e bollo
@@ -1445,7 +1449,7 @@ switch ($op) {
         $riga = $riga ?: Articolo::find($id_riga);
         $riga = $riga ?: Sconto::find($id_riga);
 
-        if (!empty($riga)) {
+        if (! empty($riga)) {
             if ($riga->isSconto()) {
                 $riga->setScontoUnitario(post('sconto'), $riga->idiva);
             } else {
@@ -1472,7 +1476,7 @@ switch ($op) {
         $riga = $riga ?: Articolo::find($id_riga);
         $riga = $riga ?: Sconto::find($id_riga);
 
-        if (!empty($riga)) {
+        if (! empty($riga)) {
             if ($riga->isSconto()) {
                 // Per gli sconti, aggiorna l'IVA mantenendo lo stesso valore di sconto
                 $sconto_unitario = $riga->sconto_unitario;
@@ -1501,7 +1505,7 @@ switch ($op) {
             $riga = Articolo::find($id_riga) ?: Riga::find($id_riga);
             $riga = $riga ?: Sconto::find($id_riga);
 
-            if (!empty($riga)) {
+            if (! empty($riga)) {
                 if ($riga->isSconto()) {
                     // Per gli sconti, aggiorna l'IVA mantenendo lo stesso valore di sconto
                     $sconto_unitario = $riga->sconto_unitario;
@@ -1512,7 +1516,7 @@ switch ($op) {
                     $riga->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 }
                 $riga->save();
-                ++$numero_totale;
+                $numero_totale++;
             }
         }
 
@@ -1543,10 +1547,10 @@ switch ($op) {
 
 // Nota di debito
 if (get('op') == 'nota_addebito') {
-    $rs_segment = Models\Segment::whereHas('translations', function ($query) {
-        $query->where('id_lang', Models\Locale::getDefault()->id);
+    $rs_segment = Segment::whereHas('translations', function ($query) {
+        $query->where('id_lang', Locale::getDefault()->id);
     })->where('predefined_addebito', '1')->first();
-    if (!empty($rs_segment)) {
+    if (! empty($rs_segment)) {
         $id_segment = $rs_segment->id;
     } else {
         $id_segment = $record['id_segment'];

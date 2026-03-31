@@ -167,7 +167,7 @@ echo '
 ]). '.</p>
 
 
-  <p>' . tr("Per accedere al calendario eventi attraverso l'API, accedi al seguente link") . ':</p>
+  <p>' . tr("Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario") . ':</p>
                 <a href="' . $link . '" target="_blank">' . $link . '</a>
                 
             </div>

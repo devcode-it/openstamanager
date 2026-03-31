@@ -66,18 +66,6 @@ switch ($resource) {
         );
         $rs = $data['results'];
 
-        // Controllo metodi di pagamento con Ri.Ba. per le fatture di vendita
-        if (!empty($superselect['dir']) && $superselect['dir'] == 'entrata') {
-            $id_banca_controparte = $superselect['id_banca_controparte'] ?? '';
-            $banca_mancante = empty($id_banca_controparte) || $id_banca_controparte == 'null';
-
-            foreach ($rs as $k => $r) {
-                if ($r['codice_modalita_pagamento_fe'] == 'MP12' && $banca_mancante) {
-                    $rs[$k]['text'] = $r['descrizione'].' '.tr('(Nessuna banca di addebito selezionata)');
-                }
-            }
-        }
-
         $results = [
             'results' => $rs,
             'recordsFiltered' => $data['recordsFiltered'],

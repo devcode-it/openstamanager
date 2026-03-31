@@ -215,15 +215,8 @@ class Mastrino extends Model
                         ->where('is_insoluto', '=', 0)
                         ->sum('totale');
 
-                    $totale_insoluti = Movimento::where('id_scadenza', '=', $scadenza->id)
-                        ->where('totale', '>', 0)
-                        ->where('is_insoluto', '=', 1)
-                        ->sum('totale');
-
-                    $totale_movimenti_scadenza = $totale_pagamenti - $totale_insoluti;
-
                     $scadenza_da_pagare = abs($scadenza->da_pagare);
-                    $pagato_assoluto = abs($totale_movimenti_scadenza);
+                    $pagato_assoluto = abs($totale_pagamenti);
 
                     // Limita il pagato all'importo da pagare della scadenza
                     $pagato_assoluto = min($pagato_assoluto, $scadenza_da_pagare);
@@ -248,13 +241,9 @@ class Mastrino extends Model
                         ->where('totale', '>', 0)
                         ->where('is_insoluto', '=', 0)
                         ->sum('totale');
-                    $totale_insoluti += Movimento::where('id_scadenza', '=', $scadenza)
-                        ->where('totale', '>', 0)
-                        ->where('is_insoluto', '=', 1)
-                        ->sum('totale');
                 }
 
-                $totale_da_distribuire = abs($totale_pagamenti - $totale_insoluti);
+                $totale_da_distribuire = abs($totale_pagamenti);
 
                 // Ciclo tra le rate dei pagamenti per inserire su `pagato` l'importo effettivamente pagato
                 // Nel caso il pagamento superi la rata, devo distribuirlo sulle rate successive

@@ -153,23 +153,8 @@ echo '
                 <h3 class="card-title">'.tr('Configurazione').'</h3>
             </div>
             <div class="card-body">
-                <p>'.tr("Per _ANDROID_, scarica un'applicazione dedicata dal _LINK_", [
-    '_ANDROID_' => '<b>'.tr('Android').'</b>',
-    '_LINK_' => '<a href="https://play.google.com/store/search?q=iCalSync&c=apps" target="_blank">'.tr('Play Store').'</a>',
-]).'.</p>
-
-                <p>'.tr("Per _APPLE_, puoi configurare un nuovo calendario dall'app standard del calendario", [
-    '_APPLE_' => '<b>'.tr('Apple').'</b>',
-]).'.</p>
-
-                <p>'.tr('Per _PC_ e altri client di posta, considerare le relative funzionalità o eventuali plugin', [
-    '_PC_' => '<b>'.tr('PC').'</b>',
-]). '.</p>
-
-
-  <p>' . tr("Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario") . ':</p>
+            <p>' . tr("Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario") . ':</p>
                 <a href="' . $link . '" target="_blank">' . $link . '</a>
-                
             </div>
         </div>
     </div>

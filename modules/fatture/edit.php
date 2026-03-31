@@ -1443,5 +1443,4 @@ sede_partenza.change(function() {
 </script>';
 
 ?>
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/fatture/js/fatture-tour.js"></script>
 <?php

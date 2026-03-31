@@ -172,4 +172,10 @@ switch (filter('op')) {
         }
 
         break;
+
+    // Gestione operazioni relative ai tour guidati
+    case 'save_tour_completed':
+    case 'is_tour_completed':
+        include base_dir().'/include/ajax/tour.php';
+        break;
 }

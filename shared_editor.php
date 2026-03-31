@@ -20,8 +20,6 @@
 
 include_once __DIR__.'/core.php';
 
-use Permissions;
-
 // Controllo accesso tramite token
 if (!AuthOSM::check() && empty($_SESSION['token_user'])) {
     redirect_url(base_path_osm().'/index.php?op=logout');
@@ -115,11 +113,13 @@ $current_permission = $token_info['permessi'] ?? 'r';
 $load_module_content = !in_array($current_permission, ['ra', 'rwa']);
 
 // Imposta la variabile read_only per la compatibilità con i moduli
-$read_only = ($current_permission == 'r');
+$read_only = $current_permission == 'r';
 
 // Altre variabili necessarie per la compatibilità
 $rootdir = base_path_osm();
 $docroot = base_dir();
+$tour_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
+$tour_url = $rootdir.'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
 
 if ($load_module_content) {
     // Gestione delle operazioni POST solo per permessi r e rw
@@ -295,6 +295,10 @@ if ($current_permission == 'rw' || $current_permission == 'r') {
     $path = $structure->getEditFile();
     if (!empty($path)) {
         include $path;
+    }
+
+    if (file_exists($tour_file)) {
+        echo '<script type="text/javascript" src="'.$tour_url.'?v='.filemtime($tour_file).'"></script>';
     }
 }
 

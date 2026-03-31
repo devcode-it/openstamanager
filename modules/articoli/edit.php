@@ -525,5 +525,3 @@ $(document).ready(function(){
     $("#prezzivendita").load("<?php echo base_path_osm(); ?>/ajax_complete.php?module=Articoli&op=getprezzivendita&idarticolo="+ <?php echo $id_record; ?> + "&limit=20");
 });
 </script>
-
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/articoli/js/articoli-tour.js"></script>

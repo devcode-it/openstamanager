@@ -982,5 +982,3 @@ if (empty($record['deleted_at'])) {
  	    });
     });
 </script>
-
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/anagrafiche/js/anagrafiche-tour.js"></script>

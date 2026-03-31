@@ -688,8 +688,6 @@ echo '
 </div>';
 ?>
 
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/contratti/js/contratti-tour.js"></script>
-
 <a class="btn btn-danger ask" data-backto="record-list">
     <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

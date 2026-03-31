@@ -1,66 +1,42 @@
 /**
  * Tour guidato del modulo Interventi
- * Utilizza Shepherd.js per guidare l'utente attraverso le funzionalità principali
+ * Utilizza Driver.js per guidare l'utente attraverso le funzionalità principali
  */
 
-// Variabile globale per il tour
 let interventiTour = null;
+let tourModuleId = typeof globals !== 'undefined' ? globals.id_module : null;
 
-/**
- * Inizializza il tour guidato degli interventi
- */
 function initInterventiTour() {
-    if (typeof Shepherd === 'undefined') {
-        console.error('Shepherd.js non è disponibile. Attendi il caricamento della libreria...');
-        setTimeout(function() {
-            if (typeof Shepherd === 'undefined') {
-                console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
-                return;
-            } else {
-                initInterventiTourInternal();
-            }
-        }, 500);
-        return;
+    if (interventiTour) {
+        return Promise.resolve(interventiTour);
     }
-    
-    initInterventiTourInternal();
-}
 
-/**
- * Funzione interna per inizializzare il tour
- */
-function initInterventiTourInternal() {
-    interventiTour = new Shepherd.Tour({
-        tourName: 'interventi-tour',
-        useModalOverlay: true,
-        defaultStepOptions: {
-            classes: 'shadow-md bg-purple-dark',
-            scrollTo: { behavior: 'smooth', block: 'center' },
-            cancelIcon: {
-                enabled: true,
-                label: 'Chiudi'
-            },
-            arrow: true,
-            modalOverlayOpeningPadding: 10,
-            modalOverlayOpeningRadius: 10,
-        },
-    });
+    return waitForDriverJsFactory().then(function(driverFactory) {
+        if (typeof driverFactory !== 'function') {
+            console.error('Driver.js non è disponibile. Il tour non può essere inizializzato.');
+            return null;
+        }
 
-    addTourSteps();
+        interventiTour = initInterventiTourInternal(driverFactory);
 
-    interventiTour.on('complete', function() {
-        localStorage.setItem('interventi-tour-completed', 'true');
-        showTourCompleteMessage();
-    });
-
-    interventiTour.on('cancel', function() {
-        localStorage.setItem('interventi-tour-completed', 'true');
+        return interventiTour;
     });
 }
 
-/**
- * Funzione helper per trovare un elemento usando jQuery e restituire l'elemento DOM
- */
+function initInterventiTourInternal(driverFactory) {
+    return driverFactory({
+        showProgress: false,
+        steps: addExitButtonsToTourSteps(getTourSteps(), function() {
+            return interventiTour;
+        }),
+        onDestroyed: function() {
+            if (tourModuleId) {
+                saveTourCompletedDB(tourModuleId);
+            }
+        }
+    });
+}
+
 function findElementBySelector(selector, containsText) {
     try {
         if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
@@ -92,330 +68,192 @@ function findElementBySelector(selector, containsText) {
     }
 }
 
-/**
- * Aggiunge i passaggi del tour
- */
-function addTourSteps() {
-    interventiTour.addStep({
-        id: 'introduction',
-        title: 'Benvenuto nel modulo Interventi',
-        text: `
-            <div class="tour-step">
-                <p>Vuoi iniziare il tour guidato del modulo Interventi?</p>
-                <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
-            </div>
-        `,
-        attachTo: {
+function getTourSteps() {
+    return [
+        {
             element: document.body,
-            on: 'top'
+            popover: {
+                title: 'Benvenuto nel modulo Interventi',
+                description: `
+                    <div class="tour-step">
+                        <p>Vuoi iniziare il tour guidato del modulo Interventi?</p>
+                        <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
+                    </div>
+                `,
+                side: 'top',
+                align: 'start',
+                showButtons: ['next', 'close'],
+                nextBtnText: 'Inizia il tour'
+            }
         },
-        buttons: [
-            {
-                text: 'No',
-                action: cancelTourAndClose,
-                classes: 'shepherd-button-secondary'
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Dati cliente');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Inizia il tour',
-                action: interventiTour.next,
-                classes: 'shepherd-button-primary'
+            popover: {
+                title: 'Dati Cliente',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Cliente:</strong> Anagrafica del cliente a cui è riferito l'intervento</li>
+                            <li><strong>Referente:</strong> Persona di contatto presso il cliente</li>
+                            <li><strong>Sede:</strong> Indirizzo o sede specifica per l'intervento</li>
+                        </ul>
+                        <p>Per visualizzare questi dati è necessario espandere la sezione cliccando sul pulsante <i class="fa fa-plus"></i> in alto a destra.</p>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti'
             }
-        ]
-    });
-
-    const datiClienteElement = findElementBySelector('.card-title', 'Dati cliente');
-    interventiTour.addStep({
-        id: 'dati-cliente',
-        title: 'Dati Cliente',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Cliente:</strong> Anagrafica del cliente a cui è riferito l'intervento</li>
-                    <li><strong>Referente:</strong> Persona di contatto presso il cliente</li>
-                    <li><strong>Sede:</strong> Indirizzo o sede specifica per l'intervento</li>
-                </ul>
-            <p>Per visualizzare questi dati è necessario espandere la sezione cliccando sul pulsante <i class="fa fa-plus"></i> in alto a destra.</p>
-            </div>
-        `,
-        attachTo: datiClienteElement ? {
-            element: datiClienteElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Dati intervento');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Avanti',
-                action: interventiTour.next
+            popover: {
+                title: 'Dati Intervento',
+                description: `
+                    <div class="tour-step">
+                        <p>Qui puoi definire le informazioni essenziali dell'attività.</p>
+                        <p><strong>Dati temporali:</strong> Inserisci la data e ora di richiesta e scadenza, quindi assegna un tipo di attività (es. manutenzione, installazione) e definisci lo stato corrente (es. in programmazione, in corso, completato).</p>
+                        <p><strong>Tecnici:</strong> Seleziona i tecnici che dovranno lavorare all'intervento. Puoi assegnarne più di uno.</p>
+                        <p><strong>Collegamenti opzionali:</strong> Collega l'attività a un preventivo, un contratto o un ordine cliente per tenere traccia della provenienza del lavoro.</p>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti'
             }
-        ]
-    });
-
-    const datiInterventoElement = findElementBySelector('.card-title', 'Dati intervento');
-    interventiTour.addStep({
-        id: 'dati-intervento',
-        title: 'Dati Intervento',
-        text: `
-            <div class="tour-step">
-                <p>Qui puoi definire le informazioni essenziali dell'attività.</p>
-                <p><strong>Dati temporali:</strong> Inserisci la data e ora di richiesta e scadenza, quindi assegna un tipo di attività (es. manutenzione, installazione) e definisci lo stato corrente (es. in programmazione, in corso, completato).</p>
-                <p><strong>Tecnici:</strong> Seleziona i tecnici che dovranno lavorare all'intervento. Puoi assegnarne più di uno.</p>
-                <p><strong>Collegamenti opzionali:</strong> Collega l'attività a un preventivo, un contratto o un ordine cliente per tenere traccia della provenienza del lavoro.</p>
-            </div>
-        `,
-        attachTo: datiInterventoElement ? {
-            element: datiInterventoElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Sessioni di lavoro');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Avanti',
-                action: interventiTour.next
+            popover: {
+                title: 'Sessioni di Lavoro',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Aggiungi sessione:</strong> Registra il lavoro svolto da ciascun tecnico</li>
+                            <li><strong>Orari:</strong> Orario di inizio e fine di ogni sessione</li>
+                            <li><strong>Note:</strong> Note sul lavoro svolto nella sessione</li>
+                            <li><strong>Totale ore:</strong> Riepilogo delle ore lavorate</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti'
             }
-        ]
-    });
-
-    const sessioniElement = findElementBySelector('.card-title', 'Sessioni di lavoro');
-    interventiTour.addStep({
-        id: 'sessioni-lavoro',
-        title: 'Sessioni di Lavoro',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Aggiungi sessione:</strong> Registra il lavoro svolto da ciascun tecnico</li>
-                    <li><strong>Orari:</strong> Orario di inizio e fine di ogni sessione</li>
-                    <li><strong>Note:</strong> Note sul lavoro svolto nella sessione</li>
-                    <li><strong>Totale ore:</strong> Riepilogo delle ore lavorate</li>
-                </ul>
-            </div>
-        `,
-        attachTo: sessioniElement ? {
-            element: sessioniElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Righe');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Avanti',
-                action: interventiTour.next
+            popover: {
+                title: 'Righe',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Articoli:</strong> Articoli utilizzati nell'intervento</li>
+                            <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
+                            <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario di ogni riga</li>
+                            <li><strong>IVA:</strong> Aliquota IVA applicata</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti'
             }
-        ]
-    });
-
-    const righeElement = findElementBySelector('.card-title', 'Righe');
-    interventiTour.addStep({
-        id: 'righe',
-        title: 'Righe',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Articoli:</strong> Articoli utilizzati nell'intervento</li>
-                    <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
-                    <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario di ogni riga</li>
-                    <li><strong>IVA:</strong> Aliquota IVA applicata</li>
-                </ul>
-            </div>
-        `,
-        attachTo: righeElement ? {
-            element: righeElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Costi totali');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Avanti',
-                action: interventiTour.next
+            popover: {
+                title: 'Costi Totali',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Totale imponibile:</strong> Somma delle righe senza IVA</li>
+                            <li><strong>Totale IVA:</strong> Somma delle imposte</li>
+                            <li><strong>Totale:</strong> Importo totale dell'intervento</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti'
             }
-        ]
-    });
-
-    const costiElement = findElementBySelector('.card-title', 'Costi totali');
-    interventiTour.addStep({
-        id: 'costi-totali',
-        title: 'Costi Totali',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Totale imponibile:</strong> Somma delle righe senza IVA</li>
-                    <li><strong>Totale IVA:</strong> Somma delle imposte</li>
-                    <li><strong>Totale:</strong> Importo totale dell'intervento</li>
-                </ul>
-            </div>
-        `,
-        attachTo: costiElement ? {
-            element: costiElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                return findElementBySelector('#documenti-collegati-title');
             },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Avanti',
-                action: interventiTour.next
+            popover: {
+                title: 'Documenti Collegati',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Preventivi:</strong> Preventivi collegati all'intervento</li>
+                            <li><strong>Contratti:</strong> Contratti da cui deriva l'intervento</li>
+                            <li><strong>DDT:</strong> Documenti di trasporto associati</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['previous', 'close'],
+                prevBtnText: 'Indietro',
+                doneBtnText: 'Termina il tour'
             }
-        ]
-    });
-
-    const docCollegatiElement = findElementBySelector('#documenti-collegati-title');
-    interventiTour.addStep({
-        id: 'documenti-collegati',
-        title: 'Documenti Collegati',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Preventivi:</strong> Preventivi collegati all'intervento</li>
-                    <li><strong>Contratti:</strong> Contratti da cui deriva l'intervento</li>
-                    <li><strong>DDT:</strong> Documenti di trasporto associati</li>
-                </ul>
-            </div>
-        `,
-        attachTo: docCollegatiElement ? {
-            element: docCollegatiElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
-            },
-            {
-                text: 'Indietro',
-                action: interventiTour.back
-            },
-            {
-                text: 'Termina il tour',
-                action: interventiTour.complete
-            }
-        ]
-    });
+        }
+    ];
 }
 
-/**
- * Avvia il tour guidato
- */
 function startInterventiTour() {
-    if (!interventiTour) {
-        initInterventiTour();
-    }
-    
-    if (interventiTour) {
-        interventiTour.start();
-    }
+    return initInterventiTour().then(function(tour) {
+        if (tour) {
+            tour.drive();
+        }
+    });
 }
 
-/**
- * Mostra un messaggio di completamento del tour
- */
-function showTourCompleteMessage() {
-    if (typeof swal !== 'undefined') {
-        swal({
-            title: 'Tour Completato',
-            text: 'Hai completato il tour guidato del modulo Interventi. Ora sei pronto per utilizzare tutte le funzionalità!',
-            type: 'success',
-            confirmButtonText: 'Perfetto',
-            confirmButtonClass: 'btn-success'
-        });
-    } else {
-        alert('Tour Completato. Hai completato il tour guidato del modulo Interventi.');
-    }
-}
-
-/**
- * Completa il tour e salva lo stato
- */
-function completeTourAndClose() {
-    localStorage.setItem('interventi-tour-completed', 'true');
-
-    if (interventiTour) {
-        interventiTour.cancel();
-    }
-}
-
-function cancelTourAndClose() {
-    localStorage.setItem('interventi-tour-completed', 'true');
-
-    if (interventiTour) {
-        interventiTour.cancel();
-    }
-}
-
-/**
- * Verifica se il tour è già stato completato
- */
 function isTourCompleted() {
-    return localStorage.getItem('interventi-tour-completed') === 'true';
+    return tourModuleId ? isTourCompletedDB(tourModuleId) : Promise.resolve(false);
 }
 
-/**
- * Mostra il pulsante per riavviare il tour
- */
-function showRestartTourButton() {
-    const restartButton = `
-        <button type="button" class="btn btn-info btn-xs" onclick="startInterventiTour()" title="Riavvia il tour guidato">
-            <i class="fa fa-question-circle"></i> Tour guidato
-        </button>
-    `;
-    
-    $('.content-header .btn-group').after(restartButton);
-}
-
-/**
- * Inizializza il tour
- */
 function initTour() {
     if ($('#edit-form').length > 0) {
-        showRestartTourButton();
-
-        if (!isTourCompleted()) {
-            setTimeout(function() {
-                startInterventiTour();
-            }, 1000);
-        }
+        isTourCompleted().then(function(completed) {
+            if (!completed) {
+                setTimeout(function() {
+                    startInterventiTour();
+                }, 1000);
+            }
+        });
     }
 }
 
 if (document.readyState === 'loading') {
-    $(document).ready(initTour);
+    document.addEventListener('DOMContentLoaded', initTour);
 } else {
     initTour();
 }

@@ -764,5 +764,4 @@ input("ordinamento").on("change", function(){
 </script>';
 
 ?>
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/ddt/js/ddt-tour.js"></script>
 <?php

@@ -242,7 +242,17 @@ class App
                     }
                 }
 
-                $result[$key] = $element.'?v='.$version;
+                $cache_version = $version;
+
+                if (!string_starts_with($element, 'http')) {
+                    $asset_path = base_dir().str_replace(base_path_osm(), '', $element);
+
+                    if (file_exists($asset_path)) {
+                        $cache_version .= '-'.filemtime($asset_path);
+                    }
+                }
+
+                $result[$key] = $element.'?v='.$cache_version;
             }
 
             $assets[$section] = $result;

@@ -573,8 +573,6 @@ echo '
 
 ?>
 
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/preventivi/js/preventivi-tour.js"></script>
-
 <a class="btn btn-danger ask" data-backto="record-list">
     <i id="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>

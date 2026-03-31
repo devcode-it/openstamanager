@@ -165,6 +165,9 @@ if (empty($record) || ! $has_access) {
         </script>';
     }
 
+    $tour_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
+    $tour_url = $rootdir.'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
+
     // Pulsanti di default
     echo '
 
@@ -209,7 +212,6 @@ if (empty($record) || ! $has_access) {
                 </span>';
 
         // Pulsante per il tour guidato (se esiste il file tour nel modulo)
-        $tour_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-tour.js';
         if (file_exists($tour_file)) {
             $tour_function = 'start'.ucfirst($structure->directory).'Tour()';
             echo '
@@ -306,6 +308,11 @@ if (empty($record) || ! $has_access) {
     $path = $structure->getEditFile();
     if (! empty($path)) {
         include $path;
+    }
+
+    if (file_exists($tour_file)) {
+        echo '
+                <script type="text/javascript" src="'.$tour_url.'?v='.filemtime($tour_file).'"></script>';
     }
 
     echo '

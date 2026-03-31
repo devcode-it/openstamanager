@@ -146,7 +146,7 @@ const JS = gulp.parallel(function vendorJS() {
         'leaflet.fullscreen/Control.FullScreen.js',
         'ismobilejs/dist/isMobile.min.js',
         'readmore.js/readmore.js',
-        'shepherd.js/dist/js/shepherd.min.js',
+        'driver.js/dist/driver.js.iife.js',
     ];
 
     for (const i in vendor) {
@@ -208,7 +208,7 @@ const CSS = gulp.parallel(() => {
         'leaflet/dist/leaflet.css',
         'leaflet.fullscreen/Control.FullScreen.css',
         '@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css',
-        'shepherd.js/dist/css/shepherd.css'
+        'driver.js/dist/driver.css'
     ];
 
     for (const i in vendor) {

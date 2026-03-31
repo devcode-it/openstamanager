@@ -1,53 +1,39 @@
 /**
  * Tour guidato del modulo DDT
- * Utilizza Shepherd.js per guidare l'utente attraverso le funzionalità principali
+ * Utilizza Driver.js per guidare l'utente attraverso le funzionalità principali
  */
 
 let ddtTour = null;
+let tourModuleId = typeof globals !== 'undefined' ? globals.id_module : null;
 
 function initDdtTour() {
-    if (typeof Shepherd === 'undefined') {
-        console.error('Shepherd.js non è disponibile. Attendi il caricamento della libreria...');
-        setTimeout(function() {
-            if (typeof Shepherd === 'undefined') {
-                console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
-                return;
-            } else {
-                initDdtTourInternal();
-            }
-        }, 500);
-        return;
+    if (ddtTour) {
+        return Promise.resolve(ddtTour);
     }
-    
-    initDdtTourInternal();
+
+    return waitForDriverJsFactory().then(function(driverFactory) {
+        if (typeof driverFactory !== 'function') {
+            console.error('Driver.js non è disponibile. Il tour non può essere inizializzato.');
+            return null;
+        }
+
+        ddtTour = initDdtTourInternal(driverFactory);
+
+        return ddtTour;
+    });
 }
 
-function initDdtTourInternal() {
-    ddtTour = new Shepherd.Tour({
-        tourName: 'ddt-tour',
-        useModalOverlay: true,
-        defaultStepOptions: {
-            classes: 'shadow-md bg-purple-dark',
-            scrollTo: { behavior: 'smooth', block: 'center' },
-            cancelIcon: {
-                enabled: true,
-                label: 'Chiudi'
-            },
-            arrow: true,
-            modalOverlayOpeningPadding: 10,
-            modalOverlayOpeningRadius: 10,
-        },
-    });
-
-    addTourSteps();
-
-    ddtTour.on('complete', function() {
-        localStorage.setItem('ddt-tour-completed', 'true');
-        showTourCompleteMessage();
-    });
-
-    ddtTour.on('cancel', function() {
-        localStorage.setItem('ddt-tour-completed', 'true');
+function initDdtTourInternal(driverFactory) {
+    return driverFactory({
+        showProgress: false,
+        steps: addExitButtonsToTourSteps(getTourSteps(), function() {
+            return ddtTour;
+        }),
+        onDestroyed: function() {
+            if (tourModuleId) {
+                saveTourCompletedDB(tourModuleId);
+            }
+        }
     });
 }
 
@@ -82,280 +68,173 @@ function findElementBySelector(selector, containsText) {
     }
 }
 
-function addTourSteps() {
-    ddtTour.addStep({
-        id: 'introduction',
-        title: 'Benvenuto nel modulo DDT',
-        text: `
-            <div class="tour-step">
-                <p>Vuoi iniziare il tour guidato del modulo DDT?</p>
-                <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
-            </div>
-        `,
-        attachTo: {
+function getTourSteps() {
+    return [
+        {
             element: document.body,
-            on: 'top'
+            popover: {
+                title: 'Benvenuto nel modulo DDT',
+                description: `
+                    <div class="tour-step">
+                        <p>Vuoi iniziare il tour guidato del modulo DDT?</p>
+                        <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
+                    </div>
+                `,
+                side: 'top',
+                align: 'start',
+                showButtons: ['next', 'close'],
+                nextBtnText: 'Inizia il tour',
+            }
         },
-        buttons: [
-            {
-                text: 'No',
-                action: cancelTourAndClose,
-                classes: 'shepherd-button-secondary'
+        {
+            element: function() {
+                const datiDestElement = findElementBySelector('.card-title', 'Dati destinatario');
+                const datiMittElement = findElementBySelector('.card-title', 'Dati mittente');
+                const datiSoggettoElement = datiDestElement || datiMittElement;
+                return datiSoggettoElement ? datiSoggettoElement.closest('.card') : null;
             },
-            {
-                text: 'Inizia il tour',
-                action: ddtTour.next,
-                classes: 'shepherd-button-primary'
+            popover: {
+                title: 'Dati Destinatario/Mittente',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Anagrafica:</strong> Destinatario o mittente a cui è riferito il DDT</li>
+                            <li><strong>Referente:</strong> Persona di contatto</li>
+                            <li><strong>Sede:</strong> Indirizzo di spedizione o provenienza</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const datiDestElement = findElementBySelector('.card-title', 'Dati destinatario');
-    const datiMittElement = findElementBySelector('.card-title', 'Dati mittente');
-    const datiSoggettoElement = datiDestElement || datiMittElement;
-
-    ddtTour.addStep({
-        id: 'dati-soggetto',
-        title: datiDestElement ? 'Dati Destinatario' : 'Dati Mittente',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Anagrafica:</strong> Destinatario o mittente a cui è riferito il DDT</li>
-                    <li><strong>Referente:</strong> Persona di contatto</li>
-                    <li><strong>Sede:</strong> Indirizzo di spedizione o provenienza</li>
-                </ul>
-            </div>
-        `,
-        attachTo: datiSoggettoElement ? {
-            element: datiSoggettoElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Intestazione');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: ddtTour.back
-            },
-            {
-                text: 'Avanti',
-                action: ddtTour.next
+            popover: {
+                title: 'Intestazione',
+                description: `
+                    <div class="tour-step">
+                        <p>Inserisci i numeri (primario e secondario) e la data del documento. Definisci le sedi di partenza e destinazione.</p>
+                        <p><strong>Condizioni:</strong> Scegli le condizioni di pagamento e applica un eventuale sconto in fattura.</p>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const intestazioneElement = findElementBySelector('.card-title', 'Intestazione');
-    ddtTour.addStep({
-        id: 'intestazione',
-        title: 'Intestazione',
-        text: `
-            <div class="tour-step">
-                <p>Inserisci i numeri (primario e secondario) e la data del documento. Definisci le sedi di partenza e destinazione.</p>
-                <p><strong>Condizioni:</strong> Scegli le condizioni di pagamento e applica un eventuale sconto in fattura.</p>
-            </div>
-        `,
-        attachTo: intestazioneElement ? {
-            element: intestazioneElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Dati ddt');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: ddtTour.back
-            },
-            {
-                text: 'Avanti',
-                action: ddtTour.next
+            popover: {
+                title: 'Dati DDT',
+                description: `
+                    <div class="tour-step">
+                        <p><strong>Opzioni di trasporto:</strong></p>
+                        <ul>
+                            <li><strong>Aspetto beni:</strong> Descrizione dell'aspetto dei beni trasportati</li>
+                            <li><strong>Causale trasporto:</strong> Motivo del trasporto</li>
+                            <li><strong>Tipo di spedizione:</strong> Modalità di spedizione</li>
+                            <li><strong>N. colli:</strong> Numero di colli trasportati</li>
+                            <li><strong>Porto:</strong> Condizione del trasporto (franco o assegnato)</li>
+                            <li><strong>Vettore:</strong> Trasportatore incaricato</li>
+                            <li><strong>Data ora trasporto:</strong> Data e ora di inizio del trasporto</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const datiDdtElement = findElementBySelector('.card-title', 'Dati ddt');
-    ddtTour.addStep({
-        id: 'dati-ddt',
-        title: 'Dati DDT',
-        text: `
-            <div class="tour-step">
-                <p><strong>Opzioni di trasporto:</strong></p>
-                <ul>
-                    <li><strong>Aspetto beni:</strong> Descrizione dell'aspetto dei beni trasportati</li>
-                    <li><strong>Causale trasporto:</strong> Motivo del trasporto</li>
-                    <li><strong>Tipo di spedizione:</strong> Modalità di spedizione</li>
-                    <li><strong>N. colli:</strong> Numero di colli trasportati</li>
-                    <li><strong>Porto:</strong> Condizione del trasporto (franco o assegnato)</li>
-                    <li><strong>Vettore:</strong> Trasportatore incaricato</li>
-                    <li><strong>Data ora trasporto:</strong> Data e ora di inizio del trasporto</li>
-                </ul>
-            </div>
-        `,
-        attachTo: datiDdtElement ? {
-            element: datiDdtElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Righe');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: ddtTour.back
-            },
-            {
-                text: 'Avanti',
-                action: ddtTour.next
+            popover: {
+                title: 'Righe',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Articoli:</strong> Articoli trasportati</li>
+                            <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
+                            <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario</li>
+                            <li><strong>IVA:</strong> Aliquota IVA applicata</li>
+                            <li><strong>Sconto:</strong> Eventuali sconti applicati</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const righeElement = findElementBySelector('.card-title', 'Righe');
-    ddtTour.addStep({
-        id: 'righe',
-        title: 'Righe',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Articoli:</strong> Articoli trasportati</li>
-                    <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
-                    <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario</li>
-                    <li><strong>IVA:</strong> Aliquota IVA applicata</li>
-                    <li><strong>Sconto:</strong> Eventuali sconti applicati</li>
-                </ul>
-            </div>
-        `,
-        attachTo: righeElement ? {
-            element: righeElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                return findElementBySelector('#documenti-collegati-title');
             },
-            {
-                text: 'Indietro',
-                action: ddtTour.back
-            },
-            {
-                text: 'Avanti',
-                action: ddtTour.next
+            popover: {
+                title: 'Documenti Collegati',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Ordini:</strong> Ordini a cui è associato il DDT</li>
+                            <li><strong>Fatture:</strong> Fatture collegate al DDT</li>
+                            <li><strong>Preventivi:</strong> Preventivi associati</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['previous', 'close'],
+                prevBtnText: 'Indietro',
+                doneBtnText: 'Termina il tour'
             }
-        ]
-    });
-
-    const docCollegatiElement = findElementBySelector('#documenti-collegati-title');
-    ddtTour.addStep({
-        id: 'documenti-collegati',
-        title: 'Documenti Collegati',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Ordini:</strong> Ordini a cui è associato il DDT</li>
-                    <li><strong>Fatture:</strong> Fatture collegate al DDT</li>
-                    <li><strong>Preventivi:</strong> Preventivi associati</li>
-                </ul>
-            </div>
-        `,
-        attachTo: docCollegatiElement ? {
-            element: docCollegatiElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
-            },
-            {
-                text: 'Indietro',
-                action: ddtTour.back
-            },
-            {
-                text: 'Termina il tour',
-                action: ddtTour.complete
-            }
-        ]
-    });
+        }
+    ];
 }
 
 function startDdtTour() {
-    if (!ddtTour) {
-        initDdtTour();
-    }
-    
-    if (ddtTour) {
-        ddtTour.start();
-    }
-}
-
-function showTourCompleteMessage() {
-    if (typeof swal !== 'undefined') {
-        swal({
-            title: 'Tour Completato',
-            text: 'Hai completato il tour guidato del modulo DDT. Ora sei pronto per utilizzare tutte le funzionalità!',
-            type: 'success',
-            confirmButtonText: 'Perfetto',
-            confirmButtonClass: 'btn-success'
-        });
-    } else {
-        alert('Tour Completato. Hai completato il tour guidato del modulo DDT.');
-    }
-}
-
-function completeTourAndClose() {
-    localStorage.setItem('ddt-tour-completed', 'true');
-
-    if (ddtTour) {
-        ddtTour.cancel();
-    }
-}
-
-function cancelTourAndClose() {
-    localStorage.setItem('ddt-tour-completed', 'true');
-
-    if (ddtTour) {
-        ddtTour.cancel();
-    }
+    return initDdtTour().then(function(tour) {
+        if (tour) {
+            tour.drive();
+        }
+    });
 }
 
 function isTourCompleted() {
-    return localStorage.getItem('ddt-tour-completed') === 'true';
-}
-
-function showRestartTourButton() {
-    const restartButton = `
-        <button type="button" class="btn btn-info btn-xs" onclick="startDdtTour()" title="Riavvia il tour guidato">
-            <i class="fa fa-question-circle"></i> Tour guidato
-        </button>
-    `;
-    
-    $('.content-header .btn-group').after(restartButton);
+    return tourModuleId ? isTourCompletedDB(tourModuleId) : Promise.resolve(false);
 }
 
 function initTour() {
     if ($('#edit-form').length > 0) {
-        showRestartTourButton();
-
-        if (!isTourCompleted()) {
-            setTimeout(function() {
-                startDdtTour();
-            }, 1000);
-        }
+        isTourCompleted().then(function(completed) {
+            if (!completed) {
+                setTimeout(function() {
+                    startDdtTour();
+                }, 1000);
+            }
+        });
     }
 }
 
 if (document.readyState === 'loading') {
-    $(document).ready(initTour);
+    document.addEventListener('DOMContentLoaded', initTour);
 } else {
     initTour();
 }

@@ -222,5 +222,3 @@ $(document).ready(function() {
 
 });
 </script>
-
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/impianti/js/impianti-tour.js"></script>

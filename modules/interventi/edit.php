@@ -878,8 +878,6 @@ echo '
 
 ?>
 
-<script type="text/javascript" src="<?php echo $rootdir; ?>/modules/interventi/js/interventi-tour.js"></script>
-
 <div class="alert alert-danger" id="alert-eliminazione-documenti" style="display: none;">
     <?php echo tr('Eliminando questo documento si potrebbero verificare problemi nelle altre sezioni del gestionale'); ?>
 </div>

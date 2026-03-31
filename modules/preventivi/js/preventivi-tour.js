@@ -1,53 +1,39 @@
 /**
  * Tour guidato del modulo Preventivi
- * Utilizza Shepherd.js per guidare l'utente attraverso le funzionalità principali
+ * Utilizza Driver.js per guidare l'utente attraverso le funzionalità principali
  */
 
 let preventiviTour = null;
+let tourModuleId = typeof globals !== 'undefined' ? globals.id_module : null;
 
 function initPreventiviTour() {
-    if (typeof Shepherd === 'undefined') {
-        console.error('Shepherd.js non è disponibile. Attendi il caricamento della libreria...');
-        setTimeout(function() {
-            if (typeof Shepherd === 'undefined') {
-                console.error('Shepherd.js non è disponibile dopo il ritardo. Il tour non può essere inizializzato.');
-                return;
-            } else {
-                initPreventiviTourInternal();
-            }
-        }, 500);
-        return;
+    if (preventiviTour) {
+        return Promise.resolve(preventiviTour);
     }
-    
-    initPreventiviTourInternal();
+
+    return waitForDriverJsFactory().then(function(driverFactory) {
+        if (typeof driverFactory !== 'function') {
+            console.error('Driver.js non è disponibile. Il tour non può essere inizializzato.');
+            return null;
+        }
+
+        preventiviTour = initPreventiviTourInternal(driverFactory);
+
+        return preventiviTour;
+    });
 }
 
-function initPreventiviTourInternal() {
-    preventiviTour = new Shepherd.Tour({
-        tourName: 'preventivi-tour',
-        useModalOverlay: true,
-        defaultStepOptions: {
-            classes: 'shadow-md bg-purple-dark',
-            scrollTo: { behavior: 'smooth', block: 'center' },
-            cancelIcon: {
-                enabled: true,
-                label: 'Chiudi'
-            },
-            arrow: true,
-            modalOverlayOpeningPadding: 10,
-            modalOverlayOpeningRadius: 10,
-        },
-    });
-
-    addTourSteps();
-
-    preventiviTour.on('complete', function() {
-        localStorage.setItem('preventivi-tour-completed', 'true');
-        showTourCompleteMessage();
-    });
-
-    preventiviTour.on('cancel', function() {
-        localStorage.setItem('preventivi-tour-completed', 'true');
+function initPreventiviTourInternal(driverFactory) {
+    return driverFactory({
+        showProgress: false,
+        steps: addExitButtonsToTourSteps(getTourSteps(), function() {
+            return preventiviTour;
+        }),
+        onDestroyed: function() {
+            if (tourModuleId) {
+                saveTourCompletedDB(tourModuleId);
+            }
+        }
     });
 }
 
@@ -82,205 +68,122 @@ function findElementBySelector(selector, containsText) {
     }
 }
 
-function addTourSteps() {
-    preventiviTour.addStep({
-        id: 'introduction',
-        title: 'Benvenuto nel modulo Preventivi',
-        text: `
-            <div class="tour-step">
-                <p>Vuoi iniziare il tour guidato del modulo Preventivi?</p>
-                <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
-            </div>
-        `,
-        attachTo: {
+function getTourSteps() {
+    return [
+        {
             element: document.body,
-            on: 'top'
+            popover: {
+                title: 'Benvenuto nel modulo Preventivi',
+                description: `
+                    <div class="tour-step">
+                        <p>Vuoi iniziare il tour guidato del modulo Preventivi?</p>
+                        <p>Il tour ti guiderà attraverso le sezioni principali del modulo.</p>
+                    </div>
+                `,
+                side: 'top',
+                align: 'start',
+                showButtons: ['next', 'close'],
+                nextBtnText: 'Inizia il tour',
+            }
         },
-        buttons: [
-            {
-                text: 'No',
-                action: cancelTourAndClose,
-                classes: 'shepherd-button-secondary'
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Dati cliente');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Inizia il tour',
-                action: preventiviTour.next,
-                classes: 'shepherd-button-primary'
+            popover: {
+                title: 'Dati Cliente',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Cliente:</strong> Anagrafica del cliente a cui è riferito il preventivo</li>
+                            <li><strong>Referente:</strong> Persona di contatto presso il cliente</li>
+                            <li><strong>Sede:</strong> Indirizzo o sede specifica per il preventivo</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const datiClienteElement = findElementBySelector('.card-title', 'Dati cliente');
-    preventiviTour.addStep({
-        id: 'dati-cliente',
-        title: 'Dati Cliente',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Cliente:</strong> Anagrafica del cliente a cui è riferito il preventivo</li>
-                    <li><strong>Referente:</strong> Persona di contatto presso il cliente</li>
-                    <li><strong>Sede:</strong> Indirizzo o sede specifica per il preventivo</li>
-                </ul>
-            </div>
-        `,
-        attachTo: datiClienteElement ? {
-            element: datiClienteElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Intestazione');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: preventiviTour.back
-            },
-            {
-                text: 'Avanti',
-                action: preventiviTour.next
+            popover: {
+                title: 'Intestazione',
+                description: `
+                    <div class="tour-step">
+                        <p>Inserisci il numero, la data e il nome del preventivo. Definisci la validità e lo stato (bozza, accettato, rifiutato, ecc.)</p>
+                        <p><strong>Condizioni:</strong> Scegli il tipo di attività, le condizioni di pagamento, le banche e applica un eventuale sconto in fattura.</p>
+                        <p><strong>Dettagli:</strong> Aggiungi descrizione, esclusioni, tempi di consegna, garanzia e condizioni generali.</p>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['next', 'previous', 'close'],
+                prevBtnText: 'Indietro',
+                nextBtnText: 'Avanti',
             }
-        ]
-    });
-
-    const intestazioneElement = findElementBySelector('.card-title', 'Intestazione');
-    preventiviTour.addStep({
-        id: 'intestazione',
-        title: 'Intestazione',
-        text: `
-            <div class="tour-step">
-                <p>Inserisci il numero, la data e il nome del preventivo. Definisci la validità e lo stato (bozza, accettato, rifiuto, ecc.)</p>
-                <p><strong>Condizioni:</strong> Scegli il tipo di attività, le condizioni di pagamento, le banche e applica un eventuale sconto in fattura.</p>
-                <p><strong>Dettagli:</strong> Aggiungi descrizione, esclusioni, tempi di consegna, garanzia e condizioni generali.</p>
-            </div>
-        `,
-        attachTo: intestazioneElement ? {
-            element: intestazioneElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
+        },
+        {
+            element: function() {
+                const elem = findElementBySelector('.card-title', 'Righe');
+                return elem ? elem.closest('.card') : null;
             },
-            {
-                text: 'Indietro',
-                action: preventiviTour.back
-            },
-            {
-                text: 'Avanti',
-                action: preventiviTour.next
+            popover: {
+                title: 'Righe',
+                description: `
+                    <div class="tour-step">
+                        <ul>
+                            <li><strong>Articoli:</strong> Articoli contenuti nel preventivo</li>
+                            <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
+                            <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario</li>
+                            <li><strong>IVA:</strong> Aliquota IVA applicata</li>
+                            <li><strong>Sconto:</strong> Eventuali sconti applicati</li>
+                        </ul>
+                    </div>
+                `,
+                side: 'bottom',
+                align: 'start',
+                showButtons: ['previous', 'close'],
+                prevBtnText: 'Indietro',
+                doneBtnText: 'Termina il tour'
             }
-        ]
-    });
-
-    const righeElement = findElementBySelector('.card-title', 'Righe');
-    preventiviTour.addStep({
-        id: 'righe',
-        title: 'Righe',
-        text: `
-            <div class="tour-step">
-                <ul>
-                    <li><strong>Articoli:</strong> Articoli contenuti nel preventivo</li>
-                    <li><strong>Descrizione:</strong> Voci di spesa o descrizioni libere</li>
-                    <li><strong>Quantità e Prezzo:</strong> Quantità e prezzo unitario</li>
-                    <li><strong>IVA:</strong> Aliquota IVA applicata</li>
-                    <li><strong>Sconto:</strong> Eventuali sconti applicati</li>
-                </ul>
-            </div>
-        `,
-        attachTo: righeElement ? {
-            element: righeElement.closest('.card'),
-            on: 'bottom'
-        } : null,
-        buttons: [
-            {
-                text: 'Fine tour',
-                action: completeTourAndClose,
-                classes: 'shepherd-button-secondary'
-            },
-            {
-                text: 'Indietro',
-                action: preventiviTour.back
-            },
-            {
-                text: 'Termina il tour',
-                action: preventiviTour.complete
-            }
-        ]
-    });
+        }
+    ];
 }
 
 function startPreventiviTour() {
-    if (!preventiviTour) {
-        initPreventiviTour();
-    }
-    
-    if (preventiviTour) {
-        preventiviTour.start();
-    }
-}
-
-function showTourCompleteMessage() {
-    if (typeof swal !== 'undefined') {
-        swal({
-            title: 'Tour Completato',
-            text: 'Hai completato il tour guidato del modulo Preventivi. Ora sei pronto per utilizzare tutte le funzionalità!',
-            type: 'success',
-            confirmButtonText: 'Perfetto',
-            confirmButtonClass: 'btn-success'
-        });
-    } else {
-        alert('Tour Completato. Hai completato il tour guidato del modulo Preventivi.');
-    }
-}
-
-function completeTourAndClose() {
-    localStorage.setItem('preventivi-tour-completed', 'true');
-
-    if (preventiviTour) {
-        preventiviTour.cancel();
-    }
-}
-
-function cancelTourAndClose() {
-    localStorage.setItem('preventivi-tour-completed', 'true');
-
-    if (preventiviTour) {
-        preventiviTour.cancel();
-    }
+    return initPreventiviTour().then(function(tour) {
+        if (tour) {
+            tour.drive();
+        }
+    });
 }
 
 function isTourCompleted() {
-    return localStorage.getItem('preventivi-tour-completed') === 'true';
-}
-
-function showRestartTourButton() {
-    const restartButton = `
-        <button type="button" class="btn btn-info btn-xs" onclick="startPreventiviTour()" title="Riavvia il tour guidato">
-            <i class="fa fa-question-circle"></i> Tour guidato
-        </button>
-    `;
-    
-    $('.content-header .btn-group').after(restartButton);
+    return tourModuleId ? isTourCompletedDB(tourModuleId) : Promise.resolve(false);
 }
 
 function initTour() {
     if ($('#edit-form').length > 0) {
-        showRestartTourButton();
-
-        if (!isTourCompleted()) {
-            setTimeout(function() {
-                startPreventiviTour();
-            }, 1000);
-        }
+        isTourCompleted().then(function(completed) {
+            if (!completed) {
+                setTimeout(function() {
+                    startPreventiviTour();
+                }, 1000);
+            }
+        });
     }
 }
 
 if (document.readyState === 'loading') {
-    $(document).ready(initTour);
+    document.addEventListener('DOMContentLoaded', initTour);
 } else {
     initTour();
 }

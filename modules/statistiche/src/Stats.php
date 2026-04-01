@@ -33,6 +33,7 @@ class Stats
 
         $grouped = [];
         foreach ($original as $row) {
+            $row = (array) $row;
             $year = (int) ($row['year'] ?? 0);
             $month = (int) ($row['month'] ?? 0);
 

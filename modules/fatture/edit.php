@@ -302,7 +302,7 @@ $query .= ' ORDER BY `title`';
     <?php }
     echo '
         <div class="col-md-4 col-lg-2'.($dir == 'uscita' ? ' offset-md-8 offset-lg-10' : '').'">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && ! $abilita_genera) ? '' : 'unblockable').'", "extra": "onchange=\"return cambiaStato()\"" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && ! $abilita_genera) ? '' : 'unblockable').'" ]}
         </div>
     </div>
 
@@ -1270,19 +1270,67 @@ $(document).ready(function () {
     });
 
     $("#barcode").focus();
-});
 
-function cambiaStato() {
-    let testo = $("#idstatodocumento option:selected").text();
+	    const form = document.getElementById("edit-form");
+	    const statoDocumento = $("#idstatodocumento");
+	    const statoCorrente = Number('.$fattura->stato->id.');
+	    const idStatoBozza = Number('.$id_stato_bozza.');
+	    const statiChiusi = [
+	        Number('.$id_stato_emessa.'),
+	        Number('.$id_stato_pagato.'),
+	        Number('.$id_stato_parz_pagato.'),
+	    ];
+	    const statiPrimaNota = [
+	        Number('.$id_stato_pagato.'),
+	        Number('.$id_stato_parz_pagato.'),
+	    ];
 
-    if (testo === "Pagato" || testo === "Parzialmente pagato") {
-        if(confirm("'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'")) {
-            return true;
-        } else {
-            $("#idstatodocumento").selectSet('.$record['idstatodocumento'].');
-        }
-    }
-}';
+	    function getConfigConfermaStato(nuovoStato) {
+	        if (statiChiusi.includes(statoCorrente) && nuovoStato === idStatoBozza) {
+	            return {
+	                title: "'.tr('Riaprire il documento?').'",
+	                text: "'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'",
+	                type: "warning",
+	                showCancelButton: true,
+	                confirmButtonText: "'.tr('Procedi').'",
+	                confirmButtonClass: "btn btn-lg btn-warning",
+	            };
+	        }
+
+	        if (statiPrimaNota.includes(nuovoStato)) {
+	            return {
+	                title: "'.tr('Attenzione').'",
+	                text: "'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'",
+	                type: "warning",
+	                showCancelButton: true,
+	                confirmButtonText: "'.tr('Procedi').'",
+	            };
+	        }
+
+	        return null;
+	    }
+
+	    $(form).on("submit", function(e) {
+	        const config = getConfigConfermaStato(Number(statoDocumento.val()));
+
+	        if (!config) {
+	            return true;
+	        }
+
+	        e.preventDefault();
+	        swal(config)
+	            .then(function() {
+	                content_was_modified = false;
+	                prepareForm(form);
+	                HTMLFormElement.prototype.submit.call(form);
+	            })
+	            .catch(function() {
+	                statoDocumento.selectSet(statoCorrente);
+	            });
+	        return false;
+	    });
+});';
+
 if ($dir == 'entrata') {
     echo '
     function bolloAutomatico() {

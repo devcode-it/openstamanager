@@ -4229,7 +4229,8 @@ table.dataTable thead th:nth-child(6) {
 }
 
 .driver-popover.driver-popover-osm .driver-popover-prev-btn,
-.driver-popover.driver-popover-osm .driver-popover-exit-btn {
+.driver-popover.driver-popover-osm .driver-popover-exit-btn,
+.driver-popover.driver-popover-osm .tour-popover-exit-btn {
     border: 1px solid #ced4da;
     background: #ffffff;
     color: #495057;
@@ -4238,7 +4239,9 @@ table.dataTable thead th:nth-child(6) {
 .driver-popover.driver-popover-osm .driver-popover-prev-btn:hover,
 .driver-popover.driver-popover-osm .driver-popover-prev-btn:focus,
 .driver-popover.driver-popover-osm .driver-popover-exit-btn:hover,
-.driver-popover.driver-popover-osm .driver-popover-exit-btn:focus {
+.driver-popover.driver-popover-osm .driver-popover-exit-btn:focus,
+.driver-popover.driver-popover-osm .tour-popover-exit-btn:hover,
+.driver-popover.driver-popover-osm .tour-popover-exit-btn:focus {
     background: #f8f9fa;
     border-color: #adb5bd;
     color: #212529;

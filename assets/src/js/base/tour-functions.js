@@ -197,8 +197,12 @@ function bindTourExitHandler() {
     }
 
     document.addEventListener('click', function(event) {
-        const exitButton = event.target && typeof event.target.closest === 'function'
-            ? event.target.closest('.driver-popover-exit-btn')
+        const eventTarget = event.target && event.target.nodeType === 3
+            ? event.target.parentElement
+            : event.target;
+
+        const exitButton = eventTarget && typeof eventTarget.closest === 'function'
+            ? eventTarget.closest('.tour-popover-exit-btn')
             : null;
 
         if (!exitButton) {
@@ -294,7 +298,7 @@ function isTourCompletedDB(idModule) {
 }
 
 function injectTourExitButton(popover, getTourDriver, getModuleId) {
-    if (!popover || !popover.footerButtons || popover.footerButtons.querySelector('.driver-popover-exit-btn')) {
+    if (!popover || !popover.footerButtons || popover.footerButtons.querySelector('.tour-popover-exit-btn')) {
         return;
     }
 
@@ -306,7 +310,7 @@ function injectTourExitButton(popover, getTourDriver, getModuleId) {
 
     const exitButton = document.createElement('button');
     exitButton.type = 'button';
-    exitButton.className = 'driver-popover-btn driver-popover-exit-btn btn btn-default btn-sm';
+    exitButton.className = 'tour-popover-exit-btn btn btn-default btn-sm';
     exitButton.textContent = 'Esci';
 
     if (resolvedModuleId) {

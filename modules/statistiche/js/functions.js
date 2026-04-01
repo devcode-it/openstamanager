@@ -58,6 +58,9 @@ function add_calendar() {
         var end = end.format("YYYY-MM-DD");
 
         manager.update(name, start, end);
+    }, {
+        startDate: manager.info.start_date,
+        endDate: manager.info.end_date,
     });
 
     // Inizializzazone calendario

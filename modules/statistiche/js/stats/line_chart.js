@@ -99,7 +99,6 @@ class LineChart extends Stat {
             color = color.substr(0, 7);
 
             chart.data.datasets.splice(dataset_index, 1);
-            chart.data.labels.splice(dataset_index, 1);
         }
 
         while (chart.data.labels.length > max_length) {

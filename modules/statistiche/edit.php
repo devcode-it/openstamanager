@@ -198,8 +198,8 @@ var info = {
     url: "'.str_replace('edit.php', '', $structure->fileurl('edit.php')).'",
     id_module: globals.id_module,
     id_record: globals.id_record,
-    start_date: globals.start_date,
-    end_date: globals.end_date,
+    start_date: "'.$start.'",
+    end_date: "'.$end.'",
 }
 var manager = new Manager(info);
 

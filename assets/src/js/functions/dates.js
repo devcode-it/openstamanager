@@ -115,7 +115,10 @@ function start_datepickers() {
     });
 }
 
-function start_complete_calendar(id, callback) {
+function start_complete_calendar(id, callback, options = {}) {
+    var startDate = options.startDate ? moment(options.startDate) : moment(globals.start_date);
+    var endDate = options.endDate ? moment(options.endDate) : moment(globals.end_date);
+
     var ranges = {};
     ranges[globals.translations.today] = [moment(), moment()];
     ranges[globals.translations.firstThreemester] = [moment("01", "MM"), moment("03", "MM").endOf('month')];
@@ -144,8 +147,8 @@ function start_complete_calendar(id, callback) {
                 toLabel: globals.translations.to,
             },
             ranges: ranges,
-            startDate: globals.start_date_formatted,
-            endDate: globals.end_date_formatted,
+            startDate: startDate,
+            endDate: endDate,
             applyClass: 'btn btn-success btn-sm',
             cancelClass: 'btn btn-danger btn-sm',
             linkedCalendars: false

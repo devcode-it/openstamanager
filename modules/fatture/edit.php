@@ -29,6 +29,7 @@ use Modules\Fatture\Stato as StatoFattura;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Modules\Ordini\Stato as StatoOrdine;
+use Modules\Pagamenti\Pagamento;
 use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 use Plugins\ExportFE\Interaction;
 
@@ -427,10 +428,12 @@ if ($dir == 'entrata') {
 
 				<div class="col-md-3">
 					<?php
-					$pagamento = $dbo->fetchOne('SELECT `codice_modalita_pagamento_fe` FROM `co_pagamenti` WHERE `id` = '.prepare($record['idpagamento']));
-					$show_riba_warning = $dir == 'entrata' && !empty($pagamento['codice_modalita_pagamento_fe']) && $pagamento['codice_modalita_pagamento_fe'] == 'MP12' && empty($record['id_banca_controparte']);
-					?>
-					<span id="riba-warning" class="badge badge-warning pull-right"><?php echo tr('Nessuna banca di addebito selezionata'); ?></span>
+                    $pagamento = Pagamento::find($record['idpagamento'])->first();
+if ($dir == 'entrata' && ($pagamento->isRiba() || $pagamento->isSepa()) && empty($record['id_banca_controparte'])) {
+    $show_riba_warning = 1;
+}
+?>
+					<span id="riba-warning" class="badge badge-warning pull-right"<?php echo $show_riba_warning ? '' : ' style="display: none;"'; ?>><?php echo tr('Nessuna banca di addebito selezionata'); ?></span>
 					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
 				</div>
 
@@ -1078,8 +1081,9 @@ echo '
         if ("'.($dir == 'entrata' ? 'true' : 'false').'") {
             let pagamentoData = $("#idpagamento").selectData();
             let bancaControparte = $("#id_banca_controparte").val();
+            let ribaSddCodes = ["MP12", "MP19", "MP20", "MP21"];
 
-            if (pagamentoData && pagamentoData.codice_modalita_pagamento_fe === "MP12" && !bancaControparte) {
+            if (pagamentoData && ribaSddCodes.includes(pagamentoData.codice_modalita_pagamento_fe) && !bancaControparte) {
                 $("#riba-warning").show();
             } else {
                 $("#riba-warning").hide();
@@ -1233,6 +1237,7 @@ function caricaRighe(id_riga) {
 
 $(document).ready(function () {
     caricaRighe(null);
+    checkRibaWarning();
 
     $("#data_registrazione").on("dp.change", function (e) {
         let data_competenza = $("#data_competenza");

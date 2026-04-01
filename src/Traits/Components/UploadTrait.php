@@ -33,7 +33,7 @@ trait UploadTrait
      */
     public function getUploadDirectoryAttribute()
     {
-        $directory = $this->directory ?: 'common';
+        $directory = $this->attachments_directory ?: 'common';
 
         $result = $this->uploads_directory.'/'.$directory;
         directory($result);

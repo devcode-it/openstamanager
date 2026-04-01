@@ -46,5 +46,3 @@ $raggruppamenti = $dbo->fetchArray('
         `periodo`
     ORDER BY
         `periodo` ASC');
-
-echo 'a';

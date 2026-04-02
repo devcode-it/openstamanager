@@ -18,7 +18,19 @@ class APIForUIController extends PageController
         $tokens = Auth::user()->getApiTokens();
 
         // Determine actual API path
-        $url = str_replace('api-for-ui/', '', $request->fullUrl());
+        $urlPieces = explode('/', $request->fullUrl());
+        $apiForUIIndex = array_search('api-for-ui', $urlPieces);
+
+        if ($apiForUIIndex === false) { // This should never happen due to the route definition
+            return response()->json(['error' => 'Invalid API path'], 400);
+        }
+
+        $pathLength = count($urlPieces) - 1 - (int) $apiForUIIndex;
+
+        // Only remove the api-for-ui part and keep the rest of the path
+        $prefix = implode('/', array_slice($urlPieces, 0, $apiForUIIndex));
+        array_splice($urlPieces, $apiForUIIndex, 1);
+        $url = implode('/', $urlPieces);
 
         // Create a new Guzzle client
         $client = new Client();
@@ -36,7 +48,7 @@ class APIForUIController extends PageController
         $formattedHeaders['X-API-Key'] = $tokens[0]['token'];
 
         try {
-            // Make the GET request
+            // Make the request
             $response = $client->request($request->method(), $url, [
                 'headers' => $formattedHeaders,
                 'json' => $request->all(),
@@ -44,6 +56,10 @@ class APIForUIController extends PageController
 
             // Get the body of the response
             $body = $response->getBody();
+            if ($pathLength == 1 && str_ends_with($url, "/api")) {
+                return str_replace("/vendor/api-platform", str_replace("/public", "", $prefix)."/assets/dist/apiplatform", $body);
+            }
+
             $data = json_decode($body, true); // Decode JSON to array
 
             // Return the response data

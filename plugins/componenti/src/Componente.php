@@ -44,6 +44,10 @@ class Componente extends Model
         'data_rimozione' => 'date',
     ];
 
+    protected $fillable = [
+        'serial',
+    ];
+
     /**
      * Crea un nuovo Componente per Impianti.
      *
@@ -51,7 +55,7 @@ class Componente extends Model
      */
     public static function build(?Impianto $impianto = null, ?Articolo $articolo = null, $data_registrazione = null)
     {
-        $model = new static();
+        $model = new static;
 
         $model->impianto()->associate($impianto);
         $model->articolo()->associate($articolo);

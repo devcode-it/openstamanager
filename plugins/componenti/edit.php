@@ -114,10 +114,19 @@ foreach ($elenchi as $elenco) {
         $data = dateFormat($componente[$date]);
         $icona_allegati = $numero_allegati == 0 ? 'fa fa-times text-danger' : 'fa fa-check text-success';
 
+        $serial_badge = '';
+        if (! empty($articolo->abilita_serial)) {
+            if (! empty($componente->serial)) {
+                $serial_badge = ' <span class="badge badge-primary">'.tr('Seriale').': '.$componente->serial.'</span>';
+            } else {
+                $serial_badge = ' <span class="badge badge-warning">'.tr('Seriale non selezionato').'</span>';
+            }
+        }
+
         echo '
                 <tr class="riga-componente" data-id="'.$componente->id.'">
                     <td class="text-center">#'.$componente->id.'</td>
-                    <td class="text-center">'.$articolo->codice.' - '.$articolo->getTranslation('title').'</td>
+                    <td class="text-center">'.$articolo->codice.' - '.$articolo->getTranslation('title').$serial_badge.'</td>
                     <td class="text-center">'.$data.'</td>
                     <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
                     <td class="text-center">
@@ -153,15 +162,21 @@ foreach ($elenchi as $elenco) {
                                             {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_'.$componente->id.'", "disabled": "1", "value": "'.$componente->id_articolo.'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1} ]}
                                         </div>
 
-                                        <div class="col-md-2">
+                                        <div class="col-md-6">
+                                            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_'.$componente->id.'", "value": "'.$componente->serial.'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $componente->id_articolo]).' ]}
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
                                             {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
                                         </div>
 
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
                                             {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
                                         </div>
 
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
                                             {[ "type": "date", "label": "'.tr('Data rimozione').'", "name": "data_rimozione", "id": "data_rimozione_'.$componente->id.'", "value": "'.$componente['data_rimozione'].'" ]}
                                         </div>
                                     </div>

@@ -321,3 +321,6 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), 'Data insoluto'),
 (2, (SELECT MAX(`id`) FROM `zz_views`), 'Unpaid date');
+
+-- Aggiunta del campo serial alla tabella my_componenti per la gestione dei seriali nei componenti degli impianti
+ALTER TABLE `my_componenti` ADD `serial` VARCHAR(255) NULL AFTER `id_articolo`;

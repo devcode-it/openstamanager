@@ -21,14 +21,20 @@
 include_once __DIR__.'/../../core.php';
 
 echo '
-<form action="" method="post" role="form">
+<form action="" method="post" role="form" id="add_componente_form">
     <input type="hidden" name="id_parent" value="'.$id_parent.'">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="add">
 
 	<div class="row">
 		<div class="col-md-12">
-            {["type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "ricerca_codici_fornitore": 1} ]}
+            {["type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_componente", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "ricerca_codici_fornitore": 1} ]}
+		</div>
+	</div>
+
+	<div class="row" id="row_serial" style="display: none;">
+		<div class="col-md-12">
+            {["type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_componente", "ajax-source": "serial-articolo", "value": "" ]}
 		</div>
 	</div>
 
@@ -40,4 +46,38 @@ echo '
 			</button>
 		</div>
 	</div>
-</form>';
+</form>
+
+<script>
+    $("#id_articolo_componente").on("change", function() {
+        var id_articolo = $(this).val();
+        
+        if (id_articolo) {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: "'.$id_module.'",
+                    id_record: "'.$id_record.'",
+                    id_plugin: "'.$id_plugin.'",
+                    op: "check_serial",
+                    id_articolo: id_articolo
+                },
+                success: function(response) {
+                    if (response.abilita_serial) {
+                        $("#row_serial").show();
+                        $("#serial_componente").enableSelect2();
+                        $("#serial_componente").select2("data", {idarticolo: id_articolo});
+                    } else {
+                        $("#row_serial").hide();
+                        $("#serial_componente").val("").change();
+                    }
+                }
+            });
+        } else {
+            $("#row_serial").hide();
+            $("#serial_componente").val("").change();
+        }
+    });
+</script>';

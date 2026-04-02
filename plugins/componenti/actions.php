@@ -28,13 +28,29 @@ use Plugins\ComponentiImpianti\Componente;
 $operazione = filter('op');
 
 switch ($operazione) {
+    case 'check_serial':
+        $id_articolo = filter('id_articolo');
+        $articolo = Articolo::find($id_articolo);
+
+        echo json_encode([
+            'abilita_serial' => $articolo ? $articolo->abilita_serial : false,
+        ]);
+
+        break;
+
     case 'add':
         $impianto = Impianto::find($id_record);
 
         $id_articolo = filter('id_articolo');
         $articolo = Articolo::find($id_articolo);
+        $serial = filter('serial');
 
-        $componente = Componente::build($impianto, $articolo, new Carbon());
+        $componente = Componente::build($impianto, $articolo, new Carbon);
+
+        if ($serial) {
+            $componente->serial = $serial;
+            $componente->save();
+        }
 
         flash()->info(tr('Salvataggio completato!'));
 
@@ -48,6 +64,7 @@ switch ($operazione) {
         $componente->data_installazione = filter('data_installazione') ?: null;
         $componente->data_rimozione = filter('data_rimozione') ?: null;
         $componente->note = filter('note') ?: null;
+        $componente->serial = filter('serial') ?: null;
 
         $componente->save();
 
@@ -60,8 +77,9 @@ switch ($operazione) {
 
         // Creazione copia del componenten
         $copia = $componente->replicate();
-        $copia->data_registrazione = new Carbon();
-        $copia->data_installazione = new Carbon();
+        $copia->data_registrazione = new Carbon;
+        $copia->data_installazione = new Carbon;
+        $componente->serial = null;
         $copia->data_sostituzione = null;
         $copia->data_rimozione = null;
         // Rimozione riferimento intervento di installazione
@@ -69,7 +87,7 @@ switch ($operazione) {
         $copia->save();
 
         // Sostituzione del componente indicato
-        $componente->data_sostituzione = new Carbon();
+        $componente->data_sostituzione = new Carbon;
         $componente->id_sostituzione = $copia->id;
         $componente->save();
 
@@ -81,7 +99,7 @@ switch ($operazione) {
         $id_componente = filter('id_componente');
         $componente = Componente::find($id_componente);
 
-        $componente->data_rimozione = new Carbon();
+        $componente->data_rimozione = new Carbon;
         $componente->save();
 
         flash()->info(tr('Componente rimosso!'));

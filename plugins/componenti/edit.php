@@ -25,14 +25,6 @@ include_once __DIR__.'/../../core.php';
 
 $compontenti_impianto = Componente::where('id_impianto', '=', $id_record);
 
-// Avviso sul numero di componenti
-if ($compontenti_impianto->count() == 0) {
-    echo '
-<div class="alert alert-info">
-    <i class="fa fa-info-circle"></i> '.tr("Nessun componente disponibile per l'impianto corrente").'
-</div>';
-}
-
 $componenti_installati = (clone $compontenti_impianto)
     ->whereNull('data_sostituzione')
     ->whereNull('data_rimozione')
@@ -44,10 +36,77 @@ $componenti_rimossi = (clone $compontenti_impianto)
     ->whereNotNull('data_rimozione')
     ->get();
 
+$totali = [
+    'installati' => $componenti_installati->count(),
+    'sostituiti' => $componenti_sostituiti->count(),
+    'rimossi' => $componenti_rimossi->count(),
+    'totali' => $compontenti_impianto->count(),
+];
+
+$con_allegati = 0;
+$senza_allegati = 0;
+foreach ($componenti_installati as $c) {
+    $num = $database->fetchNum('SELECT id FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$c['id']);
+    if ($num > 0) {
+        $con_allegati++;
+    } else {
+        $senza_allegati++;
+    }
+}
+
+// Avviso sul numero di componenti
+if ($totali['totali'] == 0) {
+    echo '
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> '.tr("Nessun componente disponibile per l'impianto corrente").'
+</div>';
+} else {
+    echo '
+<div class="row">
+    <div class="col-md-3 col-sm-6">
+        <div class="info-box bg-success">
+            <span class="info-box-icon"><i class="fa fa-cog"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">'.tr('Installati').'</span>
+                <span class="info-box-number">'.$totali['installati'].'</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="info-box bg-warning">
+            <span class="info-box-icon"><i class="fa fa-refresh"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">'.tr('Sostituiti').'</span>
+                <span class="info-box-number">'.$totali['sostituiti'].'</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="info-box bg-danger">
+            <span class="info-box-icon"><i class="fa fa-trash"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">'.tr('Rimossi').'</span>
+                <span class="info-box-number">'.$totali['rimossi'].'</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="info-box bg-info">
+            <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">'.tr('Con allegati').'</span>
+                <span class="info-box-number">'.$con_allegati.' / '.$totali['installati'].'</span>
+            </div>
+        </div>
+    </div>
+</div>';
+}
+
 $elenchi = [
     [
         'componenti' => $componenti_installati,
-        'type' => 'primary',
+        'type' => 'success',
+        'icon' => 'fa fa-check-circle',
         'title' => tr('Componenti installati'),
         'date' => 'data_installazione',
         'date_name' => tr('Installato'),
@@ -55,6 +114,7 @@ $elenchi = [
     [
         'componenti' => $componenti_sostituiti,
         'type' => 'warning',
+        'icon' => 'fa fa-refresh',
         'title' => tr('Componenti sostituiti'),
         'date' => 'data_sostituzione',
         'date_name' => tr('Sostituzione'),
@@ -62,6 +122,7 @@ $elenchi = [
     [
         'componenti' => $componenti_rimossi,
         'type' => 'danger',
+        'icon' => 'fa fa-times-circle',
         'title' => tr('Componenti rimossi'),
         'date' => 'data_rimozione',
         'date_name' => tr('Rimosso'),
@@ -83,106 +144,132 @@ foreach ($elenchi as $elenco) {
         continue;
     }
 
-    echo '
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h4 class="text-'.$type.'">'.$title.'</h4>
-    </div>
-</div>
-<hr>';
+    $icon = $elenco['icon'] ?? 'fa fa-cog';
+    $count = $componenti->count();
 
     echo '
-<div class="box collapsed-box box-'.$type.'">
-    <div class="box-heading with-border mini">
-        <table class="table" style="margin:0; padding:0;">
+<div class="card card-'.$type.'" style="margin-bottom: 15px;">
+    <div class="card-header" style="padding: 8px 15px;">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 style="margin: 0; font-size: 15px;">
+                    <i class="'.$icon.'"></i> '.$title.'
+                </h5>
+            </div>
+            <div class="col-md-6 text-right">
+                <span class="badge" style="font-size: 13px; padding: 4px 8px;">'.$count.' '.($count == 1 ? tr('componente') : tr('componenti')).'</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body" style="padding: 0;">
+        <table class="table table-striped table-hover table-condensed" style="margin: 0;">
             <thead>
-                <tr>
-                    <th class="text-center">'.tr('ID', [], ['upper' => true]).'</td>
-                    <th class="text-center">'.tr('Articolo', [], ['upper' => true]).'</td>
-                    <th class="text-center" width="20%">'.tr($date_name, [], ['upper' => true]).'</th>
-                    <th class="text-center" width="20%">'.tr('Registrazione', [], ['upper' => true]).'</th>
+                <tr style="background-color: #f5f5f5;">
+                    <th class="text-center" width="5%">'.tr('ID', [], ['upper' => true]).'</th>
+                    <th class="text-left" width="35%">'.tr('Articolo', [], ['upper' => true]).'</th>
+                    <th class="text-center" width="15%">'.tr($date_name, [], ['upper' => true]).'</th>
+                    <th class="text-center" width="15%">'.tr('Registrazione', [], ['upper' => true]).'</th>
                     <th class="text-center" width="10%">'.tr('Allegati', [], ['upper' => true]).'</th>
+                    <th class="text-center" width="20%">'.tr('Azioni', [], ['upper' => true]).'</th>
                 </tr>
             </thead>
-
             <tbody>';
 
     foreach ($componenti as $componente) {
         $articolo = $componente->articolo;
-        $numero_allegati = $database->fetchNum('SELECT id FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$componente['id'].' GROUP BY id_record');
+        $numero_allegati = $database->fetchNum('SELECT id FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$componente['id']);
 
         $data = dateFormat($componente[$date]);
-        $icona_allegati = $numero_allegati == 0 ? 'fa fa-times text-danger' : 'fa fa-check text-success';
+        $icona_allegati = $numero_allegati == 0 ? 'fa fa-times-circle text-danger' : 'fa fa-check-circle text-success';
+        $badge_allegati = $numero_allegati > 0 ? '<span class="badge badge-success">'.$numero_allegati.'</span>' : '<span class="badge badge-default">0</span>';
 
         $serial_badge = '';
         if (! empty($articolo->abilita_serial)) {
             if (! empty($componente->serial)) {
-                $serial_badge = ' <span class="badge badge-primary">'.tr('Seriale').': '.$componente->serial.'</span>';
+                $serial_badge = ' <span class="label label-primary"><i class="fa fa-barcode"></i> '.$componente->serial.'</span>';
             } else {
-                $serial_badge = ' <span class="badge badge-warning">'.tr('Seriale non selezionato').'</span>';
+                $serial_badge = ' <span class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Nessun seriale selezionato').'</span>';
             }
         }
 
+        $categoria = $articolo->categoria ? $articolo->categoria->getTranslation('title') : '';
+        $categoria_badge = $categoria ? '<span class="label label-default"><i class="fa fa-tag"></i> '.$categoria.'</span>' : '';
+
         echo '
                 <tr class="riga-componente" data-id="'.$componente->id.'">
-                    <td class="text-center">#'.$componente->id.'</td>
-                    <td class="text-center">'.$articolo->codice.' - '.$articolo->getTranslation('title').$serial_badge.'</td>
-                    <td class="text-center">'.$data.'</td>
-                    <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
+                    <td class="text-center"><strong>#'.$componente->id.'</strong></td>
+                    <td>
+                        <div>
+                            <strong>'.$articolo->codice.'</strong> - '.$articolo->getTranslation('title').'
+                        </div>
+                        <div class="text-muted small">'.$categoria_badge.' '.$serial_badge.'</div>
+                    </td>
                     <td class="text-center">
-                        <i class="'.$icona_allegati.' fa-lg"></i>
-
-                        <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-tool" onclick="toggleDettagli(this)">
-                                <i class="fa fa-plus"></i>
+                        <span class="label label-'.$type.'">'.$data.'</span>
+                    </td>
+                    <td class="text-center">'.dateFormat($componente->data_registrazione).'</td>
+                    <td class="text-center">'.$badge_allegati.'</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-default" onclick="toggleDettagli(this)" title="'.tr('Dettagli').'">
+                                <i class="fa fa-eye"></i>
                             </button>
+                            <button type="button" class="btn btn-sm btn-info" onclick="gestisciAllegati(this)" title="'.tr('Allegati').'">
+                                <i class="fa fa-paperclip"></i>
+                            </button>';
+
+        if (empty($componente->id_sostituzione) && empty($componente->data_rimozione)) {
+            echo '
+                            <button type="button" class="btn btn-sm btn-warning" onclick="sostituisciComponente(this)" title="'.tr('Sostituisci').'">
+                                <i class="fa fa-refresh"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="rimuoviComponente(this)" title="'.tr('Rimuovi').'">
+                                <i class="fa fa-trash"></i>
+                            </button>';
+        }
+
+        echo '
                         </div>
                     </td>
                 </tr>
 
                 <tr class="dettagli-componente" data-id="'.$componente->id.'" style="display: none">
-                    <td colspan="5">
-                        <div class="card card-'.$type.'">
-                            <div class="card-header">
-                                <h3 class="card-title">'.tr('Dati').'</h3>
-                            </div>
+                    <td colspan="6" style="background-color: #f9f9f9; padding: 15px;">
+                        <div class="well" style="margin: 0;">
+                            <form action="'.base_path_osm().'/editor.php" method="post" role="form">
+                                <input type="hidden" name="id_module" value="'.$module->id.'">
+                                <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">
+                                <input type="hidden" name="id_plugin" value="'.$plugin->id.'">
+                                <input type="hidden" name="id_componente" value="'.$componente->id.'">
+                                <input type="hidden" name="backto" value="record-edit">
+                                <input type="hidden" name="op" value="update">
 
-                            <div class="card-body">
-                                <form action="'.base_path_osm().'/editor.php" method="post" role="form">
-                                    <input type="hidden" name="id_module" value="'.$module->id.'">
-                                    <input type="hidden" name="id_record" value="'.$componente->id_impianto.'">
-                                    <input type="hidden" name="id_plugin" value="'.$plugin->id.'">
-
-                                    <input type="hidden" name="id_componente" value="'.$componente->id.'">
-                                    <input type="hidden" name="backto" value="record-edit">
-                                    <input type="hidden" name="op" value="update">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_'.$componente->id.'", "disabled": "1", "value": "'.$componente->id_articolo.'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1} ]}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_'.$componente->id.'", "disabled": "1", "value": "'.$componente->id_articolo.'", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1} ]}
+                                            </div>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_'.$componente->id.'", "value": "'.$componente->serial.'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $componente->id_articolo]).' ]}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_'.$componente->id.'", "disabled": "'.(empty($articolo->abilita_serial) ? '1' : '0').'", "value": "'.$componente->serial.'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $componente->id_articolo]).' ]}
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            {[ "type": "date", "label": "'.tr('Data rimozione').'", "name": "data_rimozione", "id": "data_rimozione_'.$componente->id.'", "value": "'.$componente['data_rimozione'].'" ]}
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                {[ "type": "date", "label": "'.tr('Data installazione').'", "name": "data_installazione", "id": "data_installazione_'.$componente->id.'", "value": "'.$componente['data_installazione'].'" ]}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {[ "type": "date", "label": "'.tr('Data registrazione').'", "name": "data_registrazione", "id": "data_registrazione_'.$componente->id.'", "value": "'.$componente['data_registrazione'].'" ]}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {[ "type": "date", "label": "'.tr('Data rimozione').'", "name": "data_rimozione", "id": "data_rimozione_'.$componente->id.'", "value": "'.$componente['data_rimozione'].'" ]}
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">';
+                                    <div class="col-md-6">';
 
         echo input([
             'type' => 'ckeditor',
@@ -190,49 +277,21 @@ foreach ($elenchi as $elenco) {
             'name' => 'note',
             'id' => 'note_'.$componente->id,
             'value' => $componente['note'],
+            'extra' => 'style="height: 50px;"',
         ]);
+
         echo '
-                                        </div>
                                     </div>
+                                </div>
 
-                                    <!-- PULSANTI -->
-                                    <div class="row">';
-        if (empty($componente->id_sostituzione)) {
-            echo '
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-danger" onclick="rimuoviComponente(this)">
-                                                <i class="fa fa-trash"></i> '.tr('Rimuovi').'
-                                            </button>
-                                        </div>';
-        }
-
-        echo '
-                                        <div class="col-md-1">
-                                            <button type="button" class="btn btn-default" onclick="gestisciAllegati(this)">
-                                                <i class="fa fa-file-text-o"></i> '.tr('Allegati (_NUM_)', [
-            '_NUM_' => $numero_allegati,
-        ]).'
-                                            </button>
-                                        </div>';
-
-        if (empty($componente->id_sostituzione)) {
-            echo '
-                                        <div class="col-md-9">
-                                            <button type="button" class="btn btn-warning pull-right" onclick="sostituisciComponente(this)">
-                                                <i class="fa fa-cog"></i> '.tr('Sostituisci').'
-                                            </button>
-                                        </div>';
-        }
-        echo '
-                                        <div class="col-md-1 pull-right">
-                                            <button type="submit" class="btn btn-success pull-right">
-                                                <i class="fa fa-check"></i> '.tr('Salva').'
-                                            </button>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa fa-check"></i> '.tr('Salva').'
+                                        </button>
                                     </div>
-                                </form>
-
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </td>
                 </tr>';
@@ -241,9 +300,9 @@ foreach ($elenchi as $elenco) {
     echo '
             </tbody>
         </table>
-
     </div>
-</div>';
+</div>
+<br>';
 }
 
 echo '
@@ -251,15 +310,14 @@ echo '
     function toggleDettagli(trigger) {
         const tr = $(trigger).closest("tr");
         const dettagli = tr.next();
+        const icon = $(trigger).find("i");
 
         if (dettagli.css("display") === "none"){
             dettagli.show(500);
-            $(trigger).children().removeClass("fa-plus"); 
-            $(trigger).children().addClass("fa-minus");
+            icon.removeClass("fa-eye").addClass("fa-eye-slash");
         } else {
             dettagli.hide(500);
-            $(trigger).children().removeClass("fa-minus"); 
-            $(trigger).children().addClass("fa-plus");
+            icon.removeClass("fa-eye-slash").addClass("fa-eye");
         }
     }
 

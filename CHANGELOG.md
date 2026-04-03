@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.10.3 (2026-04-07)](#2103-2026-04-07)
 - [2.10.2 (2026-03-17)](#2102-2026-03-17)
 - [2.10.1 (2026-02-26)](#2101-2026-02-26)
 - [2.10 (2026-02-05)](#210-2026-02-05)
@@ -69,6 +70,39 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.10.3 (2026-04-07)
+
+### Modificato (Changed)
+- Ottimizzazione formato ICS per esportazione calendario
+- Ottimizzazione controlli su integrità
+- Ottimizzazione lettura file JSON moduli premium
+- Miglioria grafica stampa riepilogo intervento con tabelle di riepilogo sessioni e materiale utilizzato
+- Miglioria tooltip sessione in dashboard
+- Miglioria avviso in cambio stato fattura
+- Correzione etichetta per esportazione iCal
+
+### Fixed
+- Corretto grafico vendite e acquisti in Statistiche
+- Corretto template di stampa fatturato
+- Corretto registrazione insoluto da tasto Registra insoluto
+- Corretto avviso banca di addebito non selezionata per fatture con metodo di pagamento riba
+- Corretto nome colonna tradotto da Modifica colonne
+- Corretto scritture contabili da tasto Riapri documento
+- Corretto colonna Conto in vista Fatture di acquisto è ora raggruppata per conto
+- Corretto allegato pdf alle email in invio mail fatture da bulk
+- Corretto emissione fatture con impostazione Data emissione fattura automatica abilitata
+- Corretto verifica P.IVA destinatario prima dell'importazione FE
+- Corretto caricamento tabelle senza ordinamento
+- Corretto aggiunta conti in piano dei conti
+- Corretto template stampa ddt
+- Corretto generazione movimento autofattura in fase di import FE
+- Corretto tooltip delle sessioni in dashboard viene ora visualizzata solo la sessione selezionata
+- Corretto controlli integrità su widgets premium
+- Corretto contatore differenze in campi personalizzati
+- Corretto gestione caratteri per codice SIA
+- Corretto spostamento log Laravel in logs/app.log e abilitazione rotazione giornaliera a 30 giorni
+- Corretto addebito di spese di incasso automatiche per fatture non in bozza
 
 ## 2.10.2 (2026-03-17)
 ### Modificato (Changed)

@@ -46,7 +46,7 @@ $id_stato_annullata = StatoFattura::where('name', 'Annullata')->first()->id;
 
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 
-$block_edit = ! empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || ! $abilita_genera;
+$block_edit = !empty($note_accredito) || in_array($fattura->stato->id, [$id_stato_parz_pagato, $id_stato_pagato, $id_stato_emessa]) || !$abilita_genera;
 
 if ($dir == 'entrata') {
     $conto = 'vendite';
@@ -55,14 +55,14 @@ if ($dir == 'entrata') {
 }
 
 // Informazioni sulla dichiarazione d'intento, visibili solo finché la fattura è in bozza
-if ($dir == 'entrata' && ! empty($fattura->dichiarazione)) {
+if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $diff = $fattura->dichiarazione->massimale - $fattura->dichiarazione->totale;
     $diff_in_days = Carbon::parse($fattura->dichiarazione->data_fine)->diffAsCarbonInterval($fattura->data);
 
     $id_iva = setting("Iva per lettere d'intento");
     $iva = Aliquota::find($id_iva);
 
-    if (! empty($iva)) {
+    if (!empty($iva)) {
         if ($diff == 0) {
             echo '
 <div class="alert alert-info">
@@ -101,7 +101,7 @@ if ($dir == 'entrata' && ! empty($fattura->dichiarazione)) {
 }
 
 // Autofattura
-if (! empty($fattura_acquisto_originale)) {
+if (!empty($fattura_acquisto_originale)) {
     echo '
 <div class="alert alert-info">
     <i class="fa fa-info"></i> '.tr("Questa è un'autofattura generata da una fattura di acquisto").':
@@ -145,7 +145,7 @@ if ($abilita_autofattura) {
 }
 
 // Note di credito collegate
-if (! empty($note_accredito)) {
+if (!empty($note_accredito)) {
     echo '
 <div class="alert alert-info text-center">'.tr('Note di credito collegate').':';
     foreach ($note_accredito as $nota) {
@@ -162,7 +162,7 @@ if (! empty($note_accredito)) {
 }
 
 // Fattura originale della Nota di credito
-if (! empty($fattura->ref_documento) && $fattura->isNota()) {
+if (!empty($fattura->ref_documento) && $fattura->isNota()) {
     $nota = Fattura::find($fattura->ref_documento);
     echo '
 <div class="alert alert-info">
@@ -186,7 +186,7 @@ if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
     }
 
     $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $fattura->idanagrafica)->where('data_inizio', '<=', $fattura->data)->where('data_fine', '>=', $fattura->data)->first();
-    if (! empty($assicurazione_crediti)) {
+    if (!empty($assicurazione_crediti)) {
         if (($assicurazione_crediti->totale + $fattura->totale) >= $assicurazione_crediti->fido_assicurato) {
             echo '
 <div class="alert alert-warning text-center">
@@ -199,7 +199,7 @@ if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
 // Verifica aggiuntive sulla sequenzialità dei numeri
 if ($dir == 'entrata') {
     // Calcolo il numero previsto solo se la data della fattura è maggiore o uguale all'impostazione "Data inizio verifica contatore fattura di vendita" oppure l'impostazione non è valorizzata.
-    if (! empty(setting('Data inizio verifica contatore fattura di vendita'))) {
+    if (!empty(setting('Data inizio verifica contatore fattura di vendita'))) {
         $dateFormat = 'd/m/Y';
         $carbonDate = Carbon::createFromFormat($dateFormat, setting('Data inizio verifica contatore fattura di vendita'));
         $data_inizio_verifica_contatore = (($carbonDate !== false) ? strtotime($carbonDate->format('Y-m-d')) : null);
@@ -209,7 +209,7 @@ if ($dir == 'entrata') {
         $numero_previsto = verifica_numero_fattura($fattura);
     }
 
-    if (! empty($numero_previsto)) {
+    if (!empty($numero_previsto)) {
         echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("E' assente una fattura di vendita di numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente delle fatture", [
@@ -220,9 +220,9 @@ if ($dir == 'entrata') {
     }
 
     // Usa la data della ricevuta di scarto SDI se disponibile, altrimenti la data della fattura
-    $data_riferimento = ! empty($fattura->data_stato_fe) ? $fattura->data_stato_fe : $fattura->data;
+    $data_riferimento = !empty($fattura->data_stato_fe) ? $fattura->data_stato_fe : $fattura->data;
     $data_fattura = new DateTime($data_riferimento);
-    $data_odierna = new DateTime;
+    $data_odierna = new DateTime();
     $differenza = $data_odierna->diff($data_fattura)->days;
 
     if ($fattura->codice_stato_fe == 'NS' && $fattura->stato->id != $id_stato_non_valida && ($differenza > setting('Giorni validità fattura scartata'))) {
@@ -237,7 +237,7 @@ if ($dir == 'entrata') {
     $fatturazione_futura = false;
     $data_fattura = new Carbon($fattura->data);
     $interventi_collegati = $fattura->getDocumentiCollegati()[Intervento::class];
-    if (! empty($interventi_collegati)) {
+    if (!empty($interventi_collegati)) {
         foreach ($interventi_collegati as $intervento) {
             $fine_intervento = $intervento->fine;
             $fine_intervento = new Carbon($fine_intervento);
@@ -296,13 +296,13 @@ $query .= ' ORDER BY `title`';
 
     <?php if ($dir == 'entrata') { ?>
         <div class="col-md-4 col-lg-2 offset-md-4 offset-lg-8 " <?php echo ($record['is_fiscale']) ? '' : 'hidden'; ?> >
-            {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (! empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
+            {[ "type": "select", "label": "<?php echo tr('Stato FE'); ?>", "name": "codice_stato_fe", "values": "query=SELECT `codice` as id, CONCAT_WS(' - ',`codice`, `title`) as text FROM `fe_stati_documento` LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento_lang`.`id_record` = `fe_stati_documento`.`codice` AND `fe_stati_documento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>)", "value": "$codice_stato_fe$", "disabled": <?php echo intval(Interaction::isEnabled() || ($fattura->stato->id == $id_stato_bozza && $abilita_genera)); ?>, "class": "unblockable", "help": "<?php echo (!empty($record['data_stato_fe'])) ? Translator::timestampToLocale($record['data_stato_fe']) : ''; ?>" ]}
         </div>
 
     <?php }
     echo '
         <div class="col-md-4 col-lg-2'.($dir == 'uscita' ? ' offset-md-8 offset-lg-10' : '').'">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && ! $abilita_genera) ? '' : 'unblockable').'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'" ]}
         </div>
     </div>
 
@@ -510,11 +510,11 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
                     <div class="clearfix"></div>';
 
     foreach ($scadenze as $scadenza) {
-        $pagamento_iniziato = ! empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
+        $pagamento_iniziato = !empty(floatval($scadenza->pagato)) || $scadenza->da_pagare == 0;
 
         echo '
                     <p>'.dateFormat($scadenza['scadenza']);
-        if (! empty($scadenza['data_concordata'])) {
+        if (!empty($scadenza['data_concordata'])) {
             echo ' <small>('.dateFormat($scadenza['data_concordata']).')</small>';
         }
         echo ': ';
@@ -544,7 +544,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
 }
 ?>
                 <div class="col-md-3">
-                    <?php echo ! empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
+                    <?php echo !empty($record['id_ritenuta_contributi']) ? Modules::link('Ritenute previdenziali', $record['id_ritenuta_contributi'], null, null, 'class="pull-right"') : ''; ?>
                     {[ "type": "select", "label": "<?php echo tr('Ritenuta previdenziale'); ?>", "name": "id_ritenuta_contributi", "value": "$id_ritenuta_contributi$", "values": "query=SELECT *, CONCAT(descrizione,(IF(percentuale>0, CONCAT(\" - \", percentuale, \"% sul \", percentuale_imponibile, \"% imponibile\"), \"\"))) AS descrizione FROM co_ritenuta_contributi", "help": "<?php echo tr('Ritenuta previdenziale da applicare alle righe della fattura.'); ?>"  ]}
                 </div>
 
@@ -559,7 +559,7 @@ if ($dir == 'entrata') {
     echo '
                 <div class="col-md-6">';
 
-    if (! empty($record['id_dichiarazione_intento'])) {
+    if (!empty($record['id_dichiarazione_intento'])) {
         echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
     }
 
@@ -574,7 +574,7 @@ if ($dir == 'entrata') {
     echo '
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(! isset($record['bollo'])).'", "help": "'.tr('Se abilitata, questa impostazione addebita automaticamente l\'importo della marca da bollo quando la fattura soddisfa i requisiti per la sua applicazione. In particolare, la marca da bollo si applica se la fattura contiene righe con aliquote IVA con natura N2.1, N2.2, N3.5, N3.6, N4, e se il totale della fattura supera i _MONEY_', [
+                    {[ "type": "checkbox", "label": "'.tr('Marca da bollo automatica').'", "name": "bollo_automatico", "value": "'.intval(!isset($record['bollo'])).'", "help": "'.tr('Se abilitata, questa impostazione addebita automaticamente l\'importo della marca da bollo quando la fattura soddisfa i requisiti per la sua applicazione. In particolare, la marca da bollo si applica se la fattura contiene righe con aliquote IVA con natura N2.1, N2.2, N3.5, N3.6, N4, e se il totale della fattura supera i _MONEY_', [
         '_MONEY_' => moneyFormat(setting("Soglia minima per l'applicazione della marca da bollo")),
     ]).'.<br> Se disabilitata questa impostazione permette di impostare manualmente la marca da bollo.", "placeholder": "'.tr('Bollo automatico').'" ]}
                 </div>
@@ -639,7 +639,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         'id' => $record['idspedizione'],
     ])['esterno']; ?>
 
-                    {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (! empty($esterno) && ! empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo ! empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(! $record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
 <script>
@@ -769,7 +769,7 @@ echo '
 </form>';
 
 // Dich. intento collegata
-if ($dir == 'entrata' && ! empty($fattura->dichiarazione)) {
+if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
     $ive_accettate = $dbo->table('co_iva')->where('codice_natura_fe', 'N3.5')->get();
     foreach ($ive_accettate as $iva_accettata) {
         $descrizione_iva_accettata .= '<li>'.Aliquota::find($iva_accettata->id)->getTranslation('title').'</li>';
@@ -794,18 +794,18 @@ echo '
 		<div class="row">
 			<div class="col-md-12">';
 
-if (! $block_edit) {
+if (!$block_edit) {
     if (empty($record['ref_documento'])) {
         if ($dir == 'entrata') {
             $where = '';
             // Lettura interventi non collegati a preventivi, ordini e contratti
-            if (! setting('Permetti fatturazione delle attività collegate a contratti')) {
+            if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
                 $where = ' AND in_interventi.id_contratto IS NULL';
             }
-            if (! setting('Permetti fatturazione delle attività collegate a ordini')) {
+            if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
                 $where .= ' AND in_interventi.id_ordine IS NULL';
             }
-            if (! setting('Permetti fatturazione delle attività collegate a preventivi')) {
+            if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
                 $where .= ' AND in_interventi.id_preventivo IS NULL';
             }
 
@@ -923,25 +923,25 @@ if (! $block_edit) {
         if ($dir == 'entrata') {
             echo '
 
-                                    <a class="'.(! empty($interventi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Attività').'" onclick="saveForm()">
+                                    <a class="'.(!empty($interventi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_intervento.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Attività').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Attività').'
                                     </a>
 
-                                    <a class="'.(! empty($preventivi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                    <a class="'.(!empty($preventivi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                     </a>
 
-                                    <a class="'.(! empty($contratti) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
+                                    <a class="'.(!empty($contratti) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Contratto').'
                                     </a>';
         }
         echo '
 
-                                    <a class="'.(! empty($ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                    <a class="'.(!empty($ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ddt').'
                                     </a>
 
-                                    <a class="'.(! empty($ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                    <a class="'.(!empty($ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ordine').'
                                     </a>';
     }

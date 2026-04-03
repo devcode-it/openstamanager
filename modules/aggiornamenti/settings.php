@@ -31,7 +31,7 @@ $query_conflitti = [];
 // FUNZIONI HELPER PER CONTROLLO IMPOSTAZIONI
 // ========================================================================
 
-/**
+/*
  * Wrapper per compatibilità - Calcola differenze impostazioni
  */
 if (!function_exists('settings_diff')) {
@@ -42,7 +42,7 @@ if (!function_exists('settings_diff')) {
 }
 
 /**
- * Carica e prepara i dati di riferimento per le impostazioni
+ * Carica e prepara i dati di riferimento per le impostazioni.
  */
 function loadSettingsReferenceData()
 {
@@ -57,7 +57,7 @@ function loadSettingsReferenceData()
 }
 
 /**
- * Calcola i conteggi per le impostazioni
+ * Calcola i conteggi per le impostazioni.
  */
 function calculateSettingsCounts($results_settings, $results_settings_added, $current_premium_settings, $premium_settings)
 {
@@ -90,7 +90,7 @@ function calculateSettingsCounts($results_settings, $results_settings_added, $cu
 }
 
 /**
- * Renderizza una riga di impostazione mancante o modificata
+ * Renderizza una riga di impostazione mancante o modificata.
  */
 function renderSettingRow($key, $setting, $premium_settings, &$query_conflitti)
 {
@@ -123,7 +123,7 @@ function renderSettingRow($key, $setting, $premium_settings, &$query_conflitti)
 }
 
 /**
- * Renderizza una riga di impostazione non prevista
+ * Renderizza una riga di impostazione non prevista.
  */
 function renderUnexpectedSettingRow($key, $setting, $premium_settings)
 {
@@ -144,7 +144,7 @@ function renderUnexpectedSettingRow($key, $setting, $premium_settings)
 }
 
 /**
- * Renderizza una riga di impostazione premium
+ * Renderizza una riga di impostazione premium.
  */
 function renderPremiumSettingRow($key, $setting)
 {

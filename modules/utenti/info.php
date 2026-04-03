@@ -172,8 +172,8 @@ echo '
             </div>
 
             <div class="card-body">
-  <p>' . tr("Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario") . ':</p>
-                <a href="' . $link . '" target="_blank">' . $link . '</a>
+  <p>'.tr('Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario').':</p>
+                <a href="'.$link.'" target="_blank">'.$link.'</a>
                 
             </div>
         </div>

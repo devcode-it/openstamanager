@@ -23,25 +23,27 @@
 // ========================================================================
 
 /**
- * Cerca file personalizzati in una directory
+ * Cerca file personalizzati in una directory.
  */
 function findCustomFilesInDirectory($base_path)
 {
     $files = glob($base_path.'/*.{php,html}', GLOB_BRACE) ?: [];
     $recursive_files = glob($base_path.'/**/*.{php,html}', GLOB_BRACE) ?: [];
+
     return array_merge($files, $recursive_files);
 }
 
 /**
- * Estrae il percorso base da un file personalizzato
+ * Estrae il percorso base da un file personalizzato.
  */
 function extractBasePathFromCustomFile($file)
 {
     $file = str_replace(base_dir().'/', '', $file);
+
     return explode('/custom/', $file)[0];
 }
 
-/**
+/*
  * Controlla se il database presenta alcune sezioni personalizzate.
  *
  * @return array
@@ -256,7 +258,7 @@ if (!function_exists('customViews')) {
 }
 
 /**
- * Raggruppa file personalizzati per percorso
+ * Raggruppa file personalizzati per percorso.
  */
 function groupCustomFilesByPath($files)
 {
@@ -272,10 +274,11 @@ function groupCustomFilesByPath($files)
         }
         $grouped[$base_path][] = $file_name;
     }
+
     return $grouped;
 }
 
-/**
+/*
  * Ottiene l'elenco dei file presenti nelle cartelle custom.
  *
  * @return array

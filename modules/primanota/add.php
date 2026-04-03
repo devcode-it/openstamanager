@@ -124,7 +124,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Inclusione delle sole fatture in stato Emessa, Parzialmente pagato o Pagato
     if (!in_array($fattura->stato->name, ['Emessa', 'Parzialmente pagato', 'Pagato'])) {
-        $counter++;
+        ++$counter;
         continue;
     }
 
@@ -140,9 +140,9 @@ foreach ($id_documenti as $id_documento) {
 
     // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(! empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(! empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenziario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza

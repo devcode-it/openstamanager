@@ -32,7 +32,7 @@ $query_conflitti = [];
 // FUNZIONI HELPER PER CONTROLLO WIDGETS
 // ========================================================================
 
-/**
+/*
  * Wrapper per compatibilità - Calcola differenze widgets
  */
 if (!function_exists('widgets_diff')) {
@@ -42,7 +42,7 @@ if (!function_exists('widgets_diff')) {
     }
 }
 
-/**
+/*
  * Wrapper per compatibilità - Trova widgets aggiunti
  */
 if (!function_exists('widgets_added')) {
@@ -53,7 +53,7 @@ if (!function_exists('widgets_added')) {
 }
 
 /**
- * Carica e prepara i dati di riferimento per i widgets
+ * Carica e prepara i dati di riferimento per i widgets.
  */
 function loadWidgetsReferenceData()
 {
@@ -68,7 +68,7 @@ function loadWidgetsReferenceData()
 }
 
 /**
- * Calcola i conteggi per i widgets
+ * Calcola i conteggi per i widgets.
  */
 function calculateWidgetsCounts($results_widgets, $results_widgets_added, $current_premium_widgets, $premium_widgets, $data_widgets)
 {
@@ -113,7 +113,7 @@ function calculateWidgetsCounts($results_widgets, $results_widgets_added, $curre
 }
 
 /**
- * Renderizza una riga di widget mancante o modificato
+ * Renderizza una riga di widget mancante o modificato.
  */
 function renderWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets, &$query_conflitti)
 {
@@ -146,7 +146,7 @@ function renderWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $
 }
 
 /**
- * Renderizza una riga di widget non previsto
+ * Renderizza una riga di widget non previsto.
  */
 function renderUnexpectedWidgetRow($module_key, $widget_name, $widget, $premium_widgets, $data_widgets)
 {
@@ -168,7 +168,7 @@ function renderUnexpectedWidgetRow($module_key, $widget_name, $widget, $premium_
 }
 
 /**
- * Renderizza una riga di widget premium
+ * Renderizza una riga di widget premium.
  */
 function renderPremiumWidgetRow($module_key, $widget_name, $widget)
 {

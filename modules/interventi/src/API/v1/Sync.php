@@ -68,7 +68,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\r\n";
             $result .= 'DTSTART:'.$inizio->format('Ymd\THis')."\r\n";
             $result .= 'DTEND:'.$fine->format('Ymd\THis')."\r\n";
-            $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\r\n";
+            $result .= 'SUMMARY:'.html_entity_decode((string) $r['summary'])."\r\n";
             $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\r\n";
             $result .= "END:VEVENT\r\n";
         }

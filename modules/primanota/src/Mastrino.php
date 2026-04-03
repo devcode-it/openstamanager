@@ -52,7 +52,7 @@ class Mastrino extends Model
 
     public static function build($descrizione = null, $data = null, $is_insoluto = false, $contabile = false, $id_anagrafica = null)
     {
-        $model = new static;
+        $model = new static();
 
         $model->idmastrino = self::getNextMastrino();
         $model->data = $data;
@@ -127,7 +127,7 @@ class Mastrino extends Model
         $documenti = $this->getUniqueDocumenti($movimenti);
         $scadenze = $this->getScadenzePerDocumenti($documenti);
 
-        if (! empty($scadenza) && $singola) {
+        if (!empty($scadenza) && $singola) {
             $scadenze = [$scadenza->iddocumento => [$scadenza->id]];
         }
 
@@ -197,7 +197,7 @@ class Mastrino extends Model
         $documento = Fattura::find($id_documento);
         $totale_da_distribuire = 0;
 
-        if (! empty($scadenze)) {
+        if (!empty($scadenze)) {
             if (empty($documento)) {
                 $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
             } else {
@@ -207,7 +207,7 @@ class Mastrino extends Model
             // Se il movimento ha una scadenza specifica, aggiorna solo quella
             if (count($scadenze) == 1) {
                 $scadenza = Scadenza::find($movimento->id_scadenza);
-                if (! empty($scadenza)) {
+                if (!empty($scadenza)) {
                     // Calcola il totale di TUTTI i movimenti per questa specifica scadenza
                     // Considerando il flag is_insoluto per sottrarre i movimenti di insoluto
                     $totale_pagamenti = Movimento::where('id_scadenza', '=', $scadenza->id)
@@ -289,7 +289,7 @@ class Mastrino extends Model
     {
         $documentIds = [];
         foreach ($movimenti as $movimento) {
-            if (! in_array($movimento->iddocumento, $documentIds)) {
+            if (!in_array($movimento->iddocumento, $documentIds)) {
                 $documentIds[] = $movimento->iddocumento;
             }
         }

@@ -59,7 +59,7 @@ switch (post('op')) {
         // Selezione delle fatture da stampare
         $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
-        if (! empty($fatture)) {
+        if (!empty($fatture)) {
             foreach ($fatture as $r) {
                 $print = Prints::getModulePredefinedPrint($id_module);
 
@@ -102,7 +102,7 @@ switch (post('op')) {
         }
         $id_print = Prints::getPrints()[$print_name];
 
-        if (! empty($id_records)) {
+        if (!empty($id_records)) {
             foreach ($id_records as $id_record) {
                 Prints::render($id_print, $id_record, $dir.'tmp/', false, true);
             }
@@ -131,7 +131,7 @@ switch (post('op')) {
             try {
                 $fattura_elettronica = new FatturaElettronica($id);
 
-                if (! empty($fattura_elettronica) && ! $fattura_elettronica->isGenerated()) {
+                if (!empty($fattura_elettronica) && !$fattura_elettronica->isGenerated()) {
                     $file = $fattura_elettronica->save();
                     $added[] = $fattura->numero_esterno;
                 }
@@ -140,13 +140,13 @@ switch (post('op')) {
             }
         }
 
-        if (! empty($failed)) {
+        if (!empty($failed)) {
             flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state generate.', [
                 '_LIST_' => implode(', ', $failed),
             ]));
         }
 
-        if (! empty($added)) {
+        if (!empty($added)) {
             flash()->info(tr('Le fatture elettroniche _LIST_ sono state generate.', [
                 '_LIST_' => implode(', ', $added),
             ]));
@@ -162,7 +162,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $fattura = Fattura::find($id);
 
-            if (! $fattura) {
+            if (!$fattura) {
                 $failed[] = 'ID '.$id.' (non trovata)';
 
                 continue;
@@ -173,14 +173,14 @@ switch (post('op')) {
 
                 // Verifica che la fattura sia in stato corretto per l'invio
                 // Accetta 'GEN' (generata), NULL/vuoto (appena generate), 'ERR' (trasmissione fallita)
-                if (! empty($fattura->codice_stato_fe) && $fattura->codice_stato_fe != 'GEN' && $fattura->codice_stato_fe != 'ERR') {
+                if (!empty($fattura->codice_stato_fe) && $fattura->codice_stato_fe != 'GEN' && $fattura->codice_stato_fe != 'ERR') {
                     $skipped[] = $fattura->numero_esterno.' (stato: '.$fattura->codice_stato_fe.')';
 
                     continue;
                 }
 
                 // Verifica che la fattura elettronica sia generata e valida
-                if (! empty($fattura_elettronica) && $fattura_elettronica->isGenerated()) {
+                if (!empty($fattura_elettronica) && $fattura_elettronica->isGenerated()) {
                     $fattura->codice_stato_fe = 'QUEUE';
                     $fattura->data_stato_fe = date('Y-m-d H:i:s');
                     $fattura->hook_send = true;
@@ -208,21 +208,21 @@ switch (post('op')) {
         }
 
         // Messaggi di feedback
-        if (! empty($added)) {
+        if (!empty($added)) {
             flash()->info(tr('_NUM_ fatture elettroniche aggiunte alla coda di invio: _LIST_', [
                 '_NUM_' => count($added),
                 '_LIST_' => implode(', ', $added),
             ]));
         }
 
-        if (! empty($skipped)) {
+        if (!empty($skipped)) {
             flash()->warning(tr('_NUM_ fatture saltate (stato non corretto): _LIST_', [
                 '_NUM_' => count($skipped),
                 '_LIST_' => implode(', ', $skipped),
             ]));
         }
 
-        if (! empty($failed)) {
+        if (!empty($failed)) {
             flash()->error(tr('_NUM_ fatture non aggiunte alla coda (errori): _LIST_', [
                 '_NUM_' => count($failed),
                 '_LIST_' => implode(', ', $failed),
@@ -253,7 +253,7 @@ switch (post('op')) {
 
         $failed = [];
         $added = 0;
-        if (! empty($fatture)) {
+        if (!empty($fatture)) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
                 $include = true;
@@ -269,7 +269,7 @@ switch (post('op')) {
                     $include = false;
                 }
 
-                if (! $include) {
+                if (!$include) {
                     $failed[] = $fattura->numero_esterno;
                 } else {
                     if ($r['dir'] == 'entrata') {
@@ -287,8 +287,8 @@ switch (post('op')) {
                     $result = copy($file, $dest);
 
                     if ($result) {
-                        $added++;
-                        // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                        ++$added;
+                    // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                     } else {
                         $failed[] = $fattura->numero_esterno;
                     }
@@ -296,7 +296,7 @@ switch (post('op')) {
             }
 
             // Creazione zip
-            if (extension_loaded('zip') and ! empty($added)) {
+            if (extension_loaded('zip') and !empty($added)) {
                 Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser il file zip
@@ -306,7 +306,7 @@ switch (post('op')) {
                 delete($dir.'tmp/');
             }
 
-            if (! empty($failed)) {
+            if (!empty($failed)) {
                 flash()->warning(tr('Le fatture elettroniche _LIST_ non sono state incluse poichè non ancora generate o non presenti sul server', [
                     '_LIST_' => implode(', ', $failed),
                 ]));
@@ -332,7 +332,7 @@ switch (post('op')) {
 
         $failed = [];
         $added = 0;
-        if (! empty($fatture)) {
+        if (!empty($fatture)) {
             foreach ($fatture as $r) {
                 $fattura = Fattura::find($r['id']);
                 $zz_file = $dbo->table('zz_files')->where('id_module', '=', $id_module)->where('id_record', '=', $fattura->id)->where('name', 'like', 'Ricevuta%')->first();
@@ -346,15 +346,15 @@ switch (post('op')) {
                 $result = copy($file, $dest);
 
                 if ($result) {
-                    $added++;
-                    // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
+                    ++$added;
+                // operationLog('export-xml-bulk', ['id_record' => $r['id']]);
                 } else {
                     $failed[] = $fattura->numero_esterno;
                 }
             }
 
             // Creazione zip
-            if (extension_loaded('zip') and ! empty($added)) {
+            if (extension_loaded('zip') and !empty($added)) {
                 Zip::create($dir.'tmp/', $zip);
 
                 // Invio al browser il file zip
@@ -364,7 +364,7 @@ switch (post('op')) {
                 delete($dir.'tmp/');
             }
 
-            if (! empty($failed)) {
+            if (!empty($failed)) {
                 flash()->warning(tr('Le ricevute _LIST_ non sono state incluse poichè non ancora generate o non presenti sul server', [
                     '_LIST_' => implode(', ', $failed),
                 ]));
@@ -414,7 +414,7 @@ switch (post('op')) {
                 $new_riga = $riga->replicate();
                 $new_riga->setDocument($new);
 
-                if (! post('riferimenti')) {
+                if (!post('riferimenti')) {
                     $new_riga->idpreventivo = 0;
                     $new_riga->idcontratto = 0;
                     $new_riga->idintervento = null;
@@ -429,7 +429,7 @@ switch (post('op')) {
                 }
             }
 
-            if (! empty($fattura->numero_esterno)) {
+            if (!empty($fattura->numero_esterno)) {
                 array_push($list, $fattura->numero_esterno);
             }
         }
@@ -441,7 +441,7 @@ switch (post('op')) {
         break;
 
     case 'check_bulk':
-        $controllo = new DatiFattureElettroniche;
+        $controllo = new DatiFattureElettroniche();
         $fatture = [];
         foreach ($id_records as $id) {
             $fattura_vendita = Fattura::vendita()
@@ -452,7 +452,7 @@ switch (post('op')) {
                 ->orderBy('data')
                 ->first();
 
-            if (! empty($fattura_vendita)) {
+            if (!empty($fattura_vendita)) {
                 $fatture[$id] = $fattura_vendita;
 
                 $controllo->checkFattura($fattura_vendita);
@@ -514,7 +514,7 @@ switch (post('op')) {
                 } catch (InvalidArgumentException) {
                 }
             } else {
-                $count++;
+                ++$count;
             }
         }
 
@@ -572,7 +572,7 @@ switch (post('op')) {
             WHERE
                 `co_statidocumento_lang`.`title` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
-            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (! empty($data_fattura_precedente['datamax']))) {
+            if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
                 $fattura->data = $data_fattura_precedente['datamax'];
                 $fattura->data_competenza = $data_fattura_precedente['datamax'];
             }
@@ -603,7 +603,7 @@ switch (post('op')) {
                                     <ul>';
 
                                 foreach ($errors as $error) {
-                                    if (! empty($error)) {
+                                    if (!empty($error)) {
                                         $message .= '
                                             <li>'.$error.'</li>';
                                     }
@@ -629,7 +629,7 @@ switch (post('op')) {
             }
         }
 
-        if (! empty($list)) {
+        if (!empty($list)) {
             flash()->info(tr('Le fatture _LIST_ sono state emesse!', [
                 '_LIST_' => implode(',', $list),
             ]));
@@ -667,7 +667,7 @@ switch (post('op')) {
 
             // Destinatari
             $emails = [];
-            if (! empty($fattura->anagrafica->email)) {
+            if (!empty($fattura->anagrafica->email)) {
                 $emails[] = $fattura->anagrafica->email;
             }
 
@@ -681,7 +681,7 @@ switch (post('op')) {
                     ->get();
 
                 foreach ($referenti as $referente) {
-                    if (! in_array($referente->email, $emails)) {
+                    if (!in_array($referente->email, $emails)) {
                         $emails[] = $referente->email;
                     }
                 }
@@ -689,7 +689,7 @@ switch (post('op')) {
 
             // Se non ci sono destinatari, salta questa fattura
             if (empty($emails)) {
-                $failed_count++;
+                ++$failed_count;
                 $failed_emails[] = $fattura->numero_esterno;
 
                 continue;
@@ -734,10 +734,10 @@ switch (post('op')) {
                 OperationLog::setInfo('id_record', $fattura->id);
                 OperationLog::build('send-email');
                 $list[] = $fattura->numero_esterno;
-                $success_count++;
+                ++$success_count;
             } else {
                 $mail->delete();
-                $failed_count++;
+                ++$failed_count;
                 $failed_emails[] = $fattura->numero_esterno;
             }
         }
@@ -769,7 +769,7 @@ switch (post('op')) {
             if ($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == 'WAIT') {
                 $result = Interaction::getInvoiceRecepits($id);
                 $last_recepit = $result['results'][0];
-                if (! empty($last_recepit)) {
+                if (!empty($last_recepit)) {
                     // Importazione ultima ricevuta individuata
                     $fattura = Ricevuta::process($last_recepit);
                 }
@@ -783,12 +783,12 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $documento = Fattura::find($id);
-            $count++;
+            ++$count;
 
             if ($documento->stato->getTranslation('title') == 'Bozza') {
                 $documento->id_segment = post('id_segment');
                 $documento->save();
-                $n_doc++;
+                ++$n_doc;
             }
         }
 
@@ -917,7 +917,7 @@ $operations['export_csv'] = [
 
 if ($module->name == 'Fatture di vendita') {
     $operations['export_bulk'] = [
-        'text' => '<span class="'.((! extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
+        'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe').'</span>',
         'data' => [
             'title' => '',
             'msg' => tr('Vuoi davvero esportare i PDF delle fatture selezionate in un archivio ZIP?'),
@@ -928,7 +928,7 @@ if ($module->name == 'Fatture di vendita') {
     ];
 }
 $operations['export_fe_bulk'] = [
-    'text' => '<span class="'.((! extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta stampe FE').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare i PDF delle fatture elettroniche selezionate in un archivio ZIP?'),
@@ -939,7 +939,7 @@ $operations['export_fe_bulk'] = [
 ];
 
 $operations['export_receipts_bulk'] = [
-    'text' => '<span class="'.((! extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta ricevute').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare le ricevute selezionate in un archivio ZIP?'),
@@ -950,7 +950,7 @@ $operations['export_receipts_bulk'] = [
 ];
 
 $operations['export_xml_bulk'] = [
-    'text' => '<span class="'.((! extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
+    'text' => '<span class="'.((!extension_loaded('zip')) ? 'text-muted disabled' : '').'"><i class="fa fa-file-archive-o"></i> '.tr('Esporta XML').'</span>',
     'data' => [
         'title' => '',
         'msg' => tr('Vuoi davvero esportare le fatture elettroniche selezionate in un archivio ZIP?'),

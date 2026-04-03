@@ -39,7 +39,7 @@ use Modules\Aggiornamenti\UpdateHook;
 // ========================================================================
 
 /**
- * Definisce i pattern SQL sicuri per la validazione
+ * Definisce i pattern SQL sicuri per la validazione.
  */
 function getAllowedSqlPatterns()
 {
@@ -54,7 +54,7 @@ function getAllowedSqlPatterns()
 }
 
 /**
- * Valida una singola query rispetto ai pattern sicuri
+ * Valida una singola query rispetto ai pattern sicuri.
  */
 function isQuerySafe($query, $allowed_patterns)
 {
@@ -63,11 +63,12 @@ function isQuerySafe($query, $allowed_patterns)
             return true;
         }
     }
+
     return false;
 }
 
 /**
- * Filtra le query sicure da quelle pericolose
+ * Filtra le query sicure da quelle pericolose.
  */
 function filterSafeQueries($queries, $allowed_patterns)
 {
@@ -86,7 +87,7 @@ function filterSafeQueries($queries, $allowed_patterns)
 }
 
 /**
- * Esegue le query sicure e ritorna i risultati
+ * Esegue le query sicure e ritorna i risultati.
  */
 function executeQueries($safe_queries, $dbo)
 {

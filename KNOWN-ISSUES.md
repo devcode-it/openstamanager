@@ -11,6 +11,32 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
+#### 2.10.3 - 07/04/2026
+
+##### Problemi noti
+- Corretto registrazione insoluto da tasto Registra insoluto
+https://github.com/devcode-it/openstamanager/commit/d7ba5a1b4
+
+- Corretto avviso banca di addebito non selezionata per fatture con metodo di pagamento riba
+https://github.com/devcode-it/openstamanager/commit/b358d6e1e
+
+- Corretto emissione fatture con impostazione Data emissione fattura automatica abilitata
+https://github.com/devcode-it/openstamanager/commit/332f7771d
+
+- Corretto allegato pdf alle email in invio mail fatture da bulk
+https://github.com/devcode-it/openstamanager/commit/e7e49f226
+
+- Corretto generazione movimento autofattura in fase di import FE
+https://github.com/devcode-it/openstamanager/commit/3df8d88a0
+
+- Corretto verifica P.IVA destinatario prima dell'importazione FE
+https://github.com/devcode-it/openstamanager/commit/f6d0c7c34
+
+- Corretto spostamento log Laravel in logs/app.log e abilitazione rotazione giornaliera a 30 giorni
+https://github.com/devcode-it/openstamanager/commit/d6bdb0fbb
+
+---
+
 #### 2.10.2 - 17/03/2026
 
 ##### Problemi noti

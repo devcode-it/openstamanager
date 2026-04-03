@@ -27,3 +27,5 @@ HAVING
     2=2
 ORDER BY
     `co_documenti`.`data` DESC, CAST(IF(`co_documenti`.`numero` = '', `co_documenti`.`numero_esterno`, `co_documenti`.`numero`) AS UNSIGNED) DESC" WHERE `name` = 'Fatture di acquisto';
+
+UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Nome, Indirizzo, Città, CAP, Provincia, Referente", "query": "SELECT an_sedi.id, an_sedi.nomesede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, GROUP_CONCAT(an_referenti.nome SEPARATOR \', \') AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON idsede = an_sedi.id WHERE 1=1 AND an_sedi.idanagrafica=|id_parent| AND deleted_at IS NULL GROUP BY an_sedi.id HAVING 2=2 ORDER BY an_sedi.id DESC"} ]}' WHERE `name` = 'Sedi aggiuntive';

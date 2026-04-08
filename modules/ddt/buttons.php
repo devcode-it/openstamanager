@@ -66,17 +66,16 @@ function completaTrasporto() {
 
 if (!$is_anagrafica_deleted) {
     // Informazioni sull'importabilità del DDT
-    $stati = $database->fetchArray('SELECT `title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+    $stati = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 
     foreach ($stati as $stato) {
         $stati_importabili[] = $stato['descrizione'];
     }
 
-    $causali = $database->fetchArray('SELECT `name` FROM `dt_causalet` 
-   WHERE `is_importabile` = 1');
+    $causali = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
 
     foreach ($causali as $causale) {
-        $causali_importabili[] = $causale['title'];
+        $causali_importabili[] = $causale['descrizione'];
     }
 
     // Determina il tipo di documento che verrà creato applicando la stessa logica di crea_documento.php

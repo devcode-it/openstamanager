@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Carbon\Carbon;
 use Models\Module;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Fatture\Fattura;
@@ -164,6 +165,55 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'copy_bulk':
+        $copia_righe = post('righe');
+        $copia_allegati = post('allegati');
+
+        foreach ($id_records as $idpreventivo) {
+            // Copia del preventivo
+            $preventivo = Preventivo::find($idpreventivo);
+            $new = $preventivo->replicate(['data_accettazione', 'data_conclusione', 'data_rifiuto']);
+            $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
+            $new->data_bozza = Carbon::now();
+
+            $stato_preventivo = StatoPreventivo::where('name', 'Bozza')->first()->id;
+            $new->stato()->associate($stato_preventivo);
+
+            $new->save();
+
+            $new->master_revision = $new->id;
+            $new->descrizione_revision = '';
+            $new->numero_revision = 0;
+            $new->save();
+
+            $id_record = $new->id;
+
+            // Copia delle righe
+            if (!empty($copia_righe)) {
+                $righe = $preventivo->getRighe();
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->setDocument($new);
+
+                    $new_riga->qta_evasa = 0;
+                    $new_riga->save();
+                }
+            }
+
+            // copia allegati
+            if (!empty($copia_allegati)) {
+                $allegati = $preventivo->uploads();
+                foreach ($allegati as $allegato) {
+                    $allegato->copia([
+                        'id_module' => $new->getModule()->id,
+                        'id_record' => $new->id,
+                    ]);
+                }
+            }
+        }
+        flash()->info(tr('Preventivi duplicati correttamente!'));
+        break;
 }
 
 $operations['change_status'] = [
@@ -184,6 +234,19 @@ $operations['create_invoice'] = [
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`=\''.$id_fatture.'\' ORDER BY `zz_segments_lang`.`title`", "value": "'.$id_segment.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"", "value": "'.setting('Raggruppamento fatturazione massiva preventivi').'" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia dei preventivi selezionati?'),
+        'msg' => '{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

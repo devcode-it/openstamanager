@@ -73,6 +73,22 @@ switch (post('op')) {
         flash()->info(tr('Impianti aggiornati correttamente!'));
 
         break;
+
+    case 'copy_bulk':
+        foreach ($id_records as $id_record) {
+            $database->beginTransaction();
+            $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM my_impianti WHERE id= '.prepare($id_record));
+            $dbo->query('ALTER TABLE tmp DROP id');
+            $dbo->query('INSERT INTO my_impianti SELECT NULL,tmp. * FROM tmp');
+            $idimpianto_new = $dbo->lastInsertedID();
+            $dbo->query('DROP TEMPORARY TABLE tmp');
+
+            $dbo->query('UPDATE my_impianti SET matricola = CONCAT (matricola, " (copia)") WHERE id = '.prepare($idimpianto_new));
+        }
+
+        flash()->info(tr('Impianti duplicati correttamente!'));
+
+        break;
 }
 $operations['change_customer'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Aggiorna cliente').'</span>',
@@ -101,6 +117,16 @@ $operations['export_csv'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => true,
+    ],
+];
+
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica impianti'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli impianti selezionati?'),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
     ],
 ];
 

@@ -28,6 +28,10 @@ use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
+use Modules\Emails\Template;
+use Models\OperationLog;
+use Modules\Emails\Mail;
+use Notifications\EmailNotification;
 
 // Segmenti
 $id_modulo_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
@@ -253,6 +257,70 @@ switch (post('op')) {
         flash()->info(tr('Ordini duplicati correttamente!'));
         
         break;
+
+    case 'send_mail':
+        $template = Template::find(post('id_template'));
+
+        $list = [];
+        foreach ($id_records as $id) {
+            $ordine = Ordine::find($id);
+            $id_anagrafica = $ordine->idanagrafica;
+
+            // Selezione destinatari e invio mail
+            if (!empty($template)) {
+                $creata_mail = false;
+                $emails = [];
+
+                // Aggiungo email anagrafica
+                if (!empty($ordine->anagrafica->email)) {
+                    $emails[] = $ordine->anagrafica->email;
+                    $mail = Mail::build(auth_osm()->getUser(), $template, $id);
+                    $mail->addReceiver($ordine->anagrafica->email);
+                    $creata_mail = true;
+                }
+
+                // Aggiungo email referenti in base alla mansione impostata nel template
+                $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
+                foreach ($mansioni as $mansione) {
+                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                    if (!$referenti->isEmpty() && $creata_mail == false) {
+                        $mail = Mail::build(auth_osm()->getUser(), $template, $id);
+                        $creata_mail = true;
+                    }
+
+                    foreach ($referenti as $referente) {
+                        if (!in_array($referente->email, $emails)) {
+                            $emails[] = $referente->email;
+                            $mail->addReceiver($referente->email);
+                        }
+                    }
+                }
+                if ($creata_mail == true) {
+                    $mail->save();
+                    // Invio mail istantaneo
+                    $email = EmailNotification::build($mail);
+                    $email_success = $email->send();
+
+                    if ($email_success) {
+                        OperationLog::setInfo('id_email', $mail->id);
+                        OperationLog::setInfo('id_module', $id_module);
+                        OperationLog::setInfo('id_record', $mail->id_record);
+                        OperationLog::build('send-email');
+                        array_push($list, $ordine->codice);
+                    } else {
+                        $mail->delete();
+                    }
+                }
+            }
+        }
+
+        if ($list) {
+            flash()->info(tr('Mail inviata per gli ordini _LIST_ !', [
+                '_LIST_' => implode(',', $list),
+            ]));
+        }
+
+        break;
 }
 
 $operations['change_status'] = [
@@ -316,5 +384,16 @@ if ($module->name == 'Ordini cliente') {
         ];
     }
 }
+
+$operations['send_mail'] = [
+    'text' => '<span><i class="fa fa-envelope"></i> '.tr('Invia mail').'</span>',
+    'data' => [
+        'title' => tr('Inviare mail?'),
+        'msg' => tr('Per ciascun ordine selezionato, verrà inviata una mail').'<br><br>
+            {[ "type": "select", "label": "'.tr('Template').'", "name": "id_template", "required": "1", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.prepare($id_module).' AND `deleted_at` IS NULL;" ]}',
+        'button' => tr('Invia'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
 
 return $operations;

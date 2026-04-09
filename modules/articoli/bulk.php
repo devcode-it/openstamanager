@@ -511,6 +511,45 @@ switch (post('op')) {
 
         break;
 
+    case 'copy_bulk':
+        $copia_allegati = post('allegati');
+
+        foreach ($id_records as $idarticolo) {
+            $articolo = Articolo::find($idarticolo);
+            $new = $articolo->replicate();
+
+            // Se non specifico il codice articolo lo imposto uguale all'id della riga
+            if (empty(post('codice'))) {
+                $codice = $dbo->fetchOne('SELECT MAX(`id`) as codice FROM `mg_articoli`')['codice'] + 1;
+            } else {
+                $codice = post('codice', true);
+            }
+
+            $new->codice = $codice;
+            $new->qta = 0;
+            $new->save();
+
+            $new->setTranslation('title', $articolo->getTranslation('title'));
+            $id_record = $new->id;
+
+            // Copia degli allegati
+            $copia_allegati = post('copia_allegati');
+            if (!empty($copia_allegati)) {
+                $allegati = $articolo->uploads();
+                foreach ($allegati as $allegato) {
+                    $allegato->copia([
+                        'id_module' => $new->getModule()->id,
+                        'id_record' => $new->id,
+                    ]);
+                }
+            }
+        }
+
+        flash()->info(tr('Articoli duplicati correttamente!'));
+
+        break;
+
+
     case 'merge_products':
         $id_articolo_principale = post('id_articolo_principale');
 
@@ -790,6 +829,18 @@ $operations['print_labels'] = [
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,
+    ],
+];
+
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-clone"></i> '.tr('Duplica articoli'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli articoli selezionati?'),
+        'msg' => '{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
     ],
 ];
 

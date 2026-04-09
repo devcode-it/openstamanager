@@ -192,7 +192,7 @@ class OAuth2 extends Model
     {
         $access_token = $this->access_token ? unserialize($this->access_token, ['allowed_classes' => [AccessToken::class]]) : null;
 
-        if (!empty($access_token) && $access_token->hasExpired()) {
+        if (!empty($access_token) && $access_token instanceof AccessToken && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso
             $refresh_token = $this->refresh_token;
             if (!empty($refresh_token)) {

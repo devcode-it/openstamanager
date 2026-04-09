@@ -209,6 +209,50 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'copy_bulk':
+        $idstatoordine = post('idstatoordine');
+        $data = post('data');
+        $copia_righe = post('righe');
+        $copia_allegati = post('allegati');
+
+        foreach ($id_records as $idordine) {
+            $ordine = Ordine::find($idordine);
+            $new = $ordine->replicate();
+            $new->numero = Ordine::getNextNumero($data, $ordine->tipo->dir, $ordine->id_segment);
+            $new->numero_esterno = Ordine::getNextNumeroSecondario($data, $ordine->tipo->dir, $ordine->id_segment);
+            $new->idstatoordine = $idstatoordine;
+            $new->data = $data;
+            $new->save();
+
+            $id_record = $new->id;
+
+            if (!empty($copia_righe)) {
+                $righe = $ordine->getRighe();
+                foreach ($righe as $riga) {
+                    $new_riga = $riga->replicate();
+                    $new_riga->setDocument($new);
+
+                    $new_riga->qta_evasa = 0;
+                    $new_riga->save();
+                }
+            }
+
+            // copia allegati
+            if (!empty($copia_allegati)) {
+                $allegati = $ordine->uploads();
+                foreach ($allegati as $allegato) {
+                    $allegato->copia([
+                        'id_module' => $new->getModule()->id,
+                        'id_record' => $new->id,
+                    ]);
+                }
+            }
+        }
+
+        flash()->info(tr('Ordini duplicati correttamente!'));
+        
+        break;
 }
 
 $operations['change_status'] = [
@@ -217,6 +261,21 @@ $operations['change_status'] = [
         'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
         <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `title` as descrizione, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica ordini'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia degli ordini selezionati?'),
+        'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data').'", "name": "data", "required": 0, "value": "-now-", "required":1 ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
+            <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

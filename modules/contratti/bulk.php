@@ -287,6 +287,33 @@ switch (post('op')) {
         }
 
         break;
+
+    case 'copy_bulk':
+        foreach ($id_records as $idcontratto) {
+            $contratto = Contratto::find($idcontratto);
+
+            $new = $contratto->replicate(['idcontratto_prev']);
+            $new->numero = Contratto::getNextNumero(Carbon::parse($data)->format('Y-m-d'), $contratto->id_segment);
+
+            $stato = StatoContratto::where('name', 'Bozza')->first()->id;
+            $new->stato()->associate($stato);
+            $new->save();
+
+            $id_record = $new->id;
+
+            $righe = $contratto->getRighe();
+            foreach ($righe as $riga) {
+                $new_riga = $riga->replicate();
+                $new_riga->setDocument($new);
+
+                $new_riga->qta_evasa = 0;
+                $new_riga->save();
+            }
+        }
+
+        flash()->info(tr('Contratti duplicati correttamente!'));
+
+        break;
 }
 
 $operations['change_status'] = [
@@ -330,6 +357,16 @@ $operations['renew_contract'] = [
     'data' => [
         'title' => tr('Rinnovare i contratti selezionati?').'</span>',
         'msg' => ''.tr('Un contratto è rinnovabile se presenta una data di accettazione e conclusione, se il rinnovo è abilitato dal plugin Rinnovi e se si trova in uno di questi stati: _STATE_LIST_', ['_STATE_LIST_' => $stati_bloccati]),
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['copy_bulk'] = [
+    'text' => '<span><i class="fa fa-copy"></i> '.tr('Duplica contratti'),
+    'data' => [
+        'title' => tr('Vuoi davvero fare una copia dei contratti selezionati?'),
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

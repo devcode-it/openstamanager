@@ -46,7 +46,7 @@ class ChecklistItem extends Model
 
         $model->checklist()->associate($checklist);
         $model->id_parent = $id_parent;
-        $model->content = $contenuto;
+        $model->content = \Filter::sanitize($contenuto);
         $model->is_titolo = $is_titolo;
 
         $model->findOrder();

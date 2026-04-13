@@ -61,7 +61,7 @@ if (!function_exists('renderChecklist')) {
 
             $result .= '
                         <td style="border-top:0px;">
-                            <span class="text unblockable" style="'.(!empty($check->checked_at) ? 'text-decoration:line-through;' : '').'">'.htmlspecialchars($check->content, ENT_QUOTES, 'UTF-8').' </span>
+                            <span class="text unblockable" style="'.(!empty($check->checked_at) ? 'text-decoration:line-through;' : '').'">'.$check->content.' </span>
                         </td>';
 
             $result .= '

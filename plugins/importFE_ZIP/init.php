@@ -46,4 +46,20 @@ if (!empty($id_record)) {
 
         redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
     }
+
+    // Se la fattura è già stata importata e siamo in modalità sequenza, passa alla successiva
+    if (!empty($imported) && get('sequence') == 1) {
+        $next_record = $id_record + 1;
+        $next_file = $files[$next_record - 1] ?? null;
+
+        if (!empty($next_file)) {
+            flash()->info(tr('La fattura _NAME_ è già stata importata, passaggio alla successiva...', [
+                '_NAME_' => $record['name'],
+            ]));
+            redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$next_record.'&sequence=1');
+        } else {
+            flash()->info(tr('Tutte le fatture salvate sono state importate!'));
+            redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);
+        }
+    }
 }

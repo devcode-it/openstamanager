@@ -67,19 +67,38 @@ class FatturaElettronica
 
         // Verifica che il CessionarioCommittente (destinatario) corrisponda all'azienda configurata
         // per evitare l'importazione di fatture non indirizzate a questa azienda
-        $cessionario = $this->getHeader()['CessionarioCommittente']['DatiAnagrafici'] ?? null;
-        $piva_destinatario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
-        $cf_destinatario = $cessionario['CodiceFiscale'] ?? null;
 
-        $azienda = Anagrafica::find(setting('Azienda predefinita'));
-        if (!empty($azienda) && (!empty($piva_destinatario) || !empty($cf_destinatario))) {
-            $piva_match = !empty($piva_destinatario) && $azienda->piva === $piva_destinatario;
-            $cf_match = !empty($cf_destinatario) && $azienda->codice_fiscale === $cf_destinatario;
+        if ($directory == 'Fatture di acquisto') {
+            $cessionario = $this->getHeader()['CessionarioCommittente']['DatiAnagrafici'] ?? null;
+            $piva_destinatario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
+            $cf_destinatario = $cessionario['CodiceFiscale'] ?? null;
 
-            if (!$piva_match && !$cf_match) {
-                throw new \UnexpectedValueException();
-            }
+            $azienda = Anagrafica::find(setting('Azienda predefinita'));
+            if (!empty($azienda) && (!empty($piva_destinatario) || !empty($cf_destinatario))) {
+                $piva_match = !empty($piva_destinatario) && $azienda->piva === $piva_destinatario;
+                $cf_match = !empty($cf_destinatario) && $azienda->codice_fiscale === $cf_destinatario;
+
+                if (!$piva_match && !$cf_match) {
+                    throw new \UnexpectedValueException();
+                }
+            }               
+        } else {
+            $cedente = $this->getHeader()['CedentePrestatore']['DatiAnagrafici'] ?? null;
+            $piva_destinatario = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
+            $cf_destinatario = $cedente['CodiceFiscale'] ?? null;
+
+            $azienda = Anagrafica::find(setting('Azienda predefinita'));
+            if (!empty($azienda) && (!empty($piva_destinatario) || !empty($cf_destinatario))) {
+                $piva_match = !empty($piva_destinatario) && $azienda->piva === $piva_destinatario;
+                $cf_match = !empty($cf_destinatario) && $azienda->codice_fiscale === $cf_destinatario;
+
+                if (!$piva_match && !$cf_match) {
+                    throw new \UnexpectedValueException();
+                }
+            }    
         }
+
+        
 
         // Individuazione fattura pre-esistente
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];

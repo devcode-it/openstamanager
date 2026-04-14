@@ -791,7 +791,7 @@ class Fattura extends Document
     {
         $pagamento = $this->pagamento;
 
-        if ($pagamento->isRiBa()) {
+        if ($pagamento->isRiBa() || $pagamento->isSepa()) {
             $banca = Banca::find($this->id_banca_controparte) ?: Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
         } else {
             $banca = Banca::find($this->id_banca_azienda);

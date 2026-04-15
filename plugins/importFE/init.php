@@ -32,10 +32,16 @@ if (!empty($id_record)) {
     try {
         $fattura_pa = FatturaElettronica::manage($record['name'] ?? '');
         $anagrafica = $fattura_pa->findAnagrafica();
-    } catch (UnexpectedValueException) {
+    } catch (UnexpectedValueException $e) {
         $imported = true;
-    } catch (Exception) {
+        if ($e->getMessage()) {
+            flash()->error($e->getMessage());
+        }
+    } catch (Exception $e) {
         $error = true;
+        if ($e->getMessage()) {
+            flash()->error($e->getMessage());
+        }
     }
 
     // Rimozione .p7m dal nome del file (causa eventuale estrazione da ZIP)

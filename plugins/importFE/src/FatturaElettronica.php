@@ -20,6 +20,7 @@
 
 namespace Plugins\ImportFE;
 
+use Models\Locale;
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Anagrafiche\Nazione;
@@ -65,40 +66,38 @@ class FatturaElettronica
 
         $this->xml = XML::readFile($this->file);
 
-        // Verifica che il CessionarioCommittente (destinatario) corrisponda all'azienda configurata
+        // Verifica che il CessionarioCommittente (destinatario) o CedentePrestatore (mittente) corrisponda all'azienda configurata
         // per evitare l'importazione di fatture non indirizzate a questa azienda
-
-        if ($directory == 'Fatture di acquisto') {
+        $azienda = Anagrafica::find(setting('Azienda predefinita'));
+        if (!empty($azienda)) {
             $cessionario = $this->getHeader()['CessionarioCommittente']['DatiAnagrafici'] ?? null;
-            $piva_destinatario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
-            $cf_destinatario = $cessionario['CodiceFiscale'] ?? null;
-
-            $azienda = Anagrafica::find(setting('Azienda predefinita'));
-            if (!empty($azienda) && (!empty($piva_destinatario) || !empty($cf_destinatario))) {
-                $piva_match = !empty($piva_destinatario) && $azienda->piva === $piva_destinatario;
-                $cf_match = !empty($cf_destinatario) && $azienda->codice_fiscale === $cf_destinatario;
-
-                if (!$piva_match && !$cf_match) {
-                    throw new \UnexpectedValueException();
-                }
-            }               
-        } else {
+            $piva_cessionario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
+            $cf_cessionario = $cessionario['CodiceFiscale'] ?? null;
             $cedente = $this->getHeader()['CedentePrestatore']['DatiAnagrafici'] ?? null;
-            $piva_destinatario = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
-            $cf_destinatario = $cedente['CodiceFiscale'] ?? null;
+            $piva_cedente = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
+            $cf_cedente = $cedente['CodiceFiscale'] ?? null;
 
-            $azienda = Anagrafica::find(setting('Azienda predefinita'));
-            if (!empty($azienda) && (!empty($piva_destinatario) || !empty($cf_destinatario))) {
-                $piva_match = !empty($piva_destinatario) && $azienda->piva === $piva_destinatario;
-                $cf_match = !empty($cf_destinatario) && $azienda->codice_fiscale === $cf_destinatario;
+            $piva_match = (!empty($piva_cessionario) && $azienda->piva === $piva_cessionario) || (!empty($piva_cedente) && $azienda->piva === $piva_cedente);
+            $cf_match = (!empty($cf_cessionario) && $azienda->codice_fiscale === $cf_cessionario) || (!empty($cf_cedente) && $azienda->codice_fiscale === $cf_cedente);
 
-                if (!$piva_match && !$cf_match) {
-                    throw new \UnexpectedValueException();
-                }
-            }    
+            if (!$piva_match && !$cf_match) {
+                $message = tr('Impossibile importare la fattura: P.IVA/CF non corrispondono.')."\n";
+                $message .= tr('Azienda: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($azienda->piva) ? $azienda->piva : '-',
+                    '_CF_' => !empty($azienda->codice_fiscale) ? $azienda->codice_fiscale : '-',
+                ])."\n";
+                $message .= tr('Cessionario: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($piva_cessionario) ? $piva_cessionario : '-',
+                    '_CF_' => !empty($cf_cessionario) ? $cf_cessionario : '-',
+                ])."\n";
+                $message .= tr('Cedente: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($piva_cedente) ? $piva_cedente : '-',
+                    '_CF_' => !empty($cf_cedente) ? $cf_cedente : '-',
+                ]);
+
+                throw new \UnexpectedValueException($message);
+            }
         }
-
-        
 
         // Individuazione fattura pre-esistente
         $dati_generali = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento'];
@@ -170,7 +169,17 @@ class FatturaElettronica
             new static($name, $directory, $plugin);
 
             return true;
-        } catch (\UnexpectedValueException|\Exception) {
+        } catch (\UnexpectedValueException $e) {
+            $message = $e->getMessage();
+            if (!empty($message)) {
+                return ['error' => $message];
+            }
+
+            $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
+            delete($file);
+
+            return false;
+        } catch (\Exception) {
             $file = static::getImportDirectory($directory ?: 'Fatture di acquisto').'/'.$name;
             delete($file);
 
@@ -528,7 +537,7 @@ class FatturaElettronica
         $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
 
         // Tipo del documento
-        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
         $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
         $numero_tipo = database()->fetchNum($query_tipo);
         if (!empty($numero_tipo)) {

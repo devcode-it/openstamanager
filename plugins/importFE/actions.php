@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/init.php';
 
 use Carbon\Carbon;
+use Models\Locale;
 use Modules\Anagrafiche\Tipo;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
@@ -32,6 +33,7 @@ use Modules\PrimaNota\Movimento;
 use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 use Util\XML;
+use Util\Zip;
 
 $file = null;
 switch (filter('op')) {
@@ -49,7 +51,7 @@ switch (filter('op')) {
         if (string_ends_with($name, '.zip')) {
             $directory = FatturaElettronica::getImportDirectory();
 
-            Util\Zip::extract($temp_name, $directory);
+            Zip::extract($temp_name, $directory);
 
             // Redirect forzato per l'importazione
             echo json_encode([
@@ -69,9 +71,17 @@ switch (filter('op')) {
         }
 
         try {
-            if (!FatturaElettronica::isValid($file)) {
+            $result = FatturaElettronica::isValid($file);
+            if ($result === false) {
                 echo json_encode([
                     'already' => 1,
+                ]);
+
+                return;
+            }
+            if (is_array($result) && isset($result['error'])) {
+                echo json_encode([
+                    'error' => $result['error'],
                 ]);
 
                 return;
@@ -451,7 +461,7 @@ switch (filter('op')) {
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                     INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-                    LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
+                    LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
                 WHERE
                     `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
                     YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
@@ -493,7 +503,7 @@ switch (filter('op')) {
                 FROM `or_righe_ordini`
                     INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                     INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-                    LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
+                    LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
                 WHERE
                     `or_ordini`.`numero_esterno` = '.prepare($ordine['numero']).'
                     AND YEAR(`or_ordini`.`data`) = '.prepare($ordine['anno']).'
@@ -539,7 +549,7 @@ switch (filter('op')) {
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                         INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
-                        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                     WHERE
                         `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND
@@ -560,7 +570,7 @@ switch (filter('op')) {
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
                         INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
-                        LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                        LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
                     WHERE
                         `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND

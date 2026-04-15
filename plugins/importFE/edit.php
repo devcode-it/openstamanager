@@ -57,7 +57,7 @@ echo '
                     success: function(data){
                         data = JSON.parse(data);
 
-                        if (!data.already) {
+                        if (!data.already && !data.error) {
                             if (automatic) {
                                 import_fe_auto(btn, data.name, null);
                                 $("#blob").val("");
@@ -65,6 +65,12 @@ echo '
                             } else {
                                 redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                             }
+                        } else if (data.error) {
+                            swal({
+                                title: "'.tr('Errore').'",
+                                text: data.error,
+                                type: "error",
+                            });
                         } else {
                             swal({
                                 title: "'.tr('Fattura già importata').'.",

@@ -21,11 +21,12 @@
 include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
+use Plugins\ImportFE\FatturaElettronica;
 use Plugins\ImportFE\Interaction;
 
 $list = Interaction::getInvoiceList();
 
-$directory = Plugins\ImportFE\FatturaElettronica::getImportDirectory();
+$directory = FatturaElettronica::getImportDirectory();
 
 if (!empty($list)) {
     echo '
@@ -149,8 +150,14 @@ function import_fe(button, file, data_registrazione) {
         success: function(data) {
             data = JSON.parse(data);
 
-            if (!data.already) {
+            if (!data.already && !data.error) {
                 redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
+            } else if (data.error) {
+                swal({
+                    title: "'.tr('Errore').'",
+                    text: data.error,
+                    type: "error",
+                });
             } else {
                 swal({
                     title: "'.tr('Fattura già importata.').'",

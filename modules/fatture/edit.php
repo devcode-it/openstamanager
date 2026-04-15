@@ -1078,7 +1078,7 @@ echo '
     });
 
     function checkRibaWarning() {
-        if ("'.($dir == 'entrata' ? 'true' : 'false').'") {
+        if ('.($dir == 'entrata' ? 'true' : 'false').') {
             let pagamentoData = $("#idpagamento").selectData();
             let bancaControparte = $("#id_banca_controparte").val();
             let ribaSddCodes = ["MP12", "MP19", "MP20", "MP21"];

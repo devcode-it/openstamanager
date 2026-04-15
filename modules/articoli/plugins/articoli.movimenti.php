@@ -76,17 +76,20 @@ $movimenti = $articolo->movimentiComposti();
 
 $giacenze = $articolo->getGiacenze();
 
-// Raggruppamento per documento
-$movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')->get();
-
-// Ordinamento per data del documento (decrescente) e poi per ID (decrescente)
-$movimenti = $movimenti->sortByDesc(fn ($movimento) => [$movimento->data, $movimento->id])->values();
+// Raggruppamento per documento e ordinamento
+$movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')
+    ->orderByDesc('mg_movimenti.data')
+    ->orderByDesc('mg_movimenti.created_at')
+    ->orderByDesc('mg_movimenti.id')
+    ->get()
+    ->values();
 
 // Limite ai primi 20 movimenti se non richiesta la movimentazione completa
 if (empty($_GET['movimentazione_completa'])) {
     $movimenti = $movimenti->take(20);
 }
-if (!empty($movimenti)) {
+
+if (! empty($movimenti)) {
     echo '
         <table class="table table-striped table-sm table-bordered">
             <tr>
@@ -103,16 +106,16 @@ if (!empty($movimenti)) {
 
     foreach ($movimenti as $i => $movimento) {
         // Quantità progressiva
-        if ($mov[$movimento['idsede']]['progressivo_finale'] === null) {
-            $movimento['progressivo_finale'] = $giacenze[$movimento['idsede']][0];
+        if ($mov[$movimento->idsede]['progressivo_finale'] === null) {
+            $movimento->progressivo_finale = $giacenze[$movimento->idsede][0];
         } else {
-            $movimento['progressivo_finale'] = $mov[$movimento['idsede']]['progressivo_iniziale'];
+            $movimento->progressivo_finale = $mov[$movimento->idsede]['progressivo_iniziale'];
         }
 
-        $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
+        $movimento->progressivo_iniziale = $movimento->progressivo_finale - $movimento->qta;
 
-        $mov[$movimento['idsede']]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
-        $mov[$movimento['idsede']]['progressivo_finale'] = $movimento['progressivo_finale'];
+        $mov[$movimento->idsede]['progressivo_iniziale'] = $movimento->progressivo_iniziale;
+        $mov[$movimento->idsede]['progressivo_finale'] = $movimento->progressivo_finale;
 
         // Quantità
         echo '
@@ -127,9 +130,9 @@ if (!empty($movimenti)) {
                     '.($movimento->qta < 0 ? numberFormat(abs($movimento->qta), 'qta').' '.$record['um'] : '').'
                 </td>
                 <td class="text-center">
-                    '.numberFormat($movimento['progressivo_iniziale'], 'qta').' '.$record['um'].'
+                    '.numberFormat($movimento->progressivo_iniziale, 'qta').' '.$record['um'].'
                     <i class="fa fa-arrow-circle-right"></i>
-                    '.numberFormat($movimento['progressivo_finale'], 'qta').' '.$record['um'].'
+                    '.numberFormat($movimento->progressivo_finale, 'qta').' '.$record['um'].'
                 </td>
                 <td>
                     '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'

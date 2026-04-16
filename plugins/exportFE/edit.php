@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/init.php';
 
+use Carbon\Carbon;
 use Modules\Fatture\StatoFE;
 use Plugins\ExportFE\FatturaElettronica;
 use Plugins\ExportFE\Interaction;
@@ -125,6 +126,27 @@ if ($fattura !== null) {
     </div>';
 
     echo '<br><br>';
+
+    // Controllo modifiche successive alla generazione dell'XML
+    if ($generata && (!empty($fattura->data_stato_fe))) {
+        $modifiche_successive = false;
+        $data_generazione = Carbon::parse($fattura->data_stato_fe);
+
+        if (!empty($fattura->updated_at) && $fattura->updated_at->gt($data_generazione)) {
+            $modifiche_successive = true;
+        }
+
+        if (!empty($fattura->anagrafica->updated_at) && $fattura->anagrafica->updated_at->gt($data_generazione)) {
+            $modifiche_successive = true;
+        }
+
+        if ($modifiche_successive) {
+            echo '
+    <div class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione: sono state apportate modifiche alla fattura o all\'anagrafica collegata dopo la generazione dell\'XML. È consigliabile rigenerare la fattura elettronica prima dell\'invio.').'
+    </div>';
+        }
+    }
 
     // Messaggio informativo sulla ricevuta principale impostata
     if (!empty($ricevuta_principale)) {

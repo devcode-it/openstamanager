@@ -78,67 +78,92 @@ switch (filter('op')) {
         break;
 
     case 'import':
-        // Individuazione del modulo
-        $import = Import::find($id_record);
-        $import_manager = $import->class;
+        try {
+            // Individuazione del modulo
+            $import = Import::find($id_record);
+            $import_manager = $import->class;
 
-        // Dati indicati
-        $include_first_row = post('include_first_row');
-        $fields = (array) post('fields');
-        $page = post('page');
+            // Dati indicati
+            $include_first_row = post('include_first_row');
+            $fields = (array) post('fields');
+            $page = post('page');
 
-        $limit = 500;
+            $limit = 500;
 
-        // Inizializzazione del lettore CSV
-        $filepath = base_dir().'/files/'.$record->directory.'/'.$record->filename;
-        $csv = new $import_manager($filepath);
-        foreach ($fields as $key => $value) {
-            $csv->setColumnAssociation($key, (int) $value - 1);
-        }
+            // Inizializzazione del lettore CSV
+            $filepath = base_dir().'/files/'.$record->directory.'/'.$record->filename;
+            $csv = new $import_manager($filepath);
+            foreach ($fields as $key => $value) {
+                $available_fields = $csv->getAvailableFields();
+                $field_index = null;
+                foreach ($available_fields as $index => $field_info) {
+                    if ($field_info['field'] === $value) {
+                        $field_index = $index;
+                        break;
+                    }
+                }
+                if ($field_index !== null) {
+                    $csv->setColumnAssociation($key, $field_index);
+                }
+            }
 
-        // Generazione offset sulla base della pagina
-        $offset = isset($page) ? $page * $limit : 0;
 
-        // Ignora la prima riga se composta da header
-        if ($offset == 0 && empty($include_first_row)) {
-            ++$offset;
-        }
+            $offset = isset($page) ? $page * $limit : 0;
 
-        // Gestione automatica dei valori convertiti
-        $primary_key = post('primary_key');
-        if (!empty($primary_key)) {
-            $csv->setPrimaryKey($primary_key - 1);
-        }
+            if ($offset == 0 && empty($include_first_row)) {
+                ++$offset;
+            }
 
-        // Verifica che tutti i campi obbligatori siano mappati
-        if (!isset($page) || empty($page)) {
-            if (!$csv->areRequiredFieldsMapped()) {
-                // Verifica se è il caso speciale delle anagrafiche (telefono o partita IVA)
-                $is_anagrafica_import = str_contains($csv::class, 'Anagrafiche');
-                $error_message = $is_anagrafica_import ?
-                    tr('Alcuni campi obbligatori non sono stati mappati. La ragione sociale è obbligatoria e almeno uno tra telefono e partita IVA deve essere mappato.') :
-                    tr('Alcuni campi obbligatori non sono stati mappati');
+            // Gestione automatica dei valori convertiti
+            $primary_key = post('primary_key');
+            if (!empty($primary_key)) {
+                $available_fields = $csv->getAvailableFields();
+                $primary_key_index = null;
+                foreach ($available_fields as $index => $field_info) {
+                    if ($field_info['field'] === $primary_key) {
+                        $primary_key_index = $index;
+                        break;
+                    }
+                }
+                if ($primary_key_index !== null) {
+                    $csv->setPrimaryKey($primary_key_index);
+                }
+            }
 
+            // Verifica che tutti i campi obbligatori siano mappati
+            if (!isset($page) || empty($page)) {
+                if (!$csv->areRequiredFieldsMapped()) {
+                    $is_anagrafica_import = str_contains($csv::class, 'Anagrafiche');
+                    $error_message = $is_anagrafica_import ?
+                        tr('Alcuni campi obbligatori non sono stati mappati. La ragione sociale è obbligatoria e almeno uno tra telefono e partita IVA deve essere mappato.') :
+                        tr('Alcuni campi obbligatori non sono stati mappati');
+
+                    echo json_encode([
+                        'error' => true,
+                        'message' => $error_message,
+                    ]);
+                    exit;
+                }
+
+                // Operazioni di inizializzazione per l'importazione
+                $csv->init();
+            }
+
+            $result = $csv->importRows($offset, $limit, post('update_record'), post('add_record'));
+            $more = $result['total'] == $limit;
+
+            if (!isset($result['imported'])) {
                 echo json_encode([
                     'error' => true,
-                    'message' => $error_message,
+                    'message' => tr('Errore durante l\'importazione: il risultato non contiene i dati attesi.'),
                 ]);
                 exit;
             }
 
-            // Operazioni di inizializzazione per l'importazione
-            $csv->init();
-        }
-
-        $result = $csv->importRows($offset, $limit, post('update_record'), post('add_record'));
-        $more = $result['total'] == $limit;
-
-        // Operazioni di finalizzazione per l'importazione
-        if (!$more) {
-            $csv->complete();
-
-            // Salva i record falliti in un file CSV se ce ne sono
+            // Salva i record falliti in un file CSV durante ogni batch (accumulativo)
             $failed_records_path = '';
+            $failed_records_filename = post('failed_records_filename');
+
             if (!empty($csv->getFailedRecords())) {
                 // Crea la directory per le anomalie se non esiste
                 $anomalie_dir = base_dir().'/files/anomalie';
@@ -146,11 +171,15 @@ switch (filter('op')) {
                     mkdir($anomalie_dir, 0777, true);
                 }
 
-                // Genera un nome univoco per il file delle anomalie
-                $filename = 'anomalie_'.date('Ymd_His').'_'.basename($filepath);
-                $failed_records_path = $anomalie_dir.'/'.$filename;
+                // Usa il nome del file passato dal batch precedente, oppure generane uno nuovo
+                if (empty($failed_records_filename)) {
+                    $failed_records_filename = 'anomalie_'.date('Ymd_His').'_'.basename($filepath);
+                }
+
+                $failed_records_path = $anomalie_dir.'/'.$failed_records_filename;
 
                 // Salva i record falliti con errori specifici se il metodo è disponibile
+                // Il file sarà accumulativo grazie alla modalità append in saveFailedRecordsWithErrors
                 if (method_exists($csv, 'saveFailedRecordsWithErrors')) {
                     $csv->saveFailedRecordsWithErrors($failed_records_path);
                 } else {
@@ -158,22 +187,34 @@ switch (filter('op')) {
                 }
 
                 // Converti il percorso assoluto in relativo per l'URL
-                $failed_records_path = 'files/anomalie/'.$filename;
+                $failed_records_path = 'files/anomalie/'.$failed_records_filename;
             }
 
+            // Operazioni di finalizzazione per l'importazione
+            if (!$more) {
+                $csv->complete();
+
+                echo json_encode([
+                    'more' => $more,
+                    'imported' => $result['imported'],
+                    'failed' => $result['failed'],
+                    'total' => $result['total'],
+                    'failed_records_path' => $failed_records_path,
+                ]);
+            } else {
+                echo json_encode([
+                    'more' => $more,
+                    'imported' => $result['imported'],
+                    'failed' => $result['failed'],
+                    'total' => $result['total'],
+                    'failed_records_filename' => $failed_records_filename,
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log('Errore durante importazione CSV: '.$e->getMessage()."\n".$e->getTraceAsString());
             echo json_encode([
-                'more' => $more,
-                'imported' => $result['imported'],
-                'failed' => $result['failed'],
-                'total' => $result['total'],
-                'failed_records_path' => $failed_records_path,
-            ]);
-        } else {
-            echo json_encode([
-                'more' => $more,
-                'imported' => $result['imported'],
-                'failed' => $result['failed'],
-                'total' => $result['total'],
+                'error' => true,
+                'message' => tr('Si è verificato un errore durante l\'importazione: ').$e->getMessage(),
             ]);
         }
 

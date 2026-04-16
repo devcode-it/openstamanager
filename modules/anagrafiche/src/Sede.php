@@ -75,6 +75,52 @@ class Sede extends Model
         return parent::save($options);
     }
 
+    // Mutators per il trim automatico dei campi
+    public function setIndirizzoAttribute($value)
+    {
+        $this->attributes['indirizzo'] = trim((string) $value);
+    }
+
+    public function setCittaAttribute($value)
+    {
+        $this->attributes['citta'] = trim((string) $value);
+    }
+
+    public function setCapAttribute($value)
+    {
+        $this->attributes['cap'] = trim((string) $value);
+    }
+
+    public function setProvinciaAttribute($value)
+    {
+        $this->attributes['provincia'] = trim((string) $value);
+    }
+
+    public function setTelefonoAttribute($value)
+    {
+        $this->attributes['telefono'] = trim((string) $value);
+    }
+
+    public function setFaxAttribute($value)
+    {
+        $this->attributes['fax'] = trim((string) $value);
+    }
+
+    public function setCellulareAttribute($value)
+    {
+        $this->attributes['cellulare'] = trim((string) $value);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = trim((string) $value);
+    }
+
+    public function setNomesede($value)
+    {
+        $this->attributes['nomesede'] = trim((string) $value);
+    }
+
     protected function fixRappresentanteFiscale()
     {
         $rappresentante_fiscale = post('is_rappresentante_fiscale');

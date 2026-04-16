@@ -322,7 +322,9 @@ function parseScontoCombinato($combinato)
  */
 function getSegmentPredefined($id_module)
 {
-    $id_segment = database()->selectOne('zz_segments', 'id', ['id_module' => $id_module, 'predefined' => 1])['id'];
+    // Prova a recuperare il segmento predefinito e sezionale, se non presente recupera il primo segmento sezionale trovato per il modulo
+    $id_segment = database()->selectOne('zz_segments', 'id', ['id_module' => $id_module, 'predefined' => 1, 'is_sezionale' => 1])['id'];
+    $id_segment = $id_segment ?: database()->selectOne('zz_segments', 'id', ['id_module' => $id_module, 'is_sezionale' => 1])['id'];
 
     return $id_segment;
 }

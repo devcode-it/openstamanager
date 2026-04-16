@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Import\CSV;
 use Modules\Importazione\Import;
 
 include_once __DIR__.'/../../core.php';
@@ -51,7 +52,7 @@ if (empty($id_record)) {
         }
 
         $campo = [
-            'id' => $key + 1,
+            'id' => $value['field'],
             'text' => $label,
         ];
 
@@ -63,7 +64,7 @@ if (empty($id_record)) {
         }
 
         if ($value['primary_key']) {
-            $primary_key = $key + 1;
+            $primary_key = $value['field'];
         }
     }
 
@@ -99,8 +100,9 @@ if (empty($id_record)) {
         <i class="fa fa-info-circle"></i> <strong>'.tr('Informazioni importanti:').'</strong>
         <div style="margin-top: 8px;">'.tr('I campi con * sono obbligatori e devono essere mappati nel file CSV.').'</div>';
 
-    if ($import_selezionato === Modules\Anagrafiche\Import\CSV::class) {
-        echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('Mappare almeno uno tra Telefono e Partita IVA.').'</div>
+    if ($import_selezionato === CSV::class) {
+        echo '<div style="margin-top: 8px;"><i class="fa fa-check-circle"></i> <strong>'.tr('Campi obbligatori (*):').'</strong> '.tr('Ragione sociale, Tipo di anagrafica, Tipologia.').'</div>
+            <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti aggiuntivi:').'</strong> '.tr('Mappare almeno uno tra: Telefono, Partita IVA, Codice fiscale, Email.').'</div>
             <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('I campi Tipo anagrafica e Settore merceologico vengono generati automaticamente se mappati.').'</div>';
     }
 
@@ -193,7 +195,7 @@ if (empty($id_record)) {
             $nome = trim(string_lowercase($prima_riga[$column]));
             if (in_array($nome, $nomi_disponibili[$key])) {
                 $escludi_prima_riga = 1;
-                $selezionato = $key + 1;
+                $selezionato = $value['field'];
                 break;
             }
         }
@@ -235,6 +237,8 @@ if (empty($id_record)) {
     echo '
 <script>
 var count = 0;
+var failed_records_filename = null;  // Variabile globale per mantener il nome del file di errore tra batch
+
 $(document).ready(function() {';
 
     if ($escludi_prima_riga) {
@@ -251,6 +255,7 @@ $(document).ready(function() {';
     save.unbind("click");
     save.on("click", function() {
         count = 0;
+        failed_records_filename = null;  // Reset della variabile
         importPage(0);
     });
 });
@@ -283,6 +288,11 @@ function importPage(page) {
         page: page,
     };
 
+    // Passa il nome del file delle anomalie dai batch precedenti
+    if (failed_records_filename) {
+        data.failed_records_filename = failed_records_filename;
+    }
+
     $("#edit-form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: data,
@@ -301,6 +311,11 @@ function importPage(page) {
                 });
 
                 return;
+            }
+
+            // Salva il nome del file delle anomalie per i batch successivi
+            if (data.failed_records_filename) {
+                failed_records_filename = data.failed_records_filename;
             }
 
             // Aggiorna i contatori

@@ -23,12 +23,14 @@ namespace Modules\Anagrafiche;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Models\Locale;
 use Modules\Anagrafiche\Tipo as TipoAnagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
+use Modules\PianiSconto\PianoSconto;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\DichiarazioniIntento\Dichiarazione;
@@ -37,12 +39,14 @@ use Util\Generator;
 
 class Anagrafica extends Model
 {
-    use SimpleModelTrait;
     use RecordTrait;
+    use SimpleModelTrait;
     use SoftDeletes;
 
     protected $table = 'an_anagrafiche';
+
     protected $primaryKey = 'idanagrafica';
+
     protected $module = 'Anagrafiche';
 
     protected $guarded = [];
@@ -285,6 +289,81 @@ class Anagrafica extends Model
         $this->attributes['codice_destinatario'] = trim(strtoupper((string) $value));
     }
 
+    public function setCodiceAttribute($value)
+    {
+        $this->attributes['codice'] = trim((string) $value);
+    }
+
+    public function setRagioneSocialeAttribute($value)
+    {
+        $this->attributes['ragione_sociale'] = trim((string) $value);
+    }
+
+    public function setTelefonoAttribute($value)
+    {
+        $this->attributes['telefono'] = trim((string) $value);
+    }
+
+    public function setIndirizzoAttribute($value)
+    {
+        $this->attributes['indirizzo'] = trim((string) $value);
+    }
+
+    public function setCapAttribute($value)
+    {
+        $this->attributes['cap'] = trim((string) $value);
+    }
+
+    public function setCellulareAttribute($value)
+    {
+        $this->attributes['cellulare'] = trim((string) $value);
+    }
+
+    public function setFaxAttribute($value)
+    {
+        $this->attributes['fax'] = trim((string) $value);
+    }
+
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = trim((string) $value);
+    }
+
+    public function setPecAttribute($value)
+    {
+        $this->attributes['pec'] = trim((string) $value);
+    }
+
+    public function setSitewebAttribute($value)
+    {
+        $this->attributes['sitoweb'] = trim((string) $value);
+    }
+
+    public function setLuogoNascitaAttribute($value)
+    {
+        $this->attributes['luogo_nascita'] = trim((string) $value);
+    }
+
+    public function setSessoAttribute($value)
+    {
+        $this->attributes['sesso'] = trim((string) $value);
+    }
+
+    public function setNoteAttribute($value)
+    {
+        $this->attributes['note'] = trim((string) $value);
+    }
+
+    public function setProvinciaAttribute($value)
+    {
+        $this->attributes['provincia'] = trim((string) $value);
+    }
+
+    public function setCittaAttribute($value)
+    {
+        $this->attributes['citta'] = trim((string) $value);
+    }
+
     /**
      * Restituisce la sede legale collegata.
      *
@@ -359,12 +438,12 @@ class Anagrafica extends Model
 
     public function pianoScontoVendite()
     {
-        return $this->belongsTo(\Modules\PianiSconto\PianoSconto::class, 'id_piano_sconto_vendite');
+        return $this->belongsTo(PianoSconto::class, 'id_piano_sconto_vendite');
     }
 
     public function pianoScontoAcquisti()
     {
-        return $this->belongsTo(\Modules\PianiSconto\PianoSconto::class, 'id_piano_sconto_acquisti');
+        return $this->belongsTo(PianoSconto::class, 'id_piano_sconto_acquisti');
     }
 
     /**
@@ -372,7 +451,7 @@ class Anagrafica extends Model
      *
      * @param string $dir
      *
-     * @return \Modules\PianiSconto\PianoSconto|null
+     * @return PianoSconto|null
      */
     public function pianoSconto($dir)
     {
@@ -491,13 +570,15 @@ class Anagrafica extends Model
                 }
                 $ch = curl_init();
 
-                $lang = \Models\Locale::find(setting('Lingua'))->language_code;
+                $lang = Locale::find(setting('Lingua'))->language_code;
                 $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
                 $user_agent = 'traccar';
                 curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
                 $data = json_decode(curl_exec($ch));
                 curl_close($ch);
 
@@ -515,7 +596,17 @@ class Anagrafica extends Model
                     return false;
                 }
 
-                $response = file_get_contents($url);
+                $context = stream_context_create([
+                    'http' => [
+                        'timeout' => 10,
+                    ],
+                ]);
+
+                $response = @file_get_contents($url, false, $context);
+                if ($response === false) {
+                    return false;
+                }
+
                 $data = json_decode($response, true);
 
                 if ($data['status'] == 'OK') {

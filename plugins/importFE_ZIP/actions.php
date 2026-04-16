@@ -196,21 +196,27 @@ switch (filter('op')) {
 
                         $fattura->saveRighe($articoli, $iva, $conti);
 
-                        $fattura->saveAllegati('Fatture di vendita');
+                        // NOTA: Non salvare gli allegati prima di completare la fattura
+                        // Gli allegati (XML incluso) verranno salvati dopo che la fattura è completamente salvata con tutte le righe
+                        // Questo evita il salvataggio duplicato dell'XML
 
                         $id_record = $fattura->getFattura()->id;
-                        $fattura = Fattura::find($id_record);
-                        $fattura->gestoreMovimenti = new GestoreMovimenti($fattura);
+                        $fattura_doc = Fattura::find($id_record);
+                        $fattura_doc->gestoreMovimenti = new GestoreMovimenti($fattura_doc);
 
                         // Registrazione scadenze
-                        $fattura->registraScadenze(false);
+                        $fattura_doc->registraScadenze(false);
 
                         // Registrazione movimenti
-
-                        $fattura->gestoreMovimenti->registra();
+                        $fattura_doc->gestoreMovimenti->registra();
 
                         // Imposto lo stato in GEN
                         $dbo->query("UPDATE co_documenti SET codice_stato_fe='GEN', data_stato_fe=NOW() WHERE id=".prepare($id_record));
+
+                        // Salva gli allegati DOPO che tutte le righe sono state caricate e la fattura è completamente salvata
+                        // Questo garantisce che l'XML sia salvato una sola volta con il contenuto completo
+                        $fattura->saveAllegati('Fatture di vendita');
+
                         delete($directory.'/'.$xml);
                     }
                 }

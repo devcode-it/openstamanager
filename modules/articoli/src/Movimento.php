@@ -22,6 +22,7 @@ namespace Modules\Articoli;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /*
  * Classe dedicata alla gestione dei movimenti di magazzino degli articoli.
@@ -31,7 +32,12 @@ class Movimento extends Model
     use SimpleModelTrait;
 
     protected $document;
+
     protected $table = 'mg_movimenti';
+
+    protected $casts = [
+        'idsede' => 'integer',
+    ];
 
     public static function build(?Articolo $articolo = null, $qta = null, $descrizione = null, $data = null, $document = null, $id_sede = null)
     {
@@ -97,7 +103,7 @@ class Movimento extends Model
     /**
      * Restituisce un insieme di movimenti appartenenti allo stesso documento.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function movimentiRelativi()
     {

@@ -666,6 +666,7 @@ class Fattura extends Document
             return null;
         }
 
+        $this->load('pagamento');
         $riga = $this->rigaSpeseIncasso;
         $id_riga_esclusa = $riga?->id ?? 0;
 

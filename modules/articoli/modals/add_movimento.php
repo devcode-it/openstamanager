@@ -1,4 +1,7 @@
 <?php
+
+use Models\Locale;
+
 /*
  * OpenSTAManager: il software gestionale open source per l'assistenza tecnica e la fatturazione
  * Copyright (C) DevCode s.r.l.
@@ -22,10 +25,21 @@ include_once __DIR__.'/../../../core.php';
 // Imposto come azienda l'azienda predefinita per selezionare le sedi a cui ho accesso
 // select-options
 
+// Recupera l'ID della causale di spostamento
+$rs_spostamento = $dbo->fetchArray('SELECT id, tipo_movimento FROM mg_causali_movimenti');
+$id_causale_spostamento = null;
+foreach ($rs_spostamento as $row) {
+    if ($row['tipo_movimento'] == 'spostamento') {
+        $id_causale_spostamento = $row['id'];
+        break;
+    }
+}
+
 ?>
 <form action="" method="post" id="add-form">
     <input type="hidden" name="op" value="add-movimento">
     <input type="hidden" name="backto" value="record-edit">
+    <input type="hidden" id="id_causale_spostamento" value="<?php echo $id_causale_spostamento; ?>">
 
     <div class="row">
         <div class="col-md-4">
@@ -41,7 +55,7 @@ include_once __DIR__.'/../../../core.php';
         </div>
 
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT `mg_causali_movimenti`.`id`, `title` as text, `description` as descrizione, `tipo_movimento` FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>)", "value": 1, "required": 1 ]}
+            {["type": "select", "label": "<?php echo tr('Causale'); ?>", "name": "causale", "values": "query=SELECT `mg_causali_movimenti`.`id`, `title` as text, `description` as descrizione, `tipo_movimento` FROM `mg_causali_movimenti` LEFT JOIN `mg_causali_movimenti_lang` ON (`mg_causali_movimenti`.`id` = `mg_causali_movimenti_lang`.`id_record` AND `mg_causali_movimenti_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>)", "value": 1, "required": 1 ]}
             <input type="hidden" name="tipo_movimento" id="tipo_movimento" value="carico">
         </div>
     </div>
@@ -96,6 +110,22 @@ echo '
             .attr("required", false);
     }
 
+    function controllaSpostamento() {
+        let idsede_partenza = $("#idsede_partenza").val();
+        let idsede_destinazione = $("#idsede_destinazione").val();
+        let id_causale_spostamento = $("#id_causale_spostamento").val();
+
+        // Se le sedi sono diverse e esiste la causale di spostamento
+        if (idsede_partenza !== "" && idsede_destinazione !== "" &&
+            idsede_partenza !== idsede_destinazione &&
+            id_causale_spostamento) {
+            // Seleziona la causale di spostamento solo se non è già selezionata
+            if ($("#causale").val() != id_causale_spostamento) {
+                $("#causale").val(id_causale_spostamento).trigger("change");
+            }
+        }
+    }
+
     $(document).ready(function () {
         init();
 
@@ -118,6 +148,30 @@ echo '
             } else {
                 disabilitaSede("#idsede_partenza");
                 disabilitaSede("#idsede_destinazione");
+            }
+        });
+
+        // Quando cambia la sede destinazione, controlla se impostare spostamento
+        $("#idsede_destinazione").on("change", function() {
+            let idsede_destinazione = $(this).val();
+            let idsede_partenza = $("#idsede_partenza").val();
+
+            // Se la sede destinazione è diversa dalla sede partenza
+            if (idsede_destinazione !== "" && idsede_partenza !== "" &&
+                idsede_destinazione !== idsede_partenza) {
+                controllaSpostamento();
+            }
+        });
+
+        // Quando cambia la sede partenza, controlla se impostare spostamento
+        $("#idsede_partenza").on("change", function() {
+            let idsede_partenza = $(this).val();
+            let idsede_destinazione = $("#idsede_destinazione").val();
+
+            // Se la sede partenza è diversa dalla sede destinazione
+            if (idsede_partenza !== "" && idsede_destinazione !== "" &&
+                idsede_partenza !== idsede_destinazione) {
+                controllaSpostamento();
             }
         });
 

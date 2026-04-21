@@ -62,19 +62,11 @@ echo '
     <div class="card-body">';
 
 // Calcolo la quantità dai movimenti in magazzino
-$qta_totale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record))['qta'];
-$qta_totale_attuale = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($id_record).' AND data <= CURDATE()')['qta'];
-
-echo '
-<p>'.tr('Quantità calcolata dai movimenti').': <b>'.Translator::numberToLocale($qta_totale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata da tutti i movimenti registrati').'." ><i class="fa fa-question-circle-o"></i></span></p>';
-
-echo '
-<p>'.tr('Quantità calcolata attuale').': <b>'.Translator::numberToLocale($qta_totale_attuale, 'qta').' '.$record['um'].'</b> <span class="tip" title="'.tr('Quantità calcolata secondo i movimenti registrati con data oggi o date trascorse').'." ><i class="fa fa-question-circle-o"></i></span></p>';
+$giacenze = $articolo->getGiacenze();
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 
 // Individuazione movimenti
 $movimenti = $articolo->movimentiComposti();
-
-$giacenze = $articolo->getGiacenze();
 
 // Raggruppamento per documento e ordinamento
 $movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')
@@ -89,88 +81,106 @@ if (empty($_GET['movimentazione_completa'])) {
     $movimenti = $movimenti->take(20);
 }
 
-if (! empty($movimenti)) {
-    echo '
-        <table class="table table-striped table-sm table-bordered">
-            <tr>
-                 <th class="text-center" width="40">#</th>
-                <th class="text-center" width="120">'.tr('Carico').'</th>
-                <th class="text-center" width="120">'.tr('Scarico').'</th>
-                <th class="text-center">'.tr('Q.tà progressiva').'</th>
-                <th>'.tr('Operazione').'</th>
-                <th>'.tr('Controparte').'</th>
-                <th class="text-center">'.tr('Sede').'</th>
-                <th class="text-center" width="120">'.tr('Data').'</th>
-                <th class="text-center" width="80">#</th>
-            </tr>';
+// Raggruppamento movimenti per sede
+$movimenti_per_sede = [];
+foreach ($movimenti as $movimento) {
+    $idsede = (int) $movimento->idsede;
+    $movimenti_per_sede[$idsede][] = $movimento;
+}
 
-    foreach ($movimenti as $i => $movimento) {
-        // Quantità progressiva
-        if ($mov[$movimento->idsede]['progressivo_finale'] === null) {
-            $movimento->progressivo_finale = $giacenze[$movimento->idsede][0];
-        } else {
-            $movimento->progressivo_finale = $mov[$movimento->idsede]['progressivo_iniziale'];
+if (!empty($movimenti)) {
+    foreach ($sedi as $sede) {
+        $movimenti_sede = $movimenti_per_sede[(int) $sede['id']] ?? [];
+
+        if (empty($movimenti_sede)) {
+            continue;
         }
 
-        $movimento->progressivo_iniziale = $movimento->progressivo_finale - $movimento->qta;
-
-        $mov[$movimento->idsede]['progressivo_iniziale'] = $movimento->progressivo_iniziale;
-        $mov[$movimento->idsede]['progressivo_finale'] = $movimento->progressivo_finale;
-
-        // Quantità
         echo '
-            <tr>
-                <td class="text-center">
-                    '.count($movimenti) - $i.'
-                </td>
-                <td class="text-center" style="color: green;">
-                    '.($movimento->qta > 0 ? numberFormat($movimento->qta, 'qta').' '.$record['um'] : '').'
-                </td>
-                <td class="text-center" style="color: red;">
-                    '.($movimento->qta < 0 ? numberFormat(abs($movimento->qta), 'qta').' '.$record['um'] : '').'
-                </td>
-                <td class="text-center">
-                    '.numberFormat($movimento->progressivo_iniziale, 'qta').' '.$record['um'].'
-                    <i class="fa fa-arrow-circle-right"></i>
-                    '.numberFormat($movimento->progressivo_finale, 'qta').' '.$record['um'].'
-                </td>
-                <td>
-                    '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
-                </td>
-                <td>
-                    '.Anagrafica::find($movimento->getDocument()->idanagrafica)->ragione_sociale.'
-                </td>
-                <td class="text-center">
-                    '.($movimento->nomesede ?: tr('Sede legale')).'
-                </td>';
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">'.$sede['nomesede'].'</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-sm table-bordered">
+                    <tr>
+                         <th class="text-center" width="40">#</th>
+                        <th class="text-center" width="120">'.tr('Carico').'</th>
+                        <th class="text-center" width="120">'.tr('Scarico').'</th>
+                        <th class="text-center">'.tr('Q.tà progressiva').'</th>
+                        <th>'.tr('Operazione').'</th>
+                        <th>'.tr('Controparte').'</th>
+                        <th class="text-center" width="120">'.tr('Data').'</th>
+                        <th class="text-center" width="80">#</th>
+                    </tr>';
 
-        // Data
-        $utente = $dbo->table('zz_users')->where('id', $movimento->idutente)->first();
-        $data = ($movimento->data ?: $movimento->data_movimento);
-        echo '
-                <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [
-            '_DATE_' => timestampFormat($movimento->data_movimento),
-            '_USER_' => $utente->username,
-        ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
+        foreach ($movimenti_sede as $i => $movimento) {
+            // Quantità progressiva
+            if ($mov[$movimento->idsede]['progressivo_finale'] === null) {
+                $movimento->progressivo_finale = $giacenze[$movimento->idsede][0];
+            } else {
+                $movimento->progressivo_finale = $mov[$movimento->idsede]['progressivo_iniziale'];
+            }
 
-        // Operazioni
-        echo '
-                <td class="text-center">';
+            $movimento->progressivo_iniziale = $movimento->progressivo_finale - $movimento->qta;
 
-        if (AuthOSM::admin() && $movimento->isManuale()) {
+            $mov[$movimento->idsede]['progressivo_iniziale'] = $movimento->progressivo_iniziale;
+            $mov[$movimento->idsede]['progressivo_finale'] = $movimento->progressivo_finale;
+
+            // Quantità
             echo '
-                    <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento->tipo_gruppo.'">
-                        <i class="fa fa-trash"></i>
-                    </a>';
+                <tr>
+                    <td class="text-center">
+                        '.count($movimenti_sede) - $i.'
+                    </td>
+                    <td class="text-center" style="color: green;">
+                        '.($movimento->qta > 0 ? numberFormat($movimento->qta, 'qta').' '.$record['um'] : '').'
+                    </td>
+                    <td class="text-center" style="color: red;">
+                        '.($movimento->qta < 0 ? numberFormat(abs($movimento->qta), 'qta').' '.$record['um'] : '').'
+                    </td>
+                    <td class="text-center">
+                        '.numberFormat($movimento->progressivo_iniziale, 'qta').' '.$record['um'].'
+                        <i class="fa fa-arrow-circle-right"></i>
+                        '.numberFormat($movimento->progressivo_finale, 'qta').' '.$record['um'].'
+                    </td>
+                    <td>
+                        '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
+                    </td>
+                    <td>
+                        '.Anagrafica::find($movimento->getDocument()->idanagrafica)->ragione_sociale.'
+                    </td>';
+
+            // Data
+            $utente = $dbo->table('zz_users')->where('id', $movimento->idutente)->first();
+            $data = ($movimento->data ?: $movimento->data_movimento);
+            echo '
+                    <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [
+                '_DATE_' => timestampFormat($movimento->data_movimento),
+                '_USER_' => $utente->username,
+            ]).'"><i class="fa fa-question-circle-o"></i></span> </td>';
+
+            // Operazioni
+            echo '
+                    <td class="text-center">';
+
+            if (AuthOSM::admin() && $movimento->isManuale()) {
+                echo '
+                        <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="delmovimento" data-idmovimento="'.$movimento->tipo_gruppo.'">
+                            <i class="fa fa-trash"></i>
+                        </a>';
+            }
+
+            echo '
+                    </td>
+                </tr>';
         }
 
         echo '
-                </td>
-            </tr>';
+                </table>
+            </div>
+        </div>';
     }
-
-    echo '
-        </table>';
 } else {
     echo '
 	<div class="alert alert-info">

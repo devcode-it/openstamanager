@@ -22,6 +22,7 @@ include_once __DIR__.'/../../../core.php';
 
 $impegnato = 0;
 $ordinato = 0;
+$giacenze = $articolo->getGiacenze();
 
 $query = 'SELECT
         `or_ordini`.`id` AS id,
@@ -182,13 +183,9 @@ echo '
 		</div>
 	</div>';
 
-/**
+/*
  ** Da ordinare.
  */
-$qta_presente = $articolo->qta > 0 ? $articolo->qta : 0;
-$diff = ($qta_presente - $impegnato + $ordinato) * -1;
-$da_ordinare = (($diff <= 0) ? 0 : $diff);
-
 echo '
 	<div class="col-md-3">
 		<div class="card card-primary">
@@ -197,19 +194,28 @@ echo '
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="card-body">
-              <div class="row">
-                 <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($da_ordinare, 'qta').' '.$articolo->um.'
-			       </div>
-			   </div>
+                <table class="table table-sm table-striped">';
+
+foreach ($sedi as $sede) {
+    $qta_presente = isset($giacenze[$sede['id']][0]) ? $giacenze[$sede['id']][0] : 0;
+    $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+    $da_ordinare = (($diff <= 0) ? 0 : $diff);
+    echo '
+                    <tr>
+                        <td>'.$sede['nomesede'].'</td>
+                        <td class="text-right">'.numberFormat($da_ordinare, 'qta').'</td>
+                    </tr>';
+}
+
+echo '
+                </table>
 			</div>
 		</div>
 	</div>';
 
-/**
+/*
  ** Disponibile.
  */
-$disponibile = $qta_presente - $impegnato;
 echo '
 	<div class="col-md-3">
 		<div class="card card-primary">
@@ -218,20 +224,26 @@ echo '
                 <i class="fa fa-question-circle-o"></i></span></h3>
 			</div>
 			<div class="card-body">
+                <table class="table table-sm table-striped">';
 
-              <div class="row">
-                 <div class="col-md-12 text-center" style="font-size:35pt;">
-                       '.numberFormat($disponibile, 'qta').' '.$articolo->um.'
-			       </div>
-			   </div>
+foreach ($sedi as $sede) {
+    $giacenza_sede = isset($giacenze[$sede['id']][0]) ? $giacenze[$sede['id']][0] : 0;
+    echo '
+                    <tr>
+                        <td>'.$sede['nomesede'].'</td>
+                        <td class="text-right">'.numberFormat($giacenza_sede, 'qta').'</td>
+                    </tr>';
+}
 
+echo '
+                </table>
 			</div>
 		</div>
 	</div>
 </div>';
 
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 $giacenze = $articolo->getGiacenze();
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
 
 echo '
 <div class="row">

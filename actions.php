@@ -34,8 +34,6 @@ if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
 }
 
-$upload_dir = base_dir().'/'.Uploads::getDirectory($id_module, $id_plugin);
-
 $database->beginTransaction();
 
 // Upload allegati e rimozione
@@ -56,10 +54,13 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
         $file_extension = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
 
         if (in_array(strtolower($file_extension), $allowed_extension) && $_FILES['upload']['size'] < $max_size) {
+            $id_module_upload = $id_module ?: Modules::getAvailableModules()->first()->id;
+            $upload_dir = base_path_osm().'/'.Uploads::getDirectory($id_module_upload, $id_plugin);
             $upload = Uploads::upload($_FILES['upload'], [
                 'name' => filter('nome_allegato'),
                 'id_category' => filter('id_category') ?: null,
-                'id_module' => Module::where('name', 'Gestione documentale')->first()->id,
+                'id_module' => $id_module_upload,
+                'id_plugin' => $id_plugin,
                 'id_record' => $id_record,
             ]);
 
@@ -78,9 +79,9 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                 $upload = Upload::find($id_allegato);
 
                 $response = [
-                    'fileName' => base_path_osm().'/files/gestione_documentale/'.basename($upload->filename),
+                    'fileName' => $upload_dir.'/'.basename($upload->filename),
                     'uploaded' => 1,
-                    'url' => base_path_osm().'/files/gestione_documentale/'.$upload->filename,
+                    'url' => $upload_dir.'/'.$upload->filename,
                 ];
 
                 // Upload da form
@@ -89,7 +90,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
                     <script type="text/javascript">
                         $(document).ready(function() {
                             window.parent.toastr.success("'.tr('Caricamento riuscito').'");
-                            window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$baseurl.'/files/gestione_documentale/'.$upload->filename.'");
+                            window.parent.CKEDITOR.tools.callFunction('.$funcNum.', "'.$upload_dir.'/'.$upload->filename.'");
                         });
                     </script>';
                 }
@@ -161,7 +162,6 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 if (filter('op') == 'download-allegato') {
     $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
 
-    // download($upload_dir.'/'.$rs[0]['filename'], $rs[0]['original']);
     $file = Upload::find($rs[0]['id']);
 
     if (!empty($file)) {

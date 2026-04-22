@@ -662,7 +662,7 @@ class Fattura extends Document
 
     public function manageRigaSpeseIncasso()
     {
-        if ($this->tipo->dir == 'uscita' || $this->stato->descrizione != 'Bozza') {
+        if ($this->tipo->dir == 'uscita' || $this->stato->name != 'Bozza') {
             return null;
         }
 

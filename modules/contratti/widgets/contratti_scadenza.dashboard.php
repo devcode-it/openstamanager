@@ -31,13 +31,19 @@ SELECT
     `data_conclusione`, 
     `ore_preavviso_rinnovo`, 
     `giorni_preavviso_rinnovo`, 
-    `ragione_sociale`,
-    `citta`
+    `an_anagrafiche`.`ragione_sociale`,
+    `an_anagrafiche`.`citta`,
+    `co_contratti`.`idagente`,
+    `agente`.`ragione_sociale` AS `nome_agente`,
+    `co_categorie_contratti_lang`.`title` AS `categoria`
 FROM 
 	`co_contratti` 
     INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` 
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica`
+    LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`idanagrafica` = `co_contratti`.`idagente`
+    LEFT JOIN `co_categorie_contratti` ON `co_categorie_contratti`.`id` = `co_contratti`.`id_categoria`
+    LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti_lang`.`id_record`=`co_categorie_contratti`.`id` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 
 	`rinnovabile` = 1 
     AND YEAR(`data_conclusione`) > 1970 
@@ -51,7 +57,9 @@ if (!empty($rs)) {
     echo '
 <table class="table table-hover">
     <tr>
-        <th width="50%">'.tr('Contratto').'</th>
+        <th width="20%">'.tr('Contratto').'</th>
+        <th width="15%">'.tr('Agente').'</th>
+        <th width="15%">'.tr('Categoria').'</th>
         <th width="15%" class="text-center">'.tr('Data inizio').'</th>
         <th width="15%" class="text-center">'.tr('Data conclusione').'</th>
         <th width="20%">'.tr('Scadenza').'</th>
@@ -101,6 +109,8 @@ if (!empty($rs)) {
         }
         echo '</small>
         </td>
+        <td>'.(!empty($r['idagente']) ? Modules::link('Anagrafiche',$r['idagente'],$r['nome_agente']) : '').'</td>
+        <td>'.$r['categoria'].'</td>
         <td class="text-center">'.$data_accettazione.'</td>
         <td class="text-center">'.$data_conclusione.'</td>
         <td>'.$scadenza.(isset($r['ore_rimanenti']) ? ' ('.$ore_rimanenti.')' : '').'</td>

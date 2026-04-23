@@ -22,10 +22,12 @@ namespace Modules\Emails;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Models\Module;
 use Models\PrintTemplate;
 use Models\Upload;
 use Models\User;
 use Modules\Newsletter\Newsletter;
+use Monolog\Logger;
 
 class Mail extends Model
 {
@@ -78,7 +80,7 @@ class Mail extends Model
 
         // duplica il file
         $upload = $file->copia([
-            'id_module' => \Models\Module::where('name', 'Stato email')->first()->id,
+            'id_module' => Module::where('name', 'Stato email')->first()->id,
             'id_record' => $this->id,
         ]);
 
@@ -109,8 +111,20 @@ class Mail extends Model
         // Genera la stampa come PDF
         $print = \Prints::render($print_id, $this->id_record, null, true);
 
+        // Verifica che la stampa sia stata generata correttamente
+        if (!$print || !isset($print['pdf'])) {
+            $logger = \logger_osm();
+            $logger->addRecord(Logger::ERROR, 'Impossibile generare il PDF per la stampa: '.$print_id, [
+                'id_email' => $this->id,
+                'id_record' => $this->id_record,
+                'print_id' => $print_id,
+            ]);
+
+            return;
+        }
+
         // Ottieni il modulo "Coda d'invio"
-        $id_module = \Models\Module::where('name', 'Stato email')->first()->id;
+        $id_module = Module::where('name', 'Stato email')->first()->id;
 
         $name = $name ?: $print['name'];
 
@@ -122,6 +136,19 @@ class Mail extends Model
             'id_module' => $id_module,
             'id_record' => $this->id,
         ]);
+
+        // Verifica che l'upload sia stato eseguito correttamente
+        if (!$upload) {
+            $logger = \logger_osm();
+            $logger->addRecord(Logger::ERROR, 'Impossibile salvare l\'allegato PDF per la email', [
+                'id_email' => $this->id,
+                'id_record' => $this->id_record,
+                'print_id' => $print_id,
+                'filename' => $name,
+            ]);
+
+            return;
+        }
 
         // Collega il file alla tabella em_email_attachment
         $this->attachments()->attach($upload->id, ['id_email' => $this->id, 'name' => $name, 'type' => 'print']);

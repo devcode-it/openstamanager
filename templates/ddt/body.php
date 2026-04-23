@@ -131,16 +131,10 @@ foreach ($righe as $riga) {
                     $text .= '</td><td></td><td></td><td>';
                 }
 
-                if ($riga->isArticolo()) {
-                    echo '</td><td>'.$riga->codice.'</td>';
-                } else {
-                    $text .= '</td><td></td>';
-                }
-
                 $text .= '</tr><tr><td class="text-center" nowrap="nowrap" style="vertical-align: middle">';
 
                 echo '
-                </td>
+                </td><td></td>
 
                 <td>
                     '.nl2br($text);
@@ -159,7 +153,7 @@ foreach ($righe as $riga) {
     if ($riga->isArticolo()) {
         echo '<td class="text-center">'.$riga->codice.'</td>';
     } else {
-        echo '<td>-</td>';
+        echo '<td></td>';
     }
 
     echo '

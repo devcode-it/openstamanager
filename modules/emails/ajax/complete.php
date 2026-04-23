@@ -70,7 +70,7 @@ switch ($resource) {
             $query = "
                 SELECT DISTINCT($table.$email_column) AS email,
                        $table.idanagrafica,
-                       $name_column AS ragione_sociale
+                       $table.$name_column AS ragione_sociale
                 FROM $table
                 INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = $table.idanagrafica
                 INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
@@ -87,7 +87,7 @@ switch ($resource) {
         $addResults($fetchEmails('an_sedi', 'email', 'nomesede'));
 
         // Tutti i referenti
-        $addResults($fetchEmails('an_referenti', 'email', 'an_referenti.nome'));
+        $addResults($fetchEmails('an_referenti', 'email', 'nome'));
 
         echo json_encode($results);
 

@@ -491,6 +491,12 @@ class Upload extends Model
             return true; // Se non riusciamo a determinare il modulo, permetti per compatibilità
         }
 
+        // Permetti sempre l'upload di un allegato a un email in invio, tramite il modulo Coda di invio
+        $email_module = Module::where('name', 'Stato email')->first();
+        if ($email_module && $id_module == $email_module->id) {
+            return true;
+        }
+
         // Verifica permessi in base al tipo di accesso
         if (\Permissions::isTokenAccess()) {
             // Per accesso tramite token, verifica i permessi del token

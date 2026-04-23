@@ -87,7 +87,7 @@ switch ($resource) {
         $addResults($fetchEmails('an_sedi', 'email', 'nomesede'));
 
         // Tutti i referenti
-        $addResults($fetchEmails('an_referenti', 'email', 'nome'));
+        $addResults($fetchEmails('an_referenti', 'email', 'an_referenti.nome'));
 
         echo json_encode($results);
 

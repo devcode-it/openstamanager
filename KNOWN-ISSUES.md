@@ -11,6 +11,29 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 ---
 
+#### 2.10.4 - 28/04/2026
+
+##### Problemi noti
+- Corretto invio mail con allegato a utenti senza i permessi per il modulo Coda di invio 
+https://github.com/devcode-it/openstamanager/commit/24d870675
+
+- Corretto upload allegati in ckeditor per moduli senza permessi
+https://github.com/devcode-it/openstamanager/commit/ed532550c
+
+- Corretta importazione fatture di acquisto e vendita
+https://github.com/devcode-it/openstamanager/commit/f117abc8e
+
+- Corretto riferimento documenti collegati nelle righe
+https://github.com/devcode-it/openstamanager/commit/3ab4b2f57
+
+- Corretto addebito spese di incasso
+https://github.com/devcode-it/openstamanager/commit/3d48d64cf
+
+- Corretta autenticazione con OAuth2
+https://github.com/devcode-it/openstamanager/commit/cfce79f81
+
+---
+
 #### 2.10.3 - 07/04/2026
 
 ##### Problemi noti

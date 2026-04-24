@@ -331,7 +331,7 @@ class CSV extends CSVImporter
             unset($record['ragione_sociale']);
 
             foreach ($record as $key => $value) {
-                $anagrafica->setAttribute($key, trim($value));
+                $anagrafica->setAttribute($key, trim((string) $value));
             }
 
             if (!empty($tipologie)) {

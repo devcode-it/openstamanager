@@ -107,7 +107,6 @@ switch (filter('op')) {
                 }
             }
 
-
             $offset = isset($page) ? $page * $limit : 0;
 
             if ($offset == 0 && empty($include_first_row)) {

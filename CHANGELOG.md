@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.10.4 (2026-04-28)](#2104-2026-04-28)
 - [2.10.3 (2026-04-07)](#2103-2026-04-07)
 - [2.10.2 (2026-03-17)](#2102-2026-03-17)
 - [2.10.1 (2026-02-26)](#2101-2026-02-26)
@@ -70,6 +71,32 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+
+## 2.10.4 (2026-04-28)
+
+### Modificato (Changed)
+- Ottimizzazione importazione anagrafiche a blocchi per evitare duplicati
+
+### Fixed
+- Corretto completamento suggerimento indirizzi email referenti in invio mail
+- Corretto invio mail con allegato a utenti senza i permessi per il modulo Coda di invio
+- Corretto template stampa ddt
+- Corretto riferimento documenti collegati nelle righe
+- Corretto addebito spese di incasso
+- Corretto avviso fatturazione attività futura per date corrispondenti
+- Corretto plugin movimenti e giacenze per sede
+- Corretto upload allegati in ckeditor per moduli senza permessi
+- Corretta funzione selezione segmento predefinito
+- Corretto salvataggio allegati duplicati
+- Corretto #1787 avviso nessuna banca di addebito impostata in fatture di acquisto
+- Corretta importazione fatture di acquisto e vendita
+- Corretto ordinamento movimenti articolo
+- Corretta visualizzazione banca per fatture con metodo di pagamento sepa
+- Corretta conversione valori checklist da ckeditor
+- Corretta autenticazione con OAuth2
+- Corretta traduzione mancante su tasto di creazione fattura da ddt
+
 
 ## 2.10.3 (2026-04-07)
 

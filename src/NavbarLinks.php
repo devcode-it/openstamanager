@@ -212,4 +212,64 @@ class NavbarLinks
 
         return true;
     }
+
+    /**
+     * Risolve un singolo entry di `zz_links.assets` in path relativo da OSM root.
+     *
+     * Regole:
+     * - entry contiene `/` → trattato come path completo da OSM root.
+     * - entry senza `/` → shorthand `modules/{link.id_module.directory}/assets/dist/js/{entry}`.
+     *   Se `id_module` non valorizzato o modulo non trovato → null (skip).
+     */
+    public static function resolveAssetPath(string $entry, Link $link): ?string
+    {
+        $entry = trim($entry);
+        if ($entry === '') {
+            return null;
+        }
+
+        if (str_contains($entry, '/')) {
+            return '/'.ltrim($entry, '/');
+        }
+
+        if (!$link->id_module) {
+            return null;
+        }
+
+        $mod = Module::find($link->id_module);
+        if (!$mod || empty($mod->directory)) {
+            return null;
+        }
+
+        return '/modules/'.$mod->directory.'/assets/dist/js/'.$entry;
+    }
+
+    /**
+     * Raccoglie tutti gli asset JS dei link enabled, dedup, e ritorna array path relativi.
+     */
+    public static function collectEnabledAssets(): array
+    {
+        $out = [];
+        $links = Link::where('enabled', 1)
+            ->whereNotNull('assets')
+            ->get(['id', 'id_module', 'assets']);
+
+        foreach ($links as $lk) {
+            $files = $lk->assets ?: [];
+            if (!is_array($files)) {
+                continue;
+            }
+            foreach ($files as $entry) {
+                if (!is_string($entry)) {
+                    continue;
+                }
+                $resolved = self::resolveAssetPath($entry, $lk);
+                if ($resolved && !in_array($resolved, $out, true)) {
+                    $out[] = $resolved;
+                }
+            }
+        }
+
+        return $out;
+    }
 }

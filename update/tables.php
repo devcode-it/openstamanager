@@ -203,6 +203,8 @@ return [
     'zz_imports',
     'zz_imports_lang',
     'zz_langs',
+    'zz_links',
+    'zz_links_lang',
     'zz_logs',
     'zz_marche',
     'zz_modules',

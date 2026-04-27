@@ -41,6 +41,10 @@ class Link extends Model
         'title',
     ];
 
+    protected $casts = [
+        'assets' => 'array',
+    ];
+
     public function parent()
     {
         return $this->belongsTo(self::class, 'parent');

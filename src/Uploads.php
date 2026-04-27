@@ -80,7 +80,7 @@ class Uploads
      *
      * @return Upload
      */
-    public static function upload($source, $data, $options = [])
+    public static function upload($source, $data, $force = false)
     {
         // Se è attivo il task sul controllo dello spazio disponibile allora aggiorno la cache
         $task = Tasks\Task::where('enabled', 1)->where('name', 'Hook Spazio disponibile')->first();
@@ -88,7 +88,7 @@ class Uploads
             $task->execute();
         }
 
-        return Upload::build($source, $data);
+        return Upload::build(source: $source, data: $data, force: $force);
     }
 
     /**

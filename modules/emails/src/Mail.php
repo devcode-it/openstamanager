@@ -37,7 +37,7 @@ class Mail extends Model
 
     protected $options;
 
-    public static function build(?User $user = null, $template = null, $id_record = null, $account = null)
+    public static function build(?User $user = null, $template = null, $id_record = null, $account = null, $reset_from_template = true)
     {
         $model = new static();
 
@@ -52,7 +52,7 @@ class Mail extends Model
 
         $model->save();
 
-        if (!empty($template)) {
+        if (!empty($template) && $reset_from_template) {
             $model->resetFromTemplate();
         }
 
@@ -135,7 +135,7 @@ class Mail extends Model
             'id_category' => null,
             'id_module' => $id_module,
             'id_record' => $this->id,
-        ]);
+        ], true);
 
         // Verifica che l'upload sia stato eseguito correttamente
         if (!$upload) {

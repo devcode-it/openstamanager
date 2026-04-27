@@ -352,7 +352,7 @@ elseif (filter('op') == 'ordina-checks') {
 elseif (post('op') == 'send-email') {
     $template = Template::find(post('template'));
 
-    $mail = Modules\Emails\Mail::build($user, $template, $id_record);
+    $mail = Modules\Emails\Mail::build(user: $user, template: $template, id_record: $id_record, reset_from_template: false);
 
     // Rimozione allegati predefiniti
     $mail->resetPrints();

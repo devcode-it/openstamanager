@@ -82,10 +82,10 @@ class Upload extends Model
      *
      * @return self
      */
-    public static function build($source = null, $data = null, $name = null, $category = null)
+    public static function build($source = null, $data = null, $name = null, $category = null, $force = false)
     {
         // Verifica permessi prima del caricamento
-        if (!self::checkUploadPermissions($data)) {
+        if (!self::checkUploadPermissions($data) && !$force) {
             return false;
         }
 

@@ -83,7 +83,9 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretto invio mail con allegato a utenti senza i permessi per il modulo Coda di invio
 - Corretto template stampa ddt
 - Corretto riferimento documenti collegati nelle righe
+- Corretto campo collega a fatture pro-forma in import fe
 - Corretto addebito spese di incasso
+- Corretta impostazione split payment in fattura
 - Corretto avviso fatturazione attività futura per date corrispondenti
 - Corretto plugin movimenti e giacenze per sede
 - Corretto upload allegati in ckeditor per moduli senza permessi
@@ -96,6 +98,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - Corretta conversione valori checklist da ckeditor
 - Corretta autenticazione con OAuth2
 - Corretta traduzione mancante su tasto di creazione fattura da ddt
+- Corretta duplicazione degli allegati in fase di invio mail
 
 
 ## 2.10.3 (2026-04-07)

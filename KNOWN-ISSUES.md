@@ -29,6 +29,9 @@ https://github.com/devcode-it/openstamanager/commit/3ab4b2f57
 - Corretto addebito spese di incasso
 https://github.com/devcode-it/openstamanager/commit/3d48d64cf
 
+- Corretta impostazione split payment in fattura
+https://github.com/devcode-it/openstamanager/commit/5be7818f0
+
 - Corretta autenticazione con OAuth2
 https://github.com/devcode-it/openstamanager/commit/cfce79f81
 

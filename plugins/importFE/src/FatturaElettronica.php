@@ -421,6 +421,8 @@ class FatturaElettronica
         // Verifica se è presente EsigibilitaIVA = 'S' nei riepiloghi IVA per abilitare lo split payment
         if ($this->hasSplitPaymentEsigibilita()) {
             $fattura->split_payment = true;
+        } else {
+            $fattura->split_payment = false;
         }
 
         // Salvataggio banca fornitore se specificata nel file XML

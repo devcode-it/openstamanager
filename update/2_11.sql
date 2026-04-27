@@ -324,3 +324,47 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Aggiunta del campo serial alla tabella my_componenti per la gestione dei seriali nei componenti degli impianti
 ALTER TABLE `my_componenti` ADD `serial` VARCHAR(255) NULL AFTER `id_articolo`;
+
+-- Tabelle per la gestione DB-driven delle voci della Navbar Right Menu.
+-- I moduli consumer aggiungono righe qui invece di iniettare <li> via JS DOM-manipulation.
+CREATE TABLE IF NOT EXISTS `zz_links` (
+    `id`         INT(11)      NOT NULL AUTO_INCREMENT,
+    `name`       VARCHAR(255) NOT NULL,
+    `icon`       VARCHAR(255) NOT NULL DEFAULT '',
+    `color`      VARCHAR(64)  NULL DEFAULT NULL,
+    `position`   ENUM('right','left') NOT NULL DEFAULT 'right',
+    `order`      INT(11)      NOT NULL DEFAULT 0,
+    `enabled`    TINYINT(1)   NOT NULL DEFAULT 1,
+    `type`       ENUM('link','javascript','module','plugin') NOT NULL,
+    `value`      VARCHAR(500) NOT NULL,
+    `parent`     INT(11)      NULL DEFAULT NULL,
+    `id_module`  INT(11)      NULL DEFAULT NULL,
+    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_zz_links_name` (`name`),
+    KEY `idx_zz_links_parent` (`parent`),
+    KEY `idx_zz_links_enabled_order` (`enabled`, `order`),
+    KEY `idx_zz_links_id_module` (`id_module`),
+    CONSTRAINT `fk_zz_links_parent`
+        FOREIGN KEY (`parent`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `fk_zz_links_module`
+        FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `zz_links_lang` (
+    `id`         INT(11)      NOT NULL AUTO_INCREMENT,
+    `id_lang`    INT(11)      NOT NULL,
+    `id_record`  INT(11)      NOT NULL,
+    `label`      VARCHAR(255) NOT NULL DEFAULT '',
+    `title`      VARCHAR(255) NOT NULL DEFAULT '',
+    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_zz_links_lang_record` (`id_lang`, `id_record`),
+    KEY `idx_zz_links_lang_record` (`id_record`),
+    CONSTRAINT `fk_zz_links_lang_record`
+        FOREIGN KEY (`id_record`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `fk_zz_links_lang_lang`
+        FOREIGN KEY (`id_lang`)   REFERENCES `zz_langs`(`id`)  ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

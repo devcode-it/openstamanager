@@ -334,6 +334,19 @@ foreach (App::getAssets()['js'] as $js) {
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
 
+// Autoload asset da moduli
+// Cerca in modules/{directory}/assets/navbar.js
+foreach (Module::all(['id', 'directory']) as $mod) {
+    if (empty($mod->directory)) {
+        continue;
+    }
+    $relative = '/modules/'.$mod->directory.'/assets/navbar.js';
+    if (file_exists(base_dir().$relative)) {
+        echo '
+        <script type="text/javascript" charset="utf-8" src="'.base_path_osm().$relative.'"></script>';
+    }
+}
+
 // Impostazioni di default per gli alert
 echo '
         <script>
@@ -495,7 +508,7 @@ if (AuthOSM::check()) {
                             <i class="fa fa-info nav-icon"></i>
                         </a>
                     </li>
-
+                    '.NavbarLinks::renderRight().'
                     <li class="nav-item">
                         <a href="'.base_path_osm().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
                             <i class="fa fa-power-off nav-icon"></i>

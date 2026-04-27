@@ -334,16 +334,13 @@ foreach (App::getAssets()['js'] as $js) {
         <script type="text/javascript" charset="utf-8" src="'.$js.'"></script>';
 }
 
-// Autoload asset da moduli
-// Cerca in modules/{directory}/assets/navbar.js
-foreach (Module::all(['id', 'directory']) as $mod) {
-    if (empty($mod->directory)) {
-        continue;
-    }
-    $relative = '/modules/'.$mod->directory.'/assets/navbar.js';
-    if (file_exists(base_dir().$relative)) {
+// Asset JS per-link (zz_links.assets): raccoglie+dedup+emette <script>.
+// Shorthand "file.js" -> modules/{id_module.directory}/assets/dist/js/file.js
+// Path con "/" -> da OSM root (cross-module).
+foreach (NavbarLinks::collectEnabledAssets() as $rel) {
+    if (file_exists(base_dir().$rel)) {
         echo '
-        <script type="text/javascript" charset="utf-8" src="'.base_path_osm().$relative.'"></script>';
+        <script type="text/javascript" charset="utf-8" src="'.base_path_osm().$rel.'"></script>';
     }
 }
 

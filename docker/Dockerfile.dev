@@ -1,64 +1,72 @@
-# Usa l'immagine ufficiale di PHP con Apache
 FROM php:8.3-apache-bullseye
 
-# Abilita i moduli richiesti
-RUN apt-get update && apt-get install -y \
+# Installa dipendenze di sistema ed estensioni PHP
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libicu-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
     libpng-dev \
+    libjpeg-dev \
     libonig-dev \
+    libxslt-dev \
     unzip \
-    libxml2-dev \ 
-    libxslt-dev \ 
-    wget \ 
+    wget \
     git && \
-    docker-php-ext-install zip mbstring pdo_mysql intl soap curl && \
-    a2enmod rewrite 
+    docker-php-ext-configure gd --with-jpeg && \
+    docker-php-ext-install \
+        zip \
+        mbstring \
+        pdo_mysql \
+        intl \
+        soap \
+        curl \
+        xsl \
+        ftp \
+        gd && \
+    a2enmod rewrite && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN docker-php-ext-install xsl ftp
-
-RUN docker-php-ext-enable xsl ftp
-
-RUN apt-get install -y libpng-dev libjpeg-dev \
-    && docker-php-ext-configure gd --with-jpeg \
-    && docker-php-ext-install gd
-
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
-    
-
-# Configura i parametri di PHP
+# Copia configurazione PHP
 COPY php.ini /usr/local/etc/php/
 
-# Installa Composer
+# Installa Composer dall'immagine ufficiale
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configura l'applicazione
+# Imposta directory di lavoro
 WORKDIR /var/www/html
-# Esponi la porta per Apache
+
+# Clona repository e inizializza directory
+RUN git clone https://github.com/devcode-it/openstamanager.git . && \
+    git config --global --add safe.directory /var/www/html && \
+    mkdir -p files/temp logs
+
+# Crea file di configurazione
+RUN touch manifest.json \
+    mariadb_10_x.json \
+    mysql_8_3.json \
+    mysql.json \
+    checksum.json \
+    settings.json \
+    views.json \
+    modules.json
+
+# Installa dipendenze PHP con Composer
+RUN curl -sS https://getcomposer.org/installer | php && \
+    php composer.phar install
+
+# Installa dipendenze Node.js e compila asset
+RUN corepack enable && \
+    corepack prepare yarn@stable --activate && \
+    yarn run develop-OSM
+
+# Imposta permessi corretti per i file dell'applicazione
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    chmod -R 775 /var/www/html/files /var/www/html/logs /var/www/html/storage
+
+# Espone porta Apache
 EXPOSE 80
-
-# Clona il repository
-RUN git clone https://github.com/devcode-it/openstamanager.git /var/www/html
-
-RUN mkdir -p /var/www/html/files/temp /var/www/html/logs
-RUN chown -R $USER:www-data /var/www/html/
-RUN chmod -R 770 /var/www/html/
-RUN touch /var/www/html/manifest.json \
-    /var/www/html/mariadb_10_x.json \
-    /var/www/html/mysql_8_3.json \
-    /var/www/html/mysql.json \
-    /var/www/html/checksum.json \
-    /var/www/html/settings.json \
-    /var/www/html/views.json
-    /var/www/html/modules.json
-
-RUN curl -sS https://getcomposer.org/installer | php
-RUN git config --global --add safe.directory /var/www/html
-RUN corepack enable
-RUN corepack prepare yarn@stable --activate
-
-RUN  yarn run develop-OSM
-

@@ -26,27 +26,17 @@ use Models\Plugin;
 /**
  * Helper per il rendering delle voci navbar dalla tabella `zz_links`.
  *
- * `renderRight()` / `renderLeft()` ritornano HTML pronto per essere concatenato
- * dentro `include/top.php`. Ogni campo DB è escapato via `e()`.
+ * `render()` ritorna HTML pronto per essere concatenato dentro `include/top.php`,
+ * inserito tra le voci core (info) e il logout. Ogni campo DB è escapato via `e()`.
  */
 class NavbarLinks
 {
     /** Regex di sicurezza per value di type=javascript (nome funzione globale). */
     private const JS_VALUE_REGEX = '/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/';
 
-    public static function renderRight(): string
+    public static function render(): string
     {
-        return self::renderPosition('right');
-    }
-
-    public static function renderLeft(): string
-    {
-        return self::renderPosition('left');
-    }
-
-    private static function renderPosition(string $position): string
-    {
-        $links = self::getTopLevelLinks($position);
+        $links = self::getTopLevelLinks();
 
         $html = '';
         foreach ($links as $link) {
@@ -59,10 +49,9 @@ class NavbarLinks
         return $html;
     }
 
-    private static function getTopLevelLinks(string $position): Collection
+    private static function getTopLevelLinks(): Collection
     {
         return Link::query()
-            ->where('position', $position)
             ->whereNull('parent')
             ->where('enabled', 1)
             ->orderBy('order')

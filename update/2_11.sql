@@ -332,7 +332,6 @@ CREATE TABLE IF NOT EXISTS `zz_links` (
     `name`       VARCHAR(255) NOT NULL,
     `icon`       VARCHAR(255) NOT NULL DEFAULT '',
     `color`      VARCHAR(64)  NULL DEFAULT NULL,
-    `position`   ENUM('right','left') NOT NULL DEFAULT 'right',
     `order`      INT(11)      NOT NULL DEFAULT 0,
     `enabled`    TINYINT(1)   NOT NULL DEFAULT 1,
     `type`       ENUM('link','javascript','module','plugin') NOT NULL,
@@ -365,3 +364,51 @@ CREATE TABLE IF NOT EXISTS `zz_links_lang` (
     CONSTRAINT `fk_zz_links_lang_lang`
         FOREIGN KEY (`id_lang`)   REFERENCES `zz_langs`(`id`)  ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Registrazione modulo "Link navbar" per gestione CRUD voci zz_links
+INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `parent`, `default`, `enabled`) VALUES
+('Link navbar', 'link_navbar',
+'SELECT
+    |select|
+FROM
+    `zz_links`
+    LEFT JOIN `zz_links_lang` ON (`zz_links`.`id` = `zz_links_lang`.`id_record` AND |lang|)
+    LEFT JOIN `zz_links` AS `parent_link` ON `zz_links`.`parent` = `parent_link`.`id`
+    LEFT JOIN `zz_modules` AS `mod` ON `zz_links`.`id_module` = `mod`.`id`
+WHERE
+    1=1
+HAVING
+    2=2',
+'', 'fa fa-bars', '2.11', '2.11',
+(SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Strumenti') AS `tmp_strumenti`),
+1, 1);
+
+INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_modules`), 'Link navbar', 'Link navbar'),
+(2, (SELECT MAX(`id`) FROM `zz_modules`), 'Navbar links', 'Navbar links');
+
+-- Viste del modulo Link navbar
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`, `html_format`) VALUES
+((SELECT MAX(`id`) FROM `zz_modules`), 'id',         '`zz_links`.`id`',                              1, 0, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Etichetta',  '`zz_links_lang`.`label`',                      2, 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Icona',      '`zz_links`.`icon`',                            3, 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Tipo',       '`zz_links`.`type`',                            4, 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Ordine',     '`zz_links`.`order`',                           5, 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Padre',      '`parent_link`.`name`',                         6, 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Abilitato',  'IF(`zz_links`.`enabled`=1, \'Sì\', \'No\')',  7, 1, 0);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'id'),         'id'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'id'),         'id'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Etichetta'),  'Etichetta'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Etichetta'),  'Label'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Icona'),      'Icona'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Icona'),      'Icon'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Tipo'),       'Tipo'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Tipo'),       'Type'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Ordine'),     'Ordine'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Ordine'),     'Order'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Padre'),      'Padre'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Padre'),      'Parent'),
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Abilitato'),  'Abilitato'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Abilitato'),  'Enabled');

@@ -505,7 +505,7 @@ if (AuthOSM::check()) {
                             <i class="fa fa-info nav-icon"></i>
                         </a>
                     </li>
-                    '.NavbarLinks::renderRight().'
+                    '.NavbarLinks::render().'
                     <li class="nav-item">
                         <a href="'.base_path_osm().'/index.php?op=logout" onclick="sessionStorage.clear()" class="nav-link bg-danger" title="'.tr('Esci').'">
                             <i class="fa fa-power-off nav-icon"></i>

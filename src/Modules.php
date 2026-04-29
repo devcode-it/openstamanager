@@ -312,7 +312,7 @@ class Modules
      */
     public static function link($modulo, $id_record = null, $testo = null, $alternativo = true, $extra = null, $blank = true, $anchor = null, $params = null)
     {
-        $testo = isset($testo) ? nl2br($testo) : '';
+        $testo = isset($testo) ? nl2br(htmlspecialchars($testo, ENT_QUOTES, 'UTF-8')) : '';
         $alternativo = is_bool($alternativo) && $alternativo ? $testo : $alternativo;
 
         // Verifica se il testo contiene un'icona

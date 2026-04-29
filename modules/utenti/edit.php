@@ -61,7 +61,7 @@ echo '
 		<div class="card-header">
 			<h3 class="card-title">
                 <i class="fa fa-users mr-2"></i>'.tr('Utenti del gruppo: _GROUP_', [
-    '_GROUP_' => '<span class="text-primary">'.$group->getTranslation('title').'</span>',
+    '_GROUP_' => '<span class="text-primary">'.htmlspecialchars($group->getTranslation('title')).'</span>',
 ]).'</h3>
             <div class="card-tools">
                 <a data-card-widget="modal" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-msg="" data-backto="record-edit" data-title="'.tr('Aggiungi utente').'" class="btn btn-sm btn-primary">
@@ -249,7 +249,7 @@ echo '
 			<div class="card-header">
 				<h3 class="card-title">
 					<i class="fa fa-lock mr-2"></i>'.tr('Permessi del gruppo: _GROUP_', [
-    '_GROUP_' => '<span class="text-primary">'.$record['nome'].'</span>',
+    '_GROUP_' => '<span class="text-primary">'.htmlspecialchars($record['nome']).'</span>',
 ]).'</h3>'.((empty($record['editable']) && ($record['nome'] != 'Amministratori')) ? '
 				<div class="card-tools">
 					<btn type="button" class="btn clickable btn-sm btn-warning float-right ask" data-msg="<small>'.tr('Verranno reimpostati i permessi di default per il gruppo '.$record['nome']).'.</small>" data-class="btn btn-warning" data-button="'.tr('Reimposta permessi').'" data-op="restore_permission">'.tr('Reimposta permessi').'</btn>

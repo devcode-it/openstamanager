@@ -337,10 +337,12 @@ foreach (App::getAssets()['js'] as $js) {
 // Asset JS per-link (zz_links.assets): raccoglie+dedup+emette <script>.
 // Shorthand "file.js" -> modules/{id_module.directory}/assets/dist/js/file.js
 // Path con "/" -> da OSM root (cross-module).
-foreach (NavbarLinks::collectEnabledAssets() as $rel) {
-    if (file_exists(base_dir().$rel)) {
-        echo '
+if ($dbo->isConnected() && $dbo->tableExists('zz_links')) {
+    foreach (NavbarLinks::collectEnabledAssets() as $rel) {
+        if (file_exists(base_dir().$rel)) {
+            echo '
         <script type="text/javascript" charset="utf-8" src="'.base_path_osm().$rel.'"></script>';
+        }
     }
 }
 

@@ -654,7 +654,7 @@ switch (filter('op')) {
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
                         'id_articolo' => $riga->idarticolo,
-                        'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
+                        'desc_articolo' => (!empty($riga->articolo)) ? str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')) : '',
                         'id_conto' => $riga->articolo->idconto_acquisto,
                         'desc_conto' => str_replace(' ', '_', $desc_conto ?: ''),
                     ],

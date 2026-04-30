@@ -412,11 +412,11 @@ switch (post('op')) {
                 $riga->um = $riga_data['um'];
 
                 if (!$riga->isDescrizione()) {
+                    $riga->idiva = $riga_data['idiva'];
                     $riga->prezzo_unitario = $riga_data['prezzo_unitario'];
                     $riga->sconto_unitario = $riga_data['sconto_unitario'];
                     $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
                     $riga->tipo_sconto = $riga_data['tipo_sconto'];
-                    $riga->idiva = $riga_data['idiva'];
                     $riga->id_conto = $riga_data['id_conto'];
                 }
 

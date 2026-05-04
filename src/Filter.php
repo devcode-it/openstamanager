@@ -162,26 +162,32 @@ class Filter
     public static function getPurifier()
     {
         if (empty(self::$purifier)) {
-            $config = HTMLPurifier_Config::createDefault();
-
-            $config->set('HTML.Allowed', 'br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]');
-
-            // $config->set('Cache.SerializerPath', realpath(__DIR__.'/cache/HTMLPurifier'));
-            $config->set('Cache.DefinitionImpl', null);
-            $config->set('URI.AllowedSchemes', [
-                'http' => true,
-                'https' => true,
-                'mailto' => true,
-                'ftp' => true,
-                'tel' => true,
-                'data' => true,
-            ]);
-
-            self::$purifier = new HTMLPurifier($config);
+            self::setAllowedTags('br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]');
         }
 
         return self::$purifier;
     }
+    
+
+    public static function setAllowedTags(string $html_allowed)
+    {
+        self::$purifier = null;
+        $config = HTMLPurifier_Config::createDefault();
+
+        $config->set('HTML.Allowed', $html_allowed);
+        $config->set('Cache.DefinitionImpl', null);
+        $config->set('URI.AllowedSchemes', [
+            'http' => true,
+            'https' => true,
+            'mailto' => true,
+            'ftp' => true,
+            'tel' => true,
+            'data' => true,
+        ]);
+
+        self::$purifier = new HTMLPurifier($config);
+    }
+
 
     /**
      * Imposta una proprietà specifica a un valore personalizzato.
@@ -196,5 +202,16 @@ class Filter
         } elseif (strtolower($method) == 'get') {
             self::$get['data'][$property] = $value;
         }
+    }
+
+    /**
+     * Forza la rilettura di GET e POST per uno specifico campo.
+     */
+    public static function forceParse($field)
+    {
+        self::$post['raw'][$field] = self::sanitize($_POST[$field]);
+        self::$post['data'][$field] = self::parse(self::$post['raw'][$field]);
+        self::$get['raw'][$field] = self::sanitize($_GET[$field]);
+        self::$get['data'][$field] = self::parse(self::$get['raw'][$field]);
     }
 }

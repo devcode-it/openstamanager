@@ -66,8 +66,8 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 |-----|-----|:----------:|
 | 8.4 | 31/12/2028 | 🟡 |
 | 8.3 | 31/12/2027 | 🟢 |
-| 8.2 | 31/12/2026 | 🟢 |
-| 8.1 | 31/12/2025 | 🟢 |
+| 8.2 | 31/12/2026 | 🔴 |
+| 8.1 | 31/12/2025 | 🔴 |
 | 8.0 | 26/11/2023 | 🔴 |
 | 7.4 | 28/11/2022 | 🔴 |
 | 7.3 | 06/12/2021 | 🔴 |
@@ -97,6 +97,8 @@ Fonte EOL PHP: [https://endoflife.date/php](https://endoflife.date/php)
 Fonte EOL MYSQL: [https://endoflife.date/mysql](https://endoflife.date/mysql)
 
 ❗Alcune dipendenze presenti dalla versione 2.5 non sono più compatibili con PHP 7.4 e PHP 8.0, dalla versione 2.5.3 sarà quindi richiesta una versione di php >= 8.1.
+
+❗Alcune dipendenze presenti dalla versione 2.11 non sono più compatibili con PHP 8.1, dalla versione 2.11 sarà quindi richiesta una versione di php >= 8.3.
 
 Per ulteriori informazioni, visitare la sezione [Installazione](https://docs.openstamanager.com/configurazione/installazione) della documentazione.
 

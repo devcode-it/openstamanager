@@ -601,7 +601,7 @@ Permissions::check('rw')
 
 ## Technology Stack
 
-- **PHP**: 8.1+ required (recommended 8.3)
+- **PHP**: 8.3+ required (recommended 8.3)
 - **Database**: MySQL 8.0+
 - **Framework**: Laravel `laravel/framework: ^12.0`
 - **ORM**: Laravel 12 Eloquent via `illuminate/database: ^12.0`

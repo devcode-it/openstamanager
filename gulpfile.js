@@ -203,7 +203,7 @@ const CSS = gulp.parallel(() => {
         'datatables.net-scroller-bs/css/scroller.bootstrap.css',
         'datatables.net-select-bs/css/select.bootstrap.css',
         'smartwizard/dist/css/smart_wizard.min.css',
-        'smartwizard/dist/css/smart_wizard_theme_arrows.min.css',
+        'smartwizard/dist/css/smart_wizard_arrows.min.css',
         'leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css',
         'leaflet/dist/leaflet.css',
         'leaflet.fullscreen/Control.FullScreen.css',

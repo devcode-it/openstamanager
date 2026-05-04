@@ -3600,36 +3600,36 @@ section.content, .main-footer {
 }
 
 /* SmartWizard specific fixes */
-.sw-theme-default {
+.sw-theme-basic {
     border: none !important;
 }
 
-.sw-theme-default .sw-toolbar {
+.sw-theme-basic .toolbar {
     display: none !important;
 }
 
-.sw-theme-default .step-content {
+.sw-theme-basic .tab-content {
     padding: 0 !important;
     border: none !important;
 }
 
-.sw-theme-default .sw-toolbar-bottom {
+.sw-theme-basic .toolbar-bottom {
     border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
-.sw-theme-default > ul.step-anchor > li.active > a {
+.sw-theme-basic > ul.nav > li.active > a {
     color: #3c8dbc !important;
     border-bottom: 2px solid #3c8dbc !important;
     background: transparent !important;
 }
 
-.sw-theme-default > ul.step-anchor > li > a,
-.sw-theme-default > ul.step-anchor > li > a:hover {
+.sw-theme-basic > ul.nav > li > a,
+.sw-theme-basic > ul.nav > li > a:hover {
     background: transparent !important;
     border: none !important;
 }
 
-.sw-theme-default > ul.step-anchor > li.done > a {
+.sw-theme-basic > ul.nav > li.done > a {
     color: #5cb85c !important;
     background: transparent !important;
 }

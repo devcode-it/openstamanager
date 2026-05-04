@@ -124,7 +124,7 @@ class AJAX
         foreach ($rows as $row) {
             $result = $row;
             foreach ($custom as $key => $value) {
-                $result[$key] = htmlspecialchars($row[$value] ?? '', ENT_QUOTES, 'UTF-8');
+                $result[$key] = $row[$value];
             }
 
             $results[] = $result;

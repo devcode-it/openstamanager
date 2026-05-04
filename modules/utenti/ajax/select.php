@@ -51,14 +51,14 @@ switch ($resource) {
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {
             if ($prev != $r['optgroup']) {
-                $results[] = ['text' => htmlspecialchars($r['optgroup'], ENT_QUOTES, 'UTF-8'), 'children' => []];
+                $results[] = ['text' => $r['optgroup'], 'children' => []];
                 $prev = $r['optgroup'];
             }
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => htmlspecialchars($r['descrizione'], ENT_QUOTES, 'UTF-8'),
-                'descrizione' => htmlspecialchars($r['descrizione'], ENT_QUOTES, 'UTF-8'),
+                'text' => $r['descrizione'],
+                'descrizione' => $r['descrizione'],
             ];
         }
 
@@ -106,14 +106,14 @@ switch ($resource) {
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {
             if ($prev != $r['optgroup']) {
-                $results[] = ['text' => htmlspecialchars($r['optgroup'], ENT_QUOTES, 'UTF-8'), 'children' => []];
+                $results[] = ['text' => $r['optgroup'], 'children' => []];
                 $prev = $r['optgroup'];
             }
 
             $results[count($results) - 1]['children'][] = [
                 'id' => $r['id'],
-                'text' => htmlspecialchars($r['descrizione'], ENT_QUOTES, 'UTF-8'),
-                'descrizione' => htmlspecialchars($r['descrizione'], ENT_QUOTES, 'UTF-8'),
+                'text' => $r['descrizione'],
+                'descrizione' => $r['descrizione'],
             ];
         }
 

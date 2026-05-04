@@ -425,7 +425,7 @@ function password_strength() {
 
 function hotkeys() {
     return gulp.src([
-        config.nodeDirectory + '/hotkeys-js/dist/hotkeys.min.js',
+        config.nodeDirectory + '/hotkeys-js/dist/hotkeys-js.min.js',
     ])
         .pipe(flatten())
         .pipe(gulp.dest(config.production + '/' + config.paths.js + '/hotkeys-js'));

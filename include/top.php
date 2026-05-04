@@ -366,7 +366,7 @@ if (AuthOSM::check()) {
     }
 
     if (setting('Attiva scorciatoie da tastiera')) {
-        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys.min.js?v='.$version.'"></script>';
+        echo '<script type="text/javascript" charset="utf-8" src="'.App::getPaths()['js'].'/hotkeys-js/hotkeys-js.min.js?v='.$version.'"></script>';
         echo '
         <script>
 

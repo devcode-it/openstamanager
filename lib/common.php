@@ -559,7 +559,9 @@ function hasArticoliFiglio($id_articolo)
  */
 function getImageManager()
 {
-    return extension_loaded('gd') ? ImageManager::gd() : ImageManager::imagick();
+    return extension_loaded('gd') 
+        ? ImageManager::usingDriver(Driver::class) 
+        : ImageManager::usingDriver(Driver::class);
 }
 
 /**

@@ -22,6 +22,8 @@ namespace Models;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Format;
 use Intervention\Image\ImageManager;
 use Modules\CategorieFiles\Categoria;
 use Modules\FileAdapters\FileAdapter;
@@ -426,11 +428,12 @@ class Upload extends Model
             return;
         }
 
-        $manager = ImageManager::gd(autoOrientation: true);
-        $img = $manager->read($filepath);
+        $manager = ImageManager::usingDriver(Driver::class);
+        $img = $manager->decodePath($filepath);
         $img->scale(setting('Larghezza per ridimensionamento immagini'), null);
 
-        $img->save(slashes($filepath));
+        $encoded = $img->encodeUsingFormat(Format::JPEG);
+        $encoded->save(slashes($filepath));
 
         clearstatcache();
         $upload->size = filesize(slashes($filepath));

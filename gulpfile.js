@@ -219,7 +219,7 @@ const CSS = gulp.parallel(() => {
         allowEmpty: true
     })
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
-        .pipe(autoprefixer())
+        .pipe(gulpIf(function(file) { return !file.path.includes('admin-lte'); }, autoprefixer()))
         .pipe(minifyCSS({
             rebase: false,
         }))
@@ -254,7 +254,7 @@ export function srcCSS(done) {
         config.nodeDirectory + '/admin-lte/dist/css/adminlte.min.css',
     ])
         .pipe(gulpIf('*.scss', sass(), gulpIf('*.less', less(), gulpIf('*.styl', stylus()))))
-        .pipe(autoprefixer())
+        .pipe(gulpIf(function(file) { return !file.path.includes('admin-lte'); }, autoprefixer()))
         .pipe(gulpIf(!config.debug, minifyCSS(config.minifiers.css)))
         .pipe(concat('themes.min.css'))
         .pipe(flatten())

@@ -254,7 +254,6 @@ if (AuthOSM::check()) {
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
 
                 collapse_plugin_sidebar: '.($show_plugin_bar ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
-
                 ckeditorToolbar: [
                     ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt"],
                     ["Link","Unlink","-","Bold","Italic","Underline","Superscript","SpecialChar","HorizontalRule"],
@@ -349,12 +348,14 @@ if ($dbo->isConnected() && $dbo->tableExists('zz_links')) {
 // Impostazioni di default per gli alert
 echo '
         <script>
-            swal.setDefaults({
+            Swal.defaults = {
                 buttonsStyling: false,
-                confirmButtonClass: "btn btn-lg btn-primary",
-                cancelButtonClass: "btn btn-lg btn-default",
+                customClass: {
+                    confirmButton: "btn btn-lg btn-primary",
+                    cancelButton: "btn btn-lg btn-default",
+                },
                 cancelButtonText: "'.tr('Annulla').'",
-            });
+            };
         </script>';
 
 if (AuthOSM::check()) {

@@ -242,9 +242,9 @@ function rimuoviAllegato(button) {
     const gestione = $(button).closest(".gestione-allegati");
     const allegato = $(button).closest("tr").data();
 
-    swal({
+    Swal.fire({
         title: globals.translations.allegati.elimina,
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: globals.translations.allegati.procedi,
     }).then(function () {
@@ -266,5 +266,5 @@ function rimuoviAllegato(button) {
             .then(function () {
                 ricaricaAllegati(gestione);
             });
-    }).catch(swal.noop);
+    }).catch(function() {});
 }

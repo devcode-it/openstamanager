@@ -219,14 +219,16 @@ function message(element) {
     var btn_class = "btn btn-lg btn-danger";
     if (data["class"] != undefined) btn_class = data["class"];
 
-    swal({
+    Swal.fire({
         title: title,
         html: '<div id="swal-form" data-parsley-validate>' + msg + '</div>',
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: button,
-        confirmButtonClass: btn_class,
-        onOpen: function () {
+        customClass: {
+            confirmButton: btn_class,
+        },
+        didOpen: function () {
             restart_inputs();
         },
         preConfirm: function () {
@@ -240,8 +242,8 @@ function message(element) {
                     resolve();
                 });
             } else {
-                $('.swal2-buttonswrapper button').each(function () {
-                    $(this).prop('disabled', false);
+                Swal.getPopup().querySelectorAll('button').forEach(function (button) {
+                    button.disabled = false;
                 });
             }
         }

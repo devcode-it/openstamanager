@@ -150,8 +150,8 @@ function salvaForm(form, data = {}, button = null) {
         // Messaggio in caso di eventuali errori
         let valid = $(form).parsley().validate();
         if (!valid) {
-            swal({
-                type: "error",
+            Swal.fire({
+                icon: "error",
                 title: globals.translations.ajax.missing.title,
                 text: globals.translations.ajax.missing.text,
             });
@@ -200,8 +200,8 @@ function salvaForm(form, data = {}, button = null) {
 
                 // Gestione grafica dell'errore
                 $("#main_loading").fadeOut();
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });

@@ -56,7 +56,7 @@
         "signature_pad": "^2.3.0",
         "sjcl": "^1.0.8",
         "smartwizard": "^6.0.6",
-        "sweetalert2": "^6.11.4",
+        "sweetalert2": "^11.26.24",
         "toastr": "^2.1.4",
         "tooltipster": "^4.2.5",
         "ua-parser-js": "github:Pek5892/ua-parser-js#patch-1"

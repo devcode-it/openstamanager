@@ -44,6 +44,9 @@ echo '
         </div>
     </div>
     <br>
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> '.tr('In questa pagina è possibile correggere i conti contabili associati alle singole righe della fattura.<br> ATTENZIONE: le modifiche apportate provocano la rigenerazione automatica dei movimenti contabili, sovrascrivendo eventuali variazioni precedentemente effettuate tramite il plugin "Movimenti contabili".').'
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-hover table-sm table-bordered">
             <thead>

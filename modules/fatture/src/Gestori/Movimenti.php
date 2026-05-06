@@ -118,10 +118,13 @@ class Movimenti
         ];
 
         /*
-         * 2) Movimento per ogni riga del documento
+         * 2) Movimento per riga del documento (raggruppato per idconto)
          * Imponibile -> AVERE per Vendita, DARE per Acquisto
          */
         $righe = $this->fattura->getRighe();
+        $movimenti_per_conto = [];
+        $date_per_conto = [];
+
         foreach ($righe as $riga) {
             // Retro-compatibilità per versioni <= 2.4
             $id_conto = $riga->idconto ?: $this->fattura->idconto;
@@ -136,14 +139,30 @@ class Movimenti
                 $imponibile = sum($imponibile, $rivalsa_inps);
             }
 
-            if (!empty($imponibile)) {
-                $movimenti[] = [
-                    'id_conto' => $id_conto,
-                    'avere' => $imponibile,
+            if (empty($imponibile)) {
+                continue;
+            }
+
+            // Raggruppa per conto
+            if (!isset($movimenti_per_conto[$id_conto])) {
+                $movimenti_per_conto[$id_conto] = 0;
+                $date_per_conto[$id_conto] = [
                     'data_inizio_competenza' => $riga->data_inizio_competenza,
                     'data_fine_competenza' => $riga->data_fine_competenza,
                 ];
             }
+
+            $movimenti_per_conto[$id_conto] += $imponibile;
+        }
+
+        // Creazione movimenti raggruppati
+        foreach ($movimenti_per_conto as $id_conto => $importo) {
+            $movimenti[] = [
+                'id_conto' => $id_conto,
+                'avere' => $importo,
+                'data_inizio_competenza' => $date_per_conto[$id_conto]['data_inizio_competenza'],
+                'data_fine_competenza' => $date_per_conto[$id_conto]['data_fine_competenza'],
+            ];
         }
 
         /*
@@ -168,16 +187,24 @@ class Movimenti
 
             // Aggiunta dell'IVA al conto di costo per fatture di acquisto con split payment
             if ($is_acquisto && $split_payment) {
+                $movimenti_split_iva = [];
                 foreach ($righe as $riga) {
                     $id_conto = $riga->idconto ?: $this->fattura->idconto;
                     $iva_riga = $riga->iva;
 
                     if (!empty($iva_riga)) {
-                        $movimenti[] = [
-                            'id_conto' => $id_conto,
-                            'avere' => $iva_riga,
-                        ];
+                        if (!isset($movimenti_split_iva[$id_conto])) {
+                            $movimenti_split_iva[$id_conto] = 0;
+                        }
+                        $movimenti_split_iva[$id_conto] += $iva_riga;
                     }
+                }
+
+                foreach ($movimenti_split_iva as $id_conto => $iva_totale) {
+                    $movimenti[] = [
+                        'id_conto' => $id_conto,
+                        'avere' => $iva_totale,
+                    ];
                 }
             }
 

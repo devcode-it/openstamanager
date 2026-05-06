@@ -53,6 +53,10 @@ if (empty($_GET['visualizza_movimenti'])) {
             <input type="hidden" name="backto" value="record-edit">
             <input type="hidden" name="op" value="update_conti_movimenti">
             
+            <div class="alert alert-info">
+                È possibile modificare in modo più accurato i conti associati alle singole righe dal plugin Contabilizzazione.
+            </div>
+            
             <table class="table table-hover table-sm table-bordered table-striped" style="font-size:11pt;">
                 <thead>
                     <tr>

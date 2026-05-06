@@ -608,7 +608,7 @@ if (AuthOSM::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='".($in_editor ? 'tab' : 'tab_main')."' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` DESC");
+        $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idmodule_to`='.prepare($id_module)." AND `position`='".($in_editor ? 'tab' : 'tab_main')."' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` ASC");
         foreach ($plugins as $plugin) {
             // Badge count per record plugin
             $count = 0;

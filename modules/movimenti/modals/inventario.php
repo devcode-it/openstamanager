@@ -93,7 +93,7 @@ $(document).ready(function () {
     $("#sede-inventario").on("change", function() {
         let sede_id = $(this).val();
         if (righeInventario.length > 0) {
-            swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Non è possibile cambiare sede con righe già inserite'); ?>", "warning");
+            Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Non è possibile cambiare sede con righe già inserite'); ?>", "warning");
             return false;
         }
         
@@ -128,7 +128,7 @@ $(document).ready(function () {
 function ricercaBarcode(barcode) {
     let sede_id = $("#sede-inventario").val();
     if (!sede_id) {
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona prima una sede'); ?>", "warning");
+        Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona prima una sede'); ?>", "warning");
         return;
     }
     
@@ -154,7 +154,7 @@ function ricercaBarcode(barcode) {
         } else if (data.results.length > 1) {
             $("#articolo-inventario").selectReset();
             $("#barcode-inventario").val("");
-            swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Trovati più articoli, seleziona quello corretto dal menu a tendina'); ?>", "info");
+            Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Trovati più articoli, seleziona quello corretto dal menu a tendina'); ?>", "info");
         } else {
             $("#articolo-missing").removeClass("hidden");
             $("#barcode-inventario").val("");
@@ -170,19 +170,19 @@ function aggiungiRigaInventario() {
     let articolo_data = $("#articolo-inventario").selectData();
 
     if (!sede_id) {
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona prima una sede'); ?>", "warning");
+        Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona prima una sede'); ?>", "warning");
         return;
     }
 
     if (!articolo_data || !articolo_data.id) {
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona un articolo'); ?>", "warning");
+        Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Seleziona un articolo'); ?>", "warning");
         return;
     }
 
     // Controlla se l'articolo è già presente
     let articolo_esistente = righeInventario.find(r => r.id_articolo == articolo_data.id);
     if (articolo_esistente) {
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Articolo già presente nella lista'); ?>", "warning");
+        Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Articolo già presente nella lista'); ?>", "warning");
         return;
     }
 
@@ -257,7 +257,7 @@ function aggiornaUbicazione(id, valore) {
 
 function salvaInventario() {
     if (righeInventario.length === 0) {
-        swal("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Aggiungi almeno un articolo'); ?>", "warning");
+        Swal.fire("<?php echo tr('Attenzione'); ?>", "<?php echo tr('Aggiungi almeno un articolo'); ?>", "warning");
         return;
     }
 
@@ -275,14 +275,14 @@ function salvaInventario() {
     // Salvataggio via AJAX
     $.post(globals.rootdir + "/modules/movimenti/actions.php", dati, function(response) {
         if (response.success) {
-            swal("<?php echo tr('Successo'); ?>", "<?php echo tr('Inventario salvato correttamente'); ?>", "success").then(function() {
+            Swal.fire("<?php echo tr('Successo'); ?>", "<?php echo tr('Inventario salvato correttamente'); ?>", "success").then(function() {
                 $("#modals > div").modal("hide");
             });
         } else {
-            swal("<?php echo tr('Errore'); ?>", response.message || "<?php echo tr('Errore durante il salvataggio'); ?>", "error");
+            Swal.fire("<?php echo tr('Errore'); ?>", response.message || "<?php echo tr('Errore durante il salvataggio'); ?>", "error");
         }
     }, 'json').fail(function() {
-        swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore di comunicazione con il server'); ?>", "error");
+        Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore di comunicazione con il server'); ?>", "error");
     });
 }
 </script>

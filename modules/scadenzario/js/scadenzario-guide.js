@@ -18,7 +18,7 @@ function showScadenzarioGuide() {
         return;
     }
 
-    swal({
+    Swal.fire({
         title: 'Guida ai filtri in Scadenzario',
         html: `
             <p> 
@@ -37,8 +37,10 @@ function showScadenzarioGuide() {
         `,
         type: 'info',
         showConfirmButton: false,
-        confirmButtonClass: 'btn-info',
         confirmButtonText: 'Ho capito',
-        width: '700px'
+        width: '700px',
+        customClass: { 
+            confirmButton: 'btn-info'
+        }
     });
 }

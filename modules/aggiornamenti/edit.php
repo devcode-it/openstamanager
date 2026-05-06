@@ -1252,15 +1252,17 @@ $(document).ready(function() {
             </div>
         `;
 
-        swal({
+        Swal.fire({
             title: "'.tr('Conferma risoluzione conflitti database').'",
             html: htmlContent,
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì, procedi').'",
             cancelButtonText: "'.tr('Annulla').'",
-            confirmButtonClass: "btn btn-lg btn-warning",
-            cancelButtonClass: "btn btn-lg btn-default",
+            customClass: {
+                confirmButton: "btn btn-lg btn-warning",
+                cancelButton: "btn btn-lg btn-default",
+            }
             buttonsStyling: false,
             showLoaderOnConfirm: true,
             preConfirm: function() {
@@ -1366,18 +1368,18 @@ echo '
 <script>
 function update() {
     if ($("#blob").val()) {
-        swal({
+        Swal.fire({
             title: "'.tr('Avviare la procedura?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
             $("#update").submit();
         })
     } else {
-        swal({
+        Swal.fire({
             title: "'.tr('Selezionare un file!').'",
-            type: "error",
+            icon: "error",
         })
     }
 }

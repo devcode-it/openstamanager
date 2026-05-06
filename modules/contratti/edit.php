@@ -460,16 +460,16 @@ function toggleTipoAttivita(idTipoIntervento, button) {
                 // Ricarica solo la sezione costi unitari
                 caricaCostiUnitari();
             } else {
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: "'.tr('Errore').'",
                     text: response.message
                 });
             }
         },
         error: function() {
-            swal({
-                type: "error",
+            Swal.fire({
+                icon: "error",
                 title: "'.tr('Errore').'",
                 text: "'.tr('Si è verificato un errore durante l\'operazione').'"
             });
@@ -499,8 +499,8 @@ function aggiungiRigaOre(idTipoIntervento, titoloTipo) {
             openModal("'.tr('Aggiungi riga').'", globals.rootdir + "/modules/contratti/row-add.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&" + options);
         },
         error: function() {
-            swal({
-                type: "error",
+            Swal.fire({
+                icon: "error",
                 title: "'.tr('Errore').'",
                 text: "'.tr('Si è verificato un errore durante il recupero del costo orario').'"
             });
@@ -561,8 +561,8 @@ async function salvaArticolo() {
             renderMessages();
             if(response.length > 0){
                 response = JSON.parse(response);
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: "'.tr('Errore').'",
                     text: response.error,
                 });

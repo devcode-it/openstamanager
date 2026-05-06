@@ -9,9 +9,9 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
     <script>
         function upload1(btn) {
             if ($("#blob1").val()) {
-                swal({
+                Swal.fire({
                     title: "'.tr('Avviare la procedura?').'",
-                    type: "warning",
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: "'.tr('Sì').'"
                 }).then(function (result) {
@@ -35,7 +35,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                 // Verifica se la risposta è vuota
                                 if (!data || data.trim() === "") {
                                     console.error("Risposta vuota dal server");
-                                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                    Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
                                     return;
@@ -43,7 +43,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
 
                                 var response = JSON.parse(data);
                                 if (response.error) {
-                                    swal("'.tr('Errore').'", response.error, "error");
+                                    Swal.fire("'.tr('Errore').'", response.error, "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
                                     return;
@@ -51,28 +51,28 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                             } catch (e) {
                                 console.error("Errore parsing JSON:", e);
                                 console.error("Dati ricevuti:", data);
-                                swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                                 $("#blob1").val("");
                                 buttonRestore(btn, restore);
                                 return;
                             }
 
-                            swal("Caricamento completato!", "", "success");
+                            Swal.fire("Caricamento completato!", "", "success");
                             $("#blob1").val("");
                             buttonRestore(btn, restore);
                         },
                         error: function(xhr) {
                             $("#main_loading").fadeOut();
-                            swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
                             buttonRestore(btn, restore);
                         }
                     });
                 })
             } else {
-                swal({
+                Swal.fire({
                     title: "'.tr('Selezionare un file!').'",
-                    type: "error",
+                    icon: "error",
                 })
             }
         }
@@ -87,9 +87,9 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
     <script>
         function upload1(btn) {
             if ($("#blob1").val()) {
-                swal({
+                Swal.fire({
                     title: "'.tr('Avviare la procedura?').'",
-                    type: "warning",
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: "'.tr('Sì').'"
                 }).then(function (result) {
@@ -113,7 +113,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                 // Verifica se la risposta è vuota
                                 if (!data || data.trim() === "") {
                                     console.error("Risposta vuota dal server");
-                                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                    Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
                                     return;
@@ -123,7 +123,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
 
                                 // Controlla se c\'è un messaggio di errore nella risposta
                                 if (data.error) {
-                                    swal("'.tr('Errore').'", data.error, "error");
+                                    Swal.fire("'.tr('Errore').'", data.error, "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
                                     return;
@@ -132,9 +132,9 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                 if (!data.already) {
                                     redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                                 } else {
-                                    swal({
+                                    Swal.fire({
                                         title: "'.tr('Fattura già importata').'.",
-                                        type: "info",
+                                        icon: "info",
                                     });
 
                                     $("#blob1").val("");
@@ -142,7 +142,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                             } catch (e) {
                                 console.error("Errore parsing JSON:", e);
                                 console.error("Dati ricevuti:", data);
-                                swal("'.tr('Errore').'", "'.tr('Si è verificato un errore durante l\'elaborazione della risposta').'", "error");
+                                Swal.fire("'.tr('Errore').'", "'.tr('Si è verificato un errore durante l\'elaborazione della risposta').'", "error");
                                 $("#blob1").val("");
                             }
 
@@ -150,16 +150,16 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                         },
                         error: function(xhr) {
                             $("#main_loading").fadeOut();
-                            swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
                             buttonRestore(btn, restore);
                         }
                     });
                 })
             } else {
-                swal({
+                Swal.fire({
                     title: "'.tr('Selezionare un file!').'",
-                    type: "error",
+                    icon: "error",
                 })
             }
         }
@@ -266,9 +266,9 @@ function importAllZip(btn) {
     var invoiceRows = $("table tbody tr:not(#no-results-message)").length;
 
     if (invoiceRows === 0) {
-        swal({
+        Swal.fire({
             title: "'.tr('Nessuna fattura da importare').'",
-            type: "info",
+            icon: "info",
         });
         return;
     }
@@ -290,7 +290,7 @@ function importAllZip(btn) {
                 // Verifica se la risposta è vuota
                 if (!data || data.trim() === "") {
                     console.error("Risposta vuota dal server");
-                    swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                    Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                     buttonRestore(btn, restore);
                     $("#main_loading").fadeOut();
                     return;
@@ -300,7 +300,7 @@ function importAllZip(btn) {
             } catch (e) {
                 console.error("Errore parsing JSON:", e);
                 console.error("Dati ricevuti:", data);
-                swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                 buttonRestore(btn, restore);
                 $("#main_loading").fadeOut();
                 return;
@@ -308,9 +308,9 @@ function importAllZip(btn) {
 
             // Controlla se ci sono documenti da importare
             if (!data || data.length === 0) {
-                swal({
+                Swal.fire({
                     title: "'.tr('Nessuna fattura da importare').'",
-                    type: "info",
+                    icon: "info",
                 });
                 buttonRestore(btn, restore);
                 $("#main_loading").fadeOut();
@@ -318,12 +318,12 @@ function importAllZip(btn) {
             }
 
             // Se ci sono documenti, mostra il dialogo di conferma
-            swal({
+            Swal.fire({
                 title: "'.tr('Importare tutte le fatture?').'",
                 html: "'.tr('Verranno scaricate tutte le fatture da importare, e non sarà più possibile visualizzare altre informazioni oltre al nome per le fatture che non verranno importate completamente. Continuare?').'",
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Procedi').'",
-                type: "info",
+                icon: "info",
             }).then(function (result) {
                 count = data.length;
                 counter = 0;

@@ -454,15 +454,17 @@ echo '
     }
 
     function eliminaConto(id_conto, level) {
-        swal({
+        Swal.fire({
             title: "'.tr('Sei sicuro?').'",
             html: "'.tr('Eliminare questo elemento?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Elimina').'",
-            confirmButtonClass: "btn btn-lg btn-danger",
             cancelButtonText: "'.tr('Annulla').'",
-            cancelButtonClass: "btn btn-lg"
+            customClass: {
+                confirmButton: "btn btn-lg btn-danger",
+                cancelButton: "btn btn-lg"
+            }
         }).then(function () {
             $.ajax({
                 url: globals.rootdir + "/actions.php",
@@ -477,7 +479,7 @@ echo '
                     location.reload();
                 },
                 error: function() {
-                    swal("'.tr('Errore').'.", "'.tr('Errore durante l\'eliminazione del conto.').'.", "error");
+                    Swal.fire("'.tr('Errore').'.", "'.tr('Errore durante l\'eliminazione del conto.').'.", "error");
                 }
             });
         });

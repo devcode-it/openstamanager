@@ -116,7 +116,7 @@ function import_fe(button, file) {
         },
         error: function(xhr) {
             $("#main_loading").fadeOut();
-            swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
             buttonRestore(button, restore);
         }
@@ -124,10 +124,10 @@ function import_fe(button, file) {
 }
 
 function delete_fe(button, file_id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Rimuovere la ricevuta salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
-        type: "error",
+        icon: "error",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -154,7 +154,7 @@ function delete_fe(button, file_id) {
                 },
                 error: function(xhr) {
                     $("#main_loading").fadeOut();
-                    swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                    Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
                     buttonRestore(button, restore);
                 }
             });
@@ -163,10 +163,10 @@ function delete_fe(button, file_id) {
 }
 
 function process_fe(button, file) {
-    swal({
+    Swal.fire({
         title: "'.tr('Segnare la ricevuta come processata?').'",
         html: "'.tr("Non sarà possibile individuarla nuovamente in modo automatico: l'unico modo per recuperarla sarà contattare l'assistenza").'",
-        type: "info",
+        icon: "info",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -193,7 +193,7 @@ function process_fe(button, file) {
                 },
                 error: function(xhr) {
                     $("#main_loading").fadeOut();
-                    swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                    Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
                     buttonRestore(button, restore);
                 }
             });
@@ -223,7 +223,7 @@ function manual_associate_fe(button, file) {
         },
         error: function(xhr) {
             $("#main_loading").fadeOut();
-            swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
             buttonRestore(button, restore);
         }
     });
@@ -245,10 +245,10 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                     var fatture = JSON.parse(data);
 
                     if (fatture.length === 0) {
-                        swal({
+                        Swal.fire({
                             title: "'.tr('Nessuna fattura trovata').'",
                             html: "'.tr('Non sono state trovate fatture con stato \"In elaborazione\" da associare alla ricevuta').' <strong>" + receiptFile + "</strong>",
-                            type: "warning",
+                            icon: "warning",
                         });
                         buttonRestore(originalButton, originalRestore);
                         return;
@@ -287,7 +287,7 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                         }
                     });
 
-                    swal({
+                    Swal.fire({
                         title: "'.tr('Seleziona fattura da associare').'",
                         html: "<style>" +
                               "#swal-fattura-select { width: 95% !important; margin: 0 auto; display: block; max-height: 200px; overflow-y: auto; }" +
@@ -322,7 +322,7 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                             if (selectedFattura && selectedFattura !== "") {
                                 associateReceiptToInvoice(receiptFile, selectedFattura, originalButton, originalRestore);
                             } else {
-                                swal("'.tr('Errore').'", "'.tr('Seleziona una fattura').'", "error");
+                                Swal.fire("'.tr('Errore').'", "'.tr('Seleziona una fattura').'", "error");
                                 buttonRestore(originalButton, originalRestore);
                             }
                         } else {
@@ -333,7 +333,7 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                     });
                 },
                 error: function(xhr) {
-                    swal("'.tr('Errore').'", "'.tr('Errore nel caricamento delle fatture').'", "error");
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore nel caricamento delle fatture').'", "error");
                     buttonRestore(originalButton, originalRestore);
                 }
             });
@@ -368,16 +368,16 @@ function associateReceiptToInvoice(receiptFile, fatturaId, originalButton, origi
                             day: "2-digit"
                         });
 
-                        swal({
+                        Swal.fire({
                             title: "'.tr('Associazione completata!').'",
                             html: "'.tr('Ricevuta associata correttamente alla fattura').': <h4>" + result.fattura.numero_esterno + " '.tr('del').' " + data_fattura + "</h4><br><h5>'.tr('Ricevuta').': " + result.file + "</h5>",
-                            type: "success",
+                            icon: "success",
                         });
                     } else {
-                        swal({
+                        Swal.fire({
                             title: "'.tr('Associazione completata!').'",
                             html: result.message + "<br><h5>'.tr('Ricevuta').': " + result.file + "</h5>",
-                            type: "success",
+                            icon: "success",
                         });
                     }
 
@@ -386,17 +386,17 @@ function associateReceiptToInvoice(receiptFile, fatturaId, originalButton, origi
                         start_local_datatables();
                     });
                 } else {
-                    swal("'.tr('Errore').'", result.message || "'.tr('Errore sconosciuto').'", "error");
+                    Swal.fire("'.tr('Errore').'", result.message || "'.tr('Errore sconosciuto').'", "error");
                 }
             } catch (e) {
-                swal("'.tr('Errore').'", "'.tr('Errore nel parsing della risposta del server').'", "error");
+                Swal.fire("'.tr('Errore').'", "'.tr('Errore nel parsing della risposta del server').'", "error");
             }
 
             buttonRestore(originalButton, originalRestore);
         },
         error: function(xhr) {
             $("#main_loading").fadeOut();
-            swal("'.tr('Errore').'", "'.tr('Errore durante l\'associazione').'", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'associazione').'", "error");
             buttonRestore(originalButton, originalRestore);
         }
     });

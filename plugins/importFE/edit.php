@@ -38,9 +38,9 @@ echo '
             } else {
                 text = "'.tr('Avviare la procedura?').'";
             }
-            swal({
+            Swal.fire({
                 title: text,
-                type: "warning",
+                icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Sì').'"
             }).then(function (result) {
@@ -66,15 +66,15 @@ echo '
                                 redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
                             }
                         } else if (data.error) {
-                            swal({
+                            Swal.fire({
                                 title: "'.tr('Errore').'",
                                 text: data.error,
-                                type: "error",
+                                icon: "error",
                             });
                         } else {
-                            swal({
+                            Swal.fire({
                                 title: "'.tr('Fattura già importata').'.",
-                                type: "info",
+                                icon: "info",
                             });
 
 							$("#blob").val("");
@@ -83,16 +83,16 @@ echo '
 						buttonRestore(btn, restore);
                     },
                     error: function(xhr) {
-                        swal("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                        Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
 
                         buttonRestore(btn, restore);
                     }
                 });
             })
         } else {
-            swal({
+            Swal.fire({
                 title: "'.tr('Selezionare un file!').'",
-                type: "error",
+                icon: "error",
             })
         }
     }
@@ -206,19 +206,19 @@ function importAll(btn) {
     var invoiceRows = $("table tbody tr:not(#no-results-message)").length;
 
     if (invoiceRows === 0) {
-        swal({
+        Swal.fire({
             title: "'.tr('Nessuna fattura da importare').'",
-            type: "info",
+            icon: "info",
         });
         return;
     }
 
-    swal({
+    Swal.fire({
         title: "'.tr('Importare tutte le fatture in sequenza?').'",
         html: "'.tr('Verranno importate manualmente tutte le fatture presenti. Continuare?').'",
         showCancelButton: true,
         confirmButtonText: "'.tr('Procedi').'",
-        type: "info",
+        icon: "info",
     }).then(function (result) {
         var restore = buttonLoading(btn);
         $("#main_loading").show();

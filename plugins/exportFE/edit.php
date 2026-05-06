@@ -251,23 +251,23 @@ if ($fattura !== null) {
                         buttonRestore(button, restore);
 
                         if (data.code === 200) {
-                            swal("'.tr('Fattura inviata!').'", data.message, "success");
+                            Swal.fire("'.tr('Fattura inviata!').'", data.message, "success");
 
                             $(button).attr("disabled", true).addClass("disabled");
                             // Ricarica la pagina dopo 3 secondi
                             setTimeout(function() { location.reload(); }, 3000);
                         } else if (data.code === 301) {
-                            swal("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
+                            Swal.fire("'.tr('Invio già effettuato').'", data.code + " - " + data.message, "error");
                             $(button).attr("disabled", true).addClass("disabled");
                         } else if (data.code === 500) {
-                            swal("'.tr("Errore durante l'invio").'", "'.tr("Si è verificato un problema durante l'invio della fattura! Riprova tra qualche minuto oppure contatta l'assistenza se il problema persiste.").'", "error");
+                            Swal.fire("'.tr("Errore durante l'invio").'", "'.tr("Si è verificato un problema durante l'invio della fattura! Riprova tra qualche minuto oppure contatta l'assistenza se il problema persiste.").'", "error");
                         } else {
-                            swal("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
+                            Swal.fire("'.tr('Invio fallito').'", data.code + " - " + data.message, "error");
                         }
                     },
                     error: function() {
                         $("#main_loading").fadeOut();
-                        swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+                        Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
 
                         buttonRestore(button, restore);
                     }
@@ -299,16 +299,16 @@ if ($fattura !== null) {
                     data = JSON.parse(data);
 
                     if (data.file) {
-                        swal("'.tr('Verifica completata con successo!').'", "'.tr('Lo stato della Fattura Elettronica è stato aggiornato in base all\'ultima notifica disponibile nel sistema!').'", "success").then(function() {
+                        Swal.fire("'.tr('Verifica completata con successo!').'", "'.tr('Lo stato della Fattura Elettronica è stato aggiornato in base all\'ultima notifica disponibile nel sistema!').'", "success").then(function() {
                             location.reload(); // Ricaricamento pagina
                         });
                     } else {
-                        swal("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
+                        Swal.fire("'.tr('Verifica fallita').'", data.code + " - " + data.message, "error");
                     }
                 },
                 error: function(data) {
                     $("#main_loading").fadeOut();
-                    swal("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante la verifica').'", "error");
 
                     buttonRestore(button, restore);
                 }
@@ -323,10 +323,10 @@ if ($fattura !== null) {
 
     if ($generata) {
         echo '
-                    swal({
+                    Swal.fire({
                         title: "'.tr('Sei sicuro di rigenerare la fattura?').'",
                         html: "<p>'.tr('Attenzione: sarà generato un nuovo progressivo invio').'.</p>",
-                        type: "warning",
+                        icon: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#30d64b",
                         cancelButtonColor: "#d33",
@@ -345,8 +345,8 @@ if ($fattura !== null) {
     echo '
                 }).catch(function() {
                     $("#main_loading").fadeOut();
-                    swal({
-                        type: "error",
+                    Swal.fire({
+                        icon: "error",
                         title: "'.tr('Errore').'",
                         text:  "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente').'.",
                     });

@@ -227,7 +227,7 @@ function aggiungiFornitorePrezzi(button) {
     if (id_anagrafica) {
         modificaFornitorePrezzi(id_anagrafica, direzione);
     } else {
-        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
+        Swal.fire("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
     }
 }
 </script>';

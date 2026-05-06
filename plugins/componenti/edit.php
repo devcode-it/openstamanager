@@ -332,9 +332,9 @@ echo '
         const tr = $(trigger).closest("tr");
         const id_componente = tr.data("id");
 
-        swal({
+        Swal.fire({
             title: "'.tr('Vuoi sostituire questo componente?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {
@@ -347,9 +347,9 @@ echo '
         const tr = $(trigger).closest("tr");
         const id_componente = tr.data("id");
 
-        swal({
+        Swal.fire({
             title: "'.tr('Vuoi eliminare questo componente?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function () {

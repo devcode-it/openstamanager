@@ -671,9 +671,9 @@ globals.dashboard = {
                         data = $.trim(data);
 
                         if (responseType === "success" && data !== "ok") {
-                            swal(globals.dashboard.genericWarning, data, "warning");
+                            Swal.fire(globals.dashboard.genericWarning, data, "warning");
                         } else if (responseType !== "success") {
-                            swal(globals.dashboard.genericError, data, "error");
+                            Swal.fire(globals.dashboard.genericError, data, "error");
                         }
 
                         if (data !== "ok") {
@@ -699,9 +699,9 @@ globals.dashboard = {
                     data = $.trim(data);
 
                     if (responseType === "success" && data !== "ok") {
-                        swal(globals.dashboard.genericWarning, data, "warning");
+                        Swal.fire(globals.dashboard.genericWarning, data, "warning");
                     } else if (responseType !== "success") {
-                        swal(globals.dashboard.genericError, data, "error");
+                        Swal.fire(globals.dashboard.genericError, data, "error");
                     }
 
                     if (data !== "ok") {
@@ -807,7 +807,7 @@ echo '
                         id_module: "'.$id_module.'"
                     },
                     failure: function () {
-                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                        Swal.fire(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
                 },
                 {
@@ -818,7 +818,7 @@ echo '
                         id_module: "'.$id_module.'"
                     },
                     failure: function () {
-                        swal(globals.dashboard.genericError, globals.dashboard.error, "error");
+                        Swal.fire(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
                 }
 

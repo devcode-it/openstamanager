@@ -366,7 +366,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                 // Validazione per step 2 (licenza)
                 if (currentStep === 2) {
                     if (!$("#agree").is(":checked")) {
-                        swal('.$cannot_proceed_title_js.', '.$license_required_message_js.', "error");
+                        Swal.fire('.$cannot_proceed_title_js.', '.$license_required_message_js.', "error");
                         return false;
                     }
                 }
@@ -426,7 +426,7 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                                 $installBtn.html(prev_html_install);
                                 $installBtn.prop("disabled", false);
                                 $("#test").prop("disabled", false);
-                                swal(
+                                Swal.fire(
                                     '.$mysql_incompatible_title_js.',
                                     '.$mysql_incompatible_message_js.',
                                     "error"
@@ -465,11 +465,11 @@ if (empty($creation) && (!file_exists('config.inc.php') || !$valid_config)) {
                             $("#install").prop("disabled", false);
 
                             if(data == 0){
-                                swal('.$connection_error_title_js.', '.$connection_error_message_js.', "error");
+                                Swal.fire('.$connection_error_title_js.', '.$connection_error_message_js.', "error");
                             } else if(data == 1){
-                                swal('.$insufficient_permissions_title_js.', '.$insufficient_permissions_message_js.', "error");
+                                Swal.fire('.$insufficient_permissions_title_js.', '.$insufficient_permissions_message_js.', "error");
                             } else {
-                                swal('.$connection_success_title_js.', '.$connection_success_message_js.', "success");
+                                Swal.fire('.$connection_success_title_js.', '.$connection_success_message_js.', "success");
                             }
                         },
                         error: function(data) {

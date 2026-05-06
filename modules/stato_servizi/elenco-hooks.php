@@ -111,10 +111,10 @@ echo '
 <script>
 
 function svuotaCacheHooks(button){
-    swal({
+    Swal.fire({
         title: "'.tr('Svuota cache e sblocca hooks', []).'",
         html: "'.tr('Questa operazione svuoterà la cache di tutti gli hooks e li sbloccherà. Sei sicuro di voler continuare?', []).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -135,8 +135,8 @@ function svuotaCacheHooks(button){
                     // Ricarica la pagina per mostrare i cambiamenti
                     caricaElencoHooks();
                 } else {
-                    swal({
-                        type: "error",
+                    Swal.fire({
+                        icon: "error",
                         title: "'.tr('Errore').'",
                         text: response.error || "'.tr('Errore durante lo svuotamento della cache').'",
                     });
@@ -146,8 +146,8 @@ function svuotaCacheHooks(button){
             },
             error: function() {
                 buttonRestore(button, restore);
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -162,7 +162,7 @@ function disabilitaHook(button){
     const nome = riga.data("nome");
     const nome_tipo = "hook";
 
-    swal({
+    Swal.fire({
         title: "'.tr('Disabilita _TYPE_', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -170,7 +170,7 @@ function disabilitaHook(button){
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -192,8 +192,8 @@ function disabilitaHook(button){
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -209,7 +209,7 @@ function abilitaHook(button) {
     const nome = riga.data("nome");
     const nome_tipo = "hook";
 
-    swal({
+    Swal.fire({
         title: "'.tr('Abilita _TYPE_', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -217,7 +217,7 @@ function abilitaHook(button) {
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -239,8 +239,8 @@ function abilitaHook(button) {
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });

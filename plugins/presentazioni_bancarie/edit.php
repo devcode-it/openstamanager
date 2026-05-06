@@ -57,7 +57,7 @@ function getRecords() {
 function esporta(button) {
     let records = getRecords();
     if (!records.length) {
-        swal("'.tr('Errore').'", "'.tr('Selezionare almeno una scadenza.').'", "error");
+        Swal.fire("'.tr('Errore').'", "'.tr('Selezionare almeno una scadenza.').'", "error");
         return;
     }
 

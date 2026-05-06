@@ -811,34 +811,34 @@ echo '
 	        calculateDataInizioRicorrenza();
 	        var dataInizio = $("#data_inizio_ricorrenza_hidden").val();
 	        if (!dataInizio) {
-	            swal("Errore", "Impossibile calcolare la data di inizio ricorrenza", "error");
+	            Swal.fire("Errore", "Impossibile calcolare la data di inizio ricorrenza", "error");
 	            return false;
 	        }
 
 	        var periodicita = $("#periodicita").val();
 	        if (!periodicita || periodicita <= 0) {
-	            swal("Errore", "La periodicità deve essere un numero positivo", "error");
+	            Swal.fire("Errore", "La periodicità deve essere un numero positivo", "error");
 	            return false;
 	        }
 
 	        var metodo = $("#metodo_ricorrenza").val();
 	        if (!metodo) {
-	            swal("Errore", "Seleziona un metodo per terminare la ricorrenza", "error");
+	            Swal.fire("Errore", "Seleziona un metodo per terminare la ricorrenza", "error");
 	            return false;
 	        }
 
 	        if (metodo === "data" && !$("#data_fine_ricorrenza").val()) {
-	            swal("Errore", "La data di fine ricorrenza è obbligatoria", "error");
+	            Swal.fire("Errore", "La data di fine ricorrenza è obbligatoria", "error");
 	            return false;
 	        }
 
 	        if (metodo === "numero" && (!$("#numero_ricorrenze").val() || $("#numero_ricorrenze").val() <= 0)) {
-	            swal("Errore", "Il numero di ricorrenze deve essere maggiore di zero", "error");
+	            Swal.fire("Errore", "Il numero di ricorrenze deve essere maggiore di zero", "error");
 	            return false;
 	        }
 
 	        if (!$("#idstatoricorrenze").val()) {
-	            swal("Errore", "Seleziona uno stato per le ricorrenze", "error");
+	            Swal.fire("Errore", "Seleziona uno stato per le ricorrenze", "error");
 	            return false;
 	        }
 	    }

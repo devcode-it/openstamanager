@@ -404,7 +404,7 @@ echo '
                 const lng = parseFloat("'.$sede_cliente->lng.'");
 
                 if (!lat || !lng){
-                    swal("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
+                    Swal.fire("'.tr('Errore').'", "'.tr('La posizione non è stata definita. Impossibile caricare la mappa.').'", "error");
                     return false;
                 }
 

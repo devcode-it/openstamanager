@@ -202,7 +202,7 @@ function salvaImpostazione(id, valore){
             renderMessages();
         },
         error: function(data) {
-            swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
         }
     });
 }

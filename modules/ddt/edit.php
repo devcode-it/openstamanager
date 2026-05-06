@@ -626,8 +626,8 @@ async function salvaArticolo() {
             renderMessages();
             if(response.length > 0){
                 response = JSON.parse(response);
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: "'.tr('Errore').'",
                     text: response.error,
                 });

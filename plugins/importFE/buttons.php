@@ -78,7 +78,7 @@ function compile(btn) {
             });
         },
         error: function(data) {
-            swal("'.tr('Errore').'", "'.tr('La compilazione automatica dei campi non è andata a buon fine').'.", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('La compilazione automatica dei campi non è andata a buon fine').'.", "error");
 
             buttonRestore(btn, restore);
         }
@@ -128,7 +128,7 @@ function compilaRiferimenti(btn) {
             }, 100);
         },
         error: function(data) {
-            swal("'.tr('Errore').'", "'.tr('La ricerca automatica dei riferimenti per le righe non è andata a buon fine').'.", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('La ricerca automatica dei riferimenti per le righe non è andata a buon fine').'.", "error");
 
             buttonRestore(btn, restore);
         }

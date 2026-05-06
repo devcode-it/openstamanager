@@ -542,12 +542,12 @@ function confrontaRighe(id) {
 }
 
 function aggiornaRighe(id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Aggiornare prezzi di queste righe?').'",
         html: `'.tr('Confermando verranno aggiornati i prezzi delle righe secondo i listini ed i prezzi predefiniti collegati all\'articolo e ai piani sconto collegati all\'anagrafica.').'.<br><br>
         {[ "type": "checkbox", "label": "", "name": "update_prezzo_acquisto", "value":"1", "values":" \"'.tr('Aggiornare prezzo di acquisto').'\",\"'.tr('Non aggiornare prezzo di acquisto').'\" " ]}<br>
         {[ "type": "checkbox", "label": "", "name": "update_prezzo_vendita", "value":"1", "values":" \"'.tr('Aggiornare prezzo di vendita').'\",\"'.tr('Non aggiornare prezzo di vendita').'\" " ]}<br>
-        {[ "type": "checkbox", "label": "", "name": "update_descrizione", "value":"0", "values":" \"'.tr('Aggiornare descrizione').'\",\"'.tr('Non aggiornare descrizione').'\" " ]}<br>`,        type: "warning",
+        {[ "type": "checkbox", "label": "", "name": "update_descrizione", "value":"0", "values":" \"'.tr('Aggiornare descrizione').'\",\"'.tr('Non aggiornare descrizione').'\" " ]}<br>`,        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
@@ -576,10 +576,10 @@ function aggiornaRighe(id) {
 }
 
 function rimuoviRiga(id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Rimuovere queste righe?').'",
         html: "'.tr('Sei sicuro di volere rimuovere queste righe dal documento?').' '.tr("L'operazione è irreversibile").'.",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
@@ -606,10 +606,10 @@ function rimuoviRiga(id) {
 }
 
 function duplicaRiga(id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Duplicare queste righe?').'",
         html: "'.tr('Sei sicuro di volere queste righe del documento?').'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function () {
@@ -637,18 +637,18 @@ function duplicaRiga(id) {
 
 function stampaBarcodeDDT(id) {
     if (id.length === 0) {
-        swal({
+        Swal.fire({
             title: "'.tr('Nessuna riga selezionata').'",
             text: "'.tr('Seleziona almeno una riga articolo per stampare i barcode').'",
-            type: "warning"
+            icon: "warning"
         });
         return;
     }
 
-    swal({
+    Swal.fire({
         title: "'.tr('Stampare i barcode delle righe selezionate?').'",
         html: "'.tr('Verranno stampate le etichette barcode per ogni articolo selezionato, nella quantità presente nel DDT').'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Stampa').'"
     }).then(function () {
@@ -667,10 +667,10 @@ function stampaBarcodeDDT(id) {
                 window.open(response, "_blank");
             },
             error: function() {
-                swal({
+                Swal.fire({
                     title: "'.tr('Errore').'",
                     text: "'.tr('Errore durante la preparazione della stampa').'",
-                    type: "error"
+                    icon: "error"
                 });
             }
         });
@@ -715,11 +715,11 @@ function copiaRighe(righe) {
         success: function (response) {
             if (response && response.data) {
                 navigator.clipboard.writeText(JSON.stringify(response.data)).then(function() {
-                    swal({ title: "'.tr('Righe copiate!').'", text: "'.tr('Le righe selezionate sono state copiate negli appunti').'", type: "success", timer: 2000, showConfirmButton: false });
-                }).catch(function(err) { swal({ title: "'.tr('Errore').'", text: "'.tr('Impossibile copiare negli appunti').': " + err, type: "error" }); });
+                    Swal.fire({ title: "'.tr('Righe copiate!').'", text: "'.tr('Le righe selezionate sono state copiate negli appunti').'", icon: "success", timer: 2000, showConfirmButton: false });
+                }).catch(function(err) { Swal.fire({ title: "'.tr('Errore').'", text: "'.tr('Impossibile copiare negli appunti').': " + err, icon: "error" }); });
             }
         },
-        error: function() { swal({ title: "'.tr('Errore').'", text: "'.tr('Errore durante il recupero dei dati delle righe').'", type: "error" }); }
+        error: function() { Swal.fire({ title: "'.tr('Errore').'", text: "'.tr('Errore durante il recupero dei dati delle righe').'", icon: "error" }); }
     });
 }
 
@@ -727,19 +727,19 @@ function incollaRighe() {
     navigator.clipboard.readText().then(function(text) {
         try {
             let righe_data = JSON.parse(text);
-            swal({ title: "'.tr('Incollare le righe?').'", html: "'.tr('Sei sicuro di voler incollare').' " + righe_data.length + " '.tr('righe in questo documento?').'", type: "warning", showCancelButton: true, confirmButtonText: "'.tr('Sì').'" }).then(function () {
+            Swal.fire({ title: "'.tr('Incollare le righe?').'", html: "'.tr('Sei sicuro di voler incollare').' " + righe_data.length + " '.tr('righe in questo documento?').'", icon: "warning", showCancelButton: true, confirmButtonText: "'.tr('Sì').'" }).then(function () {
                 $.ajax({
                     url: globals.rootdir + "/actions.php", type: "POST", dataType: "json",
                     data: { id_module: globals.id_module, id_record: globals.id_record, op: "paste_righe", righe_data: JSON.stringify(righe_data) },
                     success: function (response) {
                         renderMessages(); caricaRighe(null);
-                        swal({ title: "'.tr('Righe incollate!').'", text: "'.tr('Le righe sono state incollate con successo').'", type: "success", timer: 2000, showConfirmButton: false });
+                        Swal.fire({ title: "'.tr('Righe incollate!').'", text: "'.tr('Le righe sono state incollate con successo').'", icon: "success", timer: 2000, showConfirmButton: false });
                     },
-                    error: function() { renderMessages(); swal({ title: "'.tr('Errore').'", text: "'.tr('Errore durante l\'incollaggio delle righe').'", type: "error" }); }
+                    error: function() { renderMessages(); Swal.fire({ title: "'.tr('Errore').'", text: "'.tr('Errore durante l\'incollaggio delle righe').'", icon: "error" }); }
                 });
             }).catch(swal.noop);
-        } catch (e) { swal({ title: "'.tr('Errore').'", text: "'.tr('I dati negli appunti non sono validi').'", type: "error" }); }
-    }).catch(function(err) { swal({ title: "'.tr('Errore').'", text: "'.tr('Impossibile leggere dagli appunti').': " + err, type: "error" }); });
+        } catch (e) { Swal.fire({ title: "'.tr('Errore').'", text: "'.tr('I dati negli appunti non sono validi').'", icon: "error" }); }
+    }).catch(function(err) { Swal.fire({ title: "'.tr('Errore').'", text: "'.tr('Impossibile leggere dagli appunti').': " + err, icon: "error" }); });
 }
 
 $(".check").on("change", function() {

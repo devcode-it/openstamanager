@@ -155,7 +155,7 @@ echo '
 		if (id_articolo) {
 			openModal("'.tr('Listino articolo').'", "'.$structure->fileurl('modals/manage_articolo.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_articolo=" + id_articolo);
 		} else {
-			swal("'.tr('Attenzione').'", "'.tr('Inserire un articolo').'", "warning");
+			Swal.fire("'.tr('Attenzione').'", "'.tr('Inserire un articolo').'", "warning");
 		}
 	}
 
@@ -171,10 +171,10 @@ echo '
 	}
 
 	function rimuoviArticolo(id) {
-		swal({
+		Swal.fire({
 			title: "'.tr('Rimuovere questo articolo?').'",
 			html: "'.tr('Sei sicuro di volere rimuovere questo articolo dal listino?').' '.tr("L'operazione è irreversibile").'.",
-			type: "warning",
+			icon: "warning",
 			showCancelButton: true,
 			confirmButtonText: "'.tr('Sì').'"
 		}).then(function () {

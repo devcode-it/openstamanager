@@ -150,7 +150,7 @@ function aggiungiPrezzi(button, is_uscita) {
     if (id_anagrafica) {
         gestionePrezzi(id_anagrafica, direzione);
     } else {
-        swal("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
+        Swal.fire("'.tr('Attenzione').'", "'.tr('Inserire un\'anagrafica').'", "warning");
     }
 }
 </script>';

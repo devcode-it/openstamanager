@@ -55,25 +55,25 @@ echo '
 // Ripristino backup
 function restore() {
     if ($("#blob").val()) {
-        swal({
+        Swal.fire({
             title: "'.tr('Avviare la procedura?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
             $("#restore").submit();
         })
     } else {
-        swal({
+        Swal.fire({
             title: "'.tr('Selezionare un file!').'",
-            type: "error",
+            icon: "error",
         })
     }
 }
 
 // Creazione backup
 function creaBackup(button){
-    swal({
+    Swal.fire({
         title: "'.tr('Creare un nuovo backup?').'",
         text: "'.tr('Seleziona cosa escludere dal backup:').'",
         input: "select",
@@ -85,10 +85,12 @@ function creaBackup(button){
             title: "'.tr('Seleziona cosa escludere dal backup').'"
         },
         inputPlaceholder: " '.tr('Non escludere nulla').'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonClass: "btn btn-lg btn-success",
-        confirmButtonText: "'.tr('Crea').'",
+        customClass: {
+            confirmButton: "btn btn-lg btn-success",
+            confirmButtonText: "'.tr('Crea').'",
+        }
     }).then(function(result) {
         let restore = buttonLoading(button);
         $("#main_loading").show();
@@ -109,7 +111,7 @@ function creaBackup(button){
                 window.location.reload();
             },
             error: function() {
-                swal("'.tr('Errore').'", "'.tr('Errore durante la creazione del backup').'", "error");
+                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante la creazione del backup').'", "error");
                 renderMessages();
 
                 buttonRestore(button, restore);

@@ -142,7 +142,7 @@ function disabilitaWidget(button){
     const nome = riga.data("nome");
     const nome_tipo = "widget";
 
-    swal({
+    Swal.fire({
         title: "'.tr('Disabilitare il _TYPE_?', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -150,7 +150,7 @@ function disabilitaWidget(button){
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -172,8 +172,8 @@ function disabilitaWidget(button){
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -189,7 +189,7 @@ function abilitaWidget(button) {
     const nome = riga.data("nome");
     const nome_tipo = "widget";
 
-    swal({
+    Swal.fire({
         title: "'.tr('Abilitare il _TYPE_?', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -197,7 +197,7 @@ function abilitaWidget(button) {
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -219,8 +219,8 @@ function abilitaWidget(button) {
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -251,8 +251,8 @@ function spostaWidget(button) {
         error: function() {
             buttonRestore(button, restore);
 
-            swal({
-                type: "error",
+            Swal.fire({
+                icon: "error",
                 title: globals.translations.ajax.error.title,
                 text: globals.translations.ajax.error.text,
             });
@@ -276,7 +276,7 @@ $(".widgets").on("change", function() {
             renderMessages();
         },
         error: function(data) {
-            swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il salvataggio dei dati').'", "error");
         }
     });
 });

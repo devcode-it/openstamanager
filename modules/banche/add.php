@@ -186,7 +186,7 @@ echo '
     function checkIban() {
         let value = $("#modals #iban").val();
         if (value.length < 15) {
-            swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Inserire un IBAN valido'); ?>", "error");
+            Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Inserire un IBAN valido'); ?>", "error");
             return;
         }
         
@@ -202,7 +202,7 @@ echo '
             dataType: "json",
             success: function(balance) {
                 if (new Date(balance.data.expiry_date) < new Date()) {
-                    swal("<?php echo tr('Errore'); ?>", "<?php echo tr('La chiave API è scaduta'); ?>", "error");
+                    Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('La chiave API è scaduta'); ?>", "error");
                     return;
                 }
                 
@@ -213,7 +213,7 @@ echo '
                 } else if (balance.data.basic_balance > 0) {
                     verificationType = 'basic';
                 } else {
-                    swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Credito insufficiente per la verifica IBAN'); ?>", "error");
+                    Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Credito insufficiente per la verifica IBAN'); ?>", "error");
                     return;
                 }
                 
@@ -305,25 +305,25 @@ echo '
                                 infoHtml += "</div></div>";
                             }
                             
-                            swal({
+                            Swal.fire({
                                 title: "<?php echo tr('Verifica completata'); ?>",
                                 html: infoHtml,
-                                type: "success"
+                                icon: "success"
                             });
                             
                             // Aggiorna i campi del form
                             scomponiIban();
                         } else {
-                            swal("<?php echo tr('IBAN non valido'); ?>", response.message || "<?php echo tr('Formato IBAN non valido'); ?>", "error");
+                            Swal.fire("<?php echo tr('IBAN non valido'); ?>", response.message || "<?php echo tr('Formato IBAN non valido'); ?>", "error");
                         }
                     },
                     error: function() {
-                        swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore durante la verifica dell\'IBAN'); ?>", "error");
+                        Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore durante la verifica dell\'IBAN'); ?>", "error");
                     }
                 });
             },
             error: function() {
-                swal("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore durante la verifica del credito'); ?>", "error");
+                Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore durante la verifica del credito'); ?>", "error");
             }
         });
     }

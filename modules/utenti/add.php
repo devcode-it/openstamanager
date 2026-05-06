@@ -63,7 +63,7 @@ function submitCheck() {
 		$("#add-form").submit();
 	}else{
 		$("input[name=nome]").focus();
-		swal("<?php echo tr('Impossibile procedere'); ?>", "<?php echo tr('Nome gruppo già utilizzato'); ?>.", "error");
+		Swal.fire("<?php echo tr('Impossibile procedere'); ?>", "<?php echo tr('Nome gruppo già utilizzato'); ?>.", "error");
 
 	}
 }

@@ -431,9 +431,9 @@ function esporta(button) {
 </li>`)
             }
         } else {
-             swal({
+             Swal.fire({
                 title: "'.tr('Impossibile esportare le scadenze indicate!').'",
-                type: "error",
+                icon: "error",
             })
         }
     });
@@ -455,7 +455,7 @@ function scaricaFile(file) {
 
             window.URL.revokeObjectURL(url);
         })
-      .catch(() => swal("'.tr('Errore').'", "'.tr('Errore durante il download').'", "error"));
+      .catch(() => Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il download').'", "error"));
 }
 
 function registraPagamenti(button) {

@@ -191,14 +191,14 @@ function gestioneRicevuta(button, name, type) {
             buttonRestore(button, restore);
 
             if (response.fattura) {
-                swal({
+                Swal.fire({
                     title: type === "download" ? "'.tr('Ricevuta scaricata!').'" : "'.tr('Importazione della ricevuta completata!').'",
-                    type: "success",
+                    icon: "success",
                 });
             } else {
-                swal({
+                Swal.fire({
                     title: "'.tr('Operazione fallita!').'",
-                    type: "error",
+                    icon: "error",
                 });
             }
         },
@@ -206,7 +206,7 @@ function gestioneRicevuta(button, name, type) {
             $("#main_loading").fadeOut();
             buttonRestore(button, restore);
 
-            swal("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
+            Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il salvataggio').'", "error");
         }
     });
 }

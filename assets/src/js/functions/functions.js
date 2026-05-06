@@ -247,8 +247,8 @@ function message(element) {
                 });
             }
         }
-    }).then(
-        function () {
+    }).then(function (result) {
+        if (result.isConfirmed) {
             if (data["op"] == undefined) data["op"] = "delete";
 
             var href = window.location.href.split("#")[0];
@@ -294,20 +294,18 @@ function message(element) {
                         }
                     },
                     error: function (xhr, ajaxOptions, error) {
-                        swal({
+                        Swal.fire({
                             title: globals.translations.errorTitle,
                             html: globals.translations.errorMessage,
-                            type: "error",
+                            icon: "error",
                         })
                     },
                 });
             } else {
                 redirect_url(href, data, method, blank);
             }
-        },
-        function (dismiss) {
         }
-    );
+    });
 }
 
 function redirect_url(href, data, method, blank) {
@@ -485,13 +483,15 @@ function alertPush() {
  * @returns {*}
  */
 function confirmDelete(button, title, message) {
-    return swal({
+    return Swal.fire({
         title: title ? title : globals.translations.deleteTitle,
         html: message ? message : globals.translations.deleteMessage,
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: globals.translations.delete,
-        confirmButtonClass: "btn btn-lg btn-danger",
+        customClass: {
+            confirmButton: "btn btn-lg btn-danger",
+        },
     })
 }
 

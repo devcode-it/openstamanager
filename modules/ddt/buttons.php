@@ -42,17 +42,19 @@ if (!empty($ddt->id_ddt_trasporto_interno)) {
 
 <script>
 function completaTrasporto() {
-    swal({
+    Swal.fire({
         title: "'.tr('Completare il trasporto?').'",
         html: "'.tr('Sei sicuro di voler completare il trasporto interno tramite un DDT in direzione opposta?').'" + `<br><br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_collegamento, 'is_sezionale' => 1]).', "value": "'.$_SESSION['module_'.$id_module_collegamento]['id_segment'].'" ]}`,
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonClass: "btn btn-lg btn-success",
-        confirmButtonText: "'.tr('Completa').'",
+        customClass: {
+            confirmButton: "btn btn-lg btn-success",
+            confirmButtonText: "'.tr('Completa').'",
+        }
     }).then(
         function() {
             if ($("select[name=id_segment]").val() == null) {
-                swal( "'.tr('Attenzione').'", "'.tr('Devi prima selezionare un segmento').'...", "warning");
+                Swal.fire( "'.tr('Attenzione').'", "'.tr('Devi prima selezionare un segmento').'...", "warning");
             } else {
                 location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_segment=" + $("select[name=id_segment]").val() + "&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
             }

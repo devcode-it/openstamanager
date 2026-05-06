@@ -269,13 +269,15 @@ if (filter('action') == 'do_update') {
 
                 <script>
                 function continue_update(){
-                    swal({
+                    Swal.fire({
                         title: "'.(!$dbo->isInstalled() ? tr('Confermi l\'installazione?') : tr('Confermi l\'aggiornamento?')).'",
                         text: "'.(!$dbo->isInstalled() ? tr('Verrà creato il database e installati i dati iniziali') : tr('Il database verrà aggiornato alla nuova versione')).'",
-                        type: "warning",
+                        icon: "warning",
                         showCancelButton: true,
-                        confirmButtonClass: "btn btn-lg btn-success",
-                        confirmButtonText: "'.tr('Conferma').'",
+                        customClass: {
+                            confirmButton: "btn btn-lg btn-success",
+                            confirmButtonText: "'.tr('Conferma').'",
+                        }
                     }).then(
                     function(){
                         // Nascondi le istruzioni di installazione

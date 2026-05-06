@@ -286,7 +286,7 @@ if (!$is_bloccato) {
 
     <div class="col-md-2">
         <label>&nbsp;</label>
-        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovo_tecnico\').val()){ add_tecnici($(\'#nuovo_tecnico\').val()); }else{ swal(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovo_tecnico\').focus(); }">
+        <button type="button" class="btn btn-primary btn-block" onclick="if($(\'#nuovo_tecnico\').val()){ add_tecnici($(\'#nuovo_tecnico\').val()); }else{ Swal.fire(\''.tr('Attenzione').'\', \''.tr('Seleziona il tecnico da aggiungere').'.\', \'warning\'); $(\'#nuovo_tecnico\').focus(); }">
             <i class="fa fa-plus"></i> '.tr('Aggiungi').'
         </button>
     </div>
@@ -406,9 +406,9 @@ async function add_sessioni(button) {
 */
 function elimina_sessione(id_sessione) {
 
-    swal({
+    Swal.fire({
         title: "'.tr('Eliminare la sessione di lavoro?').'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Elimina').'"
     }).then(function (result) {

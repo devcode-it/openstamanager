@@ -272,10 +272,10 @@ $(document).ready(function() {
 
 // Funzione per confermare l'applicazione dell'ammortamento
 function applicaAmmortamento() {
-	swal({
+	Swal.fire({
 		title: "<?php echo tr('Applicare l\'ammortamento?'); ?>",
 		html: "<?php echo tr('Sei sicuro di voler applicare questo ammortamento?'); ?>",
-		type: "success",
+		icon: "success",
 		showCancelButton: true,
 		confirmButtonText: "<?php echo tr('Sì, procedi'); ?>"
 	}).then(function () {

@@ -7,7 +7,7 @@ function copyQueryToClipboard() {
     document.execCommand("copy");
 
     // Mostra un messaggio di conferma
-    swal(globals.translations.copied, globals.translations.query_copied, "success");
+    Swal.fire(globals.translations.copied, globals.translations.query_copied, "success");
 }
 
 /**
@@ -79,9 +79,9 @@ function testQuery() {
             $("#main_loading").fadeOut();
 
             if (data == "ok") {
-                swal(globals.translations.working_query, globals.translations.query_works_correctly, "success");
+                Swal.fire(globals.translations.working_query, globals.translations.query_works_correctly, "success");
             } else {
-                swal(globals.translations.error, data, "error");
+                Swal.fire(globals.translations.error, data, "error");
             }
         }
     });
@@ -157,12 +157,12 @@ function exportModule() {
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
             } else {
-                swal(globals.translations.error, response.message, "error");
+                Swal.fire(globals.translations.error, response.message, "error");
             }
         },
         error: function() {
             $("#main_loading").fadeOut();
-            swal(globals.translations.error, "Si è verificato un errore durante l'esportazione", "error");
+            Swal.fire(globals.translations.error, "Si è verificato un errore durante l'esportazione", "error");
         }
     });
 }

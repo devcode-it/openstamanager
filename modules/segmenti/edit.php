@@ -109,7 +109,7 @@ if (is_array($total) && isset($total['query'])) {
                     document.execCommand("copy");
 
                     // Mostra un messaggio di conferma
-                    swal("'.tr('Copiato').'", "'.tr('Query copiata negli appunti').'", "success");
+                    Swal.fire("'.tr('Copiato').'", "'.tr('Query copiata negli appunti').'", "success");
                 });
 
                 // Event listener per il pulsante di formattazione

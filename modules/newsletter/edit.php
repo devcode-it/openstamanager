@@ -254,14 +254,16 @@ function testInvio(button) {
     const destinatario_type = $(button).data("type");
     const email = $(button).data("email");
 
-    swal({
+    Swal.fire({
         title: "'.tr('Inviare la newsletter?').'",
         html: `'.tr("Vuoi effettuare un invio all'indirizzo _EMAIL_?", ['_EMAIL_' => '${email}']).' '.tr("L'email non sarà registrata come inviata, e l'invio della newsletter non escluderà questo indirizzo se impostato come invio di test").'.<br><br>
         {[ "type": "checkbox", "label": "'.tr('Invio di test').'", "name": "test" ]}`,
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Invia').'",
-        confirmButtonClass: "btn btn-lg btn-success",
+        customClass: { 
+            confirmButton: "btn btn-lg btn-success",
+        }
     }).then(function() {
         const restore = buttonLoading(button);
         $.ajax({
@@ -280,15 +282,15 @@ function testInvio(button) {
                 buttonRestore(button, restore);
 
                 if (response.result) {
-                    swal("'.tr('Invio completato').'", "", "success");
+                    Swal.fire("'.tr('Invio completato').'", "", "success");
                 } else {
-                    swal("'.tr('Invio fallito').'", "", "error");
+                    Swal.fire("'.tr('Invio fallito').'", "", "error");
                 }
             },
             error: function() {
                 buttonRestore(button, restore);
 
-                swal("'.tr('Errore').'", "'.tr("Errore durante l'invio dell'email").'", "error");
+                Swal.fire("'.tr('Errore').'", "'.tr("Errore durante l'invio dell'email").'", "error");
             }
         });
     });

@@ -49,7 +49,7 @@ function disabilitaModulo(button){
     const tipo = riga.data("tipo");
     const nome_tipo = riga.data("nome_tipo");
 
-    swal({
+    Swal.fire({
         title: "'.tr('Disabilitare il _TYPE_?', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -57,7 +57,7 @@ function disabilitaModulo(button){
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -80,8 +80,8 @@ function disabilitaModulo(button){
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -98,7 +98,7 @@ function abilitaModulo(button) {
     const tipo = riga.data("tipo");
     const nome_tipo = riga.data("nome_tipo");
 
-    swal({
+    Swal.fire({
         title: "'.tr('Abilitare il _TYPE_?', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -106,7 +106,7 @@ function abilitaModulo(button) {
     '_TYPE_' => '" + nome_tipo + "',
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -129,8 +129,8 @@ function abilitaModulo(button) {
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -147,12 +147,12 @@ function abilitaSottoModuli(button) {
     const tipo = riga.data("tipo");
     const nome_tipo = riga.data("nome_tipo");
 
-    swal({
+    Swal.fire({
         title: "'.tr('Abilitare tutti i sotto-moduli?').'",
         html: "'.tr('Sei sicuro di voler abilitare tutti i sotto-moduli del modulo _NAME_?', [
     '_NAME_' => '" + nome + "',
 ]).'",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -175,8 +175,8 @@ function abilitaSottoModuli(button) {
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });
@@ -193,7 +193,7 @@ function rimuoviModulo(button) {
     const tipo = riga.data("tipo");
     const nome_tipo = riga.data("nome_tipo");
 
-    swal({
+    Swal.fire({
         title: "'.tr('Rimuovere il _TYPE_?', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'",
@@ -203,7 +203,7 @@ function rimuoviModulo(button) {
 ]).'<br>'.tr('Questa operazione è irreversibile e provocherà la potenziale perdita dei dati attualmente collegati al _TYPE_', [
     '_TYPE_' => '" + nome_tipo + "',
 ]).'.",
-        type: "warning",
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
@@ -226,8 +226,8 @@ function rimuoviModulo(button) {
             error: function() {
                 buttonRestore(button, restore);
 
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: globals.translations.ajax.error.title,
                     text: globals.translations.ajax.error.text,
                 });

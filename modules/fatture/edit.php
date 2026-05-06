@@ -1091,9 +1091,9 @@ echo '
     }
 
     $("#ricalcola_scadenze").click(function() {
-        swal({
+        Swal.fire({
             title: "'.tr('Desideri ricalcolare le scadenze?').'",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
@@ -1289,10 +1289,12 @@ $(document).ready(function () {
 	            return {
 	                title: "'.tr('Riaprire il documento?').'",
 	                text: "'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'",
-	                type: "warning",
+	                icon: "warning",
 	                showCancelButton: true,
 	                confirmButtonText: "'.tr('Procedi').'",
-	                confirmButtonClass: "btn btn-lg btn-warning",
+                    customClass: {
+	                    confirmButton: "btn btn-lg btn-warning",
+                    }
 	            };
 	        }
 
@@ -1300,7 +1302,7 @@ $(document).ready(function () {
 	            return {
 	                title: "'.tr('Attenzione').'",
 	                text: "'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'",
-	                type: "warning",
+	                icon: "warning",
 	                showCancelButton: true,
 	                confirmButtonText: "'.tr('Procedi').'",
 	            };
@@ -1317,7 +1319,7 @@ $(document).ready(function () {
 	        }
 
 	        e.preventDefault();
-	        swal(config)
+	        Swal.fire(config)
 	            .then(function() {
 	                content_was_modified = false;
 	                prepareForm(form);
@@ -1399,8 +1401,8 @@ async function salvaArticolo() {
             renderMessages();
             if(response.length > 0){
                 response = JSON.parse(response);
-                swal({
-                    type: "error",
+                Swal.fire({
+                    icon: "error",
                     title: "'.tr('Errore').'",
                     text: response.error,
                 });

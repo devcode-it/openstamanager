@@ -125,8 +125,8 @@ function addCheck(btn) {
     });
 
     if (!continua) {
-        swal({
-            type: "error",
+        Swal.fire({
+            icon: "error",
             title: "'.tr('Errore').'",
             text: "'.tr('Alcuni campi obbligatori non sono stati compilati correttamente.').'",
         });

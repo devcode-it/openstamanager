@@ -153,15 +153,15 @@ function import_fe(button, file, data_registrazione) {
             if (!data.already && !data.error) {
                 redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
             } else if (data.error) {
-                swal({
+                Swal.fire({
                     title: "'.tr('Errore').'",
                     text: data.error,
-                    type: "error",
+                    icon: "error",
                 });
             } else {
-                swal({
+                Swal.fire({
                     title: "'.tr('Fattura già importata.').'",
-                    type: "info",
+                    icon: "info",
                 });
 
 				$(button).prop("disabled", true);
@@ -178,10 +178,10 @@ function import_fe(button, file, data_registrazione) {
 }
 
 function import_fe_auto(button, file, data_registrazione) {
-    swal({
+    Swal.fire({
         title: "'.tr('Importare la fattura automaticamente in modalità semplificata?').'",
         html: "'.tr('Non verranno associati gli articoli').'",
-        type: "info",
+        icon: "info",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -211,10 +211,10 @@ function import_fe_auto(button, file, data_registrazione) {
 }
 
 function process_fe(button, file) {
-    swal({
+    Swal.fire({
         title: "'.tr('Segnare la fattura come processata?').'",
         html: "'.tr("Non sarà possibile individuarla nuovamente in modo automatico: l'unico modo per recuperarla sarà contattare l'assistenza").'",
-        type: "info",
+        icon: "info",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -241,10 +241,10 @@ function process_fe(button, file) {
 }
 
 function delete_fe(button, file_id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Rimuovere la fattura salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
-        type: "error",
+        icon: "error",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {

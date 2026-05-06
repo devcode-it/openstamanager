@@ -125,7 +125,7 @@ echo '
         let barcode = $("#barcode");
 
         if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
-            swal("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
+            Swal.fire("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
         }
         else if (key === 13) {
             let search = barcode.val().replace(/[^a-z0-9\s\-\.\/\\|]+/gmi, "");

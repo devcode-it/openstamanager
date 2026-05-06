@@ -161,7 +161,7 @@ if ((setting('Sistema di firma') == 'Base') || isMobile()) {
 
                     // Controlla se la pagina è servita tramite HTTPS
                     if (window.location.protocol !== \'https:\') {
-                        swal("'.tr('Errore').'", "'.tr('Questa funzione richiede una connessione HTTPS.').'", "error");
+                        Swal.fire("'.tr('Errore').'", "'.tr('Questa funzione richiede una connessione HTTPS.').'", "error");
                         $("#modals > div").modal("hide");
                     }
 
@@ -170,7 +170,7 @@ if ((setting('Sistema di firma') == 'Base') || isMobile()) {
                             caricaTavoletta()
                     } else {
                         // Handle the case when navigator.hid is undefined
-                        swal("'.tr('Errore').'", "'.tr('navigator.hid non è supportato da questo browser!').'", "error");
+                        Swal.fire("'.tr('Errore').'", "'.tr('navigator.hid non è supportato da questo browser!').'", "error");
                         $("#modals > div").modal("hide");
                     }
 

@@ -191,7 +191,7 @@ echo '
     $("#add_promemoria").click(function() {
         var id_tipo = $("#id_tipo_promemoria").val();
         if (!id_tipo){
-            swal("'.tr('Nessun tipo di promemoria selezionato!').'", "'.tr('Per continuare devi selezionare una tipologia per il promemoria!').'", "error");
+            Swal.fire("'.tr('Nessun tipo di promemoria selezionato!').'", "'.tr('Per continuare devi selezionare una tipologia per il promemoria!').'", "error");
             return;
         }
 

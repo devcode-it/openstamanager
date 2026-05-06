@@ -144,10 +144,10 @@ function import_fe_vendita(button, file, data_registrazione) {
         success: function(data) {
             try {
                 if (!data || data.trim() === "") {
-                    swal({
+                    Swal.fire({
                         title: "'.tr('Errore').'",
                         text: "'.tr('Risposta vuota dal server').'",
-                        type: "error",
+                        icon: "error",
                     });
                     buttonRestore(button, restore);
                     return;
@@ -158,9 +158,9 @@ function import_fe_vendita(button, file, data_registrazione) {
                 if (!data.already) {
                     redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id + "&data_registrazione=" + data_registrazione);
                 } else {
-                    swal({
+                    Swal.fire({
                         title: "'.tr('Fattura già importata.').'",
-                        type: "info",
+                        icon: "info",
                     });
 
                     $(button).prop("disabled", true);
@@ -168,10 +168,10 @@ function import_fe_vendita(button, file, data_registrazione) {
 
                 buttonRestore(button, restore);
             } catch (e) {
-                swal({
+                Swal.fire({
                     title: "'.tr('Errore').'",
                     text: "'.tr('Errore durante l\'elaborazione della risposta del server').'",
-                    type: "error",
+                    icon: "error",
                 });
                 buttonRestore(button, restore);
             }
@@ -185,10 +185,10 @@ function import_fe_vendita(button, file, data_registrazione) {
 }
 
 function process_fe_vendita(button, file) {
-    swal({
+    Swal.fire({
         title: "'.tr('Segnare la fattura come processata?').'",
         html: "'.tr("Non sarà possibile individuarla nuovamente in modo automatico: l'unico modo per recuperarla sarà contattare l'assistenza").'",
-        type: "info",
+        icon: "info",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -206,7 +206,7 @@ function process_fe_vendita(button, file) {
             success: function(data) {
                 try {
                     if (!data || data.trim() === "") {
-                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                         buttonRestore(button, restore);
                         return;
                     }
@@ -214,9 +214,9 @@ function process_fe_vendita(button, file) {
                     var response = JSON.parse(data);
 
                     if (response.success) {
-                        swal("'.tr('Successo').'", response.message || "'.tr('File processato correttamente').'", "success");
+                        Swal.fire("'.tr('Successo').'", response.message || "'.tr('File processato correttamente').'", "success");
                     } else if (response.success === false) {
-                        swal("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
+                        Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
                     }
 
                     $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
@@ -229,7 +229,7 @@ function process_fe_vendita(button, file) {
                 }
             },
             error: function(xhr, status, error) {
-                swal("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
+                Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
                 buttonRestore(button, restore);
             }
         });
@@ -237,10 +237,10 @@ function process_fe_vendita(button, file) {
 }
 
 function delete_fe_vendita(button, file_id) {
-    swal({
+    Swal.fire({
         title: "'.tr('Rimuovere la fattura salvata localmente?').'",
         html: "'.tr('Sarà possibile inserirla nuovamente nel gestionale attraverso il caricamento').'",
-        type: "error",
+        icon: "error",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
@@ -258,7 +258,7 @@ function delete_fe_vendita(button, file_id) {
             success: function(data) {
                 try {
                     if (!data || data.trim() === "") {
-                        swal("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                         buttonRestore(button, restore);
                         return;
                     }
@@ -266,21 +266,21 @@ function delete_fe_vendita(button, file_id) {
                     var response = JSON.parse(data);
 
                     if (response.success) {
-                        swal("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
+                        Swal.fire("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
                         $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
                             buttonRestore(button, restore);
                         });
                     } else {
-                        swal("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'eliminazione del file').'", "error");
+                        Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'eliminazione del file').'", "error");
                         buttonRestore(button, restore);
                     }
                 } catch (e) {
-                    swal("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                     buttonRestore(button, restore);
                 }
             },
             error: function(xhr, status, error) {
-                swal("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
+                Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
                 buttonRestore(button, restore);
             }
         });

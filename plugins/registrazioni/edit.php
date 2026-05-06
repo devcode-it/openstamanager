@@ -216,8 +216,8 @@ function validateConti() {
         });
 
         if (!valid && errors.length > 0) {
-            swal({
-                type: "error",
+            Swal.fire({
+                icon: "error",
                 title: "<?php echo tr(\'Errori di validazione\'); ?>",
                 html: "<?php echo tr(\'Correggere i seguenti errori:\'); ?><br><ul><li>" + errors.join("</li><li>") + "</li></ul>"
             });
@@ -291,8 +291,8 @@ $(document).ready(function() {
             // Verifica se ci sono conti cespiti disponibili
             const conti_cespiti_disponibili = $("#select-conto-cespite-" + id).find("select option").length;
             if (conti_cespiti_disponibili <= 1) { // Solo opzione vuota
-                swal({
-                    type: "warning",
+                Swal.fire({
+                    icon: "warning",
                     title: "<?php echo tr(\'Attenzione\'); ?>",
                     text: "<?php echo tr(\'Non ci sono conti cespiti configurati nel sistema. Configurare prima i conti cespiti nelle impostazioni.\'); ?>"
                 });

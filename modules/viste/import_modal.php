@@ -49,7 +49,7 @@ $(document).ready(function() {
         // Verifica che sia stato selezionato un file
         var fileInput = $('input[name="file"]')[0];
         if (fileInput.files.length === 0) {
-            swal(globals.translations.error, globals.translations.file_required, "error");
+            Swal.fire(globals.translations.error, globals.translations.file_required, "error");
             return;
         }
         
@@ -69,21 +69,21 @@ $(document).ready(function() {
                 try {
                     var data = JSON.parse(response);
                     if (data.success) {
-                        swal(globals.translations.import_module, globals.translations.import_success, "success")
+                        Swal.fire(globals.translations.import_module, globals.translations.import_success, "success")
                         .then(function() {
                             // Ricarica la pagina per mostrare le modifiche
                             location.reload();
                         });
                     } else {
-                        swal(globals.translations.error, data.message || globals.translations.import_error, "error");
+                        Swal.fire(globals.translations.error, data.message || globals.translations.import_error, "error");
                     }
                 } catch (e) {
-                    swal(globals.translations.error, globals.translations.import_error, "error");
+                    Swal.fire(globals.translations.error, globals.translations.import_error, "error");
                     console.error(e, response);
                 }
             },
             error: function() {
-                swal(globals.translations.error, globals.translations.import_error, "error");
+                Swal.fire(globals.translations.error, globals.translations.import_error, "error");
             },
             complete: function() {
                 // Riabilita il pulsante

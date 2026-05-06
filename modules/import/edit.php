@@ -270,9 +270,9 @@ function importPage(page) {
         });
 
         if (!primary_key_found) {
-            swal({
+            Swal.fire({
                 title: "'.tr('Chiave primaria selezionata non presente tra i campi').'",
-                type: "error",
+                icon: "error",
             });
 
             return;
@@ -304,10 +304,10 @@ function importPage(page) {
             if (data.error) {
                 $("#main_loading").fadeOut();
 
-                swal({
+                Swal.fire({
                     title: "'.tr('Errore').'",
                     text: data.message,
-                    type: "error",
+                    icon: "error",
                 });
 
                 return;
@@ -354,7 +354,7 @@ function importPage(page) {
                 }
 
                 // Mostra il messaggio di completamento
-                swal({
+                Swal.fire({
                     title: title,
                     text: text,
                     html: html,

@@ -178,7 +178,7 @@ function submitCheck() {
         $("#user_update").submit();
     }else{
         $("input[name=username]").focus();
-        swal("'.tr('Impossibile procedere').'", "'.tr('Username già esistente o troppo corto').'", "error");
+        Swal.fire("'.tr('Impossibile procedere').'", "'.tr('Username già esistente o troppo corto').'", "error");
     }
 }
 

@@ -427,3 +427,7 @@ UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti con
 UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+
+-- Rinomino impostazione Data inizio controlli su stati FE in Data inizio controlli Fatture di vendita
+UPDATE `zz_settings` SET `nome` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings`.`nome` = 'Data inizio controlli su stati FE';
+UPDATE `zz_settings_lang` SET `title` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings_lang`.`title` = 'Data inizio controlli su stati FE';

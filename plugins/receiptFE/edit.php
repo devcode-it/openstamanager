@@ -40,7 +40,7 @@ if (Interaction::isEnabled()) {
 }
 
 // Messaggio informativo su fatture con stato di errore
-$data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
+$data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli Fatture di vendita'))->format('Y-m-d');
 
 $fatture_generate_errore = Fattura::vendita()
     ->whereIn('codice_stato_fe', ['NS', 'ERR', 'EC02'])

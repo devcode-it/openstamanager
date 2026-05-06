@@ -44,7 +44,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     } elseif ($giorno_settimana == Carbon::THURSDAY) {
         $data_limite_invio->addDays(2); // Anticipa la data di 2 giorni se la data limite cade di domenica (con data fattura giovedì)
     }
-    $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli su stati FE'))->format('Y-m-d');
+    $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli Fatture di vendita'))->format('Y-m-d');
 
     $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->get();
 

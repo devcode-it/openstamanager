@@ -1320,13 +1320,14 @@ $(document).ready(function () {
 
 	        e.preventDefault();
 	        Swal.fire(config)
-	            .then(function() {
-	                content_was_modified = false;
-	                prepareForm(form);
-	                HTMLFormElement.prototype.submit.call(form);
-	            })
-	            .catch(function() {
-	                statoDocumento.selectSet(statoCorrente);
+	            .then(function(result) {
+	                if (result.isConfirmed) {
+	                    content_was_modified = false;
+	                    prepareForm(form);
+	                    HTMLFormElement.prototype.submit.call(form);
+	                } else {
+	                    statoDocumento.selectSet(statoCorrente);
+	                }
 	            });
 	        return false;
 	    });

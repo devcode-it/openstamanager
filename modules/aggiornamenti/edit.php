@@ -1321,8 +1321,10 @@ $(document).ready(function() {
                 });
             },
             allowOutsideClick: false
-        }).then(function () {
-            location.reload(true);
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                location.reload(true);
+            }
         });
     });
 });
@@ -1374,7 +1376,9 @@ function update() {
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
-            $("#update").submit();
+            if (result.isConfirmed) {
+                $("#update").submit();
+            }
         })
     } else {
         Swal.fire({

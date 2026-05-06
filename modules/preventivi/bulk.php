@@ -246,7 +246,7 @@ $operations['copy_bulk'] = [
         'title' => tr('Vuoi davvero fare una copia dei preventivi selezionati?'),
         'msg' => '{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
-            <style>.swal2-modal{ width:600px !important; }</style>',
+            <style>.swal2-popup{ width:600px !important; }</style>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

@@ -192,47 +192,49 @@ function process_fe_vendita(button, file) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        var restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            var restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "get",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "process",
-                name: file,
-            },
-            success: function(data) {
-                try {
-                    if (!data || data.trim() === "") {
-                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
-                        buttonRestore(button, restore);
-                        return;
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "get",
+                data: {
+                    id_module: globals.id_module,
+                    id_plugin: '.$id_plugin.',
+                    op: "process",
+                    name: file,
+                },
+                success: function(data) {
+                    try {
+                        if (!data || data.trim() === "") {
+                            Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                            buttonRestore(button, restore);
+                            return;
+                        }
+
+                        var response = JSON.parse(data);
+
+                        if (response.success) {
+                            Swal.fire("'.tr('Successo').'", response.message || "'.tr('File processato correttamente').'", "success");
+                        } else if (response.success === false) {
+                            Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
+                        }
+
+                        $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                            buttonRestore(button, restore);
+                        });
+                    } catch (e) {
+                        $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                            buttonRestore(button, restore);
+                        });
                     }
-
-                    var response = JSON.parse(data);
-
-                    if (response.success) {
-                        Swal.fire("'.tr('Successo').'", response.message || "'.tr('File processato correttamente').'", "success");
-                    } else if (response.success === false) {
-                        Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'elaborazione del file').'", "error");
-                    }
-
-                    $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                        buttonRestore(button, restore);
-                    });
-                } catch (e) {
-                    $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                        buttonRestore(button, restore);
-                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
+                    buttonRestore(button, restore);
                 }
-            },
-            error: function(xhr, status, error) {
-                Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
-                buttonRestore(button, restore);
-            }
-        });
+            });
+        }
     });
 }
 
@@ -244,46 +246,48 @@ function delete_fe_vendita(button, file_id) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        var restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            var restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "get",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "delete",
-                file_id: file_id,
-            },
-            success: function(data) {
-                try {
-                    if (!data || data.trim() === "") {
-                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
-                        buttonRestore(button, restore);
-                        return;
-                    }
-
-                    var response = JSON.parse(data);
-
-                    if (response.success) {
-                        Swal.fire("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
-                        $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "get",
+                data: {
+                    id_module: globals.id_module,
+                    id_plugin: '.$id_plugin.',
+                    op: "delete",
+                    file_id: file_id,
+                },
+                success: function(data) {
+                    try {
+                        if (!data || data.trim() === "") {
+                            Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
                             buttonRestore(button, restore);
-                        });
-                    } else {
-                        Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'eliminazione del file').'", "error");
+                            return;
+                        }
+
+                        var response = JSON.parse(data);
+
+                        if (response.success) {
+                            Swal.fire("'.tr('Successo').'", response.message || "'.tr('File eliminato correttamente').'", "success");
+                            $("#list-importfe-zip").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                                buttonRestore(button, restore);
+                            });
+                        } else {
+                            Swal.fire("'.tr('Errore').'", response.message || "'.tr('Errore durante l\'eliminazione del file').'", "error");
+                            buttonRestore(button, restore);
+                        }
+                    } catch (e) {
+                        Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                         buttonRestore(button, restore);
                     }
-                } catch (e) {
-                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
                     buttonRestore(button, restore);
                 }
-            },
-            error: function(xhr, status, error) {
-                Swal.fire("'.tr('Errore').'", "'.tr('Errore di connessione').': " + error, "error");
-                buttonRestore(button, restore);
-            }
-        });
+            });
+        }
     });
 }
 

@@ -15,59 +15,58 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                     showCancelButton: true,
                     confirmButtonText: "'.tr('Sì').'"
                 }).then(function (result) {
-                    var restore = buttonLoading(btn);
+                    if (result.isConfirmed) {
+                        var restore = buttonLoading(btn);
+                        $("#main_loading").show();
 
-                    // Mostra un\'animazione di caricamento
-                    $("#main_loading").show();
+                        $("#upload1").ajaxSubmit({
+                            url: globals.rootdir + "/actions.php",
+                            data: {
+                                op: "save",
+                                id_module: "'.$id_module.'",
+                                id_plugin: "'.$id_plugin.'",
+                            },
+                            type: "post",
+                            success: function(data){
+                                $("#main_loading").fadeOut();
 
-                    $("#upload1").ajaxSubmit({
-                        url: globals.rootdir + "/actions.php",
-                        data: {
-                            op: "save",
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                        },
-                        type: "post",
-                        success: function(data){
-                            $("#main_loading").fadeOut();
+                                try {
+                                    // Verifica se la risposta è vuota
+                                    if (!data || data.trim() === "") {
+                                        console.error("Risposta vuota dal server");
+                                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                        $("#blob1").val("");
+                                        buttonRestore(btn, restore);
+                                        return;
+                                    }
 
-                            try {
-                                // Verifica se la risposta è vuota
-                                if (!data || data.trim() === "") {
-                                    console.error("Risposta vuota dal server");
-                                    Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                    var response = JSON.parse(data);
+                                    if (response.error) {
+                                        Swal.fire("'.tr('Errore').'", response.error, "error");
+                                        $("#blob1").val("");
+                                        buttonRestore(btn, restore);
+                                        return;
+                                    }
+                                } catch (e) {
+                                    console.error("Errore parsing JSON:", e);
+                                    console.error("Dati ricevuti:", data);
+                                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
                                     return;
                                 }
 
-                                var response = JSON.parse(data);
-                                if (response.error) {
-                                    Swal.fire("'.tr('Errore').'", response.error, "error");
-                                    $("#blob1").val("");
-                                    buttonRestore(btn, restore);
-                                    return;
-                                }
-                            } catch (e) {
-                                console.error("Errore parsing JSON:", e);
-                                console.error("Dati ricevuti:", data);
-                                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
+                                Swal.fire("Caricamento completato!", "", "success");
                                 $("#blob1").val("");
                                 buttonRestore(btn, restore);
-                                return;
+                            },
+                            error: function() {
+                                $("#main_loading").fadeOut();
+                                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il caricamento del file').'", "error");
+                                buttonRestore(btn, restore);
                             }
-
-                            Swal.fire("Caricamento completato!", "", "success");
-                            $("#blob1").val("");
-                            buttonRestore(btn, restore);
-                        },
-                        error: function(xhr) {
-                            $("#main_loading").fadeOut();
-                            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
-
-                            buttonRestore(btn, restore);
-                        }
-                    });
+                        });
+                    }
                 })
             } else {
                 Swal.fire({
@@ -93,68 +92,64 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                     showCancelButton: true,
                     confirmButtonText: "'.tr('Sì').'"
                 }).then(function (result) {
-                    var restore = buttonLoading(btn);
+                    if (result.isConfirmed) {
+                        var restore = buttonLoading(btn);
 
-                    // Mostra un\'animazione di caricamento
-                    $("#main_loading").show();
+                        $("#main_loading").show();
 
-                    $("#upload1").ajaxSubmit({
-                        url: globals.rootdir + "/actions.php",
-                        data: {
-                            op: "save",
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                        },
-                        type: "post",
-                        success: function(data){
-                            $("#main_loading").fadeOut();
+                        $("#upload1").ajaxSubmit({
+                            url: globals.rootdir + "/actions.php",
+                            data: {
+                                op: "save",
+                                id_module: "'.$id_module.'",
+                                id_plugin: "'.$id_plugin.'",
+                            },
+                            type: "post",
+                            success: function(data){
+                                $("#main_loading").fadeOut();
 
-                            try {
-                                // Verifica se la risposta è vuota
-                                if (!data || data.trim() === "") {
-                                    console.error("Risposta vuota dal server");
-                                    Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                try {
+                                    // Verifica se la risposta è vuota
+                                    if (!data || data.trim() === "") {
+                                        console.error("Risposta vuota dal server");
+                                        Swal.fire("'.tr('Errore').'", "'.tr('Risposta vuota dal server').'", "error");
+                                        $("#blob1").val("");
+                                        buttonRestore(btn, restore);
+                                        return;
+                                    }
+
+                                    data = JSON.parse(data);
+
+                                    if (data.error) {
+                                        Swal.fire("'.tr('Errore').'", data.error, "error");
+                                        $("#blob1").val("");
+                                        buttonRestore(btn, restore);
+                                        return;
+                                    }
+
+                                    if (!data.already) {
+                                        redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                                    } else {
+                                        Swal.fire({
+                                            title: "'.tr('Fattura già importata').'.",
+                                            icon: "info",
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.error("Errore parsing JSON:", e);
+                                    console.error("Dati ricevuti:", data);
+                                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante l\'elaborazione della risposta del server').'", "error");
                                     $("#blob1").val("");
                                     buttonRestore(btn, restore);
-                                    return;
                                 }
-
-                                data = JSON.parse(data);
-
-                                // Controlla se c\'è un messaggio di errore nella risposta
-                                if (data.error) {
-                                    Swal.fire("'.tr('Errore').'", data.error, "error");
-                                    $("#blob1").val("");
-                                    buttonRestore(btn, restore);
-                                    return;
-                                }
-
-                                if (!data.already) {
-                                    redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
-                                } else {
-                                    Swal.fire({
-                                        title: "'.tr('Fattura già importata').'.",
-                                        icon: "info",
-                                    });
-
-                                    $("#blob1").val("");
-                                }
-                            } catch (e) {
-                                console.error("Errore parsing JSON:", e);
-                                console.error("Dati ricevuti:", data);
-                                Swal.fire("'.tr('Errore').'", "'.tr('Si è verificato un errore durante l\'elaborazione della risposta').'", "error");
-                                $("#blob1").val("");
+                            },
+                            error: function() {
+                                $("#main_loading").fadeOut();
+                                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il caricamento del file').'", "error");
+                                buttonRestore(btn, restore);
                             }
-
-                            buttonRestore(btn, restore);
-                        },
-                        error: function(xhr) {
-                            $("#main_loading").fadeOut();
-                            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
-
-                            buttonRestore(btn, restore);
-                        }
-                    });
+                        });
+                    }
                 })
             } else {
                 Swal.fire({
@@ -325,29 +320,31 @@ function importAllZip(btn) {
                 confirmButtonText: "'.tr('Procedi').'",
                 icon: "info",
             }).then(function (result) {
-                count = data.length;
-                counter = 0;
-                data.forEach(function(element) {
-                    $.ajax({
-                        url: globals.rootdir + "/actions.php",
-                        type: "get",
-                        data: {
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                            op: "prepare",
-                            name: element.name,
-                        },
-                        success: function(data) {
-                            counter ++;
+                if (result.isConfirmed) {
+                    count = data.length;
+                    counter = 0;
+                    data.forEach(function(element) {
+                        $.ajax({
+                            url: globals.rootdir + "/actions.php",
+                            type: "get",
+                            data: {
+                                id_module: "'.$id_module.'",
+                                id_plugin: "'.$id_plugin.'",
+                                op: "prepare",
+                                name: element.name,
+                            },
+                            success: function(data) {
+                                counter ++;
 
-                            importComplete(count, counter, btn, restore);
-                        },
-                        error: function(data) {
-                            counter ++;
+                                importComplete(count, counter, btn, restore);
+                            },
+                            error: function(data) {
+                                counter ++;
 
-                            importComplete(count, counter, btn, restore);
-                        }
-                    });
+                                importComplete(count, counter, btn, restore);
+                            }
+                        });
+                    }
                 });
 
                 importComplete(count, counter, btn, restore);

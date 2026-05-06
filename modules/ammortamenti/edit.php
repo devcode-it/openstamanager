@@ -278,8 +278,10 @@ function applicaAmmortamento() {
 		icon: "success",
 		showCancelButton: true,
 		confirmButtonText: "<?php echo tr('Sì, procedi'); ?>"
-	}).then(function () {
-		$('#ammortamento-form').submit();
-	}).catch(swal.noop);
+	}).then(function (result) {
+        if (result.isConfirmed) {
+            $('#ammortamento-form').submit();
+        }
+    }).catch(swal.noop);
 }
 </script>

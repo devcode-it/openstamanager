@@ -61,7 +61,9 @@ function restore() {
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
         }).then(function (result) {
-            $("#restore").submit();
+            if (result.isConfirmed) {
+                $("#restore").submit();
+            }
         })
     } else {
         Swal.fire({
@@ -92,31 +94,33 @@ function creaBackup(button){
             confirmButtonText: "'.tr('Crea').'",
         }
     }).then(function(result) {
-        let restore = buttonLoading(button);
-        $("#main_loading").show();
-        let selectedOption = result;
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "GET",
-            data: {
-                id_module: globals.id_module,
-                op: "backup",
-                exclude: selectedOption
-            },
-            success: function(data) {
-                $("#main_loading").fadeOut();
-                buttonRestore(button, restore);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
+            $("#main_loading").show();
+            let selectedOption = result.value; // result.value contains the selected input option
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "GET",
+                data: {
+                    id_module: globals.id_module,
+                    op: "backup",
+                    exclude: selectedOption
+                },
+                success: function(data) {
+                    $("#main_loading").fadeOut();
+                    buttonRestore(button, restore);
 
-                // Ricaricamento della pagina corrente
-                window.location.reload();
-            },
-            error: function() {
-                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante la creazione del backup').'", "error");
-                renderMessages();
+                    // Ricaricamento della pagina corrente
+                    window.location.reload();
+                },
+                error: function() {
+                    Swal.fire("'.tr('Errore').'", "'.tr('Errore durante la creazione del backup').'", "error");
+                    renderMessages();
 
-                buttonRestore(button, restore);
-            }
-        });
+                    buttonRestore(button, restore);
+                }
+            });
+        }
     }).catch(swal.noop);
 }
 

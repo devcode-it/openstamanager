@@ -118,28 +118,42 @@ function svuotaCacheHooks(button){
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "svuota-cache-hooks",
-            },
-            success: function (response) {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "svuota-cache-hooks",
+                },
+                success: function (response) {
+                    buttonRestore(button, restore);
 
-                if (response.success) {
-                    // Ricarica la pagina per mostrare i cambiamenti
-                    caricaElencoHooks();
-                } else {
+                    if (response.success) {
+                        // Ricarica la pagina per mostrare i cambiamenti
+                        caricaElencoHooks();
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "'.tr('Errore').'",
+                            text: response.error || "'.tr('Errore durante lo svuotamento della cache').'",
+                        });
+                    }
+                },
+                error: function() {
+                    buttonRestore(button, restore);
                     Swal.fire({
                         icon: "error",
                         title: "'.tr('Errore').'",
-                        text: response.error || "'.tr('Errore durante lo svuotamento della cache').'",
+                        text: "'.tr('Errore di connessione').'",
                     });
+                }
+            });
+        }
+    }).catch(swal.noop);
                 }
 
                 renderMessages();
@@ -173,32 +187,34 @@ function disabilitaHook(button){
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
-    }).then(function (result) {
-        let restore = buttonLoading(button);
+     }).then(function (result) {
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "disabilita-hook",
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoHooks();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "disabilita-hook",
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoHooks();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 
@@ -221,31 +237,33 @@ function abilitaHook(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "abilita-hook",
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoHooks();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "abilita-hook",
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoHooks();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 </script>';

@@ -649,31 +649,35 @@ function aggiornaRighe(id) {
         html: `'.tr('Confermando verranno aggiornati i prezzi delle righe secondo i listini ed i prezzi predefiniti collegati all\'articolo e ai piani sconto collegati all\'anagrafica.').'.<br><br>
         {[ "type": "checkbox", "label": "", "name": "update_prezzo_acquisto", "value":"1", "values":" \"'.tr('Aggiornare prezzo di acquisto').'\",\"'.tr('Non aggiornare prezzo di acquisto').'\" " ]}<br>
         {[ "type": "checkbox", "label": "", "name": "update_prezzo_vendita", "value":"1", "values":" \"'.tr('Aggiornare prezzo di vendita').'\",\"'.tr('Non aggiornare prezzo di vendita').'\" " ]}<br>
-        {[ "type": "checkbox", "label": "", "name": "update_descrizione", "value":"0", "values":" \"'.tr('Aggiornare descrizione').'\",\"'.tr('Non aggiornare descrizione').'\" " ]}<br>`,        icon: "warning",
+        {[ "type": "checkbox", "label": "", "name": "update_descrizione", "value":"0", "values":" \"'.tr('Aggiornare descrizione').'\",\"'.tr('Non aggiornare descrizione').'\" " ]}<br>`,
+        icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
-    }).then(function () {
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                op: "update-price",
-                righe: id,
-                update_prezzo_acquisto: input("update_prezzo_acquisto").get(),
-                update_prezzo_vendita: input("update_prezzo_vendita").get(),
-                update_descrizione: input("update_descrizione").get(),
-            },
-            success: function (response) {
-                renderMessages();
-                caricaRighe(null);
-            },
-            error: function() {
-                renderMessages();
-                caricaRighe(null);
-            }
-        });
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    id_record: globals.id_record,
+                    op: "update-price",
+                    righe: id,
+                    update_prezzo_acquisto: input("update_prezzo_acquisto").get(),
+                    update_prezzo_vendita: input("update_prezzo_vendita").get(),
+                    update_descrizione: input("update_descrizione").get(),
+                },
+                success: function (response) {
+                    renderMessages();
+                    caricaRighe(null);
+                },
+                error: function() {
+                    renderMessages();
+                    caricaRighe(null);
+                }
+            });
+        }
     }).catch(swal.noop);
 }
 
@@ -684,36 +688,38 @@ function rimuoviRiga(id) {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
-    }).then(function () {
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                op: "delete_riga",
-                righe: id,
-            },
-            success: function (response) {
-                renderMessages();
-                caricaRighe(null);';
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    id_record: globals.id_record,
+                    op: "delete_riga",
+                    righe: id,
+                },
+                success: function (response) {
+                    renderMessages();
+                    caricaRighe(null);';
 if (!in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT'])) {
     echo '
                 $("#elimina").removeClass("disabled");';
 }
 echo '
-            },
-            error: function() {
-                renderMessages();
-                caricaRighe(null);';
+                },
+                error: function() {
+                    renderMessages();
+                    caricaRighe(null);';
 if (!in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT'])) {
     echo '
                 $("#elimina").removeClass("disabled");';
 }
 echo '
-            }
-        });
+                }
+            });
+        }
     }).catch(swal.noop);
 }
 
@@ -724,26 +730,28 @@ function duplicaRiga(id) {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
-    }).then(function () {
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                op: "copy_riga",
-                righe: id,
-            },
-            success: function (response) {
-                renderMessages();
-                caricaRighe(null);
-            },
-            error: function() {
-                renderMessages();
-                caricaRighe(null);
-            }
-        });
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id_module: globals.id_module,
+                    id_record: globals.id_record,
+                    op: "copy_riga",
+                    righe: id,
+                },
+                success: function (response) {
+                    renderMessages();
+                    caricaRighe(null);
+                },
+                error: function() {
+                    renderMessages();
+                    caricaRighe(null);
+                }
+            });
+        }
     }).catch(swal.noop);
 }
 
@@ -827,37 +835,39 @@ function incollaRighe() {
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Sì').'"
-            }).then(function () {
-                $.ajax({
-                    url: globals.rootdir + "/actions.php",
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        id_module: globals.id_module,
-                        id_record: globals.id_record,
-                        op: "paste_righe",
-                        righe_data: JSON.stringify(righe_data),
-                    },
-                    success: function (response) {
-                        renderMessages();
-                        caricaRighe(null);
-                        Swal.fire({
-                            title: "'.tr('Righe incollate!').'",
-                            text: "'.tr('Le righe sono state incollate con successo').'",
-                            icon: "success",
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function() {
-                        renderMessages();
-                        Swal.fire({
-                            title: "'.tr('Errore').'",
-                            text: "'.tr('Errore durante l\'incollaggio delle righe').'",
-                            icon: "error"
-                        });
-                    }
-                });
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: globals.rootdir + "/actions.php",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            id_module: globals.id_module,
+                            id_record: globals.id_record,
+                            op: "paste_righe",
+                            righe_data: JSON.stringify(righe_data),
+                        },
+                        success: function (response) {
+                            renderMessages();
+                            caricaRighe(null);
+                            Swal.fire({
+                                title: "'.tr('Righe incollate!').'",
+                                text: "'.tr('Le righe sono state incollate con successo').'",
+                                icon: "success",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        },
+                        error: function() {
+                            renderMessages();
+                            Swal.fire({
+                                title: "'.tr('Errore').'",
+                                text: "'.tr('Errore durante l\'incollaggio delle righe').'",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
             }).catch(swal.noop);
         } catch (e) {
             Swal.fire({

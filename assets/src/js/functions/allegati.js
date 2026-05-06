@@ -247,24 +247,26 @@ function rimuoviAllegato(button) {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: globals.translations.allegati.procedi,
-    }).then(function () {
-        mostraCaricamentoAllegati(gestione);
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            mostraCaricamentoAllegati(gestione);
 
-        // Parametri della richiesta AJAX
-        let params = new URLSearchParams({
-            op: "rimuovi-allegato",
-            id_module: gestione.data('id_module'),
-            id_plugin: gestione.data('id_plugin'),
-            id_record: gestione.data('id_record'),
-            id_allegato: allegato.id,
-            filename: allegato.filename,
-            key: gestione.data('key')
-        }).toString();
+            // Parametri della richiesta AJAX
+            let params = new URLSearchParams({
+                op: "rimuovi-allegato",
+                id_module: gestione.data('id_module'),
+                id_plugin: gestione.data('id_plugin'),
+                id_record: gestione.data('id_record'),
+                id_allegato: allegato.id,
+                filename: allegato.filename,
+                key: gestione.data('key')
+            }).toString();
 
-        // Richiesta AJAX
-        $.ajax(globals.rootdir + "/actions.php?" + params)
-            .then(function () {
-                ricaricaAllegati(gestione);
-            });
+            // Richiesta AJAX
+            $.ajax(globals.rootdir + "/actions.php?" + params)
+                .then(function () {
+                    ricaricaAllegati(gestione);
+                });
+        }
     }).catch(function() {});
 }

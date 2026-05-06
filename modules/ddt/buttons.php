@@ -51,17 +51,16 @@ function completaTrasporto() {
             confirmButton: "btn btn-lg btn-success",
             confirmButtonText: "'.tr('Completa').'",
         }
-    }).then(
-        function() {
+    }).then(function (result) {
+        start_superselect();
+        if (result.isConfirmed) {
             if ($("select[name=id_segment]").val() == null) {
                 Swal.fire( "'.tr('Attenzione').'", "'.tr('Devi prima selezionare un segmento').'...", "warning");
             } else {
                 location.href = globals.rootdir + "/editor.php?id_module='.$id_module.'&id_segment=" + $("select[name=id_segment]").val() + "&id_record='.$id_record.'&op=completa_trasporto&backto=record-edit";
             }
-        },
-        function() {},
-        start_superselect(),
-    );
+        }
+    }).catch(swal.noop);
 }
 </script>';
 }

@@ -185,28 +185,30 @@ function import_fe_auto(button, file, data_registrazione) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        var restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            var restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "post",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "generate",
-                filename: file,
-                data_registrazione: data_registrazione,
-                type: "auto",
-            },
-            success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
-                    start_local_datatables();
-                    buttonRestore(button, restore);
-                });
-            }
-        });
-        renderMessages();
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "post",
+                data: {
+                    id_module: globals.id_module,
+                    id_plugin: '.$id_plugin.',
+                    op: "generate",
+                    filename: file,
+                    data_registrazione: data_registrazione,
+                    type: "auto",
+                },
+                success: function(data) {
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                        start_local_datatables();
+                        buttonRestore(button, restore);
+                    });
+                }
+            });
+            renderMessages();
+        }
     });
 }
 
@@ -218,25 +220,27 @@ function process_fe(button, file) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        var restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            var restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "get",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "process",
-                name: file,
-            },
-            success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
-                    start_local_datatables();
-                    buttonRestore(button, restore);
-                });
-            }
-        });
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "get",
+                data: {
+                    id_module: globals.id_module,
+                    id_plugin: '.$id_plugin.',
+                    op: "process",
+                    name: file,
+                },
+                success: function(data) {
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                        start_local_datatables();
+                        buttonRestore(button, restore);
+                    });
+                }
+            });
+        }
     });
 }
 
@@ -248,25 +252,27 @@ function delete_fe(button, file_id) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        var restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            var restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "get",
-            data: {
-                id_module: globals.id_module,
-                id_plugin: '.$id_plugin.',
-                op: "delete",
-                file_id: file_id,
-            },
-            success: function(data) {
-                $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
-                    // Reinizializza le tabelle DataTables dopo il caricamento dinamico
-                    start_local_datatables();
-                    buttonRestore(button, restore);
-                });
-            }
-        });
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "get",
+                data: {
+                    id_module: globals.id_module,
+                    id_plugin: '.$id_plugin.',
+                    op: "delete",
+                    file_id: file_id,
+                },
+                success: function(data) {
+                    $("#list").load("'.$structure->fileurl('list.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'", function() {
+                        // Reinizializza le tabelle DataTables dopo il caricamento dinamico
+                        start_local_datatables();
+                        buttonRestore(button, restore);
+                    });
+                }
+            });
+        }
     });
 }
 

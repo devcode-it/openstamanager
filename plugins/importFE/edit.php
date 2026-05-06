@@ -44,50 +44,52 @@ echo '
                 showCancelButton: true,
                 confirmButtonText: "'.tr('Sì').'"
             }).then(function (result) {
-                var restore = buttonLoading(btn);
+                if (result.isConfirmed) {
+                    var restore = buttonLoading(btn);
 
-                $("#upload").ajaxSubmit({
-                    url: globals.rootdir + "/actions.php",
-                    data: {
-                        op: "save",
-                        id_module: "'.$id_module.'",
-                        id_plugin: "'.$id_plugin.'",
-                    },
-                    type: "post",
-                    success: function(data){
-                        data = JSON.parse(data);
+                    $("#upload").ajaxSubmit({
+                        url: globals.rootdir + "/actions.php",
+                        data: {
+                            op: "save",
+                            id_module: "'.$id_module.'",
+                            id_plugin: "'.$id_plugin.'",
+                        },
+                        type: "post",
+                        success: function(data){
+                            data = JSON.parse(data);
 
-                        if (!data.already && !data.error) {
-                            if (automatic) {
-                                import_fe_auto(btn, data.name, null);
-                                $("#blob").val("");
-                                renderMessages();
+                            if (!data.already && !data.error) {
+                                if (automatic) {
+                                    import_fe_auto(btn, data.name, null);
+                                    $("#blob").val("");
+                                    renderMessages();
+                                } else {
+                                    redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                                }
+                            } else if (data.error) {
+                                Swal.fire({
+                                    title: "'.tr('Errore').'",
+                                    text: data.error,
+                                    icon: "error",
+                                });
                             } else {
-                                redirect_url(globals.rootdir + "/editor.php?id_module=" + globals.id_module + "&id_plugin=" + '.$id_plugin.' + "&id_record=" + data.id);
+                                Swal.fire({
+                                    title: "'.tr('Fattura già importata').'.",
+                                    icon: "info",
+                                });
+
+                                $("#blob").val("");
                             }
-                        } else if (data.error) {
-                            Swal.fire({
-                                title: "'.tr('Errore').'",
-                                text: data.error,
-                                icon: "error",
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "'.tr('Fattura già importata').'.",
-                                icon: "info",
-                            });
 
-							$("#blob").val("");
+                            buttonRestore(btn, restore);
+                        },
+                        error: function(xhr) {
+                            Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+
+                            buttonRestore(btn, restore);
                         }
-
-						buttonRestore(btn, restore);
-                    },
-                    error: function(xhr) {
-                        Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
-
-                        buttonRestore(btn, restore);
-                    }
-                });
+                    });
+                }
             })
         } else {
             Swal.fire({
@@ -220,54 +222,53 @@ function importAll(btn) {
         confirmButtonText: "'.tr('Procedi').'",
         icon: "info",
     }).then(function (result) {
-        var restore = buttonLoading(btn);
-        $("#main_loading").show();
+        if (result.isConfirmed) {
+            var restore = buttonLoading(btn);
+            $("#main_loading").show();
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            data: {
-                op: "list",
-                id_module: "'.$id_module.'",
-                id_plugin: "'.$id_plugin.'",
-            },
-            type: "post",
-            success: function(data){
-                data = JSON.parse(data);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                data: {
+                    op: "list",
+                    id_module: "'.$id_module.'",
+                    id_plugin: "'.$id_plugin.'",
+                },
+                type: "post",
+                success: function(data){
+                    data = JSON.parse(data);
 
-                count = data.length;
-                counter = 0;
-                data.forEach(function(element) {
-                    $.ajax({
-                        url: globals.rootdir + "/actions.php",
-                        type: "get",
-                        data: {
-                            id_module: "'.$id_module.'",
-                            id_plugin: "'.$id_plugin.'",
-                            op: "prepare",
-                            name: element.name,
-                        },
-                        success: function(data) {
-                            counter ++;
+                    count = data.length;
+                    counter = 0;
+                    data.forEach(function(element) {
+                        $.ajax({
+                            url: globals.rootdir + "/actions.php",
+                            type: "get",
+                            data: {
+                                id_module: "'.$id_module.'",
+                                id_plugin: "'.$id_plugin.'",
+                                op: "prepare",
+                                name: element.name,
+                            },
+                            success: function(data) {
+                                counter ++;
 
-                            importComplete(count, counter, btn, restore);
-                        },
-                        error: function(data) {
-                            counter ++;
+                                importComplete(count, counter, btn, restore);
+                            },
+                            error: function(data) {
+                                counter ++;
 
-                            importComplete(count, counter, btn, restore);
-                        }
+                                importComplete(count, counter, btn, restore);
+                            }
+                        });
                     });
-                });
-
-                importComplete(count, counter, btn, restore);
-            },
-            error: function(data) {
-                alert("'.tr('Errore').': " + data);
-
-				$("#main_loading").fadeOut();
-                buttonRestore(btn, restore);
-            }
-        });
+                    importComplete(count, counter, btn, restore);
+                },
+                error: function(xhr) {
+                    Swal.fire("'.tr('Errore').'", xhr.responseJSON.error.message, "error");
+                    buttonRestore(btn, restore);
+                }
+            });
+        }
     });
 }
 

@@ -497,13 +497,15 @@ function addSerial(form_id, numero) {
             showCancelButton: true,
             confirmButtonText: "'.tr('Continua').'"
         }).then(function (result) {
-            if ($("div[id^=bs-popup").is(":visible")) {
-                salvaForm($(form_id), {
-                }).then(function(response) {
-                    $(form_id).closest("div[id^=bs-popup").modal("hide");
-                });
-            } else {
-                $(form_id).submit();
+            if (result.isConfirmed) {
+                if ($("div[id^=bs-popup").is(":visible")) {
+                    salvaForm($(form_id), {
+                    }).then(function(response) {
+                        $(form_id).closest("div[id^=bs-popup").modal("hide");
+                    });
+                } else {
+                    $(form_id).submit();
+                }
             }
         })
     } else {

@@ -177,25 +177,27 @@ echo '
 			icon: "warning",
 			showCancelButton: true,
 			confirmButtonText: "'.tr('Sì').'"
-		}).then(function () {
-			$.ajax({
-				url: globals.rootdir + "/actions.php",
-				type: "POST",
-				dataType: "json",
-				data: {
-					id_module: globals.id_module,
-					id_record: globals.id_record,
-					op: "delete_articolo",
-					id: id,
-				},
-				success: function (response) {
-					location.reload();
-				},
-				error: function() {
-					location.reload();
-				}
-			});
-		}).catch(swal.noop);
+ 		}).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: globals.rootdir + "/actions.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id_module: globals.id_module,
+                        id_record: globals.id_record,
+                        op: "delete_articolo",
+                        id: id,
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function() {
+                        location.reload();
+                    }
+                });
+            }
+        }).catch(swal.noop);
 	}
 
 	$(document).ready(function(){

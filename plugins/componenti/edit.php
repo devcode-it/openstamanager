@@ -337,8 +337,10 @@ echo '
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
-        }).then(function () {
-            redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=sostituisci&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            }
         }).catch(swal.noop);
             
     }
@@ -352,8 +354,10 @@ echo '
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "'.tr('Sì').'"
-        }).then(function () {
-            redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                redirect_url("'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'&op=rimuovi&backto=record-edit&id_plugin='.$id_plugin.'&id_componente=" + id_componente + "&hash=tab_'.$structure->id.'");
+            }
         }).catch(swal.noop);
     }
 

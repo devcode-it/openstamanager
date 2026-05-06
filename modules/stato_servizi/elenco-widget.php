@@ -154,32 +154,34 @@ function disabilitaWidget(button){
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "disabilita-widget",
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoWidget();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "disabilita-widget",
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoWidget();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
-    })
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
+    }).catch(swal.noop);
 }
 
 function abilitaWidget(button) {
@@ -201,32 +203,34 @@ function abilitaWidget(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "abilita-widget",
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoWidget();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "abilita-widget",
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoWidget();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
-    })
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
+    }).catch(swal.noop);
 }
 
 function spostaWidget(button) {

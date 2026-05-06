@@ -1060,11 +1060,6 @@ span.form-control {
     border-bottom-left-radius: 0;
 }
 
-.swal2-buttonswrapper .btn {
-    margin: 5px;
-}
-
-/* Enhanced styling for SweetAlert2 elements */
 .swal2-title {
     font-size: 18px !important;
     margin-bottom: 15px !important;
@@ -1073,127 +1068,19 @@ span.form-control {
     padding-bottom: 10px !important;
 }
 
-.swal2-content {
+.swal2-html-container {
     font-size: 13px !important;
 }
 
-.swal2-modal {
+.swal2-popup {
     padding: 20px !important;
     border-radius: 8px !important;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
 }
 
-/* Make SweetAlert2 modals more visually appealing */
-.swal2-popup {
-    padding: 0 !important;
+.swal2-confirm, .swal2-cancel {
+    margin-right: 10px !important;
 }
-
-/* Improve form elements in SweetAlert2 */
-.swal2-content input[type="text"],
-.swal2-content input[type="date"],
-.swal2-content input[type="datetime-local"],
-.swal2-content select {
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-    padding: 6px 12px !important;
-    margin-bottom: 5px !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05) !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
-}
-
-.swal2-content input[type="text"]:focus,
-.swal2-content input[type="date"]:focus,
-.swal2-content input[type="datetime-local"]:focus,
-.swal2-content select:focus {
-    border-color: #3498db !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), 0 0 8px rgba(52,152,219,0.3) !important;
-    outline: none !important;
-}
-
-/* Style labels in SweetAlert2 */
-.swal2-content label {
-    font-weight: 600 !important;
-    color: #555 !important;
-    font-size: 13px !important;
-    margin-bottom: 3px !important;
-    display: block !important;
-}
-
-/* Style the warning icon */
-.swal2-icon.swal2-warning {
-    border-color: #f39c12 !important;
-    color: #f39c12 !important;
-}
-
-/* Style the buttons */
-.swal2-confirm.btn-warning {
-    background-color: #f39c12 !important;
-    border-color: #e08e0b !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-}
-
-.swal2-confirm.btn-warning:hover {
-    background-color: #e08e0b !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
-}
-
-.swal2-cancel {
-    transition: all 0.2s ease !important;
-}
-
-.swal2-cancel:hover {
-    background-color: #f5f5f5 !important;
-}
-
-/* Improve the appearance of the form sections */
-.swal2-content h4 {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #3498db !important;
-    margin-top: 20px !important;
-    margin-bottom: 10px !important;
-}
-
-/* Style the specific form elements in the bulk copy form */
-.swal2-content .form-control {
-    height: 36px !important;
-}
-
-/* Reduce spacing between form groups in SweetAlert2 */
-.swal2-content > div {
-    margin-bottom: 5px !important;
-}
-
-/* Reduce vertical spacing in SweetAlert2 forms */
-.swal2-content {
-    margin-top: -5px !important;
-}
-
-/* Specifically target the spacing between Data/ora richiesta and Stato fields */
-.swal2-content label[for="Stato"],
-.swal2-content label[for="stato"] {
-    margin-top: 0 !important;
-}
-
-/* Target the specific fields in the screenshot */
-.swal2-content input[name="data"] + label,
-.swal2-content input[name="Data/ora richiesta"] + label,
-.swal2-content input[type="datetime-local"] + label {
-    margin-top: 0 !important;
-}
-
-/* Style the "Duplica righe", "Duplica sessioni", etc. labels */
-.swal2-content label[for^="Duplica"] {
-    font-size: 13px !important;
-    color: #444 !important;
-    font-weight: 500 !important;
-    margin-top: 10px !important;
-    margin-bottom: 5px !important;
-    display: block !important;
-}
-
 
 /* Personalizzazione del plugin Select2 */
 

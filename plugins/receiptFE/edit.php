@@ -398,7 +398,7 @@ function importAllReceipt(btn) {
         confirmButtonText: "'.tr('Procedi').'",
         icon: "info",
     }).then(function (result) {
-        if (result) {
+        if (result.isConfirmed) {
             var restore = buttonLoading(btn);
             $("#main_loading").show();
 
@@ -576,7 +576,7 @@ function showInvoiceSelectorInternal(receiptFile, originalButton, originalRestor
                         cancelButtonText: "'.tr('Annulla').'",
                         width: 600
                     }).then(function(result) {
-                        if (result) {
+                        if (result.isConfirmed) {
                             var selectedFattura = $("#swal-fattura-select").val();
                             if (selectedFattura && selectedFattura !== "") {
                                 associateReceiptToInvoice(receiptFile, selectedFattura, originalButton, originalRestore);

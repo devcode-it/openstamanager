@@ -348,14 +348,32 @@ if ($dbo->isConnected() && $dbo->tableExists('zz_links')) {
 // Impostazioni di default per gli alert
 echo '
         <script>
-            Swal.defaults = {
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: "btn btn-lg btn-primary",
-                    cancelButton: "btn btn-lg btn-default",
-                },
-                cancelButtonText: "'.tr('Annulla').'",
-            };
+            (function() {
+                var _originalFire = Swal.fire;
+                Swal.fire = function() {
+                    var defaults = {
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: "btn btn-lg btn-success",
+                            cancelButton: "btn btn-lg btn-danger"
+                        },
+                        cancelButtonText: "'.tr('Annulla').'"
+                    };
+                    var opts = arguments[0];
+                    var options;
+                    if (typeof opts === "string" || opts === undefined) {
+                        options = { title: opts, text: arguments[1], icon: arguments[2] };
+                    } else if (typeof opts === "object") {
+                        options = Object.assign({}, defaults, opts);
+                        if (opts.customClass) {
+                            Object.assign(options.customClass, defaults.customClass);
+                        }
+                    } else {
+                        options = opts;
+                    }
+                    return _originalFire.call(Swal, options);
+                };
+            })();
         </script>';
 
 if (AuthOSM::check()) {

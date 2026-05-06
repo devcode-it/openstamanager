@@ -61,32 +61,34 @@ function disabilitaModulo(button){
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "disabilita-modulo",
-                tipo: tipo,
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoModuli();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "disabilita-modulo",
+                    tipo: tipo,
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoModuli();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 
@@ -110,32 +112,34 @@ function abilitaModulo(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "abilita-modulo",
-                tipo: tipo,
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoModuli();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "abilita-modulo",
+                    tipo: tipo,
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoModuli();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 
@@ -156,32 +160,34 @@ function abilitaSottoModuli(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "abilita-sotto-modulo",
-                tipo: tipo,
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoModuli();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "abilida-sotto-modulo",
+                    tipo: tipo,
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoModuli();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 
@@ -207,32 +213,34 @@ function rimuoviModulo(button) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Continua').'"
     }).then(function (result) {
-        let restore = buttonLoading(button);
+        if (result.isConfirmed) {
+            let restore = buttonLoading(button);
 
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                op: "rimuovi-modulo",
-                tipo: tipo,
-                id: id,
-            },
-            success: function (response) {
-                caricaElencoModuli();
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    op: "rimuovi-modulo",
+                    tipo: tipo,
+                    id: id,
+                },
+                success: function (response) {
+                    caricaElencoModuli();
+                    renderMessages();
+                },
+                error: function() {
+                    buttonRestore(button, restore);
 
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
+                    Swal.fire({
+                        icon: "error",
+                        title: globals.translations.ajax.error.title,
+                        text: globals.translations.ajax.error.text,
+                    });
+                }
+            });
+        }
     })
 }
 </script>

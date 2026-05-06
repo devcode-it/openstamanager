@@ -412,21 +412,23 @@ function elimina_sessione(id_sessione) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Elimina').'"
     }).then(function (result) {
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                op: "delete_sessione",
-                id_sessione: id_sessione,
-            },
-            type: "post",
-            success: function() {
-                caricaTecnici();
-                caricaCosti();
-                calcolaConflittiTecnici();
-            }
-        });
+        if (result.isConfirmed) {
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                data: {
+                    id_module: globals.id_module,
+                    id_record: globals.id_record,
+                    op: "delete_sessione",
+                    id_sessione: id_sessione,
+                },
+                type: "post",
+                success: function() {
+                    caricaTecnici();
+                    caricaCosti();
+                    calcolaConflittiTecnici();
+                }
+            });
+        }
     }).catch(swal.noop);
 
 }

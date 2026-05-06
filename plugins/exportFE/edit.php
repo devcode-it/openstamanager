@@ -332,7 +332,7 @@ if ($fattura !== null) {
                         cancelButtonColor: "#d33",
                         confirmButtonText: "'.tr('Genera').'"
                     }).then((result) => {
-                        if (result) {
+                        if (result.isConfirmed) {
                             $("#form-xml").submit();
                         } else {
                             $("#main_loading").fadeOut();

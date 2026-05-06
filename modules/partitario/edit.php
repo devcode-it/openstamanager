@@ -465,23 +465,25 @@ echo '
                 confirmButton: "btn btn-lg btn-danger",
                 cancelButton: "btn btn-lg"
             }
-        }).then(function () {
-            $.ajax({
-                url: globals.rootdir + "/actions.php",
-                type: "POST",
-                data: {
-                    id_module: globals.id_module,
-                    idconto: id_conto,
-                    lvl: level,
-                    op: "del",
-                },
-                success: function (response) {
-                    location.reload();
-                },
-                error: function() {
-                    Swal.fire("'.tr('Errore').'.", "'.tr('Errore durante l\'eliminazione del conto.').'.", "error");
-                }
-            });
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: globals.rootdir + "/actions.php",
+                    type: "POST",
+                    data: {
+                        id_module: globals.id_module,
+                        idconto: id_conto,
+                        lvl: level,
+                        op: "del",
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function() {
+                        Swal.fire("'.tr('Errore').'.", "'.tr('Errore durante l\'eliminazione del conto.').'.", "error");
+                    }
+                });
+            }
         });
     }
 

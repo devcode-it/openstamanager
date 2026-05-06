@@ -131,10 +131,9 @@ function delete_fe(button, file_id) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        if (result) {
+        if (result.isConfirmed) {
             var restore = buttonLoading(button);
 
-            // Mostra un\'animazione di caricamento
             $("#main_loading").show();
 
             $.ajax({
@@ -170,10 +169,9 @@ function process_fe(button, file) {
         showCancelButton: true,
         confirmButtonText: "'.tr('Sì').'"
     }).then(function (result) {
-        if (result) {
+        if (result.isConfirmed) {
             var restore = buttonLoading(button);
 
-            // Mostra un\'animazione di caricamento
             $("#main_loading").show();
 
             $.ajax({
@@ -316,21 +314,21 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                         confirmButtonText: "'.tr('Associa').'",
                         cancelButtonText: "'.tr('Annulla').'",
                         width: 600
-                    }).then(function(result) {
-                        if (result) {
-                            var selectedFattura = $("#swal-fattura-select").val();
-                            if (selectedFattura && selectedFattura !== "") {
-                                associateReceiptToInvoice(receiptFile, selectedFattura, originalButton, originalRestore);
+                        }).then(function(result) {
+                            if (result.isConfirmed) {
+                                var selectedFattura = $("#swal-fattura-select").val();
+                                if (selectedFattura && selectedFattura !== "") {
+                                    associateReceiptToInvoice(receiptFile, selectedFattura, originalButton, originalRestore);
+                                } else {
+                                    Swal.fire("'.tr('Errore').'", "'.tr('Seleziona una fattura').'", "error");
+                                    buttonRestore(originalButton, originalRestore);
+                                }
                             } else {
-                                Swal.fire("'.tr('Errore').'", "'.tr('Seleziona una fattura').'", "error");
                                 buttonRestore(originalButton, originalRestore);
                             }
-                        } else {
+                        }).catch(function() {
                             buttonRestore(originalButton, originalRestore);
-                        }
-                    }).catch(function() {
-                        buttonRestore(originalButton, originalRestore);
-                    });
+                        });
                 },
                 error: function(xhr) {
                     Swal.fire("'.tr('Errore').'", "'.tr('Errore nel caricamento delle fatture').'", "error");

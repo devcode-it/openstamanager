@@ -278,20 +278,20 @@ if (filter('action') == 'do_update') {
                             confirmButton: "btn btn-lg btn-success",
                             confirmButtonText: "'.tr('Conferma').'",
                         }
-                    }).then(
-                    function(){
-                        // Nascondi le istruzioni di installazione
-                        $("#install-instructions").hide();
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            // Nascondi le istruzioni di installazione
+                            $("#install-instructions").hide();
 
-                        // Mostra la barra di progresso
-                        $("#progress").fadeIn(300);
-                        setPercent(1);
-                        updateCurrentFile("'.tr('Avvio aggiornamento...').'");
+                            // Mostra la barra di progresso
+                            $("#progress").fadeIn(300);
+                            setPercent(1);
+                            updateCurrentFile("'.tr('Avvio aggiornamento...').'");
 
-                        // Mostra il container degli aggiornamenti
-                        $("#updates-container").fadeIn(300);
+                            // Mostra il container degli aggiornamenti
+                            $("#updates-container").fadeIn(300);
 
-                        // Mostra il container dei dettagli delle versioni
+                            // Mostra il container dei dettagli delle versioni
                         $("#versions-details-container").fadeIn(300);
 
                         // Inizialmente nascondi i dettagli delle versioni

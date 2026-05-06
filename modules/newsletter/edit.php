@@ -264,35 +264,37 @@ function testInvio(button) {
         customClass: { 
             confirmButton: "btn btn-lg btn-success",
         }
-    }).then(function() {
-        const restore = buttonLoading(button);
-        $.ajax({
-            url: globals.rootdir + "/actions.php",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                op: "send-line",
-                id: destinatario_id,
-                type: destinatario_type,
-                test: input("test").get(),
-            },
-            success: function (response) {
-                buttonRestore(button, restore);
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            const restore = buttonLoading(button);
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                dataType: "JSON",
+                data: {
+                    id_module: globals.id_module,
+                    id_record: globals.id_record,
+                    op: "send-line",
+                    id: destinatario_id,
+                    type: destinatario_type,
+                    test: input("test").get(),
+                },
+                success: function (response) {
+                    buttonRestore(button, restore);
 
-                if (response.result) {
-                    Swal.fire("'.tr('Invio completato').'", "", "success");
-                } else {
-                    Swal.fire("'.tr('Invio fallito').'", "", "error");
+                    if (response.result) {
+                        Swal.fire("'.tr('Invio completato').'", "", "success");
+                    } else {
+                        Swal.fire("'.tr('Invio fallito').'", "", "error");
+                    }
+                },
+                error: function() {
+                    buttonRestore(button, restore);
+
+                    Swal.fire("'.tr('Errore').'", "'.tr("Errore durante l'invio dell'email").'", "error");
                 }
-            },
-            error: function() {
-                buttonRestore(button, restore);
-
-                Swal.fire("'.tr('Errore').'", "'.tr("Errore durante l'invio dell'email").'", "error");
-            }
-        });
+            });
+        }
     });
 }
 </script>';

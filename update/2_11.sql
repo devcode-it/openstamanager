@@ -412,3 +412,18 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Padre'),      'Parent'),
 (1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Abilitato'),  'Abilitato'),
 (2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Abilitato'),  'Enabled');
+
+-- Modifica plugin Registrazioni in Contabilizzazione
+UPDATE `zz_plugins` SET `name` = 'Contabilizzazione' WHERE `zz_plugins`.`name` = 'Registrazioni';
+UPDATE `zz_plugins_lang` SET `title` = 'Contabilizzazione' WHERE `title` = 'Registrazioni';
+UPDATE `zz_plugins_lang` SET `title` = 'Accounting' WHERE `title` = 'Registrations';
+
+-- Riorganizzazione plugins Fatture di vendita
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+-- Riorganizzazione plugins Fatture di acquisto
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');

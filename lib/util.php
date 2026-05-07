@@ -132,6 +132,9 @@ if (!function_exists('string_contains')) {
      */
     function string_contains($string, $contains)
     {
+        if ($string === null) {
+            return false;
+        }
         return str_contains($string, $contains);
     }
 }

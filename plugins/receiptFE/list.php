@@ -288,25 +288,19 @@ function showInvoiceSelector(receiptFile, originalButton, originalRestore, recei
                     Swal.fire({
                         title: "'.tr('Seleziona fattura da associare').'",
                         html: "<style>" +
-                              "#swal-fattura-select { width: 95% !important; margin: 0 auto; display: block; max-height: 200px; overflow-y: auto; }" +
-                              "#swal-fattura-select option { white-space: normal !important; word-wrap: break-word !important; padding: 8px 4px !important; line-height: 1.3 !important; height: auto !important; }" +
-                              ".swal2-popup { word-wrap: break-word !important; }" +
-                              ".swal2-popup .select2-container { width: 95% !important; margin: 0 auto; display: block; }" +
-                              ".swal2-popup .select2-dropdown { z-index: 99999 !important; }" +
-                              ".swal2-popup .select2-selection { min-height: 38px !important; }" +
-                              ".swal2-popup .select2-results__option { white-space: normal !important; word-wrap: break-word !important; padding: 8px 12px !important; line-height: 1.4 !important; }" +
+                              "#swal-fattura-select { max-height: 200px; overflow-y: auto; }" +
                               "</style>" +
-                              "<div style=\"background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; margin-bottom: 20px;\">" +
-                              "<div style=\"display: flex; justify-content: space-between; margin-bottom: 8px;\"><span style=\"font-weight: 600; color: #495057; font-size: 13px;\">'.tr('Ricevuta').':</span><span style=\"color: #212529; font-size: 13px; font-weight: 500;\">" + receiptFile + "</span></div>" +
-                              "<div style=\"display: flex; justify-content: space-between; margin-bottom: 8px;\"><span style=\"font-weight: 600; color: #495057; font-size: 13px;\">'.tr('Progressivo invio').':</span><span style=\"color: #212529; font-size: 13px; font-weight: 500;\">" + (receiptInfo.progressivo_invio || "'.tr('Non disponibile').'") + "</span></div>" +
+                              "<div class=\"swal2-info-box\">" +
+                              "<div class=\"swal2-info-row\"><span class=\"swal2-info-label\">'.tr('Ricevuta').':</span><span class=\"swal2-info-value\">" + receiptFile + "</span></div>" +
+                              "<div class=\"swal2-info-row\"><span class=\"swal2-info-label\">'.tr('Progressivo invio').':</span><span class=\"swal2-info-value\">" + (receiptInfo.progressivo_invio || "'.tr('Non disponibile').'") + "</span></div>" +
                               "</div>" +
-                              "<div style=\"margin: 15px 0;\">" +
-                              "<label style=\"display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 14px;\">'.tr('Seleziona la fattura da associare').':</label>" +
+                              "<div class=\"swal2-select-container\">" +
+                              "<label class=\"swal2-select-label\">'.tr('Seleziona la fattura da associare').':</label>" +
                               "<select id=\"swal-fattura-select\" class=\"form-control\">" +
                               "<option value=\"\">'.tr('Seleziona una fattura').'...</option>" +
                               options +
                               "</select>" +
-                              "<div style=\"font-size: 12px; color: #6c757d; margin-top: 8px; font-style: italic; text-align: center;\">" +
+                              "<div class=\"swal2-select-help\">" +
                               (hasMatchingProgressivo ? "'.tr('★ Fattura con progressivo corrispondente trovata e preselezionata').' ★" : "'.tr('Nessuna fattura con progressivo corrispondente trovata. Seleziona manualmente.').'") +
                               "</div>" +
                               "</div>",

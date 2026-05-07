@@ -77,27 +77,27 @@ function restore() {
 function creaBackup(button){
     Swal.fire({
         title: "'.tr('Creare un nuovo backup?').'",
-        text: "'.tr('Seleziona cosa escludere dal backup:').'",
-        input: "select",
-        inputOptions: {
-            "exclude_attachments": "📎 '.tr('Allegati').'",
-            "only_database": "🗃️ '.tr('Tutto tranne database').'"
-        },
-        inputAttributes: {
-            title: "'.tr('Seleziona cosa escludere dal backup').'"
-        },
-        inputPlaceholder: " '.tr('Non escludere nulla').'",
-        icon: "warning",
+        html: "<style>#swal-backup-select{width:100%}</style>" +
+              "<div class=\"swal2-select-container\">" +
+              "<label class=\"swal2-select-label\">'.tr('Seleziona cosa escludere dal backup:').'</label>" +
+              "<select id=\"swal-backup-select\" class=\"form-control\">" +
+              "<option value=\"\">'.tr('Non escludere nulla').'</option>" +
+              "<option value=\"exclude_attachments\">📎 '.tr('Allegati').'</option>" +
+              "<option value=\"only_database\">🗃️ '.tr('Tutto tranne database').'</option>" +
+              "</select>" +
+              "<div class=\"swal2-select-help\">'.tr('Seleziona un\'opzione per personalizzare il backup, oppure lascia vuoto per includere tutto').'</div>" +
+              "</div>",
         showCancelButton: true,
+        confirmButtonText: "'.tr('Crea').'",
+        cancelButtonText: "'.tr('Annulla').'",
         customClass: {
             confirmButton: "btn btn-lg btn-success",
-            confirmButtonText: "'.tr('Crea').'",
         }
     }).then(function(result) {
         if (result.isConfirmed) {
             let restore = buttonLoading(button);
             $("#main_loading").show();
-            let selectedOption = result.value; // result.value contains the selected input option
+            let selectedOption = $("#swal-backup-select").val();
             $.ajax({
                 url: globals.rootdir + "/actions.php",
                 type: "GET",

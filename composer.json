@@ -41,7 +41,7 @@
         "filp/whoops": "^2.15.0",
         "greenlion/php-sql-parser": "^4.5",
         "guzzlehttp/guzzle": "^7.0.1",
-        "ifsnop/mysqldump-php": "^2.3",
+        "druidfi/mysqldump-php": "^2.0",
         "illuminate/cache": "^12.0",
         "illuminate/database": "^12.0",
         "illuminate/filesystem": "^12.0",

@@ -18,11 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Ifsnop\Mysqldump\Mysqldump;
 use Util\FileSystem;
 use Util\Generator;
 use Util\Zip;
-
+use Druidfi\Mysqldump\Mysqldump;
 /**
  * Classe per la gestione dei backup.
  *
@@ -317,12 +316,22 @@ class Backup
     {
         $config = App::getConfig();
 
-        $dump = new Mysqldump('mysql:host='.$config['db_host'].';dbname='.$config['db_name'], $config['db_username'], $config['db_password'], [
-            'add-drop-table' => true,
-            'add-locks' => false,
-        ]);
+        $dsn = 'mysql:host=' . $config['db_host'] . ';dbname=' . $config['db_name'];
+        $username = $config['db_username'];
+        $password = $config['db_password'];
 
-        $dump->start($file);
+        $settings = [
+            'add-drop-table' => true,
+            'single-transaction' => true,
+            'lock-tables' => false,
+        ];
+
+        try {
+            $dump = new Mysqldump($dsn, $username, $password, $settings);
+            $dump->start($file);
+        } catch (\Exception $e) {
+            throw new \Exception('mysqldump-php error: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -169,7 +169,7 @@ function abilitaSottoModuli(button) {
                 dataType: "JSON",
                 data: {
                     id_module: globals.id_module,
-                    op: "abilida-sotto-modulo",
+                    op: "abilita-sotto-modulo",
                     tipo: tipo,
                     id: id,
                 },

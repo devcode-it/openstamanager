@@ -2,7 +2,7 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->files()
-    ->exclude('.couscous')
+    ->exclude('files')
     ->exclude('node_modules')
     ->exclude('vendor')
     ->ignoreDotFiles(true)

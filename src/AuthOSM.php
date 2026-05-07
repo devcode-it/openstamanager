@@ -137,7 +137,8 @@ class AuthOSM extends Util\Singleton
                     $is_online = $user_model ? $user_model->isOnline() : 0;
 
                     // Se ci sono operazioni recenti, la sessione è ancora attiva -> blocca il login
-                    if ($is_online == 1) {
+                    // TODO: funzionalità da completare per la versione 2.11 (Luca)
+                    /*if ($is_online == 1) {
                         $status = 'already_logged_in';
                         $this->current_status = $status;
 
@@ -147,9 +148,8 @@ class AuthOSM extends Util\Singleton
                         $database->insert('zz_logs', $log);
 
                         return false;
-                    }
+                    }*/
                 }
-
                 // Resetta il token precedente per permettere il nuovo login
                 $database->update('zz_users', [
                     'session_token' => null,
@@ -1184,6 +1184,7 @@ class AuthOSM extends Util\Singleton
      */
     protected function generateSessionToken($user_id)
     {
+        /*
         // Genera un token sicuro di 64 caratteri esadecimali
         $token = bin2hex(random_bytes(32));
 
@@ -1203,6 +1204,9 @@ class AuthOSM extends Util\Singleton
         if (!empty($this->user) && $this->user->id == $user_id) {
             $this->user->session_token = $token;
         }
+        */
+
+        return true;
     }
 
     /**

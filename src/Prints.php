@@ -208,10 +208,10 @@ class Prints
      */
     public static function getHref($print, $id_record, $get = '')
     {
-        $infos = PrintTemplate::where('name', $print)->first()->id;
+        $infos = PrintTemplate::where('name', $print)->first();
 
         if (empty($infos)) {
-            $infos = PrintTemplate::find($print)->id;
+            $infos = PrintTemplate::find($print);
         }
 
         if (empty($infos)) {
@@ -220,12 +220,12 @@ class Prints
 
         $link = base_path_osm().'/pdfgen.php?';
 
-        if (self::isOldStandard($infos['id'])) {
-            $link .= 'ptype='.$infos['directory'];
+        if (self::isOldStandard($infos->id)) {
+            $link .= 'ptype='.$infos->directory;
 
-            $link .= !empty($infos['previous']) && !empty($id_record) ? '&'.$infos['previous'].'='.$id_record : '';
+            $link .= !empty($infos->previous) && !empty($id_record) ? '&'.$infos->previous.'='.$id_record : '';
         } else {
-            $link .= 'id_print='.$infos;
+            $link .= 'id_print='.$infos->id;
 
             $link .= !empty($id_record) ? '&id_record='.$id_record : '';
         }

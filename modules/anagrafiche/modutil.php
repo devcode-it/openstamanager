@@ -48,7 +48,6 @@ if (!function_exists('geolocalizzazione')) {
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 $data = json_decode(curl_exec($ch));
-                curl_close($ch);
 
                 // Salvataggio informazioni
                 $dbo->update('an_sedi', [
@@ -78,7 +77,6 @@ if (!function_exists('geolocalizzazione')) {
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 $data = json_decode(curl_exec($ch));
-                curl_close($ch);
 
                 // Salvataggio informazioni
                 $anagrafica->gaddress = $data[0]->display_name;

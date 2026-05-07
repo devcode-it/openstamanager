@@ -81,7 +81,7 @@ echo '
             <div class="col-sm-4">
                 <div class="description-block">
                     <a class="btn btn-warning btn-block tip '.(($module) ? '' : 'disabled').'" data-href="'.(($module) ? $module->fileurl('self.php').'?id_module='.$module->id : '#').'&resource=password" data-widget="modal" data-title="'.tr('Cambia password').'">
-                        <i class="fa fa-unlock-alt"></i> '.tr('Cambia password'). '
+                        <i class="fa fa-unlock-alt"></i> '.tr('Cambia password').'
                     </a>
                 </div>
             </div>
@@ -93,17 +93,17 @@ echo '
 
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">' . tr('API e informazioni') . '</h3>
+                <h3 class="card-title">'.tr('API e informazioni').'</h3>
             </div>
 
             <div class="card-body">
-                <p>' . tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne") . '.</p>
+                <p>'.tr("Puoi utilizzare il token per accedere all'API del gestionale e per visualizzare il calendario su applicazioni esterne").'.</p>
 
-                <p>' . tr('Token personale') . ': <b>' . $token . '</b></p>
-                <p>' . tr("URL dell'API") . ': <a href="' . $api . '" target="_blank">' . $api . '</a></p>
+                <p>'.tr('Token personale').': <b>'.$token.'</b></p>
+                <p>'.tr("URL dell'API").': <a href="'.$api.'" target="_blank">'.$api.'</a></p>
                 <hr>
-                <p>' . tr("Token di sessione") . ': <b>' . $session_token . '</b></p>
-                <p>' . tr("Ultimo login riuscito") . ': <b>' . Translator::timestampToLocale($last_login) . '</b></p>
+                <p>'.tr('Token di sessione').': <b>'.$session_token.'</b></p>
+                <p>'.tr('Ultimo login riuscito').': <b>'.Translator::timestampToLocale($last_login).'</b></p>
             </div>
         </div>
     </div>
@@ -144,7 +144,7 @@ echo '
         </div>
     </div>';
 
-$link = $api . '&resource=sync';
+$link = $api.'&resource=sync';
 
 echo '
     <div class="col-md-6">
@@ -153,13 +153,12 @@ echo '
                 <h3 class="card-title">'.tr('Configurazione').'</h3>
             </div>
             <div class="card-body">
-            <p>' . tr("Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario") . ':</p>
-                <a href="' . $link . '" target="_blank">' . $link . '</a>
+            <p>'.tr('Puoi configurare il calendario del CRM caricando questo indirizzo iCal nel tuo calendario').':</p>
+                <a href="'.$link.'" target="_blank">'.$link.'</a>
             </div>
         </div>
     </div>
 </div>';
-
 
 echo '
 <script>

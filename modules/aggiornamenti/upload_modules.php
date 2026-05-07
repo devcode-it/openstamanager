@@ -44,7 +44,7 @@ $extraction_dir = Zip::extract($_FILES['blob']['tmp_name']);
 // ============================================================================
 
 /**
- * Crea un Finder ottimizzato per cercare file di configurazione
+ * Crea un Finder ottimizzato per cercare file di configurazione.
  */
 function createComponentFinder($extraction_dir)
 {
@@ -56,7 +56,7 @@ function createComponentFinder($extraction_dir)
 }
 
 /**
- * Estrae il tipo di componente dal nome del file
+ * Estrae il tipo di componente dal nome del file.
  */
 function getComponentType($filename)
 {
@@ -70,7 +70,7 @@ function getComponentType($filename)
 }
 
 /**
- * Ottiene la configurazione del componente in base al tipo
+ * Ottiene la configurazione del componente in base al tipo.
  */
 function getComponentConfig($type)
 {
@@ -93,24 +93,20 @@ function getComponentConfig($type)
 }
 
 /**
- * Verifica se un componente è già installato
+ * Verifica se un componente è già installato.
  */
 function isComponentInstalled($type, $info)
 {
-    switch ($type) {
-        case 'module':
-            return Module::where('name', $info['name'])->first();
-        case 'plugin':
-            return Plugin::where('name', $info['name'])->first();
-        case 'template':
-            return isset(Prints::getPrints()[$info['name']]);
-        default:
-            return false;
-    }
+    return match ($type) {
+        'module' => Module::where('name', $info['name'])->first(),
+        'plugin' => Plugin::where('name', $info['name'])->first(),
+        'template' => isset(Prints::getPrints()[$info['name']]),
+        default => false,
+    };
 }
 
 /**
- * Prepara i dati per l'inserimento nel database
+ * Prepara i dati per l'inserimento nel database.
  */
 function prepareInsertData($type, $info)
 {
@@ -124,37 +120,30 @@ function prepareInsertData($type, $info)
         'enabled' => 1,
     ];
 
-    switch ($type) {
-        case 'module':
-            return array_merge($baseData, [
-                'default' => 0,
-                'icon' => $info['icon'] ?? '',
-                'parent' => Module::where('name', $info['parent'] ?? '')->first()?->id,
-            ]);
-
-        case 'plugin':
-            return array_merge($baseData, [
-                'default' => 0,
-                'idmodule_from' => Module::where('name', $info['module_from'] ?? '')->first()?->id,
-                'idmodule_to' => Module::where('name', $info['module_to'] ?? '')->first()?->id,
-                'position' => $info['position'] ?? '',
-            ]);
-
-        case 'template':
-            return array_merge($baseData, [
-                'id_module' => Module::where('name', $info['module'] ?? '')->first()?->id,
-                'is_record' => $info['is_record'] ?? 0,
-                'icon' => $info['icon'] ?? '',
-                'predefined' => 0,
-            ]);
-
-        default:
-            return $baseData;
-    }
+    return match ($type) {
+        'module' => array_merge($baseData, [
+            'default' => 0,
+            'icon' => $info['icon'] ?? '',
+            'parent' => Module::where('name', $info['parent'] ?? '')->first()?->id,
+        ]),
+        'plugin' => array_merge($baseData, [
+            'default' => 0,
+            'idmodule_from' => Module::where('name', $info['module_from'] ?? '')->first()?->id,
+            'idmodule_to' => Module::where('name', $info['module_to'] ?? '')->first()?->id,
+            'position' => $info['position'] ?? '',
+        ]),
+        'template' => array_merge($baseData, [
+            'id_module' => Module::where('name', $info['module'] ?? '')->first()?->id,
+            'is_record' => $info['is_record'] ?? 0,
+            'icon' => $info['icon'] ?? '',
+            'predefined' => 0,
+        ]),
+        default => $baseData,
+    };
 }
 
 /**
- * Prepara i dati per la tabella _lang
+ * Prepara i dati per la tabella _lang.
  */
 function prepareLangData($type, $info)
 {
@@ -171,7 +160,7 @@ function prepareLangData($type, $info)
 }
 
 /**
- * Inserisce il componente nel database
+ * Inserisce il componente nel database.
  */
 function insertComponent($type, $info, $table, $dbo)
 {
@@ -179,6 +168,7 @@ function insertComponent($type, $info, $table, $dbo)
 
     if (!empty($installed)) {
         flash()->error(tr('Aggiornamento completato!'));
+
         return;
     }
 
@@ -189,6 +179,7 @@ function insertComponent($type, $info, $table, $dbo)
         flash()->error(tr('Errore: il modulo "_MODULE_" non è installato. Installare prima il modulo richiesto.', [
             '_MODULE_' => $info['module'] ?? 'sconosciuto',
         ]));
+
         return;
     }
 
@@ -204,6 +195,7 @@ function insertComponent($type, $info, $table, $dbo)
         flash()->error(tr('Errore: i moduli "_MODULES_" non sono installati. Installare prima i moduli richiesti.', [
             '_MODULES_' => implode(', ', $missing),
         ]));
+
         return;
     }
 
@@ -219,11 +211,11 @@ function insertComponent($type, $info, $table, $dbo)
 }
 
 /**
- * Elabora un singolo componente (modulo, plugin o template)
+ * Elabora un singolo componente (modulo, plugin o template).
  */
 function processComponent($file, $dbo)
 {
-    $filename = basename($file->getRealPath());
+    $filename = basename((string) $file->getRealPath());
     $type = getComponentType($filename);
 
     if (!$type) {
@@ -234,7 +226,7 @@ function processComponent($file, $dbo)
     $config = getComponentConfig($type);
 
     // Copia i file nella cartella relativa
-    copyr(dirname($file->getRealPath()), base_dir().'/'.$config['directory'].'/'.$info['directory']);
+    copyr(dirname((string) $file->getRealPath()), base_dir().'/'.$config['directory'].'/'.$info['directory']);
 
     // Inserisce il componente nel database
     insertComponent($type, $info, $config['table'], $dbo);
@@ -253,7 +245,7 @@ if (file_exists($extraction_dir.'/VERSION')) {
 }
 
 /**
- * Gestisce l'aggiornamento completo del progetto
+ * Gestisce l'aggiornamento completo del progetto.
  */
 function handleProjectUpdate($extraction_dir)
 {
@@ -277,7 +269,7 @@ function handleProjectUpdate($extraction_dir)
 }
 
 /**
- * Gestisce il caricamento di componenti (moduli, plugin, template)
+ * Gestisce il caricamento di componenti (moduli, plugin, template).
  */
 function handleComponentsUpload($extraction_dir, $dbo)
 {

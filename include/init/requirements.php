@@ -76,9 +76,9 @@ foreach ($modules as $name => $values) {
 $settings = [
     'php_version' => [
         'type' => 'version',
-        'description' => '8.3.x',
+        'description' => '8.5.x',
         'minimum' => '8.3.0',
-        'maximum' => '8.3.99',
+        'maximum' => '8.5.99',
     ],
 
     'zip' => [

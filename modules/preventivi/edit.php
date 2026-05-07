@@ -79,7 +79,7 @@ if (count($preventivo->revisioni) > 1) {
 
             <div class="row">
                 <div class="col-md-4">';
-if (! empty($record['idreferente'])) {
+if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
@@ -205,7 +205,7 @@ if ($user->gruppo != 'Clienti') {
 	</div>
 
     <?php
-        if (! empty($record['id_documento_fe']) || ! empty($record['num_item']) || ! empty($record['codice_cig']) || ! empty($record['codice_cup'])) {
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = '';
         } else {
             $collapsed = ' collapsed-card';
@@ -260,7 +260,7 @@ echo '
 
     <div class="card-body">';
 
-if (! $block_edit) {
+if (!$block_edit) {
     // Form di inserimento riga documento
     echo '
         <form id="link_form" action="" method="post">

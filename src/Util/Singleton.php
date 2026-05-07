@@ -45,9 +45,9 @@ abstract class Singleton
     }
 
     /**
-     * Private unserialize method to prevent unserializing of the <b>Singleton</b> instance.
+     * Unserialize method is public for PHP 8.5 compatibility.
      */
-    private function __wakeup()
+    public function __wakeup()
     {
     }
 

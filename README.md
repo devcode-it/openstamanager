@@ -64,7 +64,8 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | PHP | EOL | Supportato |
 |-----|-----|:----------:|
-| 8.4 | 31/12/2028 | 🟡 |
+| 8.5 | 31/12/2029 | 🟢 |
+| 8.4 | 31/12/2028 | 🟢 |
 | 8.3 | 31/12/2027 | 🟢 |
 | 8.2 | 31/12/2026 | 🔴 |
 | 8.1 | 31/12/2025 | 🔴 |

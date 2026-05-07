@@ -28,6 +28,7 @@ use Modules\Fatture\Fattura;
  */
 class InvoiceHook extends Manager
 {
+    #[\Override]
     public function isSingleton()
     {
         return true;

@@ -108,6 +108,7 @@ class SessioniInterventi extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function createRecord($data)
     {
         // Informazioni sull'utente
@@ -129,6 +130,7 @@ class SessioniInterventi extends AppResource
         ];
     }
 
+    #[\Override]
     public function updateRecord($data)
     {
         $sessione = Sessione::find($data['id']);

@@ -62,8 +62,8 @@ if (!empty($id_documento)) {
 }
 
 // Se non è stato passato id_documento, mostro la select per scegliere il contratto precedente
-$id_anagrafica = isset($record['idanagrafica']) ? $record['idanagrafica'] : null;
-$id_record_current = isset($id_record) ? $id_record : null;
+$id_anagrafica = $record['idanagrafica'] ?? null;
+$id_record_current = $id_record ?? null;
 
 echo '
 <div class="row">

@@ -109,7 +109,7 @@ if (!empty($rs)) {
         }
         echo '</small>
         </td>
-        <td>'.(!empty($r['idagente']) ? Modules::link('Anagrafiche',$r['idagente'],$r['nome_agente']) : '').'</td>
+        <td>'.(!empty($r['idagente']) ? Modules::link('Anagrafiche', $r['idagente'], $r['nome_agente']) : '').'</td>
         <td>'.$r['categoria'].'</td>
         <td class="text-center">'.$data_accettazione.'</td>
         <td class="text-center">'.$data_conclusione.'</td>

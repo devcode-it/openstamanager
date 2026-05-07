@@ -281,7 +281,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 } else {
                     // Verifico anche se il codice sembra essere un barcode (formato numerico tipico di EAN/GTIN)
                     // EAN-13 ha 13 cifre, EAN-8 ha 8 cifre, UPC ha 12 cifre
-                    if (preg_match('/^[0-9]{8,14}$/', $codice) && strlen($codice) != 6) {
+                    if (preg_match('/^[0-9]{8,14}$/', (string) $codice) && strlen((string) $codice) != 6) {
                         $barcode = $codice;
                         $codice = database()->fetchOne('SELECT MAX(id) as codice FROM mg_articoli')['codice'] + 1;
                     }
@@ -514,7 +514,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
                         // Cerca tra tutti i codici quello che inizia per "cod" (case-insensitive) per il codice fornitore
                         foreach ($codici as $codice_item) {
-                            $codice_valore = strtolower($codice_item['CodiceTipo']);
+                            $codice_valore = strtolower((string) $codice_item['CodiceTipo']);
                             if (str_starts_with($codice_valore, 'cod')) {
                                 $codice_fornitore = $codice_item['CodiceValore'];
                                 break;
@@ -650,6 +650,7 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
+    #[\Override]
     protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
         $fattura = parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo);
@@ -804,4 +805,3 @@ class FatturaOrdinaria extends FatturaElettronica
         ];
     }
 }
-

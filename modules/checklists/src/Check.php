@@ -198,6 +198,7 @@ class Check extends Model
         return $url;
     }
 
+    #[\Override]
     public function delete()
     {
         if (!empty($this->id_immagine)) {

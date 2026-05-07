@@ -78,7 +78,7 @@ if (filter('action') == 'do_update') {
 
             echo '
                 <script>
-                    $("#result").load("index.php?action=do_update&firstuse='.htmlspecialchars($_GET['firstuse'], ENT_QUOTES).'");
+                    $("#result").load("index.php?action=do_update&firstuse='.htmlspecialchars((string) $_GET['firstuse'], ENT_QUOTES).'");
                 </script>';
         } else {
             // Failure
@@ -292,14 +292,15 @@ if (filter('action') == 'do_update') {
                             $("#updates-container").fadeIn(300);
 
                             // Mostra il container dei dettagli delle versioni
-                        $("#versions-details-container").fadeIn(300);
+                            $("#versions-details-container").fadeIn(300);
 
-                        // Inizialmente nascondi i dettagli delle versioni
-                        $("#updates-details").hide();
+                            // Inizialmente nascondi i dettagli delle versioni
+                            $("#updates-details").hide();
 
-                        $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
-                        $("#continue_button").remove();
-                    }, function(){});
+                            $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
+                            $("#continue_button").remove();
+                        }
+                    });
                 }
                 </script>
 

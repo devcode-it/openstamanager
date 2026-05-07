@@ -20,7 +20,6 @@
 
 include_once __DIR__.'/core.php';
 
-use Models\Module;
 use Models\Note;
 use Models\OperationLog;
 use Models\Upload;
@@ -366,8 +365,8 @@ elseif (post('op') == 'send-email') {
     }
 
     // Permetti anche i tag <a> nel corpo delle email
-    \Filter::setAllowedTags('br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]');
-    \Filter::forceParse('body');
+    Filter::setAllowedTags('br,p[style],b[style],strong[style],i[style],em[style],u[style],strike,a[style|href|title|target],ol[style],ul[style],li[style],hr[style],blockquote[style],img[style|alt|title|width|height|src|align],table[style|width|bgcolor|align|cellspacing|cellpadding|border],tr[style],td[style],th[style],tbody,thead,caption,col,colgroup,span[style],sup,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]');
+    Filter::forceParse('body');
 
     // Contenuti
     $mail->subject = post('subject');
@@ -561,7 +560,7 @@ if ($structure->permission == 'rw') {
             elseif (!empty($customs)) {
                 $dbo->delete('zz_field_record', [
                     'id_record' => $id_record,
-                    'id_field' => array_column($customs, 'id')
+                    'id_field' => array_column($customs, 'id'),
                 ]);
             }
         }

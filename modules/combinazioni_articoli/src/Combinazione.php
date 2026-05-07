@@ -55,6 +55,7 @@ class Combinazione extends Model
         return $model;
     }
 
+    #[\Override]
     public function delete()
     {
         $database = database();
@@ -69,6 +70,7 @@ class Combinazione extends Model
         return parent::delete();
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         $result = parent::save($options);

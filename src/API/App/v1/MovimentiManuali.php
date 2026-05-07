@@ -98,6 +98,7 @@ class MovimentiManuali extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function createRecord($data)
     {
         $articolo = Articolo::find($data['id_articolo']);

@@ -523,7 +523,7 @@ switch (filter('op')) {
                 ];
                 continue;
             }
-                
+
             if (is_array($dato['RiferimentoNumeroLinea'])) {
                 foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
                     foreach ($replaces as $replace) {

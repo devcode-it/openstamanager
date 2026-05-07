@@ -203,33 +203,6 @@ class Ricevuta
     }
 
     /**
-     * Restituisce la lista normalizzata degli errori presenti nella ricevuta.
-     *
-     * @return array
-     */
-    protected function getListaErrori()
-    {
-        $lista_errori = $this->xml['ListaErrori']['Errore'] ?? [];
-        if (empty($lista_errori) || !is_array($lista_errori)) {
-            return [];
-        }
-
-        return XML::forceArray($lista_errori);
-    }
-
-    /**
-     * Restituisce il primo errore disponibile nella ricevuta.
-     *
-     * @return array
-     */
-    protected function getErrorePrincipale()
-    {
-        $lista_errori = $this->getListaErrori();
-
-        return $lista_errori[0] ?? [];
-    }
-
-    /**
      * Aggiorna lo stato della fattura relativa alla ricevuta in modo tale da rispecchiare i dati richiesti.
      */
     public function saveStato($codice, $id_allegato)
@@ -355,5 +328,32 @@ class Ricevuta
     public function cleanup()
     {
         delete($this->file);
+    }
+
+    /**
+     * Restituisce la lista normalizzata degli errori presenti nella ricevuta.
+     *
+     * @return array
+     */
+    protected function getListaErrori()
+    {
+        $lista_errori = $this->xml['ListaErrori']['Errore'] ?? [];
+        if (empty($lista_errori) || !is_array($lista_errori)) {
+            return [];
+        }
+
+        return XML::forceArray($lista_errori);
+    }
+
+    /**
+     * Restituisce il primo errore disponibile nella ricevuta.
+     *
+     * @return array
+     */
+    protected function getErrorePrincipale()
+    {
+        $lista_errori = $this->getListaErrori();
+
+        return $lista_errori[0] ?? [];
     }
 }

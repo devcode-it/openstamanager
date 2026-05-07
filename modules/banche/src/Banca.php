@@ -63,6 +63,7 @@ class Banca extends Model
         return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         $this->fixPredefined();

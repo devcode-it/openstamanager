@@ -37,6 +37,7 @@ class Google extends OriginalProvider implements ProviderInterface
         return static::$provider;
     }
 
+    #[\Override]
     protected function getDefaultScopes(): array
     {
         return ['https://mail.google.com/'];

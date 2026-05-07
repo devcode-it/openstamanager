@@ -21,16 +21,16 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Models\OperationLog;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
+use Modules\Emails\Mail;
+use Modules\Emails\Template;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Fatture\Tipo as TipoFattura;
 use Modules\Ordini\Ordine;
 use Modules\Ordini\Tipo;
-use Modules\Emails\Template;
-use Models\OperationLog;
-use Modules\Emails\Mail;
 use Notifications\EmailNotification;
 
 // Segmenti
@@ -255,7 +255,7 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Ordini duplicati correttamente!'));
-        
+
         break;
 
     case 'send_mail':

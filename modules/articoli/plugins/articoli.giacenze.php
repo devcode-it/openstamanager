@@ -197,7 +197,7 @@ echo '
                 <table class="table table-sm table-striped">';
 
 foreach ($sedi as $sede) {
-    $qta_presente = isset($giacenze[$sede['id']][0]) ? $giacenze[$sede['id']][0] : 0;
+    $qta_presente = $giacenze[$sede['id']][0] ?? 0;
     $diff = ($qta_presente - $impegnato + $ordinato) * -1;
     $da_ordinare = (($diff <= 0) ? 0 : $diff);
     echo '
@@ -227,7 +227,7 @@ echo '
                 <table class="table table-sm table-striped">';
 
 foreach ($sedi as $sede) {
-    $giacenza_sede = isset($giacenze[$sede['id']][0]) ? $giacenze[$sede['id']][0] : 0;
+    $giacenza_sede = $giacenze[$sede['id']][0] ?? 0;
     echo '
                     <tr>
                         <td>'.$sede['nomesede'].'</td>

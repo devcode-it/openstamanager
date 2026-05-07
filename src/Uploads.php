@@ -76,7 +76,6 @@ class Uploads
      *
      * @param string|array $source
      * @param array        $data
-     * @param array        $options
      *
      * @return Upload
      */

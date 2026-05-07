@@ -456,6 +456,7 @@ class Articolo extends Model
     /**
      * @version distinta_base
      */
+    #[\Override]
     public function save(array $attributes = [])
     {
         if (Plugin::where('name', 'Distinta base')->first()->id) {

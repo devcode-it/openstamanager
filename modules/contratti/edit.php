@@ -26,7 +26,7 @@ $block_edit = $record['is_bloccato'];
 $data_accettazione = $record['data_accettazione'] ? strtotime((string) $record['data_accettazione']) : '';
 $data_conclusione = $record['data_conclusione'] ? strtotime((string) $record['data_conclusione']) : '';
 
-if ($data_conclusione < $data_accettazione && ! empty($data_accettazione) && ! empty($data_conclusione)) {
+if ($data_conclusione < $data_accettazione && !empty($data_accettazione) && !empty($data_conclusione)) {
     echo '
     <div class="alert alert-warning"><a class="clickable" onclick="$(\'.alert\').hide();"><i class="fa fa-times"></i></a> '.tr('Attenzione! La data di accettazione supera la data di conclusione del contratto. Verificare le informazioni inserite.').'</div>';
 }
@@ -158,12 +158,12 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    <?php echo (! empty($record['id_categoria'])) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
+                    <?php echo (!empty($record['id_categoria'])) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>
                     {[ "type": "select", "label": "<?php echo tr('Categoria'); ?>", "name": "id_categoria", "required": 0, "value": "$id_categoria$", "ajax-source": "categorie_contratti", "icon-after": "add|<?php echo Module::where('name', 'Categorie contratti')->first()->id; ?>" ]}
                 </div>
 
                 <div class="col-md-3">
-                    <?php echo ! empty($record['id_sottocategoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie contratti')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
+                    <?php echo !empty($record['id_sottocategoria']) ? Modules::link('Categorie contratti', $record['id_categoria'], null, null, 'class="pull-right"') : ''; ?>{[ "type": "select", "label": "<?php echo tr('Sottocategoria'); ?>", "name": "id_sottocategoria", "value": "$id_sottocategoria$", "ajax-source": "sottocategorie_contratti", "select-options": <?php echo json_encode(['id_categoria' => $record['id_categoria']]); ?>, "icon-after": "add|<?php echo Module::where('name', 'Categorie contratti')->first()->id; ?>|id_original=<?php echo $record['id_categoria']; ?>" ]}
                 </div>
             </div>
 
@@ -220,7 +220,7 @@ echo '
 	</div>
 
     <?php
-        if (! empty($record['id_documento_fe']) || ! empty($record['num_item']) || ! empty($record['codice_cig']) || ! empty($record['codice_cup'])) {
+        if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = '';
         } else {
             $collapsed = ' collapsed-card';
@@ -288,7 +288,7 @@ echo '
 
     <div class="card-body">';
 
-if (! $block_edit) {
+if (!$block_edit) {
     // Form di inserimento riga documento
     echo '
         <form id="link_form" action="" method="post">

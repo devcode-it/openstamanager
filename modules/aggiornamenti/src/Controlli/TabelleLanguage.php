@@ -34,6 +34,7 @@ class TabelleLanguage extends Controllo
         return 'warning';
     }
 
+    #[\Override]
     public function getOptions($record)
     {
         return [
@@ -49,6 +50,7 @@ class TabelleLanguage extends Controllo
     /**
      * Indica se questo controllo supporta azioni globali.
      */
+    #[\Override]
     public function hasGlobalActions()
     {
         return true;
@@ -57,6 +59,7 @@ class TabelleLanguage extends Controllo
     /**
      * Restituisce le azioni globali disponibili per questo controllo.
      */
+    #[\Override]
     public function getGlobalActions()
     {
         return [
@@ -306,6 +309,7 @@ class TabelleLanguage extends Controllo
     /**
      * Esegue la correzione globale per tutti i record trovati.
      */
+    #[\Override]
     public function solveGlobal($params = [])
     {
         $results = [];

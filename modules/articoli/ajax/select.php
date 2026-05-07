@@ -216,7 +216,7 @@ switch ($resource) {
             } else {
                 $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
                 $qta_da_usare = $qta_sede;
-            } 
+            }
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_da_usare).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),

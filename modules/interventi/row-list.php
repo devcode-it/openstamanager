@@ -323,18 +323,18 @@ if (sizeof($righe) > 0) {
         <button type="button" class="btn btn-sm btn-primary disabled" id="copia_righe" onclick="copiaRighe(getSelectData());" title="'.tr('Copia righe selezionate negli appunti').'">
             <i class="fa fa-clipboard"></i> '.tr('Copia').'
         </button>';
-    
-        // Il tasto incolla è disponibile solo se il documento non è bloccato
-        if (!$block_edit) {
-            echo '
+
+    // Il tasto incolla è disponibile solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
         <button type="button" class="btn btn-sm btn-primary" id="incolla_righe" onclick="incollaRighe();" title="'.tr('Incolla righe dagli appunti').'">
                 <i class="fa fa-paste"></i> '.tr('Incolla').'
             </button>';
-        }
-    
-        // I pulsanti di modifica sono disponibili solo se il documento non è bloccato
-        if (!$block_edit) {
-            echo '
+    }
+
+    // I pulsanti di modifica sono disponibili solo se il documento non è bloccato
+    if (!$block_edit) {
+        echo '
             <button type="button" class="btn btn-sm btn-primary disabled" id="duplica_righe" onclick="duplicaRiga(getSelectData());">
                 <i class="fa fa-copy"></i> '.tr('Duplica').'
             </button>
@@ -354,7 +354,7 @@ if (sizeof($righe) > 0) {
             <button type="button" class="btn btn-sm btn-info disabled" id="modifica_iva_righe" onclick="modificaIvaRighe(getSelectData());">
                 <i class="fa fa-percent"></i> '.tr('Modifica IVA').'
             </button>';
-        }
+    }
     echo '
     </div>';
 } else {

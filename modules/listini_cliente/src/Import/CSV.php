@@ -212,6 +212,7 @@ class CSV extends CSVImporter
      *
      * @return string Percorso del file salvato
      */
+    #[\Override]
     public function saveFailedRecordsWithErrors($filepath)
     {
         if (empty($this->failed_rows)) {
@@ -247,6 +248,7 @@ class CSV extends CSVImporter
         return $filepath;
     }
 
+    #[\Override]
     public function getFailedErrors()
     {
         return $this->failed_errors;
@@ -255,6 +257,7 @@ class CSV extends CSVImporter
     /**
      * Override del metodo importRows per migliorare il tracking degli errori.
      */
+    #[\Override]
     public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $this->current_row = $offset;

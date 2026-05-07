@@ -33,7 +33,7 @@ $id_segment = $record['id_segment'];
 // Verifica aggiuntive sulla sequenzialità dei numeri
 $numero_previsto = verifica_numero_intervento($intervento, $id_segment);
 
-if (! empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
+if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
     echo '
 <div class="alert alert-warning alert-dismissable">
     <i class="fa fa-warning"></i> '.tr("E' assente una attività con numero _NUM_ in data precedente o corrispondente al _DATE_: potrebbero esserci alcuni errori di continuità con la numerazione delle attività", [
@@ -117,7 +117,7 @@ echo '
 
 $idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
-if (! empty($record['idordine'])) {
+if (!empty($record['idordine'])) {
     echo '
                         '.Modules::link('Ordini cliente', $record['idordine'], null, null, 'class="pull-right"');
 }
@@ -133,7 +133,7 @@ echo '
 
 $anagrafica_cliente = $intervento->anagrafica;
 $sede_cliente = $anagrafica_cliente->sedeLegale;
-if (! empty($intervento->idsede_destinazione)) {
+if (!empty($intervento->idsede_destinazione)) {
     $sede_cliente = Sede::find($intervento->idsede_destinazione);
 }
 
@@ -198,7 +198,7 @@ echo '
 $articoli = $intervento->articoli;
 echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || ! $articoli->isEmpty()) ? 1 : 0).'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
@@ -245,7 +245,7 @@ echo '
     </div>';
 
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
-if (! empty($record['idcontratto'])) {
+if (!empty($record['idcontratto'])) {
     $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
     $record['id_documento_fe'] = $contratto['id_documento_fe'];
     $record['codice_cup'] = $contratto['codice_cup'];
@@ -270,19 +270,19 @@ if (! empty($record['idcontratto'])) {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        {[ "type": "<?php echo ! empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo ! empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo ! empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo ! empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
                 </div>
             </div>
@@ -327,7 +327,7 @@ if (! empty($record['idcontratto'])) {
 
 <?php
 
-if (! $block_edit) {
+if (!$block_edit) {
     // Lettura preventivi accettati, in attesa di conferma o in lavorazione
     $prev_query = 'SELECT
             COUNT(*) AS tot
@@ -410,20 +410,20 @@ if (! $block_edit) {
                                         <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                                     </a>
 
-                                    <a class="'.(! empty($preventivi) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                                    <a class="'.(!empty($preventivi) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Preventivo').'
                                     </a>
 
-                                    <a class="'.(! empty($contratti) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
+                                    <a class="'.(!empty($contratti) ? '' : ' disabled').' dropdown-item" title="'.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_contratto.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Contratto').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Contratto').'
                                     </a>
 
 
-                                    <a class="'.(! empty($ddt) ? '' : ' disabled').' dropdown-item" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                                    <a class="'.(!empty($ddt) ? '' : ' disabled').' dropdown-item" title="'.tr('DDT in uscita per il Cliente che si trovano nello stato di Evaso o Parzialmente Evaso con una Causale importabile').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ddt').'
                                     </a>
 
-                                    <a class="'.(! empty($ordine) ? '' : ' disabled').' dropdown-item" title="'.tr('Ordini che si trovano nello stato Accettato').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                                    <a class="'.(!empty($ordine) ? '' : ' disabled').' dropdown-item" title="'.tr('Ordini che si trovano nello stato Accettato').'. '.tr("L'aggiunta del documento secondo questa procedura non associa l'attività al relativo consuntivo del documento: utilizzare i campi soprastanti a questo fine").'." style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                         <i class="fa fa-plus"></i> '.tr('Ordine').'
                                     </a>
 
@@ -457,19 +457,19 @@ if (! $block_edit) {
     </div>
 </div>
 
-{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato'] && ! setting('Permetti l\'inserimento di allegati in attività completate')) ? '"readonly": 1' : '"readonly": 0'; ?> )}
+{( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$", <?php echo ($record['flag_completato'] && !setting('Permetti l\'inserimento di allegati in attività completate')) ? '"readonly": 1' : '"readonly": 0'; ?> )}
 
 <!-- Documenti collegati - Caricamento ottimizzato via AJAX -->
 <div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati') ?></span></h3>
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati'); ?></span></h3>
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
         </div>
     </div>
     <div class="card-body" id="documenti-collegati-body">
         <div class="text-center" id="documenti-collegati-loading">
-            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso') ?>
+            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso'); ?>
         </div>
         <div id="documenti-collegati-content" style="display: none;"></div>
     </div>
@@ -487,7 +487,7 @@ if (! $block_edit) {
 	    <img src="'.$intervento->signature.'" class="img-thumbnail"><div>&nbsp;</div>
 	   	<div class="col-md-6 offset-md-3 alert alert-success"><i class="fa fa-check"></i> '.tr('Firmato il _DATE_ da _PERSON_', [
                 '_DATE_' => Translator::dateToLocale($intervento->firma_data),
-                '_PERSON_' => (! empty($intervento->firma_nome) ? $intervento->firma_nome : $intervento->anagrafica->ragione_sociale),
+                '_PERSON_' => (!empty($intervento->firma_nome) ? $intervento->firma_nome : $intervento->anagrafica->ragione_sociale),
             ]).'</div>';
         }
 

@@ -34,6 +34,7 @@ class PluginDuplicati extends Controllo
         return 'danger';
     }
 
+    #[\Override]
     public function getOptions($record)
     {
         return [
@@ -136,6 +137,7 @@ class PluginDuplicati extends Controllo
     /**
      * Indica se questo controllo supporta azioni globali.
      */
+    #[\Override]
     public function hasGlobalActions()
     {
         return true;
@@ -197,6 +199,7 @@ class PluginDuplicati extends Controllo
     /**
      * Risolve tutti i conflitti eliminando i record più vecchi e mantenendo quello più recente.
      */
+    #[\Override]
     public function solveGlobal($params = [])
     {
         $results = [];

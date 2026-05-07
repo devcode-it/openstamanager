@@ -50,6 +50,7 @@ class Lista extends Model
         return $model;
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         // Salva sempre i dati base (nome, descrizione, ecc.) indipendentemente dalla query

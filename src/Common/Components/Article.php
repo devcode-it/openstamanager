@@ -216,6 +216,7 @@ abstract class Article extends Accounting
      *
      * @param float $value
      */
+    #[\Override]
     public function setQtaAttribute($value)
     {
         if (!$this->cleanupSerials($value)) {
@@ -250,6 +251,7 @@ abstract class Article extends Accounting
      *
      * @return bool
      */
+    #[\Override]
     public function save(array $options = [])
     {
         if (!empty($this->qta_movimentazione)) {
@@ -260,6 +262,7 @@ abstract class Article extends Accounting
         return parent::save($options);
     }
 
+    #[\Override]
     public function canDelete()
     {
         $serials = $this->usedSerials();
@@ -267,6 +270,7 @@ abstract class Article extends Accounting
         return empty($serials);
     }
 
+    #[\Override]
     public function delete()
     {
         if (!$this->canDelete()) {
@@ -343,6 +347,7 @@ abstract class Article extends Accounting
         ]);
     }
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();

@@ -20,10 +20,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-use Modules\Anagrafiche\Anagrafica;
-use Models\PrintTemplate;
 use Models\Module;
+use Models\PrintTemplate;
 use Models\Upload;
+use Modules\Anagrafiche\Anagrafica;
 
 switch (post('op')) {
     case 'restore':
@@ -150,9 +150,7 @@ switch (post('op')) {
                 ]);
 
                 // Ottimizzazione: usa pluck() per ottenere i dati necessari
-                $links = $anagrafiche_codice_fiscale->map(function ($anagrafica_singola) {
-                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                })->toArray();
+                $links = $anagrafiche_codice_fiscale->map(fn ($anagrafica_singola) => '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>')->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -170,9 +168,7 @@ switch (post('op')) {
                 ]);
 
                 // Ottimizzazione: usa pluck() per ottenere i dati necessari
-                $links = $anagrafiche_partita_iva->map(function ($anagrafica_singola) {
-                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                })->toArray();
+                $links = $anagrafiche_partita_iva->map(fn ($anagrafica_singola) => '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>')->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -269,9 +265,7 @@ switch (post('op')) {
                 ]);
 
                 // Ottimizzazione: usa pluck() per ottenere i dati necessari
-                $links = $anagrafiche_codice_fiscale->map(function ($anagrafica_singola) {
-                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                })->toArray();
+                $links = $anagrafiche_codice_fiscale->map(fn ($anagrafica_singola) => '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>')->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }
@@ -289,9 +283,7 @@ switch (post('op')) {
                 ]);
 
                 // Ottimizzazione: usa pluck() per ottenere i dati necessari
-                $links = $anagrafiche_partita_iva->map(function ($anagrafica_singola) {
-                    return '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>';
-                })->toArray();
+                $links = $anagrafiche_partita_iva->map(fn ($anagrafica_singola) => '<li>'.Modules::link('Anagrafiche', $anagrafica_singola->id, $anagrafica_singola->ragione_sociale).'</li>')->toArray();
 
                 flash()->warning($message.'<ul>'.implode('', $links).'</ul>');
             }

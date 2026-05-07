@@ -31,7 +31,6 @@ use Plugins\PianificazioneFatturazione\Pianificazione;
 use Plugins\PianificazioneInterventi\Promemoria;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Contratto extends Document
 {
@@ -127,7 +126,7 @@ class Contratto extends Document
         foreach ($tipi as $tipo) {
             // Verifica se il tipo di intervento è abilitato per l'anagrafica
             $is_abilitato = in_array($tipo->id, $id_tipi_abilitati) ? 1 : 0;
-            
+
             $database->insert('co_contratti_tipiintervento', [
                 'idcontratto' => $this->id,
                 'idtipointervento' => $tipo->id,
@@ -232,6 +231,7 @@ class Contratto extends Document
         }
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         // Evita ricorsioni
@@ -259,6 +259,7 @@ class Contratto extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
+    #[\Override]
     public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
@@ -316,6 +317,7 @@ class Contratto extends Document
      * Salva il modello senza eseguire i trigger e le operazioni automatiche.
      * Utile per evitare ricorsioni durante il salvataggio.
      */
+    #[\Override]
     public function saveQuietly(array $options = [])
     {
         return parent::save($options);

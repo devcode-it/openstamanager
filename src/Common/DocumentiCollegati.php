@@ -22,20 +22,20 @@ namespace Common;
 
 use Models\Locale;
 use Modules;
-use Translator;
 
 /**
  * Classe per la gestione ottimizzata dei documenti collegati
  * Gestisce il caricamento via AJAX per migliorare le performance
- * Può essere utilizzata da tutti i moduli del sistema
+ * Può essere utilizzata da tutti i moduli del sistema.
  */
 class DocumentiCollegati
 {
     /**
-     * Recupera i documenti collegati a un record specifico
+     * Recupera i documenti collegati a un record specifico.
      *
-     * @param int $id_record ID del record
+     * @param int    $id_record   ID del record
      * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
+     *
      * @return array Array di documenti collegati
      */
     public static function getDocumenti($id_record, $tipo_record = 'intervento')
@@ -46,37 +46,125 @@ class DocumentiCollegati
 
         try {
             // In base al tipo di record, esegui la query appropriata
-            switch ($tipo_record) {
-                case 'intervento':
-                    return self::getDocumentiIntervento($id_record);
-                case 'fattura_vendita':
-                    return self::getDocumentiFatturaVendita($id_record);
-                case 'fattura_acquisto':
-                    return self::getDocumentiFatturaAcquisto($id_record);
-                case 'contratto':
-                    return self::getDocumentiContratto($id_record);
-                case 'preventivo':
-                    return self::getDocumentiPreventivo($id_record);
-                case 'ordine':
-                    return self::getDocumentiOrdine($id_record);
-                case 'ddt':
-                    return self::getDocumentiDDT($id_record);
-                case 'articolo':
-                    return self::getDocumentiArticolo($id_record);
-                case 'anagrafica':
-                    return self::getDocumentiAnagrafica($id_record);
-                default:
-                    return [];
-            }
+            return match ($tipo_record) {
+                'intervento' => self::getDocumentiIntervento($id_record),
+                'fattura_vendita' => self::getDocumentiFatturaVendita($id_record),
+                'fattura_acquisto' => self::getDocumentiFatturaAcquisto($id_record),
+                'contratto' => self::getDocumentiContratto($id_record),
+                'preventivo' => self::getDocumentiPreventivo($id_record),
+                'ordine' => self::getDocumentiOrdine($id_record),
+                'ddt' => self::getDocumentiDDT($id_record),
+                'articolo' => self::getDocumentiArticolo($id_record),
+                'anagrafica' => self::getDocumentiAnagrafica($id_record),
+                default => [],
+            };
         } catch (\Exception $e) {
             throw new \Exception('Errore nel recupero dei documenti: '.$e->getMessage());
         }
     }
 
     /**
-     * Recupera i documenti collegati a un intervento
+     * Conta i documenti collegati a un record specifico
+     * Conta sia i documenti precedenti che quelli successivi nel flusso di evasione.
+     *
+     * @param int    $id_record   ID del record
+     * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
+     *
+     * @return int Numero di documenti collegati (precedenti + successivi)
+     */
+    public static function countDocumenti($id_record, $tipo_record = 'intervento')
+    {
+        if (empty($id_record) || !is_numeric($id_record)) {
+            return 0;
+        }
+
+        $documenti_precedenti = self::getDocumentiPrecedenti($id_record, $tipo_record);
+        $documenti_successivi = self::getDocumentiSuccessivi($id_record, $tipo_record);
+
+        if (count($documenti_precedenti) + count($documenti_successivi) > 0) {
+            return count($documenti_precedenti) + count($documenti_successivi);
+        }
+
+        // In caso di errore, torna ai metodi di conteggio tradizionali
+        return match ($tipo_record) {
+            'intervento' => self::countDocumentiIntervento($id_record),
+            'fattura_vendita' => self::countDocumentiFatturaVendita($id_record),
+            'fattura_acquisto' => self::countDocumentiFatturaAcquisto($id_record),
+            'contratto' => self::countDocumentiContratto($id_record),
+            'preventivo' => self::countDocumentiPreventivo($id_record),
+            'ordine' => self::countDocumentiOrdine($id_record),
+            'ddt' => self::countDocumentiDDT($id_record),
+            'articolo' => self::countDocumentiArticolo($id_record),
+            'anagrafica' => self::countDocumentiAnagrafica($id_record),
+            default => 0,
+        };
+    }
+
+    /**
+     * Genera l'HTML per la lista dei documenti collegati
+     * Per gli articoli usa una tabella con dettagli, per gli altri usa il flusso di evasione
+     * Per le anagrafiche usa un elenco semplice.
+     *
+     * @param int    $id_record   ID del record
+     * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', 'articolo', 'anagrafica', ecc.)
+     *
+     * @return string HTML della lista documenti
+     */
+    public static function renderDocumenti($id_record, $tipo_record = 'intervento')
+    {
+        // Per gli articoli usa il rendering tabellare con dettagli
+        if ($tipo_record == 'articolo') {
+            return self::renderDocumentiArticolo($id_record);
+        }
+
+        // Per le anagrafiche usa un elenco semplice
+        if ($tipo_record == 'anagrafica') {
+            return self::renderDocumentiAnagrafica($id_record);
+        }
+
+        // Per gli altri tipi usa il flusso di evasione
+        return self::renderDocumentiFlusso($id_record, $tipo_record);
+    }
+
+    /**
+     * Gestisce la richiesta AJAX per i documenti collegati.
+     *
+     * @param int    $id_record   ID del record
+     * @param string $tipo_record Tipo di record (es. 'intervento', 'tipo_intervento', ecc.)
+     * @param bool   $count_only  Se true, restituisce solo il conteggio
+     *
+     * @return void
+     */
+    public static function handleAjaxRequest($id_record, $tipo_record = 'intervento', $count_only = false)
+    {
+        try {
+            if ($count_only) {
+                // Restituisci solo il conteggio
+                $count = self::countDocumenti($id_record, $tipo_record);
+                header('Content-Type: application/json');
+                echo json_encode(['count' => $count]);
+            } else {
+                // Restituisci l'HTML completo
+                $html = self::renderDocumenti($id_record, $tipo_record);
+                echo $html;
+            }
+        } catch (\Exception $e) {
+            if ($count_only) {
+                header('Content-Type: application/json');
+                echo json_encode(['count' => 0, 'error' => 'Errore database: '.$e->getMessage()]);
+            } else {
+                echo '<div class="alert alert-danger">'.tr('Errore nel caricamento dei documenti collegati').': '.$e->getMessage().'</div>';
+            }
+        }
+
+        exit;
+    }
+
+    /**
+     * Recupera i documenti collegati a un intervento.
      *
      * @param int $id_intervento ID dell'intervento
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiIntervento($id_intervento)
@@ -109,6 +197,7 @@ class DocumentiCollegati
 
         try {
             $result = $dbo->fetchArray($query);
+
             return $result;
         } catch (\Exception $e) {
             throw new \Exception('Errore nella query dei documenti: '.$e->getMessage());
@@ -116,9 +205,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a una fattura di vendita
+     * Recupera i documenti collegati a una fattura di vendita.
      *
      * @param int $id_fattura ID della fattura
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiFatturaVendita($id_fattura)
@@ -268,9 +358,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a una fattura di acquisto
+     * Recupera i documenti collegati a una fattura di acquisto.
      *
      * @param int $id_fattura ID della fattura
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiFatturaAcquisto($id_fattura)
@@ -345,9 +436,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un contratto
+     * Recupera i documenti collegati a un contratto.
      *
      * @param int $id_contratto ID del contratto
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiContratto($id_contratto)
@@ -435,9 +527,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un preventivo
+     * Recupera i documenti collegati a un preventivo.
      *
      * @param int $id_preventivo ID del preventivo
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiPreventivo($id_preventivo)
@@ -579,9 +672,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un ordine
+     * Recupera i documenti collegati a un ordine.
      *
      * @param int $id_ordine ID dell'ordine
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiOrdine($id_ordine)
@@ -699,9 +793,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un DDT
+     * Recupera i documenti collegati a un DDT.
      *
      * @param int $id_ddt ID del DDT
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiDDT($id_ddt)
@@ -766,9 +861,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un articolo
+     * Recupera i documenti collegati a un articolo.
      *
      * @param int $id_articolo ID dell'articolo
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiArticolo($id_articolo)
@@ -869,9 +965,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti collegati a un'anagrafica
+     * Recupera i documenti collegati a un'anagrafica.
      *
      * @param int $id_anagrafica ID dell'anagrafica
+     *
      * @return array Array di documenti collegati
      */
     private static function getDocumentiAnagrafica($id_anagrafica)
@@ -1046,55 +1143,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un record specifico
-     * Conta sia i documenti precedenti che quelli successivi nel flusso di evasione
-     *
-     * @param int $id_record ID del record
-     * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
-     * @return int Numero di documenti collegati (precedenti + successivi)
-     */
-    public static function countDocumenti($id_record, $tipo_record = 'intervento')
-    {
-        if (empty($id_record) || !is_numeric($id_record)) {
-            return 0;
-        }
-
-        $documenti_precedenti = self::getDocumentiPrecedenti($id_record, $tipo_record);
-        $documenti_successivi = self::getDocumentiSuccessivi($id_record, $tipo_record);
-
-        if (count($documenti_precedenti) + count($documenti_successivi) > 0) {
-            return count($documenti_precedenti) + count($documenti_successivi);
-        } else {
-            // In caso di errore, torna ai metodi di conteggio tradizionali
-            switch ($tipo_record) {
-                case 'intervento':
-                    return self::countDocumentiIntervento($id_record);
-                case 'fattura_vendita':
-                    return self::countDocumentiFatturaVendita($id_record);
-                case 'fattura_acquisto':
-                    return self::countDocumentiFatturaAcquisto($id_record);
-                case 'contratto':
-                    return self::countDocumentiContratto($id_record);
-                case 'preventivo':
-                    return self::countDocumentiPreventivo($id_record);
-                case 'ordine':
-                    return self::countDocumentiOrdine($id_record);
-                case 'ddt':
-                    return self::countDocumentiDDT($id_record);
-                case 'articolo':
-                    return self::countDocumentiArticolo($id_record);
-                case 'anagrafica':
-                    return self::countDocumentiAnagrafica($id_record);
-                default:
-                    return 0;
-            }
-        }
-    }
-
-    /**
-     * Conta i documenti collegati a un intervento
+     * Conta i documenti collegati a un intervento.
      *
      * @param int $id_intervento ID dell'intervento
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiIntervento($id_intervento)
@@ -1112,9 +1164,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a una fattura di vendita
+     * Conta i documenti collegati a una fattura di vendita.
      *
      * @param int $id_fattura ID della fattura
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiFatturaVendita($id_fattura)
@@ -1187,9 +1240,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a una fattura di acquisto
+     * Conta i documenti collegati a una fattura di acquisto.
      *
      * @param int $id_fattura ID della fattura
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiFatturaAcquisto($id_fattura)
@@ -1226,9 +1280,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un contratto
+     * Conta i documenti collegati a un contratto.
      *
      * @param int $id_contratto ID del contratto
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiContratto($id_contratto)
@@ -1272,9 +1327,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un preventivo
+     * Conta i documenti collegati a un preventivo.
      *
      * @param int $id_preventivo ID del preventivo
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiPreventivo($id_preventivo)
@@ -1336,9 +1392,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un ordine
+     * Conta i documenti collegati a un ordine.
      *
      * @param int $id_ordine ID dell'ordine
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiOrdine($id_ordine)
@@ -1390,9 +1447,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un DDT
+     * Conta i documenti collegati a un DDT.
      *
      * @param int $id_ddt ID del DDT
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiDDT($id_ddt)
@@ -1424,9 +1482,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un articolo
+     * Conta i documenti collegati a un articolo.
      *
      * @param int $id_articolo ID dell'articolo
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiArticolo($id_articolo)
@@ -1466,9 +1525,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Conta i documenti collegati a un'anagrafica
+     * Conta i documenti collegati a un'anagrafica.
      *
      * @param int $id_anagrafica ID dell'anagrafica
+     *
      * @return int Numero di documenti collegati
      */
     private static function countDocumentiAnagrafica($id_anagrafica)
@@ -1542,9 +1602,10 @@ class DocumentiCollegati
     }
 
     /**
-     * Genera la descrizione per un documento collegato a una fattura di vendita
+     * Genera la descrizione per un documento collegato a una fattura di vendita.
      *
      * @param array $elemento Elemento documento
+     *
      * @return string Descrizione HTML
      */
     private static function renderDescrizione($elemento)
@@ -1554,58 +1615,64 @@ class DocumentiCollegati
             case 'Attività':
                 $numero = $elemento['codice'] ?? $elemento['numero'] ?? '?';
                 $data = $elemento['data_richiesta'] ?? $elemento['data'] ?? '';
+
                 return tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => $numero,
-                    '_DATE_' => $data ? Translator::dateToLocale($data) : '',
+                    '_DATE_' => $data ? \Translator::dateToLocale($data) : '',
                     '_STATE_' => $elemento['stato_documento'] ?? '',
                 ]);
             case 'Preventivo':
                 $numero = $elemento['numero'] ?? '?';
                 $data = $elemento['data'] ?? '';
+
                 return tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => $numero,
-                    '_DATE_' => $data ? Translator::dateToLocale($data) : '',
+                    '_DATE_' => $data ? \Translator::dateToLocale($data) : '',
                     '_STATE_' => $elemento['stato_documento'] ?? '',
                 ]);
             case 'Contratto':
                 $numero = $elemento['numero'] ?? '?';
                 $data = $elemento['data'] ?? '';
+
                 return tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => $numero,
-                    '_DATE_' => $data ? Translator::dateToLocale($data) : '',
+                    '_DATE_' => $data ? \Translator::dateToLocale($data) : '',
                     '_STATE_' => $elemento['stato_documento'] ?? '',
                 ]);
             case 'Fattura':
                 // Per le fatture
                 $numero = !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : ($elemento['numero'] ?? '?');
                 $data = $elemento['data'] ?? '';
+
                 return tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => $numero,
-                    '_DATE_' => $data ? Translator::dateToLocale($data) : '',
+                    '_DATE_' => $data ? \Translator::dateToLocale($data) : '',
                     '_STATE_' => $elemento['stato_documento'] ?? '',
                 ]);
             default:
                 // Per DDT e Ordini
                 $numero = !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : ($elemento['numero'] ?? '?');
                 $data = $elemento['data'] ?? '';
+
                 return tr('_DOC_ num. _NUM_ del _DATE_ [_STATE_]', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => $numero,
-                    '_DATE_' => $data ? Translator::dateToLocale($data) : '',
+                    '_DATE_' => $data ? \Translator::dateToLocale($data) : '',
                     '_STATE_' => $elemento['stato_documento'] ?? '',
                 ]);
         }
     }
 
     /**
-     * Recupera i documenti precedenti nel flusso di evasione
+     * Recupera i documenti precedenti nel flusso di evasione.
      *
-     * @param int $id_record ID del record corrente
+     * @param int    $id_record   ID del record corrente
      * @param string $tipo_record Tipo di record corrente
+     *
      * @return array Array di documenti precedenti
      */
     private static function getDocumentiPrecedenti($id_record, $tipo_record)
@@ -1671,11 +1738,11 @@ class DocumentiCollegati
             // Recupera i campi dell'intervento
             $query_intervento = 'SELECT id_contratto, id_ordine, id_preventivo FROM in_interventi WHERE id = '.prepare($id_record);
             $intervento = $dbo->fetchOne($query_intervento);
-            
+
             if ($intervento) {
                 // Se c'è un contratto collegato
                 if (!empty($intervento['id_contratto'])) {
-                    $doc_info = self::getInfoDocumento($intervento['id_contratto'], 'Modules\\Contratti\\Contratto');
+                    $doc_info = self::getInfoDocumento($intervento['id_contratto'], Modules\Contratti\Contratto::class);
                     if ($doc_info) {
                         // Verifica che non sia già stato aggiunto
                         $già_presente = false;
@@ -1690,10 +1757,10 @@ class DocumentiCollegati
                         }
                     }
                 }
-                
+
                 // Se c'è un ordine collegato
                 if (!empty($intervento['id_ordine'])) {
-                    $doc_info = self::getInfoDocumento($intervento['id_ordine'], 'Modules\\Ordini\\Ordine');
+                    $doc_info = self::getInfoDocumento($intervento['id_ordine'], Modules\Ordini\Ordine::class);
                     if ($doc_info) {
                         // Verifica che non sia già stato aggiunto
                         $già_presente = false;
@@ -1708,10 +1775,10 @@ class DocumentiCollegati
                         }
                     }
                 }
-                
+
                 // Se c'è un preventivo collegato
                 if (!empty($intervento['id_preventivo'])) {
-                    $doc_info = self::getInfoDocumento($intervento['id_preventivo'], 'Modules\\Preventivi\\Preventivo');
+                    $doc_info = self::getInfoDocumento($intervento['id_preventivo'], Modules\Preventivi\Preventivo::class);
                     if ($doc_info) {
                         // Verifica che non sia già stato aggiunto
                         $già_presente = false;
@@ -1733,10 +1800,11 @@ class DocumentiCollegati
     }
 
     /**
-     * Recupera i documenti successivi nel flusso di evasione
+     * Recupera i documenti successivi nel flusso di evasione.
      *
-     * @param int $id_record ID del record corrente
+     * @param int    $id_record   ID del record corrente
      * @param string $tipo_record Tipo di record corrente
+     *
      * @return array Array di documenti successivi
      */
     private static function getDocumentiSuccessivi($id_record, $tipo_record)
@@ -1787,7 +1855,7 @@ class DocumentiCollegati
             $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_contratto = '.prepare($id_record);
             $risultati = $dbo->fetchArray($query);
             foreach ($risultati as $risultato) {
-                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
+                $doc_info = self::getInfoDocumento($risultato['id'], Modules\Interventi\Intervento::class);
                 if ($doc_info) {
                     $documenti_successivi[] = $doc_info;
                 }
@@ -1799,7 +1867,7 @@ class DocumentiCollegati
             $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_ordine = '.prepare($id_record);
             $risultati = $dbo->fetchArray($query);
             foreach ($risultati as $risultato) {
-                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
+                $doc_info = self::getInfoDocumento($risultato['id'], Modules\Interventi\Intervento::class);
                 if ($doc_info) {
                     $documenti_successivi[] = $doc_info;
                 }
@@ -1811,7 +1879,7 @@ class DocumentiCollegati
             $query = 'SELECT DISTINCT id FROM in_interventi WHERE id_preventivo = '.prepare($id_record);
             $risultati = $dbo->fetchArray($query);
             foreach ($risultati as $risultato) {
-                $doc_info = self::getInfoDocumento($risultato['id'], 'Modules\\Interventi\\Intervento');
+                $doc_info = self::getInfoDocumento($risultato['id'], Modules\Interventi\Intervento::class);
                 if ($doc_info) {
                     $documenti_successivi[] = $doc_info;
                 }
@@ -1822,10 +1890,11 @@ class DocumentiCollegati
     }
 
     /**
-     * Ottiene informazioni su un documento
+     * Ottiene informazioni su un documento.
      *
-     * @param int $id ID del documento
+     * @param int    $id   ID del documento
      * @param string $tipo Tipo di documento (nome classe completo)
+     *
      * @return array|null Informazioni del documento o null se non trovato
      */
     private static function getInfoDocumento($id, $tipo)
@@ -1834,12 +1903,12 @@ class DocumentiCollegati
 
         // Mappa i tipi di documento alle tabelle
         $mappa_tipi = [
-            'Modules\\Interventi\\Intervento' => ['tabella' => 'in_interventi', 'campo_numero' => 'codice', 'campo_data' => 'data_richiesta', 'tipo_doc' => 'Attività', 'modulo' => 'Interventi'],
-            'Modules\\Preventivi\\Preventivo' => ['tabella' => 'co_preventivi', 'campo_numero' => 'numero', 'campo_data' => 'data_bozza', 'tipo_doc' => 'Preventivo', 'modulo' => 'Preventivi'],
-            'Modules\\Contratti\\Contratto' => ['tabella' => 'co_contratti', 'campo_numero' => 'numero', 'campo_data' => 'data_bozza', 'tipo_doc' => 'Contratto', 'modulo' => 'Contratti'],
-            'Modules\\Ordini\\Ordine' => ['tabella' => 'or_ordini', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'Ordine', 'modulo' => 'Ordini cliente'],
-            'Modules\\DDT\\DDT' => ['tabella' => 'dt_ddt', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'DDT', 'modulo' => 'Ddt in uscita'],
-            'Modules\\Fatture\\Fattura' => ['tabella' => 'co_documenti', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'Fattura', 'modulo' => 'Fatture di vendita'],
+            Modules\Interventi\Intervento::class => ['tabella' => 'in_interventi', 'campo_numero' => 'codice', 'campo_data' => 'data_richiesta', 'tipo_doc' => 'Attività', 'modulo' => 'Interventi'],
+            Modules\Preventivi\Preventivo::class => ['tabella' => 'co_preventivi', 'campo_numero' => 'numero', 'campo_data' => 'data_bozza', 'tipo_doc' => 'Preventivo', 'modulo' => 'Preventivi'],
+            Modules\Contratti\Contratto::class => ['tabella' => 'co_contratti', 'campo_numero' => 'numero', 'campo_data' => 'data_bozza', 'tipo_doc' => 'Contratto', 'modulo' => 'Contratti'],
+            Modules\Ordini\Ordine::class => ['tabella' => 'or_ordini', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'Ordine', 'modulo' => 'Ordini cliente'],
+            Modules\DDT\DDT::class => ['tabella' => 'dt_ddt', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'DDT', 'modulo' => 'Ddt in uscita'],
+            Modules\Fatture\Fattura::class => ['tabella' => 'co_documenti', 'campo_numero' => 'numero', 'campo_data' => 'data', 'tipo_doc' => 'Fattura', 'modulo' => 'Fatture di vendita'],
         ];
 
         if (!isset($mappa_tipi[$tipo])) {
@@ -1852,7 +1921,7 @@ class DocumentiCollegati
         $campo_data = $info['campo_data'];
 
         // Costruisci la query in base al tipo di documento
-        if ($tipo == 'Modules\\Interventi\\Intervento') {
+        if ($tipo == Modules\Interventi\Intervento::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1867,7 +1936,7 @@ class DocumentiCollegati
                 `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
-        } elseif ($tipo == 'Modules\\Preventivi\\Preventivo') {
+        } elseif ($tipo == Modules\Preventivi\Preventivo::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1882,7 +1951,7 @@ class DocumentiCollegati
                 `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
-        } elseif ($tipo == 'Modules\\Contratti\\Contratto') {
+        } elseif ($tipo == Modules\Contratti\Contratto::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1897,7 +1966,7 @@ class DocumentiCollegati
                 `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
-        } elseif ($tipo == 'Modules\\Ordini\\Ordine') {
+        } elseif ($tipo == Modules\Ordini\Ordine::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1918,7 +1987,7 @@ class DocumentiCollegati
                 `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
-        } elseif ($tipo == 'Modules\\DDT\\DDT') {
+        } elseif ($tipo == Modules\DDT\DDT::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1939,7 +2008,7 @@ class DocumentiCollegati
                 `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
-        } elseif ($tipo == 'Modules\\Fatture\\Fattura') {
+        } elseif ($tipo == Modules\Fatture\Fattura::class) {
             $query = 'SELECT
                 `'.$tabella.'`.`id`,
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
@@ -1968,86 +2037,64 @@ class DocumentiCollegati
     }
 
     /**
-     * Ottiene il tipo di documento (nome classe) in base al tipo di record
+     * Ottiene il tipo di documento (nome classe) in base al tipo di record.
      *
      * @param string $tipo_record Tipo di record
+     *
      * @return string|null Nome classe del documento o null
      */
     private static function getTipoDocumento($tipo_record)
     {
         $mappa = [
-            'intervento' => 'Modules\\Interventi\\Intervento',
-            'preventivo' => 'Modules\\Preventivi\\Preventivo',
-            'contratto' => 'Modules\\Contratti\\Contratto',
-            'ordine' => 'Modules\\Ordini\\Ordine',
-            'ddt' => 'Modules\\DDT\\DDT',
-            'fattura_vendita' => 'Modules\\Fatture\\Fattura',
-            'fattura_acquisto' => 'Modules\\Fatture\\Fattura',
+            'intervento' => Modules\Interventi\Intervento::class,
+            'preventivo' => Modules\Preventivi\Preventivo::class,
+            'contratto' => Modules\Contratti\Contratto::class,
+            'ordine' => Modules\Ordini\Ordine::class,
+            'ddt' => Modules\DDT\DDT::class,
+            'fattura_vendita' => Modules\Fatture\Fattura::class,
+            'fattura_acquisto' => Modules\Fatture\Fattura::class,
         ];
 
         return $mappa[$tipo_record] ?? null;
     }
 
     /**
-     * Ottiene il tipo di documento in base alla tabella delle righe
+     * Ottiene il tipo di documento in base alla tabella delle righe.
      *
      * @param string $tabella Nome della tabella delle righe
+     *
      * @return string|null Tipo di documento o null
      */
     private static function getTipoDaTabella($tabella)
     {
         $mappa = [
-            'co_righe_documenti' => 'Modules\\Fatture\\Fattura',
-            'or_righe_ordini' => 'Modules\\Ordini\\Ordine',
-            'dt_righe_ddt' => 'Modules\\DDT\\DDT',
-            'in_righe_interventi' => 'Modules\\Interventi\\Intervento',
-            'co_righe_preventivi' => 'Modules\\Preventivi\\Preventivo',
-            'co_righe_contratti' => 'Modules\\Contratti\\Contratto',
+            'co_righe_documenti' => Modules\Fatture\Fattura::class,
+            'or_righe_ordini' => Modules\Ordini\Ordine::class,
+            'dt_righe_ddt' => Modules\DDT\DDT::class,
+            'in_righe_interventi' => Modules\Interventi\Intervento::class,
+            'co_righe_preventivi' => Modules\Preventivi\Preventivo::class,
+            'co_righe_contratti' => Modules\Contratti\Contratto::class,
         ];
 
         return $mappa[$tabella] ?? null;
     }
 
     /**
-     * Genera l'HTML per la lista dei documenti collegati
-     * Per gli articoli usa una tabella con dettagli, per gli altri usa il flusso di evasione
-     * Per le anagrafiche usa un elenco semplice
-     *
-     * @param int $id_record ID del record
-     * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', 'articolo', 'anagrafica', ecc.)
-     * @return string HTML della lista documenti
-     */
-    public static function renderDocumenti($id_record, $tipo_record = 'intervento')
-    {
-        // Per gli articoli usa il rendering tabellare con dettagli
-        if ($tipo_record == 'articolo') {
-            return self::renderDocumentiArticolo($id_record);
-        }
-        
-        // Per le anagrafiche usa un elenco semplice
-        if ($tipo_record == 'anagrafica') {
-            return self::renderDocumentiAnagrafica($id_record);
-        }
-        
-        // Per gli altri tipi usa il flusso di evasione
-        return self::renderDocumentiFlusso($id_record, $tipo_record);
-    }
-
-    /**
-     * Genera l'HTML per i documenti collegati a un articolo in formato tabellare
+     * Genera l'HTML per i documenti collegati a un articolo in formato tabellare.
      *
      * @param int $id_articolo ID dell'articolo
+     *
      * @return string HTML della tabella dei documenti
      */
     private static function renderDocumentiArticolo($id_articolo)
     {
         try {
             $documenti = self::getDocumentiArticolo($id_articolo);
-            
+
             if (empty($documenti)) {
                 return '<p>'.tr('Nessun documento collegato').'</p>';
             }
-            
+
             $html = '<table class="table table-striped table-bordered table-extra-condensed">';
             $html .= '<thead>';
             $html .= '<tr>';
@@ -2058,30 +2105,30 @@ class DocumentiCollegati
             $html .= '</tr>';
             $html .= '</thead>';
             $html .= '<tbody>';
-            
+
             foreach ($documenti as $elemento) {
                 $descrizione = tr('_DOC_ num. _NUM_ del _DATE_ _STATO_', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-                    '_DATE_' => Translator::dateToLocale($elemento['data']),
+                    '_DATE_' => \Translator::dateToLocale($elemento['data']),
                     '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
                 ]);
 
                 // Usa il modulo già calcolato nella query
                 $modulo = $elemento['modulo'] ?? '';
                 $id = $elemento['id'];
-                
+
                 $html .= '<tr>';
-                $html .= '<td>'.Modules::link($modulo, $id, $descrizione).'</td>';
-                $html .= '<td class="text-center">'.Translator::numberToLocale($elemento['qta_totale']).'</td>';
+                $html .= '<td>'.\Modules::link($modulo, $id, $descrizione).'</td>';
+                $html .= '<td class="text-center">'.\Translator::numberToLocale($elemento['qta_totale']).'</td>';
                 $html .= '<td class="text-right">'.moneyFormat($elemento['prezzo_unitario']).'</td>';
                 $html .= '<td class="text-right">'.moneyFormat($elemento['prezzo_totale']).'</td>';
                 $html .= '</tr>';
             }
-            
+
             $html .= '</tbody>';
             $html .= '</table>';
-            
+
             return $html;
         } catch (\Exception $e) {
             return '<div class="alert alert-danger">'.tr('Errore nel rendering dei documenti collegati').': '.$e->getMessage().'</div>';
@@ -2089,10 +2136,11 @@ class DocumentiCollegati
     }
 
     /**
-     * Genera l'HTML per la lista dei documenti collegati con flusso di evasione
+     * Genera l'HTML per la lista dei documenti collegati con flusso di evasione.
      *
-     * @param int $id_record ID del record
+     * @param int    $id_record   ID del record
      * @param string $tipo_record Tipo di record (es. 'intervento', 'fattura_vendita', ecc.)
+     *
      * @return string HTML della lista documenti con flusso
      */
     private static function renderDocumentiFlusso($id_record, $tipo_record = 'intervento')
@@ -2104,28 +2152,28 @@ class DocumentiCollegati
 
             // Mostra sempre il documento corrente, anche se non ci sono documenti collegati
             $html = '<div class="flusso-evasione">';
-            
+
             // Colonna 1: Documenti precedenti
             $html .= '<div class="colonna-documenti documenti-precedenti">';
             if (!empty($documenti_precedenti)) {
                 $html .= '<ul class="list-unstyled">';
-                
+
                 foreach ($documenti_precedenti as $elemento) {
                     $descrizione = self::renderDescrizione($elemento);
                     $modulo = $elemento['modulo'] ?? '';
                     $id = $elemento['id'];
-                    
+
                     if (!empty($modulo) && !empty($id)) {
-                        $html .= '<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+                        $html .= '<li>'.\Modules::link($modulo, $id, $descrizione).'</li>';
                     } else {
                         $html .= '<li>'.$descrizione.'</li>';
                     }
                 }
-                
+
                 $html .= '</ul>';
             }
             $html .= '</div>';
-            
+
             // Freccia verso il documento corrente (solo se ci sono documenti precedenti)
             if (!empty($documenti_precedenti)) {
                 $html .= '<div class="freccia-orizzontale"><i class="fa fa-arrow-right"></i></div>';
@@ -2134,7 +2182,7 @@ class DocumentiCollegati
             // Colonna 2: Documento corrente (evidenziato)
             $html .= '<div class="colonna-documenti documento-corrente">';
             $html .= '<div class="documento-corrente-box">';
-            
+
             // Ottieni informazioni sul documento corrente
             $info_corrente = self::getInfoDocumento($id_record, self::getTipoDocumento($tipo_record));
             if ($info_corrente) {
@@ -2144,7 +2192,7 @@ class DocumentiCollegati
                 // Se non riesce a recuperare le informazioni, mostra un messaggio generico
                 $html .= '<span class="badge badge-primary">Documento corrente</span>';
             }
-            
+
             $html .= '</div>';
             $html .= '</div>';
 
@@ -2157,19 +2205,19 @@ class DocumentiCollegati
             $html .= '<div class="colonna-documenti documenti-successivi">';
             if (!empty($documenti_successivi)) {
                 $html .= '<ul class="list-unstyled">';
-                
+
                 foreach ($documenti_successivi as $elemento) {
                     $descrizione = self::renderDescrizione($elemento);
                     $modulo = $elemento['modulo'] ?? '';
                     $id = $elemento['id'];
-                    
+
                     if (!empty($modulo) && !empty($id)) {
-                        $html .= '<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+                        $html .= '<li>'.\Modules::link($modulo, $id, $descrizione).'</li>';
                     } else {
                         $html .= '<li>'.$descrizione.'</li>';
                     }
                 }
-                
+
                 $html .= '</ul>';
             }
             $html .= '</div>';
@@ -2183,65 +2231,33 @@ class DocumentiCollegati
     }
 
     /**
-     * Gestisce la richiesta AJAX per i documenti collegati
-     *
-     * @param int $id_record ID del record
-     * @param string $tipo_record Tipo di record (es. 'intervento', 'tipo_intervento', ecc.)
-     * @param bool $count_only Se true, restituisce solo il conteggio
-     * @return void
-     */
-    public static function handleAjaxRequest($id_record, $tipo_record = 'intervento', $count_only = false)
-    {
-        try {
-            if ($count_only) {
-                // Restituisci solo il conteggio
-                $count = self::countDocumenti($id_record, $tipo_record);
-                header('Content-Type: application/json');
-                echo json_encode(['count' => $count]);
-            } else {
-                // Restituisci l'HTML completo
-                $html = self::renderDocumenti($id_record, $tipo_record);
-                echo $html;
-            }
-        } catch (\Exception $e) {
-            if ($count_only) {
-                header('Content-Type: application/json');
-                echo json_encode(['count' => 0, 'error' => 'Errore database: '.$e->getMessage()]);
-            } else {
-                echo '<div class="alert alert-danger">'.tr('Errore nel caricamento dei documenti collegati').': '.$e->getMessage().'</div>';
-            }
-        }
-
-        exit;
-    }
-    
-    /**
      * Genera l'HTML per la lista dei documenti collegati a un'anagrafica
-     * Usa un elenco semplice (ul/li) invece del flusso di evasione
+     * Usa un elenco semplice (ul/li) invece del flusso di evasione.
      *
      * @param int $id_anagrafica ID dell'anagrafica
+     *
      * @return string HTML della lista documenti
      */
     private static function renderDocumentiAnagrafica($id_anagrafica)
     {
         try {
             $documenti = self::getDocumentiAnagrafica($id_anagrafica);
-            
+
             if (empty($documenti)) {
                 return '<p>'.tr('Nessun documento collegato').'</p>';
             }
-            
+
             $html = '<ul>';
-            
+
             foreach ($documenti as $elemento) {
                 $descrizione = tr('_DOC_  _NUM_ del _DATE_ _DELETED_AT_ _STATO_', [
                     '_DOC_' => $elemento['tipo_documento'],
                     '_NUM_' => !empty($elemento['numero_esterno']) ? $elemento['numero_esterno'] : $elemento['numero'],
-                    '_DATE_' => Translator::dateToLocale($elemento['data']),
-                    '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.Translator::dateToLocale($elemento['deleted_at']) : ''),
+                    '_DATE_' => \Translator::dateToLocale($elemento['data']),
+                    '_DELETED_AT_' => (!empty($elemento['deleted_at']) ? tr('Eliminato il:').' '.\Translator::dateToLocale($elemento['deleted_at']) : ''),
                     '_STATO_' => (!empty($elemento['stato_documento']) ? '('.$elemento['stato_documento'].')' : ''),
                 ]);
-                
+
                 // Determina il modulo in base al tipo di documento
                 if (in_array($elemento['tipo_documento'], ['Utente'])) {
                     $modulo = 'Utenti e permessi';
@@ -2258,14 +2274,14 @@ class DocumentiCollegati
                 } else {
                     $modulo = ($elemento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
                 }
-                
+
                 $id = $elemento['id'];
-                
-                $html .= '<li>'.Modules::link($modulo, $id, $descrizione).'</li>';
+
+                $html .= '<li>'.\Modules::link($modulo, $id, $descrizione).'</li>';
             }
-            
+
             $html .= '</ul>';
-            
+
             return $html;
         } catch (\Exception $e) {
             return '<div class="alert alert-danger">'.tr('Errore nel rendering dei documenti collegati').': '.$e->getMessage().'</div>';

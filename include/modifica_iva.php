@@ -34,7 +34,7 @@ $namespace_map = [
 if (empty($tipo_documento)) {
     $module = Modules::get($id_module);
     if ($module) {
-        $module_name = strtolower($module['name']);
+        $module_name = strtolower((string) $module['name']);
         // Mappatura dei nomi dei moduli ai tipi di documento
         $module_map = [
             'fatture di vendita' => 'fatture',
@@ -58,21 +58,22 @@ if (empty($tipo_documento) || !isset($namespace_map[$tipo_documento])) {
 
 // Carica le classi appropriate
 $namespace = $namespace_map[$tipo_documento];
-$articolo_class = $namespace . '\\Articolo';
-$riga_class = $namespace . '\\Riga';
-$sconto_class = $namespace . '\\Sconto';
+$articolo_class = $namespace.'\\Articolo';
+$riga_class = $namespace.'\\Riga';
+$sconto_class = $namespace.'\\Sconto';
 
 /**
- * Funzione helper per recuperare una riga indipendentemente dal tipo
+ * Funzione helper per recuperare una riga indipendentemente dal tipo.
  */
 function getRiga($id, $riga_class, $articolo_class, $sconto_class)
 {
     $riga = $riga_class::find($id) ?: $articolo_class::find($id);
+
     return $riga ?: $sconto_class::find($id);
 }
 
 /**
- * Funzione helper per costruire l'array delle informazioni sull'aliquota IVA
+ * Funzione helper per costruire l'array delle informazioni sull'aliquota IVA.
  */
 function buildAliquotaArray($riga)
 {

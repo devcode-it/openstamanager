@@ -21,7 +21,6 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\ListiniCliente\Articolo;
-use Modules\ListiniCliente\Listino;
 
 switch (post('op')) {
     case 'change_prezzo':

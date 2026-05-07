@@ -88,6 +88,7 @@ class AllegatiInterventi extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function createRecord($data)
     {
         $module_record = Module::where('name', 'Interventi')->first();

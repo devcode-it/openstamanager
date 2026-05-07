@@ -32,7 +32,7 @@ switch ($resource) {
         $tipo_anagrafica = match ($indirizzi_proposti) {
             1 => '"Cliente"',
             2 => '"Fornitore"',
-            default => null
+            default => null,
         };
 
         if ($tipo_anagrafica !== null) {
@@ -42,7 +42,7 @@ switch ($resource) {
         $results = [];
 
         // Funzione helper per aggiungere risultati all'array
-        $addResults = function($records) use (&$results) {
+        $addResults = function ($records) use (&$results) {
             foreach ($records as $record) {
                 $results[] = [
                     'value' => $record['email'],
@@ -66,7 +66,7 @@ switch ($resource) {
         $addResults($dbo->fetchArray($q));
 
         // Funzione helper per sedi e referenti (tabelle che richiedono join con an_anagrafiche)
-        $fetchEmails = function($table, $email_column, $name_column) use ($dbo, $where) {
+        $fetchEmails = function ($table, $email_column, $name_column) use ($dbo, $where) {
             $query = "
                 SELECT DISTINCT($table.$email_column) AS email,
                        $table.idanagrafica,
@@ -79,7 +79,7 @@ switch ($resource) {
                 WHERE $table.$email_column != '' $where
                 ORDER BY ragione_sociale
             ";
-            
+
             return $dbo->fetchArray($query);
         };
 

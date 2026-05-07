@@ -48,9 +48,9 @@ $senza_allegati = 0;
 foreach ($componenti_installati as $c) {
     $num = $database->fetchNum('SELECT id FROM zz_files WHERE id_plugin='.prepare($id_plugin).' AND id_record='.$c['id']);
     if ($num > 0) {
-        $con_allegati++;
+        ++$con_allegati;
     } else {
-        $senza_allegati++;
+        ++$senza_allegati;
     }
 }
 
@@ -185,8 +185,8 @@ foreach ($elenchi as $elenco) {
         $badge_allegati = $numero_allegati > 0 ? '<span class="badge badge-success">'.$numero_allegati.'</span>' : '<span class="badge badge-default">0</span>';
 
         $serial_badge = '';
-        if (! empty($articolo->abilita_serial)) {
-            if (! empty($componente->serial)) {
+        if (!empty($articolo->abilita_serial)) {
+            if (!empty($componente->serial)) {
                 $serial_badge = ' <span class="label label-primary"><i class="fa fa-barcode"></i> '.$componente->serial.'</span>';
             } else {
                 $serial_badge = ' <span class="label label-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Nessun seriale selezionato').'</span>';

@@ -40,7 +40,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         // Controllo permessi per il modulo Interventi
         $module = \Models\Module::where('name', 'Interventi')->first();
         $permission = \Modules::getPermission($module->id);
-        
+
         // Verifica se l'utente ha permessi di lettura per il modulo Interventi
         if (!in_array($permission, ['r', 'rw']) || (!$user->anagrafica->isTipo('Tecnico') && !$user->anagrafica->isTipo('Cliente'))) {
             return [
@@ -78,7 +78,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $result .= "VERSION:2.0\r\n";
         $result .= "PRODID:-// OpenSTAManager\r\n";
 
-        //VTIMEZONE completo
+        // VTIMEZONE completo
         $result .= "BEGIN:VTIMEZONE\r\n";
         $result .= "TZID:Europe/Rome\r\n";
         $result .= "BEGIN:STANDARD\r\n";
@@ -109,7 +109,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $result .= 'DTSTAMP:'.$now->format('Ymd\THis')."\r\n";
             $result .= 'DTSTART;TZID=Europe/Rome:'.$inizio->format('Ymd\THis')."\r\n";
             $result .= 'DTEND;TZID=Europe/Rome:'.$fine->format('Ymd\THis')."\r\n";
-            $result .= 'SUMMARY:'.html_entity_decode($r['summary'])."\r\n";
+            $result .= 'SUMMARY:'.html_entity_decode((string) $r['summary'])."\r\n";
             $result .= 'DESCRIPTION:'.html_entity_decode($description, ENT_QUOTES, 'UTF-8')."\r\n";
             $result .= "END:VEVENT\r\n";
         }
@@ -129,7 +129,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         // Controllo permessi per il modulo Interventi
         $module = \Models\Module::where('name', 'Interventi')->first();
         $permission = \Modules::getPermission($module->id);
-        
+
         // Verifica se l'utente ha permessi di scrittura per il modulo Interventi
         if (!in_array($permission, ['rw'])) {
             return;
@@ -166,9 +166,9 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             $orario_fine = \DateTime::createFromFormat('Ymd\\THis', $end)->format(\Intl\Formatter::getStandardFormats()['timestamp']);
 
             // Descrizione
-            $description = is_array($event['DESCRIPTION']) ? $event['DESCRIPTION']['VALUE']: $event['DESCRIPTION'];
+            $description = is_array($event['DESCRIPTION']) ? $event['DESCRIPTION']['VALUE'] : $event['DESCRIPTION'];
             // Rimozione prefisso tipo "text/html,2":TESTO per ottenere solo TESTO
-            if (preg_match('/^[^:]+:(.*)$/', $description, $matches)) {
+            if (preg_match('/^[^:]+:(.*)$/', (string) $description, $matches)) {
                 $description = $matches[1];
             }
             $description = str_replace('\\r\\n', "\n", $description);

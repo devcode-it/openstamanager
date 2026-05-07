@@ -235,6 +235,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return ($this->totale_imponibile && ($this->spesa || $this->provvigione)) ? (($this->totale_imponibile / ($this->spesa + $this->provvigione)) - 1) * 100 : 0;
     }
 
+    #[\Override]
     public function delete()
     {
         $righe = $this->getRighe();
@@ -289,6 +290,7 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
         return parent::delete();
     }
 
+    #[\Override]
     public function toArray()
     {
         $array = parent::toArray();

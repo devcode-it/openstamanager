@@ -37,7 +37,7 @@ use Traits\RecordTrait;
  * $id = $dbo->insert('zz_settings', ['nome' => 'mia_impostazione', 'valore' => '', 'tipo' => 'text']);
  * $dbo->insert('zz_settings_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Mia impostazione']);
  * ```
- * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ * Per aggiornare una traduzione usa {@see RecordTrait::setTranslation()}.
  */
 class Setting extends Model
 {

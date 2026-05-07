@@ -87,7 +87,7 @@ switch (post('op')) {
 
                     if ($articolo) {
                         $descrizione = tr('Inventario - Rettifica giacenza (Q.r. _QTA_)', [
-                            '_QTA_' => $nuova_giacenza
+                            '_QTA_' => $nuova_giacenza,
                         ]);
 
                         // Registra il movimento

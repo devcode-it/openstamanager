@@ -197,6 +197,7 @@ class Checklists extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function updateRecord($data)
     {
         $check = Check::find($data['id']);

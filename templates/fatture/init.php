@@ -128,7 +128,7 @@ if (!empty($record['idsede_destinazione'])) {
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => Stringy\Stringy::create($tipo_doc)->toUpperCase(),
+    'tipo_doc' => strtoupper($tipo_doc),
     'numero' => $numero,
     'tipo_documento' => $tipo_doc,
     'data' => Translator::dateToLocale($record['data']),

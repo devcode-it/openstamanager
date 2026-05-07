@@ -641,10 +641,10 @@ switch (post('op')) {
             if (!empty($documento->data_conclusione)) {
                 $contratto->data_accettazione = $documento->data_conclusione->copy()->addDays(1);
             }
-            
+
             $contratto->data_conclusione = $contratto->data_accettazione->copy()->addDays($diff);
             $contratto->data_bozza = Carbon::now();
-            
+
             // Disabilita il calcolo automatico della data di conclusione
             $contratto->validita = null;
             $contratto->tipo_validita = null;
@@ -707,13 +707,11 @@ switch (post('op')) {
 
         // Se è un rinnovo, copia solo le righe selezionate
         if ($is_renewal) {
-            $righe_selezionate = $documento->getRighe()->filter(function($riga) {
-                return post('evadere')[$riga->id] == 'on' && !empty(post('qta_da_evadere')[$riga->id]);
-            });
+            $righe_selezionate = $documento->getRighe()->filter(fn ($riga) => post('evadere')[$riga->id] == 'on' && !empty(post('qta_da_evadere')[$riga->id]));
 
             foreach ($righe_selezionate as $riga) {
                 $qta = post('qta_da_evadere')[$riga->id];
- 
+
                 $copia = $riga->replicate();
                 $copia->setDocument($contratto);
                 $copia->qta_evasa = 0;
@@ -755,14 +753,14 @@ switch (post('op')) {
         // Gestione delle ore residue selezionate
         $tipi_attivita_selezionati = post('evadere_ore') ?: [];
         $tipi_attivita = post('tipi_attivita') ?: [];
-            
+
         if (!empty($tipi_attivita_selezionati) && !empty($tipi_attivita)) {
             // Prepara la lista dei tipi di attività per la query
             $tipi_attivita_list = [];
             foreach ($tipi_attivita as $id_tipo) {
                 $tipi_attivita_list[] = prepare($id_tipo);
             }
-            
+
             // Recupera i dettagli dei tipi di attività selezionati
             $tipi_attivita_dettagli = $dbo->fetchArray('SELECT
                 `co_contratti_tipiintervento`.`idtipointervento`,
@@ -783,17 +781,17 @@ switch (post('op')) {
 
             foreach ($tipi_attivita_dettagli as $tipo) {
                 $idtipointervento = $tipo['idtipointervento'];
-                
+
                 // Verifica se questo tipo di attività è stato selezionato
                 if (!empty($tipi_attivita_selezionati[$idtipointervento]) && $tipi_attivita_selezionati[$idtipointervento] == 'on') {
                     $qta_ore = post('qta_da_evadere_ore')[$idtipointervento] ?? 0;
-                    
+
                     if ($qta_ore > 0) {
                         // Recupera la riga originale del contratto precedente per questo tipo di attività
                         $riga_originale = $documento->getRighe()
                             ->where('id_tipointervento', $idtipointervento)
                             ->first();
-                        
+
                         if ($riga_originale) {
                             // Crea una copia della riga originale con la quantità selezionata
                             $copia = $riga_originale->replicate();
@@ -804,20 +802,19 @@ switch (post('op')) {
                             $copia->original_type = null;
                             $copia->original_document_id = null;
                             $copia->original_document_type = null;
-                            
+
                             // Aggiunge alla descrizione il riferimento al contratto precedente
                             $data_contratto = $documento->data_conclusione ? dateFormat($documento->data_conclusione) : dateFormat($documento->data_bozza);
                             $copia->descrizione = $riga_originale->descrizione.' (Residue da attività numero '.$documento->numero.' del '.$data_contratto.')';
-                            
+
                             // Applica uno sconto del 100%
                             $copia->setSconto(100, 'PRC');
-                            
+
                             $copia->save();
                         }
                     }
                 }
             }
-            
         }
 
         // Modifica finale dello stato

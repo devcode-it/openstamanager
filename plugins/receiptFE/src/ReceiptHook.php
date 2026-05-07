@@ -41,6 +41,7 @@ class ReceiptHook extends CachedManager
         return false;
     }
 
+    #[\Override]
     public function execute()
     {
         return false;

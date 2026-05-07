@@ -24,6 +24,7 @@ use Hooks\Manager;
 
 class EmailHook extends Manager
 {
+    #[\Override]
     public function isSingleton()
     {
         return true;

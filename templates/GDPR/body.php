@@ -219,9 +219,9 @@ if (!empty($condizioni_gdpr)) {
     </tr>
     <tr class='border-0'>
         <td class='gdpr-cell'>
-            ".nl2br($condizioni_gdpr)."
+            ".nl2br($condizioni_gdpr).'
         </td>
-    </tr>";
+    </tr>';
 }
 
 echo "
@@ -257,7 +257,7 @@ echo "
                             </tr>
                             <tr>
                                 <td class='gdpr-signature-box-compact'>
-                                    ".($firma!=''?$firma:'<br>.............................')."
+                                    ".($firma != '' ? $firma : '<br>.............................')."
                                 </td>
                             </tr>
                         </table>
@@ -284,10 +284,9 @@ echo "
     <tr>
         <td class='gdpr-cell'>";
 
-
 // Recuperare le scelte GDPR dalle variabili globali
-$marketing_generico = isset($GLOBALS['gdpr_marketing_generico']) ? $GLOBALS['gdpr_marketing_generico'] : '1';
-$profilazione = isset($GLOBALS['gdpr_profilazione']) ? $GLOBALS['gdpr_profilazione'] : '1';
+$marketing_generico = $GLOBALS['gdpr_marketing_generico'] ?? '1';
+$profilazione = $GLOBALS['gdpr_profilazione'] ?? '1';
 
 // Funzione helper per generare le caselle con X
 $checkbox_marketing = ($marketing_generico == '1') ? '[X]' : '[  ]';
@@ -296,18 +295,18 @@ $checkbox_marketing_no = ($marketing_generico == '0') ? '[X]' : '[  ]';
 $checkbox_profilazione = ($profilazione == '1') ? '[X]' : '[  ]';
 $checkbox_profilazione_no = ($profilazione == '0') ? '[X]' : '[  ]';
 
-echo"
+echo "
             1. PRESA VISIONE INFORMATIVA (Obbligatorio)<br>
             Dichiaro di aver ricevuto l'informativa privacy e compreso le modalità di trattamento dei miei dati personali ai sensi del Regolamento (UE) 2016/679 (GDPR).<br>
             [X] Confermo<br><br>
 
             2. MARKETING GENERICO (Facoltativo)<br>
             Acconsento all'invio di comunicazioni promozionali, newsletter e materiale informativo tramite email, SMS, WhatsApp o altri mezzi di comunicazione.<br>
-            ".$checkbox_marketing." Acconsento &nbsp;&nbsp; ".$checkbox_marketing_no." Non acconsento<br><br>
+            ".$checkbox_marketing.' Acconsento &nbsp;&nbsp; '.$checkbox_marketing_no." Non acconsento<br><br>
 
             3. PROFILAZIONE (Facoltativo)<br>
             Acconsento all'analisi dei miei dati di acquisto e alle preferenze manifestate per ricevere offerte personalizzate e servizi su misura.<br>
-            ".$checkbox_profilazione." Acconsento &nbsp;&nbsp; ".$checkbox_profilazione_no." Non acconsento<br><br>
+            ".$checkbox_profilazione.' Acconsento &nbsp;&nbsp; '.$checkbox_profilazione_no." Non acconsento<br><br>
         </td>
     </tr>
     <tr>
@@ -324,7 +323,7 @@ echo"
                             </tr>
                             <tr>
                                 <td class='gdpr-signature-box-compact'>
-                                    ".($firma!=''?$firma:'<br>.............................')."
+                                    ".($firma != '' ? $firma : '<br>.............................').'
                                 </td>
                             </tr>
                         </table>
@@ -398,5 +397,4 @@ echo"
 .gdpr-page-break {
     page-break-before: always;
 }
-</style>";
-?>
+</style>';

@@ -20,7 +20,6 @@
 
 namespace Modules\StatoServizi;
 
-use App;
 use Carbon\Carbon;
 use Hooks\Manager;
 use Models\Cache;
@@ -75,8 +74,8 @@ class CronStatusHook extends Manager
 
         // Badge informativo per ambiente localhost
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        if (in_array($host, ['localhost', '127.0.0.1', '::1']) || str_starts_with($host, 'localhost:')) {
-            $config = App::getConfig();
+        if (in_array($host, ['localhost', '127.0.0.1', '::1']) || str_starts_with((string) $host, 'localhost:')) {
+            $config = \App::getConfig();
             $forza_cron = !empty($config['forza_cron_localhost']);
 
             if ($forza_cron) {

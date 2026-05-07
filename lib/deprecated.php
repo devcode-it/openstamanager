@@ -335,7 +335,8 @@ function doc_references($info, $dir, $ignore = [])
 
     // Testo relativo
     if (!empty($module) && !empty($id)) {
-        $document = Stringy\Stringy::create($document)->toLowerCase();
+        $document = strtolower($document);
+        $documentUpperFirst = ucfirst($document);
 
         if (!empty($data)) {
             $description = tr('Rif. _DOC_ num. _NUM_ del _DATE_', [
@@ -345,7 +346,7 @@ function doc_references($info, $dir, $ignore = [])
             ]);
         } else {
             $description = tr('_DOC_ di riferimento _ID_ eliminato', [
-                '_DOC_' => $document->upperCaseFirst(),
+                '_DOC_' => $documentUpperFirst,
                 '_ID_' => $id,
             ]);
         }

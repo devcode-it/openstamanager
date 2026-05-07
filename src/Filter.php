@@ -167,7 +167,6 @@ class Filter
 
         return self::$purifier;
     }
-    
 
     public static function setAllowedTags(string $html_allowed)
     {
@@ -187,7 +186,6 @@ class Filter
 
         self::$purifier = new HTMLPurifier($config);
     }
-
 
     /**
      * Imposta una proprietà specifica a un valore personalizzato.

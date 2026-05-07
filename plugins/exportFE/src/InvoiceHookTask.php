@@ -25,7 +25,7 @@ use Tasks\Manager;
 
 class InvoiceHookTask extends Manager
 {
-    private const MAX_ATTEMPTS = 3;
+    private const int MAX_ATTEMPTS = 3;
 
     public function execute()
     {
@@ -79,6 +79,7 @@ class InvoiceHookTask extends Manager
         $fattura_elettronica = new FatturaElettronica($fattura->id);
         if (!$fattura_elettronica->isGenerated()) {
             $this->resetInvoice($fattura);
+
             return;
         }
 

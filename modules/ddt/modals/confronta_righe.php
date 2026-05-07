@@ -26,7 +26,7 @@ $ddt = DDT::find($id_record);
 
 $id_anagrafica = $ddt->idanagrafica;
 $direzione = $ddt->direzione;
-$righe_ids = array_map('intval', explode(',', get('righe', true) ?? ''));
+$righe_ids = array_map(intval(...), explode(',', get('righe', true) ?? ''));
 $placeholders = implode(',', array_fill(0, count($righe_ids), '?'));
 $righe = $dbo->fetchArray(
     'SELECT 

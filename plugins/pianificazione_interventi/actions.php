@@ -62,7 +62,7 @@ switch ($operazione) {
         // Eliminazione pianificazione
     case 'delete-promemoria':
         $id = post('id');
-        
+
         $dbo->delete('co_promemoria', ['id' => $id]);
         $dbo->delete('co_righe_promemoria', ['id_promemoria' => $id]);
 

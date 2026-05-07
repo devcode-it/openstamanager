@@ -152,7 +152,7 @@ switch (post('op')) {
             $dbo->table('in_interventi')->where('id', $idintervento)->update(['id_preventivo' => $id_record]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
-            $stato_in_lavorazione = Modules\Preventivi\Stato::where('name', 'In lavorazione')->first()->id;
+            $stato_in_lavorazione = Stato::where('name', 'In lavorazione')->first()->id;
             $dbo->table('co_preventivi')->where('id', $id_record)->update(['idstato' => $stato_in_lavorazione]);
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
@@ -550,10 +550,10 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = Modules\Anagrafiche\Anagrafica::find($preventivo->idagente)->provvigione_default;
+            $provvigione = Anagrafica::find($preventivo->idagente)->provvigione_default;
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoScontoVendite;
+            $piano_sconto = Anagrafica::find($id_anagrafica)->pianoScontoVendite;
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }
@@ -664,7 +664,7 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = Modules\Anagrafiche\Anagrafica::find($id_anagrafica)->pianoSconto($dir);
+            $piano_sconto = Anagrafica::find($id_anagrafica)->pianoSconto($dir);
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
             }

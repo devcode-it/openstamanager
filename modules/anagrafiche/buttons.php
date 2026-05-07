@@ -32,16 +32,16 @@ if (!$is_anagrafica_deleted) {
             </button>
             <div class="dropdown-menu dropdown-menu-left">';
 
-            // Aggiunta utente per i tecnici
-            if (in_array($id_tecnico, $tipi_anagrafica)) {
-                echo '
+        // Aggiunta utente per i tecnici
+        if (in_array($id_tecnico, $tipi_anagrafica)) {
+            echo '
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi utente').'" data-widget="modal" data-href="modules/utenti/user.php?id_module='.Module::where('name', 'Utenti e permessi')->first()->id.'&id_record='.Group::where('nome', 'Tecnici')->first()->id.'&idanagrafica='.$record['idanagrafica'].'">
                     <i class="fa fa-user"></i> '.tr('Nuovo utente').'
                 </a>';
-            }
+        }
 
-            if (in_array($id_cliente, $tipi_anagrafica)) {
-                echo '
+        if (in_array($id_cliente, $tipi_anagrafica)) {
+            echo '
                 
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi attività').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&idanagrafica='.$record['idanagrafica'].'">
                     <i class="fa fa-wrench"></i> '.tr('Nuova attività').'
@@ -60,10 +60,10 @@ if (!$is_anagrafica_deleted) {
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi fattura di vendita').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file"></i> '.tr('Nuova fattura di vendita').'</a>
 
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi registrazione contabile').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i> '.tr('Nuova registrazione contabile (cliente)').'</a>';
-            }
+        }
 
-            if (in_array($id_fornitore, $tipi_anagrafica)) {
-                echo '
+        if (in_array($id_fornitore, $tipi_anagrafica)) {
+            echo '
                     
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi ordine fornitore').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Ordini fornitore')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file-o fa-flip-horizontal"></i> '.tr('Nuovo ordine fornitore').'</a>
 
@@ -72,9 +72,9 @@ if (!$is_anagrafica_deleted) {
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi fattura di acquisto').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Fatture di acquisto')->first()->id.'&idanagrafica='.$record['idanagrafica'].'"><i class="fa fa-file fa-flip-horizontal"></i> '.tr('Nuova fattura di acquisto').'</a>
 
                 <a class="btn dropdown-item" data-title="'.tr('Aggiungi registrazione contabile').'" data-widget="modal" data-href="add.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_anagrafica='.$record['idanagrafica'].'"><i class="fa fa-euro"></i> '.tr('Nuova registrazione contabile (fornitore)').'</a>';
-            }
+        }
 
-            echo '
+        echo '
             </div>
         </div>';
 

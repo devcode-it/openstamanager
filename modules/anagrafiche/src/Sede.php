@@ -64,6 +64,7 @@ class Sede extends Model
         return $this->belongsTo(Nazione::class, 'id_nazione');
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         $this->fixRappresentanteFiscale();
@@ -167,7 +168,6 @@ class Sede extends Model
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 $data = json_decode(curl_exec($ch));
-                curl_close($ch);
 
                 // Salvataggio informazioni
                 $this->gaddress = $data[0]->display_name;

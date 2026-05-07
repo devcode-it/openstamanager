@@ -45,7 +45,7 @@ switch ($operazione) {
         $articolo = Articolo::find($id_articolo);
         $serial = filter('serial');
 
-        $componente = Componente::build($impianto, $articolo, new Carbon);
+        $componente = Componente::build($impianto, $articolo, new Carbon());
 
         if ($serial) {
             $componente->serial = $serial;
@@ -77,8 +77,8 @@ switch ($operazione) {
 
         // Creazione copia del componenten
         $copia = $componente->replicate();
-        $copia->data_registrazione = new Carbon;
-        $copia->data_installazione = new Carbon;
+        $copia->data_registrazione = new Carbon();
+        $copia->data_installazione = new Carbon();
         $componente->serial = null;
         $copia->data_sostituzione = null;
         $copia->data_rimozione = null;
@@ -87,7 +87,7 @@ switch ($operazione) {
         $copia->save();
 
         // Sostituzione del componente indicato
-        $componente->data_sostituzione = new Carbon;
+        $componente->data_sostituzione = new Carbon();
         $componente->id_sostituzione = $copia->id;
         $componente->save();
 
@@ -99,7 +99,7 @@ switch ($operazione) {
         $id_componente = filter('id_componente');
         $componente = Componente::find($id_componente);
 
-        $componente->data_rimozione = new Carbon;
+        $componente->data_rimozione = new Carbon();
         $componente->save();
 
         flash()->info(tr('Componente rimosso!'));

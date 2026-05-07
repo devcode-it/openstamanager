@@ -1255,7 +1255,7 @@ switch (post('op')) {
 
         $sessione->orario_inizio = post('data_inizio');
         $sessione->orario_fine = post('data_fine');
-        if (post('ore') != round($sessione->ore,2)) {
+        if (post('ore') != round($sessione->ore, 2)) {
             $sessione->orario_fine = Carbon::parse(post('data_inizio'))->addSeconds(round(post('ore') * 3600, 2))->format('Y-m-d H:i:s');
         } else {
             $sessione->orario_fine = post('data_fine');
@@ -1279,7 +1279,7 @@ switch (post('op')) {
     case 'split_sessione':
         $id_sessione = post('id_sessione');
         $sessione = Sessione::find($id_sessione);
-        
+
         $pausa_inizio = post('pausa_inizio');
         $pausa_fine = post('pausa_fine');
         $orario_fine = $sessione->orario_fine;
@@ -1287,7 +1287,7 @@ switch (post('op')) {
         // Modifica la sessione originale: fine sessione = inizio pausa
         $sessione->orario_fine = $pausa_inizio;
         $sessione->save();
-        
+
         // Crea una nuova sessione: inizio = fine pausa, fine = fine sessione originale
         $new_sessione = $sessione->replicate();
         $new_sessione->orario_inizio = $pausa_fine;
@@ -1295,14 +1295,14 @@ switch (post('op')) {
         $new_sessione->km = 0;
         $new_sessione->prezzo_dirittochiamata = 0;
         $new_sessione->save();
-        
+
         // Trigger aggiornamento intervento
         $intervento = $sessione->intervento;
         $intervento->updated_at = date('Y-m-d H:i:s');
         $intervento->save();
-        
+
         flash()->info(tr('Pausa inserita correttamente!'));
-        
+
         break;
 
         // Duplica intervento

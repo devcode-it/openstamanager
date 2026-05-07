@@ -32,7 +32,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
     /**
      * Operazioni da monitorare per le notifiche.
      */
-    private const OPERAZIONI_MONITORATE = [
+    private const array OPERAZIONI_MONITORATE = [
         'edit_sessione',
         'update_inline_sessione',
         'delete_sessione',

@@ -293,6 +293,7 @@ class Interventi extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function createRecord($data)
     {
         $anagrafica = Anagrafica::find($data['id_cliente']);
@@ -311,6 +312,7 @@ class Interventi extends AppResource
         ];
     }
 
+    #[\Override]
     public function updateRecord($data)
     {
         $intervento = Intervento::find($data['id']);

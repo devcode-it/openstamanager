@@ -95,7 +95,7 @@ class App
             $result = array_merge($defaultConfig, $config);
 
             // Operazioni di normalizzazione sulla configurazione
-            $result['debug'] = self::$config['debug'] ?? ! empty($result['debug']);
+            $result['debug'] = self::$config['debug'] ?? !empty($result['debug']);
             $result['lang'] = $result['lang'] == 'it' ? 'it_IT' : $result['lang'];
 
             self::$config = $result;
@@ -107,7 +107,8 @@ class App
     /**
      * Imposta e restituisce lo stato di debug del progetto.
      *
-     * @param  bool  $value
+     * @param bool $value
+     *
      * @return bool
      */
     public static function debug($value = null)
@@ -116,7 +117,7 @@ class App
             self::$config['debug'] = $value;
         }
 
-        if (! isset(self::$config['debug'])) {
+        if (!isset(self::$config['debug'])) {
             App::getConfig();
         }
 
@@ -144,7 +145,7 @@ class App
      */
     public static function definePaths($docroot)
     {
-        if (! defined('DOCROOT')) {
+        if (!defined('DOCROOT')) {
             // Individuazione di $rootdir
             $rootdir = substr((string) $_SERVER['SCRIPT_NAME'], 0, strrpos((string) $_SERVER['SCRIPT_NAME'], '/')).'/';
             if (strrpos($rootdir, '/'.basename((string) $docroot).'/') !== false) {
@@ -264,10 +265,11 @@ class App
     /**
      * Restituisce il codice HTML per il form contenente il file indicato.
      *
-     * @param  string  $file
-     * @param  array  $result
-     * @param  array  $options
-     * @param  bool  $disableForm
+     * @param string $file
+     * @param array  $result
+     * @param array  $options
+     * @param bool   $disableForm
+     *
      * @return string
      */
     public static function load($file, $result, $options, $disableForm = false)
@@ -284,10 +286,11 @@ class App
     /**
      * Restituisce il codice HTML generato del file indicato.
      *
-     * @param  string  $file
-     * @param  array  $result
-     * @param  array  $options
-     * @param  string  $directory
+     * @param string $file
+     * @param array  $result
+     * @param array  $options
+     * @param string $directory
+     *
      * @return string
      */
     public static function internalLoad($file, $result, $options, $directory = null)
@@ -312,8 +315,9 @@ class App
     /**
      * Individua il percorso per il file da includere considerando gli eventuali custom.
      *
-     * @param  string  $path
-     * @param  string  $file
+     * @param string $path
+     * @param string $file
+     *
      * @return string|null
      */
     public static function filepath($path, $file = null)

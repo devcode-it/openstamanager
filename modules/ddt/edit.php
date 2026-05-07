@@ -32,7 +32,7 @@ $id_segment = $record['id_segment'];
 
 if ($dir == 'entrata') {
     $numero_previsto = verifica_numero_ddt($ddt, $id_segment);
-    if (! empty($numero_previsto)) {
+    if (!empty($numero_previsto)) {
         echo '
         <div class="alert alert-warning">
             <i class="fa fa-warning"></i> '.tr("E' assente un _TYPE_ numero _NUM_ in data precedente o corrispondente a _DATE_: si potrebbero verificare dei problemi con la numerazione corrente dei DDT", [
@@ -82,14 +82,14 @@ if ($righe_vuote) {
 
 $sede_anagrafica = $ddt->anagrafica->sedeLegale;
 $id_sede_anagrafica = $dir == 'entrata' ? $ddt->idsede_destinazione : $ddt->idsede_partenza;
-if (! empty($id_sede_anagrafica)) {
+if (!empty($id_sede_anagrafica)) {
     $sede_anagrafica = Sede::find($id_sede_anagrafica);
 }
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $sede_azienda = $anagrafica_azienda->sedeLegale;
 $id_sede_azienda = $dir == 'entrata' ? $ddt->idsede_partenza : $ddt->idsede_destinazione;
-if (! empty($id_sede_azienda)) {
+if (!empty($id_sede_azienda)) {
     $sede_azienda = Sede::find($id_sede_azienda);
 }
 
@@ -255,7 +255,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (! empty($esterno) && ! empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo ! empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(! $record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -337,7 +337,7 @@ if ($dir == 'entrata') {
 	</div>
 
     <?php
-    if (! empty($record['id_documento_fe']) || ! empty($record['num_item']) || ! empty($record['codice_cig']) || ! empty($record['codice_cup'])) {
+    if (!empty($record['id_documento_fe']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
         $collapsed = '';
     } else {
         $collapsed = ' collapsed-card';
@@ -389,7 +389,7 @@ if ($dir == 'entrata') {
 	<div class="card-body">
 <?php
 
-if (! $block_edit) {
+if (!$block_edit) {
     // Lettura ordini (cliente o fornitore)
     $ordini_query = 'SELECT
             COUNT(*) AS tot
@@ -462,11 +462,11 @@ if (! $block_edit) {
                                 <i class="fa fa-plus"></i> '.tr('Sconto/maggiorazione').'
                             </a>
 
-                            <a class="'.(! empty($tot_ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
+                            <a class="'.(!empty($tot_ddt) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ddt.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ddt').'" onclick="saveForm()">
                                 <i class="fa fa-plus"></i> '.tr('Ddt').'
                             </a>
 
-                            <a class="'.(! empty($tot_ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
+                            <a class="'.(!empty($tot_ordini) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_ordine.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Ordine').'" onclick="saveForm()">
                                 <i class="fa fa-plus"></i> '.tr('Ordine').'
                             </a>
                         </ul>
@@ -499,14 +499,14 @@ echo '
 ?>
 <div class="card card-warning collapsable collapsed-card" id="documenti-collegati-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati') ?></span></h3>
+        <h3 class="card-title"><i class="fa fa-warning"></i> <span id="documenti-collegati-title"><?php echo tr('Documenti collegati'); ?></span></h3>
         <div class="card-tools pull-right">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" id="documenti-collegati-toggle"><i class="fa fa-plus"></i></button>
         </div>
     </div>
     <div class="card-body" id="documenti-collegati-body">
         <div class="text-center" id="documenti-collegati-loading">
-            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso') ?>
+            <i class="fa fa-spinner fa-spin"></i> <?php echo tr('Caricamento documenti collegati in corso'); ?>
         </div>
         <div id="documenti-collegati-content" style="display: none;"></div>
     </div>

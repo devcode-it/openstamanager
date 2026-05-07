@@ -61,7 +61,7 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Stato aliquote iva aggiornato con successo!'));
-        
+
         break;
 }
 

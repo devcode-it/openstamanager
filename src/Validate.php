@@ -102,7 +102,6 @@ class Validate
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
             $data = json_decode(curl_exec($ch));
-            curl_close($ch);
 
             /* se la riposta è null imposto la relativa proprietà dell'oggetto a 0 */
             if ($data->valid == null) {
@@ -229,7 +228,6 @@ class Validate
             $ch = curl_init();
             curl_setopt_array($ch, $curl_options);
             $output = curl_exec($ch);
-            curl_close($ch);
 
             $data = json_decode($output, false);
 

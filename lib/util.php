@@ -18,8 +18,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Stringy\Stringy as S;
-
 /*
  * Funzioni esterne di utilità per il progetto.
  *
@@ -104,8 +102,7 @@ if (!function_exists('string_starts_with')) {
      */
     function string_starts_with($string, $starts_with)
     {
-        // return strpos($string, $string_starts_with) === 0;
-        return S::create($string)->startsWith($starts_with);
+        return str_starts_with($string, $starts_with);
     }
 }
 
@@ -120,8 +117,7 @@ if (!function_exists('string_ends_with')) {
      */
     function string_ends_with($string, $ends_with)
     {
-        // return substr($string, -strlen($string_ends_with)) === $string_ends_with;
-        return S::create($string)->endsWith($ends_with);
+        return str_ends_with($string, $ends_with);
     }
 }
 
@@ -136,8 +132,7 @@ if (!function_exists('string_contains')) {
      */
     function string_contains($string, $contains)
     {
-        // return strpos($string, $contains) !== false;
-        return S::create($string)->contains($contains);
+        return strpos($string, $contains) !== false;
     }
 }
 
@@ -151,7 +146,7 @@ if (!function_exists('string_lowercase')) {
      */
     function string_lowercase($string)
     {
-        return S::create($string)->toLowerCase()->__toString();
+        return strtolower($string);
     }
 }
 
@@ -165,7 +160,7 @@ if (!function_exists('string_uppercase')) {
      */
     function string_uppercase($string)
     {
-        return S::create($string)->toUpperCase()->__toString();
+        return strtoupper($string);
     }
 }
 

@@ -132,6 +132,7 @@ class Database extends Util\Singleton
         return parent::$instance[$class];
     }
 
+    #[Override]
     public static function getInstance()
     {
         return self::getConnection();

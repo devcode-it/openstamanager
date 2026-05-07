@@ -21,7 +21,6 @@
 namespace Plugins\ExportFE;
 
 use Respect\Validation\Validator as v;
-use Stringy\Stringy as S;
 
 class Validator
 {
@@ -675,7 +674,7 @@ class Validator
             // Riduzione delle dimensioni
             if ($info['type'] != 'integer' && isset($size[1])) {
                 $output = trim((string) $output);
-                $output = S::create($output)->substr(0, $size[1])->__toString();
+                $output = mb_substr($output, 0, $size[1]);
             }
 
             // Validazione

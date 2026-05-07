@@ -28,8 +28,8 @@ namespace Util;
 class Autofill
 {
     // Costanti per i fattori di scala ottimizzati
-    private const MULTILINE_FACTOR = 0.8;
-    private const SMALL_TEXT_FACTOR = 0.65;
+    private const float MULTILINE_FACTOR = 0.8;
+    private const float SMALL_TEXT_FACTOR = 0.65;
     protected $space = 0;
     protected $current = 0;
 

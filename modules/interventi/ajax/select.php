@@ -27,11 +27,11 @@ switch ($resource) {
         // Verifica se è presente un contratto collegato
         $id_contratto = $superselect['idcontratto'] ?? null;
         $id_intervento = $superselect['id_intervento'] ?? null;
-        
+
         if (!empty($id_contratto)) {
             // Verifica se il contratto ha righe con tipi di intervento specificati
             $righe_contratto = $dbo->fetchOne('SELECT COUNT(*) AS count FROM `co_righe_contratti` WHERE `idcontratto` = '.prepare($id_contratto).' AND `id_tipointervento` IS NOT NULL');
-            
+
             if ($righe_contratto['count'] > 0) {
                 // Se il contratto ha righe con tipi di intervento: mostra SOLO tipi presenti nelle righe del contratto
                 $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
@@ -73,8 +73,8 @@ switch ($resource) {
 
         if (!empty($superselect['idtipiintervento'])) {
             $where[] = '`in_tipiintervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
-        } else if (!empty($superselect['idanagrafica'])) {
-            $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica=".prepare($superselect['idanagrafica']));
+        } elseif (!empty($superselect['idanagrafica'])) {
+            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']));
             if (sizeof($rs) > 0) {
                 $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
             }
@@ -137,7 +137,7 @@ switch ($resource) {
     case 'tipiintervento-tecnico':
         $idtecnico = $superselect['idtecnico'];
         $id_intervento = $superselect['id_intervento'];
-        
+
         if (empty($idtecnico)) {
             $results = [
                 'results' => [],
@@ -145,9 +145,9 @@ switch ($resource) {
             ];
             break;
         }
-        
+
         $intervento = Intervento::find($id_intervento);
-        
+
         // Query per i tipi di intervento in base alla sede al contratto o al tecnico
         // Priorità: tariffe contratto > tariffe sede > tariffe tecnico
         if (!empty($intervento->idsede_destinazione)) {
@@ -166,7 +166,7 @@ switch ($resource) {
                     LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
-                
+
                 // Filtro: mostra SOLO tipi presenti nelle righe del contratto
                 $where[] = '`co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto);
             } else {
@@ -180,7 +180,7 @@ switch ($resource) {
                     LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
-                
+
                 // Filtro: mostra tipi con tariffe sede o tecnico
                 $where[] = '(
                     `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
@@ -200,7 +200,7 @@ switch ($resource) {
                 LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                 |where|
                 ORDER BY `title`';
-            
+
             // Filtro: mostra SOLO tipi presenti nelle righe del contratto
             $where[] = '`co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto);
         } else {
@@ -214,7 +214,7 @@ switch ($resource) {
                 INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                 |where|
                 ORDER BY `title`';
-            
+
             $where[] = '`in_tariffe`.`idtecnico` = '.prepare($idtecnico);
         }
 
@@ -227,7 +227,7 @@ switch ($resource) {
         }
 
         if (!empty($superselect['idanagrafica'])) {
-            $rs = $dbo->fetchArray("SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica=".prepare($superselect['idanagrafica']));
+            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']));
             if (sizeof($rs) > 0) {
                 $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
             }

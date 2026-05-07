@@ -254,7 +254,7 @@ switch ($resource) {
             '|where|' => ' AND id_anagrafica = '.prepare($id_anagrafica),
         ]);
         $prezzi = $database->fetchArray($query_anagrafica);
-        
+
         // prezzi listini sede
         $listino_sede = [];
         if ($idsede_destinazione) {

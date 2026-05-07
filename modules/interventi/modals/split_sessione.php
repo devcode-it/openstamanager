@@ -26,15 +26,15 @@ $op = 'split_sessione';
 $button = '<i class="fa fa-pause"></i> '.tr('Applica pausa');
 
 // Calcola la probabile pausa pranzo (a metà tra inizio e fine)
-$inizio = strtotime($sessione['orario_inizio']);
-$fine = strtotime($sessione['orario_fine']);
+$inizio = strtotime((string) $sessione['orario_inizio']);
+$fine = strtotime((string) $sessione['orario_fine']);
 $meta = ($inizio + $fine) / 2;
 
 // Calcola orario minimo per inizio pausa
-$pausa_inizio_min = date('Y-m-d H:i:s', $inizio + setting('Numero di minuti di avanzamento delle sessioni delle attività')*60);
+$pausa_inizio_min = date('Y-m-d H:i:s', $inizio + setting('Numero di minuti di avanzamento delle sessioni delle attività') * 60);
 
 // Calcola orario massimo per fine pausa
-$pausa_fine_max = date('Y-m-d H:i:s', $fine - setting('Numero di minuti di avanzamento delle sessioni delle attività')*60);
+$pausa_fine_max = date('Y-m-d H:i:s', $fine - setting('Numero di minuti di avanzamento delle sessioni delle attività') * 60);
 
 // Calcola la probabile pausa pranzo (1 ora a metà della sessione)
 $pausa_inizio_default = date('Y-m-d H:i:s', $meta - 1800);
@@ -58,10 +58,10 @@ echo '
 echo '
     <div class="alert alert-info">
         <i class="fa fa-info-circle"></i> '.tr('Sessione corrente: _TECNICO_ dal _INIZIO_ al _FINE_', [
-            '_TECNICO_' => '<strong>'.$sessione['ragione_sociale'].'</strong>',
-            '_INIZIO_' => '<strong>'.Translator::timestampToLocale($sessione['orario_inizio']).'</strong>',
-            '_FINE_' => '<strong>'.Translator::timestampToLocale($sessione['orario_fine']).'</strong>',
-        ]).'
+    '_TECNICO_' => '<strong>'.$sessione['ragione_sociale'].'</strong>',
+    '_INIZIO_' => '<strong>'.Translator::timestampToLocale($sessione['orario_inizio']).'</strong>',
+    '_FINE_' => '<strong>'.Translator::timestampToLocale($sessione['orario_fine']).'</strong>',
+]).'
     </div>';
 
 // Orari pausa

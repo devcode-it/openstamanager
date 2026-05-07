@@ -73,7 +73,7 @@ $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idan
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => Stringy\Stringy::create($documento->tipo->getTranslation('title'))->toUpperCase(),
+    'tipo_doc' => strtoupper($documento->tipo->getTranslation('title')),
     'numero' => $numero,
     'data' => Translator::dateToLocale($documento['data']),
     'pagamento' => $pagamento['title'],

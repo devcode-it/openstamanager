@@ -23,7 +23,7 @@ if ($record['can_delete']) {
     $attr = '';
 } else {
     $attr = 'readonly';
-    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato.').('</div>');
+    echo '<div class="alert alert-warning">'.tr('Alcune impostazioni non possono essere modificate per questo stato.').'</div>';
 }
 
 ?>

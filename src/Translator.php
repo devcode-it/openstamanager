@@ -151,14 +151,11 @@ class Translator extends Util\Singleton
     {
         $result = self::getInstance()->getTranslator()->trans($string, $parameters);
 
-        // Operazioni aggiuntive sul risultato
         if (!empty($operations)) {
-            $result = new Stringy\Stringy($result);
-
             if (!empty($operations['upper'])) {
-                $result = $result->toUpperCase();
+                $result = strtoupper($result);
             } elseif (!empty($operations['lower'])) {
-                $result = $result->toLowerCase();
+                $result = strtolower($result);
             }
         }
 

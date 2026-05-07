@@ -364,23 +364,23 @@ if (!function_exists('aggiungi_movimento')) {
             $dbo->query($query2, $params);
         }
 
-            // Lettura id conto iva indetraibile
-            if ($iva_indetraibile_fattura != 0 && !$split_payment) {
-                $idconto_iva2 = setting('Conto per Iva indetraibile');
+        // Lettura id conto iva indetraibile
+        if ($iva_indetraibile_fattura != 0 && !$split_payment) {
+            $idconto_iva2 = setting('Conto per Iva indetraibile');
 
-                $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
-                $params = [
-                    ':idmastrino' => $idmastrino,
-                    ':data' => $data,
-                    ':iddocumento' => $iddocumento,
-                    ':id_anagrafica' => '',
-                    ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                    ':idconto' => $idconto_iva2,
-                    ':totale' => $iva_indetraibile_fattura * $segno_mov3_iva,
-                    ':primanota' => $primanota,
-                ];
-                $dbo->query($query2, $params);
-            }
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $params = [
+                ':idmastrino' => $idmastrino,
+                ':data' => $data,
+                ':iddocumento' => $iddocumento,
+                ':id_anagrafica' => '',
+                ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
+                ':idconto' => $idconto_iva2,
+                ':totale' => $iva_indetraibile_fattura * $segno_mov3_iva,
+                ':primanota' => $primanota,
+            ];
+            $dbo->query($query2, $params);
+        }
 
         // 4) Aggiungo la rivalsa INPS se c'è
         // Lettura id conto inps

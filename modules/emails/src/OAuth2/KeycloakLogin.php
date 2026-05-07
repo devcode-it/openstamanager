@@ -41,7 +41,7 @@ class KeycloakLogin extends GenericProvider implements ProviderInterface
             'realm' => [
                 'label' => 'Realm',
                 'type' => 'text',
-            ]
+            ],
         ];
     }
 

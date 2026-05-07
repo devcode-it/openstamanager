@@ -34,7 +34,7 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
      * Mappa delle risorse principali da controllare.
      * Ogni risorsa è associata alla sua classe per poter istanziarla e controllare gli aggiornamenti.
      */
-    private const RISORSE_DA_CONTROLLARE = [
+    private const array RISORSE_DA_CONTROLLARE = [
         'clienti' => Clienti::class,
         'tecnici' => Tecnici::class,
         'interventi' => Interventi::class,

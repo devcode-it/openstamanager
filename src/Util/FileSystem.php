@@ -67,9 +67,23 @@ class FileSystem
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
-            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions))) {
-                    $total += $object->getSize();
+            $finder = new \Symfony\Component\Finder\Finder();
+            $finder->files()->in($path);
+            
+            // Apply directory exclusions
+            if (!empty($exclusions)) {
+                $finder->exclude($exclusions);
+            }
+
+            foreach ($finder as $file) {
+                try {
+                    // Verifica se il file è accessibile prima di ottenere la sua dimensione
+                    if (is_readable($file->getRealPath())) {
+                        $total += $file->getSize();
+                    }
+                } catch (\Exception $e) {
+                    // Ignora i file che non possono essere letti (es. link simbolici rotti)
+                    continue;
                 }
             }
         }
@@ -90,9 +104,23 @@ class FileSystem
         $path = realpath($path);
 
         if ($path !== false && $path != '' && file_exists($path)) {
-            foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $object) {
-                if (!in_array($object->getExtension(), $exclusions) && (!in_array($object->getPath(), $exclusions))) {
-                    ++$total;
+            $finder = new \Symfony\Component\Finder\Finder();
+            $finder->files()->in($path);
+            
+            // Apply directory exclusions
+            if (!empty($exclusions)) {
+                $finder->exclude($exclusions);
+            }
+
+            foreach ($finder as $file) {
+                try {
+                    // Verifica se il file è accessibile
+                    if (is_readable($file->getRealPath())) {
+                        ++$total;
+                    }
+                } catch (\Exception $e) {
+                    // Ignora i file che non possono essere letti (es. link simbolici rotti)
+                    continue;
                 }
             }
         }

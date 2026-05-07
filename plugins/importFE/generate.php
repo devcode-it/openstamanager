@@ -516,7 +516,7 @@ if (!empty($righe)) {
         $codice_principale = null;
 
         foreach ($codici as $codice) {
-            $tipo = strtolower($codice['CodiceTipo']);
+            $tipo = strtolower((string) $codice['CodiceTipo']);
             if (str_starts_with($tipo, 'cod')) {
                 $codice_principale = $codice['CodiceValore'];
             }
@@ -644,19 +644,19 @@ if (!empty($righe)) {
         echo '
         <tr data-id="'.$key.'" data-qta="'.$qta.'" data-descrizione="'.$riga['Descrizione'].'" data-prezzo_unitario="'.$prezzo_unitario.'" data-iva_percentuale="'.$riga['AliquotaIVA'].'" data-sconto_unitario="'.$sconto_unitario.'">
             <td>';
-                // Badge per creazione automatica articolo
-                $badge_html = '';
-                if (empty($codice_principale)) {
-                    $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Non idoneo').'</div>';
-                } elseif (!empty($id_articolo)) {
-                    // Articolo già presente nel sistema
-                    $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-info pull-right text-white articolo-warning hidden">'.tr('Articolo già presente').'</div>';
-                } else {
-                    // Nuovo articolo da creare
-                    $badge_html = '<label id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-success pull-right text-white articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;">'.tr('Nuovo articolo').'</span></label>';
-                }
+        // Badge per creazione automatica articolo
+        $badge_html = '';
+        if (empty($codice_principale)) {
+            $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-warning pull-right text-muted articolo-warning hidden">'.tr('Non idoneo').'</div>';
+        } elseif (!empty($id_articolo)) {
+            // Articolo già presente nel sistema
+            $badge_html = '<div id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-info pull-right text-white articolo-warning hidden">'.tr('Articolo già presente').'</div>';
+        } else {
+            // Nuovo articolo da creare
+            $badge_html = '<label id="articolo-badge-'.$key.'" style="padding:7px;" class="badge badge-success pull-right text-white articolo-warning hidden"><input class="check" type="checkbox" name="crea_articoli['.$key.']"/> <span style="position:relative;top:-2px;">'.tr('Nuovo articolo').'</span></label>';
+        }
 
-            echo'
+        echo '
                 '.$badge_html.'
                 <small class="pull-right text-muted padded" id="riferimento_'.$key.'"></small>';
         if (!empty($riferimento_fe)) {

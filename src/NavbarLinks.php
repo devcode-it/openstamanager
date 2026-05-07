@@ -32,7 +32,7 @@ use Models\Plugin;
 class NavbarLinks
 {
     /** Regex di sicurezza per value di type=javascript (nome funzione globale). */
-    private const JS_VALUE_REGEX = '/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/';
+    private const string JS_VALUE_REGEX = '/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/';
 
     public static function render(): string
     {
@@ -47,71 +47,6 @@ class NavbarLinks
         }
 
         return $html;
-    }
-
-    private static function getTopLevelLinks(): Collection
-    {
-        return Link::query()
-            ->whereNull('parent')
-            ->where('enabled', 1)
-            ->orderBy('order')
-            ->with(['children' => function ($q) {
-                $q->where('enabled', 1)->orderBy('order');
-            }])
-            ->get();
-    }
-
-    private static function renderItem(Link $link): string
-    {
-        if ($link->hasChildren()) {
-            return self::renderDropdown($link);
-        }
-
-        return self::renderSingle($link);
-    }
-
-    private static function renderSingle(Link $link): string
-    {
-        $iconClass = trim($link->icon.' nav-icon '.(string) $link->color);
-
-        return '<li class="nav-item">'
-            .'<a href="'.e(self::url($link)).'" class="nav-link" '
-            .self::onclickAttr($link).' '
-            .self::targetAttr($link).' '
-            .'title="'.e($link->title).'">'
-            .'<i class="'.e($iconClass).'"></i>'
-            .'</a>'
-            .'</li>';
-    }
-
-    private static function renderDropdown(Link $link): string
-    {
-        $iconClass = trim($link->icon.' nav-icon '.(string) $link->color);
-
-        $items = '';
-        foreach ($link->children as $child) {
-            if (!self::visible($child)) {
-                continue;
-            }
-            $childIcon = trim($child->icon.' '.(string) $child->color);
-            $items .= '<a class="dropdown-item" href="'.e(self::url($child)).'" '
-                .self::onclickAttr($child).' '
-                .self::targetAttr($child).' '
-                .'title="'.e($child->title).'">'
-                .'<i class="'.e($childIcon).'"></i> '
-                .e($child->label)
-                .'</a>';
-        }
-
-        return '<li class="nav-item dropdown">'
-            .'<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" '
-            .'title="'.e($link->title).'">'
-            .'<i class="'.e($iconClass).'"></i>'
-            .'</a>'
-            .'<div class="dropdown-menu dropdown-menu-right">'
-            .$items
-            .'</div>'
-            .'</li>';
     }
 
     public static function url(Link $link): string
@@ -260,5 +195,70 @@ class NavbarLinks
         }
 
         return $out;
+    }
+
+    private static function getTopLevelLinks(): Collection
+    {
+        return Link::query()
+            ->whereNull('parent')
+            ->where('enabled', 1)
+            ->orderBy('order')
+            ->with(['children' => function ($q) {
+                $q->where('enabled', 1)->orderBy('order');
+            }])
+            ->get();
+    }
+
+    private static function renderItem(Link $link): string
+    {
+        if ($link->hasChildren()) {
+            return self::renderDropdown($link);
+        }
+
+        return self::renderSingle($link);
+    }
+
+    private static function renderSingle(Link $link): string
+    {
+        $iconClass = trim($link->icon.' nav-icon '.(string) $link->color);
+
+        return '<li class="nav-item">'
+            .'<a href="'.e(self::url($link)).'" class="nav-link" '
+            .self::onclickAttr($link).' '
+            .self::targetAttr($link).' '
+            .'title="'.e($link->title).'">'
+            .'<i class="'.e($iconClass).'"></i>'
+            .'</a>'
+            .'</li>';
+    }
+
+    private static function renderDropdown(Link $link): string
+    {
+        $iconClass = trim($link->icon.' nav-icon '.(string) $link->color);
+
+        $items = '';
+        foreach ($link->children as $child) {
+            if (!self::visible($child)) {
+                continue;
+            }
+            $childIcon = trim($child->icon.' '.(string) $child->color);
+            $items .= '<a class="dropdown-item" href="'.e(self::url($child)).'" '
+                .self::onclickAttr($child).' '
+                .self::targetAttr($child).' '
+                .'title="'.e($child->title).'">'
+                .'<i class="'.e($childIcon).'"></i> '
+                .e($child->label)
+                .'</a>';
+        }
+
+        return '<li class="nav-item dropdown">'
+            .'<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" '
+            .'title="'.e($link->title).'">'
+            .'<i class="'.e($iconClass).'"></i>'
+            .'</a>'
+            .'<div class="dropdown-menu dropdown-menu-right">'
+            .$items
+            .'</div>'
+            .'</li>';
     }
 }

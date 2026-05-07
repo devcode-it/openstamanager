@@ -111,6 +111,7 @@ class Clienti extends AppResource
         return $record;
     }
 
+    #[\Override]
     public function createRecord($data)
     {
         $ragione_sociale = $data['ragione_sociale'];
@@ -138,6 +139,7 @@ class Clienti extends AppResource
         ];
     }
 
+    #[\Override]
     public function updateRecord($data)
     {
         $anagrafica = Anagrafica::find($data['id']);

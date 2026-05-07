@@ -35,7 +35,6 @@ use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Plugins\DichiarazioniIntento\Dichiarazione;
 use Traits\RecordTrait;
-use Util\Generator;
 
 class Anagrafica extends Model
 {
@@ -216,6 +215,7 @@ class Anagrafica extends Model
         return $this->tipi()->get()->search(fn ($item, $key) => TipoAnagrafica::find($item->id)->name == $type) !== false;
     }
 
+    #[\Override]
     public function delete()
     {
         if (!$this->isAzienda()) {
@@ -223,6 +223,7 @@ class Anagrafica extends Model
         }
     }
 
+    #[\Override]
     public function save(array $options = [])
     {
         $this->fixRagioneSociale();
@@ -580,7 +581,6 @@ class Anagrafica extends Model
                 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
                 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
                 $data = json_decode(curl_exec($ch));
-                curl_close($ch);
 
                 // Salvataggio informazioni
                 $this->gaddress = $data[0]->display_name;

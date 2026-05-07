@@ -55,7 +55,7 @@ class Componente extends Model
      */
     public static function build(?Impianto $impianto = null, ?Articolo $articolo = null, $data_registrazione = null)
     {
-        $model = new static;
+        $model = new static();
 
         $model->impianto()->associate($impianto);
         $model->articolo()->associate($articolo);

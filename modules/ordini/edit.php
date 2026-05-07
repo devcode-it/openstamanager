@@ -132,7 +132,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">';
-if (! empty($record['idreferente'])) {
+if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
 }
 echo '
@@ -210,14 +210,14 @@ echo '
 
                 <div class="col-md-3">
                     <?php
-        if (! empty($record['idvettore'])) {
+        if (!empty($record['idvettore'])) {
             echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
         }
 $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
     'id' => $record['idspedizione'],
 ])['esterno'];
 ?>
-					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo ! empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(! $record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -257,12 +257,12 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
             <div class="row">
 				<div class="col-md-12">
                     <?php echo input([
-    'type' => 'ckeditor',
-    'use_full_ckeditor' => 0,
-    'label' => tr('Condizioni generali di fornitura'),
-    'name' => 'condizioni_fornitura',
-    'value' => $record['condizioni_fornitura'],
-]);
+                        'type' => 'ckeditor',
+                        'use_full_ckeditor' => 0,
+                        'label' => tr('Condizioni generali di fornitura'),
+                        'name' => 'condizioni_fornitura',
+                        'value' => $record['condizioni_fornitura'],
+                    ]);
 ?>
                 </div>
 			</div>
@@ -279,7 +279,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
 	</div>
 
     <?php
-        if (! empty($record['codice_commessa']) || ! empty($record['num_item']) || ! empty($record['codice_cig']) || ! empty($record['codice_cup'])) {
+        if (!empty($record['codice_commessa']) || !empty($record['num_item']) || !empty($record['codice_cig']) || !empty($record['codice_cup'])) {
             $collapsed = 'in';
         } else {
             $collapsed = '';
@@ -332,7 +332,7 @@ echo '
 
 	<div class="card-body">';
 
-if (! $block_edit) {
+if (!$block_edit) {
     $prev_query = 'SELECT
             COUNT(*) AS tot
         FROM
@@ -386,7 +386,7 @@ if (! $block_edit) {
     if ($dir == 'entrata') {
         echo '
 
-                            <a class="'.(! empty($preventivi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
+                            <a class="'.(!empty($preventivi) ? '' : ' disabled').' dropdown-item" style="cursor:pointer" data-href="'.$structure->fileurl('add_preventivo.php').'?id_module='.$id_module.'&id_record='.$id_record.'" data-card-widget="modal" data-title="'.tr('Aggiungi Preventivo').'" onclick="saveForm()">
                                 <i class="fa fa-plus"></i> '.tr('Preventivo').'
                             </a>';
     }

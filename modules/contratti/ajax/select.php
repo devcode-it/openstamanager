@@ -144,14 +144,14 @@ switch ($resource) {
             $custom['link'] = 'module:Categorie contratti';
         }
         break;
-    
-    /*
-     * Opzioni utilizzate:
-     * - id_record
-     */
+
+        /*
+         * Opzioni utilizzate:
+         * - id_record
+         */
     case 'tipiintervento_abilitati':
         $id_record = $options['id_record'] ?? get('id_record') ?? $superselect['id_record'];
-        
+
         $query = 'SELECT
                     `in_tipiintervento`.`id` AS id,
                     `in_tipiintervento_lang`.`title` AS descrizione
@@ -164,17 +164,17 @@ switch ($resource) {
                     AND `co_contratti_tipiintervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipiintervento_lang`.`title`';
-        
+
         $where = [];
         $custom = [];
-        
+
         if (!empty($search)) {
             $search_fields[] = '`in_tipiintervento_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
-        
+
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
-        
+
         $results = [];
         foreach ($rs as $r) {
             $results[] = [
@@ -183,11 +183,11 @@ switch ($resource) {
                 'descrizione' => $r['descrizione'],
             ];
         }
-        
+
         $results = [
             'results' => $results,
             'recordsFiltered' => $data['recordsFiltered'],
         ];
-        
+
         break;
 }

@@ -130,11 +130,11 @@ class User extends Model implements Authenticatable
         $database = database();
 
         // Estraggo le sedi dell'utente loggato
-        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user=' . prepare($this->id));
+        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($this->id));
 
         // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
         if (empty($sedi)) {
-            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica=' . prepare($this->idanagrafica));
+            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($this->idanagrafica));
         }
 
         return array_column($sedi, 'idsede');
@@ -153,7 +153,7 @@ class User extends Model implements Authenticatable
 
         $image = Upload::find($this->image_file_id);
 
-        return base_path_osm() . '/files/' . $image->module->directory . '/' . $image->filename;
+        return base_path_osm().'/files/'.$image->module->directory.'/'.$image->filename;
     }
 
     public function setPhotoAttribute($value)
@@ -171,7 +171,7 @@ class User extends Model implements Authenticatable
         // Informazioni sull'immagine
         $filepath = is_array($value) ? $value['tmp_name'] : $value;
         $info = Upload::getInfo(is_array($value) ? $value['name'] : $value);
-        $file = base_dir() . '/files/temp_photo.' . $info['extension'];
+        $file = base_dir().'/files/temp_photo.'.$info['extension'];
 
         // Ridimensionamento
         $img = getImageManager()->read($filepath)->scaleDown(100, 100);
@@ -198,16 +198,16 @@ class User extends Model implements Authenticatable
             return $this->username;
         }
 
-        return $anagrafica->ragione_sociale . ' (' . $this->username . ')';
+        return $anagrafica->ragione_sociale.' ('.$this->username.')';
     }
 
     public function getApiTokens()
     {
-        $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = ' . prepare($this->id);
+        $query = 'SELECT * FROM `zz_tokens` WHERE `enabled` = 1 AND `id_utente` = '.prepare($this->id);
         $database = database();
 
         // Generazione del token per l'utente
-        $query_utenti = 'SELECT * FROM `zz_tokens` WHERE `id_utente` = ' . prepare($this->id);
+        $query_utenti = 'SELECT * FROM `zz_tokens` WHERE `id_utente` = '.prepare($this->id);
         $tokens = $database->fetchArray($query_utenti);
         if (empty($tokens)) {
             $token = secure_random_string();
@@ -304,7 +304,9 @@ class User extends Model implements Authenticatable
         return '';
     }
 
-    public function setRememberToken($value) {}
+    public function setRememberToken($value)
+    {
+    }
 
     public function getRememberTokenName(): string
     {

@@ -91,6 +91,7 @@ abstract class Accounting extends Component
      *
      * @param string $key
      */
+    #[\Override]
     public function __set($key, $value)
     {
         // Gestisce id_conto come alias per idconto
@@ -108,6 +109,7 @@ abstract class Accounting extends Component
      *
      * @param string $key
      */
+    #[\Override]
     public function __get($key)
     {
         // Gestisce id_conto come alias per idconto
@@ -469,6 +471,7 @@ abstract class Accounting extends Component
      *
      * @return bool
      */
+    #[\Override]
     public function save(array $options = [])
     {
         // Fix dei campi statici
@@ -571,6 +574,7 @@ abstract class Accounting extends Component
         $this->attributes['tipo_provvigione'] = $this->provvigione_percentuale ? 'PRC' : 'UNT';
     }
 
+    #[\Override]
     protected static function boot()
     {
         parent::boot();

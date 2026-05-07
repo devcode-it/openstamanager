@@ -48,7 +48,6 @@ switch (filter('op')) {
             $link = Modules::link('Categorie', $categoria_esistente->id, $nome);
             flash()->error($message.': '.$link);
         } else {
-
             if (isset($nome) && isset($nota) && isset($colore)) {
                 $categoria->colore = $colore;
                 $categoria->parent = $id_original ?: null;
@@ -131,9 +130,8 @@ switch (filter('op')) {
             $database->commitTransaction();
             redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.($id_original ?: $id_record));
             exit;
-        } else {
-            echo json_encode(['id' => $id_record, 'text' => $nome]);
         }
+        echo json_encode(['id' => $id_record, 'text' => $nome]);
 
         break;
 

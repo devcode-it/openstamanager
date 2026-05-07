@@ -172,7 +172,7 @@ class Movimenti
         if (!empty($iva_detraibile)) {
             if ($this->fattura->tipo->codice_tipo_documento_fe == 'TD17') {
                 $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti Extra UE') : setting('Conto per Iva su vendite Extra UE');
-            } elseif ($this->fattura->tipo->codice_tipo_documento_fe == 'TD18') {  
+            } elseif ($this->fattura->tipo->codice_tipo_documento_fe == 'TD18') {
                 $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti Intra UE') : setting('Conto per Iva su vendite Intra UE');
             } elseif ($this->fattura->tipo->codice_tipo_documento_fe == 'TD19') {
                 $id_conto = $is_acquisto ? setting('Conto per Iva su acquisti Reverse charge') : setting('Conto per Iva su vendite Reverse charge');

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 $assets_pretty = '';
 if (!empty($record['assets'])) {
-    $decoded = json_decode($record['assets'], true);
+    $decoded = json_decode((string) $record['assets'], true);
     if (is_array($decoded)) {
         $assets_pretty = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     } else {
@@ -128,7 +128,7 @@ if (!empty($record['assets'])) {
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "<?php echo tr('Lista asset (JSON array)'); ?>", "name": "assets", "value": "<?php echo addslashes($assets_pretty); ?>", "rows": "5", "help": "<?php echo tr('Esempio: [\"file.js\", \"modules/altro/assets/dist/js/x.js\"]. Shorthand (solo filename) richiede modulo associato e cerca in modules/{dir}/assets/dist/js/. Path con / è interpretato da OSM root (cross-module).'); ?>" ]}
+                    {[ "type": "textarea", "label": "<?php echo tr('Lista asset (JSON array)'); ?>", "name": "assets", "value": "<?php echo addslashes((string) $assets_pretty); ?>", "rows": "5", "help": "<?php echo tr('Esempio: [\"file.js\", \"modules/altro/assets/dist/js/x.js\"]. Shorthand (solo filename) richiede modulo associato e cerca in modules/{dir}/assets/dist/js/. Path con / è interpretato da OSM root (cross-module).'); ?>" ]}
                 </div>
             </div>
         </div>

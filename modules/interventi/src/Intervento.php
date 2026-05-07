@@ -27,7 +27,6 @@ use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
 use Traits\RecordTrait;
 use Traits\ReferenceTrait;
-use Util\Generator;
 
 class Intervento extends Document
 {
@@ -143,6 +142,7 @@ class Intervento extends Document
      *
      * @return iterable
      */
+    #[\Override]
     public function getRigheContabili()
     {
         $results = parent::getRigheContabili();
@@ -202,6 +202,7 @@ class Intervento extends Document
         return $this->hasMany(Components\Sessione::class, 'idintervento');
     }
 
+    #[\Override]
     public function toArray()
     {
         $array = parent::toArray();

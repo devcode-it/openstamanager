@@ -33,7 +33,7 @@ if (get('op') == 'get_costo_ore') {
 
     // Recupera il costo ore dal contratto
     $rs = $dbo->fetchArray('SELECT `costo_ore` FROM `co_contratti_tipiintervento` WHERE `idcontratto`='.prepare($id_record).' AND `idtipointervento`='.prepare($idtipointervento));
-    
+
     if (!empty($rs)) {
         echo json_encode([
             'costo_ore' => $rs[0]['costo_ore'],

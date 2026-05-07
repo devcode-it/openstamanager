@@ -37,6 +37,7 @@ class IntegritaFile extends Controllo
         return $record['tipo'] === 'file_orfano' ? 'warning' : 'danger';
     }
 
+    #[\Override]
     public function getOptions($record)
     {
         $options = [];
@@ -63,6 +64,7 @@ class IntegritaFile extends Controllo
     /**
      * Indica se questo controllo supporta azioni globali.
      */
+    #[\Override]
     public function hasGlobalActions()
     {
         return true;
@@ -71,6 +73,7 @@ class IntegritaFile extends Controllo
     /**
      * Restituisce le azioni globali disponibili per questo controllo.
      */
+    #[\Override]
     public function getGlobalActions()
     {
         $orphan_files_stats = $this->getOrphanFilesStats();
@@ -119,6 +122,7 @@ class IntegritaFile extends Controllo
     /**
      * Risolve tutti i problemi di integrità.
      */
+    #[\Override]
     public function solveGlobal($params = [])
     {
         $action = $params['action'] ?? '';

@@ -22,8 +22,8 @@ namespace Modules\Ordini;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
-use Traits\RecordTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Traits\RecordTrait;
 
 class Stato extends Model
 {

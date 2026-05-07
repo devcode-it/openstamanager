@@ -549,7 +549,6 @@ switch (post('op')) {
 
         break;
 
-
     case 'merge_products':
         $id_articolo_principale = post('id_articolo_principale');
 
@@ -608,7 +607,7 @@ switch (post('op')) {
                 FROM `mg_movimenti` 
                 WHERE `idarticolo` = '.prepare($id_articolo_principale)
             )['totale'];
-            
+
             $nuova_qta = $qta_attuale + $qta_movimenti;
             database()->table('mg_articoli')->where('id', $id_articolo_principale)->update(['qta' => $nuova_qta]);
 
@@ -782,7 +781,6 @@ $operations['export_csv'] = [
         'blank' => true,
     ],
 ];
-
 
 $operations['generate_barcode_bulk'] = [
     'text' => '<span><i class="fa fa-magic"></i> '.tr('Genera barcode').'</span>',

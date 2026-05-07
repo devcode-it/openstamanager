@@ -37,12 +37,12 @@ $materiali_righe = [];
 $sessioni_cache = [];
 
 /**
- * Funzione helper per calcolare margine, margine percentuale e ricarico percentuale
+ * Funzione helper per calcolare margine, margine percentuale e ricarico percentuale.
  */
 function calcolaMargini($costo, $ricavo)
 {
     $margine = $ricavo - $costo;
-    
+
     if ($ricavo > 0) {
         $margine_prc = (int) ((1 - ($costo / $ricavo)) * 100);
         $ricarico_prc = $costo > 0 ? (int) ((($ricavo / $costo) - 1) * 100) : 100;
@@ -50,7 +50,7 @@ function calcolaMargini($costo, $ricavo)
         $margine_prc = 0;
         $ricarico_prc = 0;
     }
-    
+
     return [
         'margine' => $margine,
         'margine_prc' => $margine_prc,
@@ -59,24 +59,24 @@ function calcolaMargini($costo, $ricavo)
 }
 
 /**
- * Funzione helper per ottenere le sessioni di un intervento con cache
+ * Funzione helper per ottenere le sessioni di un intervento con cache.
  */
 function getSessioniCache($intervento, &$cache)
 {
     $id = $intervento->id;
-    
+
     if (!isset($cache[$id])) {
         $cache[$id] = $intervento->sessioni()
             ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
             ->where('non_conteggiare', 0)
             ->get();
     }
-    
+
     return $cache[$id];
 }
 
 /**
- * Funzione helper per calcolare i totali di una sessione
+ * Funzione helper per calcolare i totali di una sessione.
  */
 function calcolaTotaliSessione($sessione)
 {
@@ -89,7 +89,7 @@ function calcolaTotaliSessione($sessione)
 }
 
 /**
- * Funzione helper per generare HTML sconto
+ * Funzione helper per generare HTML sconto.
  */
 function getHtmlSconto($sconto)
 {
@@ -97,12 +97,12 @@ function getHtmlSconto($sconto)
 }
 
 /**
- * Funzione helper per ottenere la query degli interventi disponibili
+ * Funzione helper per ottenere la query degli interventi disponibili.
  */
 function getQueryInterventiDisponibili($idanagrafica)
 {
     global $dbo;
-    
+
     return 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione 
             FROM in_interventi 
             WHERE id_preventivo IS NULL 
@@ -231,23 +231,23 @@ if (!empty($interventi)) {
                                 <td class="text-right text-success">'.moneyFormat($sessione->prezzo_viaggio).$sconto_km.'</td>
                                 <td class="text-right text-success">'.moneyFormat($sessione->prezzo_diritto_chiamata).'</td>
                             </tr>';
-                
+
                 // Calcola totali sessione
                 $totali_sessione = calcolaTotaliSessione($sessione);
-                
+
                 // Raggruppamento per tipologia descrizione
                 $tipo_title = $sessione->tipo->getTranslation('title');
                 $tipologie[$tipo_title]['ore'] = ($tipologie[$tipo_title]['ore'] ?? 0) + $sessione->ore;
                 $tipologie[$tipo_title]['costo'] = ($tipologie[$tipo_title]['costo'] ?? 0) + $totali_sessione['costo'];
                 $tipologie[$tipo_title]['ricavo'] = ($tipologie[$tipo_title]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
-                
+
                 // Raggruppamento per tecnico
                 $tecnico_nome = $sessione->anagrafica->ragione_sociale;
                 $tecnici[$tecnico_nome]['ore'] = ($tecnici[$tecnico_nome]['ore'] ?? 0) + $sessione->ore;
                 $tecnici[$tecnico_nome]['km'] = ($tecnici[$tecnico_nome]['km'] ?? 0) + $sessione->km;
                 $tecnici[$tecnico_nome]['costo'] = ($tecnici[$tecnico_nome]['costo'] ?? 0) + $totali_sessione['costo'];
                 $tecnici[$tecnico_nome]['ricavo'] = ($tecnici[$tecnico_nome]['ricavo'] ?? 0) + $totali_sessione['ricavo'];
-                
+
                 // Raggruppamento per stato intervento
                 $stato_title = $intervento->stato->getTranslation('title');
                 $stati_intervento[$stato_title]['colore'] = $intervento->stato->colore;
@@ -292,7 +292,7 @@ if (!empty($interventi)) {
                 $ricavo = (string) (($articolo->imponibile - $articolo->sconto) / $qta);
                 $costo = (string) ($articolo->spesa / $qta);
                 $descrizione = $articolo->articolo->codice.' - '.$articolo->descrizione;
-                
+
                 if (!isset($materiali_art[$descrizione][$ricavo][$costo])) {
                     $materiali_art[$descrizione][$ricavo][$costo] = ['id' => $articolo->id, 'qta' => 0, 'costo' => 0, 'ricavo' => 0];
                 }
@@ -415,34 +415,34 @@ echo '
 if (!empty($totale_ore_contratto)) {
     // Raggruppa le ore per tipo di attività
     $tipologie_ore_per_riga = [];
-    
+
     foreach ($interventi as $intervento) {
         $sessioni = getSessioniCache($intervento, $sessioni_cache);
-        
+
         foreach ($sessioni as $sessione) {
             $tipo_title = $sessione->tipo->getTranslation('title');
-            
+
             if (!isset($tipologie_ore_per_riga[$tipo_title])) {
                 $tipologie_ore_per_riga[$tipo_title] = [
                     'ore_totali' => 0,
                     'ore_completate' => 0,
                 ];
             }
-            
+
             $tipologie_ore_per_riga[$tipo_title]['ore_totali'] += $sessione->ore;
-            
+
             if (!empty($intervento->stato->is_bloccato)) {
                 $tipologie_ore_per_riga[$tipo_title]['ore_completate'] += $sessione->ore;
             }
         }
     }
-    
+
     // Raggruppa le ore a contratto per tipo di attività dalle righe del documento
     $ore_contratto_per_tipo = [];
     foreach ($righe as $riga) {
         if ($riga->um == 'ore') {
             $id_tipointervento = $riga->id_tipointervento ?? null;
-            
+
             if (!empty($id_tipointervento)) {
                 $tipo_intervento = Tipo::where('id', $id_tipointervento)->first()->name;
                 if ($tipo_intervento) {
@@ -454,13 +454,13 @@ if (!empty($totale_ore_contratto)) {
             }
         }
     }
-    
+
     // Crea una mappatura tra tipi attività sessioni e tipi attività contratto (case-insensitive)
     $mappa_tipi = [];
     foreach ($tipologie_ore_per_riga as $tipo_sessione => $dati) {
         // Cerca una corrispondenza diretta case-insensitive
         foreach ($ore_contratto_per_tipo as $tipo_contratto => $ore) {
-            if (strcasecmp($tipo_sessione, $tipo_contratto) == 0) {
+            if (strcasecmp((string) $tipo_sessione, (string) $tipo_contratto) == 0) {
                 $mappa_tipi[$tipo_sessione] = $tipo_contratto;
                 break;
             }
@@ -470,7 +470,7 @@ if (!empty($totale_ore_contratto)) {
             $mappa_tipi[$tipo_sessione] = null;
         }
     }
-    
+
     echo '
 <div class="card mb-4">
     <div class="card-header bg-info text-white">
@@ -489,10 +489,10 @@ if (!empty($totale_ore_contratto)) {
                 </tr>
             </thead>
             <tbody>';
-    
+
     // Unisci i tipi di attività dalle sessioni e dal contratto
     $tipologie_unite = array_unique(array_merge(array_keys($tipologie_ore_per_riga), array_keys($ore_contratto_per_tipo)));
-    
+
     // Crea mappatura inversa per trovare il tipo di sessione corrispondente al tipo contratto
     $mappa_inversa = [];
     foreach ($mappa_tipi as $tipo_sessione => $tipo_contratto) {
@@ -500,7 +500,7 @@ if (!empty($totale_ore_contratto)) {
             $mappa_inversa[$tipo_contratto] = $tipo_sessione;
         }
     }
-    
+
     // Mostra le righe raggruppate per tipo di attività
     foreach ($tipologie_unite as $tipo) {
         // Cerca le ore a contratto per questo tipo di attività
@@ -510,7 +510,7 @@ if (!empty($totale_ore_contratto)) {
         } elseif (isset($mappa_inversa[$tipo]) && isset($ore_contratto_per_tipo[$mappa_inversa[$tipo]])) {
             $ore_contratto = $ore_contratto_per_tipo[$mappa_inversa[$tipo]];
         }
-        
+
         // Cerca i dati delle sessioni per questo tipo di attività
         $dati_sessioni = null;
         if (isset($tipologie_ore_per_riga[$tipo])) {
@@ -518,16 +518,16 @@ if (!empty($totale_ore_contratto)) {
         } elseif (isset($mappa_inversa[$tipo]) && isset($tipologie_ore_per_riga[$mappa_inversa[$tipo]])) {
             $dati_sessioni = $tipologie_ore_per_riga[$mappa_inversa[$tipo]];
         }
-        
+
         $ore_erogate = $dati_sessioni ? $dati_sessioni['ore_totali'] : 0;
         $ore_concluse = $dati_sessioni ? $dati_sessioni['ore_completate'] : 0;
-        
+
         $ore_residue = floatval($ore_contratto) - floatval($ore_erogate);
         $ore_residue_concluse = floatval($ore_contratto) - floatval($ore_concluse);
-        
+
         $bg_class_residue = $ore_residue >= 0 ? 'text-primary' : 'text-danger';
         $bg_class_residue_concluse = $ore_residue_concluse >= 0 ? 'text-primary' : 'text-danger';
-        
+
         echo '
                 <tr>
                     <td><strong>'.$tipo.'</strong></td>
@@ -538,7 +538,7 @@ if (!empty($totale_ore_contratto)) {
                     <td class="text-right font-weight-bold '.$bg_class_residue_concluse.'">'.Translator::numberToLocale($ore_residue_concluse).'</td>
                 </tr>';
     }
-    
+
     // Calcola i totali basandosi sui tipi di attività delle sessioni
     $totale_ore_erogate = 0;
     $totale_ore_concluse = 0;
@@ -546,13 +546,13 @@ if (!empty($totale_ore_contratto)) {
         $totale_ore_erogate += $dati['ore_totali'];
         $totale_ore_concluse += $dati['ore_completate'];
     }
-    
+
     $totale_ore_residue = floatval($totale_ore_contratto) - floatval($totale_ore_erogate);
     $totale_ore_residue_concluse = floatval($totale_ore_contratto) - floatval($totale_ore_concluse);
-    
+
     $bg_class_residue_totali = $totale_ore_residue >= 0 ? 'text-primary' : 'text-danger';
     $bg_class_residue_concluse_totali = $totale_ore_residue_concluse >= 0 ? 'text-primary' : 'text-danger';
-    
+
     // Riga totali
     echo '
                 <tr class="table-info font-weight-bold">
@@ -568,7 +568,7 @@ if (!empty($totale_ore_contratto)) {
     </div>
 </div>';
 } else {
-    echo'
+    echo '
 <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> '.tr('Per monitorare il consumo ore, inserisci almeno una riga con unità di misura "ore"').'.
 </div>';
@@ -786,10 +786,10 @@ foreach ($interventi as $intervento) {
                 'totale' => 0,
             ];
         }
-        
+
         // Usa la funzione helper per calcolare i totali
         $totali_sessione = calcolaTotaliSessione($sessione);
-        
+
         $interventi_per_mese[$mese]['ore'] += $sessione->ore;
         $interventi_per_mese[$mese]['km'] += $sessione->km;
         $interventi_per_mese[$mese]['costo'] += $totali_sessione['costo'];

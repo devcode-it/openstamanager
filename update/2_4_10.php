@@ -2,7 +2,7 @@
 
 $database = database();
 
-error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED & ~E_STRICT);
+error_reporting(E_ALL & ~E_WARNING & ~E_CORE_WARNING & ~E_NOTICE & ~E_USER_DEPRECATED);
 
 // Fix del calcolo del bollo
 $fatture = $database->fetchArray('SELECT id, bollo, split_payment FROM co_documenti');

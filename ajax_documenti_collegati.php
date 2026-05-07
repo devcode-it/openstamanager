@@ -35,7 +35,7 @@ ini_set('display_errors', 0);
 // Verifica che l'id_record sia valido
 if (empty($id_record) || !is_numeric($id_record)) {
     $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
-    
+
     if ($count_only) {
         header('Content-Type: application/json');
         echo json_encode(['count' => 0, 'error' => 'ID record non valido']);
@@ -48,7 +48,7 @@ if (empty($id_record) || !is_numeric($id_record)) {
 // Verifica che id_module sia presente
 if (empty($id_module)) {
     $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
-    
+
     if ($count_only) {
         header('Content-Type: application/json');
         echo json_encode(['count' => 0, 'error' => 'ID modulo non valido']);

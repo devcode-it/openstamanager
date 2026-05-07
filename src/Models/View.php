@@ -37,12 +37,13 @@ use Util\Query;
  * $id = $dbo->insert('zz_views', ['id_module' => $id_module, 'name' => 'campo', 'query' => '...']);
  * $dbo->insert('zz_views_lang', ['id_record' => $id, 'id_lang' => $id_lang, 'title' => 'Etichetta']);
  * ```
- * Per aggiornare una traduzione usa {@see \Traits\RecordTrait::setTranslation()}.
+ * Per aggiornare una traduzione usa {@see RecordTrait::setTranslation()}.
  */
 class View extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'zz_views';
 
     protected static $translated_fields = [

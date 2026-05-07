@@ -223,5 +223,5 @@ delete($files);
 $rs = $dbo->fetchArray('SELECT * FROM co_scadenziario');
 
 for ($i = 0; $i < sizeof($rs); ++$i) {
-    $dbo->query("UPDATE co_scadenziario SET descrizione=(SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id=".prepare($rs[$i]['iddocumento']).") WHERE co_scadenziario.id=".prepare($rs[$i]['id']));
+    $dbo->query("UPDATE co_scadenziario SET descrizione=(SELECT CONCAT(co_tipidocumento.descrizione, CONCAT(' numero ', IF(numero_esterno!='', numero_esterno, numero))) FROM co_documenti INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_documenti.id=".prepare($rs[$i]['iddocumento']).') WHERE co_scadenziario.id='.prepare($rs[$i]['id']));
 }

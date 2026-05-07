@@ -132,7 +132,7 @@ if (!function_exists('string_contains')) {
      */
     function string_contains($string, $contains)
     {
-        return strpos($string, $contains) !== false;
+        return str_contains($string, $contains);
     }
 }
 

@@ -297,7 +297,7 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
                 INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
                 LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `in_interventi`.`id` = '.prepare($documento->id)); 
+                `in_interventi`.`id` = '.prepare($documento->id));
         // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, usa un valore di default
         $descrizione_personalizzata = setting('Descrizione personalizzata in fatturazione');
         if (!empty($descrizione_personalizzata)) {
@@ -477,7 +477,7 @@ foreach ($righe as $i => $riga) {
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'entrata' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
-                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] || $is_renewal ? '' : ($info_disponibilita['disponibile']>$riga['qta_rimanente'] ? $riga['qta_rimanente'] : $info_disponibilita['disponibile'])).'" />';
+                        <input type="hidden" id="max_qta_'.$i.'" value="'.($options['superamento_soglia_qta'] || $is_renewal ? '' : ($info_disponibilita['disponibile'] > $riga['qta_rimanente'] ? $riga['qta_rimanente'] : $info_disponibilita['disponibile'])).'" />';
 
     $descrizione = ($riga->isArticolo() ? $riga->articolo->codice.' - ' : '').$riga['descrizione'];
 
@@ -648,7 +648,7 @@ if (!empty($options['tipi_attivita'])) {
                 </tr>
             </thead>
             <tbody>';
-    
+
     foreach ($options['tipi_attivita'] as $i => $tipo) {
         $ore_residue = max(0, $tipo['ore_totali'] - $tipo['ore_utilizzate']);
 
@@ -672,7 +672,7 @@ if (!empty($options['tipi_attivita'])) {
                 </tr>';
         }
     }
-    
+
     echo '
             </tbody>
         </table>

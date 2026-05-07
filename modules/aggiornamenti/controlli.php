@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 // ========================================================================
 
 /**
- * Carica i dati di ultima esecuzione per i controlli
+ * Carica i dati di ultima esecuzione per i controlli.
  */
 function loadLastExecutionData()
 {
@@ -35,18 +35,19 @@ function loadLastExecutionData()
 }
 
 /**
- * Genera il badge HTML per il conteggio degli errori
+ * Genera il badge HTML per il conteggio degli errori.
  */
 function generateErrorBadgeHtml($count, $type = 'danger')
 {
     if ($count <= 0) {
         return '';
     }
+
     return ' <span class="badge badge-'.$type.' ml-2">'.$count.'</span>';
 }
 
 /**
- * Determina le classi CSS per la card in base ai tipi di errore
+ * Determina le classi CSS per la card in base ai tipi di errore.
  */
 function determineCardClasses($hasDanger, $hasWarning, $hasInfo)
 {
@@ -71,14 +72,14 @@ function determineCardClasses($hasDanger, $hasWarning, $hasInfo)
             'titleClass' => 'requirements-card-title requirements-card-title-info',
             'icon' => 'fa-info-circle',
         ];
-    } else {
-        return [
-            'cardClass' => 'card-outline card-success requirements-card mb-2 collapsable collapsed-card',
-            'headerClass' => 'requirements-card-header requirements-card-header-success',
-            'titleClass' => 'requirements-card-title requirements-card-title-success',
-            'icon' => 'fa-check-circle',
-        ];
     }
+
+    return [
+        'cardClass' => 'card-outline card-success requirements-card mb-2 collapsable collapsed-card',
+        'headerClass' => 'requirements-card-header requirements-card-header-success',
+        'titleClass' => 'requirements-card-title requirements-card-title-success',
+        'icon' => 'fa-check-circle',
+    ];
 }
 
 // Aggiunta della classe per il modulo

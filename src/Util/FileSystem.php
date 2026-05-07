@@ -69,7 +69,7 @@ class FileSystem
         if ($path !== false && $path != '' && file_exists($path)) {
             $finder = new \Symfony\Component\Finder\Finder();
             $finder->files()->in($path);
-            
+
             // Apply directory exclusions
             if (!empty($exclusions)) {
                 $finder->exclude($exclusions);
@@ -81,7 +81,7 @@ class FileSystem
                     if (is_readable($file->getRealPath())) {
                         $total += $file->getSize();
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     // Ignora i file che non possono essere letti (es. link simbolici rotti)
                     continue;
                 }
@@ -106,7 +106,7 @@ class FileSystem
         if ($path !== false && $path != '' && file_exists($path)) {
             $finder = new \Symfony\Component\Finder\Finder();
             $finder->files()->in($path);
-            
+
             // Apply directory exclusions
             if (!empty($exclusions)) {
                 $finder->exclude($exclusions);
@@ -118,7 +118,7 @@ class FileSystem
                     if (is_readable($file->getRealPath())) {
                         ++$total;
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     // Ignora i file che non possono essere letti (es. link simbolici rotti)
                     continue;
                 }

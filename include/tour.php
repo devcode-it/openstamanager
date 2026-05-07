@@ -2,9 +2,9 @@
 
 /**
  * Funzioni comuni per la gestione dei tour guidati
- * Salva e recupera lo stato dei tour completati nel database
+ * Salva e recupera lo stato dei tour completati nel database.
  */
-if (! defined('DOCROOT') && ! defined('ROOTDIR')) {
+if (!defined('DOCROOT') && !defined('ROOTDIR')) {
     return;
 }
 
@@ -13,7 +13,7 @@ if (! defined('DOCROOT') && ! defined('ROOTDIR')) {
  */
 function normalizeCompletedTours($tours): array
 {
-    if (! is_array($tours)) {
+    if (!is_array($tours)) {
         return [];
     }
 
@@ -35,7 +35,7 @@ function decodeUserTourOptions(?string $options_json): array
 {
     $options_data = json_decode($options_json ?: '{}', true);
 
-    if (json_last_error() !== JSON_ERROR_NONE || ! is_array($options_data)) {
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($options_data)) {
         $options_data = [];
     }
 
@@ -61,7 +61,7 @@ function getUserTourOptions(int $id_user): ?array
 }
 
 /**
- * Salva un tour come completato nel database
+ * Salva un tour come completato nel database.
  *
  * @return bool Successo dell'operazione
  */
@@ -71,7 +71,7 @@ function saveTourCompleted(int $id_module): bool
 
     // Ottieni ID utente corrente
     $id_user = $_SESSION['id_utente'] ?? null;
-    if (! $id_user) {
+    if (!$id_user) {
         return false;
     }
 
@@ -83,7 +83,7 @@ function saveTourCompleted(int $id_module): bool
 
     // Mantieni l'ID del modulo come numero intero per coerenza
     $id_module_int = (int) $id_module;
-    if (! in_array($id_module_int, $options_data['tours'], true)) {
+    if (!in_array($id_module_int, $options_data['tours'], true)) {
         $options_data['tours'][] = $id_module_int;
     }
 
@@ -100,7 +100,7 @@ function saveTourCompleted(int $id_module): bool
 }
 
 /**
- * Verifica se un tour è stato completato
+ * Verifica se un tour è stato completato.
  *
  * @return bool True se il tour è completato, false altrimenti
  */
@@ -108,7 +108,7 @@ function isTourCompleted(int $id_module): bool
 {
     // Ottieni ID utente corrente
     $id_user = $_SESSION['id_utente'] ?? null;
-    if (! $id_user) {
+    if (!$id_user) {
         return false;
     }
 

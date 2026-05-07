@@ -65,12 +65,12 @@ if ($periodo == 'Trimestrale') {
 foreach ($segmenti_vendite as $segmento) {
     $id_segment = $segmento['id'];
     $nome_segmento = $segmento['name'];
-    
+
     // Recupera i dati per questo segmento
-    $iva_vendite_esigibile_segmento = isset($iva_vendite_esigibile_per_segmento[$id_segment]) ? $iva_vendite_esigibile_per_segmento[$id_segment] : [];
-    $iva_vendite_nonesigibile_segmento = isset($iva_vendite_nonesigibile_per_segmento[$id_segment]) ? $iva_vendite_nonesigibile_per_segmento[$id_segment] : [];
-    $iva_vendite_segmento = isset($iva_vendite_per_segmento[$id_segment]) ? $iva_vendite_per_segmento[$id_segment] : [];
-    
+    $iva_vendite_esigibile_segmento = $iva_vendite_esigibile_per_segmento[$id_segment] ?? [];
+    $iva_vendite_nonesigibile_segmento = $iva_vendite_nonesigibile_per_segmento[$id_segment] ?? [];
+    $iva_vendite_segmento = $iva_vendite_per_segmento[$id_segment] ?? [];
+
     // Calcola i totali per questo segmento
     $totale_iva_esigibile_segmento = sum(array_column($iva_vendite_esigibile_segmento, 'iva'), null, 2);
     $subtotale_iva_esigibile_segmento = sum(array_column($iva_vendite_esigibile_segmento, 'subtotale'), null, 2);
@@ -78,11 +78,11 @@ foreach ($segmenti_vendite as $segmento) {
     $subtotale_iva_nonesigibile_segmento = sum(array_column($iva_vendite_nonesigibile_segmento, 'subtotale'), null, 2);
     $totale_iva_vendite_segmento = sum(array_column($iva_vendite_segmento, 'iva'), null, 2);
     $totale_subtotale_vendite_segmento = sum(array_column($iva_vendite_segmento, 'subtotale'), null, 2);
-    
+
     // Mostra la tabella solo se ci sono dati per questo segmento
     if (!empty($iva_vendite_esigibile_segmento) || !empty($iva_vendite_nonesigibile_segmento) || !empty($iva_vendite_segmento)) {
         echo '
-<h5 class="text-center">'.htmlentities($nome_segmento).'</h5>
+<h5 class="text-center">'.htmlentities((string) $nome_segmento).'</h5>
 <table class="table table-sm table-striped table-bordered">
 <thead>
     <tr>
@@ -98,22 +98,22 @@ foreach ($segmenti_vendite as $segmento) {
         <th class="text-center" colspan="5">IVA ESIGIBILE DEL PERIODO</th>
     </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_vendite_esigibile_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_vendite_esigibile_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -121,8 +121,8 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
-echo '
+        }
+        echo '
 <tr>
     <td colspan="2"></td>
     <td>TOTALI</td>
@@ -134,22 +134,22 @@ echo '
     <th class="text-center" colspan="5">IVA NON ESIGIBILE DEL PERIODO</th>
 </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_vendite_nonesigibile_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_vendite_nonesigibile_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -157,8 +157,8 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
-echo '
+        }
+        echo '
 <tr>
     <td colspan="2"></td>
     <td>TOTALI</td>
@@ -170,22 +170,22 @@ echo '
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA VENDITE</th>
 </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_vendite_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_vendite_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -193,8 +193,8 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
-echo '
+        }
+        echo '
 <tr>
     <th colspan="2"></th>
     <th>TOTALE</th>
@@ -210,12 +210,12 @@ echo '
 foreach ($segmenti_acquisti as $segmento) {
     $id_segment = $segmento['id'];
     $nome_segmento = $segmento['name'];
-    
+
     // Recupera i dati per questo segmento
-    $iva_acquisti_detraibile_segmento = isset($iva_acquisti_detraibile_per_segmento[$id_segment]) ? $iva_acquisti_detraibile_per_segmento[$id_segment] : [];
-    $iva_acquisti_nondetraibile_segmento = isset($iva_acquisti_nondetraibile_per_segmento[$id_segment]) ? $iva_acquisti_nondetraibile_per_segmento[$id_segment] : [];
-    $iva_acquisti_segmento = isset($iva_acquisti_per_segmento[$id_segment]) ? $iva_acquisti_per_segmento[$id_segment] : [];
-    
+    $iva_acquisti_detraibile_segmento = $iva_acquisti_detraibile_per_segmento[$id_segment] ?? [];
+    $iva_acquisti_nondetraibile_segmento = $iva_acquisti_nondetraibile_per_segmento[$id_segment] ?? [];
+    $iva_acquisti_segmento = $iva_acquisti_per_segmento[$id_segment] ?? [];
+
     // Calcola i totali per questo segmento
     $totale_iva_detraibile_segmento = sum(array_column($iva_acquisti_detraibile_segmento, 'iva'), null, 2);
     $subtotale_iva_detraibile_segmento = sum(array_column($iva_acquisti_detraibile_segmento, 'subtotale'), null, 2);
@@ -223,11 +223,11 @@ foreach ($segmenti_acquisti as $segmento) {
     $subtotale_iva_nondetraibile_segmento = sum(array_column($iva_acquisti_nondetraibile_segmento, 'subtotale'), null, 2);
     $totale_iva_acquisti_segmento = sum(array_column($iva_acquisti_segmento, 'iva'), null, 2);
     $totale_subtotale_acquisti_segmento = sum(array_column($iva_acquisti_segmento, 'subtotale'), null, 2);
-    
+
     // Mostra la tabella solo se ci sono dati per questo segmento
     if (!empty($iva_acquisti_detraibile_segmento) || !empty($iva_acquisti_nondetraibile_segmento) || !empty($iva_acquisti_segmento)) {
-    echo '
-<h5 class="text-center">'.htmlentities($nome_segmento).'</h5>
+        echo '
+<h5 class="text-center">'.htmlentities((string) $nome_segmento).'</h5>
 <table class="table table-condensed table-striped table-bordered">
 <thead>
     <tr>
@@ -243,22 +243,22 @@ foreach ($segmenti_acquisti as $segmento) {
         <th class="text-center" colspan="5">IVA DETRAIBILE DEL PERIODO</th>
     </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_acquisti_detraibile_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_acquisti_detraibile_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -266,8 +266,8 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
-echo '
+        }
+        echo '
 <tr>
     <td colspan="2"></td>
     <td>TOTALI</td>
@@ -279,22 +279,22 @@ echo '
     <th class="text-center" colspan="5">IVA NON DETRAIBILE DEL PERIODO</th>
 </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_acquisti_nondetraibile_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_acquisti_nondetraibile_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -302,8 +302,8 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
-echo '
+        }
+        echo '
 <tr>
     <td colspan="2"></td>
     <td>TOTALI</td>
@@ -315,22 +315,22 @@ echo '
     <th class="text-center" colspan="5">RIEPILOGO GENERALE IVA ACQUISTI</th>
 </tr>';
 
-// Somma importi arrotondati per fattura
-$aliquote = [];
+        // Somma importi arrotondati per fattura
+        $aliquote = [];
 
-foreach ($iva_acquisti_segmento as $record) {
-    $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
-    $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
-    $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
-    $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
-    $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
-}
+        foreach ($iva_acquisti_segmento as $record) {
+            $aliquote[$record['descrizione']]['aliquota'] = $record['aliquota'];
+            $aliquote[$record['descrizione']]['cod_iva'] = $record['cod_iva'];
+            $aliquote[$record['descrizione']]['descrizione'] = $record['descrizione'];
+            $aliquote[$record['descrizione']]['subtotale'] += sum($record['subtotale'], null, 2);
+            $aliquote[$record['descrizione']]['iva'] += sum($record['iva'], null, 2);
+        }
 
-foreach ($aliquote as $aliquota => $record) {
-    if ($record['subtotale'] == 0) {
-        continue;
-    }
-    echo '
+        foreach ($aliquote as $aliquota => $record) {
+            if ($record['subtotale'] == 0) {
+                continue;
+            }
+            echo '
     <tr>
         <td>'.round($record['aliquota']).'%</td>
         <td>'.$record['cod_iva'].'</td>
@@ -338,9 +338,9 @@ foreach ($aliquote as $aliquota => $record) {
         <td class=text-right>'.moneyFormat($record['subtotale'], 2).'</td>
         <td class=text-right>'.moneyFormat($record['iva'], 2).'</td>
     </tr>';
-}
+        }
 
-echo '
+        echo '
 <tr>
     <th colspan="2"></th>
     <th>TOTALE</th>
@@ -415,15 +415,15 @@ echo '
     </tr>
     <tr>
         <td>IMPORTO DA VERSARE</td>';
-        if ($periodo == 'Mensile') {
-            $importo_da_versare = $totale_iva;
-        } else {
-            $importo_da_versare = $totale_iva_maggiorata;
-        }
+if ($periodo == 'Mensile') {
+    $importo_da_versare = $totale_iva;
+} else {
+    $importo_da_versare = $totale_iva_maggiorata;
+}
 
-        $importo_da_versare -= $credito_iva_compensabile;
-        $importo_da_versare = $importo_da_versare > 0 ? $importo_da_versare : 0;
-        echo '
+$importo_da_versare -= $credito_iva_compensabile;
+$importo_da_versare = $importo_da_versare > 0 ? $importo_da_versare : 0;
+echo '
         <td class=text-right>'.moneyFormat($importo_da_versare, 2).'</td>
     </tr>
     <tr>

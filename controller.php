@@ -65,8 +65,8 @@ if ($structure->hasAddFile() && $structure->permission == 'rw') {
 // Pulsante per il tour guidato (se esiste il file tour nel modulo)
 $guide_file = base_dir().'/modules/'.$structure->directory.'/js/'.$structure->directory.'-guide.js';
 if (file_exists($guide_file)) {
-	$guide_function = 'show'.ucfirst($structure->directory).'Guide()';
-	echo '
+    $guide_function = 'show'.ucfirst($structure->directory).'Guide()';
+    echo '
 			<button type="button" class="btn btn-info btn-md" onclick="'.$guide_function.'" title="Avvia tour guidato">
 				<i class="fa fa-question-circle"></i>
 			</button>';

@@ -112,6 +112,6 @@ for ($c = 0; $c < sizeof($rsc); ++$c) {
     $rsi = $dbo->fetchArray('SELECT * FROM in_tipiintervento WHERE (costo_orario!=0 OR costo_km!=0 OR costo_diritto_chiamata!=0)');
 
     for ($i = 0; $i < sizeof($rsi); ++$i) {
-        $dbo->query('INSERT INTO co_contratti_tipiintervento( idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( "' . $rsc[$c]['id'] . '", "' . $rsi[$i]['idtipointervento'] . '", "' . $rsi[$i]['costo_orario'] . '", "' . $rsi[$i]['costo_km'] . '", "' . $rsi[$i]['costo_diritto_chiamata'] . '", "' . $rsi[$i]['costo_orario_tecnico'] . '", "' . $rsi[$i]['costo_km_tecnico'] . '", "' . $rsi[$i]['costo_diritto_chiamata_tecnico'] . '" )');
+        $dbo->query('INSERT INTO co_contratti_tipiintervento( idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( "'.$rsc[$c]['id'].'", "'.$rsi[$i]['idtipointervento'].'", "'.$rsi[$i]['costo_orario'].'", "'.$rsi[$i]['costo_km'].'", "'.$rsi[$i]['costo_diritto_chiamata'].'", "'.$rsi[$i]['costo_orario_tecnico'].'", "'.$rsi[$i]['costo_km_tecnico'].'", "'.$rsi[$i]['costo_diritto_chiamata_tecnico'].'" )');
     }
 }

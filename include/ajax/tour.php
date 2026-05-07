@@ -21,7 +21,7 @@
 header('Content-Type: application/json; charset=UTF-8');
 
 $tour_file = base_dir().'/include/tour.php';
-if (! file_exists($tour_file)) {
+if (!file_exists($tour_file)) {
     echo json_encode(['success' => false, 'completed' => false, 'message' => 'File di gestione tour non trovato']);
 
     return;
@@ -29,7 +29,7 @@ if (! file_exists($tour_file)) {
 
 require_once $tour_file;
 
-if (! function_exists('saveTourCompleted') || ! function_exists('isTourCompleted')) {
+if (!function_exists('saveTourCompleted') || !function_exists('isTourCompleted')) {
     echo json_encode(['success' => false, 'completed' => false, 'message' => 'Funzioni di gestione tour non disponibili']);
 
     return;

@@ -155,7 +155,6 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore = Translator::numberToLocale($ore, $d_qta);
 }
 
-
 // Sessioni
 if (count($sessioni) > 0) {
     echo '

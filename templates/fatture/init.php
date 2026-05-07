@@ -128,7 +128,7 @@ if (!empty($record['idsede_destinazione'])) {
 
 // Sostituzioni specifiche
 $custom = [
-    'tipo_doc' => strtoupper($tipo_doc),
+    'tipo_doc' => strtoupper((string) $tipo_doc),
     'numero' => $numero,
     'tipo_documento' => $tipo_doc,
     'data' => Translator::dateToLocale($record['data']),

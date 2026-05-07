@@ -17,18 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
 // trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
-
 /**
  * Individua il codice successivo.
- *
- * @deprecated 2.4
  *
  * @param string $str
  * @param int    $qty
  * @param string $mask
  */
+#[Deprecated(message: '2.4')]
 function get_next_code($str, $qty = 1, $mask = '')
 {
     trigger_error(tr('Funzione deprecata!'), E_USER_DEPRECATED);
@@ -40,11 +37,10 @@ function get_next_code($str, $qty = 1, $mask = '')
  * Legge il valore di un'impostazione dalla tabella zz_settings.
  * Se descrizione = 1 e il tipo è 'query=' mi restituisce il valore del campo descrizione della query.
  *
- * @deprecated 2.4.2
- *
  * @param string $sezione
  * @param string $descrizione
  */
+#[Deprecated(message: '2.4.2')]
 function get_var($nome, $sezione = null, $descrizione = false, $again = false)
 {
     return setting($nome);
@@ -204,9 +200,8 @@ function datediff($interval, $datefrom, $dateto, $using_timestamps = false)
  * @throws Exception
  *
  * @return bool
- *
- * @deprecated
  */
+#[Deprecated]
 function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
 {
     $dbo = database();
@@ -242,9 +237,8 @@ function controlla_seriali($field, $id_riga, $old_qta, $new_qta, $dir)
  * @param string $dir
  *
  * @return array
- *
- * @deprecated
  */
+#[Deprecated]
 function seriali_non_rimuovibili($field, $id_riga, $dir)
 {
     $dbo = database();
@@ -263,12 +257,11 @@ function seriali_non_rimuovibili($field, $id_riga, $dir)
  *
  * @param array $ignore
  *
- * @deprecated
- *
  * @throws Exception
  *
  * @return array
  */
+#[Deprecated]
 function doc_references($info, $dir, $ignore = [])
 {
     $dbo = database();
@@ -365,10 +358,9 @@ function doc_references($info, $dir, $ignore = [])
  * Restituisce i mesi tradotti nella lingua corrente.
  * Da sostituire con il relativo corretto utilizzo delle date PHP.
  *
- * @deprecated
- *
  * @return array
  */
+#[Deprecated]
 function months()
 {
     return [

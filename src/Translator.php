@@ -153,9 +153,9 @@ class Translator extends Util\Singleton
 
         if (!empty($operations)) {
             if (!empty($operations['upper'])) {
-                $result = strtoupper($result);
+                $result = strtoupper((string) $result);
             } elseif (!empty($operations['lower'])) {
-                $result = strtolower($result);
+                $result = strtolower((string) $result);
             }
         }
 

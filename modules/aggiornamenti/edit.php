@@ -206,7 +206,7 @@ function highlightDifferences($current, $expected)
 // ============================================================================
 
 /**
- * Carica i dati di personalizzazione dal sistema
+ * Carica i dati di personalizzazione dal sistema.
  */
 function loadCustomizationData()
 {
@@ -221,7 +221,7 @@ function loadCustomizationData()
 }
 
 /**
- * Verifica i checksum dei file
+ * Verifica i checksum dei file.
  */
 function verifyFileChecksums()
 {
@@ -261,7 +261,7 @@ function verifyFileChecksums()
 }
 
 /**
- * Determina il file di riferimento del database in base al tipo e versione
+ * Determina il file di riferimento del database in base al tipo e versione.
  */
 function getDatabaseReferenceFile($database)
 {
@@ -285,7 +285,7 @@ function getDatabaseReferenceFile($database)
 }
 
 /**
- * Verifica i file di riferimento mancanti
+ * Verifica i file di riferimento mancanti.
  */
 function checkMissingReferenceFiles($database)
 {
@@ -302,7 +302,7 @@ function checkMissingReferenceFiles($database)
 }
 
 /**
- * Determina gli errori per ogni sezione
+ * Determina gli errori per ogni sezione.
  */
 function determineErrorStatus($customization_data, $checksum_data, $reference_files)
 {
@@ -369,7 +369,7 @@ if (function_exists('customComponents')) {
     // ========================================================================
 
     /**
-     * Renderizza la card per i file personalizzati
+     * Renderizza la card per i file personalizzati.
      */
     function renderCustomFilesCard($checksum_errors_grouped, $custom_files, $has_file_errors)
     {
@@ -437,7 +437,7 @@ if (function_exists('customComponents')) {
     // ========================================================================
 
     /**
-     * Renderizza la card per le tabelle non previste
+     * Renderizza la card per le tabelle non previste.
      */
     function renderUnexpectedTablesCard($tables, $has_table_errors)
     {
@@ -958,9 +958,9 @@ if (function_exists('customComponents')) {
                     $database_info_count += $info_count;
 
                     // Aggiungi i campi premium e le chiavi esterne premium ai conteggi
-                    $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+                    $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), fn ($k) => $k !== 'foreign_keys')) : 0;
                     $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
-                    
+
                     // Aggiorna i conteggi se ci sono elementi premium (solo in primary, non in info)
                     if ($premium_fields_count > 0 || $premium_fks_count > 0) {
                         $database_premium_count += $premium_fields_count + $premium_fks_count;
@@ -1056,7 +1056,7 @@ if (function_exists('customComponents')) {
     $settings_icon = $settings_colors['icon'];
 
     $settings_badge_html = Utils::generateBadgeHtml($settings_danger_count, $settings_warning_count, $settings_info_count);
-    
+
     // Aggiungi badge per le impostazioni premium
     if ($settings_premium_count > 0) {
         $settings_badge_html .= '<span class="badge badge-primary ml-2">'.$settings_premium_count.'</span>';
@@ -1151,7 +1151,7 @@ if (function_exists('customComponents')) {
     $widgets_icon = $widgets_colors['icon'];
 
     $widgets_badge_html = Utils::generateBadgeHtml($widgets_danger_count, $widgets_warning_count, $widgets_info_count);
-    
+
     // Aggiungi badge per i widgets premium
     if ($widgets_premium_count > 0) {
         $widgets_badge_html .= '<span class="badge badge-primary ml-2">'.$widgets_premium_count.'</span>';

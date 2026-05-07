@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 // ========================================================================
 
 /**
- * Carica i checksum dal file principale e dai moduli premium
+ * Carica i checksum dal file principale e dai moduli premium.
  */
 function loadAllChecksums()
 {
@@ -53,7 +53,7 @@ function loadAllChecksums()
 }
 
 /**
- * Verifica l'integrità dei file rispetto ai checksum
+ * Verifica l'integrità dei file rispetto ai checksum.
  */
 function verifyFileIntegrity($checksum)
 {
@@ -64,11 +64,12 @@ function verifyFileIntegrity($checksum)
             $errors[] = $file;
         }
     }
+
     return $errors;
 }
 
 /**
- * Renderizza la tabella degli errori di integrità
+ * Renderizza la tabella degli errori di integrità.
  */
 function renderIntegrityErrorsTable($errors)
 {
@@ -82,6 +83,7 @@ function renderIntegrityErrorsTable($errors)
     }
 
     $html .= '</tbody></table>';
+
     return $html;
 }
 
@@ -113,6 +115,7 @@ $(document).ready(function () {
 })
 </script>';
     echo '</div>';
+
     return;
 }
 
@@ -122,6 +125,7 @@ $checksum = loadAllChecksums();
 if (empty($checksum)) {
     echo '<div class="alert alert-warning"><i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', ['_FILE_' => '<b>checksum.json</b>']).'.'.
     '</div></div>';
+
     return;
 }
 

@@ -32,8 +32,10 @@ class OAuth2 extends Model
 
     protected $provider;
 
+    #[\Override]
     protected $table = 'zz_oauth2';
 
+    #[\Override]
     protected $casts = [
         'config' => 'array',
     ];

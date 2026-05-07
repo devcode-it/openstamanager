@@ -35,7 +35,7 @@ function saveQueriesToSession($queries)
     $_SESSION['query_conflitti'] = $queries;
 }
 
-/**
+/*
  * Determina il file di riferimento database in base al tipo di DBMS
  * (Definita anche in edit.php, ma qui con if !function_exists per evitare conflitti)
  */
@@ -49,6 +49,7 @@ if (!function_exists('getDatabaseReferenceFile')) {
                 $mysql_min_version = '8.0.0';
                 $mysql_max_version = '8.3.99';
                 $version = $database->getMySQLVersion();
+
                 return (version_compare($version, $mysql_min_version, '>=') && version_compare($version, $mysql_max_version, '<='))
                     ? 'mysql.json'
                     : 'mysql_8_3.json';
@@ -59,7 +60,7 @@ if (!function_exists('getDatabaseReferenceFile')) {
 }
 
 /**
- * Carica il file di riferimento database principale
+ * Carica il file di riferimento database principale.
  */
 function loadMainDatabaseReference($file_to_check_database)
 {
@@ -69,11 +70,12 @@ function loadMainDatabaseReference($file_to_check_database)
 
     $contents = file_get_contents(base_dir().'/'.$file_to_check_database);
     $data = json_decode($contents, true);
+
     return is_array($data) ? $data : [];
 }
 
 /**
- * Rimuove i campi premium dai dati di riferimento
+ * Rimuove i campi premium dai dati di riferimento.
  */
 function removePremiumFieldsFromData(&$data, $premium_fields, $premium_foreign_keys)
 {
@@ -151,6 +153,7 @@ $data = loadMainDatabaseReference($file_to_check_database);
 if ($data === null) {
     echo '<div class="alert alert-danger alert-database"><i class="fa fa-times"></i> '.tr('File di riferimento del database non trovato: _FILE_', ['_FILE_' => '<b>'.$file_to_check_database.'</b>']).'.'.
     '</div>';
+
     return;
 }
 
@@ -166,6 +169,7 @@ removePremiumFieldsFromData($data, $premium_fields, $premium_foreign_keys);
 if (empty($data)) {
     echo '<div class="alert alert-warning alert-database"><i class="fa fa-warning"></i> '.tr('Impossibile effettuare controlli di integrità in assenza del file _FILE_', ['_FILE_' => '<b>'.$file_to_check_database.'</b>']).'.'.
     '</div>';
+
     return;
 }
 
@@ -612,9 +616,9 @@ if (!empty($grouped_errors)) {
         }
 
         // Aggiungi i campi premium e le chiavi esterne premium ai conteggi
-        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), fn ($k) => $k !== 'foreign_keys')) : 0;
         $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
-        
+
         // Aggiorna i conteggi se ci sono elementi premium
         if ($premium_fields_count > 0 || $premium_fks_count > 0) {
             $info_count += $premium_fields_count + $premium_fks_count;
@@ -646,9 +650,9 @@ if (!empty($grouped_errors)) {
         }
 
         // Aggiungi i campi premium e le chiavi esterne premium alla fine della tabella se esistono
-        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), function($k) { return $k !== 'foreign_keys'; })) : 0;
+        $premium_fields_count = isset($premium_fields[$table]) ? count(array_filter(array_keys($premium_fields[$table]), fn ($k) => $k !== 'foreign_keys')) : 0;
         $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
-        
+
         if ($premium_fields_count > 0 || $premium_fks_count > 0) {
             echo '
         <div class="table-responsive">
@@ -660,7 +664,7 @@ if (!empty($grouped_errors)) {
                     </tr>
                 </thead>
                     <tbody>';
-            
+
             // Aggiungi i campi premium
             if (isset($premium_fields[$table]) && !empty($premium_fields[$table])) {
                 foreach ($premium_fields[$table] as $field_name => $premium_info) {
@@ -678,7 +682,7 @@ if (!empty($grouped_errors)) {
                         </tr>';
                 }
             }
-            
+
             // Aggiungi le chiavi esterne premium
             if (isset($premium_foreign_keys[$table]) && !empty($premium_foreign_keys[$table])) {
                 foreach ($premium_foreign_keys[$table] as $fk_name => $premium_info) {
@@ -692,7 +696,7 @@ if (!empty($grouped_errors)) {
                         </tr>';
                 }
             }
-            
+
             echo '
                     </tbody>
                 </table>
@@ -753,9 +757,9 @@ foreach ($premium_fields as $table => $fields) {
     }
 
     // Controlla se ci sono campi premium (escludendo le chiavi esterne)
-    $premium_fields_count = count(array_filter(array_keys($fields), function($k) { return $k !== "foreign_keys"; }));
+    $premium_fields_count = count(array_filter(array_keys($fields), fn ($k) => $k !== 'foreign_keys'));
     $premium_fks_count = isset($premium_foreign_keys[$table]) ? count($premium_foreign_keys[$table]) : 0;
-    
+
     if ($premium_fields_count == 0 && $premium_fks_count == 0) {
         continue;
     }
@@ -783,7 +787,7 @@ foreach ($premium_fields as $table => $fields) {
                 </tr>
             </thead>
                 <tbody>';
-        
+
         // Aggiungi i campi premium
         if ($premium_fields_count > 0) {
             foreach ($fields as $field_name => $premium_info) {
@@ -801,7 +805,7 @@ foreach ($premium_fields as $table => $fields) {
                     </tr>';
             }
         }
-        
+
         // Aggiungi le chiavi esterne premium
         if ($premium_fks_count > 0 && isset($premium_foreign_keys[$table])) {
             foreach ($premium_foreign_keys[$table] as $fk_name => $premium_info) {
@@ -815,7 +819,7 @@ foreach ($premium_fields as $table => $fields) {
                     </tr>';
             }
         }
-        
+
         echo '
                 </tbody>
             </table>

@@ -258,19 +258,19 @@ if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) 
         echo '
                         <div class="social-auth-links text-center mt-4 pt-3 border-top">
                             <p class="text-muted">'.tr('- oppure -').'</p>';
-                        if ($microsoft) {
-                            echo '
+        if ($microsoft) {
+            echo '
                             <a href="'.base_path_osm().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
                                 <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
                             </a>';
-                        }
-                        if ($keycloack) {
-                            echo '
+        }
+        if ($keycloack) {
+            echo '
                             <a href="'.base_path_osm().'/oauth2_login.php?id='.$keycloack['id'].'" class="btn btn-block btn-social btn-info btn-flat shadow-sm">
                                 <i class="fa fa-key mr-2"></i>'.tr('Accedi con Keycloack').'
                             </a>';
-                        }
-                        echo '
+        }
+        echo '
                         </div>';
     }
     echo '

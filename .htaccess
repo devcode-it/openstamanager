@@ -36,7 +36,6 @@ ServerSignature Off
 	# Deny access to protected folders
     RewriteRule ^backup/ - [F,L]
     RewriteRule ^docs/ - [F,L]
-    RewriteRule ^include/ - [F,L]
     RewriteRule ^locale/ - [F,L]
     RewriteRule ^logs/ - [F,L]
     RewriteRule ^update/ - [F,L]

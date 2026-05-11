@@ -910,7 +910,7 @@ if (empty($record['deleted_at'])) {
 
 <script>
 
-    var an_sdi = <?php echo ($anagrafica->tipo == 'Azienda') ? $dbo->fetchOne('SELECT JSON_ARRAYAGG(`codice`) AS `elenco_codici` FROM `an_sdi`')['elenco_codici'] : []; ?>;
+    var an_sdi = <?php echo ($anagrafica->tipo != 'Ente pubblico') ? $dbo->table('an_sdi')->pluck('codice')->toJson() : '[]'; ?>;
 
     $(document).ready(function() {
 

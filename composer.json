@@ -60,7 +60,7 @@
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^7.0",
         "picqer/php-barcode-generator": "^3.2",
-        "respect/validation": "^2.0",
+        "respect/validation": "^3.1",
         "servo/fluidxml": "^2.0",
         "slim/flash": "^0.4.0",
         "spatie/laravel-route-attributes": "^1.25",

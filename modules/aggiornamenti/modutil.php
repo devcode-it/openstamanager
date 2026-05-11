@@ -112,7 +112,7 @@ if (!function_exists('customTables')) {
             $file_to_check_database = 'mariadb_10_x.json';
         } elseif ($database->getType() === 'MySQL') {
             $mysql_min_version = '8.0.0';
-            $mysql_max_version = '8.3.99';
+            $mysql_max_version = '8.4.99';
             $file_to_check_database = ((version_compare($database->getMySQLVersion(), $mysql_min_version, '>=') && version_compare($database->getMySQLVersion(), $mysql_max_version, '<=')) ? 'mysql.json' : 'mysql_8_3.json');
         }
 

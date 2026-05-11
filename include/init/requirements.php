@@ -221,9 +221,9 @@ if ($database->isInstalled()) {
             'mysql_version' => [
                 'type' => 'version',
                 'warning' => $database->isMySQL() ? false : true,
-                'description' => $database->isMySQL() ? '8.0.x - 8.3.x' : '10.x',
+                'description' => $database->isMySQL() ? '8.0.x - 8.4.x' : '10.x',
                 'minimum' => $database->isMySQL() ? '8.0.0' : '10.1.0',
-                'maximum' => $database->isMySQL() ? '8.3.99' : '10.6.99',
+                'maximum' => $database->isMySQL() ? '8.4.99' : '10.6.99',
             ],
 
             'sort_buffer_size' => [
@@ -341,7 +341,7 @@ $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
     'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x'),
     'mysql_8_3.json' => tr('Necessario per il controllo integrità con database MySQL 8.3.x'),
-    'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x'),
+    'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x - 8.4.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),
     'views.json' => tr('Necessario per il controllo delle viste del database'),

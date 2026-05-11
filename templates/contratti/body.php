@@ -38,7 +38,7 @@ if ($has_image) {
 }
 
 // Creazione righe fantasma ottimizzata
-$autofill = new Util\Autofill($columns);
+$autofill = new Util\Autofill($columns, 70, $settings['font-size']);
 $rows_per_page = 22;
 $rows_first_page = 36;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);

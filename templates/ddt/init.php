@@ -42,7 +42,7 @@ $spedizione = $dbo->fetchOne('SELECT `dt_spedizione`.*, `dt_spedizione_lang`.`ti
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
 
 $tipo_doc = $documento->tipo->getTranslation('title');
-if (empty($documento['numero_esterno'])) {
+if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {
     $numero = 'pro-forma '.$documento['numero'];
     $tipo_doc = tr('DDT pro-forma', [], ['upper' => true]);
 } else {

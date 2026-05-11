@@ -59,7 +59,7 @@ if ($documento->direzione == 'uscita') {
 $columns = $options['pricing'] ? $columns : $columns - 3;
 
 // Creazione righe fantasma ottimizzata
-$autofill = new Util\Autofill($columns);
+$autofill = new Util\Autofill($columns, 70, $settings['font-size']);
 $rows_per_page = 31;
 $rows_first_page = $rows_per_page + 3;
 $autofill->setRows($rows_per_page, 0, $rows_first_page);

@@ -28,6 +28,9 @@ namespace Util;
 class Autofill
 {
     // Costanti per i fattori di scala ottimizzati
+    private const float BASE_FONT_SIZE = 8.5;
+    private const float MIN_FONT_SIZE = 8.5;
+    private const float MAX_FONT_SIZE = 15.0;
     private const float MULTILINE_FACTOR = 0.8;
     private const float SMALL_TEXT_FACTOR = 0.65;
     protected $space = 0;
@@ -37,15 +40,23 @@ class Autofill
     protected $max_rows_first_page = 39;
     protected $max_additional = 0;
 
-    public function __construct(protected $column_number, protected $char_number = 70)
+    private float $font_size = self::BASE_FONT_SIZE;
+    private float $base_char_number = 70.0;
+
+    public function __construct(protected $column_number, protected $char_number = 70, $font_size = self::BASE_FONT_SIZE)
     {
+        $this->font_size = min(max(self::MIN_FONT_SIZE, (float) $font_size), self::MAX_FONT_SIZE);
+        $this->base_char_number = $this->char_number;
+        $this->char_number = $this->base_char_number * (self::BASE_FONT_SIZE / $this->font_size);
     }
 
     public function setRows($rows, $additional = null, $first_page = null)
     {
-        $this->max_rows = $rows;
-        $this->max_additional = $additional ?? $this->max_rows;
-        $this->max_rows_first_page = $first_page ?? $this->max_rows_first_page;
+        $scale = self::BASE_FONT_SIZE / $this->font_size;
+
+        $this->max_rows = max(1, (int) floor($rows * $scale));
+        $this->max_additional = $additional !== null ? max(1, (int) floor($additional * $scale)) : $this->max_rows;
+        $this->max_rows_first_page = $first_page !== null ? max(1, (int) floor($first_page * $scale)) : max(1, (int) floor($this->max_rows_first_page * $scale));
     }
 
     public function count($text, $small = null)

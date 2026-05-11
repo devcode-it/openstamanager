@@ -31,10 +31,25 @@ use Util\Query;
  */
 class Prints
 {
+    private const MIN_FONT_SIZE = 8.5;
+    private const MAX_FONT_SIZE = 12.0;
+
     /** @var array Elenco delle stampe disponibili */
     protected static $prints = [];
     /** @var array Elenco delle stampe per modulo */
     protected static $modules = [];
+
+    /**
+     * Normalizza il valore di font-size per le stampe.
+     *
+     * @param mixed $font_size
+     *
+     * @return float
+     */
+    protected static function normalizeFontSize($font_size): float
+    {
+        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
+    }
 
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
@@ -507,6 +522,7 @@ class Prints
         // Individuazione delle impostazioni finali
         $settings = array_merge($default, (array) $custom);
         $settings = array_merge($settings, (array) $options);
+        $settings['font-size'] = self::normalizeFontSize($settings['font-size'] ?? $default['font-size'] ?? self::MIN_FONT_SIZE);
 
         // Individuazione delle variabili fondamentali per la sostituzione dei contenuti
         $print_init = self::filepath($id_print, 'init.php');

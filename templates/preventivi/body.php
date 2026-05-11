@@ -43,8 +43,8 @@ if ($has_image) {
 }
 
 // Creazione righe fantasma ottimizzata
-$autofill = new Util\Autofill($columns);
-$rows_per_page = 22;
+$autofill = new Util\Autofill($columns, 70, $settings['font-size']);
+$rows_per_page = 20;
 $rows_first_page = 36;
 
 // Calcolo ottimizzato delle righe da sottrarre
@@ -56,7 +56,7 @@ if ($destinazione) {
 // Calcolo ottimizzato per la descrizione del documento
 if (!empty($documento['descrizione'])) {
     // Usa il metodo ottimizzato della classe Autofill per calcolare l'altezza
-    $temp_autofill = new Util\Autofill($columns);
+    $temp_autofill = new Util\Autofill($columns, 70, $settings['font-size']);
     $temp_autofill->count($documento['descrizione']);
     $temp_autofill->next();
 
@@ -80,7 +80,7 @@ echo "
 <table class='table table-striped border-bottom' id='contents'>
     <thead>
         <tr>
-            <th class='text-center' width='35' >#</th>";
+            <th class='text-center' style='width:35'>#</th>";
 
 if ($has_image) {
     echo "
@@ -88,7 +88,7 @@ if ($has_image) {
 }
 
 echo "
-            <th class='text-center' style='width:45%'>".tr('Descrizione', [], ['upper' => true])."</th>
+            <th class='text-center'>".tr('Descrizione', [], ['upper' => true])."</th>
             <th class='text-center' style='width:15%'>".tr('Q.tà', [], ['upper' => true]).'</th>';
 
 if ($options['pricing']) {
@@ -213,7 +213,6 @@ foreach ($righe as $key => $riga) {
                     echo '
                     <td class="text-center" style="vertical-align: middle">
                         '.Translator::numberToLocale($riga->aliquota->percentuale, 0).'
-                        <br><small class="text-muted">'.(strlen((string) $riga->aliquota->getTranslation('title')) > 15 ? substr((string) $riga->aliquota->getTranslation('title'), 0, 15).'...' : $riga->aliquota->getTranslation('title')).'</small>
                     </td>';
                 }
                 // Imponibile

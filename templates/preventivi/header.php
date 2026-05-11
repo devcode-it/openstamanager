@@ -40,7 +40,7 @@ echo '
     </div>
     <br>
 
-    <table class="table text-center" style="font-size:'.(isset($options['header-font-size']) && $options['header-font-size'] ? $options['header-font-size'] : $settings['header-font-size']).'px;">
+    <table class="table text-center">
         <tr>
             <td valign="top" class="border-bottom border-top">
                 <p class="small-bold text-muted">'.tr('Nr. documento', [], ['upper' => true]).'</p>
@@ -74,7 +74,7 @@ echo '
     </table>
 </div>
 	<div class="col-xs-6 pull-right">
-        <table class="table border-bottom" style="font-size:'.(isset($options['header-font-size']) && $options['header-font-size'] ? $options['header-font-size'] : $settings['header-font-size']).'px;">
+        <table class="table border-bottom">
             <tr>
                 <td colspan=2 style="height:16mm;">
                     <p class="small-bold text-muted ">'.tr('Spett.le', [], ['upper' => true]).'</p>

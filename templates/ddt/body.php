@@ -23,10 +23,10 @@ include_once __DIR__.'/../../core.php';
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
 // Creazione righe fantasma ottimizzata
-$autofill = new Util\Autofill($options['pricing'] ? 7 : 4, 70);
+$autofill = new Util\Autofill($options['pricing'] ? 7 : 4, 70, $settings['font-size']);
 
 if ($options['pricing']) {
-    $rows_per_page = 23;
+    $rows_per_page = 21;
 } elseif ($documento['note']) {
     $rows_per_page = 20;
 } else {

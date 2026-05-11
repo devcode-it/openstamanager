@@ -67,7 +67,7 @@
         "spipu/html2pdf": "^5.0.0",
         "symfony/filesystem": "^7.0",
         "symfony/finder": "^7.0",
-        "symfony/framework-bundle": "^7.0",
+        "symfony/framework-bundle": "^8.0",
         "symfony/polyfill-ctype": "^1.8",
         "symfony/translation": "^7.0",
         "symfony/var-dumper": "^7.0",

@@ -72,7 +72,7 @@
         "symfony/translation": "^7.0",
         "symfony/var-dumper": "^7.0",
         "thenetworg/oauth2-azure": "^2.0",
-        "voku/stringy": "^6.0.0",
+        "voku/stringy": "^7.0.1",
         "willdurand/geocoder": "^5.0"
     },
     "require-dev": {

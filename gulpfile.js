@@ -541,7 +541,6 @@ export function release(done) {
                     '**/*',
                     '!checksum.json',
                     '!mysql.json',
-                    '!mysql_8_3.json',
                     '!mariadb_10_x.json',
                     '!settings.json',
                     '!views.json',

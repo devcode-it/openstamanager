@@ -270,15 +270,8 @@ function getDatabaseReferenceFile($database)
     }
 
     if ($database->getType() === 'MySQL') {
-        $mysql_min_version = '8.0.0';
-        $mysql_max_version = '8.3.99';
-        $version = $database->getMySQLVersion();
 
-        if (version_compare($version, $mysql_min_version, '>=') && version_compare($version, $mysql_max_version, '<=')) {
-            return 'mysql.json';
-        }
-
-        return 'mysql_8_3.json';
+        return 'mysql.json';
     }
 
     return 'mysql.json';

@@ -46,13 +46,8 @@ if (!function_exists('getDatabaseReferenceFile')) {
             case 'MariaDB':
                 return 'mariadb_10_x.json';
             case 'MySQL':
-                $mysql_min_version = '8.0.0';
-                $mysql_max_version = '8.4.99';
-                $version = $database->getMySQLVersion();
-
-                return (version_compare($version, $mysql_min_version, '>=') && version_compare($version, $mysql_max_version, '<='))
-                    ? 'mysql.json'
-                    : 'mysql_8_3.json';
+                return 'mysql.json';
+                
             default:
                 return 'mysql.json';
         }

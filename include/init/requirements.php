@@ -340,7 +340,6 @@ foreach ($dirs_to_check as $name => $description) {
 $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
     'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x'),
-    'mysql_8_3.json' => tr('Necessario per il controllo integrità con database MySQL 8.3.x'),
     'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x - 8.4.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),

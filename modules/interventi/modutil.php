@@ -268,6 +268,12 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
         foreach ($ore_di_lavoro as $gruppo) {
             $date = [];
             $sessione = $gruppo->first();
+
+            // Se non c'è il prezzo orario o se è 0, salto la creazione della riga
+            if ($sessione->prezzo_orario == 0 || $sessione->ore == 0) {
+                continue;
+            }
+
             $riga = Riga::build($fattura);
 
             foreach ($gruppo as $sessione) {
@@ -318,6 +324,12 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
         foreach ($diritti_chiamata as $gruppo) {
             $date = [];
             $diritto_chiamata = $gruppo->first();
+
+            // Se non c'è il diritto di chiamata o se è 0, salto la creazione della riga
+            if ($diritto_chiamata->prezzo_diritto_chiamata == 0) {
+                continue;
+            }
+
             $riga = Riga::build($fattura);
 
             foreach ($gruppo as $sessione) {
@@ -369,6 +381,12 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             }
 
             $viaggio = $gruppo->first();
+
+            // Se non c'è il prezzo per km o se è 0, salto la creazione della riga
+            if ($viaggio->prezzo_km_unitario == 0 || $qta_trasferta == 0) {
+                continue;
+            }
+            
             $riga = Riga::build($fattura);
 
             $riga->descrizione = tr("Trasferta dell'attività _NUM_ del _DATE_", [

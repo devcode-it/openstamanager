@@ -509,6 +509,7 @@ if (!empty($righe)) {
 
         // Visualizzazione codici articoli
         $codici = $riga['CodiceArticolo'] ?: [];
+        $codici = !empty($codici) && !isset($codici[0]) ? [$codici] : $codici;
         $serial = [];
 
         // Individuazione articolo con codice relativo

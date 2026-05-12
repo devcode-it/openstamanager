@@ -36,7 +36,7 @@ switch (post('op')) {
         $iddocumento = post('iddocumento') ?: 0;
         $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
-        $dbo->insert('co_scadenziario', [
+        $dbo->insert('co_scadenzario', [
             'idanagrafica' => $idanagrafica,
             'iddocumento' => $iddocumento,
             'descrizione' => $descrizione,
@@ -68,7 +68,7 @@ switch (post('op')) {
         $descrizione = strip_tags(post('descrizione'));
         $iddocumento = post('iddocumento') ?: 0;
         if (!empty($iddocumento)) {
-            $scadenze = database()->table('co_scadenziario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
+            $scadenze = database()->table('co_scadenzario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
         }
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
@@ -112,7 +112,7 @@ switch (post('op')) {
 
             $id_scadenza = $scadenza->id ?? $scadenza['id'];
             if (!empty($id_scadenza)) {
-                $database->update('co_scadenziario', [
+                $database->update('co_scadenzario', [
                     'idanagrafica' => $idanagrafica,
                     'descrizione' => $descrizione,
                     'da_pagare' => $da_pagare,
@@ -127,10 +127,10 @@ switch (post('op')) {
                 ], ['id' => $id_scadenza]);
 
                 if ($da_pagare == 0) {
-                    $database->delete('co_scadenziario', ['id' => $id_scadenza]);
+                    $database->delete('co_scadenzario', ['id' => $id_scadenza]);
                 }
             } else {
-                $database->insert('co_scadenziario', [
+                $database->insert('co_scadenzario', [
                     'idanagrafica' => $idanagrafica,
                     'descrizione' => $descrizione,
                     'tipo' => $tipo,
@@ -169,7 +169,7 @@ switch (post('op')) {
         $scadenza = Scadenza::find($id_record);
         $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
 
-        $dbo->table('co_scadenziario')
+        $dbo->table('co_scadenzario')
             ->where('id', $id_record)
             ->delete();
 
@@ -243,7 +243,7 @@ switch (post('op')) {
             $tipo = 'fattura'; // Tipo di default
             $data_emissione = date('Y-m-d');
 
-            $dbo->insert('co_scadenziario', [
+            $dbo->insert('co_scadenzario', [
                 'idanagrafica' => $idanagrafica,
                 'iddocumento' => $iddocumento,
                 'descrizione' => $descrizione,

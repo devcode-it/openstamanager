@@ -37,10 +37,10 @@ switch (filter('op')) {
                 $tipo->save();
                 flash()->info(tr('Salvataggio completato.'));
 
-                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenziario.tipo=\''.$nome_prev.'\'" AND `zz_segments`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
+                $segmento = $dbo->fetchOne('SELECT `zz_segments`.`id` FROM `zz_segments` WHERE `id_module` = '.prepare(Module::where('name', 'Scadenzario')->first()->id).' AND `clause` = "co_scadenzario.tipo=\''.$nome_prev.'\'" AND `zz_segments`.`name` = "Scadenzario '.$nome_prev.'"')['id'];
 
                 $dbo->update('zz_segments', [
-                    'clause' => 'co_scadenziario.tipo="'.$nome.'"',
+                    'clause' => 'co_scadenzario.tipo="'.$nome.'"',
                 ], [
                     'id' => $segmento,
                 ]);
@@ -78,7 +78,7 @@ switch (filter('op')) {
                 // Aggiungo anche il segmento
                 $dbo->insert('zz_segments', [
                     'id_module' => Module::where('name', 'Scadenzario')->first()->id,
-                    'clause' => 'co_scadenziario.tipo="'.$nome.'"',
+                    'clause' => 'co_scadenzario.tipo="'.$nome.'"',
                     'position' => 'WHR',
                 ]);
                 $id_segment = $dbo->lastInsertedID();
@@ -108,7 +108,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenziario` WHERE `tipo` = (SELECT `title` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_scadenzario` WHERE `tipo` = (SELECT `title` FROM `co_tipi_scadenze` LEFT JOIN `co_tipi_scadenze_lang` ON (`co_tipi_scadenze_lang`.`id_record` = `co_tipi_scadenze`.`id` AND `co_tipi_scadenze_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_scadenze`.`id` = '.prepare($id_record).')');
 
         if ((!empty($id_record)) && empty($documenti)) {
             $dbo->delete('co_tipi_scadenze', ['can_delete' => 1, 'id' => $id_record]);

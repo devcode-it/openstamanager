@@ -431,3 +431,50 @@ UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti con
 -- Rinomino impostazione Data inizio controlli su stati FE in Data inizio controlli Fatture di vendita
 UPDATE `zz_settings` SET `nome` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings`.`nome` = 'Data inizio controlli su stati FE';
 UPDATE `zz_settings_lang` SET `title` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings_lang`.`title` = 'Data inizio controlli su stati FE';
+
+-- Allineamento riferimento Scadenziario -> Scadenzario 
+RENAME TABLE `openstamanager`.`co_scadenziario` TO `openstamanager`.`co_scadenzario`;
+
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `co_scadenzario`
+    LEFT JOIN `co_documenti` ON `co_scadenzario`.`iddocumento` = `co_documenti`.`id`
+    LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
+    LEFT JOIN `an_anagrafiche` ON `co_scadenzario`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
+    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
+    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.|lang|)
+    LEFT JOIN (SELECT COUNT(id_email) as emails, zz_operations.id_record FROM zz_operations WHERE id_module IN(SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_operations`.`op` = 'send-email' GROUP BY zz_operations.id_record) AS `email` ON `email`.`id_record` = `co_scadenzario`.`id`
+WHERE 
+    1=1 AND (`co_statidocumento`.`id` IS NULL OR `co_statidocumento`.`name` IN ('Emessa', 'Parzialmente pagato', 'Pagato')) 
+HAVING
+    2=2
+ORDER BY 
+    `scadenza` ASC" WHERE `name` = "Scadenzario";
+
+-- Allineamento widgets
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_documenti.id) AS dato FROM co_scadenzario INNER JOIN (((co_documenti INNER JOIN an_anagrafiche ON co_documenti.idanagrafica=an_anagrafiche.idanagrafica) INNER JOIN co_pagamenti ON co_documenti.idpagamento=co_pagamenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id) ON co_scadenzario.iddocumento=co_documenti.id WHERE ABS(pagato) < ABS(da_pagare) AND scadenza >= \"|period_start|\" AND scadenza <= \"|period_end|\" ORDER BY scadenza ASC' WHERE `zz_widgets`.`name` = "Scadenze";
+UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((\n SELECT SUM(da_pagare-pagato)), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenzario INNER JOIN co_documenti ON co_scadenzario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'entrata\' AND co_documenti.idstatodocumento!=1 |segment(`co_documenti`.`id_segment`)| AND 1=1' WHERE `zz_widgets`.`name` = "Crediti da clienti";
+UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenzario INNER JOIN co_documenti ON co_scadenzario.iddocumento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.idtipodocumento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'uscita\' AND co_documenti.idstatodocumento!=1 |segment(`co_documenti`.`id_segment`)| AND 1=1' WHERE `zz_widgets`.`name` = "Debiti verso fornitori";
+
+-- Allineamento viste
+UPDATE `zz_views` SET `query` = '`co_scadenzario`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+UPDATE `zz_views` SET `query` = '`co_scadenzario`.`descrizione`' WHERE `zz_views`.`name` = "Descrizione scadenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+UPDATE `zz_views` SET `query` = '`co_scadenzario`.`note`' WHERE `zz_views`.`name` = "Note" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+UPDATE `zz_views` SET `query` = '`co_scadenzario`.`distinta`' WHERE `zz_views`.`name` = "Distinta" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+UPDATE `zz_views` SET `query` = 'DATEDIFF(`co_scadenzario`.`scadenza`,NOW())' WHERE `zz_views`.`name` = "Scadenza giorni" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+UPDATE `zz_views` SET `query` = "IF(pagato = da_pagare, \'#CCFFCC\', IF(data_concordata IS NOT NULL AND data_concordata != \'0000-00-00\', IF(data_concordata < NOW(), \'#ec5353\', \'#b3d2e3\'), IF(scadenza < NOW(), \'#f08080\', IF(DATEDIFF(co_scadenzario.scadenza,NOW()) < 10, \'#f9f9c6\', \'\'))))" WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+
+-- Allineamento segmenti
+UPDATE `zz_segments` SET `clause` = 'ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)' WHERE `zz_segments`.`name` = "Scadenzario totale";
+UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'entrata\') AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)' WHERE `zz_segments`.`name` = "Scadenzario clienti";
+UPDATE `zz_segments` SET `clause` = '((SELECT dir FROM co_tipidocumento WHERE co_tipidocumento.id=co_documenti.idtipodocumento)=\'uscita\') AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)' WHERE `zz_segments`.`name` = "Scadenzario fornitori";
+UPDATE `zz_segments` SET `clause` = 'co_scadenzario.tipo=\"generico\"' WHERE `zz_segments`.`name` = "Scadenzario generico";
+UPDATE `zz_segments` SET `clause` = 'co_scadenzario.tipo=\"f24\"' WHERE `zz_segments`.`name` = "Scadenzario F24";
+UPDATE `zz_segments` SET `clause` = '(`co_scadenzario`.`scadenza` BETWEEN \'|period_start|\' AND \'|period_end|\' AND codice_tipo_documento_fe NOT IN (\'TD16\', \'TD17\', \'TD18\', \'TD19\', \'TD20\', \'TD21\', \'TD22\', \'TD23\', \'TD26\', \'TD27\', \'TD28\'))' WHERE `zz_segments`.`name` = "Scadenzario completo";
+UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"entrata\" AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)' WHERE `zz_segments`.`name` = "Scadenzario Ri.Ba. Clienti";
+UPDATE `zz_segments` SET `clause` = 'co_pagamenti.codice_modalita_pagamento_fe= \'MP12\' AND co_tipidocumento.dir=\"uscita\" AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)' WHERE `zz_segments`.`name` = "Scadenzario Ri.Ba. Fornitori"

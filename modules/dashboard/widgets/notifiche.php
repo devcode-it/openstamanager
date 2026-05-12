@@ -98,7 +98,7 @@ foreach ($moduli as $module_id => $note) {
         } elseif ($modulo->name == 'Anagrafiche') {
             $documento = $dbo->fetchOne("SELECT ' ' AS numero, `ragione_sociale` FROM `zz_notes` INNER JOIN `an_anagrafiche` ON (`an_anagrafiche`.`idanagrafica` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = \"Anagrafiche\")) WHERE `zz_notes`.`id` = ".$nota->id);
         } elseif ($modulo->name == 'Scadenzario') {
-            $documento = $dbo->fetchOne('SELECT `co_scadenziario`.`tipo` AS numero , `ragione_sociale` FROM `zz_notes` INNER JOIN `co_scadenziario` ON (`co_scadenziario`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = "Scadenzario")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_scadenziario`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
+            $documento = $dbo->fetchOne('SELECT `co_scadenzario`.`tipo` AS numero , `ragione_sociale` FROM `zz_notes` INNER JOIN `co_scadenzario` ON (`co_scadenzario`.`id` = `zz_notes`.`id_record` AND `zz_notes`.`id_module`=(SELECT `id` FROM `zz_modules` WHERE `name` = "Scadenzario")) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_scadenzario`.`idanagrafica` WHERE `zz_notes`.`id` = '.$nota->id);
         } else {
             $documento['numero'] = ' ';
         }

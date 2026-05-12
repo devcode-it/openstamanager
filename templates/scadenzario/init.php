@@ -43,12 +43,12 @@ if (!empty(get('date_end'))) {
 }
 
 if (get('id_anagrafica') && get('id_anagrafica') != 'null') {
-    $module_query = str_replace('1=1', '1=1 AND `co_scadenziario`.`idanagrafica`='.prepare(get('id_anagrafica')), $module_query);
+    $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`idanagrafica`='.prepare(get('id_anagrafica')), $module_query);
     $id_anagrafica = get('id_anagrafica');
 }
 
 if (get('is_pagata') == 'false') {
-    $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`) ', $module_query);
+    $module_query = str_replace('1=1', '1=1 AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`) ', $module_query);
 }
 
 if (get('is_riba') == 'true') {
@@ -65,12 +65,12 @@ if (get('is_fornitore') == 'true') {
 
 // Scelgo la query in base alla scadenza
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_scadenziario` WHERE `id` = '.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `co_scadenzario` WHERE `id` = '.prepare($id_record));
     $documento = Fattura::find($record['iddocumento']);
     if (!empty($documento)) {
-        $module_query = str_replace('1=1', '1=1 AND `co_scadenziario`.`iddocumento`='.prepare($documento->id), $module_query);
+        $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`iddocumento`='.prepare($documento->id), $module_query);
     } else {
-        $module_query = str_replace('1=1', '1=1 AND `co_scadenziario`.`id`='.prepare($id_record), $module_query);
+        $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`id`='.prepare($id_record), $module_query);
     }
 }
 

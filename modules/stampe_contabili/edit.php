@@ -159,7 +159,7 @@ echo '
 
             <div class="card-body">';
 
-if (empty($dbo->fetchArray('SELECT * FROM co_scadenziario'))) {
+if (empty($dbo->fetchArray('SELECT * FROM co_scadenzario'))) {
     $class = 'muted';
     $disabled = 'disabled';
 } else {

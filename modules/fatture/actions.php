@@ -343,11 +343,11 @@ switch ($op) {
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
             ->where('co_documenti.idanagrafica', '=', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
-            ->join('co_scadenziario', 'co_documenti.id', '=', 'co_scadenziario.iddocumento')
+            ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.iddocumento')
             ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')
-            ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
-            ->whereRaw('co_scadenziario.scadenza < NOW()')
-            ->groupBy('co_scadenziario.iddocumento')
+            ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
+            ->whereRaw('co_scadenzario.scadenza < NOW()')
+            ->groupBy('co_scadenzario.iddocumento')
             ->get();
 
         $results = [];
@@ -364,7 +364,7 @@ switch ($op) {
         try {
             $fattura->delete();
 
-            $dbo->table('co_scadenziario')
+            $dbo->table('co_scadenzario')
                 ->where('iddocumento', $id_record)
                 ->delete();
             $dbo->table('co_movimenti')

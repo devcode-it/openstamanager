@@ -1680,8 +1680,8 @@ class FatturaElettronica implements \Stringable
             'CondizioniPagamento' => ($co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
         ];
 
-        $co_scadenziario = $database->fetchArray('SELECT * FROM `co_scadenziario` WHERE `iddocumento` = '.prepare($documento['id']));
-        foreach ($co_scadenziario as $scadenza) {
+        $co_scadenzario = $database->fetchArray('SELECT * FROM `co_scadenzario` WHERE `iddocumento` = '.prepare($documento['id']));
+        foreach ($co_scadenzario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
             $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first();
             $pagamento = [

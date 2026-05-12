@@ -24,29 +24,29 @@ $giorni_promemoria = setting('Intervallo di giorni in anticipo per invio promemo
 $filtro_scadenze_selezionate = '';
 if (!empty($_SESSION['scadenzario_selected_ids'])) {
     $ids_selezionati = implode(',', array_map(intval(...), $_SESSION['scadenzario_selected_ids']));
-    $filtro_scadenze_selezionate = ' AND `co_scadenziario`.`id` IN ('.$ids_selezionati.')';
+    $filtro_scadenze_selezionate = ' AND `co_scadenzario`.`id` IN ('.$ids_selezionati.')';
 }
 
 $r = $dbo->fetchOne('SELECT 
-        `co_scadenziario`.*, 
+        `co_scadenzario`.*, 
         `co_documenti`.*,
         `an_anagrafiche`.`email`,
         `an_anagrafiche`.`pec`,
         `an_anagrafiche`.`ragione_sociale`,
         `an_referenti`.`nome`,
-        `co_scadenziario`.`da_pagare` - `co_scadenziario`.`pagato` AS totale,
+        `co_scadenzario`.`da_pagare` - `co_scadenzario`.`pagato` AS totale,
         `title` AS pagamento,
-        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare` - `pagato`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) < NOW() AND `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica`'.$filtro_scadenze_selezionate.' ORDER BY IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`)) AS scadenze_fatture_scadute,
-        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenziario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenziario`.`iddocumento` = `nota`.`ref_documento` WHERE `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica`'.$filtro_scadenze_selezionate.' AND IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL '.prepare($giorni_promemoria).' DAY),"%Y-%m-%d") ORDER BY IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`)) AS scadenze_fatture_promemoria
-    FROM `co_scadenziario`
-        INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenziario`.`iddocumento`
+        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare` - `pagato`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenzario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenzario`.`iddocumento` = `nota`.`ref_documento` WHERE IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) < NOW() AND `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica`'.$filtro_scadenze_selezionate.' ORDER BY IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`)) AS scadenze_fatture_scadute,
+        (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenzario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenzario`.`iddocumento` = `nota`.`ref_documento` WHERE `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `idanagrafica`=`co_documenti`.`idanagrafica`'.$filtro_scadenze_selezionate.' AND IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL '.prepare($giorni_promemoria).' DAY),"%Y-%m-%d") ORDER BY IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`)) AS scadenze_fatture_promemoria
+    FROM `co_scadenzario`
+        INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenzario`.`iddocumento`
         LEFT JOIN `co_pagamenti` ON `co_pagamenti`.`id` = `co_documenti`.`idpagamento`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `em_accounts` ON `em_accounts`.`id` = '.prepare($template['id_account']).'
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` 
         LEFT JOIN `an_referenti` ON `an_referenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
     WHERE 
-        `co_scadenziario`.`da_pagare` > `co_scadenziario`.`pagato` AND `co_scadenziario`.`iddocumento` = (SELECT `iddocumento` FROM `co_scadenziario` s WHERE `id`='.prepare($id_record).')
+        `co_scadenzario`.`da_pagare` > `co_scadenzario`.`pagato` AND `co_scadenzario`.`iddocumento` = (SELECT `iddocumento` FROM `co_scadenzario` s WHERE `id`='.prepare($id_record).')
     GROUP BY iddocumento');
 
 $logo_azienda = str_replace(base_dir(), base_path_osm(), App::filepath('templates/base|custom|/logo_azienda.jpg'));

@@ -45,22 +45,22 @@ class PagamentoAutomaticoTask extends Manager
         // Recupero le scadenze scadute o in scadenza oggi con flag registra_pagamento attivo
         $scadenze = $database->fetchArray('
             SELECT 
-                `co_scadenziario`.*,
+                `co_scadenzario`.*,
                 `co_documenti`.`idanagrafica`,
                 `co_documenti`.`idtipodocumento`,
                 `co_tipidocumento`.`dir`,
                 `co_pagamenti`.`idconto_vendite`,
                 `co_pagamenti`.`idconto_acquisti`
             FROM 
-                `co_scadenziario`
-                INNER JOIN `co_documenti` ON `co_scadenziario`.`iddocumento` = `co_documenti`.`id`
+                `co_scadenzario`
+                INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento` = `co_documenti`.`id`
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento` = `co_tipidocumento`.`id`
                 INNER JOIN `co_pagamenti` ON `co_documenti`.`idpagamento` = `co_pagamenti`.`id`
             WHERE 
                 `co_pagamenti`.`registra_pagamento_automatico` = 1
-                AND ABS(`co_scadenziario`.`pagato`) < ABS(`co_scadenziario`.`da_pagare`)
+                AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)
                 AND (
-                    IF(`co_scadenziario`.`data_concordata`, `co_scadenziario`.`data_concordata`, `co_scadenziario`.`scadenza`) <= CURDATE()
+                    IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) <= CURDATE()
                 )
         ');
 

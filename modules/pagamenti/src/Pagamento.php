@@ -122,7 +122,7 @@ class Pagamento extends Model
             // Conversione della data in stringa standard
             $scadenza = $date->format('Y-m-d');
 
-            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenziario per evitare di inserire cifre arrotondate "male"
+            // All'ultimo ciclo imposto come cifra da pagare il totale della fattura meno gli importi già inseriti in scadenzario per evitare di inserire cifre arrotondate "male"
             if ($count + 1 == $number) {
                 $da_pagare = sum($importo, -$totale, 2);
             }

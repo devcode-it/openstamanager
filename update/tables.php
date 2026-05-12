@@ -60,7 +60,7 @@ return [
     'co_ritenutaacconto',
     'co_ritenuta_contributi',
     'co_rivalse',
-    'co_scadenziario',
+    'co_scadenzario',
     'co_staticontratti',
     'co_staticontratti_lang',
     'co_statidocumento',

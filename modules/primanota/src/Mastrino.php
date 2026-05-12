@@ -147,7 +147,7 @@ class Mastrino extends Model
                 }
 
                 // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
-                $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenziario WHERE iddocumento='.prepare($id_documento));
+                $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenzario WHERE iddocumento='.prepare($id_documento));
 
                 $totale_pagato = abs(floatval($totali['tot_pagato']));
                 $totale_da_pagare = abs(floatval($totali['tot_da_pagare']));
@@ -304,7 +304,7 @@ class Mastrino extends Model
         $scadenze = [];
         foreach ($documenti as $documento) {
             $scadenze[$documento] = [];
-            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento));
+            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenzario WHERE iddocumento='.prepare($documento));
             foreach ($scadenze_documento as $scadenza_row) {
                 $id_scadenza = $scadenza_row['id'];
                 $scadenze[$documento][$id_scadenza] = $id_scadenza;

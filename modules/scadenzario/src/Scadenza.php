@@ -30,7 +30,7 @@ class Scadenza extends Model
 {
     use SimpleModelTrait;
 
-    protected $table = 'co_scadenziario';
+    protected $table = 'co_scadenzario';
 
     protected $casts = [
         'scadenza' => 'date',

@@ -97,8 +97,8 @@ $interventi_programmati = Intervento::select('in_interventi.*')
 
 // Insoluti
 $insoluti = Scadenza::where('idanagrafica', $intervento->idanagrafica)
-    ->whereRaw('co_scadenziario.da_pagare > co_scadenziario.pagato')
-    ->whereRaw('co_scadenziario.scadenza < NOW()')
+    ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
+    ->whereRaw('co_scadenzario.scadenza < NOW()')
     ->count();
 
 // Logo

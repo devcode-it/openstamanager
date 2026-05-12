@@ -23,16 +23,16 @@ use Modules\Fatture\Fattura;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT co_scadenziario.*, an_anagrafiche.ragione_sociale FROM co_scadenziario LEFT JOIN an_anagrafiche ON co_scadenziario.idanagrafica=an_anagrafiche.idanagrafica WHERE id = '.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT co_scadenzario.*, an_anagrafiche.ragione_sociale FROM co_scadenzario LEFT JOIN an_anagrafiche ON co_scadenzario.idanagrafica=an_anagrafiche.idanagrafica WHERE id = '.prepare($id_record));
     $documento = Fattura::find($record['iddocumento']);
 
     // Scelgo la query in base alla scadenza
     if (!empty($documento)) {
-        $id_record = $dbo->fetchOne('SELECT id FROM co_scadenziario WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
+        $id_record = $dbo->fetchOne('SELECT id FROM co_scadenzario WHERE iddocumento='.prepare($documento->id).' ORDER BY id')['id'];
+        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE iddocumento = '.prepare($documento->id).' ORDER BY scadenza ASC');
         $totale_da_pagare = $documento->netto;
     } else {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenziario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
+        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
         $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
     }
 }

@@ -35,7 +35,7 @@ class MovimentiManuali extends AppResource
         // Restituisce i movimenti eliminati o non più appartenenti all'utente
         $query = 'SELECT `mg_movimenti`.`id`
             FROM `mg_movimenti`
-            WHERE `mg_movimenti`.`idutente` = '.prepare($id_utente);
+            WHERE `mg_movimenti`.`id_utente` = '.prepare($id_utente);
 
         if ($last_sync_at) {
             $query .= ' AND `mg_movimenti`.`updated_at` > '.prepare($last_sync_at);
@@ -61,7 +61,7 @@ class MovimentiManuali extends AppResource
         // Query per recuperare i movimenti dell'utente loggato nell'ultimo giorno
         $query = 'SELECT `mg_movimenti`.`id`, `mg_movimenti`.`updated_at`
             FROM `mg_movimenti`
-            WHERE `mg_movimenti`.`idutente` = '.prepare($id_utente).'
+            WHERE `mg_movimenti`.`id_utente` = '.prepare($id_utente).'
             AND `mg_movimenti`.`data` BETWEEN '.prepare($inizio_giorno).' AND '.prepare($fine_giorno);
 
         $records = database()->fetchArray($query);
@@ -83,7 +83,7 @@ class MovimentiManuali extends AppResource
             `mg_movimenti`.`movimento` AS descrizione,
             `mg_movimenti`.`data`,
             `mg_movimenti`.`id_sede` AS id_sede_azienda,
-            `mg_movimenti`.`idutente` AS id_utente,
+            `mg_movimenti`.`id_utente` AS id_utente,
             `mg_movimenti`.`manuale`
         FROM
             `mg_movimenti`
@@ -91,7 +91,7 @@ class MovimentiManuali extends AppResource
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
             `mg_movimenti`.`id` = '.prepare($id).'
-            AND `mg_movimenti`.`idutente` = '.prepare($id_utente);
+            AND `mg_movimenti`.`id_utente` = '.prepare($id_utente);
 
         $record = database()->fetchOne($query);
 
@@ -108,7 +108,7 @@ class MovimentiManuali extends AppResource
 
         $id_movimento = $articolo->movimenta($data['qta'], $data['descrizione'], $data_movimento, true, [
             'id_sede' => $id_sede,
-            'idutente' => auth_osm()->getUser()->id,
+            'id_utente' => auth_osm()->getUser()->id,
         ]);
 
         return [

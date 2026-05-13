@@ -170,14 +170,14 @@ class Articolo extends Model
         // Movimento il magazzino solo se l'articolo non è un servizio
         if (empty($this->servizio)) {
             // Registrazione della movimentazione
-            // I valori in $array hanno priorità (es. idutente passato dall'API)
+            // I valori in $array hanno priorità (es. id_utente passato dall'API)
             database()->insert('mg_movimenti', array_merge([
                 'id_articolo' => $this->id,
                 'qta' => $qta,
                 'movimento' => $descrizone,
                 'data' => $data,
                 'manuale' => $manuale,
-                'idutente' => $id_utente,
+                'id_utente' => $id_utente,
             ], $array));
         }
         $id = database()->lastInsertedID();
@@ -378,7 +378,7 @@ class Articolo extends Model
     {
         $movimenti = $this->movimenti()
             ->selectRaw('*, mg_movimenti.created_at AS data_movimento, SUM(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
-            ->groupBy(['tipo_gruppo', 'mg_movimenti.reference_id', 'mg_movimenti.idutente']);
+            ->groupBy(['tipo_gruppo', 'mg_movimenti.reference_id', 'mg_movimenti.id_utente']);
 
         if (!empty($mostra_vuoti)) {
             return $movimenti;

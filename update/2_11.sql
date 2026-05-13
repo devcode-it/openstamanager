@@ -991,7 +991,10 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 -- Modifica colonne an_anagrafiche
 ALTER TABLE `an_anagrafiche` CHANGE `id_pagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `id_pagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;
+
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_articoli` CHANGE `idiva_vendita` `id_iva_vendita` INT NULL DEFAULT NULL;
+
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_acquisti` `id_iva_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idsede_fatturazione` `id_sede_fatturazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `piva` `p_iva` VARCHAR(16) NOT NULL;
@@ -1039,12 +1042,15 @@ ALTER TABLE `an_automezzi_scadenze` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_referenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `in_tariffe_sedi` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 ALTER TABLE `in_interventi_tecnici` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
+ALTER TABLE `in_tariffe` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 
 ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
 ALTER TABLE `em_mansioni_template` CHANGE `idmansione` `id_mansione` INT NOT NULL;
@@ -1072,6 +1078,7 @@ ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT N
 ALTER TABLE `co_preventivi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
@@ -1106,9 +1113,18 @@ ALTER TABLE `co_promemoria` CHANGE `idtipointervento` `id_tipo_intervento` INT N
 ALTER TABLE `in_fasceorarie_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `in_interventi_tecnici` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+ALTER TABLE `in_righe_tipiinterventi` CHANGE `id_tipointervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
+ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+ALTER TABLE `in_tariffe_sedi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+ALTER TABLE `in_tipiintervento_groups` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+ALTER TABLE `in_tipiintervento_tipologie` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `in_tariffe` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `in_tariffe_sedi` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(12,4) NOT NULL;
+
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `in_tariffe` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
@@ -1155,14 +1171,20 @@ ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT 
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_scadenzario` CHANGE `iddocumento` `id_documento` INT NOT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
 ALTER TABLE `co_movimenti_modelli` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
 ALTER TABLE `co_stampecontabili` CHANGE `idmastrino` `id_mastrino` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `primanota` `prima_nota` TINYINT NOT NULL;
+
 ALTER TABLE `co_pagamenti` CHANGE `idconto_vendite` `id_conto_vendite` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_articoli` CHANGE `idconto_vendita` `id_conto_vendita` INT NULL DEFAULT NULL;
+
 ALTER TABLE `co_pagamenti` CHANGE `idconto_acquisti` `id_conto_acquisti` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_articoli` CHANGE `idconto_acquisto` `id_conto_acquisto` INT NULL DEFAULT NULL;
+
 ALTER TABLE `co_pianodeiconti2` CHANGE `idpianodeiconti1` `id_piano_dei_conti1` INT NOT NULL;
 ALTER TABLE `co_pianodeiconti3` CHANGE `idpianodeiconti2` `id_piano_dei_conti2` INT NOT NULL;
 
@@ -1175,13 +1197,18 @@ ALTER TABLE `co_righe_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `in_righe_tipiinterventi` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idimpianto` `id_impianto` INT NULL DEFAULT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `idimpianto` `id_impianto` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idtecnici` `id_tecnici` VARCHAR(255) NOT NULL;
 
@@ -1191,6 +1218,9 @@ ALTER TABLE `co_righe_documenti` CHANGE `idarticolo` `id_articolo` INT NULL DEFA
 ALTER TABLE `co_righe_preventivi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `in_righe_interventi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `mg_articoli_barcode` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
 
@@ -1199,6 +1229,7 @@ ALTER TABLE `dt_righe_ddt` CHANGE `idordine` `id_ordine` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idddt` `id_ddt` INT NOT NULL;
+ALTER TABLE `mg_movimenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
@@ -1209,3 +1240,7 @@ ALTER TABLE `in_fasceorarie_tipiintervento` CHANGE `idfasciaoraria` `id_fascia_o
 ALTER TABLE `in_interventi` CHANGE `nomefile` `nome_file` VARCHAR(255) NOT NULL;
 
 ALTER TABLE `in_interventi_tecnici` CHANGE `scontokm` `sconto_km` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `in_interventi_tecnici` CHANGE `scontokm_unitario` `sconto_km_unitario` DECIMAL(17,8) NOT NULL;
+ALTER TABLE `in_interventi_tecnici` CHANGE `tipo_scontokm` `tipo_sconto_km` ENUM('UNT','PRC') NOT NULL DEFAULT 'UNT';
+
+ALTER TABLE `mg_movimenti` CHANGE `idutente` `id_utente` INT NULL DEFAULT NULL;

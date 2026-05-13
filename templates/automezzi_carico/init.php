@@ -39,7 +39,7 @@ $query = '
         `zz_categorie_lang`.`title` AS subcategoria,
         `mg_articoli_lang`.`title` AS descrizione,
         `mg_movimenti`.`qta`,
-        `mg_movimenti`.`idutente`,
+        `mg_movimenti`.`id_utente`,
         `zz_users`.`username`,
         `mg_articoli`.`um`,
         `zz_groups_lang`.`title` as gruppo
@@ -47,7 +47,7 @@ $query = '
         `mg_movimenti`
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`id_articolo`=`mg_articoli`.`id`
         INNER JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
-        INNER JOIN `zz_users` ON `mg_movimenti`.`idutente`=`zz_users`.`id`
+        INNER JOIN `zz_users` ON `mg_movimenti`.`id_utente`=`zz_users`.`id`
         INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
         LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_sedi` ON `mg_movimenti`.`id_sede`=`an_sedi`.`id`

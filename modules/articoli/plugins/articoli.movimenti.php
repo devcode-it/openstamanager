@@ -152,7 +152,7 @@ if (!empty($movimenti)) {
                     </td>';
 
             // Data
-            $utente = $dbo->table('zz_users')->where('id', $movimento->idutente)->first();
+            $utente = $dbo->table('zz_users')->where('id', $movimento->id_utente)->first();
             $data = ($movimento->data ?: $movimento->data_movimento);
             echo '
                     <td class="text-center">'.dateFormat($data).' <span  class="tip" title="'.tr('Creazione movimento: _DATE_ <br>Creatore movimento: _USER_', [

@@ -202,13 +202,13 @@ class CSV extends CSVImporter
                 'label' => 'ID Agente',
             ],
             [
-                'field' => 'idpagamento_vendite',
+                'field' => 'id_pagamento_vendite',
                 'label' => 'ID Pagamento',
                 'names' => [
                     'Pagamento',
                     'ID Pagamento',
                     'id_pagamento',
-                    'idpagamento_vendite',
+                    'id_pagamento_vendite',
                     'idpagamento',
                 ],
             ],

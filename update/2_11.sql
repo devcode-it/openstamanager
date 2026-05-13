@@ -467,7 +467,7 @@ FROM
         SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
         FROM `co_pagamenti`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    ) AS pagvendita ON `an_anagrafiche`.`idpagamento_vendite` = `pagvendita`.`id`
+    ) AS pagvendita ON `an_anagrafiche`.`id_pagamento_vendite` = `pagvendita`.`id`
     LEFT JOIN (
         SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
         FROM `co_pagamenti`
@@ -986,3 +986,6 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Mese di chiusura, Giorno di riprogrammazione", "query": "SELECT id, IF(mese=\'01\', \'Gennaio\', IF(mese=\'02\', \'Febbraio\',IF(mese=\'03\', \'Marzo\',IF(mese=\'04\', \'Aprile\',IF(mese=\'05\', \'Maggio\', IF(mese=\'06\', \'Giugno\', IF(mese=\'07\', \'Luglio\',IF(mese=\'08\', \'Agosto\',IF(mese=\'09\', \'Settembre\', IF(mese=\'10\', \'Ottobre\', IF(mese=\'11\', \'Novembre\',\'Dicembre\'))))))))))) AS `Mese di chiusura`, giorno_fisso AS `Giorno di riprogrammazione` FROM an_pagamenti_anagrafiche WHERE 1=1 AND id_anagrafica=|id_parent| GROUP BY id HAVING 2=2 ORDER BY an_pagamenti_anagrafiche.mese ASC"} ]}' WHERE `name` = "Regole pagamenti";
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.idagente=an_anagrafiche.id WHERE co_provvigioni.idarticolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
+
+-- Modifica colonna idpagamento_vendite in id_pagamento_vendite
+ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;

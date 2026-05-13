@@ -123,7 +123,7 @@ class CSV extends CSVExporter
                 'label' => 'ID Agente',
             ],
             [
-                'field' => 'idpagamento_vendite',
+                'field' => 'id_pagamento_vendite',
                 'label' => 'ID Pagamento',
             ],
             [

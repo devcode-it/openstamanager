@@ -107,7 +107,7 @@ class Preventivo extends Document
         }
 
         if (!empty($id_iva)) {
-            $model->idiva = $id_iva;
+            $model->id_iva = $id_iva;
         }
         if (!empty($id_pagamento)) {
             $model->id_pagamento = $id_pagamento;

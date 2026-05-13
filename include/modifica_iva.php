@@ -78,7 +78,7 @@ function getRiga($id, $riga_class, $articolo_class, $sconto_class)
 function buildAliquotaArray($riga)
 {
     return [
-        'id' => $riga->idiva,
+        'id' => $riga->id_iva,
         'codice' => $riga->aliquota->codice,
         'descrizione' => $riga->aliquota->getTranslation('title'),
         'percentuale' => $riga->aliquota->percentuale,
@@ -105,15 +105,15 @@ if (!empty($riga_id)) {
     $righe_totali = 1;
     $righe_ids_array = [$riga_id];
 
-    if (!empty($riga) && !empty($riga->idiva) && !empty($riga->aliquota)) {
+    if (!empty($riga) && !empty($riga->id_iva) && !empty($riga->aliquota)) {
         $aliquota = buildAliquotaArray($riga);
         $aliquota['count'] = 1;
-        $aliquote_iva[$riga->idiva] = $aliquota;
+        $aliquote_iva[$riga->id_iva] = $aliquota;
     } elseif (!empty($riga)) {
         $righe_senza_iva[] = [
             'id' => $riga->id,
             'descrizione' => $riga->descrizione,
-            'idiva' => $riga->idiva ?: 'N/D',
+            'id_iva' => $riga->id_iva ?: 'N/D',
         ];
     }
 } elseif (!empty($righe_ids)) {
@@ -124,16 +124,16 @@ if (!empty($riga_id)) {
     foreach ($righe_ids_array as $id_riga) {
         $riga = getRiga($id_riga, $riga_class, $articolo_class, $sconto_class);
 
-        if (!empty($riga) && !empty($riga->idiva) && !empty($riga->aliquota)) {
-            if (!isset($aliquote_iva[$riga->idiva])) {
-                $aliquote_iva[$riga->idiva] = buildAliquotaArray($riga);
+        if (!empty($riga) && !empty($riga->id_iva) && !empty($riga->aliquota)) {
+            if (!isset($aliquote_iva[$riga->id_iva])) {
+                $aliquote_iva[$riga->id_iva] = buildAliquotaArray($riga);
             }
-            ++$aliquote_iva[$riga->idiva]['count'];
+            ++$aliquote_iva[$riga->id_iva]['count'];
         } elseif (!empty($riga)) {
             $righe_senza_iva[] = [
                 'id' => $riga->id,
                 'descrizione' => $riga->descrizione,
-                'idiva' => $riga->idiva ?: 'N/D',
+                'id_iva' => $riga->id_iva ?: 'N/D',
             ];
         }
     }

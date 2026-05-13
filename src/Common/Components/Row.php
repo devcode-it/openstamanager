@@ -33,8 +33,8 @@ abstract class Row extends Accounting
         $model = new static();
         $model->setDocument($document);
 
-        if (empty($model->idiva)) {
-            $model->idiva = setting('Iva predefinita');
+        if (empty($model->id_iva)) {
+            $model->id_iva = setting('Iva predefinita');
         }
 
         return $model;

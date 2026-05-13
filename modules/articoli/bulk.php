@@ -69,7 +69,7 @@ switch (post('op')) {
 
             if (empty((int) $articolo->coefficiente)) {
                 $prezzo_partenza = post('prezzo_partenza') == 'vendita' ? $articolo->prezzo_vendita : $articolo->prezzo_acquisto;
-                $aliquota_iva = floatval(Aliquota::find($articolo->idiva_vendita)->percentuale);
+                $aliquota_iva = floatval(Aliquota::find($articolo->id_iva_vendita)->percentuale);
 
                 $new_prezzo_vendita = $prezzo_partenza + ($prezzo_partenza * $percentuale / 100);
 
@@ -90,7 +90,7 @@ switch (post('op')) {
                     $new_prezzo_vendita = $new_prezzo_vendita + ($new_prezzo_vendita * $aliquota_iva / 100);
                 }
 
-                $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->idiva_vendita);
+                $articolo->setPrezzoVendita($new_prezzo_vendita, $articolo->id_iva_vendita);
                 $articolo->save();
             } else {
                 ++$articoli_coeff;
@@ -222,12 +222,12 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $originale = Articolo::find($id);
             $articolo = ArticoloPreventivo::build($preventivo, $originale);
-            $id_iva = $originale->idiva_vendita ?: setting('Iva predefinita');
+            $id_iva = $originale->id_iva_vendita ?: setting('Iva predefinita');
             $articolo->qta = 1;
             $articolo->um = $originale->um ?: null;
             $articolo->costo_unitario = $originale->prezzo_acquisto;
             $articolo->prezzo_unitario = $originale->prezzo_vendita;
-            $articolo->idiva = $id_iva;
+            $articolo->id_iva = $id_iva;
             $articolo->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);
             $articolo->save();
 
@@ -289,7 +289,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $articolo->idiva_vendita = $iva;
+            $articolo->id_iva_vendita = $iva;
             $articolo->save();
 
             ++$n_articoli;

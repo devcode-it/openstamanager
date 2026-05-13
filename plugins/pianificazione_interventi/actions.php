@@ -222,7 +222,7 @@ switch ($operazione) {
         $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
 
         try {
@@ -256,7 +256,7 @@ switch ($operazione) {
         $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
 
         $riga->qta = $qta;

@@ -129,7 +129,7 @@ if (!function_exists('add_tecnico')) {
             $riga->um = $riga_aggiuntiva['um'];
 
             $riga->costo_unitario = $riga_aggiuntiva['prezzo_acquisto'];
-            $riga->setPrezzoUnitario($riga_aggiuntiva['prezzo_vendita'], $riga_aggiuntiva['idiva']);
+            $riga->setPrezzoUnitario($riga_aggiuntiva['prezzo_vendita'], $riga_aggiuntiva['id_iva']);
             $riga->qta = $riga_aggiuntiva['qta'];
 
             $riga->save();

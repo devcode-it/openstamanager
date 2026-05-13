@@ -190,7 +190,7 @@ class Articolo extends Model
      */
     public function setPrezzoVendita($prezzo_vendita, $id_iva)
     {
-        $this->idiva_vendita = $id_iva;
+        $this->id_iva_vendita = $id_iva;
 
         // Calcolo prezzo di vendita ivato e non ivato
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -234,14 +234,14 @@ class Articolo extends Model
             $prezzo_vendita = $value * $this->coefficiente;
 
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
-            $id_iva = $this->idiva_vendita ?: setting('Iva predefinita');
+            $id_iva = $this->id_iva_vendita ?: setting('Iva predefinita');
             $percentuale_aliquota = floatval(Aliquota::find($id_iva)->percentuale);
 
             if ($prezzi_ivati) {
                 $prezzo_vendita = $prezzo_vendita * (1 + $percentuale_aliquota / 100);
             }
 
-            $this->setPrezzoVendita(round($prezzo_vendita, 2), $this->idiva_vendita);
+            $this->setPrezzoVendita(round($prezzo_vendita, 2), $this->id_iva_vendita);
         }
     }
 
@@ -564,7 +564,7 @@ class Articolo extends Model
         $riga = ArticoloPreventivo::find($idrigapreventivo);
 
         $riga->costo_unitario = $riga->totale_acquisto ?: 0;
-        $riga->setPrezzoUnitario($riga->totale_vendita, $riga->idiva);
+        $riga->setPrezzoUnitario($riga->totale_vendita, $riga->id_iva);
 
         $riga->save();
     }

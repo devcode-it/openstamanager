@@ -100,7 +100,7 @@ foreach ($righe as $riga) {
     $r = $riga->toArray();
 
     $v_totale[$r['desc_iva']] += $riga->totale_imponibile + $riga->rivalsa_inps;
-    $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->idiva))['percentuale'];
+    $aliquota = $database->fetchOne('SELECT percentuale FROM co_iva WHERE id = '.prepare($riga->id_iva))['percentuale'];
     $v_iva[$r['desc_iva']] += ($riga->totale_imponibile + $riga->rivalsa_inps) * $aliquota / 100;
 
     echo '

@@ -131,7 +131,7 @@ switch ($operazione) {
                         }
 
                         $riga->descrizione = $descrizione;
-                        $riga->setPrezzoUnitario($prezzo_unitario, $r->idiva);
+                        $riga->setPrezzoUnitario($prezzo_unitario, $r->id_iva);
                         $riga->costo_unitario = $r->costo_unitario;
                         $riga->setSconto($r->tipo_sconto == 'PRC' ? $r->sconto_percentuale : $r->sconto_unitario, $r->tipo_sconto);
                         $riga->qta = $qta_riga;

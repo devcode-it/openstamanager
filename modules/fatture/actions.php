@@ -438,7 +438,7 @@ switch ($op) {
                 $riga->save();
             }
 
-            $id_iva_intervento = post('idiva');
+            $id_iva_intervento = post('id_iva');
 
             // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
             if (!empty($fattura->id_dichiarazione_intento)) {
@@ -533,7 +533,7 @@ switch ($op) {
         $articolo->data_inizio_competenza = post('data_inizio_competenza') ?: null;
         $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
-        $articolo->id_iva = post('idiva');
+        $articolo->id_iva = post('id_iva');
         $articolo->id_conto = post('id_conto') ?: null;
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
@@ -542,7 +542,7 @@ switch ($op) {
         $articolo->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
@@ -582,7 +582,7 @@ switch ($op) {
 
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
-        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('id_iva'));
         $sconto->save();
 
         if (post('idriga') != null) {
@@ -611,7 +611,7 @@ switch ($op) {
         $riga->data_inizio_competenza = post('data_inizio_competenza') ?: null;
         $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
-        $riga->id_iva = post('idiva');
+        $riga->id_iva = post('id_iva');
         $riga->id_conto = post('id_conto');
 
         $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
@@ -620,7 +620,7 @@ switch ($op) {
         $riga->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         if ($dir == 'entrata') {
             $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
@@ -760,7 +760,7 @@ switch ($op) {
                     'sconto_unitario' => $riga->sconto_unitario,
                     'sconto_percentuale' => $riga->sconto_percentuale,
                     'tipo_sconto' => $riga->tipo_sconto,
-                    'idiva' => $riga->idiva,
+                    'id_iva' => $riga->id_iva,
                     'id_conto' => $riga->id_conto,
                     'note' => $riga->note,
                 ];
@@ -818,7 +818,7 @@ switch ($op) {
                 $riga->um = $riga_data['um'];
 
                 if (!$riga->isDescrizione()) {
-                    $riga->idiva = $riga_data['idiva'];
+                    $riga->id_iva = $riga_data['id_iva'];
                     $riga->prezzo_unitario = $riga_data['prezzo_unitario'];
                     $riga->sconto_unitario = $riga_data['sconto_unitario'];
                     $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
@@ -989,7 +989,7 @@ switch ($op) {
                         ->first();
 
                     if (!empty($iva_dichiarazione)) {
-                        $copia->idiva = $iva_dichiarazione->id;
+                        $copia->id_iva = $iva_dichiarazione->id;
                     }
                 }
 
@@ -1082,31 +1082,31 @@ switch ($op) {
         $iva = Aliquota::find(setting('Iva predefinita'));
 
         $imponibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
             ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
             ->sum('subtotale');
 
         $sconto = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
             ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
             ->sum('sconto');
 
         $imponibile_indetraibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->sum('subtotale');
 
         $sconto_indetraibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->sum('sconto');
 
         $iva_indetraibile_id = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
+            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->value('co_iva.id');
@@ -1260,12 +1260,12 @@ switch ($op) {
 
                 if ($dir == 'entrata') {
                     // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
-                    if ($originale->idiva_vendita) {
-                        $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+                    if ($originale->id_iva_vendita) {
+                        $aliquota_articolo = floatval(Aliquota::find($originale->id_iva_vendita)->percentuale);
                     }
-                    $id_iva = ($fattura->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+                    $id_iva = ($fattura->anagrafica->id_iva_vendite && (!$originale->id_iva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->id_iva_vendite : $originale->id_iva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    $id_iva = ($fattura->anagrafica->id_iva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
+                    $id_iva = ($fattura->anagrafica->id_iva_acquisti ?: ($originale->id_iva_vendita ?: setting('Iva predefinita')));
                 }
                 $id_anagrafica = $fattura->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
@@ -1348,7 +1348,7 @@ switch ($op) {
             }
 
             if ($articolo->prezzo_unitario != $riga['price']) {
-                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->id_iva);
                 $articolo->save();
                 ++$numero_totale;
             }
@@ -1406,7 +1406,7 @@ switch ($op) {
                 }
 
                 if ($update_prezzo_vendita) {
-                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
+                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->id_iva);
                 }
 
                 if ($update_descrizione) {
@@ -1451,10 +1451,10 @@ switch ($op) {
 
         if (!empty($riga)) {
             if ($riga->isSconto()) {
-                $riga->setScontoUnitario(post('sconto'), $riga->idiva);
+                $riga->setScontoUnitario(post('sconto'), $riga->id_iva);
             } else {
                 $riga->qta = post('qta');
-                $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
+                $riga->setPrezzoUnitario(post('prezzo'), $riga->id_iva);
                 $riga->setSconto(post('sconto'), post('tipo_sconto'));
                 $riga->costo_unitario = post('costo') ?: 0;
             }

@@ -453,11 +453,11 @@ class CSV extends CSVImporter
             if (!empty($record['codice_iva_vendita'])) {
                 $aliquota = Aliquota::where('codice', $record['codice_iva_vendita'])->first();
                 if ($aliquota) {
-                    $articolo->idiva_vendita = $aliquota->id;
+                    $articolo->id_iva_vendita = $aliquota->id;
                 } else {
                     $aliquota_predefinita = setting('Iva predefinita');
                     if ($aliquota_predefinita) {
-                        $articolo->idiva_vendita = $aliquota_predefinita;
+                        $articolo->id_iva_vendita = $aliquota_predefinita;
                     }
                 }
             }

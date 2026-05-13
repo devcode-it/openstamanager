@@ -707,9 +707,9 @@ class Fattura extends Document
 
         $riga->qta = 1;
         $riga->descrizione = $this->pagamento->descrizione_incasso;
-        $riga->id_iva = $first_riga_fattura->idiva;
+        $riga->id_iva = $first_riga_fattura->id_iva;
         $riga->id_conto = setting("Conto predefinito per le spese d'incasso");
-        $riga->setPrezzoUnitario($prezzo_unitario, $first_riga_fattura->idiva);
+        $riga->setPrezzoUnitario($prezzo_unitario, $first_riga_fattura->id_iva);
         $riga->setSconto($sconto, $riga->tipo_sconto);
         $riga->save();
 

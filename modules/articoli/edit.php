@@ -249,7 +249,7 @@ echo '
                         </div>
 
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "idiva_vendita", "ajax-source": "iva", "value": "$idiva_vendita$", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Iva di vendita'); ?>", "name": "id_iva_vendita", "ajax-source": "iva", "value": "$id_iva_vendita$", "help": "<?php echo tr('Se non specificata, verrà utilizzata l\'iva di default delle impostazioni'); ?>" ]}
                             <input type="hidden" name="prezzi_ivati" value="<?php echo $prezzi_ivati; ?>">
                             <input type="hidden" name="aliquota_predefinita" value="<?php echo $aliquota_predefinita; ?>">
                         </div>
@@ -308,7 +308,7 @@ echo '
 {( "name": "filelist_and_upload", "id_module": "$id_module$", "id_record": "$id_record$" )}
 
 <script>
-let iva_vendita = $("#idiva_vendita");
+let iva_vendita = $("#id_iva_vendita");
 let percentuale = 0;
 
 $(document).ready(function() {

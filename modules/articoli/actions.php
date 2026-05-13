@@ -59,10 +59,10 @@ switch (post('op')) {
         $articolo = Articolo::build($codice, $categoria, $sottocategoria);
         $articolo->name = post('descrizione');
         $articolo->coefficiente = post('coefficiente');
-        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->id_iva_vendita = post('id_iva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         if (empty(post('coefficiente'))) {
-            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('id_iva_vendita'));
         }
         $articolo->servizio = post('servizio');
 
@@ -83,7 +83,7 @@ switch (post('op')) {
         }
 
         $id_record = $articolo->id;
-        $iva = post('idiva_vendita') ? Aliquota::find(post('idiva_vendita')) : null;
+        $iva = post('id_iva_vendita') ? Aliquota::find(post('id_iva_vendita')) : null;
 
         if (post('genera_barcode')) {
             // Genera un barcode unico controllando sia la tabella mg_articoli che mg_articoli_barcode
@@ -138,7 +138,7 @@ switch (post('op')) {
                 'data' => [
                     'prezzo_acquisto' => post('prezzo_acquisto'),
                     'prezzo_vendita' => post('prezzo_vendita'),
-                    'idiva_vendita' => post('idiva_vendita') ?: null,
+                    'id_iva_vendita' => post('id_iva_vendita') ?: null,
                     'iva_vendita' => $iva ? $iva->getTranslation('title') : null,
                     'um' => post('um'),
                 ],
@@ -178,7 +178,7 @@ switch (post('op')) {
         $articolo->abilita_serial = post('abilita_serial');
         $articolo->ubicazione = post('ubicazione');
         $articolo->coefficiente = post('coefficiente');
-        $articolo->idiva_vendita = post('idiva_vendita');
+        $articolo->id_iva_vendita = post('id_iva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
         $articolo->id_conto_vendita = post('id_conto_vendita');
         $articolo->id_conto_acquisto = post('id_conto_acquisto');
@@ -194,10 +194,10 @@ switch (post('op')) {
         $articolo->um_secondaria = post('um_secondaria');
         $articolo->fattore_um_secondaria = post('fattore_um_secondaria');
         $articolo->qta_multipla = post('qta_multipla');
-        $articolo->setMinimoVendita(post('minimo_vendita'), post('idiva_vendita'));
+        $articolo->setMinimoVendita(post('minimo_vendita'), post('id_iva_vendita'));
 
         if (empty(post('coefficiente'))) {
-            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('idiva_vendita'));
+            $articolo->setPrezzoVendita(post('prezzo_vendita'), post('id_iva_vendita'));
         }
         $componente = post('componente_filename');
         $articolo->componente_filename = $componente;

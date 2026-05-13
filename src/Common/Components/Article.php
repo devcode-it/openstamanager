@@ -49,10 +49,10 @@ abstract class Article extends Accounting
         $model->abilita_serial = $articolo->abilita_serial;
         $model->um = $articolo->um;
 
-        if (empty($model->idiva)) {
+        if (empty($model->id_iva)) {
             $default_iva = setting('Iva predefinita');
 
-            $model->idiva = $default_iva;
+            $model->id_iva = $default_iva;
         }
 
         return $model;

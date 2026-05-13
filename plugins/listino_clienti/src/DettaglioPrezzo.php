@@ -60,7 +60,7 @@ class DettaglioPrezzo extends Model
      */
     public function setPrezzoUnitario($prezzo_unitario)
     {
-        $id_iva = $this->articolo->idiva_vendita;
+        $id_iva = $this->articolo->id_iva_vendita;
 
         // Calcolo prezzo di vendita ivato e non ivato
         $prezzi_ivati = ($this->dir == 'entrata' ? setting('Utilizza prezzi di vendita comprensivi di IVA') : 0);

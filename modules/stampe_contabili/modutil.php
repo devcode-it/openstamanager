@@ -126,7 +126,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
@@ -150,7 +150,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
+                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
                 INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
             WHERE
@@ -194,7 +194,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = co_iva.id
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = co_iva.id
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
@@ -216,7 +216,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
+                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
                 INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
             WHERE
@@ -250,7 +250,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -277,7 +277,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -306,7 +306,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -334,7 +334,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -362,7 +362,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -390,7 +390,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -436,7 +436,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
@@ -457,7 +457,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
+                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
                 INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
             WHERE
@@ -498,7 +498,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
@@ -519,7 +519,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             FROM
                 `co_iva`
                 LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
+                INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`id_iva` = `co_iva`.`id`
                 INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
                 INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
             WHERE
@@ -552,7 +552,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -579,7 +579,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -608,7 +608,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
@@ -635,7 +635,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
         FROM
             `co_iva`
             LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE

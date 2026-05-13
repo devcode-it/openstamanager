@@ -454,7 +454,7 @@ class FatturaElettronica implements \Stringable
         }
 
         // Natura obbligatoria per iva con esenzione
-        $iva = $database->fetchArray('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_iva`.`id` IN (SELECT `idiva` FROM `co_righe_documenti` WHERE `id_documento` = '.prepare($fattura->id).') AND `esente` = 1');
+        $iva = $database->fetchArray('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_iva`.`id` IN (SELECT `id_iva` FROM `co_righe_documenti` WHERE `id_documento` = '.prepare($fattura->id).') AND `esente` = 1');
         $fields = [
             'codice_natura_fe' => 'Natura IVA',
         ];
@@ -957,7 +957,7 @@ class FatturaElettronica implements \Stringable
             if (!empty($riga['id_rivalsa_inps']) and empty($riga['is_descrizione'])) {
                 $id_rivalsa_inps = $riga['id_rivalsa_inps'];
                 $totale_rivalsa_inps += $riga['rivalsa_inps'];
-                $aliquota_iva_rivalsa_inps = $riga['idiva'];
+                $aliquota_iva_rivalsa_inps = $riga['id_iva'];
             }
         }
 

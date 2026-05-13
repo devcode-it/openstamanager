@@ -127,7 +127,7 @@ abstract class Accounting extends Component
 
     public function aliquota()
     {
-        return $this->belongsTo(Aliquota::class, 'idiva');
+        return $this->belongsTo(Aliquota::class, 'id_iva');
     }
 
     public function getIvaAttribute()
@@ -431,7 +431,7 @@ abstract class Accounting extends Component
      */
     public function setIdIvaAttribute($value)
     {
-        $this->attributes['idiva'] = $value;
+        $this->attributes['id_iva'] = $value;
         $this->load('aliquota');
     }
 
@@ -500,7 +500,7 @@ abstract class Accounting extends Component
     {
         $this->attributes['iva'] = $this->iva;
 
-        $iva = Aliquota::Find($this->idiva);
+        $iva = Aliquota::Find($this->id_iva);
         if (database()->isConnected() && database()->tableExists('co_iva_lang')) {
             $this->attributes['desc_iva'] = $iva ? $iva->getTranslation('title') : '';
         }

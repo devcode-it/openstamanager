@@ -170,8 +170,8 @@ $("#idarticolo").on("change", function() {
         }
 
         if (direzione === "entrata") {
-            if($data.idiva_vendita) {
-                $("#idiva").selectSetNew($data.idiva_vendita, $data.iva_vendita, {"percentuale": $data.percentuale});
+            if($data.id_iva_vendita) {
+                $("#id_iva").selectSetNew($data.id_iva_vendita, $data.iva_vendita, {"percentuale": $data.percentuale});
             }
         }
 

@@ -69,12 +69,12 @@ switch ($resource) {
 
         if ($usare_iva_anagrafica) {
             $query .= '
-            IFNULL(`iva_anagrafica`.`id`, IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`)) AS idiva_vendita,
+            IFNULL(`iva_anagrafica`.`id`, IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`)) AS id_iva_vendita,
             IFNULL(`iva_anagrafica_lang`.`title`, IFNULL(`iva_articolo_lang`.`title`, `iva_predefinita_lang`.`title`)) AS iva_vendita,
             IFNULL(`iva_anagrafica`.`percentuale`, IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`)) AS percentuale,';
         } else {
             $query .= '
-            IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`) AS idiva_vendita,
+            IFNULL(`iva_articolo`.`id`, `iva_predefinita`.`id`) AS id_iva_vendita,
             IFNULL(`iva_articolo_lang`.`title`, `iva_predefinita_lang`.`title`) AS iva_vendita,
             IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`) AS percentuale,';
         }
@@ -112,7 +112,7 @@ switch ($resource) {
                 LEFT JOIN `co_pianodeiconti2` AS conto_acquisto_categoria ON `conto_acquisto_sottocategoria`.`id_piano_dei_conti2`=`conto_acquisto_categoria`.`id`
             LEFT JOIN (SELECT `co_righe_documenti`.`idarticolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
             ON `righe`.`id`=`mg_articoli`.`id`
-            LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
+            LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`id_iva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
             LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = '.$iva_predefinita.'
             LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')

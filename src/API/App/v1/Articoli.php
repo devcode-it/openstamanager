@@ -55,7 +55,7 @@ class Articoli extends AppResource
             `mg_articoli`.`prezzo_acquisto`,
             `mg_articoli`.`qta`,
             `mg_articoli`.`um`,
-            `mg_articoli`.`idiva_vendita` AS id_iva,
+            `mg_articoli`.`id_iva_vendita` AS id_iva,
             `categoria_lang`.`title` AS categoria,
             `sottocategoria_lang`.`title` AS sottocategoria,
             `mg_articoli`.`abilita_serial`,

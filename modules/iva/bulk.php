@@ -26,12 +26,12 @@ switch (post('op')) {
     case 'delete_bulk':
         $count_iva = $dbo->fetchNum('SELECT `id` FROM `co_iva` WHERE `deleted_at` IS NOT NULL');
         foreach ($id_records as $id) {
-            $res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva`='.prepare($id).
-            ' UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.prepare($id).
-            ' UNION SELECT `co_righe_contratti`.`id` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = '.prepare($id).
-            ' UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.prepare($id).
-            ' UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.prepare($id).
-            ' UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.prepare($id).
+            $res = $dbo->fetchNum('SELECT `co_righe_documenti`.`id` FROM `co_righe_documenti` WHERE `co_righe_documenti`.`id_iva`='.prepare($id).
+            ' UNION SELECT `co_righe_preventivi`.`id` FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`id_iva` = '.prepare($id).
+            ' UNION SELECT `co_righe_contratti`.`id` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`id_iva` = '.prepare($id).
+            ' UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`id_iva` = '.prepare($id).
+            ' UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`id_iva` = '.prepare($id).
+            ' UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`id_iva_vendita` = '.prepare($id).
             ' UNION SELECT `an_anagrafiche`.`id` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_iva_vendite` = '.prepare($id).' OR `an_anagrafiche`.`id_iva_acquisti` = '.prepare($id));
 
             if (empty($res)) {

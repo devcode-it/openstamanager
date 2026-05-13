@@ -34,7 +34,7 @@ echo App::internalLoad('conti.php', $result, $options);
 echo '
     <div class="row">
         <div class="col-md-'.$width.' '.(!empty($options['nascondi_prezzi']) ? 'hidden' : '').'">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva", "select-options": '.json_encode($options['select-options']['iva']).' ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "value": "'.$result['id_iva'].'", "ajax-source": "iva", "select-options": '.json_encode($options['select-options']['iva']).' ]}
         </div>';
 
 // Quantità
@@ -108,7 +108,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                 sconto = sconto / 100 * $("#prezzo_unitario").val().toEnglish();
             }
             if (prezzi_ivati!=0) {
-                percentuale_iva = input("idiva").getElement().selectData().percentuale;
+                percentuale_iva = input("id_iva").getElement().selectData().percentuale;
                 prezzo = ($("#prezzo_unitario").val().toEnglish() / (1 + percentuale_iva / 100)) - (sconto / (1 + percentuale_iva / 100));
             } else {
                 prezzo = $("#prezzo_unitario").val().toEnglish() - sconto;

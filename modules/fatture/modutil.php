@@ -209,10 +209,10 @@ if (!function_exists('aggiungi_movimento')) {
         // Calcolo l'iva della rivalsa inps
         $iva_rivalsa_inps = 0;
 
-        $rsr = $dbo->fetchArray('SELECT `idiva`, `rivalsa_inps` FROM `co_righe_documenti` WHERE `id_documento`='.prepare($id_documento));
+        $rsr = $dbo->fetchArray('SELECT `id_iva`, `rivalsa_inps` FROM `co_righe_documenti` WHERE `id_documento`='.prepare($id_documento));
 
         for ($r = 0; $r < sizeof($rsr); ++$r) {
-            $qi = Aliquota::find(prepare($rsr[$r]['idiva']))->percentuale;
+            $qi = Aliquota::find(prepare($rsr[$r]['id_iva']))->percentuale;
             $rsi = $dbo->fetchArray($qi);
             $iva_rivalsa_inps += $rsr[$r]['rivalsa_inps'] / 100 * $rsi[0]['percentuale'];
         }
@@ -556,7 +556,7 @@ if (!function_exists('verifica_numero_fattura')) {
         $righe = [];
 
         // Righe documento
-        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(fn ($item, $key) => $item['prezzo_unitario'].'|'.$item['idiva'].'|'.$item['sconto_unitario']);
+        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(fn ($item, $key) => $item['prezzo_unitario'].'|'.$item['id_iva'].'|'.$item['sconto_unitario']);
 
         if (setting('Raggruppa attività per tipologia in fattura') && !$righe_documento->isEmpty()) {
             $articoli = [];

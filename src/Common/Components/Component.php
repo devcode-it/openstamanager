@@ -281,12 +281,12 @@ abstract class Component extends Model
         // Azioni specifiche di inizializzazione
         $model->customInitCopiaIn($this);
 
-        if (empty($model->idiva)) {
-            if ($this->idiva) {
-                $model->idiva = $this->idiva;
+        if (empty($model->id_iva)) {
+            if ($this->id_iva) {
+                $model->id_iva = $this->id_iva;
             } else {
-                $model->idiva = setting('Iva predefinita');
-                unset($attributes['idiva']);
+                $model->id_iva = setting('Iva predefinita');
+                unset($attributes['id_iva']);
             }
         }
 
@@ -461,11 +461,11 @@ abstract class Component extends Model
      */
     protected function customBeforeDataCopiaIn($original)
     {
-        if (!empty($original->idiva)) {
-            $this->idiva = $original->idiva;
+        if (!empty($original->id_iva)) {
+            $this->id_iva = $original->id_iva;
         } else {
             // Set default IVA to prevent foreign key constraint violations
-            $this->idiva = setting('Iva predefinita');
+            $this->id_iva = setting('Iva predefinita');
         }
     }
 

@@ -123,7 +123,7 @@ class RigheInterventi extends AppResource
             'tipo_sconto' => $riga->tipo_sconto,
             'sconto_percentuale' => $riga->sconto_percentuale,
             'sconto_unitario' => $riga->sconto_unitario,
-            'id_iva' => $riga->idiva,
+            'id_iva' => $riga->id_iva,
             'iva_unitaria' => $riga->iva_unitaria,
             'prezzo_unitario_ivato' => $riga->prezzo_unitario_ivato,
             'sconto_iva_unitario' => $riga->sconto_iva_unitario,
@@ -221,7 +221,7 @@ class RigheInterventi extends AppResource
         if (empty($data['id_iva'])) {
             if ($data['is_articolo']) {
                 $originale = ArticoloOriginale::find($data['id_articolo']);
-                $data['id_iva'] = $originale->idiva_vendita;
+                $data['id_iva'] = $originale->id_iva_vendita;
             } else {
                 $data['id_iva'] = setting('Iva predefinita');
             }

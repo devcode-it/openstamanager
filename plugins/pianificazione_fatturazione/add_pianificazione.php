@@ -93,7 +93,7 @@ echo '
 
             <div class="tab-pane" id="div_righe">';
 
-$iva_righe = $contratto->getRighe()->groupBy('idiva');
+$iva_righe = $contratto->getRighe()->groupBy('id_iva');
 
 /*
 foreach ($iva_righe as $id_iva => $righe) {
@@ -110,13 +110,13 @@ echo '
 </div>';
 
 foreach ($righe as $riga) {
-    $iva = Aliquota::find($riga->idiva);
+    $iva = Aliquota::find($riga->id_iva);
     $descrizione = $riga->descrizione."\n{periodo}";
 
     $options = [
         'id' => $riga->id_iva,
         'totale_imponibile' => $riga->totale_imponibile,
-        'iva' => $riga->idiva,
+        'iva' => $riga->id_iva,
         'totale' => $riga->totale,
         'qta' => $riga->qta,
     ];

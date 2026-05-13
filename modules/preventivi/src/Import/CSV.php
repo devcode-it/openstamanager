@@ -319,10 +319,10 @@ class CSV extends CSVImporter
             }
 
             $anagrafica = $preventivo->anagrafica;
-            $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
+            $id_iva = $articolo_orig->id_iva_vendita ?: ($anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
 
             $riga_articolo->descrizione = $articolo_orig->getTranslation('title');
-            $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
+            $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $id_iva);
             $riga_articolo->qta = !empty($record['qta']) ? $record['qta'] : 1;
 
             $riga_articolo->save();
@@ -352,10 +352,10 @@ class CSV extends CSVImporter
                 $riga->data_evasione = $this->parseData($record['data_evasione']);
             }
 
-            $idiva = $this->trovaAliquotaIva($record, $preventivo);
+            $id_iva = $this->trovaAliquotaIva($record, $preventivo);
 
             $riga->descrizione = $record['descrizione_riga'];
-            $riga->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
+            $riga->setPrezzoUnitario($record['prezzo_unitario'], $id_iva);
             $riga->qta = !empty($record['qta']) ? $record['qta'] : 1;
 
             $riga->save();

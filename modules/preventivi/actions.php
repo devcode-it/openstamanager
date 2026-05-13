@@ -99,7 +99,7 @@ switch (post('op')) {
             $preventivo->codice_cig = post('codice_cig');
             $preventivo->codice_cup = post('codice_cup');
             $preventivo->id_tipo_intervento = post('id_tipo_intervento');
-            $preventivo->idiva = post('idiva');
+            $preventivo->id_iva = post('id_iva');
             $preventivo->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             $preventivo->save();
@@ -207,7 +207,7 @@ switch (post('op')) {
         $articolo->confermato = post('confermato') ?: 0;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
-        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         $articolo->id_conto = post('id_conto') ?: null;
@@ -257,7 +257,7 @@ switch (post('op')) {
 
         $sconto->descrizione = post('descrizione');
         $sconto->note = post('note');
-        $sconto->setScontoUnitario(post('sconto_unitario'), post('idiva'));
+        $sconto->setScontoUnitario(post('sconto_unitario'), post('id_iva'));
         $sconto->confermato = setting('Conferma automaticamente le quantità nei preventivi');
         $sconto->save();
 
@@ -288,7 +288,7 @@ switch (post('op')) {
         $riga->confermato = post('confermato') ?: 0;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
-        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
+        $riga->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $riga->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $riga->setProvvigione(post('provvigione'), post('tipo_provvigione'));
 
@@ -398,7 +398,7 @@ switch (post('op')) {
                     'type' => $riga::class, 'descrizione' => $riga->descrizione, 'qta' => $riga->qta, 'um' => $riga->um,
                     'prezzo_unitario' => $riga->prezzo_unitario, 'sconto_unitario' => $riga->sconto_unitario,
                     'sconto_percentuale' => $riga->sconto_percentuale, 'tipo_sconto' => $riga->tipo_sconto,
-                    'idiva' => $riga->idiva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
+                    'id_iva' => $riga->id_iva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
                 ];
                 if ($riga->isArticolo()) {
                     $riga_array['idarticolo'] = $riga->idarticolo;
@@ -436,7 +436,7 @@ switch (post('op')) {
                 $riga->qta = $riga_data['qta'];
                 $riga->um = $riga_data['um'];
                 if (!$riga->isDescrizione()) {
-                    $riga->idiva = $riga_data['idiva'];
+                    $riga->id_iva = $riga_data['id_iva'];
                     $riga->prezzo_unitario = $riga_data['prezzo_unitario'];
                     $riga->sconto_unitario = $riga_data['sconto_unitario'];
                     $riga->sconto_percentuale = $riga_data['sconto_percentuale'];
@@ -534,10 +534,10 @@ switch (post('op')) {
             $articolo->confermato = setting('Conferma automaticamente le quantità nei preventivi');
 
             // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
-            if ($originale->idiva_vendita) {
-                $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
+            if ($originale->id_iva_vendita) {
+                $aliquota_articolo = floatval(Aliquota::find($originale->id_iva_vendita)->percentuale);
             }
-            $id_iva = ($preventivo->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+            $id_iva = ($preventivo->anagrafica->id_iva_vendite && (!$originale->id_iva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->id_iva_vendite : $originale->id_iva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
@@ -579,10 +579,10 @@ switch (post('op')) {
 
         if (!empty($riga)) {
             if ($riga->isSconto()) {
-                $riga->setScontoUnitario(post('sconto'), $riga->idiva);
+                $riga->setScontoUnitario(post('sconto'), $riga->id_iva);
             } else {
                 $riga->qta = post('qta');
-                $riga->setPrezzoUnitario(post('prezzo'), $riga->idiva);
+                $riga->setPrezzoUnitario(post('prezzo'), $riga->id_iva);
                 $riga->setSconto(post('sconto'), post('tipo_sconto'));
                 $riga->costo_unitario = post('costo') ?: 0;
             }
@@ -603,7 +603,7 @@ switch (post('op')) {
             }
 
             if ($articolo->prezzo_unitario != $riga['price']) {
-                $articolo->setPrezzoUnitario($riga['price'], $articolo->idiva);
+                $articolo->setPrezzoUnitario($riga['price'], $articolo->id_iva);
                 $articolo->save();
                 ++$numero_totale;
             }
@@ -651,7 +651,7 @@ switch (post('op')) {
                     $sconto = $prezzo_consigliato['sconto'];
 
                     $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $riga->articolo->prezzo_vendita_ivato : $riga->articolo->prezzo_vendita);
-                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->idiva);
+                    $riga->setPrezzoUnitario($prezzo_unitario, $riga->id_iva);
                 }
 
                 if ($dir == 'entrata' && $update_prezzo_acquisto) {

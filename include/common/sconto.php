@@ -49,7 +49,7 @@ echo '
 // Iva
 echo '
     <div class="col-md-'.($options['action'] == 'add' ? 4 : 6).'">
-        {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$result['idiva'].'", "ajax-source": "iva" ]}
+        {[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "value": "'.$result['id_iva'].'", "ajax-source": "iva" ]}
     </div>
 </div>';
 

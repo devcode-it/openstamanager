@@ -98,7 +98,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         [$categoria, $sottocategoria] = $this->gestioneCategorie($data['categoria'], $data['sottocategoria']);
 
         $articolo = Articolo::build($data['codice'], $categoria, $sottocategoria);
-        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
+        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->id_iva_vendita);
         $articolo->setTranslation('title', $data['descrizione']);
         $articolo->save();
 
@@ -123,7 +123,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         }
 
         $articolo->setTranslation('title', $data['descrizione']);
-        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->idiva_vendita);
+        $articolo->setPrezzoVendita($data['prezzo_vendita'], $articolo->id_iva_vendita);
 
         $articolo->save();
 

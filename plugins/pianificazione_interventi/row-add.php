@@ -43,14 +43,14 @@ $result = [
     'prezzo' => 0,
     'sconto_unitario' => 0,
     'tipo_sconto' => '',
-    'idiva' => '',
+    'id_iva' => '',
     'id_conto' => $id_conto,
     'ritenuta_contributi' => true,
 ];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT id_iva_vendite AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
-$result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
+$iva = $dbo->fetchArray('SELECT id_iva_vendite AS id_iva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
+$result['id_iva'] = $iva[0]['id_iva'] ?: setting('Iva predefinita');
 
 // Importazione della gestione dedicata
 $file = 'riga';

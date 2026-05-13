@@ -38,17 +38,17 @@ $id = prepare($id_record);
 
 $res = $dbo->fetchOne('
     SELECT (
-        SELECT COUNT(*) FROM `co_righe_documenti` WHERE `co_righe_documenti`.`idiva` = '.$id.'
+        SELECT COUNT(*) FROM `co_righe_documenti` WHERE `co_righe_documenti`.`id_iva` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`idiva` = '.$id.'
+        SELECT COUNT(*) FROM `co_righe_preventivi` WHERE `co_righe_preventivi`.`id_iva` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idiva` = '.$id.'
+        SELECT COUNT(*) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`id_iva` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.$id.'
+        SELECT COUNT(*) FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`id_iva` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.$id.'
+        SELECT COUNT(*) FROM `or_righe_ordini` WHERE `or_righe_ordini`.`id_iva` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.$id.'
+        SELECT COUNT(*) FROM `mg_articoli` WHERE `mg_articoli`.`id_iva_vendita` = '.$id.'
     ) + (
         SELECT COUNT(*) FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_iva_vendite` = '.$id.' OR `an_anagrafiche`.`id_iva_acquisti` = '.$id.'
     ) AS total')['total'];

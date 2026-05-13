@@ -134,7 +134,7 @@ $id_iva = $fattura->anagrafica->id_iva_vendite ?: setting('Iva predefinita');
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva", "help": "'.tr("L'aliquota IVA selezionata sovrascrive il valore predditivo presentato in Attività, modificando di conseguenza le sessioni di lavoro dei tecnici").'. '.tr('Righe generiche, articoli e sconti non verranno influenzati').'."]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva", "help": "'.tr("L'aliquota IVA selezionata sovrascrive il valore predditivo presentato in Attività, modificando di conseguenza le sessioni di lavoro dei tecnici").'. '.tr('Righe generiche, articoli e sconti non verranno influenzati').'."]}
         </div>';
 
 echo '

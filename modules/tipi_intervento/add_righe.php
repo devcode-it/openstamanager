@@ -49,7 +49,7 @@ if (empty($idriga)) {
     $descrizione = $rsr[0]['descrizione'];
     $qta = $rsr[0]['qta'];
     $um = $rsr[0]['um'];
-    $id_iva = $rsr[0]['idiva'];
+    $id_iva = $rsr[0]['id_iva'];
     $prezzo_vendita = $rsr[0]['prezzo_vendita'];
     $prezzo_acquisto = $rsr[0]['prezzo_acquisto'];
 }
@@ -88,7 +88,7 @@ echo '
 // Iva
 echo '
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Iva').'", "name": "idiva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva" ]}
+            {[ "type": "select", "label": "'.tr('Iva').'", "name": "id_iva", "required": 1, "value": "'.$id_iva.'", "ajax-source": "iva" ]}
         </div>
     </div>';
 

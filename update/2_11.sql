@@ -270,7 +270,7 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
-    LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
+    LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`id_iva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`co_banche`.`nome`, \' - \', `co_banche`.`iban`) AS `descrizione` FROM `co_banche` GROUP BY `co_banche`.`id`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
     LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
     LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
@@ -576,7 +576,7 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
-    LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`idiva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
+    LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`id_iva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`co_banche`.`nome`, ' - ', `co_banche`.`iban`) AS `descrizione` FROM `co_banche` GROUP BY `co_banche`.`id`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
     LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
     LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
@@ -902,7 +902,7 @@ FROM
     `mg_articoli`
     LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_iva` ON `mg_articoli`.`idiva_vendita` = `co_iva`.`id`
+    LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
     LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.|lang|)
     LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `id_stato` IN(SELECT `id` FROM `or_statiordine` WHERE `is_bloccato` = 0) GROUP BY `idarticolo`) ordini ON `ordini`.`idarticolo` = `mg_articoli`.`id`
     LEFT JOIN (SELECT `idarticolo`, `id_sede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `id_sede` = |giacenze_sedi_id_sede| GROUP BY `idarticolo`, `id_sede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
@@ -1056,10 +1056,17 @@ ALTER TABLE `co_preventivi` CHANGE `idstato` `id_stato` TINYINT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 ALTER TABLE `co_documenti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idreferente` `id_referente` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+
 ALTER TABLE `co_contratti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idpagamento` `id_pagamento` INT NULL DEFAULT NULL;
+ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+
 ALTER TABLE `co_contratti` CHANGE `id_contratto_prev` `id_contratto_prev` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;
@@ -1075,12 +1082,15 @@ ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico`
 
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idporto` `id_porto` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idporto` `id_porto` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idaspettobeni` `id_aspetto_beni` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
-ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
@@ -1103,3 +1113,6 @@ ALTER TABLE `co_pagamenti` CHANGE `idconto_vendite` `id_conto_vendite` INT NULL 
 ALTER TABLE `co_pagamenti` CHANGE `idconto_acquisti` `id_conto_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `co_pianodeiconti2` CHANGE `idpianodeiconti1` `id_piano_dei_conti1` INT NOT NULL;
 ALTER TABLE `co_pianodeiconti3` CHANGE `idpianodeiconti2` `id_piano_dei_conti2` INT NOT NULL;
+
+ALTER TABLE `co_preventivi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;

@@ -69,8 +69,8 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
             $riga = Articolo::build($ddt, $originale);
 
             if ($originale->prezzo_vendita > 0) {
-                $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
-                $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
+                $id_iva = ($originale->id_iva_vendita ?: setting('Iva predefinita'));
+                $riga->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);
             } else {
                 $riga->prezzo_unitario = 0;
             }
@@ -120,8 +120,8 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
             $riga->descrizione = ($descrizione ?: '-');
             $riga->costo_unitario = $originale->prezzo_acquisto;
             $riga->idarticolo = $originale->id;
-            $idiva = ($originale->idiva_vendita ?: setting('Iva predefinita'));
-            $riga->setPrezzoUnitario($originale->prezzo_vendita, $idiva);
+            $id_iva = ($originale->id_iva_vendita ?: setting('Iva predefinita'));
+            $riga->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);
         } else {
             $riga->descrizione = ($data['descrizione'] ?: '-');
             $riga->costo_unitario = 0;

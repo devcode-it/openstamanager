@@ -36,7 +36,7 @@ $query = 'SELECT
         `or_ordini`
         INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
         INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
-        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
+        INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
     WHERE 
         `id_articolo` = '.prepare($articolo->id)."
         AND `or_tipiordine`.`dir`= '|dir|'

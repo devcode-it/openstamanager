@@ -313,9 +313,9 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
+        INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
         LEFT JOIN `or_tipiordine_lang` ON (
-            `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND 
+            `or_tipiordine_lang`.`id_record` = `or_ordini`.`id_tipo_ordine` AND 
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
@@ -416,9 +416,9 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
+        INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
         LEFT JOIN `or_tipiordine_lang` ON (
-            `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND 
+            `or_tipiordine_lang`.`id_record` = `or_ordini`.`id_tipo_ordine` AND 
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
@@ -577,7 +577,7 @@ class DocumentiCollegati
             `or_statiordine_lang`.`title` AS stato_documento
         FROM `or_ordini`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
-        INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+        INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`id_tipo_ordine`
         LEFT JOIN `or_tipiordine_lang` ON (
             `or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1030,9 +1030,9 @@ class DocumentiCollegati
             `or_tipiordine`.`dir`,
             NULL AS `deleted_at`
         FROM `or_ordini`
-        INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+        INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`id_tipo_ordine`
         LEFT JOIN `or_tipiordine_lang` ON (
-            `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND
+            `or_tipiordine_lang`.`id_record` = `or_ordini`.`id_tipo_ordine` AND
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         LEFT JOIN or_statiordine ON or_ordini.id_stato=or_statiordine.id
@@ -1976,7 +1976,7 @@ class DocumentiCollegati
                 IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\') AS modulo,
                 `or_statiordine_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `or_tipiordine` ON `'.$tabella.'`.`idtipoordine` = `or_tipiordine`.`id`
+            INNER JOIN `or_tipiordine` ON `'.$tabella.'`.`id_tipo_ordine` = `or_tipiordine`.`id`
             LEFT JOIN `or_tipiordine_lang` ON (
                 `or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND
                 `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'

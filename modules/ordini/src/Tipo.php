@@ -36,7 +36,7 @@ class Tipo extends Model
 
     public function ordini()
     {
-        return $this->hasMany(Ordine::class, 'idtipoordine');
+        return $this->hasMany(Ordine::class, 'id_tipo_ordine');
     }
 
     public function getModuleAttribute()

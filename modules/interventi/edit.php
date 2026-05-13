@@ -367,7 +367,7 @@ if (!$block_edit) {
             `or_ordini`
             INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
             INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
-            INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
+            INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`id_tipo_ordine`
         WHERE
             ((`or_tipiordine`.`dir` = "entrata" AND `id_anagrafica`='.prepare($record['id_anagrafica']).') || `or_tipiordine`.`dir` = "uscita")
             AND `or_statiordine`.`is_fatturabile` = 1

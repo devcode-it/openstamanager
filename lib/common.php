@@ -715,7 +715,7 @@ function cleanInvalidBankReferences($anagrafica)
  *                           - 'direction': direzione del documento (entrata/uscita)
  *                           - 'skip_direction': direzione da saltare (ritorna stringa vuota)
  *                           - 'type_document': tipo di documento per condizioni extra
- *                           - 'type_document_field': campo del tipo documento (es. id_tipo_ddt, idtipoordine)
+ *                           - 'type_document_field': campo del tipo documento (es. id_tipo_ddt, id_tipo_ordine)
  *                           - 'type_document_table': tabella del tipo documento
  *                           - 'conditions_extra': array di condizioni extra SQL
  *                           - 'use_setting': usa setting() invece di Generator::getMaschera() (default false)
@@ -816,7 +816,7 @@ function getNextNumeroProgressivo($table, $field, $data, $id_segment, $options =
  *                           - 'direction': direzione del documento (entrata/uscita)
  *                           - 'skip_direction': direzione da saltare (ritorna stringa vuota, default 'uscita')
  *                           - 'type_document': tipo di documento per condizioni extra
- *                           - 'type_document_field': campo del tipo documento (es. id_tipo_ddt, idtipoordine)
+ *                           - 'type_document_field': campo del tipo documento (es. id_tipo_ddt, id_tipo_ordine)
  *                           - 'type_document_table': tabella del tipo documento
  *                           - 'conditions_extra': array di condizioni extra SQL
  *                           - 'date_pattern': pattern della data per Generator::generate()

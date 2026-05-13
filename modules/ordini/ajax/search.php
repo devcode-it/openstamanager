@@ -37,7 +37,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`= `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_ordine`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM or_righe_ordini GROUP BY `id_ordine`) righe ON `righe`.`id_ordine`=`or_ordini`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`= `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_ordine`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM or_righe_ordini GROUP BY `id_ordine`) righe ON `righe`.`id_ordine`=`or_ordini`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');

@@ -233,7 +233,7 @@ if (empty(get('modal'))) {
                         FROM
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine`=`or_ordini`.`id`
-                            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
+                            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
                             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `or_righe_ordini`.`id`='.prepare($acquisto['id_riga_ordine']);
@@ -344,7 +344,7 @@ if (empty(get('modal'))) {
                         FROM
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine`=`or_ordini`.`id`
-                            INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
+                            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
                             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `or_righe_ordini`.`id`='.prepare($vendita['id_riga_ordine']);

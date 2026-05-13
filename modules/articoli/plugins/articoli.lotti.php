@@ -209,7 +209,7 @@ if (empty(get('modal'))) {
                         FROM
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
@@ -320,7 +320,7 @@ if (empty(get('modal'))) {
                         FROM
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt`=`dt_ddt`.`id`
-                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
+                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);

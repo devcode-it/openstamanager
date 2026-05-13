@@ -36,7 +36,7 @@ class Tipo extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idtipoddt');
+        return $this->hasMany(DDT::class, 'id_tipo_ddt');
     }
 
     public function getModuleAttribute()

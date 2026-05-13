@@ -178,7 +178,7 @@ class DDT extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipoddt');
+        return $this->belongsTo(Tipo::class, 'id_tipo_ddt');
     }
 
     public function stato()
@@ -303,7 +303,7 @@ class DDT extends Document
         return getNextNumeroProgressivo('dt_ddt', 'numero', $data, $id_segment, [
             'direction' => $direzione,
             'skip_direction' => 'entrata',
-            'type_document_field' => 'idtipoddt',
+            'type_document_field' => 'id_tipo_ddt',
             'type_document_table' => 'dt_tipiddt',
             'use_date_pattern' => true,
         ]);
@@ -323,7 +323,7 @@ class DDT extends Document
         return getNextNumeroSecondarioProgressivo('dt_ddt', 'numero_esterno', $data, $id_segment, [
             'direction' => $direzione,
             'skip_direction' => 'uscita',
-            'type_document_field' => 'idtipoddt',
+            'type_document_field' => 'id_tipo_ddt',
             'type_document_table' => 'dt_tipiddt',
             'use_date_pattern' => true,
         ]);

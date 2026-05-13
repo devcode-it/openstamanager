@@ -88,7 +88,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga->um = $data['um'] ?: null;
         $riga->save();
 
-        $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
+        $module = ($ddt->id_tipo_ddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
 
         return [
             'id' => $riga->id_ddt,
@@ -132,7 +132,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga->save();
 
         $ddt = DDT::find($riga->id_ddt);
-        $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
+        $module = ($ddt->id_tipo_ddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
 
         return [
             'id' => $riga->id_ddt,
@@ -148,7 +148,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga = $riga ?: Descrizione::find($data['id_riga']);
 
         $ddt = DDT::find($riga->id_ddt);
-        $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
+        $module = ($ddt->id_tipo_ddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
         $riga->delete();
 
         ricalcola_costiagg_ddt($riga->id_ddt);

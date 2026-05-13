@@ -45,7 +45,7 @@ switch (filter('op')) {
     case 'add':
         $id_anagrafica = post('id_anagrafica');
         $data = post('data');
-        $id_tipo = post('idtipoddt');
+        $id_tipo = post('id_tipo_ddt');
         $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($id_anagrafica);

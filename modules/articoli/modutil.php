@@ -29,7 +29,7 @@ if (!function_exists('aggiorna_sedi_movimenti')) {
         $dbo = database();
 
         if ($module == 'ddt') {
-            $rs = $dbo->fetchArray('SELECT `id_sede_partenza`, `id_sede_destinazione`, `dir` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt` WHERE `dt_ddt`.`id`='.prepare($id));
+            $rs = $dbo->fetchArray('SELECT `id_sede_partenza`, `id_sede_destinazione`, `dir` FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt` WHERE `dt_ddt`.`id`='.prepare($id));
 
             $id_sede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['id_sede_destinazione'] : $rs[0]['id_sede_partenza'];
 

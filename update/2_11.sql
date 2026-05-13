@@ -743,7 +743,7 @@ SELECT
 FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
     LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
@@ -773,7 +773,7 @@ SELECT
 FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
     LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
@@ -977,7 +977,7 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [	{	"type": "table", "field
 
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Nome, Indirizzo, Città, CAP, Provincia, Referente", "query": "SELECT an_sedi.id, an_sedi.nomesede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, GROUP_CONCAT(an_referenti.nome SEPARATOR \', \') AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON id_sede = an_sedi.id WHERE 1=1 AND an_sedi.id_anagrafica=|id_parent| AND deleted_at IS NULL GROUP BY an_sedi.id HAVING 2=2 ORDER BY an_sedi.id DESC"} ]}' WHERE `name` = "Sedi aggiuntive";
 
-UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT `dt_ddt`.`id`, (CASE WHEN `dt_tipiddt`.`dir` = \'entrata\' THEN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in uscita\') ELSE (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in entrata\') END) AS _link_module_, `dt_ddt`.`id` AS _link_record_, IF(`dt_ddt`.`numero_esterno` = \'\', `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`) AS Numero, DATE_FORMAT(`dt_ddt`.`data`, \'%d/%m/%Y\') AS Data, `dt_righe_ddt`.`descrizione` AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(`dt_righe_ddt`.`qta`, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM `dt_ddt` LEFT JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`id_ddt` JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id` WHERE `dt_ddt`.`id_anagrafica`=|id_parent| ORDER BY `dt_ddt`.`id` DESC"} ]}' WHERE `name` = "Ddt del cliente";
+UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT `dt_ddt`.`id`, (CASE WHEN `dt_tipiddt`.`dir` = \'entrata\' THEN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in uscita\') ELSE (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in entrata\') END) AS _link_module_, `dt_ddt`.`id` AS _link_record_, IF(`dt_ddt`.`numero_esterno` = \'\', `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`) AS Numero, DATE_FORMAT(`dt_ddt`.`data`, \'%d/%m/%Y\') AS Data, `dt_righe_ddt`.`descrizione` AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(`dt_righe_ddt`.`qta`, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM `dt_ddt` LEFT JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`id_ddt` JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id` WHERE `dt_ddt`.`id_anagrafica`=|id_parent| ORDER BY `dt_ddt`.`id` DESC"} ]}' WHERE `name` = "Ddt del cliente";
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ {  "type": "table", "fields": "Numero, Data inizio, Data fine, Tipo", "query": "SELECT in_interventi.id, in_interventi.codice AS Numero, DATE_FORMAT(MAX(orario_inizio), \'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(MAX(orario_fine), \'%d/%m/%Y\') AS \'Data fine\', `in_tipiintervento_lang`.`title`AS \'Tipo\', (SELECT `id` FROM `zz_modules` WHERE `name` = \'Interventi\' LIMIT 1) AS _link_module_, in_interventi.id AS _link_record_ FROM in_interventi LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` INNER JOIN `in_tipiintervento` ON (`in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`) LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = \'Lingua\')) WHERE 1=1 AND in_interventi.deleted_at IS NULL AND id_anagrafica = |id_parent| GROUP BY `in_interventi`.`id` HAVING 2=2 ORDER BY in_interventi.id DESC"}]}' WHERE `name` = "Storico attività";
 
@@ -1062,6 +1062,7 @@ ALTER TABLE `co_preventivi` CHANGE `idstato` `id_stato` TINYINT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 ALTER TABLE `co_documenti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idreferente` `id_referente` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
@@ -1084,6 +1085,8 @@ ALTER TABLE `co_righe_contratti` CHANGE `idcontratto` `id_contratto` INT NOT NUL
 ALTER TABLE `co_righe_documenti` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idtipoddt` `id_tipo_ddt` TINYINT NOT NULL;
+
 ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
@@ -1093,13 +1096,20 @@ ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idspedizione` `id_spedizione` TINYINT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idporto` `id_porto` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idporto` `id_porto` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idporto` `id_porto` TINYINT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idaspettobeni` `id_aspetto_beni` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idaspettobeni` `id_aspetto_beni` TINYINT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
@@ -1139,6 +1149,7 @@ ALTER TABLE `co_righe_contratti` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;

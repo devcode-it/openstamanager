@@ -57,7 +57,7 @@ switch ($resource) {
             FROM `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
-                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
                 LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 
                 `id_anagrafica` = '.prepare($id_anagrafica)." AND
@@ -135,7 +135,7 @@ switch ($resource) {
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
                 LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
+                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)." AND
                 `dt_stati_lang`.`title` != 'Fatturato' AND

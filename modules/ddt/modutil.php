@@ -248,7 +248,7 @@ if (!function_exists('verifica_numero_ddt')) {
             return null;
         }
 
-        $documenti = DDT::where('idtipoddt', $tipo->id)
+        $documenti = DDT::where('id_tipo_ddt', $tipo->id)
             ->where('data', $data)
             ->get();
 
@@ -258,7 +258,7 @@ if (!function_exists('verifica_numero_ddt')) {
         $ultimo = Generator::getPreviousFrom($maschera, 'dt_ddt', $campo, [
             'data < '.prepare(date('Y-m-d', strtotime($data))),
             'YEAR(data) = '.prepare(date('Y', strtotime($data))),
-            'idtipoddt = '.prepare($tipo->id),
+            'id_tipo_ddt = '.prepare($tipo->id),
         ], $data);
 
         do {

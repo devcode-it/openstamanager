@@ -64,7 +64,7 @@ $righe = $dbo->fetchArray(
                         DATE(`co_righe_preventivi`.`updated_at`) AS updated_at
                     FROM
                         `co_preventivi`
-                        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
+                        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`id_articolo`
                         INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
                         LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

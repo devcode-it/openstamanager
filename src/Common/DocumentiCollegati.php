@@ -560,7 +560,7 @@ class DocumentiCollegati
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_righe_documenti`.`idpreventivo` = '.prepare($id_preventivo).'
+        WHERE `co_righe_documenti`.`id_preventivo` = '.prepare($id_preventivo).'
         GROUP BY `co_documenti`.`id`';
 
         $fatture = $dbo->fetchArray($query_fatture);
@@ -587,7 +587,7 @@ class DocumentiCollegati
             `or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_preventivo).'
+        WHERE `or_righe_ordini`.`id_preventivo` = '.prepare($id_preventivo).'
         GROUP BY `or_ordini`.`id`';
 
         $ordini = $dbo->fetchArray($query_ordini);
@@ -776,13 +776,13 @@ class DocumentiCollegati
             `co_statipreventivi_lang`.`title` AS stato_documento
         FROM `co_preventivi`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = '.prepare($id_ordine).'
-        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
+        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
         LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
             `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `or_righe_ordini`.`idpreventivo` = `co_preventivi`.`id`
+        WHERE `or_righe_ordini`.`id_preventivo` = `co_preventivi`.`id`
         GROUP BY `co_preventivi`.`id`
         ORDER BY `co_preventivi`.`data_bozza` DESC';
 
@@ -948,7 +948,7 @@ class DocumentiCollegati
             ((SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`))*SUM(`co_righe_preventivi`.`qta`)) AS prezzo_totale,
             SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`) AS prezzo_unitario
         FROM `co_preventivi`
-        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`id_preventivo`
         LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
             `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
@@ -1343,7 +1343,7 @@ class DocumentiCollegati
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
-        WHERE `co_righe_documenti`.`idpreventivo` = '.prepare($id_preventivo);
+        WHERE `co_righe_documenti`.`id_preventivo` = '.prepare($id_preventivo);
 
         $result = $dbo->fetchOne($query_fatture);
         $total += (int) $result['total'];
@@ -1352,7 +1352,7 @@ class DocumentiCollegati
         $query_ordini = 'SELECT COUNT(DISTINCT `or_ordini`.`id`) AS total
         FROM `or_ordini`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
-        WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_preventivo);
+        WHERE `or_righe_ordini`.`id_preventivo` = '.prepare($id_preventivo);
 
         $result = $dbo->fetchOne($query_ordini);
         $total += (int) $result['total'];
@@ -1437,8 +1437,8 @@ class DocumentiCollegati
         $query_preventivi = 'SELECT COUNT(DISTINCT `co_preventivi`.`id`) AS total
         FROM `co_preventivi`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = '.prepare($id_ordine).'
-        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
-        WHERE `or_righe_ordini`.`idpreventivo` = `co_preventivi`.`id`';
+        INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
+        WHERE `or_righe_ordini`.`id_preventivo` = `co_preventivi`.`id`';
 
         $result = $dbo->fetchOne($query_preventivi);
         $total += (int) $result['total'];
@@ -1515,7 +1515,7 @@ class DocumentiCollegati
         // Conta i preventivi collegati
         $query_preventivi = 'SELECT COUNT(DISTINCT `co_preventivi`.`id`) AS total
         FROM `co_preventivi`
-        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+        INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`id_preventivo`
         WHERE `co_righe_preventivi`.`id_articolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_preventivi);
@@ -1705,7 +1705,7 @@ class DocumentiCollegati
                 break;
             case 'preventivo':
                 $tabella_righe = 'co_righe_preventivi';
-                $campo_id_documento = 'idpreventivo';
+                $campo_id_documento = 'id_preventivo';
                 break;
             case 'contratto':
                 $tabella_righe = 'co_righe_contratti';
@@ -1826,7 +1826,7 @@ class DocumentiCollegati
             'or_righe_ordini' => ['id_ordine', 'ordine'],
             'dt_righe_ddt' => ['id_ddt', 'ddt'],
             'in_righe_interventi' => ['id_intervento', 'intervento'],
-            'co_righe_preventivi' => ['idpreventivo', 'preventivo'],
+            'co_righe_preventivi' => ['id_preventivo', 'preventivo'],
             'co_righe_contratti' => ['id_contratto', 'contratto'],
         ];
 

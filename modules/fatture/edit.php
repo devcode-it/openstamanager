@@ -824,7 +824,7 @@ if (!$block_edit) {
                     COUNT(*) AS tot
                 FROM
                     `co_preventivi`
-                    LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.idpreventivo
+                    LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.id_preventivo
                     INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.id_stato
                 WHERE
                     `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';

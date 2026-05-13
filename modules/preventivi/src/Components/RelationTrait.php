@@ -26,7 +26,7 @@ trait RelationTrait
 {
     public function getDocumentID()
     {
-        return 'idpreventivo';
+        return 'id_preventivo';
     }
 
     public function document()

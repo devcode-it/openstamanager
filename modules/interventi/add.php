@@ -97,7 +97,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `id_intervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `id_intervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as id_preventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];
@@ -109,7 +109,7 @@ elseif (!empty($id_intervento)) {
     $id_anagrafica = $intervento['id_anagrafica'];
     $id_cliente_finale = $intervento['id_cliente_finale'];
     $id_contratto = $intervento['id_contratto'];
-    $id_preventivo = $intervento['idpreventivo'];
+    $id_preventivo = $intervento['id_preventivo'];
     $id_zona = $intervento['id_zona'] ?: $id_zona;
 
     // Generazione dell'orario di fine sulla base del tempo standard definito dall'Intervento
@@ -196,7 +196,7 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_preventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -441,7 +441,7 @@ if (!empty($id_intervento)) {
 <script type="text/javascript">
     $(document).ready(function() {
        input("id_sede_destinazione").disable();
-       input("idpreventivo").disable();
+       input("id_preventivo").disable();
        input("id_contratto").disable();
        input("id_ordine").disable();
        input("id_referente").disable();
@@ -472,7 +472,7 @@ echo '
     var anagrafica = input("id_anagrafica");
     var sede = input("id_sede_destinazione");
     var contratto = input("id_contratto");
-    var preventivo = input("idpreventivo");
+    var preventivo = input("id_preventivo");
     var ordine = input("id_ordine");
     var referente = input("id_referente");
     var cliente_finale = input("id_cliente_finale");

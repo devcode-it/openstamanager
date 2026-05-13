@@ -99,12 +99,12 @@ echo '
 
                         <div class="col-md-6">';
 echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'"  ]}
+                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_preventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'"  ]}
                         </div>
 
                         <div class="col-md-6">';
 
-$idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
+$id_preventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
 
 echo '
 
@@ -334,7 +334,7 @@ if (!$block_edit) {
         FROM
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-            INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+            INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`id_preventivo`
         WHERE
             id_anagrafica='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
@@ -590,7 +590,7 @@ echo '
     var anagrafica = input("id_anagrafica");
     var sede = input("id_sede_destinazione");
     var contratto = input("id_contratto");
-    var preventivo = input("idpreventivo");
+    var preventivo = input("id_preventivo");
     var ordine = input("id_ordine");
     var cliente_finale = input("id_cliente_finale");
     var referente = input("id_referente");

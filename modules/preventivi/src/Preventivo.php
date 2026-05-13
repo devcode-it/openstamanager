@@ -210,22 +210,22 @@ class Preventivo extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idpreventivo');
+        return $this->hasMany(Components\Articolo::class, 'id_preventivo');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idpreventivo');
+        return $this->hasMany(Components\Riga::class, 'id_preventivo');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'idpreventivo');
+        return $this->hasMany(Components\Sconto::class, 'id_preventivo');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idpreventivo');
+        return $this->hasMany(Components\Descrizione::class, 'id_preventivo');
     }
 
     public function interventi()

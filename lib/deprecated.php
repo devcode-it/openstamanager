@@ -297,11 +297,11 @@ function doc_references($info, $dir, $ignore = [])
     }
 
     // Preventivo
-    elseif (!empty($info['idpreventivo'])) {
-        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($info['idpreventivo']));
+    elseif (!empty($info['id_preventivo'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_preventivi WHERE id='.prepare($info['id_preventivo']));
 
         $module = 'Preventivi';
-        $id = $info['idpreventivo'];
+        $id = $info['id_preventivo'];
 
         $document = tr('Preventivo');
     }

@@ -170,9 +170,9 @@ switch (post('op')) {
         $copia_righe = post('righe');
         $copia_allegati = post('allegati');
 
-        foreach ($id_records as $idpreventivo) {
+        foreach ($id_records as $id_preventivo) {
             // Copia del preventivo
-            $preventivo = Preventivo::find($idpreventivo);
+            $preventivo = Preventivo::find($id_preventivo);
             $new = $preventivo->replicate(['data_accettazione', 'data_conclusione', 'data_rifiuto']);
             $new->numero = Preventivo::getNextNumero(Carbon::now(), $new->id_segment);
             $new->data_bozza = Carbon::now();

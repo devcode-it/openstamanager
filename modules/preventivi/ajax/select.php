@@ -35,8 +35,8 @@ switch ($resource) {
                     `co_preventivi`.`id_tipo_intervento`,
                     `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
                     `in_tipiintervento`.`tempo_standard` AS tempo_standard,
-                    (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS totale,
-                    (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS sconto
+                    (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE id_preventivo=co_preventivi.id GROUP BY id_preventivo) AS totale,
+                    (SELECT SUM(sconto) FROM co_righe_preventivi WHERE id_preventivo=co_preventivi.id GROUP BY id_preventivo) AS sconto
                 FROM
                     `co_preventivi`
                     INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica`=`an_anagrafiche`.`id`

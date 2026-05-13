@@ -34,7 +34,7 @@ if (!empty($id_record)) {
         `in_statiintervento`.`colore` AS colore,
         IF((`in_interventi`.`id_sede_destinazione` = 0), `an_anagrafiche`.`id_zona`, `an_sedi`.`id_zona`) AS id_zona,
         `in_interventi`.`id_anagrafica` as id_anagrafica,
-        `in_interventi`.`id_preventivo` as idpreventivo,
+        `in_interventi`.`id_preventivo` as id_preventivo,
         `in_interventi`.`id_contratto` as id_contratto,
         `in_interventi`.`id_ordine` as id_ordine
     FROM 

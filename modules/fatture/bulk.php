@@ -415,7 +415,7 @@ switch (post('op')) {
                 $new_riga->setDocument($new);
 
                 if (!post('riferimenti')) {
-                    $new_riga->idpreventivo = 0;
+                    $new_riga->id_preventivo = 0;
                     $new_riga->id_contratto = 0;
                     $new_riga->id_intervento = null;
                     $new_riga->id_ddt = 0;

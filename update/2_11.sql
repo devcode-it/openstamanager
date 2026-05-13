@@ -548,9 +548,9 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
     LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND co_statipreventivi_lang.id_lang = |lang|)
-    LEFT JOIN (SELECT `idpreventivo`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_preventivi` GROUP BY `idpreventivo`) AS righe ON `co_preventivi`.`id` = `righe`.`idpreventivo`
+    LEFT JOIN (SELECT `id_preventivo`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_preventivi` GROUP BY `id_preventivo`) AS righe ON `co_preventivi`.`id` = `righe`.`id_preventivo`
     LEFT JOIN (SELECT `an_anagrafiche`.`id`, `an_anagrafiche`.`ragione_sociale` AS nome FROM `an_anagrafiche`) AS agente ON `agente`.`id` = `co_preventivi`.`id_agente`
-    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idpreventivo` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type` = 'ModulesPreventiviPreventivo' GROUP BY `idpreventivo`, `original_document_id`) AS `fattura` ON `fattura`.`idpreventivo` = `co_preventivi`.`id`
+    LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `id_preventivo` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type` = 'ModulesPreventiviPreventivo' GROUP BY `id_preventivo`, `original_document_id`) AS `fattura` ON `fattura`.`id_preventivo` = `co_preventivi`.`id`
     LEFT JOIN (SELECT COUNT(em_emails.id) AS emails, em_emails.id_record FROM em_emails INNER JOIN zz_operations ON zz_operations.id_email = em_emails.id WHERE id_module IN (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi') AND `zz_operations`.`op` = 'send-email' GROUP BY em_emails.id_record) AS `email` ON `email`.`id_record` = `co_preventivi`.`id`
     LEFT JOIN (SELECT `an_sedi`.`id`, CONCAT(`an_sedi`.`nomesede`, '<br />', IF(`an_sedi`.`telefono` != '', CONCAT(`an_sedi`.`telefono`, '<br />'), ''), IF(`an_sedi`.`cellulare` != '', CONCAT(`an_sedi`.`cellulare`, '<br />'), ''), `an_sedi`.`citta`, IF(`an_sedi`.`indirizzo` != '', CONCAT(' - ', `an_sedi`.`indirizzo`), '')) AS `info` FROM `an_sedi`) AS `sede_destinazione` ON `sede_destinazione`.`id` = `co_preventivi`.`id_sede_destinazione`
 WHERE
@@ -1126,12 +1126,16 @@ ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
+
 ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idtecnici` `id_tecnici` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 
 ALTER TABLE `co_provvigioni` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idordine` `id_ordine` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;

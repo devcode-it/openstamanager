@@ -338,7 +338,7 @@ if (!$block_edit) {
         FROM
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
-            INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
+            INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`id_preventivo`
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa` > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];

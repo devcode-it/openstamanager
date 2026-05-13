@@ -73,7 +73,7 @@ switch (post('op')) {
         $intervento->id_stato = post('id_stato');
         $intervento->id_sede_partenza = post('id_sede_partenza');
         $intervento->id_sede_destinazione = post('id_sede_destinazione');
-        $intervento->id_preventivo = post('idpreventivo') ?: null;
+        $intervento->id_preventivo = post('id_preventivo') ?: null;
         $intervento->id_contratto = post('id_contratto') ?: null;
         $intervento->id_ordine = post('id_ordine') ?: null;
         $intervento->id_pagamento = post('id_pagamento');
@@ -236,7 +236,7 @@ switch (post('op')) {
             flash()->info(tr('Aggiunto nuovo intervento!'));
 
             // Informazioni di base
-            $idpreventivo = post('idpreventivo');
+            $id_preventivo = post('id_preventivo');
             $id_contratto = post('id_contratto');
             $id_promemoria = post('id_contratto_riga');
             $id_tipo_intervento = post('id_tipo_intervento');
@@ -247,7 +247,7 @@ switch (post('op')) {
                 $intervento->id_cliente_finale = post('id_cliente_finale');
             }
 
-            $intervento->id_preventivo = $idpreventivo ?: null;
+            $intervento->id_preventivo = $id_preventivo ?: null;
             $intervento->id_contratto = $id_contratto ?: null;
             $intervento->id_ordine = post('id_ordine') ?: null;
             $intervento->id_referente = post('id_referente') ?: null;

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 include_once __DIR__.'/../init.php';
 use Models\Module;
 
-$id_contratto_precedente = $record['idcontratto_prev'];
+$id_contratto_precedente = $record['id_contratto_prev'];
 $module = Module::find($id_module);
 
 if (!empty($id_contratto_precedente)) {
@@ -49,7 +49,7 @@ if (!empty($id_contratto_precedente)) {
 $counter = 0;
 while (!empty($id_contratto_precedente) && $counter < 50) {
     ++$counter;
-    $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, idcontratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
+    $rs = $dbo->fetchArray('SELECT nome, numero, data_accettazione, data_conclusione, budget, id_contratto_prev FROM co_contratti WHERE id='.prepare($id_contratto_precedente));
 
     echo '
         <tr>
@@ -63,11 +63,11 @@ while (!empty($id_contratto_precedente) && $counter < 50) {
             <td align="center">'.Translator::dateToLocale($rs[0]['data_conclusione']).'</td>
         </tr>';
 
-    $id_contratto_precedente = $rs[0]['idcontratto_prev'];
+    $id_contratto_precedente = $rs[0]['id_contratto_prev'];
 }
 
 // Chiudo la tabella solo se ci sono record da visualizzare
-if (!empty($record['idcontratto_prev'])) {
+if (!empty($record['id_contratto_prev'])) {
     echo '
     </tbody>
 </table>';

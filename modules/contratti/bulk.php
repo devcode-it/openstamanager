@@ -157,7 +157,7 @@ switch (post('op')) {
 
                 $new_contratto->numero = Contratto::getNextNumero($contratto->data_conclusione->copy()->addDays(1), $contratto->id_segment);
 
-                $new_contratto->idcontratto_prev = $contratto->id;
+                $new_contratto->id_contratto_prev = $contratto->id;
                 $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
                 $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
                 $new_contratto->data_bozza = Carbon::now();
@@ -292,7 +292,7 @@ switch (post('op')) {
         foreach ($id_records as $idcontratto) {
             $contratto = Contratto::find($idcontratto);
 
-            $new = $contratto->replicate(['idcontratto_prev']);
+            $new = $contratto->replicate(['id_contratto_prev']);
             $new->numero = Contratto::getNextNumero(Carbon::parse($data)->format('Y-m-d'), $contratto->id_segment);
 
             $stato = StatoContratto::where('name', 'Bozza')->first()->id;

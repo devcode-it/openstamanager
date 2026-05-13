@@ -48,10 +48,10 @@ if (!empty($id_record)) {
 
     // Estrazione numero contratto originale
     $numero_contratto_originale = '';
-    $id_contratto_prev = $contratto->idcontratto_prev;
+    $id_contratto_prev = $contratto->id_contratto_prev;
     while ($id_contratto_prev != 0) {
         $contratto_prev = Contratto::find($id_contratto_prev);
-        $id_contratto_prev = $contratto_prev->idcontratto_prev;
+        $id_contratto_prev = $contratto_prev->id_contratto_prev;
         $numero_contratto_originale = 'Orig. '.$contratto_prev->numero;
     }
 }

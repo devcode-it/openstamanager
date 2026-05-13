@@ -40,7 +40,7 @@ FROM
     INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`id`
+    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE
     `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
@@ -274,7 +274,7 @@ if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
 $query_da_programmare .= '
         WHERE
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND
-            `in_interventi`.`idstatointervento` IN(SELECT `idstatointervento` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
+            `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
 if (!empty($risultati_da_programmare)) {
@@ -320,7 +320,7 @@ if (!empty($risultati_da_programmare)) {
     $query_mesi_precenti .= '
         WHERE
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0
-            AND `in_interventi`.`idstatointervento` IN(SELECT `idstatointervento` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+            AND `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
             AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 

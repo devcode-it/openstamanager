@@ -46,13 +46,13 @@ function verificaSbilanciLibroGiornale($date_start, $date_end)
         FROM (
             SELECT
                 co_movimenti.idmastrino,
-                co_movimenti.idconto,
+                co_movimenti.id_conto,
                 SUM(co_movimenti.totale) AS totale_raggruppato
             FROM co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
             INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id
             WHERE co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
-            GROUP BY co_movimenti.idmastrino, co_movimenti.idconto
+            GROUP BY co_movimenti.idmastrino, co_movimenti.id_conto
         ) AS movimenti_raggruppati
     ');
 
@@ -651,7 +651,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             SUM(totale) AS totale
         FROM
             co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
         WHERE
             co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
             AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end));
@@ -661,7 +661,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             SUM(totale) AS totale
         FROM
             co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
         WHERE
             co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
             AND co_movimenti.data >= '.prepare($periodo_precedente_start).' AND co_movimenti.data <= '.prepare($periodo_precedente_end));
@@ -671,7 +671,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 -SUM(totale) AS totale
             FROM
                 co_movimenti
-                INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id
+                INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
             WHERE
                 co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
                 AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'

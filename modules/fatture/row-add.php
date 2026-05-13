@@ -52,8 +52,8 @@ $options = [
 ];
 
 // Conto dalle impostazioni
-if (empty($idconto)) {
-    $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+if (empty($id_conto)) {
+    $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
 }
 
 // Dati di default
@@ -66,7 +66,7 @@ $result = [
     'sconto_unitario' => 0,
     'tipo_sconto' => (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT'),
     'idiva' => '',
-    'idconto' => $idconto,
+    'id_conto' => $id_conto,
     'ritenuta_contributi' => true,
     'provvigione_default' => 0,
     'tipo_provvigione_default' => 'PRC',

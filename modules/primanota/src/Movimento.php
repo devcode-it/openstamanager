@@ -51,7 +51,7 @@ class Movimento extends Model
         $model->id_anagrafica = $mastrino->id_anagrafica;
 
         // Conto associato
-        $model->idconto = $id_conto;
+        $model->id_conto = $id_conto;
 
         // Associazione al documento indicato
         $documento_scadenza = $scadenza ? $scadenza->documento : null;
@@ -93,9 +93,9 @@ class Movimento extends Model
 
     // Attributi
 
-    public function getIdContoAttribute()
+    public function getid_contoAttribute()
     {
-        return $this->attributes['idconto'];
+        return $this->attributes['id_conto'];
     }
 
     public function getAvereAttribute()

@@ -261,10 +261,10 @@ class PianoContiRagioneSociale extends Controllo
 
         // Aggiorna i movimenti contabili collegati all'anagrafica e al vecchio conto
         $database->update('co_movimenti', [
-            'idconto' => $nuovo_id_conto,
+            'id_conto' => $nuovo_id_conto,
         ], [
             'id_anagrafica' => $id_anagrafica,
-            'idconto' => $vecchio_id_conto,
+            'id_conto' => $vecchio_id_conto,
         ]);
 
         // Aggiorna anche i movimenti collegati ai documenti dell'anagrafica
@@ -277,10 +277,10 @@ class PianoContiRagioneSociale extends Controllo
 
         foreach ($documenti_anagrafica as $documento) {
             $database->update('co_movimenti', [
-                'idconto' => $nuovo_id_conto,
+                'id_conto' => $nuovo_id_conto,
             ], [
                 'iddocumento' => $documento['iddocumento'],
-                'idconto' => $vecchio_id_conto,
+                'id_conto' => $vecchio_id_conto,
             ]);
         }
     }
@@ -300,7 +300,7 @@ class PianoContiRagioneSociale extends Controllo
         $totale_anagrafiche_collegate = $anagrafiche_collegate_cliente + $anagrafiche_collegate_fornitore;
 
         // Verifica se ci sono movimenti contabili collegati a questo conto
-        $movimenti_collegati = $database->fetchOne('SELECT COUNT(*) as count FROM co_movimenti WHERE idconto = '.prepare($id_conto))['count'];
+        $movimenti_collegati = $database->fetchOne('SELECT COUNT(*) as count FROM co_movimenti WHERE id_conto = '.prepare($id_conto))['count'];
 
         // Se non ci sono anagrafiche e movimenti collegati, elimina il conto
         if ($totale_anagrafiche_collegate == 0 && $movimenti_collegati == 0) {

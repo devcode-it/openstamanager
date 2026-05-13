@@ -181,10 +181,10 @@ $("#idarticolo").on("change", function() {
             aggiornaQtaMinima();
         }
 
-        let id_conto = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
-        let id_conto_title = $data.idconto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
+        let id_conto = $data.id_conto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').';
+        let id_conto_title = $data.id_conto_'.($options['dir'] == 'entrata' ? 'vendita' : 'acquisto').'_title;
         if(id_conto) {
-            $("#idconto").selectSetNew(id_conto, id_conto_title);
+            $("#id_conto").selectSetNew(id_conto, id_conto_title);
         }
 
         $("#um").selectSetNew($data.um, $data.um);

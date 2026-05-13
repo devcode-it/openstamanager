@@ -180,8 +180,8 @@ switch (post('op')) {
         $articolo->coefficiente = post('coefficiente');
         $articolo->idiva_vendita = post('idiva_vendita');
         $articolo->prezzo_acquisto = post('prezzo_acquisto');
-        $articolo->idconto_vendita = post('idconto_vendita');
-        $articolo->idconto_acquisto = post('idconto_acquisto');
+        $articolo->id_conto_vendita = post('id_conto_vendita');
+        $articolo->id_conto_acquisto = post('id_conto_acquisto');
         $articolo->id_fornitore = post('id_fornitore');
         $articolo->garanzia = post('garanzia');
         $articolo->tipo_garanzia = post('tipo_garanzia');

@@ -35,7 +35,7 @@ switch (post('op')) {
         $mastrino = Mastrino::build($descrizione, $data, $is_insoluto, true, $id_anagrafica);
         $singola = post('singola');
 
-        $conti = post('idconto_add');
+        $conti = post('id_conto_add');
         $scadenze = [];
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza_add')[$i];
@@ -85,8 +85,8 @@ switch (post('op')) {
             }
 
             foreach ($conti as $i => $id_conto) {
-                $idconto = post('idconto_add')[$i];
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto) VALUES (:idmastrino, :nome, :descrizione, :id_conto)';
+                $id_conto = post('id_conto_add')[$i];
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto) VALUES (:idmastrino, :nome, :descrizione, :id_conto)';
                 $params = [
                     ':idmastrino' => $idmastrino,
                     ':nome' => $descrizione,
@@ -110,7 +110,7 @@ switch (post('op')) {
 
         $mastrino->cleanup();
 
-        $conti = post('idconto');
+        $conti = post('id_conto');
         foreach ($conti as $i => $id_conto) {
             $id_scadenza = post('id_scadenza')[$i];
             $id_documento = post('id_documento')[$i];

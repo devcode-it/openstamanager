@@ -44,7 +44,7 @@ $result = [
     'sconto_unitario' => 0,
     'tipo_sconto' => '',
     'idiva' => '',
-    'idconto' => $idconto,
+    'id_conto' => $id_conto,
     'ritenuta_contributi' => true,
 ];
 

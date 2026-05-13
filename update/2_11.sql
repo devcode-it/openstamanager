@@ -611,7 +611,7 @@ FROM
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|)
     LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`nome`, ' - ', `iban`) AS `descrizione` FROM `co_banche`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN (SELECT `iddocumento`, GROUP_CONCAT(DISTINCT `co_pianodeiconti3`.`descrizione` SEPARATOR ', ') AS `descrizione` FROM `co_righe_documenti` INNER JOIN `co_pianodeiconti3` ON `co_pianodeiconti3`.`id` = `co_righe_documenti`.`idconto` GROUP BY iddocumento) AS `conti` ON `conti`.`iddocumento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT `iddocumento`, GROUP_CONCAT(DISTINCT `co_pianodeiconti3`.`descrizione` SEPARATOR ', ') AS `descrizione` FROM `co_righe_documenti` INNER JOIN `co_pianodeiconti3` ON `co_pianodeiconti3`.`id` = `co_righe_documenti`.`id_conto` GROUP BY iddocumento) AS `conti` ON `conti`.`iddocumento` = `co_documenti`.`id`
     LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `iddocumento`) AS `righe` ON `co_documenti`.`id` = `righe`.`iddocumento`
     LEFT JOIN (SELECT COUNT(`d`.`id`) AS `conteggio`, IF(`d`.`numero_esterno` = '', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento`, `d`.`id_anagrafica` AS `anagrafica`, `d`.`id_segment`, YEAR(`d`.`data`) AS `anno` FROM `co_documenti` AS `d`
     LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`id_tipo_documento` = `d_tipo`.`id` WHERE 1=1 AND `d_tipo`.`dir` = 'uscita' AND('|period_start|' <= `d`.`data` AND '|period_end|' >= `d`.`data` OR '|period_start|' <= `d`.`data_competenza` AND '|period_end|' >= `d`.`data_competenza`) GROUP BY `d`.`id_segment`, `numero_documento`, `d`.`id_anagrafica`, YEAR(`d`.`data`)) AS `d` ON (`d`.`numero_documento` = IF(`co_documenti`.`numero_esterno` = '',`co_documenti`.`numero`,`co_documenti`.`numero_esterno`) AND `d`.`anagrafica` = `co_documenti`.`id_anagrafica` AND `d`.`id_segment` = `co_documenti`.`id_segment` AND `d`.`anno` = YEAR(`co_documenti`.`data`))
@@ -631,7 +631,7 @@ SELECT
     |select| 
 FROM
     `co_movimenti`
-    INNER JOIN `co_pianodeiconti3` ON `co_movimenti`.`idconto` = `co_pianodeiconti3`.`id`
+    INNER JOIN `co_pianodeiconti3` ON `co_movimenti`.`id_conto` = `co_pianodeiconti3`.`id`
     LEFT JOIN `co_documenti` ON `co_documenti`.`id` = `co_movimenti`.`iddocumento`
     LEFT JOIN `an_anagrafiche` ON `co_movimenti`.`id_anagrafica` = `an_anagrafiche`.`id`
 WHERE
@@ -1007,10 +1007,10 @@ ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codice_rea` VARCHAR(23) NULL DE
 ALTER TABLE `an_anagrafiche` CHANGE `appoggiobancario` `appoggio_bancario` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `codiceiban` `codice_iban` VARCHAR(40) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `diciturafissafattura` `dicitura_fissa_fattura` VARCHAR(255) NOT NULL;
-ALTER TABLE `an_anagrafiche` CHANGE `idconto_cliente` `id_conto_cliente` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `id_conto_cliente` `id_conto_cliente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_vendite` `id_banca_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `id_banca_acquisti` INT NULL DEFAULT NULL;
-ALTER TABLE `an_anagrafiche` CHANGE `idconto_fornitore` `id_conto_fornitore` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `id_conto_fornitore` `id_conto_fornitore` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idagente` `id_agente` INT NOT NULL;
@@ -1077,3 +1077,5 @@ ALTER TABLE `co_documenti` CHANGE `idaspettobeni` `id_aspetto_beni` INT NOT NULL
 ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `id_conto` `id_conto` INT NOT NULL;

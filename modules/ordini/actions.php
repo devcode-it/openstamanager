@@ -96,7 +96,7 @@ switch (post('op')) {
             $ordine->id_vettore = post('id_vettore') ?: null;
             $ordine->id_sede_partenza = post('id_sede_partenza');
             $ordine->id_sede_destinazione = post('id_sede_destinazione');
-            $ordine->idconto = post('idconto');
+            $ordine->id_conto = post('id_conto');
             $ordine->idrivalsainps = $idrivalsainps ?: null;
             $ordine->idritenutaacconto = $idritenutaacconto ?: null;
 
@@ -188,7 +188,7 @@ switch (post('op')) {
         $articolo->confermato = post('confermato') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
-        $articolo->idconto = post('idconto') ?: null;
+        $articolo->id_conto = post('id_conto') ?: null;
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }

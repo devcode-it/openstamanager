@@ -240,10 +240,10 @@ if (!function_exists('aggiungi_movimento')) {
             // Lettura conto fornitore
             $query = 'SELECT id_conto_fornitore FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
             $rs = $dbo->fetchArray($query);
-            $idconto_controparte = $rs[0]['id_conto_fornitore'];
+            $id_conto_controparte = $rs[0]['id_conto_fornitore'];
 
-            if ($idconto_controparte == '') {
-                $idconto_controparte = setting('Conto per Riepilogativo fornitori');
+            if ($id_conto_controparte == '') {
+                $id_conto_controparte = setting('Conto per Riepilogativo fornitori');
             }
         } else {
             $segno_mov1_cliente = 1;
@@ -256,10 +256,10 @@ if (!function_exists('aggiungi_movimento')) {
             // Lettura conto cliente
             $query = 'SELECT id_conto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
             $rs = $dbo->fetchArray($query);
-            $idconto_controparte = $rs[0]['id_conto_cliente'];
+            $id_conto_controparte = $rs[0]['id_conto_cliente'];
 
-            if ($idconto_controparte == '') {
-                $idconto_controparte = setting('Conto per Riepilogativo clienti');
+            if ($id_conto_controparte == '') {
+                $id_conto_controparte = setting('Conto per Riepilogativo clienti');
             }
         }
 
@@ -308,14 +308,14 @@ if (!function_exists('aggiungi_movimento')) {
             $importo_cliente = sum($importo_cliente, -$iva_fattura, 2);
         }
 
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
         $params = [
             ':idmastrino' => $idmastrino,
             ':data' => $data,
             ':iddocumento' => $iddocumento,
             ':id_anagrafica' => '',
             ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-            ':idconto' => $idconto_controparte,
+            ':id_conto' => $id_conto_controparte,
             ':totale' => ($importo_cliente + $totale_bolli) * $segno_mov1_cliente,
             ':primanota' => $primanota,
         ];
@@ -323,21 +323,21 @@ if (!function_exists('aggiungi_movimento')) {
 
         // 2) Aggiungo il totale sul conto dei ricavi/spese scelto
         // Lettura descrizione conto ricavi/spese per ogni riga del documento
-        $righe = $dbo->fetchArray('SELECT idconto, SUM(subtotale - sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' GROUP BY idconto');
+        $righe = $dbo->fetchArray('SELECT id_conto, SUM(subtotale - sconto) AS imponibile FROM co_righe_documenti WHERE iddocumento='.prepare($iddocumento).' GROUP BY id_conto');
 
         foreach ($righe as $riga) {
             // Retrocompatibilità
-            $idconto_riga = $riga['idconto'];
+            $id_conto_riga = $riga['id_conto'];
             $riga['imponibile'] = $is_nota ? -$riga['imponibile'] : $riga['imponibile'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_riga,
+                ':id_conto' => $id_conto_riga,
                 ':totale' => $riga['imponibile'] * $segno_mov2_ricavivendite,
                 ':primanota' => $primanota,
             ];
@@ -348,16 +348,16 @@ if (!function_exists('aggiungi_movimento')) {
         // Lettura id conto iva
         if ($iva_fattura != 0 && !$split_payment) {
             $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
-            $idconto_iva = setting('Conto per '.$descrizione_conto_iva);
+            $id_conto_iva = setting('Conto per '.$descrizione_conto_iva);
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_iva,
+                ':id_conto' => $id_conto_iva,
                 ':totale' => $iva_fattura * $segno_mov3_iva,
                 ':primanota' => $primanota,
             ];
@@ -366,16 +366,16 @@ if (!function_exists('aggiungi_movimento')) {
 
         // Lettura id conto iva indetraibile
         if ($iva_indetraibile_fattura != 0 && !$split_payment) {
-            $idconto_iva2 = setting('Conto per Iva indetraibile');
+            $id_conto_iva2 = setting('Conto per Iva indetraibile');
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_iva2,
+                ':id_conto' => $id_conto_iva2,
                 ':totale' => $iva_indetraibile_fattura * $segno_mov3_iva,
                 ':primanota' => $primanota,
             ];
@@ -385,16 +385,16 @@ if (!function_exists('aggiungi_movimento')) {
         // 4) Aggiungo la rivalsa INPS se c'è
         // Lettura id conto inps
         if ($totale_rivalsainps != 0) {
-            $idconto_inps = setting('Conto per Erario c/INPS');
+            $id_conto_inps = setting('Conto per Erario c/INPS');
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_inps,
+                ':id_conto' => $id_conto_inps,
                 ':totale' => $totale_rivalsainps * $segno_mov4_inps,
                 ':primanota' => $primanota,
             ];
@@ -404,31 +404,31 @@ if (!function_exists('aggiungi_movimento')) {
         // 5) Aggiungo la ritenuta d'acconto se c'è
         // Lettura id conto ritenuta e la storno subito
         if ($totale_ritenutaacconto != 0) {
-            $idconto_ritenutaacconto = setting("Conto per Erario c/ritenute d'acconto");
+            $id_conto_ritenutaacconto = setting("Conto per Erario c/ritenute d'acconto");
 
             // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_ritenutaacconto,
+                ':id_conto' => $id_conto_ritenutaacconto,
                 ':totale' => $totale_ritenutaacconto * $segno_mov5_ritenutaacconto,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);
 
             // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_controparte,
+                ':id_conto' => $id_conto_controparte,
                 ':totale' => ($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1,
                 ':primanota' => $primanota,
             ];
@@ -438,31 +438,31 @@ if (!function_exists('aggiungi_movimento')) {
         // 6) Aggiungo la ritenuta enasarco se c'è
         // Lettura id conto ritenuta e la storno subito
         if ($totale_ritenutacontributi != 0) {
-            $idconto_ritenutaenasarco = setting('Conto per Erario c/enasarco');
+            $id_conto_ritenutaenasarco = setting('Conto per Erario c/enasarco');
 
             // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_ritenutaenasarco,
+                ':id_conto' => $id_conto_ritenutaenasarco,
                 ':totale' => $totale_ritenutacontributi * $segno_mov5_ritenutaacconto,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);
 
             // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, idconto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :idconto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
                 ':idmastrino' => $idmastrino,
                 ':data' => $data,
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':idconto' => $idconto_controparte,
+                ':id_conto' => $id_conto_controparte,
                 ':totale' => ($totale_ritenutacontributi * $segno_mov5_ritenutaacconto) * -1,
                 ':primanota' => $primanota,
             ];

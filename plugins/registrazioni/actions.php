@@ -31,8 +31,8 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'change-conto':
-        $conti = (array) post('idconto');
-        $conti_cespiti = (array) post('idconto_cespiti');
+        $conti = (array) post('id_conto');
+        $conti_cespiti = (array) post('id_conto_cespiti');
         $cespiti = (array) post('is_cespite');
 
         $errori = [];

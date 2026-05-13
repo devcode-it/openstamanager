@@ -26,7 +26,7 @@ function renderRiga($id, $riga)
     echo '
     <tr>
         <td>
-            {[ "type": "select", "name": "idconto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['idconto'] ?: '').'", "ajax-source": "conti-modelliprimanota" ]}
+            {[ "type": "select", "name": "id_conto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti-modelliprimanota" ]}
         </td>';
 
     // Dare
@@ -131,7 +131,7 @@ echo '
         // Trigger dell\'evento keyup() per la prima volta, per eseguire i dovuti controlli nel caso siano predisposte delle righe in prima nota
         $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
-        $("select[id*=idconto]").click(function() {
+        $("select[id*=id_conto]").click(function() {
             $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
         });
     });
@@ -221,7 +221,7 @@ echo '
 
 <script>
 
-$('select[name=idconto]').each(function() {
+$('select[name=id_conto]').each(function() {
     this.selectAdd([{
         'value': -1,
         'text': "Conto cliente fattura",

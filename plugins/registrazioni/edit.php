@@ -120,10 +120,10 @@ if (!empty($fattura)) {
 
                     <td>
                         <div id="select-conto-standard-'.$riga['id'].'" '.($riga->is_cespite ? 'style="display:none;"' : '').'>
-                            {[ "type": "select", "name": "idconto['.$riga['id'].']", "required": "'.($riga->is_cespite ? 0 : 1).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
+                            {[ "type": "select", "name": "id_conto['.$riga['id'].']", "required": "'.($riga->is_cespite ? 0 : 1).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti['results']).', "class": "unblockable" ]}
                         </div>
                         <div id="select-conto-cespite-'.$riga['id'].'" '.(!$riga->is_cespite ? 'style="display:none;"' : '').'>
-                            {[ "type": "select", "name": "idconto_cespiti['.$riga['id'].']", "required": "'.($riga->is_cespite ? 1 : 0).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
+                            {[ "type": "select", "name": "id_conto_cespiti['.$riga['id'].']", "required": "'.($riga->is_cespite ? 1 : 0).'", "value": "'.$riga->id_conto.'", "values": '.json_encode($optionsConti_cespiti['results']).', "class": "unblockable" ]}
                         </div>
                     </td>';
             if ($dir == 'uscita') {
@@ -154,7 +154,7 @@ echo '
 
 <script>
 function copy() {
-    let conti = $("select[name^=idconto]");
+    let conti = $("select[name^=id_conto]");
 
     // Individuazione del primo conto selezionato
     let conto_selezionato = null;
@@ -324,7 +324,7 @@ $(document).ready(function() {
     });
 
     // Gestione del cambio di selezione nei conti per rimuovere errori
-    $("select[name^=\'idconto\']").change(function() {
+    $("select[name^=\'id_conto\']").change(function() {
         $(this).removeClass(\'parsley-error\');
     });
 });

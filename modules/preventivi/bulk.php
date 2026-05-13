@@ -54,7 +54,7 @@ switch (post('op')) {
 
         $data = date('Y-m-d');
         $id_segment = post('id_segment');
-        $idconto = setting('Conto predefinito fatture di vendita');
+        $id_conto = setting('Conto predefinito fatture di vendita');
         $raggruppamento = post('raggruppamento');
 
         // Lettura righe selezionate
@@ -115,13 +115,13 @@ switch (post('op')) {
                     if ($qta > 0) {
                         $copia = $riga->copiaIn($fattura, $qta);
 
-                        // Fix per idconto righe fattura
-                        $copia->idconto = $idconto;
+                        // Fix per id_conto righe fattura
+                        $copia->id_conto = $id_conto;
 
                         // Aggiornamento seriali dalla riga dell'ordine
                         if ($copia->isArticolo()) {
                             $articolo = ArticoloOriginale::find($copia->idarticolo);
-                            $copia->idconto = !empty($articolo->idconto_vendita) ? $articolo->idconto_vendita : $idconto;
+                            $copia->id_conto = !empty($articolo->id_conto_vendita) ? $articolo->id_conto_vendita : $id_conto;
                             $copia->serials = $riga->serials;
                         }
 

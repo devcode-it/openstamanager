@@ -356,7 +356,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $articolo->idconto_acquisto = $conto_acquisto;
+            $articolo->id_conto_acquisto = $conto_acquisto;
             $articolo->save();
 
             ++$n_articoli;
@@ -378,7 +378,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $articolo = Articolo::find($id);
-            $articolo->idconto_vendita = $conto_vendita;
+            $articolo->id_conto_vendita = $conto_vendita;
             $articolo->save();
 
             ++$n_articoli;

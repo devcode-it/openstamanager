@@ -46,7 +46,7 @@ switch (filter('op')) {
 
         // Recupero informazioni sulla riga del documento
         $riga = Articolo::find($id_record) ?: Riga::find($id_record);
-        $id_conto_dare = $riga->idconto;
+        $id_conto_dare = $riga->id_conto;
         $id_conto_avere = $id_conto;
 
         // Elimino i movimenti collegati agli ammortamenti precedenti

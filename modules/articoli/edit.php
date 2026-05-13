@@ -204,7 +204,7 @@ if ($articolo->servizio) {
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "idconto_acquisto", "value": "$idconto_acquisto$", "ajax-source": "conti-acquisti" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di acquisto'); ?>", "name": "id_conto_acquisto", "value": "$id_conto_acquisto$", "ajax-source": "conti-acquisti" ]}
                         </div>
                     </div>
                 </div>
@@ -257,7 +257,7 @@ echo '
 
                     <div class="row">
                         <div class="col-md-12">
-                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "idconto_vendita", "value": "$idconto_vendita$", "ajax-source": "conti-vendite" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Conto predefinito di vendita'); ?>", "name": "id_conto_vendita", "value": "$id_conto_vendita$", "ajax-source": "conti-vendite" ]}
                         </div>
                     </div>
                 </div>

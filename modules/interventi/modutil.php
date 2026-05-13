@@ -226,7 +226,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             if ($copia->isArticolo()) {
                 $copia->serials = $riga->serials;
                 $articolo = ArticoloOriginale::find($copia->idarticolo);
-                $copia->id_conto = ($articolo->idconto_vendita ?: $id_conto);
+                $copia->id_conto = ($articolo->id_conto_vendita ?: $id_conto);
             }
 
             $copia->save();
@@ -291,7 +291,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             $riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
-            $riga->idconto = $id_conto;
+            $riga->id_conto = $id_conto;
 
             $riga->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
@@ -347,7 +347,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             // $riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
-            $riga->idconto = $id_conto;
+            $riga->id_conto = $id_conto;
 
             $riga->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;
@@ -397,7 +397,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             $riga->um = 'km';
 
             $riga->id_iva = $id_iva;
-            $riga->idconto = $id_conto;
+            $riga->id_conto = $id_conto;
 
             $riga->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
             $riga->id_ritenuta_acconto = $id_ritenuta_acconto;

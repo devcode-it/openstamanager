@@ -94,9 +94,9 @@ abstract class Accounting extends Component
     #[\Override]
     public function __set($key, $value)
     {
-        // Gestisce id_conto come alias per idconto
+        // Gestisce id_conto come alias per id_conto
         if ($key === 'id_conto') {
-            $this->setIdContoAttribute($value);
+            $this->setid_contoAttribute($value);
 
             return;
         }
@@ -112,9 +112,9 @@ abstract class Accounting extends Component
     #[\Override]
     public function __get($key)
     {
-        // Gestisce id_conto come alias per idconto
+        // Gestisce id_conto come alias per id_conto
         if ($key === 'id_conto') {
-            return $this->getIdContoAttribute();
+            return $this->getid_contoAttribute();
         }
 
         return parent::__get($key);
@@ -445,10 +445,10 @@ abstract class Accounting extends Component
      *
      * @param int $value
      */
-    public function setIdContoAttribute($value)
+    public function setid_contoAttribute($value)
     {
-        if ($this->hasColumn('idconto')) {
-            $this->attributes['idconto'] = $value;
+        if ($this->hasColumn('id_conto')) {
+            $this->attributes['id_conto'] = $value;
         }
     }
 
@@ -457,10 +457,10 @@ abstract class Accounting extends Component
      *
      * @return int|null
      */
-    public function getIdContoAttribute()
+    public function getid_contoAttribute()
     {
-        if ($this->hasColumn('idconto')) {
-            return $this->attributes['idconto'] ?? null;
+        if ($this->hasColumn('id_conto')) {
+            return $this->attributes['id_conto'] ?? null;
         }
 
         return null;
@@ -480,7 +480,7 @@ abstract class Accounting extends Component
         $this->fixProvvigione();
 
         $this->fixIva();
-        $this->fixIdConto();
+        $this->fixid_conto();
 
         return parent::save($options);
     }
@@ -517,15 +517,15 @@ abstract class Accounting extends Component
     }
 
     /**
-     * Imposta il campo idconto solo se esiste nella tabella.
+     * Imposta il campo id_conto solo se esiste nella tabella.
      */
-    protected function fixIdConto()
+    protected function fixid_conto()
     {
-        // Verifica se la colonna idconto esiste nella tabella
-        if ($this->hasColumn('idconto')) {
-            // Se il campo idconto non è già impostato, prova a copiarlo dal documento padre
-            if (empty($this->attributes['idconto']) && !empty($this->getDocument()->idconto)) {
-                $this->attributes['idconto'] = $this->getDocument()->idconto;
+        // Verifica se la colonna id_conto esiste nella tabella
+        if ($this->hasColumn('id_conto')) {
+            // Se il campo id_conto non è già impostato, prova a copiarlo dal documento padre
+            if (empty($this->attributes['id_conto']) && !empty($this->getDocument()->id_conto)) {
+                $this->attributes['id_conto'] = $this->getDocument()->id_conto;
             }
         }
     }

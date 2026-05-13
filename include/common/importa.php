@@ -225,7 +225,7 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
 
     $show_ritenuta_contributi = !empty($documento_finale['id_ritenuta_contributi']);
 
-    $id_conto = $documento_finale['idconto'];
+    $id_conto = $documento_finale['id_conto'];
     if (empty($id_conto)) {
         $id_conto = $dir == 'entrata' ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
     }

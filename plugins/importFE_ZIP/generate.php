@@ -536,10 +536,10 @@ if (!empty($righe)) {
                 }
             }
 
-            $idconto_vendita = $database->fetchOne('SELECT `idconto_vendita` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_vendita'];
+            $id_conto_vendita = $database->fetchOne('SELECT `id_conto_vendita` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['id_conto_vendita'];
         }
 
-        $idconto_vendita = $is_autofattura ? setting('Conto per autofattura') : $idconto_vendita;
+        $id_conto_vendita = $is_autofattura ? setting('Conto per autofattura') : $id_conto_vendita;
         $qta = (empty($riga['Quantita']) && (!empty($riga['PrezzoUnitario']) || !empty($riga['Importo'])) ? 1 : $riga['Quantita']);
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
@@ -666,7 +666,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-3">
-                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-vendite", "required": 1, "label": "'.tr('Conto vendite').'", "value": "'.$idconto_vendita.'" ]}
+                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-vendite", "required": 1, "label": "'.tr('Conto vendite').'", "value": "'.$id_conto_vendita.'" ]}
                             </div>
 
                             <div class="col-md-3">
@@ -1012,7 +1012,7 @@ $("[id^=\'articoli\']").change(function() {
     updateSelectOption("id_articolo", $(this).val());
     let data = $(this).selectData();
     if(data!==undefined){
-        $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_vendita, data.idconto_vendita_title);
+        $("#conto-"+$(this).data("id")).selectSetNew(data.id_conto_vendita, data.id_conto_vendita_title);
     }
 
     verificaSerial($(this));

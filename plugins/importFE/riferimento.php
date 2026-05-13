@@ -80,7 +80,7 @@ foreach ($righe as $riga) {
     $riga_origine = $riga->getOriginalComponent();
 
     if (!empty($riga->idarticolo)) {
-        $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->idconto_acquisto))['descrizione'];
+        $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->id_conto_acquisto))['descrizione'];
     }
 
     $dettagli = [
@@ -94,7 +94,7 @@ foreach ($righe as $riga) {
         'iva_percentuale' => $riga->aliquota->percentuale,
         'id_articolo' => $riga->idarticolo,
         'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
-        'id_conto' => $riga->articolo->idconto_acquisto,
+        'id_conto' => $riga->articolo->id_conto_acquisto,
         'desc_conto' => $desc_conto ? str_replace(' ', '_', $desc_conto) : null,
     ];
 

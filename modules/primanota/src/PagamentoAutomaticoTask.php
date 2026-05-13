@@ -49,8 +49,8 @@ class PagamentoAutomaticoTask extends Manager
                 `co_documenti`.`id_anagrafica`,
                 `co_documenti`.`id_tipo_documento`,
                 `co_tipidocumento`.`dir`,
-                `co_pagamenti`.`idconto_vendite`,
-                `co_pagamenti`.`idconto_acquisti`
+                `co_pagamenti`.`id_conto_vendite`,
+                `co_pagamenti`.`id_conto_acquisti`
             FROM 
                 `co_scadenzario`
                 INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento` = `co_documenti`.`id`
@@ -91,9 +91,9 @@ class PagamentoAutomaticoTask extends Manager
                 // Determino il conto di contropartita
                 $id_conto_contropartita = null;
                 if ($scadenza['dir'] == 'entrata') {
-                    $id_conto_contropartita = $scadenza['idconto_vendite'];
+                    $id_conto_contropartita = $scadenza['id_conto_vendite'];
                 } else {
-                    $id_conto_contropartita = $scadenza['idconto_acquisti'];
+                    $id_conto_contropartita = $scadenza['id_conto_acquisti'];
                 }
 
                 // Verifica che i conti siano valorizzati

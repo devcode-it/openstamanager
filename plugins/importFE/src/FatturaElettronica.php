@@ -444,7 +444,7 @@ class FatturaElettronica
         if (!empty($fattura->anagrafica->id_banca_acquisti)) {
             $banca = $fattura->anagrafica->id_banca_acquisti;
         } else {
-            $banca = Banca::where('id_piano_dei_conti3', $fattura->pagamento->idconto_acquisti)->where('id_anagrafica', setting('Azienda predefinita'))->first()->id;
+            $banca = Banca::where('id_piano_dei_conti3', $fattura->pagamento->id_conto_acquisti)->where('id_anagrafica', setting('Azienda predefinita'))->first()->id;
         }
 
         $fattura->id_banca_azienda = $banca;

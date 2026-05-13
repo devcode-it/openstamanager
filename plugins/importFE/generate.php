@@ -553,10 +553,10 @@ if (!empty($righe)) {
                 }
             }
 
-            $idconto_acquisto = $database->fetchOne('SELECT `idconto_acquisto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['idconto_acquisto'];
+            $id_conto_acquisto = $database->fetchOne('SELECT `id_conto_acquisto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo))['id_conto_acquisto'];
         }
 
-        $idconto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $idconto_acquisto;
+        $id_conto_acquisto = $is_autofattura ? setting('Conto per autofattura') : $id_conto_acquisto;
         $qta = (empty($riga['Quantita']) && (!empty($riga['PrezzoUnitario']) || !empty($riga['Importo'])) ? 1 : $riga['Quantita']);
         $um = $riga['UnitaMisura'];
         $prezzo_unitario = $riga['PrezzoUnitario'] ?: $riga['Importo'];
@@ -721,7 +721,7 @@ if (!empty($righe)) {
                             </div>
 
                             <div class="col-md-3">
-                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$idconto_acquisto.'" ]}
+                                {[ "type": "select", "name": "conto['.$key.']", "id": "conto-'.$key.'", "ajax-source": "conti-acquisti", "required": 1, "label": "'.tr('Conto acquisti').'", "value": "'.$id_conto_acquisto.'" ]}
                             </div>
 
                             <div class="col-md-3">
@@ -1073,8 +1073,8 @@ $("[id^=\'articoli\']").change(function() {
     $("#conto-"+$(this).data("id")).selectReset();
     updateSelectOption("id_articolo", $(this).val());
     let data = $(this).selectData();
-    if(data !== undefined && data.idconto_acquisto && data.idconto_acquisto_title){
-        $("#conto-"+$(this).data("id")).selectSetNew(data.idconto_acquisto, data.idconto_acquisto_title);
+    if(data !== undefined && data.id_conto_acquisto && data.id_conto_acquisto_title){
+        $("#conto-"+$(this).data("id")).selectSetNew(data.id_conto_acquisto, data.id_conto_acquisto_title);
     }
 
     verificaSerial($(this));

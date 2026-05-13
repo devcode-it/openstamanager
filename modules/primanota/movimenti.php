@@ -42,7 +42,7 @@ function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
         </td>
 
         <td>
-            {[ "type": "select", "name": "idconto'.$suffix.'['.$id.']", "id": "conto'.$suffix.'_'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
+            {[ "type": "select", "name": "id_conto'.$suffix.'['.$id.']", "id": "conto'.$suffix.'_'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti", "icon-after": '.json_encode('<button type="button" onclick="visualizzaMovimenti(this)" class="btn btn-info '.($riga['id_conto'] ? '' : 'disabled').'"><i class="fa fa-eye"></i></button>').' ]}
         </td>';
 
     // Dare

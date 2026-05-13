@@ -57,8 +57,8 @@ switch (filter('op')) {
                 $pagamento->num_giorni = (int) post('distanza')[$key];
                 $pagamento->giorno = $giorno;
                 $pagamento->prc = (float) post('percentuale')[$key];
-                $pagamento->idconto_vendite = post('idconto_vendite') ?: null;
-                $pagamento->idconto_acquisti = post('idconto_acquisti') ?: null;
+                $pagamento->id_conto_vendite = post('id_conto_vendite') ?: null;
+                $pagamento->id_conto_acquisti = post('id_conto_acquisti') ?: null;
                 $pagamento->descrizione_incasso = post('descrizione_incasso');
                 $pagamento->importo_fisso_incasso = (float) post('importo_fisso_incasso');
                 $pagamento->importo_percentuale_incasso = (float) post('importo_percentuale_incasso');

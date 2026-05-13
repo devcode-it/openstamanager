@@ -92,13 +92,13 @@ switch ($resource) {
             `mg_articoli`.`servizio`,
             `mg_articoli`.`abilita_serial`,
             `mg_articoli`.`ubicazione`,
-            `mg_articoli`.`idconto_vendita`,
-            `mg_articoli`.`idconto_acquisto`,
+            `mg_articoli`.`id_conto_vendita`,
+            `mg_articoli`.`id_conto_acquisto`,
             `categoria_lang`.`title` AS categoria,
             `sottocategoria_lang`.`title` AS sottocategoria,
             `righe`.`media_ponderata`,
-            CONCAT(`conto_vendita_categoria` .`numero`, '.', `conto_vendita_sottocategoria`.`numero`, ' ', `conto_vendita_sottocategoria`.`descrizione`) AS idconto_vendita_title,
-            CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS idconto_acquisto_title
+            CONCAT(`conto_vendita_categoria` .`numero`, '.', `conto_vendita_sottocategoria`.`numero`, ' ', `conto_vendita_sottocategoria`.`descrizione`) AS id_conto_vendita_title,
+            CONCAT(`conto_acquisto_categoria` .`numero`, '.', `conto_acquisto_sottocategoria`.`numero`, ' ', `conto_acquisto_sottocategoria`.`descrizione`) AS id_conto_acquisto_title
         FROM
             `mg_articoli`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
@@ -106,9 +106,9 @@ switch ($resource) {
             LEFT JOIN `zz_categorie_lang` AS categoria_lang ON (`categoria`.`id` = `categoria_lang`.`id_record` AND `categoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `zz_categorie` AS sottocategoria ON `sottocategoria`.`id` = `mg_articoli`.`id_sottocategoria`
             LEFT JOIN `zz_categorie_lang` AS sottocategoria_lang ON (`sottocategoria`.`id` = `sottocategoria_lang`.`id_record` AND `sottocategoria_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-            LEFT JOIN `co_pianodeiconti3` AS conto_vendita_sottocategoria ON `conto_vendita_sottocategoria`.`id`=`mg_articoli`.`idconto_vendita`
+            LEFT JOIN `co_pianodeiconti3` AS conto_vendita_sottocategoria ON `conto_vendita_sottocategoria`.`id`=`mg_articoli`.`id_conto_vendita`
                 LEFT JOIN `co_pianodeiconti2` AS conto_vendita_categoria ON `conto_vendita_sottocategoria`.`idpianodeiconti2`=`conto_vendita_categoria`.`id`
-            LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`idconto_acquisto`
+            LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`id_conto_acquisto`
                 LEFT JOIN `co_pianodeiconti2` AS conto_acquisto_categoria ON `conto_acquisto_sottocategoria`.`idpianodeiconti2`=`conto_acquisto_categoria`.`id`
             LEFT JOIN (SELECT `co_righe_documenti`.`idarticolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
             ON `righe`.`id`=`mg_articoli`.`id`

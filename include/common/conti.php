@@ -88,7 +88,7 @@ if (!empty($options['show-ritenuta-contributi']) || empty($options['hide_conto']
     if (empty($options['hide_conto'])) {
         echo '
     <div class="col-md-'.$width.'">
-        {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$result['idconto'].'", "ajax-source": "'.$options['conti'].'" ]}
+        {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$result['id_conto'].'", "ajax-source": "'.$options['conti'].'" ]}
     </div>';
     }
 

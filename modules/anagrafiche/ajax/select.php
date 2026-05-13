@@ -55,7 +55,7 @@ switch ($resource) {
                 LEFT JOIN (SELECT `co_contratti`.`id`, `id_anagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_staticontratti_lang`.`title` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_staticontratti` ON `co_contratti`.`id_stato`=`co_staticontratti`.`id` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id`=`co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto ON `an_anagrafiche`.`id`=`contratto`.`id_anagrafica`
                 LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`id_pagamento_vendite`=`co_pagamenti`.`id`
                 LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id`=`co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).')
-                LEFT JOIN `co_banche` banca_vendite ON `co_pagamenti`.`idconto_vendite` = `banca_vendite`.`id_piano_dei_conti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL AND `banca_vendite`.`predefined` = 1
+                LEFT JOIN `co_banche` banca_vendite ON `co_pagamenti`.`id_conto_vendite` = `banca_vendite`.`id_piano_dei_conti3` AND `banca_vendite`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_vendite`.`deleted_at` IS NULL AND `banca_vendite`.`predefined` = 1
                 |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
             ORDER BY
                 `ragione_sociale`';
@@ -117,7 +117,7 @@ switch ($resource) {
                 LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
                 LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`id_pagamento_acquisti`=`co_pagamenti`.`id`
                 LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_piano_dei_conti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
+                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`id_conto_acquisti` = `banca_acquisti`.`id_piano_dei_conti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
                 LEFT JOIN an_relazioni ON an_anagrafiche.id_relazione=an_relazioni.id
                 LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).')
                 |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
@@ -181,7 +181,7 @@ switch ($resource) {
                 LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
                 LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`id_pagamento_acquisti`=`co_pagamenti`.`id`
                 LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`idconto_acquisti` = `banca_acquisti`.`id_piano_dei_conti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
+                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`id_conto_acquisti` = `banca_acquisti`.`id_piano_dei_conti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
                 LEFT JOIN an_relazioni ON an_anagrafiche.id_relazione=an_relazioni.id
                 LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).')
                 |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'

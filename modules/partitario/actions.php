@@ -62,7 +62,7 @@ switch (post('op')) {
 
         // Modifica conto di livello 2 e 3 nel partitario
     case 'edit':
-        $idconto = post('idconto');
+        $id_conto = post('id_conto');
         $idpianodeiconti = post('idpianodeiconti');
         $numero = post('numero');
         $descrizione = post('descrizione');
@@ -74,22 +74,22 @@ switch (post('op')) {
 
         if ($conto_bloccato) {
             if ($lvl == 2) {
-                $original_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id='.prepare($id_conto);
             } else {
-                $original_query = 'SELECT descrizione FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+                $original_query = 'SELECT descrizione FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
             }
             $original = $dbo->fetchOne($original_query);
             $descrizione = $original['descrizione'];
         }
 
         if ($lvl == 2) {
-            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
 
-            $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', dir='.prepare($dir).' WHERE id='.prepare($idconto);
+            $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', dir='.prepare($dir).' WHERE id='.prepare($id_conto);
         } else {
-            $duplicate_query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND NOT id='.prepare($idconto).' AND idpianodeiconti2='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND idpianodeiconti2='.prepare($idpianodeiconti);
 
-            $update_query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', percentuale_deducibile='.prepare($percentuale).' WHERE id='.prepare($idconto);
+            $update_query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', percentuale_deducibile='.prepare($percentuale).' WHERE id='.prepare($id_conto);
         }
 
         // Controllo che non sia stato usato un numero non valido del conto
@@ -109,16 +109,16 @@ switch (post('op')) {
 
         // Eliminazione conto dal partitario
     case 'del':
-        $idconto = post('idconto');
+        $id_conto = post('id_conto');
         $lvl = post('lvl') ?: 3;
         if ($lvl == 2) {
             // Eliminazione conto di livello 2 (co_pianodeiconti2)
             // Controllo che non esistano movimenti associati ai conti di livello 3 collegati
-            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto = co_pianodeiconti3.id WHERE co_pianodeiconti3.idpianodeiconti2 = '.prepare($idconto));
+            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto = co_pianodeiconti3.id WHERE co_pianodeiconti3.idpianodeiconti2 = '.prepare($id_conto));
 
-            if ($idconto != '' and empty($movimenti)) {
+            if ($id_conto != '' and empty($movimenti)) {
                 // Prima elimino tutti i conti di livello 3 collegati
-                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($id_conto));
 
                 foreach ($conti_livello3 as $conto3) {
                     // Scollego il conto dalle anagrafiche
@@ -127,10 +127,10 @@ switch (post('op')) {
                 }
 
                 // Elimino tutti i conti di livello 3 collegati
-                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($idconto));
+                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($id_conto));
 
                 // Infine elimino il conto di livello 2
-                $query = 'DELETE FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+                $query = 'DELETE FROM co_pianodeiconti2 WHERE id='.prepare($id_conto);
 
                 if ($dbo->query($query)) {
                     flash()->info(tr('Conto e tutti i suoi sottoconti eliminati!'));
@@ -143,14 +143,14 @@ switch (post('op')) {
         } else {
             // Eliminazione conto di livello 3 (co_pianodeiconti3) - logica esistente
             // Controllo che non esistano movimenti associati al conto
-            $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE idconto = '.prepare($idconto));
+            $movimenti = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE id_conto = '.prepare($id_conto));
 
-            if ($idconto != '' and empty($movimenti)) {
+            if ($id_conto != '' and empty($movimenti)) {
                 // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
-                $dbo->query('UPDATE an_anagrafiche SET id_conto_cliente = NULL WHERE id_conto_cliente = '.prepare($idconto));
-                $dbo->query('UPDATE an_anagrafiche SET id_conto_fornitore = NULL WHERE id_conto_fornitore = '.prepare($idconto));
+                $dbo->query('UPDATE an_anagrafiche SET id_conto_cliente = NULL WHERE id_conto_cliente = '.prepare($id_conto));
+                $dbo->query('UPDATE an_anagrafiche SET id_conto_fornitore = NULL WHERE id_conto_fornitore = '.prepare($id_conto));
 
-                $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+                $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
 
                 if ($dbo->query($query)) {
                     flash()->info(tr('Conto eliminato!'));
@@ -168,13 +168,13 @@ switch (post('op')) {
         // Eliminazione eventuali movimenti di apertura fatti finora
         $dbo->query('DELETE FROM co_movimenti WHERE is_apertura=1 AND data='.prepare($_SESSION['period_start']));
 
-        $idconto_apertura = setting('Conto per Apertura conti patrimoniali');
-        $idconto_chiusura = setting('Conto per Chiusura conti patrimoniali');
+        $id_conto_apertura = setting('Conto per Apertura conti patrimoniali');
+        $id_conto_chiusura = setting('Conto per Chiusura conti patrimoniali');
         $data_inizio = date('Ymd', strtotime($_SESSION['period_start'].' -1 year'));
         $data_fine = $_SESSION['period_start'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($idconto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Apertura conto'), $_SESSION['period_start'], 0, true);
 
@@ -208,7 +208,7 @@ switch (post('op')) {
             $avere = abs($totale);
         }
 
-        $movimento = Movimento::build($mastrino, $idconto_apertura);
+        $movimento = Movimento::build($mastrino, $id_conto_apertura);
         $movimento->setTotale($avere, $dare);
         $movimento->is_apertura = true;
         $movimento->save();
@@ -222,14 +222,14 @@ switch (post('op')) {
         // Eliminazione eventuali movimenti di chiusura fatti finora
         $dbo->query('DELETE FROM co_movimenti WHERE is_chiusura=1 AND data='.prepare($_SESSION['period_end']));
 
-        $idconto_apertura = setting('Conto per Apertura conti patrimoniali');
-        $idconto_chiusura = setting('Conto per Chiusura conti patrimoniali');
+        $id_conto_apertura = setting('Conto per Apertura conti patrimoniali');
+        $id_conto_chiusura = setting('Conto per Chiusura conti patrimoniali');
 
         $data_inizio = $_SESSION['period_start'];
         $data_fine = $_SESSION['period_end'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.idconto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($idconto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Chiusura conto'), $_SESSION['period_end'], 0, true);
 
@@ -263,7 +263,7 @@ switch (post('op')) {
             $avere = abs($totale);
         }
 
-        $movimento = Movimento::build($mastrino, $idconto_chiusura);
+        $movimento = Movimento::build($mastrino, $id_conto_chiusura);
         $movimento->setTotale($avere, $dare);
         $movimento->is_chiusura = true;
         $movimento->save();
@@ -278,7 +278,7 @@ switch (post('op')) {
         $id_conto = post('id_conto');
 
         $dbo->query('UPDATE co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_movimenti.idconto
+            INNER JOIN co_pianodeiconti3 ON co_pianodeiconti3.id = co_movimenti.id_conto
         SET co_movimenti.totale_reddito = (co_movimenti.totale * co_pianodeiconti3.percentuale_deducibile / 100)
         WHERE co_pianodeiconti3.id = '.prepare($id_conto).' AND
             co_movimenti.data BETWEEN '.prepare($start).' AND '.prepare($end));

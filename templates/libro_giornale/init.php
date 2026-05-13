@@ -31,7 +31,7 @@ $records = $dbo->fetchArray('SELECT
     SUM(co_movimenti.totale) AS totale 
 FROM 
     co_movimenti 
-    INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id 
+    INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id 
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id
     INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id
 WHERE 
@@ -39,7 +39,7 @@ WHERE
     AND co_movimenti.data<='.prepare($date_end).' 
 GROUP BY 
     co_movimenti.idmastrino, 
-    co_movimenti.idconto,
+    co_movimenti.id_conto,
     IF(co_pianodeiconti1.descrizione = \'Patrimoniale\', IF(co_movimenti.totale>0, 1, 0), 0)
 ORDER BY 
     co_movimenti.data, co_movimenti.idmastrino');

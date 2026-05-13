@@ -92,7 +92,7 @@ switch (filter('op')) {
 
             $ddt->id_statoddt = $id_statoddt;
             $ddt->id_pagamento = $id_pagamento;
-            $ddt->idconto = post('idconto');
+            $ddt->id_conto = post('id_conto');
             $ddt->id_anagrafica = $id_anagrafica;
             $ddt->id_referentee = post('id_referente');
             $ddt->id_agente = post('id_agente');
@@ -182,7 +182,7 @@ switch (filter('op')) {
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
-        $articolo->idconto = post('idconto') ?: null;
+        $articolo->id_conto = post('id_conto') ?: null;
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }

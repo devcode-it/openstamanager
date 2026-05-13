@@ -42,11 +42,11 @@ include_once __DIR__.'/../../core.php';
 
 			<div class="row">
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite'); ?>", "name": "idconto_vendite", "value": "$idconto_vendite$", "ajax-source": "conti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per le vendite'); ?>", "name": "id_conto_vendite", "value": "$id_conto_vendite$", "ajax-source": "conti" ]}
                 </div>
 
                 <div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti'); ?>", "name": "idconto_acquisti", "value": "$idconto_acquisti$", "ajax-source": "conti" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito per gli acquisti'); ?>", "name": "id_conto_acquisti", "value": "$id_conto_acquisti$", "ajax-source": "conti" ]}
 				</div>
 
                 <div class="col-md-4">

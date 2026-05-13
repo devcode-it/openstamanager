@@ -35,8 +35,8 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
             FROM an_anagrafiche
         ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.id_conto_cliente, anagrafica.id_conto_fornitore)
         LEFT OUTER JOIN (
-            SELECT COUNT(idconto) AS numero_movimenti,
-            idconto,
+            SELECT COUNT(id_conto) AS numero_movimenti,
+            id_conto,
             SUM(
                 CASE
                     WHEN co_movimenti.data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']).' THEN
@@ -79,8 +79,8 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
                 (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
                  data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
                  data_fine_competenza <= '.prepare($_SESSION['period_end']).')
-            ) GROUP BY idconto
-        ) movimenti ON co_pianodeiconti3.id=movimenti.idconto
+            ) GROUP BY id_conto
+        ) movimenti ON co_pianodeiconti3.id=movimenti.id_conto
     WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
 
 $terzo_livello = $dbo->fetchArray($query3);
@@ -146,7 +146,7 @@ if (!empty($terzo_livello)) {
         // Possibilità di eliminare il conto se non ci sono movimenti collegati
         if ($numero_movimenti <= 0) {
             echo '
-                            <a class="btn btn-danger btn-xs ask" data-widget="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-idconto="'.$conto_terzo['id'].'">
+                            <a class="btn btn-danger btn-xs ask" data-widget="tooltip" title="'.tr('Elimina').'" data-backto="record-list" data-op="del" data-id_conto="'.$conto_terzo['id'].'">
                                 <i class="fa fa-trash"></i>
                             </a>';
         }

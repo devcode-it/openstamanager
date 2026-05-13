@@ -299,7 +299,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $articolo = ArticoloOriginale::build($codice, $categoria);
                 $articolo->setTranslation('title', $riga['Descrizione']);
                 $articolo->um = $riga['UnitaMisura'];
-                $articolo->idconto_acquisto = $conto[$key] ?: null;
+                $articolo->id_conto_acquisto = $conto[$key] ?: null;
                 $articolo->abilita_serial = setting('Serial number abilitato di default');
 
                 $articolo->save();
@@ -314,7 +314,7 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             if (!empty($articolo)) {
-                $articolo->idconto_acquisto = $conto[$key] ?: null;
+                $articolo->id_conto_acquisto = $conto[$key] ?: null;
                 $articolo->save();
 
                 $obj = Articolo::build($fattura, $articolo);
@@ -378,7 +378,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 $conto_value = !empty($conto[$key]) ? $conto[$key] : setting('Conto predefinito fatture di acquisto');
 
                 $obj->id_iva = $iva_value;
-                $obj->idconto = $conto_value;
+                $obj->id_conto = $conto_value;
 
                 if (empty($conto_arrotondamenti) && !empty($conto_value)) {
                     $conto_arrotondamenti = $conto_value;
@@ -641,7 +641,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 $obj->descrizione = tr('Arrotondamento calcolato in automatico');
                 $obj->id_iva = $iva_arrotondamento['id'];
-                $obj->idconto = $conto_arrotondamenti;
+                $obj->id_conto = $conto_arrotondamenti;
                 $obj->prezzo_unitario = round($arrotondamento_finale, 4);
                 $obj->qta = 1;
 

@@ -26,23 +26,23 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $nome = post('nome');
 
-        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
-            $idconto = post('idconto')[$i];
+        for ($i = 0; $i < sizeof(post('id_conto')); ++$i) {
+            $id_conto = post('id_conto')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
-            if (!empty($idconto)) {
+            if (!empty($id_conto)) {
                 if (!empty($dare)) {
                     $totale = $dare;
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES (:idmastrino, :nome, :descrizione, :idconto, :totale)';
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto, totale) VALUES (:idmastrino, :nome, :descrizione, :id_conto, :totale)';
                 $params = [
                     ':idmastrino' => $idmastrino,
                     ':nome' => $nome,
                     ':descrizione' => $descrizione,
-                    ':idconto' => $idconto,
+                    ':id_conto' => $id_conto,
                     ':totale' => $totale,
                 ];
                 if ($dbo->query($query, $params)) {
@@ -61,23 +61,23 @@ switch (post('op')) {
         // Eliminazione prima nota
         $dbo->delete('co_movimenti_modelli', ['idmastrino' => $idmastrino]);
 
-        for ($i = 0; $i < sizeof(post('idconto')); ++$i) {
-            $idconto = post('idconto')[$i];
+        for ($i = 0; $i < sizeof(post('id_conto')); ++$i) {
+            $id_conto = post('id_conto')[$i];
             $dare = post('dare')[$i];
             $avere = post('avere')[$i];
 
-            if (!empty($idconto)) {
+            if (!empty($id_conto)) {
                 if (!empty($dare)) {
                     $totale = $dare;
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, idconto, totale) VALUES (:idmastrino, :nome, :descrizione, :idconto, :totale)';
+                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto, totale) VALUES (:idmastrino, :nome, :descrizione, :id_conto, :totale)';
                 $params = [
                     ':idmastrino' => $idmastrino,
                     ':nome' => $nome,
                     ':descrizione' => $descrizione,
-                    ':idconto' => $idconto,
+                    ':id_conto' => $id_conto,
                     ':totale' => $totale,
                 ];
                 if ($dbo->query($query, $params)) {

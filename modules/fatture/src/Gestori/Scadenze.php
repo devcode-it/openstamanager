@@ -158,7 +158,7 @@ class Scadenze
                 $id_conto_anagrafica = $id_conto_anagrafica[$dir == 'entrata' ? 'id_conto_cliente' : 'id_conto_fornitore'];
 
                 // Recupero conto contropartita
-                $id_conto_contropartita = $dir == 'entrata' ? $pagamento->idconto_vendite : $pagamento->idconto_acquisti;
+                $id_conto_contropartita = $dir == 'entrata' ? $pagamento->id_conto_vendite : $pagamento->id_conto_acquisti;
 
                 if (!empty($id_conto_anagrafica) && !empty($id_conto_contropartita)) {
                     Movimento::registraPagamentoAutomatico($scadenza->id, $importo_da_registrare, $id_conto_anagrafica, $id_conto_contropartita, $dir);

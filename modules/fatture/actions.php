@@ -149,7 +149,7 @@ switch ($op) {
         $fattura->id_vettore = post('id_vettore') ?: null;
         $fattura->id_sede_partenza = post('id_sede_partenza') ?: null;
         $fattura->id_sede_destinazione = post('id_sede_destinazione') ?: null;
-        $fattura->idconto = post('idconto') ?: null;
+        $fattura->id_conto = post('id_conto') ?: null;
         $fattura->split_payment = post('split_payment') ?: 0;
         $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
         $fattura->n_colli = post('n_colli');
@@ -452,7 +452,7 @@ switch ($op) {
                 }
             }
 
-            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), $id_iva_intervento, post('idconto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
+            aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), $id_iva_intervento, post('id_conto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $idintervento,
@@ -534,7 +534,7 @@ switch ($op) {
         $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $articolo->id_iva = post('idiva');
-        $articolo->idconto = post('idconto') ?: null;
+        $articolo->id_conto = post('id_conto') ?: null;
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
@@ -573,7 +573,7 @@ switch ($op) {
             $sconto = Sconto::build($fattura);
         }
 
-        $sconto->idconto = post('idconto');
+        $sconto->id_conto = post('id_conto');
 
         $sconto->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $sconto->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
@@ -612,7 +612,7 @@ switch ($op) {
         $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->id_iva = post('idiva');
-        $riga->idconto = post('idconto');
+        $riga->id_conto = post('id_conto');
 
         $riga->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $riga->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
@@ -975,7 +975,7 @@ switch ($op) {
 
                 $copia = $riga->copiaIn($fattura, $qta);
 
-                $copia->id_conto = ($documento->direzione == 'entrata' ? ($articolo->idconto_vendita ?: $id_conto) : ($articolo->idconto_acquisto ?: $id_conto));
+                $copia->id_conto = ($documento->direzione == 'entrata' ? ($articolo->id_conto_vendita ?: $id_conto) : ($articolo->id_conto_acquisto ?: $id_conto));
                 $copia->calcolo_ritenuta_acconto = $calcolo_ritenuta_acconto;
                 $copia->id_ritenuta_acconto = $id_ritenuta_acconto;
                 $copia->id_rivalsa_inps = $id_rivalsa_inps;
@@ -1031,7 +1031,7 @@ switch ($op) {
         $tipo = Tipo::where('name', 'Nota di credito')->where('dir', 'entrata')->first();
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
-        $nota->idconto = $fattura->idconto;
+        $nota->id_conto = $fattura->id_conto;
         $nota->id_pagamento = $fattura->id_pagamento;
         $nota->id_banca_azienda = $fattura->id_banca_azienda;
         $nota->id_banca_controparte = $fattura->id_banca_controparte;
@@ -1126,7 +1126,7 @@ switch ($op) {
         }
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
-        $autofattura->idconto = $fattura->idconto;
+        $autofattura->id_conto = $fattura->id_conto;
         $autofattura->id_pagamento = $fattura->id_pagamento;
         $autofattura->is_fattura_conto_terzi = 1;
         $autofattura->ref_documento = $fattura->id;
@@ -1147,7 +1147,7 @@ switch ($op) {
         }
 
         $riga->id_iva = $id_iva_da_usare;
-        $riga->idconto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
+        $riga->id_conto = setting('Conto per autofattura') ?: setting('Conto predefinito fatture di vendita');
         $riga->setPrezzoUnitario($totale_imponibile, $id_iva_da_usare);
         $riga->qta = 1;
         $riga->save();
@@ -1251,12 +1251,12 @@ switch ($op) {
                 $articolo->costo_unitario = $originale->prezzo_acquisto;
 
                 $id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
-                if ($dir == 'entrata' && !empty($originale->idconto_vendita)) {
-                    $id_conto = $originale->idconto_vendita;
-                } elseif ($dir == 'uscita' && !empty($originale->idconto_acquisto)) {
-                    $id_conto = $originale->idconto_acquisto;
+                if ($dir == 'entrata' && !empty($originale->id_conto_vendita)) {
+                    $id_conto = $originale->id_conto_vendita;
+                } elseif ($dir == 'uscita' && !empty($originale->id_conto_acquisto)) {
+                    $id_conto = $originale->id_conto_acquisto;
                 }
-                $articolo->idconto = $id_conto;
+                $articolo->id_conto = $id_conto;
 
                 if ($dir == 'entrata') {
                     // L'aliquota dell'articolo ha precedenza solo se ha aliquota a 0, altrimenti anagrafica -> articolo -> impostazione
@@ -1562,7 +1562,7 @@ if (get('op') == 'nota_addebito') {
 
     $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
     $nota->ref_documento = $fattura->id;
-    $nota->idconto = $fattura->idconto;
+    $nota->id_conto = $fattura->id_conto;
     $nota->id_pagamento = $fattura->id_pagamento;
     $nota->id_banca_azienda = $fattura->id_banca_azienda;
     $nota->id_banca_controparte = $fattura->id_banca_controparte;

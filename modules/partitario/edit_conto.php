@@ -20,14 +20,14 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 
-$idconto = get('id');
+$id_conto = get('id');
 $lvl = get('lvl');
 
 // Info conto
 if ($lvl == 2) {
-    $query = 'SELECT *, idpianodeiconti1 AS idpianodeiconti FROM co_pianodeiconti2 WHERE id='.prepare($idconto);
+    $query = 'SELECT *, idpianodeiconti1 AS idpianodeiconti FROM co_pianodeiconti2 WHERE id='.prepare($id_conto);
 } else {
-    $query = 'SELECT *, idpianodeiconti2 AS idpianodeiconti, (SELECT dir FROM co_pianodeiconti2 WHERE co_pianodeiconti2.id=co_pianodeiconti3.idpianodeiconti2) AS dir FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
+    $query = 'SELECT *, idpianodeiconti2 AS idpianodeiconti, (SELECT dir FROM co_pianodeiconti2 WHERE co_pianodeiconti2.id=co_pianodeiconti3.idpianodeiconti2) AS dir FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
 }
 
 $info = $dbo->fetchOne($query);
@@ -63,7 +63,7 @@ if (!$conto_bloccato && $lvl == 3) {
     <input type="hidden" name="lvl" value="<?php echo $lvl; ?>">
 
     <input type="hidden" name="idpianodeiconti" value="<?php echo $info['idpianodeiconti']; ?>">
-    <input type="hidden" name="idconto" value="<?php echo $info['id']; ?>">
+    <input type="hidden" name="id_conto" value="<?php echo $info['id']; ?>">
 
     <div class="row">
         <div class="col-md-4">

@@ -23,12 +23,12 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'update_conti_movimenti':
         // Aggiornamento dei conti associati ai movimenti
-        $idconti = post('idconto');
+        $idconti = post('id_conto');
 
         if (!empty($idconti)) {
             foreach ($idconti as $id_movimento => $id_conto) {
                 $dbo->update('co_movimenti', [
-                    'idconto' => $id_conto,
+                    'id_conto' => $id_conto,
                 ], [
                     'id' => $id_movimento,
                 ]);

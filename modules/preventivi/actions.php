@@ -210,7 +210,7 @@ switch (post('op')) {
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('idiva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
-        $articolo->idconto = post('idconto') ?: null;
+        $articolo->id_conto = post('id_conto') ?: null;
 
         try {
             $articolo->qta = $qta;

@@ -135,7 +135,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Predisposizione prima riga
     $banca = Banca::find($fattura->id_banca_azienda);
-    $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
+    $conto_field = 'id_conto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
     $id_conto_aziendale = $banca->id_piano_dei_conti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
     // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
@@ -172,7 +172,7 @@ foreach ($id_documenti as $id_documento) {
     if ($is_insoluto) {
         $scadenza_disponibile = $scadenze[0];
 
-        $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
+        $conto_field = 'id_conto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
         $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
         $conto_banca_effetti = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare('Banca effetti all\'incasso'));
@@ -219,7 +219,7 @@ foreach ($id_documenti as $id_documento) {
             if ($scadenza['tipo'] == 'ritenutaacconto') {
                 $id_conto_controparte = setting("Conto per Erario c/ritenute d'acconto");
             } else {
-                $conto_field = 'idconto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
+                $conto_field = 'id_conto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
                 $id_conto_controparte = $fattura->anagrafica[$conto_field];
             }
 
@@ -389,9 +389,9 @@ if (!empty($id_anagrafica)) {
     $id_conto_anticipo_fornitori = setting('Conto anticipo fornitori');
     $id_conto_anticipo_clienti = setting('Conto anticipo clienti');
 
-    $anticipo_cliente = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_clienti));
+    $anticipo_cliente = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.id_conto='.prepare($id_conto_anticipo_clienti));
 
-    $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.idconto='.prepare($id_conto_anticipo_fornitori));
+    $anticipo_fornitore = $dbo->fetchOne('SELECT ABS(SUM(totale)) AS totale FROM co_movimenti WHERE  co_movimenti.id_anagrafica='.prepare($id_anagrafica).' AND  co_movimenti.id_conto='.prepare($id_conto_anticipo_fornitori));
 
     if ($anticipo_fornitore['totale'] != 0) {
         echo '

@@ -129,7 +129,7 @@ class FatturaSemplificata extends FatturaElettronica
             $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
 
             $obj->id_iva = $iva_value;
-            $obj->idconto = $conto[$key];
+            $obj->id_conto = $conto[$key];
 
             // Gestione corretta dei segni in base al tipo di documento
             $tipo_documento = $this->getBody()['DatiGenerali']['DatiGeneraliDocumento']['TipoDocumento'];

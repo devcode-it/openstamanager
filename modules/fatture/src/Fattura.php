@@ -120,7 +120,7 @@ class Fattura extends Document
         $model->data_registrazione = $data_registrazione ?: $data;
         $model->data_competenza = $data;
         $model->id_segment = $id_segment;
-        $model->idconto = $id_conto;
+        $model->id_conto = $id_conto;
         if ($numero_esterno) {
             $model->numero_esterno = $numero_esterno;
         }
@@ -708,7 +708,7 @@ class Fattura extends Document
         $riga->qta = 1;
         $riga->descrizione = $this->pagamento->descrizione_incasso;
         $riga->id_iva = $first_riga_fattura->idiva;
-        $riga->idconto = setting("Conto predefinito per le spese d'incasso");
+        $riga->id_conto = setting("Conto predefinito per le spese d'incasso");
         $riga->setPrezzoUnitario($prezzo_unitario, $first_riga_fattura->idiva);
         $riga->setSconto($sconto, $riga->tipo_sconto);
         $riga->save();

@@ -38,7 +38,7 @@ $fattura = Fattura::find($id_record);
 $numero = ($fattura->numero_esterno != '') ? $fattura->numero_esterno : $fattura->numero;
 $id_anagrafica = $fattura->id_anagrafica;
 
-$idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
+$id_conto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
 
 $where = '';
 // Lettura interventi non collegati a preventivi, ordini e contratti
@@ -139,7 +139,7 @@ echo '
 
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Conto').'", "name": "idconto", "required": 1, "value": "'.$idconto.'", "ajax-source": "'.$conti.'" ]}
+            {[ "type": "select", "label": "'.tr('Conto').'", "name": "id_conto", "required": 1, "value": "'.$id_conto.'", "ajax-source": "'.$conti.'" ]}
         </div>
     </div>';
 

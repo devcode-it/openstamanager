@@ -41,7 +41,7 @@ if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
 }
 $id_segment = $_SESSION['module_'.$id_modulo_fatture]['id_segment'];
 $id_segment_ordini = $_SESSION['module_'.$id_module]['id_segment'];
-$idconto = setting('Conto predefinito fatture di vendita');
+$id_conto = setting('Conto predefinito fatture di vendita');
 $id_tipo_documento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
@@ -117,13 +117,13 @@ switch (post('op')) {
                         if ($qta > 0) {
                             $copia = $riga->copiaIn($fattura, $qta);
 
-                            // Fix per idconto righe fattura
-                            $copia->id_conto = $idconto;
+                            // Fix per id_conto righe fattura
+                            $copia->id_conto = $id_conto;
 
                             // Aggiornamento seriali dalla riga dell'ordine
                             if ($copia->isArticolo()) {
                                 $articolo = ArticoloOriginale::find($copia->idarticolo);
-                                $copia->id_conto = !empty($articolo->idconto_vendita) ? $articolo->idconto_vendita : $idconto;
+                                $copia->id_conto = !empty($articolo->id_conto_vendita) ? $articolo->id_conto_vendita : $id_conto;
                                 $copia->serials = $riga->serials;
                             }
                             $copia->save();

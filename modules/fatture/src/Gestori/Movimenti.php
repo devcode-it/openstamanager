@@ -118,7 +118,7 @@ class Movimenti
         ];
 
         /*
-         * 2) Movimento per riga del documento (raggruppato per idconto)
+         * 2) Movimento per riga del documento (raggruppato per id_conto)
          * Imponibile -> AVERE per Vendita, DARE per Acquisto
          */
         $righe = $this->fattura->getRighe();
@@ -127,7 +127,7 @@ class Movimenti
 
         foreach ($righe as $riga) {
             // Retro-compatibilità per versioni <= 2.4
-            $id_conto = $riga->idconto ?: $this->fattura->idconto;
+            $id_conto = $riga->id_conto ?: $this->fattura->id_conto;
 
             $indetraibile = $riga->iva_indetraibile;
             $imponibile = $riga->totale_imponibile + $indetraibile;
@@ -189,7 +189,7 @@ class Movimenti
             if ($is_acquisto && $split_payment) {
                 $movimenti_split_iva = [];
                 foreach ($righe as $riga) {
-                    $id_conto = $riga->idconto ?: $this->fattura->idconto;
+                    $id_conto = $riga->id_conto ?: $this->fattura->id_conto;
                     $iva_riga = $riga->iva;
 
                     if (!empty($iva_riga)) {

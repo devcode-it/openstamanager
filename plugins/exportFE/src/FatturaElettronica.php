@@ -144,13 +144,13 @@ class FatturaElettronica implements \Stringable
             $documento = $this->getDocumento();
             $database = database();
 
-            $contratti = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_contratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
+            $contratti = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_contratti` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_contratto` = `co_contratti`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
 
-            $preventivi = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
+            $preventivi = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `co_preventivi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idpreventivo` = `co_preventivi`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
 
-            $interventi = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
+            $interventi = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `in_interventi` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idintervento` = `in_interventi`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idordine` = 0 AND `co_righe_documenti`.`idddt` = 0');
 
-            $ddt = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0');
+            $ddt = $database->fetchArray('SELECT DISTINCT `id_documento_fe` AS id_documento, `num_item`, `codice_cig`, `codice_cup` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']).' AND `id_documento_fe` IS NOT NULL AND `co_righe_documenti`.`id_contratto` = 0 AND `co_righe_documenti`.`idpreventivo` = 0 AND `co_righe_documenti`.`idintervento` IS NULL AND `co_righe_documenti`.`idordine` = 0');
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_contratto'] ?: [];
@@ -172,7 +172,7 @@ class FatturaElettronica implements \Stringable
             $documento = $this->getDocumento();
             $database = database();
 
-            $ordini = $database->fetchArray('SELECT `or_ordini`.`numero_cliente` AS id_documento, `or_ordini`.`num_item`, `or_ordini`.`codice_cig`, `or_ordini`.`codice_cup`, `or_ordini`.`codice_commessa`, `or_ordini`.`data_cliente` AS `data`, `co_righe_documenti`.`order` AS riferimento_linea FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
+            $ordini = $database->fetchArray('SELECT `or_ordini`.`numero_cliente` AS id_documento, `or_ordini`.`num_item`, `or_ordini`.`codice_cig`, `or_ordini`.`codice_cup`, `or_ordini`.`codice_commessa`, `or_ordini`.`data_cliente` AS `data`, `co_righe_documenti`.`order` AS riferimento_linea FROM `or_ordini` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idordine` = `or_ordini`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']));
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_ordine'] ?: [];
@@ -194,7 +194,7 @@ class FatturaElettronica implements \Stringable
             $documento = $this->getDocumento();
             $database = database();
 
-            $ddt = $database->fetchArray('SELECT `dt_ddt`.`numero_esterno` AS id_documento, `co_righe_documenti`.`order` AS riferimento_linea, `dt_ddt`.`data` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`iddocumento` = '.prepare($documento['id']));
+            $ddt = $database->fetchArray('SELECT `dt_ddt`.`numero_esterno` AS id_documento, `co_righe_documenti`.`order` AS riferimento_linea, `dt_ddt`.`data` FROM `dt_ddt` INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idddt` = `dt_ddt`.`id` WHERE `co_righe_documenti`.`id_documento` = '.prepare($documento['id']));
 
             $dati_aggiuntivi = $documento->dati_aggiuntivi_fe;
             $dati = $dati_aggiuntivi['dati_ddt'] ?: [];
@@ -454,7 +454,7 @@ class FatturaElettronica implements \Stringable
         }
 
         // Natura obbligatoria per iva con esenzione
-        $iva = $database->fetchArray('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_iva`.`id` IN (SELECT `idiva` FROM `co_righe_documenti` WHERE `iddocumento` = '.prepare($fattura->id).') AND `esente` = 1');
+        $iva = $database->fetchArray('SELECT * FROM `co_iva` LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') WHERE `co_iva`.`id` IN (SELECT `idiva` FROM `co_righe_documenti` WHERE `id_documento` = '.prepare($fattura->id).') AND `esente` = 1');
         $fields = [
             'codice_natura_fe' => 'Natura IVA',
         ];
@@ -1182,7 +1182,7 @@ class FatturaElettronica implements \Stringable
                 $dati['RiferimentoNumeroLinea'] = $element['riferimento_linea'];
             }
 
-            $dati['IdDocumento'] = $element['id_documento'];
+            $dati['id_documento'] = $element['id_documento'];
 
             if (!empty($element['data'])) {
                 $dati['Data'] = $element['data'];
@@ -1680,7 +1680,7 @@ class FatturaElettronica implements \Stringable
             'CondizioniPagamento' => ($co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
         ];
 
-        $co_scadenzario = $database->fetchArray('SELECT * FROM `co_scadenzario` WHERE `iddocumento` = '.prepare($documento['id']));
+        $co_scadenzario = $database->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento` = '.prepare($documento['id']));
         foreach ($co_scadenzario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
             $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['id_anagrafica'])->where('predefined', 1)->first();

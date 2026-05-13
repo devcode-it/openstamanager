@@ -269,17 +269,17 @@ class PianoContiRagioneSociale extends Controllo
 
         // Aggiorna anche i movimenti collegati ai documenti dell'anagrafica
         $documenti_anagrafica = $database->fetchArray('
-            SELECT DISTINCT iddocumento
+            SELECT DISTINCT id_documento
             FROM co_movimenti
             WHERE id_anagrafica = '.prepare($id_anagrafica).'
-            AND iddocumento > 0
+            AND id_documento > 0
         ');
 
         foreach ($documenti_anagrafica as $documento) {
             $database->update('co_movimenti', [
                 'id_conto' => $nuovo_id_conto,
             ], [
-                'iddocumento' => $documento['iddocumento'],
+                'id_documento' => $documento['id_documento'],
                 'id_conto' => $vecchio_id_conto,
             ]);
         }

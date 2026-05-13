@@ -29,7 +29,7 @@ trait RelationTrait
 {
     public function getDocumentID()
     {
-        return 'iddocumento';
+        return 'id_documento';
     }
 
     public function document()

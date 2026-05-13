@@ -54,7 +54,7 @@ echo '
 
 	<input type="hidden" name="tipo" value="'.$record['tipo'].'">
 	<input type="hidden" name="descrizione" value="'.$record['descrizione'].'">
-	<input type="hidden" name="iddocumento" value="'.$record['iddocumento'].'">
+	<input type="hidden" name="id_documento" value="'.$record['id_documento'].'">
     <input type="hidden" name="id_anagrafica" value="'.$record['id_anagrafica'].'">
 
 	<div class="card card-primary">
@@ -107,7 +107,7 @@ if (!empty($documento)) {
                         </tr>
                     </table>
 
-                    '.Modules::link($documento->module, $record['iddocumento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
+                    '.Modules::link($documento->module, $record['id_documento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
 } else {
     $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record));
     echo '
@@ -383,7 +383,7 @@ echo '
                 id_record: globals.id_record,
                 op: "add",
                 id_anagrafica: '.$record['id_anagrafica'].',
-                iddocumento: '.$documento['id'].',
+                id_documento: '.$documento['id'].',
                 data_emissione: "'.$documento['data_emissione'].'",
             },
             success: function(response) {
@@ -438,7 +438,7 @@ echo '
                 id_record: globals.id_record,
                 op: "save_new_scadenza",
                 index: index,
-                iddocumento: '.$documento['id'].',
+                id_documento: '.$documento['id'].',
                 id_anagrafica: '.$record['id_anagrafica'].',
                 id_banca_azienda: id_banca_azienda,
                 id_banca_controparte: id_banca_controparte,

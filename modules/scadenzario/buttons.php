@@ -20,11 +20,11 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (!empty($record['iddocumento'])) {
+if (!empty($record['id_documento'])) {
     $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id_record, 'original' => 'Fattura di vendita.pdf'])['id'];
     echo '
     <button type="button" class="btn btn-warning ask btn-warning '.(empty($fattura_allegata
-    ) ? '' : 'disabled').'" id="allega-fattura" data-msg="'.tr('Allegare la stampa della fattura?').'"  data-op="allega_fattura" data-iddocumento="'.$record['iddocumento'].'" data-button="'.tr('Allega').'" data-class="btn btn-lg btn-warning" data-backto="record-edit" >
+    ) ? '' : 'disabled').'" id="allega-fattura" data-msg="'.tr('Allegare la stampa della fattura?').'"  data-op="allega_fattura" data-id_documento="'.$record['id_documento'].'" data-button="'.tr('Allega').'" data-class="btn btn-lg btn-warning" data-backto="record-edit" >
         <i class="fa fa-paperclip"></i> '.tr('Allega fattura').'
     </button>';
 }

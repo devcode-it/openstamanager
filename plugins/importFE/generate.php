@@ -461,14 +461,14 @@ if (!empty($righe)) {
     foreach ($DatiOrdini as $dato) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ordini[(int) $linea] = [
-                'numero' => $dato['IdDocumento'],
+                'numero' => $dato['id_documento'],
                 'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }
 
         if (!$dato['RiferimentoNumeroLinea']) {
             $dati_ordini_documento[] = [
-                'numero' => $dato['IdDocumento'],
+                'numero' => $dato['id_documento'],
                 'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
             ];
         }

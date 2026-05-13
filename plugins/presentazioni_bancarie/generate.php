@@ -83,14 +83,14 @@ foreach ($scadenze as $scadenza) {
             // Se gli importi corrispondono (tolleranza di 1 centesimo), escludiamo anche la fattura originale
             if (abs($importo_nota - $importo_fattura_originale) < 0.01) {
                 // Trova tutte le scadenze della fattura originale e le esclude
-                $scadenze_fattura_originale = $scadenze->where('iddocumento', $fattura_originale->id);
+                $scadenze_fattura_originale = $scadenze->where('id_documento', $fattura_originale->id);
                 foreach ($scadenze_fattura_originale as $scad_orig) {
                     $scadenze_da_escludere->push($scad_orig->id);
                 }
                 $fatture_stornate->push($fattura_originale);
             } else {
                 // Importi diversi: storniamo il valore della nota di credito dalla fattura originale
-                $scadenze_fattura_originale = $scadenze->where('iddocumento', $fattura_originale->id);
+                $scadenze_fattura_originale = $scadenze->where('id_documento', $fattura_originale->id);
                 $importo_da_stornare = $importo_nota;
 
                 // Distribuiamo lo storno proporzionalmente tra le scadenze della fattura originale
@@ -309,7 +309,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
         if ($is_sepa) {
             // Prima, successiva, singola
 
-            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenzario` INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id_anagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
+            $scadenze_antecedenti = $dbo->fetchArray('SELECT * FROM `co_scadenzario` INNER JOIN `co_documenti` ON `co_scadenzario`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id` LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id_anagrafica`='.prepare($id_anagrafica)." AND `codice_modalita_pagamento_fe` IN('MP19','MP20','MP21') AND `data_emissione`<".prepare($scadenza->data_emissione));
 
             $check_successiva = '';
             $check_prima = '';

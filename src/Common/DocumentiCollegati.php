@@ -189,7 +189,7 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_documenti`.`id` IN (
-            SELECT `iddocumento` 
+            SELECT `id_documento` 
             FROM `co_righe_documenti` 
             WHERE `idintervento` = '.prepare($id_intervento).'
         )
@@ -229,7 +229,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `in_interventi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
@@ -254,7 +254,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_preventivi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
@@ -280,7 +280,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
         LEFT JOIN `dt_tipiddt_lang` ON (
@@ -311,7 +311,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `or_ordini`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
         LEFT JOIN `or_tipiordine_lang` ON (
@@ -341,7 +341,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_contratti`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Contratti\\\\Contratto\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (
@@ -383,7 +383,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
         LEFT JOIN `dt_tipiddt_lang` ON (
@@ -414,7 +414,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `or_ordini`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
         LEFT JOIN `or_tipiordine_lang` ON (
@@ -469,7 +469,7 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_righe_documenti` ON (
-            `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` AND
+            `co_righe_documenti`.`id_documento` = `co_documenti`.`id` AND
             `co_righe_documenti`.`id_contratto` = '.prepare($id_contratto).'
         )
         GROUP BY `co_documenti`.`id`
@@ -554,7 +554,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
@@ -699,7 +699,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
@@ -815,7 +815,7 @@ class DocumentiCollegati
             IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
             `co_statidocumento_lang`.`title` AS stato_documento
         FROM `co_documenti`
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
@@ -891,7 +891,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
         LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
@@ -1154,7 +1154,7 @@ class DocumentiCollegati
         global $dbo;
 
         // Query ottimizzata per il conteggio (conta documenti unici, non righe)
-        $query = 'SELECT COUNT(DISTINCT `iddocumento`) AS total
+        $query = 'SELECT COUNT(DISTINCT `id_documento`) AS total
         FROM `co_righe_documenti`
         WHERE `idintervento` = '.prepare($id_intervento);
 
@@ -1182,7 +1182,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `in_interventi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_interventi);
@@ -1194,7 +1194,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_preventivi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_preventivi);
@@ -1206,7 +1206,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_ddt);
@@ -1218,7 +1218,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `or_ordini`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_ordini);
@@ -1230,7 +1230,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_contratti`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Contratti\\\\Contratto\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_contratti);
@@ -1258,7 +1258,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_ddt);
@@ -1270,7 +1270,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `or_ordini`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\' AND
-            `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
+            `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )';
 
         $result = $dbo->fetchOne($query_ordini);
@@ -1296,7 +1296,7 @@ class DocumentiCollegati
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON (
-            `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` AND
+            `co_righe_documenti`.`id_documento` = `co_documenti`.`id` AND
             `co_righe_documenti`.`id_contratto` = '.prepare($id_contratto).'
         )';
 
@@ -1342,7 +1342,7 @@ class DocumentiCollegati
         // Conta le fatture collegate
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         WHERE `co_righe_documenti`.`idpreventivo` = '.prepare($id_preventivo);
 
         $result = $dbo->fetchOne($query_fatture);
@@ -1407,7 +1407,7 @@ class DocumentiCollegati
         // Conta le fatture collegate
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         WHERE `co_righe_documenti`.`idordine` = '.prepare($id_ordine);
 
         $result = $dbo->fetchOne($query_fatture);
@@ -1462,7 +1462,7 @@ class DocumentiCollegati
         // Conta le fatture collegate
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
-        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
         WHERE `co_righe_documenti`.`idddt` = '.prepare($id_ddt);
 
         $result = $dbo->fetchOne($query_fatture);
@@ -1497,7 +1497,7 @@ class DocumentiCollegati
         // Conta le fatture collegate
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
-        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
+        INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
         WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_fatture);
@@ -1689,7 +1689,7 @@ class DocumentiCollegati
             case 'fattura_vendita':
             case 'fattura_acquisto':
                 $tabella_righe = 'co_righe_documenti';
-                $campo_id_documento = 'iddocumento';
+                $campo_id_documento = 'id_documento';
                 break;
             case 'ordine':
                 $tabella_righe = 'or_righe_ordini';
@@ -1822,7 +1822,7 @@ class DocumentiCollegati
 
         // Cerca nelle tabelle delle righe di tutti i tipi di documento
         $tabelle_righe = [
-            'co_righe_documenti' => ['iddocumento', 'fattura_vendita', 'fattura_acquisto'],
+            'co_righe_documenti' => ['id_documento', 'fattura_vendita', 'fattura_acquisto'],
             'or_righe_ordini' => ['idordine', 'ordine'],
             'dt_righe_ddt' => ['idddt', 'ddt'],
             'in_righe_interventi' => ['idintervento', 'intervento'],

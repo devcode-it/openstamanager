@@ -411,22 +411,22 @@ class Fattura extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'iddocumento');
+        return $this->hasMany(Components\Articolo::class, 'id_documento');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'iddocumento');
+        return $this->hasMany(Components\Riga::class, 'id_documento');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'iddocumento');
+        return $this->hasMany(Components\Sconto::class, 'id_documento');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'iddocumento');
+        return $this->hasMany(Components\Descrizione::class, 'id_documento');
     }
 
     public function ritenutaContributi()
@@ -436,22 +436,22 @@ class Fattura extends Document
 
     public function rigaBollo()
     {
-        return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_bollo);
+        return $this->hasOne(Components\Riga::class, 'id_documento')->where('id', $this->id_riga_bollo);
     }
 
     public function rigaSpeseIncasso()
     {
-        return $this->hasOne(Components\Riga::class, 'iddocumento')->where('id', $this->id_riga_spese_incasso);
+        return $this->hasOne(Components\Riga::class, 'id_documento')->where('id', $this->id_riga_spese_incasso);
     }
 
     public function scadenze()
     {
-        return $this->hasMany(Scadenza::class, 'iddocumento')->orderBy('scadenza');
+        return $this->hasMany(Scadenza::class, 'id_documento')->orderBy('scadenza');
     }
 
     public function movimentiContabili()
     {
-        return $this->hasMany(Movimento::class, 'iddocumento')->where('primanota', 1);
+        return $this->hasMany(Movimento::class, 'id_documento')->where('primanota', 1);
     }
 
     // Metodi generali
@@ -1014,7 +1014,7 @@ class Fattura extends Document
     protected function aggiornaDataCompetenzaMovimenti($id_stato_attuale, $stati_non_attivi)
     {
         if (isset($this->changes['data_competenza']) && !in_array($id_stato_attuale, $stati_non_attivi)) {
-            Movimento::where('iddocumento', $this->id)
+            Movimento::where('id_documento', $this->id)
                 ->where('primanota', 0)
                 ->update(['data' => $this->data_competenza]);
         }

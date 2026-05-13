@@ -25,23 +25,23 @@ use Models\Module;
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
-	<input type="hidden" name="iddocumento" value="<?php echo $record['iddocumento']; ?>">
+	<input type="hidden" name="id_documento" value="<?php echo $record['id_documento']; ?>">
 
     <div class="row">
 	<?php
 
     // Controllo se alla prima nota solo collegate più fatture
-    $rs_doc = $dbo->fetchArray('SELECT DISTINCT iddocumento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.iddocumento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND iddocumento!=0');
+    $rs_doc = $dbo->fetchArray('SELECT DISTINCT id_documento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.id_documento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND id_documento!=0');
 
 if (sizeof($rs_doc) > 0) {
     if (sizeof($rs_doc) == 1) {
-        $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['iddocumento']));
+        $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['id_documento']));
         $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
             
             <div class="col-md-2">
                 <br>
                 <div class="btn-group">
-                    <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $rs[0]['dir'] == 'uscita' ? Module::where('name', 'Fatture di acquisto')->first()->id : Module::where('name', 'Fatture di vendita')->first()->id; ?>&id_record=<?php echo $rs_doc[0]['iddocumento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
+                    <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $rs[0]['dir'] == 'uscita' ? Module::where('name', 'Fatture di acquisto')->first()->id : Module::where('name', 'Fatture di vendita')->first()->id; ?>&id_record=<?php echo $rs_doc[0]['id_documento']; ?>" class="btn btn-info"><i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura'); ?></a>
                     <a type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -65,9 +65,9 @@ if (sizeof($rs_doc) > 0) {
                     <ul class="dropdown-menu">
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
-            $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['iddocumento']));
+            $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['id_documento']));
             $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
-                        <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['iddocumento']; ?>" class="btn dropdown-item">
+                        <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['id_documento']; ?>" class="btn dropdown-item">
                             <i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?>
                         </a>
         <?php

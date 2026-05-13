@@ -62,14 +62,14 @@ switch (filter('op')) {
                     // Se gli importi corrispondono (tolleranza di 1 centesimo), escludiamo anche la fattura originale
                     if (abs($importo_nota - $importo_fattura_originale) < 0.01) {
                         // Trova tutte le scadenze della fattura originale e le esclude
-                        $scadenze_fattura_originale = $scadenze_originali->where('iddocumento', $fattura_originale->id);
+                        $scadenze_fattura_originale = $scadenze_originali->where('id_documento', $fattura_originale->id);
                         foreach ($scadenze_fattura_originale as $scad_orig) {
                             $scadenze_da_escludere->push($scad_orig->id);
                         }
                         $fatture_stornate->push($fattura_originale);
                     } else {
                         // Importi diversi: storniamo il valore della nota di credito dalla fattura originale
-                        $scadenze_fattura_originale = $scadenze_originali->where('iddocumento', $fattura_originale->id);
+                        $scadenze_fattura_originale = $scadenze_originali->where('id_documento', $fattura_originale->id);
                         $importo_da_stornare = $importo_nota;
 
                         // Distribuiamo lo storno proporzionalmente tra le scadenze della fattura originale

@@ -43,7 +43,7 @@ class Movimenti
     public function getMastrino()
     {
         if (!isset($this->mastrino)) {
-            $this->mastrino = Mastrino::where('iddocumento', $this->fattura->id)
+            $this->mastrino = Mastrino::where('id_documento', $this->fattura->id)
                 ->where('primanota', false)
                 ->first();
         }

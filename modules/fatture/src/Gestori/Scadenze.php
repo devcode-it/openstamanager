@@ -112,7 +112,7 @@ class Scadenze
             }
         }
 
-        database()->delete('co_scadenzario', ['iddocumento' => $this->fattura->id]);
+        database()->delete('co_scadenzario', ['id_documento' => $this->fattura->id]);
 
         foreach ($assicurazioni as $assicurazione) {
             $assicurazione->fixTotale();

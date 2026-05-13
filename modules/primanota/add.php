@@ -72,8 +72,8 @@ $permetti_modelli = (count($id_documenti) + count($id_scadenze)) <= 1;
 // Scadenze
 foreach ($id_scadenze as $id_scadenza) {
     $scadenza = $database->fetchOne('SELECT *, SUM(da_pagare - pagato) AS rata FROM co_scadenzario WHERE id='.prepare($id_scadenza));
-    if (!empty($scadenza['iddocumento'])) {
-        $id_documenti[] = $scadenza['iddocumento'];
+    if (!empty($scadenza['id_documento'])) {
+        $id_documenti[] = $scadenza['id_documento'];
         continue;
     }
     $dir = $scadenza['rata'] > 0 ? 'entrata' : 'uscita';
@@ -85,7 +85,7 @@ foreach ($id_scadenze as $id_scadenza) {
 
     $righe_documento = [];
     $righe_documento[] = [
-        'iddocumento' => null,
+        'id_documento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => null,
         'dare' => ($dir == 'uscita') ? 0 : $scadenza['rata'],
@@ -93,7 +93,7 @@ foreach ($id_scadenze as $id_scadenza) {
     ];
 
     $righe_documento[] = [
-        'iddocumento' => null,
+        'id_documento' => null,
         'id_scadenza' => $scadenza['id'],
         'id_conto' => $id_conto_controparte,
         'dare' => ($dir == 'uscita') ? $scadenza['rata'] : 0,
@@ -140,9 +140,9 @@ foreach ($id_documenti as $id_documento) {
 
     // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenzario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, iddocumento, tipo FROM co_scadenzario WHERE iddocumento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -182,7 +182,7 @@ foreach ($id_documenti as $id_documento) {
         $id_conto_spese_insoluti = $conto_spese['id'] ?? null;
 
         $righe_documento[] = [
-            'iddocumento' => $scadenza_disponibile['iddocumento'],
+            'id_documento' => $scadenza_disponibile['id_documento'],
             'id_scadenza' => $scadenza_disponibile['id'],
             'id_conto' => $id_conto_controparte,
             'dare' => $scadenza_disponibile['rata'],
@@ -190,7 +190,7 @@ foreach ($id_documenti as $id_documento) {
         ];
 
         $righe_documento[] = [
-            'iddocumento' => $scadenza_disponibile['iddocumento'],
+            'id_documento' => $scadenza_disponibile['id_documento'],
             'id_scadenza' => $scadenza_disponibile['id'],
             'id_conto' => $id_conto_banca_effetti,
             'dare' => 0,
@@ -198,7 +198,7 @@ foreach ($id_documenti as $id_documento) {
         ];
 
         $righe_documento[] = [
-            'iddocumento' => null,
+            'id_documento' => null,
             'id_scadenza' => null,
             'id_conto' => $id_conto_spese_insoluti,
             'dare' => $scadenza_disponibile['rata'],
@@ -206,7 +206,7 @@ foreach ($id_documenti as $id_documento) {
         ];
 
         $righe_documento[] = [
-            'iddocumento' => null,
+            'id_documento' => null,
             'id_scadenza' => null,
             'id_conto' => $id_conto_aziendale,
             'dare' => 0,
@@ -224,7 +224,7 @@ foreach ($id_documenti as $id_documento) {
             }
 
             $righe_documento[] = [
-                'iddocumento' => $scadenza['iddocumento'],
+                'id_documento' => $scadenza['id_documento'],
                 'id_scadenza' => $scadenza['id'],
                 'id_conto' => $id_conto_controparte,
                 'dare' => $is_importo_avere ? 0 : $scadenza['rata'],
@@ -236,7 +236,7 @@ foreach ($id_documenti as $id_documento) {
         $totale = sum(array_column($scadenze, 'rata'));
 
         $righe_documento[] = [
-            'iddocumento' => $scadenze[0]['iddocumento'],
+            'id_documento' => $scadenze[0]['id_documento'],
             'id_scadenza' => $scadenze[0]['id'],
             'id_conto' => $id_conto_aziendale,
             'dare' => $is_importo_avere ? $totale : 0,

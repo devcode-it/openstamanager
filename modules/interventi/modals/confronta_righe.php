@@ -85,7 +85,7 @@ $righe = $dbo->fetchArray(
                         DATE(`co_righe_documenti`.`updated_at`) AS updated_at
                     FROM
                         `co_documenti`
-                        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+                        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
                         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idarticolo` = `mg_articoli`.`id`
                         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`

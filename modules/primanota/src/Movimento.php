@@ -58,7 +58,7 @@ class Movimento extends Model
         $documento = $documento ?: $documento_scadenza;
         if (!empty($documento)) {
             $model->id_anagrafica = $documento->id_anagrafica;
-            $model->iddocumento = $documento->id;
+            $model->id_documento = $documento->id;
         }
 
         // Associazione alla scadenza indicata
@@ -117,7 +117,7 @@ class Movimento extends Model
 
     public function documento()
     {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
+        return $this->belongsTo(Fattura::class, 'id_documento');
     }
 
     /**

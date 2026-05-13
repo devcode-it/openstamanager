@@ -39,7 +39,7 @@ if (empty($_GET['visualizza_movimenti'])) {
     if ($modulo == 'Anagrafiche') {
         $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_anagrafica='.prepare($id_record).' GROUP BY co_movimenti.id ORDER BY data, idmastrino');
     } else {
-        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento='.prepare($id_record).' GROUP BY co_movimenti.id ORDER BY data, idmastrino');
+        $movimenti = $dbo->fetchArray('SELECT co_movimenti.*, totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_documento='.prepare($id_record).' GROUP BY co_movimenti.id ORDER BY data, idmastrino');
     }
 
     $idmastrini_processati = [-1];
@@ -71,7 +71,7 @@ if (empty($_GET['visualizza_movimenti'])) {
                 <tbody>';
 
         foreach ($movimenti as $movimento) {
-            $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['iddocumento']) : null;
+            $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['id_documento']) : null;
             $scalare += $movimento['totale'];
             $descrizione = $movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'];
 
@@ -102,10 +102,10 @@ if (empty($_GET['visualizza_movimenti'])) {
 
         // Altri movimenti del mastrino collegati ma non direttamente collegati alla fattura (es. spese bancarie)
         if ($modulo != 'Anagrafiche') {
-            $altri_movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE iddocumento=0 AND idmastrino IN('.implode(',', array_map(prepare(...), $idmastrini_processati)).') GROUP BY idmastrino, id_conto ORDER BY data, idmastrino');
+            $altri_movimenti = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale, co_pianodeiconti3.descrizione, co_pianodeiconti3.numero AS conto3, co_pianodeiconti2.numero AS conto2 FROM co_movimenti LEFT JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE id_documento=0 AND idmastrino IN('.implode(',', array_map(prepare(...), $idmastrini_processati)).') GROUP BY idmastrino, id_conto ORDER BY data, idmastrino');
 
             foreach ($altri_movimenti as $altro_movimento) {
-                $documento = $modulo == 'Anagrafiche' ? Fattura::find($altro_movimento['iddocumento']) : null;
+                $documento = $modulo == 'Anagrafiche' ? Fattura::find($altro_movimento['id_documento']) : null;
                 $scalare += $altro_movimento['totale'];
                 $descrizione = $altro_movimento['conto2'].'.'.$altro_movimento['conto3'].' - '.$altro_movimento['descrizione'];
 

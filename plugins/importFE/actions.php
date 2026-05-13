@@ -329,39 +329,39 @@ switch (filter('op')) {
             if (is_array($dato['RiferimentoNumeroLinea'])) {
                 foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
                     foreach ($replaces as $replace) {
-                        if (string_starts_with($dato['IdDocumento'], $replace)) {
-                            $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
+                        if (string_starts_with($dato['id_documento'], $replace)) {
+                            $dato['id_documento'] = str_replace($replace, '', $dato['id_documento']);
                             break;
                         }
                     }
 
                     try {
                         $dati_ordini[(int) $linea] = [
-                            'numero' => $dato['IdDocumento'],
+                            'numero' => $dato['id_documento'],
                             'anno' => (new Carbon($dato['Data']))->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ordini[(int) $linea] = [
-                            'numero' => $dato['IdDocumento'],
+                            'numero' => $dato['id_documento'],
                         ];
                     }
                 }
             } else {
                 foreach ($replaces as $replace) {
-                    if (string_starts_with($dato['IdDocumento'], $replace)) {
-                        $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
+                    if (string_starts_with($dato['id_documento'], $replace)) {
+                        $dato['id_documento'] = str_replace($replace, '', $dato['id_documento']);
                         break;
                     }
                 }
 
                 try {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
-                        'numero' => $dato['IdDocumento'],
+                        'numero' => $dato['id_documento'],
                         'anno' => (new Carbon($dato['Data']))->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
-                        'numero' => $dato['IdDocumento'],
+                        'numero' => $dato['id_documento'],
                     ];
                 }
             }

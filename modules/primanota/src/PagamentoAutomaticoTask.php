@@ -53,7 +53,7 @@ class PagamentoAutomaticoTask extends Manager
                 `co_pagamenti`.`id_conto_acquisti`
             FROM 
                 `co_scadenzario`
-                INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento` = `co_documenti`.`id`
+                INNER JOIN `co_documenti` ON `co_scadenzario`.`id_documento` = `co_documenti`.`id`
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
                 INNER JOIN `co_pagamenti` ON `co_documenti`.`id_pagamentoo` = `co_pagamenti`.`id`
             WHERE 

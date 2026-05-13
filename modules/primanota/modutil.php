@@ -38,7 +38,7 @@ function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = nu
     $params = [];
 
     if (!empty($id_documento)) {
-        $where_conditions[] = 'co_movimenti.iddocumento = ?';
+        $where_conditions[] = 'co_movimenti.id_documento = ?';
         $params[] = $id_documento;
     } elseif (!empty($id_scadenza)) {
         $where_conditions[] = 'co_movimenti.id_scadenza = ?';

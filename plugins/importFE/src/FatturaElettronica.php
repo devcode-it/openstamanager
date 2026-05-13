@@ -718,8 +718,8 @@ class FatturaElettronica
             $elemento = [];
 
             // Conversione nodi XML -> campi interni
-            if (!empty($dato['IdDocumento'])) {
-                $elemento['id_documento'] = $dato['IdDocumento'];
+            if (!empty($dato['id_documento'])) {
+                $elemento['id_documento'] = $dato['id_documento'];
             }
 
             if (!empty($dato['Data'])) {

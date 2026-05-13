@@ -58,8 +58,8 @@ switch (post('op')) {
         $list = [];
         foreach ($id_records as $id) {
             $scadenza = Scadenza::find($id);
-            if ($scadenza->iddocumento) {
-                $documento = Fattura::find($scadenza->iddocumento);
+            if ($scadenza->id_documento) {
+                $documento = Fattura::find($scadenza->id_documento);
                 $documento->id_banca_azienda = post('id_banca');
                 $documento->save();
                 array_push($list, $documento->numero_esterno);
@@ -85,10 +85,10 @@ switch (post('op')) {
         // Salvo le scadenze selezionate in sessione
         $_SESSION['scadenzario_selected_ids'] = $id_records;
 
-        $scadenze = $database->FetchArray('SELECT * FROM co_scadenzario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenzario.iddocumento = nota.ref_documento WHERE co_scadenzario.id IN ('.implode(',', array_map(prepare(...), $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY id_anagrafica, iddocumento');
+        $scadenze = $database->FetchArray('SELECT * FROM co_scadenzario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenzario.id_documento = nota.ref_documento WHERE co_scadenzario.id IN ('.implode(',', array_map(prepare(...), $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY id_anagrafica, id_documento');
         foreach ($scadenze as $key => $scadenza) {
             $scadenza = Scadenza::find($scadenza['id']);
-            $documento = Fattura::find($scadenza['iddocumento']);
+            $documento = Fattura::find($scadenza['id_documento']);
 
             // Controllo se è una fattura di vendita
             if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')) {
@@ -159,7 +159,7 @@ switch (post('op')) {
 
                     $next_scadenza = $scadenze[$key + 1];
                     // Allego unica fattura per più scadenze collegate
-                    if (!empty($fattura_allegata) && $scadenza->iddocumento != $next_scadenza['iddocumento']) {
+                    if (!empty($fattura_allegata) && $scadenza->id_documento != $next_scadenza['id_documento']) {
                         $mail->addUpload($fattura_allegata);
                     }
                     // Invio unico per scadenze della stessa anagrafica

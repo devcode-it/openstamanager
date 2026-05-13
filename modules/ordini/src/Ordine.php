@@ -168,8 +168,8 @@ class Ordine extends Document
         $fatture_collegate = database()->table('co_righe_documenti')
             ->whereIn('original_id', $righe_ids)
             ->where('original_type', $class_type)
-            ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
-            ->select('co_righe_documenti.original_id', 'co_righe_documenti.iddocumento')
+            ->join('co_documenti', 'co_righe_documenti.id_documento', '=', 'co_documenti.id')
+            ->select('co_righe_documenti.original_id', 'co_righe_documenti.id_documento')
             ->get()
             ->keyBy('original_id');
 
@@ -288,7 +288,7 @@ class Ordine extends Document
         if ($documento instanceof DDT) {
             $fatture_ddt = database()->table('co_righe_documenti')
                 ->where('idddt', $documento->id)
-                ->join('co_documenti', 'co_righe_documenti.iddocumento', '=', 'co_documenti.id')
+                ->join('co_documenti', 'co_righe_documenti.id_documento', '=', 'co_documenti.id')
                 ->count();
 
             return $fatture_ddt > 0

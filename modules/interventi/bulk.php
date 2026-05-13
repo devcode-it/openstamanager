@@ -347,7 +347,7 @@ switch (post('op')) {
                 `co_documenti`.`id`
             FROM
                 `co_documenti`
-                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+                INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             WHERE
                 `co_righe_documenti`.`idintervento` = '.prepare($id).' OR
                 (`co_righe_documenti`.`original_document_id` = '.prepare($id).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\')

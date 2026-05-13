@@ -47,7 +47,7 @@ if (!empty($id_record)) {
         `co_documenti`.`note`,
         `co_documenti`.`note_aggiuntive`,
         `co_documenti`.`id_pagamento`,
-        `co_documenti`.`id` AS iddocumento,
+        `co_documenti`.`id` AS id_documento,
 		`co_documenti`.`split_payment` AS split_payment,
         `co_statidocumento_lang`.`title` AS `stato`,
         `co_tipidocumento_lang`.`title` AS `descrizione_tipo`,

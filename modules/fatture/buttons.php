@@ -55,14 +55,14 @@ if (!$is_anagrafica_deleted) {
                 '.tr('Nota di debito').'
             </a>
 
-            <a class="btn dropdown-item" data-href="'.base_path_osm().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi nota di credito">
+            <a class="btn dropdown-item" data-href="'.base_path_osm().'/modules/fatture/crea_documento.php?id_module='.$id_module.'&id_record='.$id_record.'&id_documento='.$id_record.'" data-title="Aggiungi nota di credito">
                 '.tr('Nota di credito').'
             </a>
         </ul>';
         } elseif (!empty($abilita_autofattura)) {
             echo '
         <ul class="dropdown-menu dropdown-menu-right">
-            <a class="btn dropdown-item" data-href="'.base_path_osm().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&iddocumento='.$id_record.'" data-title="Aggiungi autofattura">
+            <a class="btn dropdown-item" data-href="'.base_path_osm().'/modules/fatture/crea_autofattura.php?id_module='.$id_module.'&id_record='.$id_record.'&id_documento='.$id_record.'" data-title="Aggiungi autofattura">
                 '.tr('Autofattura').'
             </a>
         </ul>';
@@ -83,7 +83,7 @@ if (empty($record['is_fiscale'])) {
 }
 
 $modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
-$totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenzario WHERE iddocumento = '.prepare($id_record));
+$totale_scadenze = $dbo->fetchOne('SELECT SUM(da_pagare - pagato) AS differenza, SUM(da_pagare) AS da_pagare FROM co_scadenzario WHERE id_documento = '.prepare($id_record));
 if (!empty($record['is_fiscale'])) {
     $differenza = isset($totale_scadenze) ? $totale_scadenze['differenza'] : 0;
     // Aggiunta insoluto
@@ -100,7 +100,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-    $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE iddocumento = '.prepare($id_record).' AND primanota = 1');
+    $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE id_documento = '.prepare($id_record).' AND primanota = 1');
 
     $registrazione_contabile = 0;
     if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {

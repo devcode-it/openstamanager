@@ -94,7 +94,7 @@ echo "
                             </tr>';
 
 // Elenco scadenze
-$rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenzario` WHERE `iddocumento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
+$rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
         $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
@@ -283,7 +283,7 @@ if ($show_sconto) {
  * Rivalsa INPS | Totale (+ Rivalsa INPS)
  */
 if ($has_rivalsa) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione FROM co_rivalse WHERE id IN (SELECT id_rivalsa_inps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_rivalsa_inps!=0)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione FROM co_rivalse WHERE id IN (SELECT id_rivalsa_inps FROM co_righe_documenti WHERE id_documento='.prepare($id_record).' AND id_rivalsa_inps!=0)');
 
     foreach ($rs2 as $rs) {
         $descrizione .= '<p class="text-muted small-bold">'.$rs['descrizione'].'</p>';
@@ -353,7 +353,7 @@ echo '
  * Ritenuta | Totale (+ Rivalsa INPS - Ritenuta)
  */
 if ($has_ritenuta) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE id_documento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;

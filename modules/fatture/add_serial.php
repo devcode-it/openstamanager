@@ -50,7 +50,7 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
 $data = [
     'fat' => [
         'table' => 'co_righe_documenti',
-        'id' => 'iddocumento',
+        'id' => 'id_documento',
     ],
     'ddt' => [
         'table' => 'dt_righe_ddt',

@@ -110,7 +110,7 @@ switch ($resource) {
                 LEFT JOIN `co_pianodeiconti2` AS conto_vendita_categoria ON `conto_vendita_sottocategoria`.`idpianodeiconti2`=`conto_vendita_categoria`.`id`
             LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`id_conto_acquisto`
                 LEFT JOIN `co_pianodeiconti2` AS conto_acquisto_categoria ON `conto_acquisto_sottocategoria`.`idpianodeiconti2`=`conto_acquisto_categoria`.`id`
-            LEFT JOIN (SELECT `co_righe_documenti`.`idarticolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
+            LEFT JOIN (SELECT `co_righe_documenti`.`idarticolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
             ON `righe`.`id`=`mg_articoli`.`id`
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`idiva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
@@ -354,7 +354,7 @@ switch ($resource) {
             '.$data_movimento.' AS `data_movimento`
         FROM `mg_prodotti`
             LEFT JOIN `co_righe_documenti` ON `mg_prodotti`.`id_riga_documento` = `co_righe_documenti`.`id`
-            LEFT JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
+            LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             LEFT JOIN `dt_righe_ddt` ON `mg_prodotti`.`id_riga_ddt` = `dt_righe_ddt`.`id`
             LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`

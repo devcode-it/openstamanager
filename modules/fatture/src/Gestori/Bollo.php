@@ -103,7 +103,7 @@ class Bollo
         $riga->descrizione = setting('Descrizione addebito bollo');
         $riga->id_iva = $righe_bollo->idiva ?? database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
         $riga->id_conto = setting('Conto predefinito per la marca da bollo');
-        $riga->iddocumento = $this->fattura->id;
+        $riga->id_documento = $this->fattura->id;
 
         // Applico la rivalsa alla marca da bollo se previsto
         if ((setting('Regime Fiscale') == 'RF19') && (!empty(setting('Cassa previdenziale predefinita')))) {

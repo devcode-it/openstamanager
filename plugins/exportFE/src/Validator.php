@@ -258,7 +258,7 @@ class Validator
             'type' => 'integer',
             'size' => [1, 4],
         ],
-        'IdDocumento' => [
+        'id_documento' => [
             'type' => 'normalizedString',
             'size' => [1, 20],
         ],

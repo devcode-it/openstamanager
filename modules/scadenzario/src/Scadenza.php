@@ -38,7 +38,7 @@ class Scadenza extends Model
         'data_concordata' => 'date',
     ];
 
-    public static function build($id_anagrafica = null, $descrizione = null, $importo = null, $data_scadenza = null, $id_pagamento = null, $id_banca_azienda = null, $id_banca_controparte = null, $type = 'fattura', $is_pagato = false, $iddocumento = null)
+    public static function build($id_anagrafica = null, $descrizione = null, $importo = null, $data_scadenza = null, $id_pagamento = null, $id_banca_azienda = null, $id_banca_controparte = null, $type = 'fattura', $is_pagato = false, $id_documento = null)
     {
         $model = new static();
 
@@ -50,7 +50,7 @@ class Scadenza extends Model
         $model->id_pagamento = $id_pagamento;
         $model->id_banca_azienda = $id_banca_azienda;
         $model->id_banca_controparte = $id_banca_controparte;
-        $model->iddocumento = $iddocumento;
+        $model->id_documento = $id_documento;
 
         $model->pagato = $is_pagato ? $importo : 0;
         $model->data_pagamento = $is_pagato ? $data_scadenza : null;
@@ -62,7 +62,7 @@ class Scadenza extends Model
 
     public function documento()
     {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
+        return $this->belongsTo(Fattura::class, 'id_documento');
     }
 
     public function anagrafica()

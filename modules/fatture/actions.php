@@ -343,11 +343,11 @@ switch ($op) {
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
             ->where('co_documenti.id_anagrafica', '=', $id_anagrafica)
             ->whereIn('id_stato', [$stato1->id, $stato2->id])
-            ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.iddocumento')
+            ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.id_documento')
             ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.id_tipo_documento')
             ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
             ->whereRaw('co_scadenzario.scadenza < NOW()')
-            ->groupBy('co_scadenzario.iddocumento')
+            ->groupBy('co_scadenzario.id_documento')
             ->get();
 
         $results = [];
@@ -365,10 +365,10 @@ switch ($op) {
             $fattura->delete();
 
             $dbo->table('co_scadenzario')
-                ->where('iddocumento', $id_record)
+                ->where('id_documento', $id_record)
                 ->delete();
             $dbo->table('co_movimenti')
-                ->where('iddocumento', $id_record)
+                ->where('id_documento', $id_record)
                 ->delete();
 
             flash()->info(tr('Fattura eliminata!'));
@@ -1083,31 +1083,31 @@ switch ($op) {
 
         $imponibile = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
-            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->where('co_righe_documenti.id_documento', $fattura->id)
             ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
             ->sum('subtotale');
 
         $sconto = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
-            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->where('co_righe_documenti.id_documento', $fattura->id)
             ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
             ->sum('sconto');
 
         $imponibile_indetraibile = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
-            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->sum('subtotale');
 
         $sconto_indetraibile = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
-            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->sum('sconto');
 
         $iva_indetraibile_id = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.idiva')
-            ->where('co_righe_documenti.iddocumento', $fattura->id)
+            ->where('co_righe_documenti.id_documento', $fattura->id)
             ->where('co_iva.indetraibile', 100)
             ->value('co_iva.id');
 

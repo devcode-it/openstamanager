@@ -32,7 +32,7 @@ function renderRiga($id, $riga, $totale_dare = null, $totale_avere = null)
     // Conto
     echo '
     <tr>
-        <input type="hidden" name="id_documento'.$suffix.'['.$id.']" value="'.$riga['iddocumento'].'">
+        <input type="hidden" name="id_documento'.$suffix.'['.$id.']" value="'.$riga['id_documento'].'">
         <input type="hidden" name="id_scadenza'.$suffix.'['.$id.']" value="'.$riga['id_scadenza'].'">
 
         <td class="text-center" style="width:40px;">
@@ -67,7 +67,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
     global $counter;
 
     $prima_riga = $righe->first();
-    $id_documento = $prima_riga ? $prima_riga['iddocumento'] : null;
+    $id_documento = $prima_riga ? $prima_riga['id_documento'] : null;
     $id_scadenza = $prima_riga ? $prima_riga['id_scadenza'] : null;
 
     echo '
@@ -137,8 +137,8 @@ $totale_avere = 0;
 
 // Elenco per documenti
 $scadenze = $movimenti
-    ->where('iddocumento', '<>', 0)
-    ->groupBy('iddocumento');
+    ->where('id_documento', '<>', 0)
+    ->groupBy('id_documento');
 foreach ($scadenze as $id_documento => $righe) {
     $documento = Fattura::find($id_documento);
 
@@ -156,7 +156,7 @@ foreach ($scadenze as $id_documento => $righe) {
 
 // Elenco per scadenze
 $scadenze = $movimenti
-    ->where('iddocumento', '=', 0)
+    ->where('id_documento', '=', 0)
     ->where('id_scadenza', '<>', 0)
     ->groupBy('id_scadenza');
 foreach ($scadenze as $id_scadenza => $righe) {
@@ -173,7 +173,7 @@ foreach ($scadenze as $id_scadenza => $righe) {
 
 // Elenco generale
 $movimenti_generali = $movimenti
-    ->where('iddocumento', '=', 0)
+    ->where('id_documento', '=', 0)
     ->where('id_scadenza', '=', 0);
 if ($movimenti_generali->isEmpty()) {
     $movimenti_generali->push([]);
@@ -198,7 +198,7 @@ echo '
 
 renderRiga('-id-',
     [
-        'iddocumento' => '-id_documento-',
+        'id_documento' => '-id_documento-',
         'id_scadenza' => '-id_scadenza-',
     ],
     $totale_dare,

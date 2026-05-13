@@ -31,7 +31,7 @@ $query = 'SELECT
         `dir` 
     FROM 
         `co_movimenti`
-        LEFT JOIN `co_documenti` ON `co_movimenti`.`iddocumento` = `co_documenti`.`id`
+        LEFT JOIN `co_documenti` ON `co_movimenti`.`id_documento` = `co_documenti`.`id`
         LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     WHERE 
         `co_movimenti`.`id_conto`='.prepare($id_conto).' AND
@@ -75,7 +75,7 @@ if (!empty($movimenti)) {
             if (!empty($movimento['primanota'])) {
                 echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
             } else {
-                echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['iddocumento'], $movimento['descrizione']);
+                echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['id_documento'], $movimento['descrizione']);
             }
 
             echo '

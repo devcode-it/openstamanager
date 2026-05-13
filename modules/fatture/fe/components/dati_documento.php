@@ -69,10 +69,10 @@ foreach ($dato['riferimento_linea'] as $linea) {
     ++$index;
 }
 
-// IdDocumento
+// id_documento
 echo '
         <tr class="fifth-level">
-            <td style="vertical-align: middle;">'.str_repeat((string) $space, 4).$info['code'].'.2 IdDocumento</td>
+            <td style="vertical-align: middle;">'.str_repeat((string) $space, 4).$info['code'].'.2 id_documento</td>
             <td>
                 {[ "type": "text", "name": "'.$nome.'['.$key.'][id_documento]", "value": "'.$dato['id_documento'].'", "maxlength": 20, "readonly": '.($is_readonly ? '1' : '0').' ]}
             </td>

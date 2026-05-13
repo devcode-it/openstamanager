@@ -66,9 +66,9 @@ if (get('is_fornitore') == 'true') {
 // Scelgo la query in base alla scadenza
 if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT * FROM `co_scadenzario` WHERE `id` = '.prepare($id_record));
-    $documento = Fattura::find($record['iddocumento']);
+    $documento = Fattura::find($record['id_documento']);
     if (!empty($documento)) {
-        $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`iddocumento`='.prepare($documento->id), $module_query);
+        $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`id_documento`='.prepare($documento->id), $module_query);
     } else {
         $module_query = str_replace('1=1', '1=1 AND `co_scadenzario`.`id`='.prepare($id_record), $module_query);
     }

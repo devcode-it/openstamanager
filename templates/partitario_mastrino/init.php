@@ -35,7 +35,7 @@ if (get('lev') == '3') {
     $group_by = $conto1['descrizione'] == 'Patrimoniale' ? ', IF(`totale`>0, 1, 0)' : '';
 
     // Movimenti
-    $records = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale FROM co_movimenti LEFT JOIN co_documenti ON co_movimenti.iddocumento=co_documenti.id WHERE co_movimenti.id_conto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).'
+    $records = $dbo->fetchArray('SELECT co_movimenti.*, SUM(totale) AS totale FROM co_movimenti LEFT JOIN co_documenti ON co_movimenti.id_documento=co_documenti.id WHERE co_movimenti.id_conto='.prepare($id_record).' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).'
     GROUP BY 
         `co_movimenti`.`idmastrino` '.$group_by.'
     ORDER BY 

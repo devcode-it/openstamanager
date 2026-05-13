@@ -33,12 +33,12 @@ switch (post('op')) {
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
         $descrizione = strip_tags(post('descrizione'));
-        $iddocumento = post('iddocumento') ?: 0;
+        $id_documento = post('id_documento') ?: 0;
         $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
         $dbo->insert('co_scadenzario', [
             'id_anagrafica' => $id_anagrafica,
-            'iddocumento' => $iddocumento,
+            'id_documento' => $id_documento,
             'descrizione' => $descrizione,
             'tipo' => $tipo,
             'data_emissione' => $data_emissione,
@@ -66,9 +66,9 @@ switch (post('op')) {
         $id_anagrafica = post('id_anagrafica');
         $tipo = post('tipo');
         $descrizione = strip_tags(post('descrizione'));
-        $iddocumento = post('iddocumento') ?: 0;
-        if (!empty($iddocumento)) {
-            $scadenze = database()->table('co_scadenzario')->where('iddocumento', '=', $iddocumento)->orderBy('scadenza')->get();
+        $id_documento = post('id_documento') ?: 0;
+        if (!empty($id_documento)) {
+            $scadenze = database()->table('co_scadenzario')->where('id_documento', '=', $id_documento)->orderBy('scadenza')->get();
         }
         $totale_pagato = 0;
         $id_scadenza_non_completa = null;
@@ -80,7 +80,7 @@ switch (post('op')) {
             $data_concordata = post('data_concordata')[$id];
             $da_pagare = post('da_pagare')[$id];
 
-            if (!empty($iddocumento)) {
+            if (!empty($id_documento)) {
                 $tipo_documento = Tipo::find($documento->id_tipo_documento);
 
                 if ($tipo_documento['dir'] == 'uscita') {
@@ -134,7 +134,7 @@ switch (post('op')) {
                     'id_anagrafica' => $id_anagrafica,
                     'descrizione' => $descrizione,
                     'tipo' => $tipo,
-                    'iddocumento' => $iddocumento,
+                    'id_documento' => $id_documento,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
                     'scadenza' => $data_scadenza,
@@ -184,7 +184,7 @@ switch (post('op')) {
 
     case 'allega_fattura':
         $scadenza = Scadenza::find($id_record);
-        $id_documento = post('iddocumento');
+        $id_documento = post('id_documento');
         $print_predefined = PrintTemplate::where('predefined', 1)->where('id_module', Module::where('name', 'Fatture di vendita')->first()->id)->first();
 
         $print = Prints::render($print_predefined->id, $id_documento, null, true);
@@ -224,7 +224,7 @@ switch (post('op')) {
 
     case 'save_new_scadenza':
         $index = post('index');
-        $iddocumento = post('iddocumento');
+        $id_documento = post('id_documento');
         $id_anagrafica = post('id_anagrafica');
 
         // Recupera i dati dai campi del form
@@ -245,7 +245,7 @@ switch (post('op')) {
 
             $dbo->insert('co_scadenzario', [
                 'id_anagrafica' => $id_anagrafica,
-                'iddocumento' => $iddocumento,
+                'id_documento' => $id_documento,
                 'descrizione' => $descrizione,
                 'tipo' => $tipo,
                 'data_emissione' => $data_emissione,

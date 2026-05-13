@@ -224,7 +224,7 @@ function getDestinationComponents($riga)
     }
 
     $fatture = Fattura::whereIn('id', function ($query) use ($riga) {
-        $query->select('iddocumento')
+        $query->select('id_documento')
             ->from('co_righe_documenti')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class);
@@ -233,7 +233,7 @@ function getDestinationComponents($riga)
         $riga_fattura = database()->table('co_righe_documenti')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class)
-            ->where('iddocumento', $fattura->id)
+            ->where('id_documento', $fattura->id)
             ->first();
         $documents['documento'][] = $fattura;
         $documents['qta'][] = $riga_fattura->qta;

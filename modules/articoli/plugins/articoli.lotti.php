@@ -186,13 +186,13 @@ if (empty(get('modal'))) {
                 // Acquistato su fatture
                 if (!empty($acquisto['id_riga_documento'])) {
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($acquisto['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     // Determina il modulo in base alla direzione effettiva del documento
                     $module = ($data[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-                    $id = $data[0]['iddocumento'];
+                    $id = $data[0]['id_documento'];
                 }
 
                 // Acquistato su ddt
@@ -297,13 +297,13 @@ if (empty(get('modal'))) {
                 // Venduto su fatture
                 if (!empty($vendita['id_riga_documento'])) {
                     // Ricerca vendite su fatture
-                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
+                    $query = 'SELECT *, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`,`co_documenti`.`data` FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_documenti`.`id`='.prepare($vendita['id_riga_documento']);
                     $data = $dbo->fetchArray($query);
 
                     // Determina il modulo in base alla direzione effettiva del documento
                     $module = ($data[0]['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-                    $id = $data[0]['iddocumento'];
+                    $id = $data[0]['id_documento'];
                 }
 
                 // Venduto su ddt

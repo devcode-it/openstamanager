@@ -20,7 +20,7 @@
 include_once __DIR__.'/../../core.php';
 
 // Recupero informazioni sulla riga del documento
-$documento = $dbo->fetchOne('SELECT * FROM `co_documenti` WHERE id='.prepare($record['iddocumento']));
+$documento = $dbo->fetchOne('SELECT * FROM `co_documenti` WHERE id='.prepare($record['id_documento']));
 
 // Recupero righe di ammortamento esistenti
 $righe_ammortamento = $dbo->fetchArray('SELECT * FROM `co_righe_ammortamenti` WHERE id_riga='.prepare($id_record).' ORDER BY anno ASC');

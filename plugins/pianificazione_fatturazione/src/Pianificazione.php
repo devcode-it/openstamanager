@@ -78,7 +78,7 @@ class Pianificazione extends Document
 
     public function fattura()
     {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
+        return $this->belongsTo(Fattura::class, 'id_documento');
     }
 
     public function getNumeroPianificazione()

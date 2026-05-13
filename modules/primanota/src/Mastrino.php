@@ -46,7 +46,7 @@ class Mastrino extends Model
     protected $hidden = [
         'idmastrino',
         'data_documento',
-        'iddocumento',
+        'id_documento',
         'id_anagrafica',
     ];
 
@@ -130,11 +130,11 @@ class Mastrino extends Model
         $scadenze = $this->getScadenzePerDocumenti($documenti);
 
         if (!empty($scadenza) && $singola) {
-            $scadenze = [$scadenza->iddocumento => [$scadenza->id]];
+            $scadenze = [$scadenza->id_documento => [$scadenza->id]];
         }
 
         foreach ($movimenti as $movimento) {
-            $this->correggiScadenza($movimento, $scadenze[$movimento->iddocumento], $movimento->iddocumento, $is_insoluto);
+            $this->correggiScadenza($movimento, $scadenze[$movimento->id_documento], $movimento->id_documento, $is_insoluto);
         }
 
         // Fix dello stato della Fattura
@@ -147,7 +147,7 @@ class Mastrino extends Model
                 }
 
                 // Verifico se la fattura è stata pagata tutta, così imposto lo stato a "Pagato"
-                $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenzario WHERE iddocumento='.prepare($id_documento));
+                $totali = $database->fetchOne('SELECT SUM(pagato) AS tot_pagato, SUM(da_pagare) AS tot_da_pagare FROM co_scadenzario WHERE id_documento='.prepare($id_documento));
 
                 $totale_pagato = abs(floatval($totali['tot_pagato']));
                 $totale_da_pagare = abs(floatval($totali['tot_da_pagare']));
@@ -173,7 +173,7 @@ class Mastrino extends Model
 
     public function fattura()
     {
-        return $this->belongsTo(Fattura::class, 'iddocumento');
+        return $this->belongsTo(Fattura::class, 'id_documento');
     }
 
     public function movimenti()
@@ -291,8 +291,8 @@ class Mastrino extends Model
     {
         $documentIds = [];
         foreach ($movimenti as $movimento) {
-            if (!in_array($movimento->iddocumento, $documentIds)) {
-                $documentIds[] = $movimento->iddocumento;
+            if (!in_array($movimento->id_documento, $documentIds)) {
+                $documentIds[] = $movimento->id_documento;
             }
         }
 
@@ -304,7 +304,7 @@ class Mastrino extends Model
         $scadenze = [];
         foreach ($documenti as $documento) {
             $scadenze[$documento] = [];
-            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenzario WHERE iddocumento='.prepare($documento));
+            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenzario WHERE id_documento='.prepare($documento));
             foreach ($scadenze_documento as $scadenza_row) {
                 $id_scadenza = $scadenza_row['id'];
                 $scadenze[$documento][$id_scadenza] = $id_scadenza;

@@ -59,7 +59,7 @@ echo '
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
 	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
-	<input type="hidden" name="iddocumento" value="<?php echo $record['iddocumento']; ?>">
+	<input type="hidden" name="id_documento" value="<?php echo $record['id_documento']; ?>">
 
 
     <div class="row">

@@ -36,10 +36,10 @@ $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['id_anagrafica'];
 
 // Impianti del contratto
-$impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `id_contratto` = :id', [
+$impianti = $dbo->fetchArray('SELECT `id_impianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `id_contratto` = :id', [
     ':id' => $id_parent,
 ]);
-$id_impianti = explode(',', (string) $impianti[0]['idimpianti']);
+$id_impianti = explode(',', (string) $impianti[0]['id_impianti']);
 
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {
@@ -57,7 +57,7 @@ $tempo_standard = $record['tempo_standard'];
 $id_tipo_intervento = $record['id_tipo_intervento'];
 
 if (!empty($id_sede)) {
-    $id_impianti = explode(',', trim((string) $record['idimpianti']));
+    $id_impianti = explode(',', trim((string) $record['id_impianti']));
 }
 
 $pianificazione = [
@@ -121,7 +121,7 @@ echo '
 			   </div>
 
 				<div class="col-md-6">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.id_contratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "id_impianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.id_contratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
 				</div>
 			</div>
 

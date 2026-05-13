@@ -79,7 +79,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $richiesta = $promemoria['richiesta'];
     $descrizione = $promemoria['descrizione'];
     $id_sede = $promemoria['id_sede'];
-    $impianti_collegati = $promemoria['idimpianti'];
+    $impianti_collegati = $promemoria['id_impianti'];
     $tecnici_assegnati = $promemoria['idtecnici'];
     $data_scadenza = $promemoria['data_scadenza'];
 
@@ -186,7 +186,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "id_sede_destinazione": '.($id_sede ?: '0').', "id_contratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "id_impianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "id_sede_destinazione": '.($id_sede ?: '0').', "id_contratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -649,7 +649,7 @@ echo '
             plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
         }
 
-        plus_impianto = $(".modal #idimpianti").parent().find(".btn");
+        plus_impianto = $(".modal #id_impianti").parent().find(".btn");
 
         if (plus_impianto.length == 1) {
             plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
@@ -743,7 +743,7 @@ echo '
 	});
 
     // Gestione delle modifiche agli impianti selezionati
-	input("idimpianti").change(function() {
+	input("id_impianti").change(function() {
         updateSelectOption("matricola", $(this).val());
 		session_set("superselect,matricola", $(this).val(), 0);
 

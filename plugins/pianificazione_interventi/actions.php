@@ -49,7 +49,7 @@ switch ($operazione) {
             'data_richiesta' => post('data_richiesta'),
             'id_tipo_intervento' => post('id_tipo_intervento'),
             'richiesta' => post('richiesta'),
-            'idimpianti' => implode(',', post('idimpianti') ?: []),
+            'id_impianti' => implode(',', post('id_impianti') ?: []),
             'id_sede' => post('id_sede_c') ?: 0,
             'data_scadenza' => post('data_scadenza') ?: null,
             'idtecnici' => implode(',', post('idtecnici') ?: []),

@@ -107,8 +107,8 @@ if (!$elenco_promemoria->isEmpty()) {
 
         // Informazioni sugli impianti
         $info_impianti = '';
-        if (!empty($promemoria['idimpianti'])) {
-            $impianti_ids = array_map(intval(...), explode(',', (string) $promemoria['idimpianti']));
+        if (!empty($promemoria['id_impianti'])) {
+            $impianti_ids = array_map(intval(...), explode(',', (string) $promemoria['id_impianti']));
             $impianti = $dbo->fetchArray('SELECT id, matricola, nome FROM my_impianti WHERE id IN ('.implode(',', $impianti_ids).')');
 
             foreach ($impianti as $impianto) {

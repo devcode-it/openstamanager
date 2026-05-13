@@ -1036,6 +1036,7 @@ ALTER TABLE `an_automezzi_danni` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_scadenze` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_referenti` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `co_promemoria` CHANGE `idsede` `id_sede` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
@@ -1081,6 +1082,7 @@ ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT 
 ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+ALTER TABLE `co_promemoria` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
@@ -1120,3 +1122,4 @@ ALTER TABLE `co_preventivi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
+ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;

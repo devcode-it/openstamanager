@@ -265,7 +265,7 @@ switch (post('op')) {
             }
 
             // Collegamenti intervento/impianti
-            $impianti = post('idimpianti');
+            $impianti = post('id_impianti');
             foreach ($impianti as $impianto) {
                 if (!empty($impianto)) {
                     $dbo->insert('my_impianti_interventi', [

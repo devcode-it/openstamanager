@@ -619,7 +619,7 @@ echo '
         ordine.setDisabled(value)
             .getElement().selectReset(placeholder);
 
-        input("idimpianti").setDisabled(value);
+        input("id_impianti").setDisabled(value);
 
         let data = anagrafica.getData();
 		if (data) {
@@ -647,7 +647,7 @@ echo '
 	sede.change(function() {
         updateSelectOption("id_sede_destinazione", $(this).val());
 		session_set("superselect,id_sede_destinazione", $(this).val(), 0);
-        input("idimpianti").getElement().selectReset();
+        input("id_impianti").getElement().selectReset();
         input("id_referente").getElement().selectReset();
 
         let data = sede.getData();
@@ -705,7 +705,7 @@ echo '
 	});
 
     // Gestione delle modifiche agli impianti selezionati
-	input("idimpianti").change(function() {
+	input("id_impianti").change(function() {
         updateSelectOption("matricola", $(this).val());
 		session_set("superselect,matricola", $(this).val(), 0);
 

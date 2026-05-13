@@ -672,7 +672,7 @@ switch (post('op')) {
                     'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
                     'id_tipo_intervento' => $p['id_tipo_intervento'],
                     'richiesta' => $p['richiesta'],
-                    'idimpianti' => $p['idimpianti'],
+                    'id_impianti' => $p['id_impianti'],
                 ]);
                 $id_promemoria = $dbo->lastInsertedID();
 

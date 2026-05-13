@@ -369,7 +369,7 @@ if ($permetti_modelli) {
     echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "name": "modello_primanota", "values": "query=SELECT id_mastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY id_mastrino" ]}
+			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "name": "modello_prima_nota", "values": "query=SELECT id_mastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY id_mastrino" ]}
 		</div>
 	</div>';
 }
@@ -463,7 +463,7 @@ if ($permetti_modelli) {
             modificaModello: "'.tr('Aggiungi e modifica modello').'",
         },
         id_mastrino_input: input("id_mastrino"),
-        modello_input: input("modello_primanota"),
+        modello_input: input("modello_prima_nota"),
         modello_button: $("#modello-button"),
     };
 

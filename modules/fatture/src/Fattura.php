@@ -451,7 +451,7 @@ class Fattura extends Document
 
     public function movimentiContabili()
     {
-        return $this->hasMany(Movimento::class, 'id_documento')->where('primanota', 1);
+        return $this->hasMany(Movimento::class, 'id_documento')->where('prima_nota', 1);
     }
 
     // Metodi generali
@@ -1015,7 +1015,7 @@ class Fattura extends Document
     {
         if (isset($this->changes['data_competenza']) && !in_array($id_stato_attuale, $stati_non_attivi)) {
             Movimento::where('id_documento', $this->id)
-                ->where('primanota', 0)
+                ->where('prima_nota', 0)
                 ->update(['data' => $this->data_competenza]);
         }
     }

@@ -58,7 +58,7 @@ class Mastrino extends Model
         $model->data = $data;
         $model->descrizione = $descrizione;
         $model->is_insoluto = $is_insoluto;
-        $model->primanota = $contabile;
+        $model->prima_nota = $contabile;
         $model->id_anagrafica = $id_anagrafica;
 
         return $model;
@@ -119,7 +119,7 @@ class Mastrino extends Model
     public function aggiornaScadenzario($movimenti = null, $scadenza = null, $singola = false)
     {
         // Aggiornamento dello scadenzario disponibile solo da Mastrino di PrimaNota
-        if ($this->primanota == 0 || $this->is_apertura == 1 || $this->is_chiusura == 1) {
+        if ($this->prima_nota == 0 || $this->is_apertura == 1 || $this->is_chiusura == 1) {
             return;
         }
         $movimenti = $movimenti ?: $this->movimenti;

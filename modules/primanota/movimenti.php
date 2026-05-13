@@ -71,7 +71,7 @@ function renderTabella($nome, $righe, $totale_dare = null, $totale_avere = null)
     $id_scadenza = $prima_riga ? $prima_riga['id_scadenza'] : null;
 
     echo '
-<div class="raggruppamento_primanota" data-id_scadenza="'.$id_scadenza.'" data-id_documento="'.$id_documento.'">
+<div class="raggruppamento_prima_nota" data-id_scadenza="'.$id_scadenza.'" data-id_documento="'.$id_documento.'">
     <button class="btn btn-info btn-xs pull-right" type="button" onclick="addRiga(this)">
         <i class="fa fa-plus"></i> '.tr('Aggiungi riga').'
     </button>
@@ -246,7 +246,7 @@ function controllaConti(element) {
     let container = isInModal ? $("#modals > div") : $(document);
 
     // Controlli sullo stato dei raggruppamenti nel container corrente
-    container.find(".raggruppamento_primanota").each(function() {
+    container.find(".raggruppamento_prima_nota").each(function() {
         continuare &= calcolaBilancio(this) === 0;
     });
 
@@ -326,7 +326,7 @@ $(document).ready(function() {
     $("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
 
     $("select[id*=conto]").click(function() {
-        $(this).closest(".raggruppamento_primanota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+        $(this).closest(".raggruppamento_prima_nota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
     });
 });
 
@@ -337,7 +337,7 @@ $(document).on("change", "select[id*=conto]", function() {
         row.find("input").prop("disabled", !$(this).val());
     }
 
-    $(this).closest(".raggruppamento_primanota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
+    $(this).closest(".raggruppamento_prima_nota").find("input[id*=dare][value!=\'\'], input[id*=avere][value!=\'\']").keyup();
     controllaConti(this);
 
     $(this).closest("td").find("button").toggleClass("disabled", !$(this).val());

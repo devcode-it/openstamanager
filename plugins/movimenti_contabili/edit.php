@@ -75,7 +75,7 @@ if (empty($_GET['visualizza_movimenti'])) {
             $scalare += $movimento['totale'];
             $descrizione = $movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'];
 
-            if ($movimento['primanota'] == 1) {
+            if ($movimento['prima_nota'] == 1) {
                 $descrizione = Modules::link('Prima nota', $movimento['id_mastrino'], $descrizione);
             }
 
@@ -109,7 +109,7 @@ if (empty($_GET['visualizza_movimenti'])) {
                 $scalare += $altro_movimento['totale'];
                 $descrizione = $altro_movimento['conto2'].'.'.$altro_movimento['conto3'].' - '.$altro_movimento['descrizione'];
 
-                if ($altro_movimento['primanota'] == 1) {
+                if ($altro_movimento['prima_nota'] == 1) {
                     $descrizione = Modules::link('Prima nota', $altro_movimento['id_mastrino'], $descrizione);
                 }
 

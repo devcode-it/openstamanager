@@ -26,7 +26,7 @@ function renderRiga($id, $riga)
     echo '
     <tr>
         <td>
-            {[ "type": "select", "name": "id_conto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti-modelliprimanota" ]}
+            {[ "type": "select", "name": "id_conto['.$id.']", "id": "conto'.$id.'", "value": "'.($riga['id_conto'] ?: '').'", "ajax-source": "conti-modelliprima_nota" ]}
         </td>';
 
     // Dare

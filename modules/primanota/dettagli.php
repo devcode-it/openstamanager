@@ -72,7 +72,7 @@ if (!empty($movimenti)) {
 
             $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id;
 
-            if (!empty($movimento['primanota'])) {
+            if (!empty($movimento['prima_nota'])) {
                 echo Modules::link('Prima nota', $movimento['id_mastrino'], $movimento['descrizione']);
             } else {
                 echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['id_documento'], $movimento['descrizione']);

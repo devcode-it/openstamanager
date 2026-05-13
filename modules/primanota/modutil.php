@@ -34,7 +34,7 @@ function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = nu
 {
     global $dbo;
 
-    $where_conditions = ['co_movimenti.primanota = 1'];
+    $where_conditions = ['co_movimenti.prima_nota = 1'];
     $params = [];
 
     if (!empty($id_documento)) {

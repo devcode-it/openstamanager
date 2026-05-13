@@ -100,7 +100,7 @@ if (!empty($record['is_fiscale'])) {
     }
 
     // Aggiunta prima nota solo se non c'è già, se non si è in bozza o se il pagamento non è completo
-    $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE id_documento = '.prepare($id_record).' AND primanota = 1');
+    $prima_nota_presente = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE id_documento = '.prepare($id_record).' AND prima_nota = 1');
 
     $registrazione_contabile = 0;
     if ($differenza != 0 || (!$prima_nota_presente && $record['stato'] == 'Emessa')) {

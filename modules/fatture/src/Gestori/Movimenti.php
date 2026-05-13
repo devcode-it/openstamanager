@@ -44,7 +44,7 @@ class Movimenti
     {
         if (!isset($this->mastrino)) {
             $this->mastrino = Mastrino::where('id_documento', $this->fattura->id)
-                ->where('primanota', false)
+                ->where('prima_nota', false)
                 ->first();
         }
 
@@ -389,7 +389,7 @@ class Movimenti
         $diff = round($totale_avere - $totale_dare, 4);
 
         if ($diff) {
-            $movimenti = $mastrino->movimenti()->where('primanota', '=', 0)->get();
+            $movimenti = $mastrino->movimenti()->where('prima_nota', '=', 0)->get();
             $m = 0;
             foreach ($movimenti as $movimento) {
                 if ($m++ == $movimenti->count() - 2) {
@@ -428,7 +428,7 @@ class Movimenti
         $riferimento_fattura = $this->fattura->getReference(1);
 
         // Cerca tutti i mastrini che contengono il riferimento della fattura e sono giroconti IVA
-        $mastrini_giroconti = Mastrino::where('primanota', false)
+        $mastrini_giroconti = Mastrino::where('prima_nota', false)
             ->where(function ($query) use ($riferimento_fattura) {
                 $query->where('descrizione', 'like', "%Giroconto IVA a credito anno precedente - {$riferimento_fattura}%")
                       ->orWhere('descrizione', 'like', "%Giroconto IVA al mese successivo - {$riferimento_fattura}%")

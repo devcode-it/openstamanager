@@ -81,7 +81,7 @@ UPDATE `zz_settings` SET `valore` = 'Attività numero {numero} del {data}' WHERE
 
 -- Aggiunta vista Data rate in Fatture di vendita
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Data pagamento rate', '`primanota`.`data_rate`', 16, 0);
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Data pagamento rate', '`prima_nota`.`data_rate`', 16, 0);
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), 'Data pagamento rate'),
@@ -265,8 +265,8 @@ UPDATE `zz_modules` SET `options` = 'SELECT
     |select|
 FROM
     `co_documenti`
-    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `id_documento`, `data`, GROUP_CONCAT(DISTINCT DATE_FORMAT(`data`, "%d/%m/%Y") SEPARATOR ", ") AS `data_rate` FROM `co_movimenti` WHERE `totale` > 0 AND `primanota` = 1 GROUP BY `id_documento`) AS `primanota` ON `primanota`.`id_documento` = `co_documenti`.`id`
-    LEFT JOIN (SELECT `ultimo_movimento`.`id_documento`, IF(`ultimo_movimento`.`is_insoluto` = 1, DATE_FORMAT(`ultimo_movimento`.`data`, "%d/%m/%Y"), NULL) AS `data_insoluto` FROM `co_movimenti` AS `ultimo_movimento` INNER JOIN (SELECT `id_documento`, MAX(`id`) AS `id` FROM `co_movimenti` WHERE `primanota` = 1 GROUP BY `id_documento`) AS `ultimo_movimento_idx` ON `ultimo_movimento_idx`.`id` = `ultimo_movimento`.`id`) AS `ultimo_movimento` ON `ultimo_movimento`.`id_documento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `id_documento`, `data`, GROUP_CONCAT(DISTINCT DATE_FORMAT(`data`, "%d/%m/%Y") SEPARATOR ", ") AS `data_rate` FROM `co_movimenti` WHERE `totale` > 0 AND `prima_nota` = 1 GROUP BY `id_documento`) AS `prima_nota` ON `prima_nota`.`id_documento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT `ultimo_movimento`.`id_documento`, IF(`ultimo_movimento`.`is_insoluto` = 1, DATE_FORMAT(`ultimo_movimento`.`data`, "%d/%m/%Y"), NULL) AS `data_insoluto` FROM `co_movimenti` AS `ultimo_movimento` INNER JOIN (SELECT `id_documento`, MAX(`id`) AS `id` FROM `co_movimenti` WHERE `prima_nota` = 1 GROUP BY `id_documento`) AS `ultimo_movimento_idx` ON `ultimo_movimento_idx`.`id` = `ultimo_movimento`.`id`) AS `ultimo_movimento` ON `ultimo_movimento`.`id_documento` = `co_documenti`.`id`
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
@@ -571,8 +571,8 @@ SELECT
     |select|
 FROM
     `co_documenti`
-    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `id_documento`, `data`, GROUP_CONCAT(DISTINCT DATE_FORMAT(`data`, '%d/%m/%Y') SEPARATOR ', ') AS `data_rate` FROM `co_movimenti` WHERE `totale` > 0 AND `primanota` = 1 GROUP BY `id_documento`) AS `primanota` ON `primanota`.`id_documento` = `co_documenti`.`id`
-    LEFT JOIN (SELECT `ultimo_movimento`.`id_documento`, IF(`ultimo_movimento`.`is_insoluto` = 1, DATE_FORMAT(`ultimo_movimento`.`data`, '%d/%m/%Y'), NULL) AS `data_insoluto` FROM `co_movimenti` AS `ultimo_movimento` INNER JOIN (SELECT `id_documento`, MAX(`id`) AS `id` FROM `co_movimenti` WHERE `primanota` = 1 GROUP BY `id_documento`) AS `ultimo_movimento_idx` ON `ultimo_movimento_idx`.`id` = `ultimo_movimento`.`id`) AS `ultimo_movimento` ON `ultimo_movimento`.`id_documento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `id_documento`, `data`, GROUP_CONCAT(DISTINCT DATE_FORMAT(`data`, '%d/%m/%Y') SEPARATOR ', ') AS `data_rate` FROM `co_movimenti` WHERE `totale` > 0 AND `prima_nota` = 1 GROUP BY `id_documento`) AS `prima_nota` ON `prima_nota`.`id_documento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT `ultimo_movimento`.`id_documento`, IF(`ultimo_movimento`.`is_insoluto` = 1, DATE_FORMAT(`ultimo_movimento`.`data`, '%d/%m/%Y'), NULL) AS `data_insoluto` FROM `co_movimenti` AS `ultimo_movimento` INNER JOIN (SELECT `id_documento`, MAX(`id`) AS `id` FROM `co_movimenti` WHERE `prima_nota` = 1 GROUP BY `id_documento`) AS `ultimo_movimento_idx` ON `ultimo_movimento_idx`.`id` = `ultimo_movimento`.`id`) AS `ultimo_movimento` ON `ultimo_movimento`.`id_documento` = `co_documenti`.`id`
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
@@ -635,10 +635,10 @@ FROM
     LEFT JOIN `co_documenti` ON `co_documenti`.`id` = `co_movimenti`.`id_documento`
     LEFT JOIN `an_anagrafiche` ON `co_movimenti`.`id_anagrafica` = `an_anagrafiche`.`id`
 WHERE
-    1=1 AND `primanota` = 1  |date_period(`co_movimenti`.`data`)|
+    1=1 AND `prima_nota` = 1  |date_period(`co_movimenti`.`data`)|
 GROUP BY
     `id_mastrino`,
-    `primanota`,
+    `prima_nota`,
     `co_movimenti`.`data`,
     `numero_esterno`,
     `co_movimenti`.`descrizione`,
@@ -1081,12 +1081,18 @@ ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
+
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
+ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
+ALTER TABLE `co_movimenti` CHANGE `primanota` `prima_nota` TINYINT NOT NULL;

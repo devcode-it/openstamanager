@@ -109,9 +109,9 @@ foreach ($values as $row) {
     $campi = explode(',', $row);
     $id = $campi[0];
     $data = $campi[2];
-    $is_primanota = $campi[12];
+    $is_prima_nota = $campi[12];
 
-    if (!empty($is_primanota)) {
+    if (!empty($is_prima_nota)) {
         $results[] = 'UPDATE `co_movimenti` SET `data` = '.$data.' WHERE `id` = '.prepare($id).';';
     }
 }

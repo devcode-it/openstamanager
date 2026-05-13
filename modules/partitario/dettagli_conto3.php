@@ -67,7 +67,7 @@ if (!empty($movimenti)) {
     <tr>
         <td>';
 
-        if (!empty($movimento['primanota'])) {
+        if (!empty($movimento['prima_nota'])) {
             echo Modules::link('Prima nota', $movimento['id_mastrino'], $movimento['descrizione']);
         } else {
             if (str_starts_with((string) $movimento['descrizione'], 'Vendita al banco')) {

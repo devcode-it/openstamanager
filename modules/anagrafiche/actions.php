@@ -83,7 +83,7 @@ switch (post('op')) {
         $anagrafica->marche = post('marche');
         $anagrafica->dipendenti = post('dipendenti');
         $anagrafica->macchine = post('macchine');
-        $anagrafica->idagente = post('idagente');
+        $anagrafica->id_agente = post('id_agente');
         $anagrafica->id_provenienza = post('id_provenienza') ?: null;
         $anagrafica->idrelazione = post('idrelazione');
         $anagrafica->sito_web = post('sito_web');
@@ -118,7 +118,7 @@ switch (post('op')) {
 
         // Aggiorno gli agenti collegati
         $idagenti = array_filter((array) post('idagenti'), fn ($value) => $value !== '' && $value !== null);
-        $dbo->sync('an_anagrafiche_agenti', ['id_anagrafica' => $id_record], ['idagente' => $idagenti]);
+        $dbo->sync('an_anagrafiche_agenti', ['id_anagrafica' => $id_record], ['id_agente' => $idagenti]);
 
         flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [
             '_NAME_' => $anagrafica->ragione_sociale,
@@ -214,7 +214,7 @@ switch (post('op')) {
             }
         }
 
-        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['id_anagrafica'] : 0;
+        $id_agente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['id_anagrafica'] : 0;
 
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');
@@ -223,7 +223,7 @@ switch (post('op')) {
         $anagrafica->telefono = post('telefono');
         $anagrafica->cellulare = post('cellulare');
         $anagrafica->email = post('email');
-        $anagrafica->idagente = $idagente ?: null;
+        $anagrafica->id_agente = $id_agente ?: null;
         $anagrafica->pec = post('pec');
         $anagrafica->tipo = post('tipo');
         $anagrafica->id_nazione = post('id_nazione') ?: null;

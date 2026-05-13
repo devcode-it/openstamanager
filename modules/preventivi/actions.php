@@ -69,7 +69,7 @@ switch (post('op')) {
             $preventivo->id_anagrafica = post('id_anagrafica');
             $preventivo->idsede_partenza = post('idsede_partenza');
             $preventivo->idsede_destinazione = post('idsede_destinazione');
-            $preventivo->idagente = post('idagente');
+            $preventivo->id_agente = post('id_agente');
             $preventivo->idreferente = post('idreferente');
             $preventivo->idpagamento = post('idpagamento') ?: null;
             $preventivo->id_banca_controparte = post('id_banca_controparte') ?: null;
@@ -550,7 +550,7 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = Anagrafica::find($preventivo->idagente)->provvigione_default;
+            $provvigione = Anagrafica::find($preventivo->id_agente)->provvigione_default;
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $piano_sconto = Anagrafica::find($id_anagrafica)->pianoScontoVendite;

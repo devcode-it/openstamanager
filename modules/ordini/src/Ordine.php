@@ -69,7 +69,7 @@ class Ordine extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate($stato_documento);
         $model->id_segment = $id_segment;
-        $model->idagente = $anagrafica->idagente;
+        $model->id_agente = $anagrafica->id_agente;
         $model->nome = $nome;
         $model->data = $data;
         $model->idpagamento = $id_pagamento;

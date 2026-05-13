@@ -284,14 +284,14 @@ switch ($resource) {
 
         // Evidenzia l'agente di default
         if ($superselect['id_anagrafica']) {
-            $rsa = $dbo->fetchArray('SELECT `idagente` FROM `an_anagrafiche` WHERE `id`='.prepare($superselect['id_anagrafica']));
-            $idagente_default = $rsa[0]['idagente'];
+            $rsa = $dbo->fetchArray('SELECT `id_agente` FROM `an_anagrafiche` WHERE `id`='.prepare($superselect['id_anagrafica']));
+            $id_agente_default = $rsa[0]['id_agente'];
         } else {
-            $idagente_default = 0;
+            $id_agente_default = 0;
         }
 
         $ids = array_column($results['results'], 'id');
-        $pos = array_search($idagente_default, $ids);
+        $pos = array_search($id_agente_default, $ids);
         if ($pos !== false) {
             $results['results'][$pos]['_bgcolor_'] = '#ffff00';
         }

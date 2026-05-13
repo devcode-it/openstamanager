@@ -35,7 +35,7 @@ switch ($resource) {
         $ricerca_codici_fornitore = 1;
         $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['id_anagrafica']);
         $solo_non_varianti = $superselect['solo_non_varianti'];
-        $idagente = $superselect['idagente'];
+        $id_agente = $superselect['id_agente'];
         $id_listino = $superselect['id_listino'];
         $iva_predefinita = setting('IVA predefinita');
 
@@ -79,7 +79,7 @@ switch ($resource) {
             IFNULL(`iva_articolo`.`percentuale`, `iva_predefinita`.`percentuale`) AS percentuale,';
         }
 
-        if ($idagente) {
+        if ($id_agente) {
             $query .= '
             `co_provvigioni`.`provvigione` AS provvigione,
             `co_provvigioni`.`tipo_provvigione` AS tipo_provvigione,';
@@ -124,9 +124,9 @@ switch ($resource) {
             LEFT JOIN `co_iva_lang` AS iva_anagrafica_lang on (`iva_anagrafica`.`id` = `iva_anagrafica_lang`.`id_record` AND `iva_anagrafica_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
         }
 
-        if ($idagente) {
+        if ($id_agente) {
             $query .= '
-            LEFT JOIN `co_provvigioni` ON `co_provvigioni`.`idarticolo` = `mg_articoli`.`id` AND `co_provvigioni`.`idagente`='.prepare($idagente);
+            LEFT JOIN `co_provvigioni` ON `co_provvigioni`.`idarticolo` = `mg_articoli`.`id` AND `co_provvigioni`.`id_agente`='.prepare($id_agente);
         }
 
         if ($dir == 'uscita') {

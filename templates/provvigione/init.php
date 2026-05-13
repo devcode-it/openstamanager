@@ -37,7 +37,7 @@ FROM
     LEFT JOIN (SELECT `iddocumento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `iddocumento`) AS righe ON `co_documenti`.`id` = `righe`.`iddocumento`
     LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
     LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`id_anagrafica` = `co_documenti`.`idagente`
+	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`id_anagrafica` = `co_documenti`.`id_agente`
     LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
 WHERE
     1=1 AND `provvigione` > 0
@@ -70,5 +70,5 @@ if (get('is_emessa') == 'true' && get('is_parz_pagata') == 'true') {
     $module_query = str_replace('1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Parzialmente pagato"))', $module_query);
 }
 
-$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`idagente`='.prepare($id_record), $module_query);
+$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`id_agente`='.prepare($id_record), $module_query);
 $records = $dbo->fetchArray($module_query);

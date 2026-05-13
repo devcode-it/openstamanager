@@ -43,7 +43,7 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT
         `co_documenti`.*,
         `co_tipidocumento`.`reversed` AS is_reversed,
-        `co_documenti`.`idagente` AS idagente_fattura,
+        `co_documenti`.`id_agente` AS id_agente_fattura,
         `co_documenti`.`note`,
         `co_documenti`.`note_aggiuntive`,
         `co_documenti`.`idpagamento`,

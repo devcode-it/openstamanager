@@ -124,7 +124,7 @@ class Fattura extends Document
         if ($numero_esterno) {
             $model->numero_esterno = $numero_esterno;
         }
-        $model->idagente = $anagrafica->idagente ?: '';
+        $model->id_agente = $anagrafica->id_agente ?: '';
 
         // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
         $id_sede = 0;

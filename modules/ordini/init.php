@@ -30,7 +30,7 @@ if (!empty($id_record)) {
             `or_ordini`.`note`,
             `or_ordini`.`idpagamento`,
             `or_ordini`.`id` AS idordine,
-            `or_ordini`.`idagente` AS idagente,
+            `or_ordini`.`id_agente` AS id_agente,
             `or_ordini`.`idstatoordine` AS idstatoordine,
             `or_statiordine_lang`.`title` AS stato,
             `or_tipiordine_lang`.`title` AS descrizione_tipodoc,

@@ -99,11 +99,11 @@ switch (post('op')) {
         break;
 
     case 'update_agenti':
-        $idagente = post('idagente') ?: 0;
+        $id_agente = post('id_agente') ?: 0;
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
             if ($anagrafica->isTipo('Cliente')) {
-                $anagrafica->idagente = $idagente;
+                $anagrafica->id_agente = $id_agente;
                 $anagrafica->save();
             }
         }
@@ -285,7 +285,7 @@ $operations['export_csv'] = [
 $operations['update_agenti'] = [
     'text' => '<span><i class="fa fa-users"></i> '.tr('Aggiorna agente').'</span>',
     'data' => [
-        'msg' => tr('Vuoi aggiornare l\'agente a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "ajax-source": "agenti", "value": "$idagente$" ]}',
+        'msg' => tr('Vuoi aggiornare l\'agente a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Agente principale').'", "name": "id_agente", "ajax-source": "agenti", "value": "$id_agente$" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

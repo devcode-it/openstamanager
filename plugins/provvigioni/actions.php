@@ -26,7 +26,7 @@ switch ($operazione) {
     case 'addprovvigione':
         $dbo->insert('co_provvigioni', [
             'idarticolo' => $id_parent,
-            'idagente' => post('idagente'),
+            'id_agente' => post('id_agente'),
             'provvigione' => post('provvigione'),
             'tipo_provvigione' => post('tipo_provvigione'),
         ]);
@@ -38,7 +38,7 @@ switch ($operazione) {
 
     case 'updateprovvigione':
         $dbo->update('co_provvigioni', [
-            'idagente' => post('idagente'),
+            'id_agente' => post('id_agente'),
             'provvigione' => post('provvigione'),
             'tipo_provvigione' => post('tipo_provvigione'),
         ], ['id' => $id_record]);

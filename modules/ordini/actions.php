@@ -88,7 +88,7 @@ switch (post('op')) {
             $ordine->note = post('note');
             $ordine->note_aggiuntive = post('note_aggiuntive');
 
-            $ordine->idagente = post('idagente');
+            $ordine->id_agente = post('id_agente');
             $ordine->idstatoordine = $idstatoordine;
             $ordine->idpagamento = $idpagamento;
             $ordine->idspedizione = post('idspedizione') ?: null;
@@ -555,7 +555,7 @@ switch (post('op')) {
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
             $ordine->idreferente = $documento->idreferente;
-            $ordine->idagente = $documento->idagente;
+            $ordine->id_agente = $documento->id_agente;
 
             $ordine->save();
 
@@ -830,7 +830,7 @@ switch (post('op')) {
             } else {
                 $prezzo_unitario = $prezzo_unitario ?: $originale->prezzo_acquisto;
             }
-            $agente = Anagrafica::find($ordine->idagente);
+            $agente = Anagrafica::find($ordine->id_agente);
             $provvigione = $agente ? $agente->provvigione_default : 0;
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica

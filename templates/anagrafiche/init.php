@@ -23,4 +23,4 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 
 $anagrafica = Anagrafica::find($id_record);
-$agente = Anagrafica::find($anagrafica->idagente);
+$agente = Anagrafica::find($anagrafica->id_agente);

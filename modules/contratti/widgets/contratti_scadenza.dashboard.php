@@ -33,7 +33,7 @@ SELECT
     `giorni_preavviso_rinnovo`, 
     `an_anagrafiche`.`ragione_sociale`,
     `an_anagrafiche`.`citta`,
-    `co_contratti`.`idagente`,
+    `co_contratti`.`id_agente`,
     `agente`.`ragione_sociale` AS `nome_agente`,
     `co_categorie_contratti_lang`.`title` AS `categoria`
 FROM 
@@ -41,7 +41,7 @@ FROM
     INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` 
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
-    LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`idagente`
+    LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`id_agente`
     LEFT JOIN `co_categorie_contratti` ON `co_categorie_contratti`.`id` = `co_contratti`.`id_categoria`
     LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti_lang`.`id_record`=`co_categorie_contratti`.`id` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 
@@ -109,7 +109,7 @@ if (!empty($rs)) {
         }
         echo '</small>
         </td>
-        <td>'.(!empty($r['idagente']) ? Modules::link('Anagrafiche', $r['idagente'], $r['nome_agente']) : '').'</td>
+        <td>'.(!empty($r['id_agente']) ? Modules::link('Anagrafiche', $r['id_agente'], $r['nome_agente']) : '').'</td>
         <td>'.$r['categoria'].'</td>
         <td class="text-center">'.$data_accettazione.'</td>
         <td class="text-center">'.$data_conclusione.'</td>

@@ -35,7 +35,7 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT 
         `an_anagrafiche`.*,
         GROUP_CONCAT(`an_tipianagrafiche`.`id`) AS idtipianagrafica,
-        GROUP_CONCAT(`an_anagrafiche_agenti`.`idagente`) AS idagenti,
+        GROUP_CONCAT(`an_anagrafiche_agenti`.`id_agente`) AS idagenti,
         GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipianagrafica
     FROM 
         `an_anagrafiche`

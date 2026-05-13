@@ -397,18 +397,18 @@ switch (post('op')) {
     case 'set_commission':
         $n_art = 0;
         foreach ($id_records as $id) {
-            $exist = $dbo->selectOne('co_provvigioni', 'id', ['idarticolo' => $id, 'idagente' => post('idagente')]);
+            $exist = $dbo->selectOne('co_provvigioni', 'id', ['idarticolo' => $id, 'id_agente' => post('id_agente')]);
 
             if ($exist) {
                 $dbo->update('co_provvigioni', [
-                    'idagente' => post('idagente'),
+                    'id_agente' => post('id_agente'),
                     'provvigione' => post('provvigione'),
                     'tipo_provvigione' => post('tipo_provvigione'),
-                ], ['idarticolo' => $id, 'idagente' => post('idagente')]);
+                ], ['idarticolo' => $id, 'id_agente' => post('id_agente')]);
             } else {
                 $dbo->insert('co_provvigioni', [
                     'idarticolo' => $id,
-                    'idagente' => post('idagente'),
+                    'id_agente' => post('id_agente'),
                     'provvigione' => post('provvigione'),
                     'tipo_provvigione' => post('tipo_provvigione'),
                 ]);
@@ -809,7 +809,7 @@ $operations['set_commission'] = [
     'data' => [
         'title' => tr('Impostare una provvigione?'),
         'msg' => tr('Selezionare un agente e la provvigione prevista:').'
-        <br><br>{[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "required": 1, "ajax-source": "agenti" ]}
+        <br><br>{[ "type": "select", "label": "'.tr('Agente').'", "name": "id_agente", "required": 1, "ajax-source": "agenti" ]}
         <br>{[ "type": "number", "label": "'.tr('Provvigione').'", "name": "provvigione", "required": 1, "icon-after": "choice|untprc|" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

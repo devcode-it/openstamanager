@@ -67,7 +67,7 @@ switch (post('op')) {
         $intervento->id_anagrafica = post('id_anagrafica');
         $intervento->id_cliente_finale = post('id_cliente_finale') ?: null;
         $intervento->idreferente = post('idreferente');
-        $intervento->idagente = post('idagente');
+        $intervento->id_agente = post('id_agente');
         $intervento->idtipointervento = post('idtipointervento');
 
         $intervento->idstatointervento = post('idstatointervento');
@@ -883,7 +883,7 @@ switch (post('op')) {
             $intervento->codice_cig = $documento->codice_cig;
             $intervento->num_item = $documento->num_item;
             $intervento->idreferente = $documento->idreferente;
-            $intervento->idagente = $documento->idagente;
+            $intervento->id_agente = $documento->id_agente;
 
             if ($class == Modules\Preventivi\Preventivo::class) {
                 $intervento->id_preventivo = $documento->id;
@@ -1492,7 +1492,7 @@ switch (post('op')) {
                 $sconto = $prezzo_consigliato['sconto'];
 
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $intervento->idagente])['provvigione_default'];
+                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $intervento->id_agente])['provvigione_default'];
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
                 $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));

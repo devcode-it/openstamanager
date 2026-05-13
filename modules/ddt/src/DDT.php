@@ -85,7 +85,7 @@ class DDT extends Document
         $model->tipo()->associate($tipo_documento);
         $model->stato()->associate(self::getStatoBozzaId());
         $model->id_segment = $id_segment;
-        $model->idagente = $anagrafica->idagente;
+        $model->id_agente = $anagrafica->id_agente;
         $model->data = $data;
 
         $id_pagamento = self::getIdPagamento($anagrafica, $direzione);

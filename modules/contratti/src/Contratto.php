@@ -74,7 +74,7 @@ class Contratto extends Document
 
         $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
-        $id_agente = $anagrafica->idagente;
+        $id_agente = $anagrafica->id_agente;
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
         $id_pagamento = $anagrafica->id_pagamento_vendite ?: setting('Tipo di pagamento predefinito');
@@ -88,7 +88,7 @@ class Contratto extends Document
         $model->id_segment = $id_segment;
 
         if (!empty($id_agente)) {
-            $model->idagente = $id_agente;
+            $model->id_agente = $id_agente;
         }
 
         if (!empty($id_pagamento)) {

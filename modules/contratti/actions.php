@@ -84,7 +84,7 @@ switch (post('op')) {
             $contratto->idsede_destinazione = post('idsede_destinazione');
             $contratto->idstato = post('idstato');
             $contratto->nome = post('nome');
-            $contratto->idagente = post('idagente');
+            $contratto->id_agente = post('id_agente');
             $contratto->idpagamento = post('idpagamento');
             $contratto->numero = post('numero');
             $contratto->budget = $budget;
@@ -609,7 +609,7 @@ switch (post('op')) {
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
             $contratto->idreferente = $documento->idreferente;
-            $contratto->idagente = $documento->idagente;
+            $contratto->id_agente = $documento->id_agente;
 
             $contratto->save();
 
@@ -632,7 +632,7 @@ switch (post('op')) {
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
             $contratto->idreferente = $documento->idreferente;
-            $contratto->idagente = $documento->idagente;
+            $contratto->id_agente = $documento->id_agente;
             $contratto->id_categoria = $documento->id_categoria;
             $contratto->id_sottocategoria = $documento->id_sottocategoria;
 
@@ -886,7 +886,7 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id_anagrafica' => $contratto->idagente])['provvigione_default'];
+            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id_anagrafica' => $contratto->id_agente])['provvigione_default'];
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
             $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));

@@ -137,7 +137,7 @@ switch ($op) {
         $fattura->note_aggiuntive = post('note_aggiuntive');
 
         $fattura->id_anagrafica = post('id_anagrafica');
-        $fattura->idagente = post('idagente') ?: null;
+        $fattura->id_agente = post('id_agente') ?: null;
         $fattura->idreferente = post('idreferente') ?: null;
         $fattura->idpagamento = post('idpagamento') ?: null;
         $fattura->id_banca_azienda = post('id_banca_azienda') ?: null;
@@ -909,7 +909,7 @@ switch ($op) {
             $fattura->idsede_destinazione = $idsede_destinazione ?: null;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->idreferente = $documento->idreferente ?: null;
-            $fattura->idagente = $documento->idagente ?: null;
+            $fattura->id_agente = $documento->id_agente ?: null;
 
             $fattura->save();
 
@@ -1291,7 +1291,7 @@ switch ($op) {
                     $sconto = parseScontoCombinato($piano_sconto->prc_guadagno.'+'.$sconto);
                 }
 
-                $provvigione = Anagrafica::find($fattura->idagente)->provvigione_default;
+                $provvigione = Anagrafica::find($fattura->id_agente)->provvigione_default;
 
                 $articolo->id_rivalsa_inps = setting('Cassa previdenziale predefinita') ?: null;
                 $articolo->id_ritenuta_acconto = setting('Ritenuta d\'acconto predefinita') ?: null;

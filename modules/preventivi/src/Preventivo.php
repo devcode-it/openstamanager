@@ -78,7 +78,7 @@ class Preventivo extends Document
 
         $stato_documento = Stato::where('name', 'Bozza')->first()->id;
 
-        $id_agente = $anagrafica->idagente;
+        $id_agente = $anagrafica->id_agente;
         $id_pagamento = $anagrafica->id_pagamento_vendite ?: setting('Tipo di pagamento predefinito');
         $id_segment = $id_segment ?: getSegmentPredefined($model->getModule()->id);
 
@@ -103,7 +103,7 @@ class Preventivo extends Document
         }
 
         if (!empty($id_agente)) {
-            $model->idagente = $id_agente;
+            $model->id_agente = $id_agente;
         }
 
         if (!empty($id_iva)) {

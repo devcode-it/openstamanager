@@ -64,7 +64,7 @@ class Intervento extends Document
         $model->codice = static::getNextCodice($data_richiesta, $id_segment);
         $model->data_richiesta = $data_richiesta;
         $model->id_segment = $id_segment;
-        $model->idagente = $anagrafica->idagente;
+        $model->id_agente = $anagrafica->id_agente;
         $model->idpagamento = $anagrafica->id_pagamento_vendite ?: setting('Tipo di pagamento predefinito');
 
         // Set id_cliente_finale to the same as id_anagrafica by default to avoid foreign key constraint violation

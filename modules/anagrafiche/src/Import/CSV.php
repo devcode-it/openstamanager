@@ -198,7 +198,7 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'idagente',
+                'field' => 'id_agente',
                 'label' => 'ID Agente',
             ],
             [

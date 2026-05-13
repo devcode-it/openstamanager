@@ -56,7 +56,7 @@ class PianoConti extends Controllo
          */
         $anagrafiche_interessate = $database->fetchArray('SELECT
             `an_anagrafiche`.`id` AS id,
-            `an_anagrafiche`.`idconto_cliente`,
+            `an_anagrafiche`.`id_conto_cliente`,
             `an_anagrafiche`.`idconto_fornitore`,
             `an_anagrafiche`.`ragione_sociale`,
             GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipi_anagrafica
@@ -65,7 +65,7 @@ class PianoConti extends Controllo
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
-            (`idconto_cliente` = 0 OR `idconto_cliente` IS NULL OR `idconto_fornitore` = 0 OR `idconto_fornitore` IS NULL)
+            (`id_conto_cliente` = 0 OR `id_conto_cliente` IS NULL OR `idconto_fornitore` = 0 OR `idconto_fornitore` IS NULL)
             AND
             `deleted_at` IS NULL
         GROUP BY `an_anagrafiche`.`id`');
@@ -78,12 +78,12 @@ class PianoConti extends Controllo
             $descrizione = 0;
 
             if ($cliente || $fornitore) {
-                $is_esistente = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_cliente'].' OR id = '.$anagrafica['idconto_fornitore']);
+                $is_esistente = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_cliente'].' OR id = '.$anagrafica['idconto_fornitore']);
                 $descrizione = null;
 
-                if (($cliente && $fornitore) && (empty($anagrafica['idconto_cliente']) || empty($anagrafica['idconto_fornitore']) || !$is_esistente)) {
+                if (($cliente && $fornitore) && (empty($anagrafica['id_conto_cliente']) || empty($anagrafica['idconto_fornitore']) || !$is_esistente)) {
                     $descrizione = tr("L'anagrafica corrente non ha impostati i conti relativi al Piano dei Conti");
-                } elseif ($cliente && (empty($anagrafica['idconto_cliente'])) || !$is_esistente) {
+                } elseif ($cliente && (empty($anagrafica['id_conto_cliente'])) || !$is_esistente) {
                     $descrizione = tr("L'anagrafica corrente non ha impostati il conto Cliente relativo al Piano dei Conti");
                 } elseif ($fornitore && (empty($anagrafica['idconto_fornitore'])) || !$is_esistente) {
                     $descrizione = tr("L'anagrafica corrente non ha impostati il conto Fornitore relativo al Piano dei Conti");

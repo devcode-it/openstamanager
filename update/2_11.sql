@@ -1006,3 +1006,4 @@ ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codice_rea` VARCHAR(23) NULL DE
 ALTER TABLE `an_anagrafiche` CHANGE `appoggiobancario` `appoggio_bancario` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `codiceiban` `codice_iban` VARCHAR(40) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `diciturafissafattura` `dicitura_fissa_fattura` VARCHAR(255) NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idconto_cliente` `id_conto_cliente` INT NOT NULL;

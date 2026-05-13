@@ -108,17 +108,17 @@ class Anagrafica extends Model
     public static function fixCliente(Anagrafica $anagrafica)
     {
         // Creo il relativo conto nel partitario se non esiste
-        if (empty($anagrafica->idconto_cliente)) {
-            $id_conto = self::creaConto($anagrafica, 'idconto_cliente');
+        if (empty($anagrafica->id_conto_cliente)) {
+            $id_conto = self::creaConto($anagrafica, 'id_conto_cliente');
 
             // Collegamento conto
-            $anagrafica->idconto_cliente = $id_conto;
+            $anagrafica->id_conto_cliente = $id_conto;
             $anagrafica->save();
         } else {
-            $conto = $anagrafica->idconto_cliente;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_cliente']);
+            $conto = $anagrafica->id_conto_cliente;
+            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_cliente']);
             if (!$is_esistente) {
-                $anagrafica->idconto_cliente = null;
+                $anagrafica->id_conto_cliente = null;
                 $anagrafica->save();
                 Anagrafica::fixCliente($anagrafica);
             }
@@ -469,7 +469,7 @@ class Anagrafica extends Model
     protected static function creaConto(Anagrafica $anagrafica, $campo)
     {
         $categoria_conto_id = null;
-        if ($campo == 'idconto_cliente') {
+        if ($campo == 'id_conto_cliente') {
             $categoria_conto_id = setting('Conto di secondo livello per i crediti clienti');
         } else {
             $categoria_conto_id = setting('Conto di secondo livello per i debiti fornitori');
@@ -520,7 +520,7 @@ class Anagrafica extends Model
         $database = database();
 
         if ($this->isTipo('Cliente')) {
-            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_cliente]);
+            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_cliente]);
         }
 
         if ($this->isTipo('Fornitore')) {

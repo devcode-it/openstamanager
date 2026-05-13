@@ -82,7 +82,7 @@ class PagamentoAutomaticoTask extends Manager
                 $id_conto_anagrafica = null;
                 if ($scadenza['dir'] == 'entrata') {
                     // Fattura di vendita: conto cliente
-                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_cliente', ['id_anagrafica' => $scadenza['id_anagrafica']])['idconto_cliente'];
+                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'id_conto_cliente', ['id_anagrafica' => $scadenza['id_anagrafica']])['id_conto_cliente'];
                 } else {
                     // Fattura di acquisto: conto fornitore
                     $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_fornitore', ['id_anagrafica' => $scadenza['id_anagrafica']])['idconto_fornitore'];

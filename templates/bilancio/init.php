@@ -71,7 +71,7 @@ $liv2_economico = $dbo->fetchArray('SELECT co_pianodeiconti2.numero AS numero, c
      data_fine_competenza <= '.prepare($date_end).')
 ) GROUP BY idpianodeiconti2 ORDER BY co_pianodeiconti2.numero');
 
-$liv3_patrimoniale = $dbo->fetchArray('SELECT co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(totale) AS totale, co_pianodeiconti3.idpianodeiconti2 AS idpianodeiconti2 FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale"))) '.(empty(get('elenco_analitico')) ? 'AND co_pianodeiconti3.id NOT IN (SELECT idconto_cliente FROM an_anagrafiche) AND co_pianodeiconti3.id NOT IN (SELECT idconto_fornitore FROM an_anagrafiche)' : '').' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idconto ORDER BY co_pianodeiconti3.numero');
+$liv3_patrimoniale = $dbo->fetchArray('SELECT co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(totale) AS totale, co_pianodeiconti3.idpianodeiconti2 AS idpianodeiconti2 FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.idconto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idconto IN(SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 IN(SELECT id FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale"))) '.(empty(get('elenco_analitico')) ? 'AND co_pianodeiconti3.id NOT IN (SELECT id_conto_cliente FROM an_anagrafiche) AND co_pianodeiconti3.id NOT IN (SELECT idconto_fornitore FROM an_anagrafiche)' : '').' AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY idconto ORDER BY co_pianodeiconti3.numero');
 
 $liv3_economico = $dbo->fetchArray('SELECT co_pianodeiconti3.numero AS numero, co_pianodeiconti3.descrizione AS descrizione, SUM(
     CASE
@@ -151,7 +151,7 @@ FROM
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id 
 WHERE 
     co_pianodeiconti2.id='.prepare(setting('Conto di secondo livello per i crediti clienti')).'
-    AND co_pianodeiconti3.id IN (SELECT idconto_cliente FROM an_anagrafiche) 
+    AND co_pianodeiconti3.id IN (SELECT id_conto_cliente FROM an_anagrafiche) 
     AND co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 
     AND co_movimenti.totale > 0
@@ -197,7 +197,7 @@ FROM
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id 
 WHERE 
     co_pianodeiconti2.id='.prepare(setting('Conto di secondo livello per i crediti clienti')).'
-    AND co_pianodeiconti3.id IN (SELECT idconto_cliente FROM an_anagrafiche) 
+    AND co_pianodeiconti3.id IN (SELECT id_conto_cliente FROM an_anagrafiche) 
     AND co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 
     AND co_movimenti.totale < 0

@@ -254,9 +254,9 @@ if (!function_exists('aggiungi_movimento')) {
             $segno_mov5_ritenutaacconto = 1;
 
             // Lettura conto cliente
-            $query = 'SELECT idconto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
+            $query = 'SELECT id_conto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
             $rs = $dbo->fetchArray($query);
-            $idconto_controparte = $rs[0]['idconto_cliente'];
+            $idconto_controparte = $rs[0]['id_conto_cliente'];
 
             if ($idconto_controparte == '') {
                 $idconto_controparte = setting('Conto per Riepilogativo clienti');

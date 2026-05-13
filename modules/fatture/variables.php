@@ -22,7 +22,7 @@ $r = $dbo->fetchOne('SELECT
         `co_documenti`.*,
         `an_anagrafiche`.`pec`,
         IF ((`an_referenti`.`email` IS NOT NULL AND `an_referenti`.`email`!=""), `an_referenti`.`email`, `an_anagrafiche`.`email`) AS email,
-        `an_anagrafiche`.`idconto_cliente`,
+        `an_anagrafiche`.`id_conto_cliente`,
         `an_anagrafiche`.`idconto_fornitore`,
         `an_anagrafiche`.`ragione_sociale`,
         `an_referenti`.`nome`,

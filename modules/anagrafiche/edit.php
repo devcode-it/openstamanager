@@ -702,7 +702,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codiceri", "value": "$codiceri$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
+                        {[ "type": "text", "label": "<?php echo tr('Numero d\'iscrizione registro imprese'); ?>", "name": "codice_r_i", "value": "$codice_r_i$", "help": "<?php echo tr('Il numero registro imprese è il numero di iscrizione attribuito dal Registro Imprese della Camera di Commercio.'); ?>" ]}
                     </div>
 
                     <div class="col-md-3">

@@ -64,7 +64,7 @@ switch (post('op')) {
         $anagrafica->pec = post('pec');
         $anagrafica->id_sede_fatturazione = post('idsede_fatturazione');
         $anagrafica->note = post('note');
-        $anagrafica->codiceri = post('codiceri');
+        $anagrafica->codice_r_i = post('codice_r_i');
         $anagrafica->codicerea = strtoupper(post('codicerea')) ?: null;
         $anagrafica->appoggiobancario = post('appoggiobancario');
         $anagrafica->filiale = post('filiale');

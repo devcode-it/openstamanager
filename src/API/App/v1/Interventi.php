@@ -136,7 +136,7 @@ class Interventi extends AppResource
                     `deleted_at` IS NULL AND (`in_interventi`.`id` IN (
                         SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end)
                         OR 
-                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                         )
                     )';
             } else {
@@ -158,7 +158,7 @@ class Interventi extends AppResource
                             `in_interventi`.`id` NOT IN (
                                 SELECT `idintervento` FROM `in_interventi_tecnici`
                             )
-                            AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0) AND `in_interventi`.`id` IN (
+                            AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0) AND `in_interventi`.`id` IN (
                                 SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`id_tecnico` = :id_tecnico_q2
                             )
                         )
@@ -183,7 +183,7 @@ class Interventi extends AppResource
                                 `in_interventi`.`id` NOT IN (
                                     SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+                                AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
                         )';
             } else {
@@ -205,7 +205,7 @@ class Interventi extends AppResource
                                 `in_interventi`.`id` NOT IN (
                                     SELECT `idintervento` FROM `in_interventi_tecnici`
                                 )
-                                AND `in_interventi`.`idstatointervento` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+                                AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
                         )';
             }
@@ -271,7 +271,7 @@ class Interventi extends AppResource
             id_contratto,
             id_preventivo,
             id_tipo_intervento AS id_tipo_intervento,
-            idstatointervento AS id_stato_intervento,
+            id_stato AS id_stato,
             idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,
             IF(id_sede_destinazione = 0, NULL, id_sede_destinazione) AS id_sede,
@@ -298,7 +298,7 @@ class Interventi extends AppResource
     {
         $anagrafica = Anagrafica::find($data['id_cliente']);
         $tipo = TipoSessione::find($data['id_tipo_intervento']);
-        $stato = Stato::find($data['id_stato_intervento']);
+        $stato = Stato::find($data['id_stato']);
 
         $data_richiesta = new Carbon($data['data_richiesta']);
         $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta);
@@ -328,7 +328,7 @@ class Interventi extends AppResource
         $database = database();
 
         // Aggiornamento intervento
-        $record->idstatointervento = $data['id_stato_intervento'];
+        $record->id_stato = $data['id_stato'];
         $record->id_contratto = $data['id_contratto'] ?: null;
         $record->id_preventivo = $data['id_preventivo'] ?: null;
         $record->richiesta = $data['richiesta'];

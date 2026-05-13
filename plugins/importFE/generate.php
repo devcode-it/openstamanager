@@ -326,7 +326,7 @@ if (!empty($anagrafica)) {
         WHERE
             `co_tipidocumento`.`dir` = 'uscita' AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-            `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
+            `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
             `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);
 
     // Riferimenti ad altre fatture
@@ -352,7 +352,7 @@ if (!empty($anagrafica)) {
             `co_tipidocumento`.`dir` = 'entrata' AND
             `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
-            `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
+            `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
             `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);
 
         $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura_pa->getHeader()['DatiTrasmissione']['ProgressivoInvio'])->first();

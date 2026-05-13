@@ -150,7 +150,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
     elseif ($final_module->name == 'Interventi') {
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato_intervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
             </div>
 
             <div class="col-md-4">
@@ -294,7 +294,7 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
                 IF(`id_cliente_finale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
             FROM
                 `in_interventi`
-                INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+                INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
                 LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `in_interventi`.`id` = '.prepare($documento->id));
@@ -369,7 +369,7 @@ if ($abilita_controllo_disponibilita) {
                     FROM or_righe_ordini
                     INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
                     INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
-                    INNER JOIN or_statiordine ON or_ordini.idstatoordine = or_statiordine.id
+                    INNER JOIN or_statiordine ON or_ordini.id_stato = or_statiordine.id
                     WHERE or_righe_ordini.idarticolo = '.prepare($id_articolo).'
                     AND or_tipiordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1

@@ -47,7 +47,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $joins[] = [
             'in_statiintervento',
-            'in_interventi.idstatointervento',
+            'in_interventi.id_stato',
             'in_statiintervento.id',
         ];
 
@@ -103,7 +103,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $anagrafica = Anagrafica::find($data['id_anagrafica']);
         $tipo = TipoSessione::find($data['id_tipo_intervento']);
-        $stato = Stato::find($data['id_stato_intervento']);
+        $stato = Stato::find($data['id_stato']);
 
         $intervento = Intervento::build($anagrafica, $tipo, $stato, $data['data_richiesta']);
 
@@ -125,7 +125,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $intervento = Intervento::find($data['id']);
 
         $intervento->descrizione = $data['descrizione'];
-        $intervento->idstatointervento = $data['id_stato_intervento'];
+        $intervento->id_stato = $data['id_stato'];
         $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
         $intervento->save();
 

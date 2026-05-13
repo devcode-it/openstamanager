@@ -170,14 +170,14 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     $id_stato_fatt = Stato::where('codice', 'FAT')->first()->id;
                     if ($intervento->stato->id == $id_stato_fatt) {
                         echo '
-                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
                     } else {
                         echo '
-                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `in_statiintervento`.`id`!='.prepare($id_stato_fatt).' AND `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                        {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `in_statiintervento`.`id`!='.prepare($id_stato_fatt).' AND `deleted_at` IS NULL ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
                     }
                 } else {
                     echo '
-                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatointervento", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$idstatointervento$", "class": "unblockable" ]}';
+                    {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` ='.prepare(Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
                 }
 ?>
                 </div>
@@ -333,14 +333,14 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `co_preventivi`
-            INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+            INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
         WHERE
             id_anagrafica='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
     // Lettura contratti accettati, in attesa di conferma o in lavorazione
-    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
+    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
     $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
 
     // Lettura ddt (entrata o uscita)
@@ -349,7 +349,7 @@ if (!$block_edit) {
         FROM
             `dt_ddt`
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
-            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
@@ -365,7 +365,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `or_ordini`
-            INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+            INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
             INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         WHERE

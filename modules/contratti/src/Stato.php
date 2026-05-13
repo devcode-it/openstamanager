@@ -52,7 +52,7 @@ class Stato extends Model
 
     public function preventivi()
     {
-        return $this->hasMany(Contratto::class, 'idstato');
+        return $this->hasMany(Contratto::class, 'id_stato');
     }
 
     public function getModuleAttribute()

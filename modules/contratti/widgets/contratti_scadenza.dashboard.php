@@ -24,7 +24,7 @@ $rs = $dbo->fetchArray('
 SELECT 
 	`co_contratti`.`id`,
     `co_contratti`.`id_sede_destinazione`,
-    ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
+    ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`id_stato` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
     `co_contratti`.`nome`, 
     DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, 
     `co_contratti`.`data_accettazione`,
@@ -38,7 +38,7 @@ SELECT
     `co_categorie_contratti_lang`.`title` AS `categoria`
 FROM 
 	`co_contratti` 
-    INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` 
+    INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato` 
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
     LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`id_agente`

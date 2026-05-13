@@ -43,7 +43,7 @@ switch (post('op')) {
         $contratto = Contratto::build($anagrafica, post('nome'), $id_segment);
 
         // Salvataggio informazioni sul rinnovo
-        $contratto->idstato = post('idstato');
+        $contratto->id_stato = post('id_stato');
         $contratto->validita = post('validita');
         $contratto->tipo_validita = post('tipo_validita');
         $contratto->data_accettazione = post('data_accettazione') ?: null;
@@ -82,7 +82,7 @@ switch (post('op')) {
             $contratto->id_anagrafica = post('id_anagrafica');
             $contratto->id_sede_partenza = post('id_sede_partenza');
             $contratto->id_sede_destinazione = post('id_sede_destinazione');
-            $contratto->idstato = post('idstato');
+            $contratto->id_stato = post('id_stato');
             $contratto->nome = post('nome');
             $contratto->id_agente = post('id_agente');
             $contratto->idpagamento = post('idpagamento');
@@ -696,7 +696,7 @@ switch (post('op')) {
             }
 
             // Aggiorna lo stato del contratto precedente a concluso
-            $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($documento->id));
+            $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `id_stato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($documento->id));
         }
 
         if (!empty($documento->sconto_finale)) {
@@ -819,7 +819,7 @@ switch (post('op')) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $contratto->idstato = post('id_stato');
+            $contratto->id_stato = post('id_stato');
             $contratto->save();
         }
 

@@ -25,7 +25,7 @@ use Modules\Preventivi\Stato;
 
 $id_module = Module::where('name', 'Preventivi')->first()->id;
 
-$rs = Preventivo::where('idstato', '=', Stato::where('name', 'In lavorazione')->first()->id)->where('default_revision', '=', 1)->get();
+$rs = Preventivo::where('id_stato', '=', Stato::where('name', 'In lavorazione')->first()->id)->where('default_revision', '=', 1)->get();
 
 if (!empty($rs)) {
     echo "

@@ -107,14 +107,14 @@ if (setting('Cambia automaticamente stato ddt fatturati')) {
     $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
     if ($ddt->stato->id == $id_stato_fatt || $ddt->stato->id == $id_stato_parz_fatt) {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "extra": "readonly", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_statoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_statoddt$", "extra": "readonly", "class": "unblockable" ]}';
     } else {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 OR `dt_statiddt`.`id` = '.prepare($id_stato_bozza).' ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_statoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 OR `dt_statiddt`.`id` = '.prepare($id_stato_bozza).' ORDER BY `title`", "value": "$id_statoddt$", "class": "unblockable" ]}';
     }
 } else {
     echo '
-        {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstatoddt$", "class": "unblockable" ]}';
+        {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_statoddt", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_statoddt$", "class": "unblockable" ]}';
 }
 
 echo '
@@ -396,7 +396,7 @@ if (!$block_edit) {
         FROM
             `or_ordini`
             INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
-            INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
+            INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
         WHERE
@@ -412,7 +412,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `dt_ddt`
-            INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+            INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`

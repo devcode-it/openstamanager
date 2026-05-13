@@ -87,13 +87,13 @@ switch (post('op')) {
                 if (!empty($accodare) && empty($fattura)) {
                     if ($raggruppamento == 'sede') {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                            ->where('id_stato', $stato_documenti_accodabili->id)
                             ->where('idtipodocumento', $tipo_documento->id)
                             ->where('id_sede_destinazione', $id_sede)
                             ->first();
                     } else {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                            ->where('id_stato', $stato_documenti_accodabili->id)
                             ->where('idtipodocumento', $tipo_documento->id)
                             ->first();
                     }
@@ -224,7 +224,7 @@ switch (post('op')) {
                 }
 
                 // Cambio stato precedente contratto in concluso (non più pianificabile)
-                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `idstato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($contratto->id));
+                $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `id_stato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($contratto->id));
 
                 ++$numero_totale;
             }

@@ -47,7 +47,7 @@ switch (post('op')) {
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede_destinazione, $id_segment);
 
         $preventivo->esclusioni = setting('Esclusioni default preventivi');
-        $preventivo->idstato = post('idstato');
+        $preventivo->id_stato = post('id_stato');
         $preventivo->save();
 
         $id_record = $preventivo->id;
@@ -64,7 +64,7 @@ switch (post('op')) {
 
     case 'update':
         if (!empty($id_record)) {
-            $preventivo->idstato = post('idstato');
+            $preventivo->id_stato = post('id_stato');
             $preventivo->nome = post('nome');
             $preventivo->id_anagrafica = post('id_anagrafica');
             $preventivo->id_sede_partenza = post('id_sede_partenza');
@@ -153,7 +153,7 @@ switch (post('op')) {
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
             $stato_in_lavorazione = Stato::where('name', 'In lavorazione')->first()->id;
-            $dbo->table('co_preventivi')->where('id', $id_record)->update(['idstato' => $stato_in_lavorazione]);
+            $dbo->table('co_preventivi')->where('id', $id_record)->update(['id_stato' => $stato_in_lavorazione]);
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
                 '_NUM_' => $rs[0]['codice'],

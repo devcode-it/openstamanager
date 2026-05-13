@@ -43,7 +43,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $joins[] = [
             'dt_statiddt',
             'dt_statiddt.id',
-            'dt_ddt.idstatoddt',
+            'dt_ddt.id_statoddt',
         ];
 
         $joins[] = [
@@ -78,7 +78,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
 
         $ddt = DDT::build($anagrafica, $tipo, $data['data'], $data['id_segment']);
 
-        $ddt->idstatoddt = $data['id_stato'];
+        $ddt->id_statoddt = $data['id_stato'];
         $ddt->idcausalet = $data['idcausale'];
         $ddt->id_sede_partenza = $data['id_sede_partenza'];
         $ddt->id_sede_destinazione = $data['id_sede_destinazione'];
@@ -99,7 +99,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $ddt = DDT::find($data['id']);
 
         $ddt->data = $data['data'];
-        $ddt->idstatoddt = $data['id_stato'];
+        $ddt->id_statoddt = $data['id_stato'];
         $ddt->idcausalet = $data['idcausale'];
         $ddt->id_anagrafica = $data['id_anagrafica'];
         $ddt->numero_esterno = $data['numero_esterno'];

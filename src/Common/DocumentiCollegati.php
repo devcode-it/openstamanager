@@ -183,9 +183,9 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND 
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (
-            `co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND 
+            `co_statidocumento_lang`.`id_record` = `co_documenti`.`id_stato` AND 
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_documenti`.`id` IN (
@@ -231,9 +231,9 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\' AND
             `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`idstatointervento` AND 
+            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND 
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `in_interventi`.`id`
@@ -256,9 +256,9 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
             `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`idstato` AND 
+            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND 
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_preventivi`.`id`
@@ -287,9 +287,9 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`idtipoddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`idstatoddt` AND 
+            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_statoddt` AND 
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
@@ -318,9 +318,9 @@ class DocumentiCollegati
             `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND 
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
+        INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
         LEFT JOIN `or_statiordine_lang` ON (
-            `or_statiordine_lang`.`id_record` = `or_ordini`.`idstatoordine` AND 
+            `or_statiordine_lang`.`id_record` = `or_ordini`.`id_stato` AND 
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `or_ordini`.`id`
@@ -343,9 +343,9 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Contratti\\\\Contratto\' AND
             `co_righe_documenti`.`iddocumento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+        INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (
-            `co_staticontratti_lang`.`id_record` = `co_contratti`.`idstato` AND 
+            `co_staticontratti_lang`.`id_record` = `co_contratti`.`id_stato` AND 
             `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_contratti`.`id`
@@ -390,9 +390,9 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`idtipoddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`idstatoddt` AND 
+            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_statoddt` AND 
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
@@ -421,9 +421,9 @@ class DocumentiCollegati
             `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND 
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
+        INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
         LEFT JOIN `or_statiordine_lang` ON (
-            `or_statiordine_lang`.`id_record` = `or_ordini`.`idstatoordine` AND 
+            `or_statiordine_lang`.`id_record` = `or_ordini`.`id_stato` AND 
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `or_ordini`.`id`
@@ -463,9 +463,9 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`idstatodocumento`
+        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (
-            `co_statidocumento_lang`.`id_record` = `co_documenti`.`idstatodocumento` AND
+            `co_statidocumento_lang`.`id_record` = `co_documenti`.`id_stato` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_righe_documenti` ON (
@@ -487,9 +487,9 @@ class DocumentiCollegati
             \'Interventi\' AS modulo,
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`idstatointervento` AND
+            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_interventi`.`id_contratto` = '.prepare($id_contratto).'
@@ -512,9 +512,9 @@ class DocumentiCollegati
             `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
             `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
         )
-        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`idstato` AND
+            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_preventivi`.`id`
@@ -555,7 +555,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
-        LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -582,7 +582,7 @@ class DocumentiCollegati
             `or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
+        LEFT JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
         LEFT JOIN `or_statiordine_lang` ON (
             `or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -609,7 +609,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -632,7 +632,7 @@ class DocumentiCollegati
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -656,7 +656,7 @@ class DocumentiCollegati
             `co_staticontratti_lang`.`title` AS stato_documento
         FROM `co_contratti`
         INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`
-        LEFT JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+        LEFT JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (
             `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
             `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -700,7 +700,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
-        LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -728,7 +728,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -751,7 +751,7 @@ class DocumentiCollegati
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -777,7 +777,7 @@ class DocumentiCollegati
         FROM `co_preventivi`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = '.prepare($id_ordine).'
         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
-        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
             `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -821,7 +821,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -844,9 +844,9 @@ class DocumentiCollegati
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`idstatointervento` AND
+            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_righe_interventi`.`original_document_id` = '.prepare($id_ddt).'
@@ -892,7 +892,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
-        LEFT JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -923,7 +923,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`idstatoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -949,7 +949,7 @@ class DocumentiCollegati
             SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`) AS prezzo_unitario
         FROM `co_preventivi`
         INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
-        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
             `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -993,7 +993,7 @@ class DocumentiCollegati
             `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN co_statidocumento ON co_documenti.idstatodocumento=co_statidocumento.id
+        LEFT JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id
         LEFT JOIN `co_statidocumento_lang` ON (
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1035,7 +1035,7 @@ class DocumentiCollegati
             `or_tipiordine_lang`.`id_record` = `or_ordini`.`idtipoordine` AND
             `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN or_statiordine ON or_ordini.idstatoordine=or_statiordine.id
+        LEFT JOIN or_statiordine ON or_ordini.id_stato=or_statiordine.id
         LEFT JOIN `or_statiordine_lang` ON (
             `or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1061,7 +1061,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`idtipoddt` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN dt_statiddt ON dt_ddt.idstatoddt=dt_statiddt.id
+        LEFT JOIN dt_statiddt ON dt_ddt.id_statoddt=dt_statiddt.id
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1083,7 +1083,7 @@ class DocumentiCollegati
             in_interventi.deleted_at AS `deleted_at`
         FROM `in_interventi`
         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`
-        LEFT JOIN in_statiintervento ON in_interventi.idstatointervento=in_statiintervento.id
+        LEFT JOIN in_statiintervento ON in_interventi.id_stato=in_statiintervento.id
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1108,7 +1108,7 @@ class DocumentiCollegati
             0 AS dir,
             NULL AS `deleted_at`
         FROM `co_contratti`
-        LEFT JOIN co_staticontratti ON co_contratti.idstato=co_staticontratti.id
+        LEFT JOIN co_staticontratti ON co_contratti.id_stato=co_staticontratti.id
         LEFT JOIN `co_staticontratti_lang` ON (
             `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
             `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1129,7 +1129,7 @@ class DocumentiCollegati
             0 AS dir,
             NULL AS `deleted_at`
         FROM `co_preventivi`
-        LEFT JOIN co_statipreventivi ON co_preventivi.idstato=co_statipreventivi.id
+        LEFT JOIN co_statipreventivi ON co_preventivi.id_stato=co_statipreventivi.id
         LEFT JOIN `co_statipreventivi_lang` ON (
             `co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1930,7 +1930,7 @@ class DocumentiCollegati
                 \''.$info['modulo'].'\' AS modulo,
                 `in_statiintervento_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `in_statiintervento` ON `'.$tabella.'`.`idstatointervento` = `in_statiintervento`.`id`
+            INNER JOIN `in_statiintervento` ON `'.$tabella.'`.`id_stato` = `in_statiintervento`.`id`
             LEFT JOIN `in_statiintervento_lang` ON (
                 `in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND
                 `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1945,7 +1945,7 @@ class DocumentiCollegati
                 \''.$info['modulo'].'\' AS modulo,
                 `co_statipreventivi_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `co_statipreventivi` ON `'.$tabella.'`.`idstato` = `co_statipreventivi`.`id`
+            INNER JOIN `co_statipreventivi` ON `'.$tabella.'`.`id_stato` = `co_statipreventivi`.`id`
             LEFT JOIN `co_statipreventivi_lang` ON (
                 `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
                 `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1960,7 +1960,7 @@ class DocumentiCollegati
                 \''.$info['modulo'].'\' AS modulo,
                 `co_staticontratti_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `co_staticontratti` ON `'.$tabella.'`.`idstato` = `co_staticontratti`.`id`
+            INNER JOIN `co_staticontratti` ON `'.$tabella.'`.`id_stato` = `co_staticontratti`.`id`
             LEFT JOIN `co_staticontratti_lang` ON (
                 `co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND
                 `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1981,7 +1981,7 @@ class DocumentiCollegati
                 `or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND
                 `or_tipiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
-            INNER JOIN `or_statiordine` ON `'.$tabella.'`.`idstatoordine` = `or_statiordine`.`id`
+            INNER JOIN `or_statiordine` ON `'.$tabella.'`.`id_stato` = `or_statiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (
                 `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND
                 `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -2002,7 +2002,7 @@ class DocumentiCollegati
                 `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
                 `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
-            INNER JOIN `dt_statiddt` ON `'.$tabella.'`.`idstatoddt` = `dt_statiddt`.`id`
+            INNER JOIN `dt_statiddt` ON `'.$tabella.'`.`id_statoddt` = `dt_statiddt`.`id`
             LEFT JOIN `dt_statiddt_lang` ON (
                 `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
                 `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -2023,7 +2023,7 @@ class DocumentiCollegati
                 `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
                 `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
-            INNER JOIN `co_statidocumento` ON `'.$tabella.'`.`idstatodocumento` = `co_statidocumento`.`id`
+            INNER JOIN `co_statidocumento` ON `'.$tabella.'`.`id_stato` = `co_statidocumento`.`id`
             LEFT JOIN `co_statidocumento_lang` ON (
                 `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
                 `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'

@@ -88,7 +88,7 @@ if ($intervento->id_ordine) {
 
 // Altre attività
 $interventi_programmati = Intervento::select('in_interventi.*')
-    ->join('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
+    ->join('in_statiintervento', 'in_interventi.id_stato', '=', 'in_statiintervento.id')
     ->where('id_anagrafica', $intervento->id_anagrafica)
     ->where('id_sede_destinazione', $intervento->id_sede_destinazione)
     ->where('is_bloccato', '!=', 1)

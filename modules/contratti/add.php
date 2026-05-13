@@ -48,7 +48,7 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "value": "'.$stato.'", "values": "query='.$stati.'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "value": "'.$stato.'", "values": "query='.$stati.'" ]}
         </div>
 
         <div class="col-md-6">

@@ -33,7 +33,7 @@ $r = $dbo->fetchOne('SELECT *,
         CONCAT(`an_sedi`.`indirizzo`, \' \', `an_sedi`.`cap`, \'  \', `an_sedi`.`citta`, \' (\', `an_sedi`.`provincia`, \')\') AS sede_indirizzo
     FROM `in_interventi`
         LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`id_sede_destinazione`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

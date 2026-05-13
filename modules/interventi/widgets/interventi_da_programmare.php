@@ -23,7 +23,7 @@ include_once __DIR__.'/../../../core.php';
 use Modules\Interventi\Intervento;
 use Modules\Interventi\Stato;
 
-$rs = Intervento::where('idstatointervento', '=', Stato::where('codice', '=', 'TODO')->first()->id)->get();
+$rs = Intervento::where('id_stato', '=', Stato::where('codice', '=', 'TODO')->first()->id)->get();
 
 if (!empty($rs)) {
     echo '

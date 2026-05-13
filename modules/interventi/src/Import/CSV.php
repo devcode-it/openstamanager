@@ -213,7 +213,7 @@ class CSV extends CSVImporter
             } else {
                 // Aggiorna i campi dell'intervento esistente
                 $intervento->id_tipo_intervento = $tipo->id;
-                $intervento->idstatointervento = $stato->id;
+                $intervento->id_stato = $stato->id;
                 $intervento->data_richiesta = $record['data_richiesta'];
             }
 

@@ -84,13 +84,13 @@ switch (post('op')) {
                 if (!empty($accodare) && empty($fattura)) {
                     if ($raggruppamento == 'sede') {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                            ->where('id_stato', $stato_documenti_accodabili->id)
                             ->where('idtipodocumento', $tipo_documento->id)
                             ->where('id_sede_destinazione', $id_sede)
                             ->first();
                     } else {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                            ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                            ->where('id_stato', $stato_documenti_accodabili->id)
                             ->where('idtipodocumento', $tipo_documento->id)
                             ->first();
                     }

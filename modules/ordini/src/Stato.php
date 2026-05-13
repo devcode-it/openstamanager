@@ -51,7 +51,7 @@ class Stato extends Model
 
     public function ordini()
     {
-        return $this->hasMany(Ordine::class, 'idstatoordine');
+        return $this->hasMany(Ordine::class, 'id_stato');
     }
 
     public function getModuleAttribute()

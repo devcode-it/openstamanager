@@ -70,7 +70,7 @@ switch (post('op')) {
         $intervento->id_agente = post('id_agente');
         $intervento->id_tipo_intervento = post('id_tipo_intervento');
 
-        $intervento->idstatointervento = post('idstatointervento');
+        $intervento->id_stato = post('id_stato');
         $intervento->id_sede_partenza = post('id_sede_partenza');
         $intervento->id_sede_destinazione = post('id_sede_destinazione');
         $intervento->id_preventivo = post('idpreventivo') ?: null;
@@ -160,8 +160,8 @@ switch (post('op')) {
         ]);
 
         // Notifica cambio stato intervento
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('idstatointervento')]);
-        if (!empty($stato['notifica']) && $stato['id'] != $record['idstatointervento']) {
+        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('id_stato')]);
+        if (!empty($stato['notifica']) && $stato['id'] != $record['id_stato']) {
             $template = Template::find($stato['id_email']);
 
             if (!empty($stato['destinatari'])) {
@@ -201,8 +201,8 @@ switch (post('op')) {
         }
 
         // Log del cambio stato dell'attività
-        if ($stato['id'] != $record['idstatointervento']) {
-            $stato_precedente = $dbo->selectOne('in_statiintervento', '*', ['id' => $record['idstatointervento']]);
+        if ($stato['id'] != $record['id_stato']) {
+            $stato_precedente = $dbo->selectOne('in_statiintervento', '*', ['id' => $record['id_stato']]);
 
             OperationLog::setInfo('id_module', $id_module);
             OperationLog::setInfo('id_plugin', $id_plugin);
@@ -221,14 +221,14 @@ switch (post('op')) {
         if (post('id_intervento') == null) {
             $id_anagrafica = post('id_anagrafica');
             $id_tipo_intervento = post('id_tipo_intervento');
-            $idstatointervento = post('id');
+            $id_stato = post('id');
             $data_richiesta = post('data_richiesta');
             $data_scadenza = post('data_scadenza') ?: null;
             $id_segment = post('id_segment');
 
             $anagrafica = Anagrafica::find($id_anagrafica);
             $tipo = TipoSessione::find($id_tipo_intervento);
-            $stato = Stato::find($idstatointervento);
+            $stato = Stato::find($id_stato);
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta, $id_segment);
             $id_record = $intervento->id;
@@ -309,12 +309,12 @@ switch (post('op')) {
             }
         } else {
             $id_record = post('id_intervento');
-            $idstatointervento = post('id');
+            $id_stato = post('id');
 
             $intervento = Intervento::find($id_record);
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');
-            $intervento->idstatointervento = $idstatointervento;
+            $intervento->id_stato = $id_stato;
             $intervento->save();
 
             $idcontratto = $dbo->fetchOne('SELECT idcontratto FROM co_promemoria WHERE idintervento = :id', [
@@ -417,7 +417,7 @@ switch (post('op')) {
             // Validazione dei campi obbligatori per la ricorrenza
             $periodicita = post('periodicita');
             $metodo_ricorrenza = post('metodo_ricorrenza');
-            $idstatoricorrenze = post('idstatoricorrenze');
+            $id_statoricorrenze = post('id_statoricorrenze');
 
             // Calcolo automatico della data di inizio ricorrenza
             $data_inizio = post('data_inizio_ricorrenza'); // Campo nascosto calcolato dal JavaScript
@@ -438,7 +438,7 @@ switch (post('op')) {
             }
 
             // Controllo campi obbligatori
-            if (empty($periodicita) || empty($metodo_ricorrenza) || empty($idstatoricorrenze)) {
+            if (empty($periodicita) || empty($metodo_ricorrenza) || empty($id_statoricorrenze)) {
                 flash()->error(tr('Tutti i campi della ricorrenza sono obbligatori quando si crea un\'attività ricorrente.'));
                 break;
             }
@@ -451,7 +451,7 @@ switch (post('op')) {
 
             $data = $data_inizio;
             $interval = post('tipo_periodicita') != 'manual' ? post('tipo_periodicita') : 'days';
-            $stato = Stato::find($idstatoricorrenze);
+            $stato = Stato::find($id_statoricorrenze);
 
             if (empty($stato)) {
                 flash()->error(tr('Stato delle ricorrenze non valido.'));
@@ -539,7 +539,7 @@ switch (post('op')) {
                     // Calcolo il nuovo codice
                     $new->codice = Intervento::getNextCodice($data_ricorrenza, $new->id_segment);
                     $new->data_richiesta = $data_ricorrenza;
-                    $new->idstatointervento = $stato->id;
+                    $new->id_stato = $stato->id;
                     $new->save();
                     $idintervento = $new->id;
                     ++$ricorrenze_create;
@@ -863,7 +863,7 @@ switch (post('op')) {
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
-            $stato = Stato::find(post('id_stato_intervento'));
+            $stato = Stato::find(post('id_stato'));
             $tipo = TipoSessione::find(post('id_tipo_intervento'));
 
             $anagrafica = post('id_anagrafica') ? Anagrafica::find(post('id_anagrafica')) : $documento->anagrafica;
@@ -941,7 +941,7 @@ switch (post('op')) {
         // Modifica finale dello stato
         /*
             if (post('create_document') == 'on') {
-                $intervento->id = post('id_stato_intervento');
+                $intervento->id = post('id_stato');
                 $intervento->save();
             }*/
 
@@ -990,7 +990,7 @@ switch (post('op')) {
                     $id_stato = setting("Stato dell'attività dopo la firma");
                     $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
                     if (!empty($stato)) {
-                        $intervento->idstatointervento = $stato['id'];
+                        $intervento->id_stato = $stato['id'];
                         $intervento->save();
                     }
                 }
@@ -1078,7 +1078,7 @@ switch (post('op')) {
                         $id_stato = setting("Stato dell'attività dopo la firma");
                         $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
                         if (!empty($stato)) {
-                            $intervento->idstatointervento = $stato['id'];
+                            $intervento->id_stato = $stato['id'];
                             $intervento->save();
                         }
 
@@ -1329,7 +1329,7 @@ switch (post('op')) {
                 if (in_array($giorno, $giorni)) {
                     ++$i;
                     $new = $intervento->replicate();
-                    $new->idstatointervento = $id_stato;
+                    $new->id_stato = $id_stato;
 
                     // Calcolo del nuovo codice sulla base della data di richiesta
                     $new->codice = Intervento::getNextCodice($data_richiesta, $new->id_segment);

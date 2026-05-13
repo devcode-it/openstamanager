@@ -64,7 +64,7 @@ switch (filter('op')) {
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`id_tecnico` = `tecnico`.`id`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
             LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_interventi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `in_interventi`.`id`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         WHERE
             (
                 (
@@ -92,7 +92,7 @@ switch (filter('op')) {
                 )
             )
             AND `id_tecnico` IN('.implode(',', $tecnici).')
-            AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
+            AND `in_interventi`.`id_stato` IN('.implode(',', $stati).')
             AND `in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
         HAVING
@@ -142,7 +142,7 @@ switch (filter('op')) {
             FROM `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
                 LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
-                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 (
@@ -279,7 +279,7 @@ switch (filter('op')) {
                         *,
                         `in_interventi`.`codice`,
                         `an_anagrafiche`.`note` AS note_anagrafica,
-                        `in_statiintervento`.`id` AS parent_idstato,
+                        `in_statiintervento`.`id` AS parent_id_stato,
                         `in_statiintervento_lang`.`title` AS stato,
                         `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
@@ -287,7 +287,7 @@ switch (filter('op')) {
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM
                         `in_interventi`
-                        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+                        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
                         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipiintervento`.`id`
                         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
@@ -393,7 +393,7 @@ switch (filter('op')) {
                 `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
                 LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
-                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
                 LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `co_preventivi`.`id`='.prepare($id_intervento);
@@ -498,7 +498,7 @@ switch (filter('op')) {
         FROM
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
-            INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+            INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
@@ -537,7 +537,7 @@ switch (filter('op')) {
         }
 
         $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+            INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`id`
         WHERE
             `in_statiintervento`.`is_bloccato` = 0

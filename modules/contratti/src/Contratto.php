@@ -178,7 +178,7 @@ class Contratto extends Document
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'idstato');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function articoli()
@@ -294,8 +294,8 @@ class Contratto extends Document
         }
 
         // Aggiorna lo stato solo se è diverso
-        if ($this->idstato != $stato->id) {
-            $this->idstato = $stato->id;
+        if ($this->id_stato != $stato->id) {
+            $this->id_stato = $stato->id;
             $this->saveQuietly();
         }
 
@@ -305,8 +305,8 @@ class Contratto extends Document
             // Carica solo gli interventi con stato bloccato
             $interventi = $this->interventi()->with('stato')->get();
             foreach ($interventi as $intervento) {
-                if ($intervento->stato && $intervento->stato->is_bloccato == 1 && $intervento->idstatointervento != $stato_intervento->id) {
-                    $intervento->idstatointervento = $stato_intervento->id;
+                if ($intervento->stato && $intervento->stato->is_bloccato == 1 && $intervento->id_stato != $stato_intervento->id) {
+                    $intervento->id_stato = $stato_intervento->id;
                     $intervento->saveQuietly();
                 }
             }

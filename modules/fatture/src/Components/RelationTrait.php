@@ -174,7 +174,7 @@ trait RelationTrait
 
         // Aggiorna lo stato dell'intervento a 'OK' quando la riga viene eliminata
         $stato = \Modules\Interventi\Stato::where('codice', 'OK')->first()->id;
-        \Modules\Interventi\Intervento::where('id', $this->idintervento)->update(['idstatointervento' => $stato]);
+        \Modules\Interventi\Intervento::where('id', $this->idintervento)->update(['id_stato' => $stato]);
 
         return $result;
     }

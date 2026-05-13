@@ -57,7 +57,7 @@ if (!empty($id_record)) {
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`idrivalsainps`) AS rivalsainps_desc,
         `dt_causalet_lang`.`title` AS causale_desc
     FROM `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+        INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id`
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`

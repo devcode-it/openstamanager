@@ -207,7 +207,7 @@ class CSV extends CSVImporter
 
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], $this->parseData($record['data_bozza']), 0);
             $preventivo->numero = $record['numero'];
-            $preventivo->idstato = Stato::where('name', 'Bozza')->first()->id;
+            $preventivo->id_stato = Stato::where('name', 'Bozza')->first()->id;
             $preventivo->descrizione = $record['descrizione'] ?? '';
             $preventivo->save();
 

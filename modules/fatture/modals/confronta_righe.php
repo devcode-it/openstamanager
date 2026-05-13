@@ -68,7 +68,7 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
                         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idarticolo` = `mg_articoli`.`id`
-                        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
+                        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
                     WHERE
                         `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statipreventivi`.`id` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY
@@ -86,7 +86,7 @@ $righe = $dbo->fetchArray(
                         `co_documenti`
                         LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
                         LEFT JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
-                        INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`
+                        INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
                         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                     WHERE
                         `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` = '.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")

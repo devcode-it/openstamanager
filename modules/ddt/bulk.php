@@ -87,13 +87,13 @@ switch (post('op')) {
                     if (!empty($accodare) && empty($fattura)) {
                         if ($raggruppamento == 'sede') {
                             $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('id_stato', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->where('id_sede_destinazione', $id_sede)
                                 ->first();
                         } else {
                             $fattura = Fattura::where('v', $id_anagrafica)
-                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('id_stato', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->first();
                         }
@@ -163,7 +163,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $ddt = DDT::find($id);
-            $ddt->idstatoddt = $id_stato;
+            $ddt->id_statoddt = $id_stato;
             $ddt->save();
 
             ++$n_ddt;

@@ -28,7 +28,7 @@ class Contratti extends AppResource implements RetrieveInterface
     public function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(`co_contratti`.`id`) AS id FROM `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
             $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_staticontratti`.`updated_at` > '.prepare($last_sync_at).')';
@@ -50,7 +50,7 @@ class Contratti extends AppResource implements RetrieveInterface
             `co_contratti`.`updated_at`
         FROM 
             `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
@@ -79,7 +79,7 @@ class Contratti extends AppResource implements RetrieveInterface
             `co_contratti`.`data_bozza`,
             `co_staticontratti_lang`.`title` AS stato
         FROM `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
             LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `co_contratti`.`id` = '.prepare($id);
 

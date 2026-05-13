@@ -51,7 +51,7 @@ class Stato extends Model
 
     public function preventivi()
     {
-        return $this->hasMany(Preventivo::class, 'idstatopreventivo');
+        return $this->hasMany(Preventivo::class, 'id_statopreventivo');
     }
 
     public function getModuleAttribute()

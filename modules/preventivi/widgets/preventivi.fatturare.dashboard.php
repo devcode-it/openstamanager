@@ -26,7 +26,7 @@ use Modules\Preventivi\Stato;
 
 $id_module = Module::where('name', 'Preventivi')->first()->id;
 $stati = Stato::where('is_fatturabile', 1)->pluck('id')->toArray();
-$rs = Preventivo::whereIn('idstato', $stati)->where('default_revision', 1)->get();
+$rs = Preventivo::whereIn('id_stato', $stati)->where('default_revision', 1)->get();
 
 if (!empty($rs)) {
     echo "
@@ -41,7 +41,7 @@ if (!empty($rs)) {
     foreach ($rs as $preventivo) {
         $data_accettazione = ($preventivo->data_accettazione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_accettazione) : '';
         $data_conclusione = ($preventivo->data_conclusione != '0000-00-00') ? Translator::dateToLocale($preventivo->data_conclusione) : '';
-        $stato_preventivo = Stato::find($preventivo->idstato)->getTranslation('title');
+        $stato_preventivo = Stato::find($preventivo->id_stato)->getTranslation('title');
 
         if (strtotime((string) $preventivo->data_conclusione) < strtotime(date('Y-m-d')) && $data_conclusione != '') {
             $attr = ' class="danger"';

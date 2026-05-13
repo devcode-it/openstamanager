@@ -74,7 +74,7 @@ $rs = $dbo->fetchArray('SELECT
         IF(`id_cliente_finale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
         `in_interventi` 
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
         (`in_interventi`.`id_anagrafica`='.prepare($id_anagrafica).' OR `in_interventi`.`id_cliente_finale`='.prepare($id_anagrafica).')

@@ -101,7 +101,7 @@ switch ($op) {
         break;
 
     case 'update':
-        $stato = Stato::find(post('idstatodocumento'));
+        $stato = Stato::find(post('id_stato'));
         $fattura->stato()->associate($stato);
         $data = post('data');
 
@@ -321,7 +321,7 @@ switch ($op) {
 
         $fatture = Fattura::vendita()
             ->where('id_anagrafica', $id_anagrafica)
-            ->where('idstatodocumento', $stato->id)
+            ->where('id_stato', $stato->id)
             ->get();
 
         $results = [];
@@ -342,7 +342,7 @@ switch ($op) {
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
             ->where('co_documenti.id_anagrafica', '=', $id_anagrafica)
-            ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
+            ->whereIn('id_stato', [$stato1->id, $stato2->id])
             ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.iddocumento')
             ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')
             ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
@@ -878,7 +878,7 @@ switch ($op) {
         // Metto l'intervento in stato "Fatturato"
         if (setting('Cambia automaticamente stato attività fatturate')) {
             $stato_fatturato = Modules\Interventi\Stato::where('codice', 'FAT')->first()->id;
-            Intervento::where('id', $id_documento)->update(['idstatointervento' => $stato_fatturato]);
+            Intervento::where('id', $id_documento)->update(['id_stato' => $stato_fatturato]);
         }
 
         // Individuazione del documento originale
@@ -1005,7 +1005,7 @@ switch ($op) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $fattura->idstatodocumento = post('id_stato');
+            $fattura->id_stato = post('id_stato');
             $fattura->save();
         }
 

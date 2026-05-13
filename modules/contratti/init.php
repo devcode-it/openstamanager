@@ -38,7 +38,7 @@ if (!empty($id_record)) {
     FROM 
         `co_contratti`
         INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
-        INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
+        INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `my_impianti_contratti` ON `my_impianti_contratti`.`idcontratto` = `co_contratti`.`id`
     WHERE 

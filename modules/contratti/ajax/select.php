@@ -31,7 +31,7 @@ switch ($resource) {
     case 'contratti':
         $query = 'SELECT
                 `co_contratti`.`id` AS id,
-                CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `idstato`) , "]") AS descrizione,
+                CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `id_stato`) , "]") AS descrizione,
                 (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS totale,
                 (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS sconto,
                 (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS n_righe,
@@ -57,7 +57,7 @@ switch ($resource) {
             $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                 ? $superselect['stato']
                 : 'is_pianificabile';
-            $where[] = '`idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `'.str_replace('`', '', $stato).'` = 1)';
+            $where[] = '`id_stato` IN (SELECT `id` FROM `co_staticontratti` WHERE `'.str_replace('`', '', $stato).'` = 1)';
         }
 
         if (!empty($search)) {

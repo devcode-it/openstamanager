@@ -80,7 +80,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
     WHERE
-        `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+        `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -105,7 +105,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`idiva` = `co_iva`.`id`
         INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
-        INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
+        INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
         LEFT JOIN `in_interventi` ON `vb_righe_venditabanco`.`idintervento` = `in_interventi`.`id`
         LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `in_interventi`.`id_anagrafica`
     WHERE
@@ -148,7 +148,7 @@ FROM
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
 WHERE
-    `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+    `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY
     `co_iva`.`id`, `co_documenti`.`id`
     HAVING

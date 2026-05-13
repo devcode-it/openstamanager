@@ -38,7 +38,7 @@ class Stato extends Model
 
     public function interventi()
     {
-        return $this->hasMany(Intervento::class, 'idstatointervento');
+        return $this->hasMany(Intervento::class, 'id_stato');
     }
 
     public static function build($codice = null, $colore = null)

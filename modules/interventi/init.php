@@ -41,7 +41,7 @@ if (!empty($id_record)) {
         `in_interventi`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
         LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione` = `an_sedi`.`id`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
+        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
 

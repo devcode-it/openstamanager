@@ -413,7 +413,7 @@ echo '
 
                             <div class="row mt-3">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "idstatoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
+                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "id_statoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
@@ -449,7 +449,7 @@ if (!empty($id_intervento)) {
        input("id_anagrafica").disable();
        input("id_cliente_finale").disable();
        input("id_tipo_intervento").disable();
-       input("idstatointervento").disable();
+       input("id_stato").disable();
        input("data_richiesta").disable();
     });
 </script>';
@@ -837,7 +837,7 @@ echo '
 	            return false;
 	        }
 
-	        if (!$("#idstatoricorrenze").val()) {
+	        if (!$("#id_statoricorrenze").val()) {
 	            Swal.fire("Errore", "Seleziona uno stato per le ricorrenze", "error");
 	            return false;
 	        }
@@ -1047,13 +1047,13 @@ echo '
         if ($(this).is(":checked")) {
             $(".ricorrenza-config").slideDown(300);
             $("#metodo_ricorrenza").attr("required", true);
-            $("#idstatoricorrenze").attr("required", true);
+            $("#id_statoricorrenze").attr("required", true);
             $("#periodicita").attr("required", true);
             calculateDataInizioRicorrenza();
         } else {
             $(".ricorrenza-config").slideUp(300);
             $("#metodo_ricorrenza").attr("required", false);
-            $("#idstatoricorrenze").attr("required", false);
+            $("#id_statoricorrenze").attr("required", false);
             $("#periodicita").attr("required", false);
             $("#data_fine_ricorrenza").attr("required", false);
             $("#numero_ricorrenze").attr("required", false);

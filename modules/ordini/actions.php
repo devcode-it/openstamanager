@@ -64,7 +64,7 @@ switch (post('op')) {
 
     case 'update':
         if (!empty($id_record)) {
-            $idstatoordine = post('idstatoordine');
+            $id_stato = post('id_stato');
             $idpagamento = post('idpagamento');
             $totale_imponibile = get_imponibile_ordine($id_record);
             $totale_ordine = get_totale_ordine($id_record);
@@ -89,7 +89,7 @@ switch (post('op')) {
             $ordine->note_aggiuntive = post('note_aggiuntive');
 
             $ordine->id_agente = post('id_agente');
-            $ordine->idstatoordine = $idstatoordine;
+            $ordine->id_stato = $id_stato;
             $ordine->idpagamento = $idpagamento;
             $ordine->idspedizione = post('idspedizione') ?: null;
             $ordine->idporto = post('idporto') ?: null;
@@ -148,7 +148,7 @@ switch (post('op')) {
 
             $ordine->save();
             if ($ordine) {
-                $stato = Modules\Ordini\Stato::find($idstatoordine);
+                $stato = Modules\Ordini\Stato::find($id_stato);
 
                 // Ricalcolo inps, ritenuta e bollo (se l'ordine non è stato evaso)
                 if ($dir == 'entrata') {
@@ -582,7 +582,7 @@ switch (post('op')) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $ordine->idstatoordine = post('id_stato');
+            $ordine->id_stato = post('id_stato');
             $ordine->save();
         }
 
@@ -669,7 +669,7 @@ switch (post('op')) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $ordine->idstatoordine = post('id_stato');
+            $ordine->id_stato = post('id_stato');
             $ordine->save();
         }
 
@@ -754,7 +754,7 @@ switch (post('op')) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $ordine->idstatoordine = post('id_stato');
+            $ordine->id_stato = post('id_stato');
             $ordine->save();
         }
 
@@ -987,7 +987,7 @@ switch (post('op')) {
         $new = $ordine->replicate();
         $new->numero = Ordine::getNextNumero(post('data'), $ordine->tipo->dir, $ordine->id_segment);
         $new->numero_esterno = Ordine::getNextNumeroSecondario(post('data'), $ordine->tipo->dir, $ordine->id_segment);
-        $new->idstatoordine = post('idstatoordine');
+        $new->id_stato = post('id_stato');
         $new->data = post('data');
         $new->save();
 

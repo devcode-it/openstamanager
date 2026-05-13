@@ -63,7 +63,7 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 		</div>
 
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstato", "required": 1, "value": "<?php echo $stato; ?>", "values": "query=<?php echo $stati; ?>" ]}
+            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "value": "<?php echo $stato; ?>", "values": "query=<?php echo $stati; ?>" ]}
         </div>
 	</div>
 

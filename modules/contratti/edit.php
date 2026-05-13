@@ -45,14 +45,14 @@ if (setting('Cambia automaticamente stato contratti fatturati')) {
 
     if ($contratto->stato->id == $id_stato_fatt || $contratto->stato->id == $id_stato_parz_fatt) {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
     } else {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` NOT IN ('.implode(',', array_map(prepare(...), [$id_stato_fatt, $id_stato_parz_fatt])).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` NOT IN ('.implode(',', array_map(prepare(...), [$id_stato_fatt, $id_stato_parz_fatt])).') ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
     }
 } else {
     echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$idstato$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_staticontratti`.`id`, `title` as `descrizione`, `colore` AS _bgcolor_ FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
 }
 echo '
         </div>

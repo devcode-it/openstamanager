@@ -62,7 +62,7 @@ if ($record['can_delete']) {
 
 
 <?php
-$ddt = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idstatoddt`='.prepare($id_record));
+$ddt = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_statoddt`='.prepare($id_record));
 
 if (!empty($ddt)) {
     echo '

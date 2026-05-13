@@ -63,7 +63,7 @@ if ($record['can_delete']) {
 
 
 <?php
-$ordini = $dbo->fetchNum('SELECT `id` FROM `or_ordini` WHERE `idstatoordine`='.prepare($id_record));
+$ordini = $dbo->fetchNum('SELECT `id` FROM `or_ordini` WHERE `id_stato`='.prepare($id_record));
 
 if (!empty($ordini)) {
     echo '

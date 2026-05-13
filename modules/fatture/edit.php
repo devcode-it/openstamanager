@@ -301,7 +301,7 @@ $query .= ' ORDER BY `title`';
     <?php }
     echo '
         <div class="col-md-4 col-lg-2'.($dir == 'uscita' ? ' offset-md-8 offset-lg-10' : '').'">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatodocumento", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query='.$query.'", "value": "'.$fattura->stato->id.'", "class": "'.(($fattura->stato->id != $id_stato_bozza && !$abilita_genera) ? '' : 'unblockable').'" ]}
         </div>
     </div>
 
@@ -809,13 +809,13 @@ if (!$block_edit) {
             }
 
             // Lettura interventi non rifiutati, non fatturati
-            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati
-                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `id_cliente_finale`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_cliente_finale`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 
@@ -825,13 +825,13 @@ if (!$block_edit) {
                 FROM
                     `co_preventivi`
                     LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.idpreventivo
-                    INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.idstato
+                    INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.id_stato
                 WHERE
                     `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         }
 
@@ -845,7 +845,7 @@ if (!$block_edit) {
         FROM
             `dt_ddt`
             INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
-            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`idstatoddt`
+            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
@@ -868,7 +868,7 @@ if (!$block_edit) {
             FROM
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
-                INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`idstatoordine`
+                INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
             WHERE
@@ -1271,9 +1271,9 @@ $(document).ready(function () {
     $("#barcode").focus();
 
 	    const form = document.getElementById("edit-form");
-	    const statoDocumento = $("#idstatodocumento");
+	    const statoDocumento = $("#id_stato");
 	    const statoCorrente = Number('.$fattura->stato->id.');
-	    const idStatoBozza = Number('.$id_stato_bozza.');
+	    const id_statoBozza = Number('.$id_stato_bozza.');
 	    const statiChiusi = [
 	        Number('.$id_stato_emessa.'),
 	        Number('.$id_stato_pagato.'),
@@ -1285,7 +1285,7 @@ $(document).ready(function () {
 	    ];
 
 	    function getConfigConfermaStato(nuovoStato) {
-	        if (statiChiusi.includes(statoCorrente) && nuovoStato === idStatoBozza) {
+	        if (statiChiusi.includes(statoCorrente) && nuovoStato === id_statoBozza) {
 	            return {
 	                title: "'.tr('Riaprire il documento?').'",
 	                text: "'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'",

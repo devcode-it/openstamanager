@@ -86,13 +86,13 @@ switch (post('op')) {
                     if (!empty($accodare) && empty($fattura)) {
                         if ($raggruppamento == 'sede') {
                             $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('id_stato', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->where('id_sede_destinazione', $id_sede)
                                 ->first();
                         } else {
                             $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
-                                ->where('idstatodocumento', $stato_documenti_accodabili->id)
+                                ->where('id_stato', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->first();
                         }
@@ -149,7 +149,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $ordine = Ordine::find($id);
-            $ordine->idstatoordine = $id_stato;
+            $ordine->id_stato = $id_stato;
             $ordine->save();
 
             ++$n_ordini;
@@ -184,7 +184,7 @@ switch (post('op')) {
                 } else {
                     $anagrafica = Anagrafica::find($ordine->id_anagrafica);
                     $new_ordine = Ordine::build($anagrafica, $tipo, '', $data, post('id_segment'));
-                    $new_ordine->idstatoordine = $id_stato;
+                    $new_ordine->id_stato = $id_stato;
                     $new_ordine->data = $data;
                     $new_ordine->save();
 
@@ -215,7 +215,7 @@ switch (post('op')) {
         break;
 
     case 'copy_bulk':
-        $idstatoordine = post('idstatoordine');
+        $id_stato = post('id_stato');
         $data = post('data');
         $copia_righe = post('righe');
         $copia_allegati = post('allegati');
@@ -225,7 +225,7 @@ switch (post('op')) {
             $new = $ordine->replicate();
             $new->numero = Ordine::getNextNumero($data, $ordine->tipo->dir, $ordine->id_segment);
             $new->numero_esterno = Ordine::getNextNumeroSecondario($data, $ordine->tipo->dir, $ordine->id_segment);
-            $new->idstatoordine = $idstatoordine;
+            $new->id_stato = $id_stato;
             $new->data = $data;
             $new->save();
 
@@ -340,7 +340,7 @@ $operations['copy_bulk'] = [
     'data' => [
         'title' => tr('Vuoi davvero fare una copia degli ordini selezionati?'),
         'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data').'", "name": "data", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
             <style>.swal2-popup{ width:600px !important; }</style>',

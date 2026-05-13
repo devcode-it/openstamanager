@@ -65,7 +65,7 @@ if ($record['can_delete']) {
 
 
 <?php
-$preventivi = $dbo->fetchNum('SELECT id FROM co_preventivi WHERE idstato='.prepare($id_record));
+$preventivi = $dbo->fetchNum('SELECT id FROM co_preventivi WHERE id_stato='.prepare($id_record));
 
 if (!empty($preventivi)) {
     echo '

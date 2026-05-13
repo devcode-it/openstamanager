@@ -26,7 +26,7 @@ use Modules\Checklists\Check;
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $checklist_module = Module::where('name', 'Checklists')->first();
 // Blocco della modifica impianti se l'intervento è completato
-$dati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`is_bloccato` FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`idstatointervento` WHERE `in_interventi`.`id`='.prepare($id_record));
+$dati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`is_bloccato` FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id` = `in_interventi`.`id_stato` WHERE `in_interventi`.`id`='.prepare($id_record));
 $is_bloccato = $dati_intervento[0]['is_bloccato'];
 
 if ($is_bloccato) {

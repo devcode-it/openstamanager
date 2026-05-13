@@ -62,16 +62,16 @@ if (setting('Cambia automaticamente stato ordini fatturati')) {
 
     if ($ordine->stato->id == $id_stato_fatt || $ordine->stato->id == $id_stato_parz_fatt || $ordine->stato->id == $id_stato_evaso || $ordine->stato->id == $id_stato_parz_evaso) {
         ?>
-                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "extra": "readonly", "class": "unblockable" ]}
+                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$id_stato$", "extra": "readonly", "class": "unblockable" ]}
                 <?php
     } else {
         ?>
-                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
+                {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.*, `or_statiordine_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE (`is_fatturabile` = 0 AND `or_statiordine`.`id` != <?php echo $id_stato_fatt; ?> || `or_statiordine`.`id` = <?php echo $id_stato_accettato; ?>) ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}
                 <?php
     }
 } else {
     ?>
-            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "idstatoordine", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$idstatoordine$", "class": "unblockable" ]}
+            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.*, `colore` AS _bgcolor_, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}
             <?php
 }
 
@@ -337,7 +337,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `co_preventivi`
-            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
+            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa` > 0)';

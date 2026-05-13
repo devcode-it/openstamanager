@@ -29,7 +29,7 @@ class TariffeContratti extends AppResource
         $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `idcontratto`) AS id
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
             $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_staticontratti`.`updated_at` > '.prepare($last_sync_at).')';
@@ -59,7 +59,7 @@ class TariffeContratti extends AppResource
             `co_contratti_tipiintervento`.`updated_at`
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
+            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map(prepare(...), $id_contratti)).')';
 
         // Filtro per data

@@ -402,7 +402,7 @@ class CSV extends CSVImporter
 
         // Inserisce le note se presenti
         if (!empty($record['note'])) {
-            $intervento->informazioniaggiuntive = $record['note'];
+            $intervento->informazioni_aggiuntive = $record['note'];
         }
     }
 

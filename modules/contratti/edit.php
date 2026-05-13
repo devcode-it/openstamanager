@@ -198,7 +198,7 @@ echo '
                 echo '
 
                 <div class="col-md-4">
-                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioni_aggiuntive", "class": "autosize", "value": "$informazioni_aggiuntive$", "extra": "rows=\'5\'" ]}
                 </div>';
             }
 ?>

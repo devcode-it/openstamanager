@@ -109,7 +109,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $intervento->richiesta = $data['richiesta'];
         $intervento->descrizione = $data['descrizione'];
-        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $intervento->informazioni_aggiuntive = $data['informazioni_aggiuntive'];
         $intervento->save();
 
         return [
@@ -126,7 +126,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $intervento->descrizione = $data['descrizione'];
         $intervento->id_stato = $data['id_stato'];
-        $intervento->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $intervento->informazioni_aggiuntive = $data['informazioni_aggiuntive'];
         $intervento->save();
 
         return [

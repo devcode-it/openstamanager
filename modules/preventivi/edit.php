@@ -191,7 +191,7 @@ echo '
                     {[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "class": "autosize", "value": "$note$", "extra": "rows=\'5\'" ]}';
 if ($user->gruppo != 'Clienti') {
     echo '
-                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}';
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioni_aggiuntive", "class": "autosize", "value": "$informazioni_aggiuntive$", "extra": "rows=\'5\'" ]}';
 }
 ?>
                 </div>

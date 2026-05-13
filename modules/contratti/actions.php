@@ -90,7 +90,7 @@ switch (post('op')) {
             $contratto->budget = $budget;
             $contratto->id_referente = post('id_referente');
             $contratto->condizioni_fornitura = post('condizioni_fornitura');
-            $contratto->informazioniaggiuntive = post('informazioniaggiuntive');
+            $contratto->informazioni_aggiuntive = post('informazioni_aggiuntive');
             $contratto->id_categoria = post('id_categoria') ?: null;
             $contratto->id_sottocategoria = post('id_sottocategoria') ?: null;
 

@@ -236,7 +236,7 @@ if ($user['gruppo'] != 'Clienti') {
     echo '
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioniaggiuntive", "class": "autosize", "value": "$informazioniaggiuntive$", "extra": "rows=\'5\'" ]}
+                    {[ "type": "textarea", "label": "'.tr('Note interne').'", "name": "informazioni_aggiuntive", "class": "autosize", "value": "$informazioni_aggiuntive$", "extra": "rows=\'5\'" ]}
                 </div>
             </div>';
 }

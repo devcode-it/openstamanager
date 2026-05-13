@@ -356,8 +356,8 @@ switch (filter('op')) {
                     $tooltip .= '<div class="shorten-wrapper"><div class="shorten-text">'.nl2br($descrizione_short).'</div><div class="shorten-full">'.nl2br($descrizione).'</div><a href="javascript:void(0);" class="shorten-toggle">'.tr('Mostra tutto').'</a></div>';
                 }
 
-                if ($rs[0]['informazioniaggiuntive'] != '') {
-                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-info-circle"></i> '.tr('Informazioni aggiuntive').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['informazioniaggiuntive']).'</span></div>';
+                if ($rs[0]['informazioni_aggiuntive'] != '') {
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-info-circle"></i> '.tr('Informazioni aggiuntive').':</span> <span class="tooltip-info-value">'.nl2br((string) $rs[0]['informazioni_aggiuntive']).'</span></div>';
                 }
                 $tooltip .= '</div>'; // Chiude tooltip-info-section
 

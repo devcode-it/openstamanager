@@ -1059,3 +1059,5 @@ ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` I
 ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idcontratto_prev` `id_contratto_prev` INT NOT NULL;
+
+ALTER TABLE `co_contratti` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;

@@ -62,7 +62,7 @@ switch (post('op')) {
         $intervento->data_scadenza = post('data_scadenza') ?: null;
         $intervento->richiesta = post('richiesta');
         $intervento->descrizione = post('descrizione');
-        $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
+        $intervento->informazioni_aggiuntive = post('informazioni_aggiuntive');
 
         $intervento->id_anagrafica = post('id_anagrafica');
         $intervento->id_cliente_finale = post('id_cliente_finale') ?: null;

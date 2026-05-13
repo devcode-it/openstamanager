@@ -273,7 +273,7 @@ class Interventi extends AppResource
             id_tipo_intervento AS id_tipo_intervento,
             id_stato AS id_stato,
             id_pagamento AS id_pagamento,
-            informazioniaggiuntive AS informazioni_aggiuntive,
+            informazioni_aggiuntive AS informazioni_aggiuntive,
             IF(id_sede_destinazione = 0, NULL, id_sede_destinazione) AS id_sede,
             IF(firma_data = '0000-00-00 00:00:00', '', firma_data) AS firma_data,
             firma_nome
@@ -333,7 +333,7 @@ class Interventi extends AppResource
         $record->id_preventivo = $data['id_preventivo'] ?: null;
         $record->richiesta = $data['richiesta'];
         $record->descrizione = $data['descrizione'];
-        $record->informazioniaggiuntive = $data['informazioni_aggiuntive'];
+        $record->informazioni_aggiuntive = $data['informazioni_aggiuntive'];
         $record->id_sede_destinazione = $data['id_sede'] ?: 0;
         $record->id_pagamento = $data['id_pagamento'] ?: 0;
 

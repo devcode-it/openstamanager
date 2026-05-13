@@ -32,7 +32,7 @@ $fields = [
     'Sede intervento' => 'info_sede',
     'Richiesta' => 'richiesta',
     'Descrizione' => '`in_interventi`.`descrizione`',
-    'Informazioni aggiuntive' => 'informazioniaggiuntive',
+    'Informazioni aggiuntive' => 'informazioni_aggiuntive',
 ];
 
 $query = 'SELECT in_interventi.*,

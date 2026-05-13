@@ -46,7 +46,7 @@ class Sede extends Model
         $model = parent::make();
 
         if (!empty($is_sede_legale)) {
-            $model->nomesede = 'Sede legale';
+            $model->nome_sede = 'Sede legale';
         }
         $model->anagrafica()->associate($anagrafica);
         $model->save();
@@ -117,9 +117,9 @@ class Sede extends Model
         $this->attributes['email'] = trim((string) $value);
     }
 
-    public function setNomesede($value)
+    public function setnome_sede($value)
     {
-        $this->attributes['nomesede'] = trim((string) $value);
+        $this->attributes['nome_sede'] = trim((string) $value);
     }
 
     protected function fixRappresentanteFiscale()

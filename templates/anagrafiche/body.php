@@ -74,7 +74,7 @@ if (!empty($sedi)) {
     for ($i = 0; count($sedi) > $i; ++$i) {
         echo '
             <tr>
-                <td colspan="4" class="text-left" >'.tr('Nome sede').': <b>'.$sedi[$i]['nomesede'].'</b></td>
+                <td colspan="4" class="text-left" >'.tr('Nome sede').': <b>'.$sedi[$i]['nome_sede'].'</b></td>
             </tr>
             <tr>
                 <td colspan="4" class="text-left" >'.tr('Indirizzo').': <b>'.$sedi[$i]['indirizzo'].'</b></td>

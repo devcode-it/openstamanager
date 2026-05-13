@@ -127,7 +127,7 @@ echo '
                         <h4 class="mb-2"><b>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
 
                         <p class="mb-2">
-                            '.($sede['nomesede'] ? '<i class="fa fa-building-o text-muted mr-1"></i> '.$sede['nomesede'].'<br>' : '').'
+                            '.($sede['nome_sede'] ? '<i class="fa fa-building-o text-muted mr-1"></i> '.$sede['nome_sede'].'<br>' : '').'
                             <i class="fa fa-map-marker text-muted mr-1"></i> '.$sede['indirizzo'].'<br>
                             <i class="fa fa-map text-muted mr-1"></i> '.$sede['cap'].' - '.$sede['citta'].' ('.$sede['provincia'].')
                         </p>

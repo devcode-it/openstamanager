@@ -31,11 +31,11 @@ $sessioni = $intervento->sessioni;
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
 // Recupera la sede dell'intervento se disponibile
-$nomesede = null;
+$nome_sede = null;
 if (!empty($intervento['id_sede_destinazione'])) {
-    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
+    $sedi = $dbo->fetchOne('SELECT nome_sede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
 
-    $nomesede = $sedi['nomesede'];
+    $nome_sede = $sedi['nome_sede'];
     $citta = $sedi['citta'];
     $indirizzo = $sedi['indirizzo'];
     $cap = $sedi['cap'];
@@ -129,7 +129,7 @@ if (dateFormat($intervento->inizio)) {
 echo '
         <table style="width: 100%;">
             <tr>
-                <td style="width: 50%; padding: 2px 0;">'.$intervento->anagrafica->ragione_sociale.($nomesede ? ' ('.$nomesede.')' : '').'</td>
+                <td style="width: 50%; padding: 2px 0;">'.$intervento->anagrafica->ragione_sociale.($nome_sede ? ' ('.$nome_sede.')' : '').'</td>
                 <td style="width: 50%; padding: 2px 0;">'.$indirizzo.' '.$cap.' - '.$citta.' ('.strtoupper((string) $provincia).')</td>
             </tr>
             <tr>

@@ -137,7 +137,7 @@ foreach ($rs as $r) {
 
 // Sedi anagrafiche
 $fields = [
-    'Nome' => 'nomesede',
+    'Nome' => 'nome_sede',
     'Indirizzo' => 'indirizzo',
     'Città' => 'citta',
     'C.A.P.' => 'cap',

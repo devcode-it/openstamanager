@@ -25,7 +25,7 @@ use Models\Module;
 switch ($resource) {
     case 'get_sedi':
         $id_anagrafica = get('id_anagrafica');
-        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
+        $q = "SELECT id, CONCAT_WS( ' - ', nome_sede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 
@@ -40,7 +40,7 @@ switch ($resource) {
         // Elenco sedi con <option>
     case 'get_sedi_select':
         $id_anagrafica = get('id_anagrafica');
-        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
+        $q = "SELECT id, CONCAT_WS( ' - ', nome_sede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 
@@ -63,7 +63,7 @@ switch ($resource) {
         $results = [];
 
         // Tutti i referenti per questo cliente
-        $q = "SELECT DISTINCT(email), (SELECT nomesede FROM an_sedi WHERE an_sedi.id=an_referenti.id_sede) AS sede, id_anagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY id_anagrafica';
+        $q = "SELECT DISTINCT(email), (SELECT nome_sede FROM an_sedi WHERE an_sedi.id=an_referenti.id_sede) AS sede, id_anagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY id_anagrafica';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {
@@ -74,7 +74,7 @@ switch ($resource) {
         }
 
         // Tutti le sedi per questo cliente
-        $q = "SELECT DISTINCT(email), id AS id_anagrafica, nomesede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
+        $q = "SELECT DISTINCT(email), id AS id_anagrafica, nome_sede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {

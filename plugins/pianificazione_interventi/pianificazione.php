@@ -117,7 +117,7 @@ echo '
                 </div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE id_anagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nome_sede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE id_anagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
 			   </div>
 
 				<div class="col-md-6">

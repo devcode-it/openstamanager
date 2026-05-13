@@ -857,7 +857,7 @@ class FatturaElettronica implements \Stringable
     {
         // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         $cliente = $fattura->getCliente();
-        $azienda = Sede::where('id_anagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nomesede AS ragione_sociale')->first();
+        $azienda = Sede::where('id_anagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nome_sede AS ragione_sociale')->first();
 
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),

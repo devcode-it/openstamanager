@@ -86,9 +86,9 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).')');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).')');
 } else {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).') AND id IN(SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).') AND id IN(SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
 }
 
 $giacenze = $articolo->getGiacenze();
@@ -128,7 +128,7 @@ if ($articolo->servizio) {
 
         echo '
                     <tr class="'.($is_low ? 'text-danger' : '').'">
-                        <td>'.($is_low ? '<i class="fa fa-exclamation-triangle mr-1"></i>' : '').$sede['nomesede'].'</td>
+                        <td>'.($is_low ? '<i class="fa fa-exclamation-triangle mr-1"></i>' : '').$sede['nome_sede'].'</td>
                         <td class="text-right">'.$formatted_qty.' '.$articolo->um.'</td>
                         '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$formatted_secondary.' '.$articolo->um_secondaria.'</td>' : '').'
                     </tr>';

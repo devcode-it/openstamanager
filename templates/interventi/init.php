@@ -31,9 +31,9 @@ $id_cliente = $documento['id_anagrafica'];
 $id_sede = $documento['id_sede'];
 
 if (!empty($documento['id_sede_destinazione'])) {
-    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['id_sede_destinazione']));
+    $sedi = $dbo->fetchOne('SELECT nome_sede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['id_sede_destinazione']));
 
-    $s_nomesede = $sedi['nomesede'];
+    $s_nome_sede = $sedi['nome_sede'];
     $s_citta = $sedi['citta'];
     $s_indirizzo = $sedi['indirizzo'];
     $s_cap = $sedi['cap'];

@@ -66,7 +66,7 @@ foreach ($destinatari_filtrati as $destinatario) {
     $descrizione = $anagrafica->ragione_sociale;
 
     if ($origine instanceof Sede) {
-        $descrizione .= ' ['.$origine->nomesede.']';
+        $descrizione .= ' ['.$origine->nome_sede.']';
     } elseif ($origine instanceof Referente) {
         $descrizione .= ' ['.$origine->nome.']';
     }

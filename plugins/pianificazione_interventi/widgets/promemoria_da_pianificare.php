@@ -95,7 +95,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
         } elseif (empty($promemoria->id_sede)) {
             echo tr('Sede legale');
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($promemoria->id_sede));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nome_sede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($promemoria->id_sede));
 
             echo $rsp2[0]['descrizione'];
         }

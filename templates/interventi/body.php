@@ -44,7 +44,7 @@ echo '
             <p class="text-muted">'.tr('Cliente', [], ['upper' => true]).':</p>
         </td>
         <td width="180">
-            '.$c_ragionesociale.($s_nomesede ? ' ('.$s_nomesede.')' : '').'
+            '.$c_ragionesociale.($s_nome_sede ? ' ('.$s_nome_sede.')' : '').'
         </td>';
 // Indirizzo
 if (!empty($s_indirizzo) or !empty($s_cap) or !empty($s_citta) or !empty($s_provincia)) {

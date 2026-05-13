@@ -37,7 +37,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-				{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1 ]}
+				{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nome_sede", "required": 1 ]}
 		</div>
 	</div>
 

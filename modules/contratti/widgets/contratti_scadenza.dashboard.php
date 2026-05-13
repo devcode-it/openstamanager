@@ -103,7 +103,7 @@ if (!empty($rs)) {
         if ($r['id_sede_destinazione'] == 0) {
             echo $r['citta'];
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['id_sede_destinazione']));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nome_sede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['id_sede_destinazione']));
 
             echo $rsp2[0]['descrizione'];
         }

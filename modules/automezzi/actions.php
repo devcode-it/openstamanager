@@ -12,7 +12,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
 
         if ($dbo->fetchNum('SELECT targa FROM an_sedi WHERE targa='.prepare($targa).' AND NOT id='.prepare($id_record)) == 0) {
-            $query = 'UPDATE an_sedi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).', nomesede='.prepare($nome.' - '.$targa).' WHERE id='.prepare($id_record);
+            $query = 'UPDATE an_sedi SET targa='.prepare($targa).', descrizione='.prepare($descrizione).', nome='.prepare($nome).', nome_sede='.prepare($nome.' - '.$targa).' WHERE id='.prepare($id_record);
             if ($dbo->query($query)) {
                 flash()->info(tr('Informazioni salvate correttamente!'));
             }
@@ -31,7 +31,7 @@ switch (post('op')) {
         if ($dbo->fetchNum('SELECT targa FROM an_sedi WHERE targa='.prepare($targa)) == 0) {
             $dbo->insert('an_sedi', [
                 'id_anagrafica' => setting('Azienda predefinita'),
-                'nomesede' => $nome.' - '.$targa,
+                'nome_sede' => $nome.' - '.$targa,
                 'is_automezzo' => 1,
                 'targa' => $targa,
                 'nome' => $nome,
@@ -53,12 +53,12 @@ switch (post('op')) {
         $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
             'id_sede' => $id_record,
         ]);
 
         // Registrazione del movimento dalla sede di origine
-        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
             'id_sede' => 0,
         ]);
 
@@ -74,12 +74,12 @@ switch (post('op')) {
         $qta = post('qta') - $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.id_sede='.prepare($id_record))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
             'id_sede' => $id_record,
         ]);
 
         // Registrazione del movimento dalla sede di origine
-        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra(-$qta, tr('Scarico nel magazzino dall\'automezzo  _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
             'id_sede' => 0,
         ]);
 
@@ -96,13 +96,13 @@ switch (post('op')) {
         $qta = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($idarticolo).' AND id_sede='.prepare($idautomezzotecnico))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
-        $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nomesede]), Carbon::now(), 1, [
+        $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
             'id_sede' => 0,
         ]);
 
         // Registrazione del movimento dalla sede di origine
         $descrizione = tr('Scarico dall\'automezzo _SEDE_ nel magazzino', [
-            '_SEDE_' => $automezzo->nomesede,
+            '_SEDE_' => $automezzo->nome_sede,
         ]);
         $articolo->registra(-$qta, $descrizione, Carbon::now(), 1, [
             'id_sede' => $idautomezzotecnico,

@@ -202,7 +202,7 @@ foreach ($sedi as $sede) {
     $da_ordinare = (($diff <= 0) ? 0 : $diff);
     echo '
                     <tr>
-                        <td>'.$sede['nomesede'].'</td>
+                        <td>'.$sede['nome_sede'].'</td>
                         <td class="text-right">'.numberFormat($da_ordinare, 'qta').'</td>
                     </tr>';
 }
@@ -230,7 +230,7 @@ foreach ($sedi as $sede) {
     $giacenza_sede = $giacenze[$sede['id']][0] ?? 0;
     echo '
                     <tr>
-                        <td>'.$sede['nomesede'].'</td>
+                        <td>'.$sede['nome_sede'].'</td>
                         <td class="text-right">'.numberFormat($giacenza_sede, 'qta').'</td>
                     </tr>';
 }
@@ -243,7 +243,7 @@ echo '
 </div>';
 
 $giacenze = $articolo->getGiacenze();
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
 
 echo '
 <div class="row">
@@ -270,7 +270,7 @@ foreach ($sedi as $sede) {
     $scorta = $dbo->selectOne('mg_scorte_sedi', '*', ['id_sede' => $sede['id'], 'id_articolo' => $id_record]);
     echo '
                         <tr data-id="'.$sede['id'].'">
-                            <td>'.$sede['nomesede'].'</td>
+                            <td>'.$sede['nome_sede'].'</td>
                             <td>
                                 {[ "type": "number", "decimals": "qta", "name": "scorta_'.$sede['id'].'", "value": "'.$scorta['threshold_qta'].'", "onchange": "aggiornaSogliaMinima($(this).closest(\'tr\').data(\'id\'))" ]}
                             </td>

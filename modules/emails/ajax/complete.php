@@ -84,7 +84,7 @@ switch ($resource) {
         };
 
         // Tutte le sedi
-        $addResults($fetchEmails('an_sedi', 'email', 'nomesede'));
+        $addResults($fetchEmails('an_sedi', 'email', 'nome_sede'));
 
         // Tutti i referenti
         $addResults($fetchEmails('an_referenti', 'email', 'nome'));

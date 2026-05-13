@@ -27,10 +27,10 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addsede':
-        if (!empty(post('nomesede'))) {
+        if (!empty(post('nome_sede'))) {
             $sede = Sede::build(Anagrafica::find($id_parent));
 
-            $sede->nomesede = post('nomesede');
+            $sede->nome_sede = post('nome_sede');
             $sede->indirizzo = post('indirizzo');
             $sede->citta = post('citta');
             $sede->cap = post('cap');
@@ -62,7 +62,7 @@ switch ($operazione) {
             }
 
             if (isAjaxRequest() && !empty($id_record)) {
-                echo json_encode(['id' => $id_record, 'text' => post('nomesede').' - '.post('citta')]);
+                echo json_encode(['id' => $id_record, 'text' => post('nome_sede').' - '.post('citta')]);
             }
 
             flash()->info(tr('Aggiunta una nuova sede!'));
@@ -78,7 +78,7 @@ switch ($operazione) {
     case 'updatesede':
         $sede = Sede::find($id_record);
 
-        $sede->nomesede = post('nomesede');
+        $sede->nome_sede = post('nome_sede');
         $sede->indirizzo = post('indirizzo');
         $sede->citta = post('citta');
         $sede->cap = post('cap');

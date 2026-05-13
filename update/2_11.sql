@@ -1035,3 +1035,5 @@ ALTER TABLE `an_referenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
+
+ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMENT 'Nome sede';

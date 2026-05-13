@@ -29,7 +29,7 @@ $r = $dbo->fetchOne('SELECT *,
         `in_statiintervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
         `in_interventi`.`descrizione` AS descrizione,
-        `an_sedi`.`nomesede` AS sede,
+        `an_sedi`.`nome_sede` AS sede,
         CONCAT(`an_sedi`.`indirizzo`, \' \', `an_sedi`.`cap`, \'  \', `an_sedi`.`citta`, \' (\', `an_sedi`.`provincia`, \')\') AS sede_indirizzo
     FROM `in_interventi`
         LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`id_sede_destinazione`

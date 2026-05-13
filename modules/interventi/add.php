@@ -759,7 +759,7 @@ echo '
             input("id_anagrafica").getElement()
             .selectSetNew(data.id_anagrafica, data.ragione_sociale);
             input("id_sede_destinazione").getElement()
-            .selectSetNew(data.id_sede, data.nomesede);
+            .selectSetNew(data.id_sede, data.nome_sede);
         } else {
             input("id_anagrafica").enable();
             input("id_sede_destinazione").enable();

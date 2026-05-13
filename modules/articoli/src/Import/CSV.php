@@ -801,7 +801,7 @@ class CSV extends CSVImporter
             $id_sede = 0;
 
             if (!empty($nome_sede)) {
-                $sede = Sede::where('nomesede', $nome_sede)
+                $sede = Sede::where('nome_sede', $nome_sede)
                     ->where('id', $anagrafica_azienda->id)
                     ->first();
                 $id_sede = $sede ? $sede->id : 0;

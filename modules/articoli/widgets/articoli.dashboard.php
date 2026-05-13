@@ -42,7 +42,7 @@ if (!empty($rs)) {
         $giacenze = $articolo->getGiacenze();
         if ($giacenze[$r['id_sede']][0] < $r['threshold_qta']) {
             if (!empty($r['id_sede'])) {
-                $sede = Sede::find($r['id_sede'])->nomesede;
+                $sede = Sede::find($r['id_sede'])->nome_sede;
             } else {
                 $sede = 'Sede Legale';
             }

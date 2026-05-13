@@ -58,7 +58,7 @@ switch ($resource) {
 
         // Gestione sedi come destinatari
         $query = "SELECT CONCAT('sede_', `an_sedi`.`id`) AS id,
-           CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_sedi`.`nomesede`, IF(`an_sedi`.`citta` != '' OR `an_sedi`.`provincia` != '', CONCAT(' :', `an_sedi`.`citta`, IF(`an_sedi`.`provincia` != '', `an_sedi`.`provincia`, ''), ''), ''), ')', ' [', `an_sedi`.`email`, ']') AS text,
+           CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `an_sedi`.`nome_sede`, IF(`an_sedi`.`citta` != '' OR `an_sedi`.`provincia` != '', CONCAT(' :', `an_sedi`.`citta`, IF(`an_sedi`.`provincia` != '', `an_sedi`.`provincia`, ''), ''), ''), ')', ' [', `an_sedi`.`email`, ']') AS text,
            'Sedi' AS optgroup
         FROM
             `an_sedi`
@@ -69,7 +69,7 @@ switch ($resource) {
             `optgroup` ASC, `ragione_sociale` ASC";
 
         $query = str_replace('1=1', !empty($where) ? replace($where, [
-            '|nome|' => '`nomesede` LIKE '.prepare('%'.$search.'%').' OR `ragione_sociale`',
+            '|nome|' => '`nome_sede` LIKE '.prepare('%'.$search.'%').' OR `ragione_sociale`',
             '|table|' => '`an_sedi`',
         ]) : '', $query);
         $sedi = $database->fetchArray($query);

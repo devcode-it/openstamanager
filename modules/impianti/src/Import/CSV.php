@@ -507,7 +507,7 @@ class CSV extends CSVImporter
             return;
         }
 
-        $sede = Sede::where('nomesede', $record['sede'])
+        $sede = Sede::where('nome_sede', $record['sede'])
             ->where('id_anagrafica', $anagrafica->id)
             ->first();
 

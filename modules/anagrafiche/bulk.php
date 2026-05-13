@@ -126,7 +126,7 @@ switch (post('op')) {
                 AND deleted_at IS NULL";
         } elseif ($tipo_esportazione == 'sedi') {
             // Esportazione email, ragione sociale e nome sede dalle sedi delle anagrafiche selezionate
-            $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
+            $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nome_sede as sede_referente
                 FROM an_sedi s
                 LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
                 WHERE s.id_anagrafica IN ($id_records_list)
@@ -152,7 +152,7 @@ switch (post('op')) {
                 AND enable_newsletter = 1
                 AND deleted_at IS NULL
                 UNION
-                SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
+                SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nome_sede as sede_referente
                 FROM an_sedi s
                 LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
                 WHERE s.id_anagrafica IN ($id_records_list)

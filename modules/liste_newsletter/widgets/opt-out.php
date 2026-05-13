@@ -104,7 +104,7 @@ foreach ($destinatari as $destinatario) {
     $descrizione = $anagrafica->ragione_sociale;
 
     if ($destinatario instanceof Sede) {
-        $descrizione .= ' ['.$destinatario->nomesede.']';
+        $descrizione .= ' ['.$destinatario->nome_sede.']';
     } elseif ($destinatario instanceof Referente) {
         $descrizione .= ' ['.$destinatario->nome.']';
     }

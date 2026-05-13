@@ -69,7 +69,7 @@ if (!$utenti && $id_parent == $id_azienda && !$record['is_automezzo']) {
 echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nomesede", "required": 1, "value": "$nomesede$" ]}
+			{[ "type": "text", "label": "'.tr('Nome sede').'", "name": "nome_sede", "required": 1, "value": "$nome_sede$" ]}
 		</div>
 	</div>
 

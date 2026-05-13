@@ -45,7 +45,7 @@ if (!empty($rs)) {
         $is_abilitato = !empty($rs[$i]['is_abilitato']);
         $costo_ore = !empty($rs[$i]['costo_ore']) ? $rs[$i]['costo_ore'] : $rs[$i]['costo_orario'];
         $costo_km = !empty($rs[$i]['costo_km']) ? $rs[$i]['costo_km'] : $rs[$i]['costo_km_standard'];
-        $costo_dirittochiamata = !empty($rs[$i]['costo_dirittochiamata']) ? $rs[$i]['costo_dirittochiamata'] : $rs[$i]['costo_diritto_chiamata'];
+        $costo_diritto_chiamata = !empty($rs[$i]['costo_diritto_chiamata']) ? $rs[$i]['costo_diritto_chiamata'] : $rs[$i]['costo_diritto_chiamata'];
         echo '
                             <tr>
                                 <td>'.$rs[$i]['title'].'</td>
@@ -59,7 +59,7 @@ if (!empty($rs)) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$costo_dirittochiamata.'", "disabled": '.(!$is_abilitato ? '1' : '0').' ]}
+                                    {[ "type": "number", "name": "costo_diritto_chiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$costo_diritto_chiamata.'", "disabled": '.(!$is_abilitato ? '1' : '0').' ]}
                                 </td>
 
                                 <td class="text-center" '.($block_edit ? 'style="display:none;"' : '').'>
@@ -118,7 +118,7 @@ if (!empty($rs)) {
                                 </td>
 
                                 <td>
-                                    {[ "type": "number", "name": "costo_dirittochiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>", "disabled": '.(!$is_abilitato ? '1' : '0').' ]}
+                                    {[ "type": "number", "name": "costo_diritto_chiamata['.$rs[$i]['id_tipo_intervento'].']", "value": "'.$rs[$i]['costo_diritto_chiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>", "disabled": '.(!$is_abilitato ? '1' : '0').' ]}
                                 </td>
 
                                 <td class="text-center" '.($block_edit ? 'style="display:none;"' : '').'>

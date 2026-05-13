@@ -109,11 +109,11 @@ if (!empty($sessioni)) {
 
         $costo_ore_unitario = $sessione['prezzo_ore_unitario'];
         $costo_km_unitario = $sessione['prezzo_km_unitario'];
-        $costo_dirittochiamata = $sessione['prezzo_dirittochiamata'];
+        $costo_diritto_chiamata = $sessione['prezzo_dirittochiamata'];
 
         $costo_ore_unitario_tecnico = $sessione['prezzo_ore_unitario_tecnico'];
         $costo_km_unitario_tecnico = $sessione['prezzo_km_unitario_tecnico'];
-        $costo_dirittochiamata_tecnico = $sessione['prezzo_dirittochiamata_tecnico'];
+        $costo_diritto_chiamata_tecnico = $sessione['prezzo_dirittochiamata_tecnico'];
 
         $costo_km_consuntivo_tecnico = $sessione['prezzo_km_consuntivo_tecnico'];
         $costo_ore_consuntivo_tecnico = $sessione['prezzo_ore_consuntivo_tecnico'];
@@ -161,14 +161,14 @@ if (!empty($sessioni)) {
                             <th class="text-danger">'.tr('Costo').':</th>
                             <td class="text-right">
                                 '.Translator::numberToLocale($costo_ore_consuntivo_tecnico)."
-                                <small class='help-block'>".Translator::numberToLocale($costo_ore_unitario_tecnico).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata_tecnico).'</small>
+                                <small class='help-block'>".Translator::numberToLocale($costo_ore_unitario_tecnico).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_diritto_chiamata_tecnico).'</small>
                             </td>
                         </tr>
                         <tr>
                             <th>'.tr('Addebito').':</th>
                             <td class="text-right">
                                 '.Translator::numberToLocale($costo_ore_consuntivo).'
-                                <small class="help-block">'.Translator::numberToLocale($costo_ore_unitario).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_dirittochiamata).'</small>
+                                <small class="help-block">'.Translator::numberToLocale($costo_ore_unitario).'x'.Translator::numberToLocale($ore).'<br>+'.Translator::numberToLocale($costo_diritto_chiamata).'</small>
                             </td>
                         </tr>
                         <tr>

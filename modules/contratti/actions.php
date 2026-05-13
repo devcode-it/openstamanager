@@ -149,7 +149,7 @@ switch (post('op')) {
                 $dbo->update('co_contratti_tipiintervento', [
                     'costo_ore' => post('costo_ore')[$id_tipo],
                     'costo_km' => post('costo_km')[$id_tipo],
-                    'costo_dirittochiamata' => post('costo_dirittochiamata')[$id_tipo],
+                    'costo_diritto_chiamata' => post('costo_diritto_chiamata')[$id_tipo],
                 ], [
                     'id_contratto' => $id_record,
                     'id_tipo_intervento' => $id_tipo,
@@ -547,10 +547,10 @@ switch (post('op')) {
             $result = $dbo->query('UPDATE `co_contratti_tipiintervento` SET '
                 .' `costo_ore`=(SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
                 .' `costo_km`=(SELECT `costo_km` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
-                .' `costo_dirittochiamata`=(SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
+                .' `costo_diritto_chiamata`=(SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
                 .' `costo_ore_tecnico`=(SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
                 .' `costo_km_tecnico`=(SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
-                .' `costo_dirittochiamata_tecnico`=(SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') '
+                .' `costo_diritto_chiamata_tecnico`=(SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') '
                 .' WHERE `id_contratto`='.prepare(post('id_contratto')).' AND `id_tipo_intervento`='.prepare(post('id_tipo_intervento')));
 
             if ($result) {
@@ -562,7 +562,7 @@ switch (post('op')) {
 
         // ...altrimenti la creo
         else {
-            if ($dbo->query('INSERT INTO `co_contratti_tipiintervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare(post('id_contratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
+            if ($dbo->query('INSERT INTO `co_contratti_tipiintervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico ) VALUES( '.prepare(post('id_contratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));
             } else {
                 flash()->error(tr("Errore durante l'importazione tariffe!"));
@@ -657,7 +657,7 @@ switch (post('op')) {
 
             // Copia i tipi di intervento dal contratto precedente
             $dbo->delete('co_contratti_tipiintervento', ['id_contratto' => $id_record]);
-            $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($documento->id));
+            $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($documento->id));
 
             // Copia gli impianti dal contratto precedente
             $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto='.prepare($documento->id));

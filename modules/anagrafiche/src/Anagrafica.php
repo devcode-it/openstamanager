@@ -160,10 +160,10 @@ class Anagrafica extends Model
                 'id_tipo_intervento' => $tipo->id,
                 'costo_ore' => $tipo->costo_orario,
                 'costo_km' => $tipo->costo_km,
-                'costo_dirittochiamata' => $tipo->costo_diritto_chiamata,
+                'costo_diritto_chiamata' => $tipo->costo_diritto_chiamata,
                 'costo_ore_tecnico' => $tipo->costo_orario_tecnico,
                 'costo_km_tecnico' => $tipo->costo_km_tecnico,
-                'costo_dirittochiamata_tecnico' => $tipo->costo_diritto_chiamata_tecnico,
+                'costo_diritto_chiamata_tecnico' => $tipo->costo_diritto_chiamata_tecnico,
             ]);
         }
     }

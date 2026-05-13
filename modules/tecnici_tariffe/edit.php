@@ -86,7 +86,7 @@ foreach ($tipi_interventi as $tipo_intervento) {
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_diritto_chiamata['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_diritto_chiamata'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>
@@ -98,7 +98,7 @@ foreach ($tipi_interventi as $tipo_intervento) {
             </td>
 
             <td>
-                {[ "type": "number", "name": "costo_dirittochiamata_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_dirittochiamata_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
+                {[ "type": "number", "name": "costo_diritto_chiamata_tecnico['.$tipo_intervento['id'].']", "required": 1, "value": "'.$tipo_intervento['costo_diritto_chiamata_tecnico'].'", "icon-after": "<i class=\'fa fa-euro\'></i>" ]}
             </td>
 
             <td>

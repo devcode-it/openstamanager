@@ -109,23 +109,23 @@ class Sessione extends Model
             // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
             $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND idintervento = '.prepare($this->intervento->id));
             if (!empty($sessioni) && setting('Applica diritto di chiamata una volta al giorno')) {
-                $tariffa['costo_dirittochiamata_tecnico'] = 0;
-                $tariffa['costo_dirittochiamata'] = 0;
+                $tariffa['costo_diritto_chiamata_tecnico'] = 0;
+                $tariffa['costo_diritto_chiamata'] = 0;
 
                 // Fix se reset non attivo
-                $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+                $this->prezzo_dirittochiamata = $tariffa['costo_diritto_chiamata'];
             }
 
             // Modifica dei costi
             $this->prezzo_ore_unitario_tecnico = $tariffa['costo_ore_tecnico'];
             $this->prezzo_km_unitario_tecnico = $tariffa['costo_km_tecnico'];
-            $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_dirittochiamata_tecnico'];
+            $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_diritto_chiamata_tecnico'];
 
             // Modifica dei prezzi
             if ($reset) {
                 $this->prezzo_ore_unitario = $tariffa['costo_ore'];
                 $this->prezzo_km_unitario = $tariffa['costo_km'];
-                $this->prezzo_dirittochiamata = $tariffa['costo_dirittochiamata'];
+                $this->prezzo_dirittochiamata = $tariffa['costo_diritto_chiamata'];
             }
         }
     }
@@ -469,7 +469,7 @@ class Sessione extends Model
         // Costi unitari specifici per la sede
         $id_sede = $this->intervento->id_sede_destinazione;
         if (!empty($id_sede) && $this->intervento->anagrafica->isTipo('Cliente')) {
-            $tariffa_sede = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_sede).' AND id_tipo_intervento = '.prepare($id_tipo));
+            $tariffa_sede = $database->fetchOne('SELECT costo_ore, costo_km, costo_diritto_chiamata FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_sede).' AND id_tipo_intervento = '.prepare($id_tipo));
 
             if (!empty($tariffa_sede)) {
                 $result = array_merge($result, $tariffa_sede);
@@ -479,7 +479,7 @@ class Sessione extends Model
         // Costi unitari del contratto
         $id_contratto = $this->intervento->id_contratto;
         if (!empty($id_contratto)) {
-            $tariffa_contratto = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare($id_contratto).' AND id_tipo_intervento = '.prepare($id_tipo));
+            $tariffa_contratto = $database->fetchOne('SELECT costo_ore, costo_km, costo_diritto_chiamata FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare($id_contratto).' AND id_tipo_intervento = '.prepare($id_tipo));
 
             if (!empty($tariffa_contratto)) {
                 $result = array_merge($result, $tariffa_contratto);

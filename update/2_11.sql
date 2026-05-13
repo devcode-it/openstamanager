@@ -1064,3 +1064,6 @@ ALTER TABLE `co_contratti` CHANGE `informazioniaggiuntive` `informazioni_aggiunt
 
 ALTER TABLE `co_contratti` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
+ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
+
+ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL;

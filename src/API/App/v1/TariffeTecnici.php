@@ -52,7 +52,7 @@ class TariffeTecnici extends AppResource
             NULL AS id_contratto,
             costo_ore AS prezzo_orario,
             costo_km AS prezzo_chilometrico,
-            costo_dirittochiamata AS prezzo_diritto_chiamata
+            costo_diritto_chiamata AS prezzo_diritto_chiamata
         FROM in_tariffe
         WHERE id = '.prepare($id);
 

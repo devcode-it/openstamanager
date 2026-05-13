@@ -325,7 +325,7 @@ if ($is_cliente) {
         $attivo = !empty($tariffa) ? 1 : 0;
         $costo_ore = $tariffa['costo_ore'] ?? $tipo_intervento['costo_orario'];
         $costo_km = $tariffa['costo_km'] ?? $tipo_intervento['costo_km'];
-        $costo_dirittochiamata = $tariffa['costo_dirittochiamata'] ?? $tipo_intervento['costo_diritto_chiamata'];
+        $costo_diritto_chiamata = $tariffa['costo_diritto_chiamata'] ?? $tipo_intervento['costo_diritto_chiamata'];
 
         echo '
 							<tr data-id="'.$id_tipo.'">
@@ -340,7 +340,7 @@ if ($is_cliente) {
 									{[ "type": "number", "name": "costo_km['.$id_tipo.']", "value": "'.$costo_km.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-km-'.$id_tipo.'" ]}
 								</td>
 								<td>
-									{[ "type": "number", "name": "costo_dirittochiamata['.$id_tipo.']", "value": "'.$costo_dirittochiamata.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-dirittochiamata-'.$id_tipo.'" ]}
+									{[ "type": "number", "name": "costo_diritto_chiamata['.$id_tipo.']", "value": "'.$costo_diritto_chiamata.'", "icon-after": "<i class=\'fa fa-euro\'></i>", "class": "costo-dirittochiamata-'.$id_tipo.'" ]}
 								</td>
 							</tr>';
     }
@@ -472,7 +472,7 @@ function rimuoviSede(button) {
 function toggleTariffa(idTipo, attivo, costoOreStandard, costoKmStandard, costoDirittochiamataStandard) {
     let inputOre = input("costo_ore[" + idTipo + "]");
     let inputKm = input("costo_km[" + idTipo + "]");
-    let inputDirittochiamata = input("costo_dirittochiamata[" + idTipo + "]");
+    let inputDirittochiamata = input("costo_diritto_chiamata[" + idTipo + "]");
 
     if (attivo) {
         // Se attivo, abilita i campi

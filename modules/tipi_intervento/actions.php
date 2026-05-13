@@ -154,10 +154,10 @@ switch (post('op')) {
         $values = [
             'costo_ore' => $record['costo_orario'],
             'costo_km' => $record['costo_km'],
-            'costo_dirittochiamata' => $record['costo_diritto_chiamata'],
+            'costo_diritto_chiamata' => $record['costo_diritto_chiamata'],
             'costo_ore_tecnico' => $record['costo_orario_tecnico'],
             'costo_km_tecnico' => $record['costo_km_tecnico'],
-            'costo_dirittochiamata_tecnico' => $record['costo_diritto_chiamata_tecnico'],
+            'costo_diritto_chiamata_tecnico' => $record['costo_diritto_chiamata_tecnico'],
         ];
 
         $dbo->update('in_tariffe', $values, [

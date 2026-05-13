@@ -85,7 +85,7 @@ class TariffeContratti extends AppResource
             `id_contratto` AS id_contratto,
             `costo_ore` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
-            `costo_dirittochiamata` AS prezzo_diritto_chiamata
+            `costo_diritto_chiamata` AS prezzo_diritto_chiamata
         FROM `co_contratti_tipiintervento`
         WHERE `co_contratti_tipiintervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_contratto);
 

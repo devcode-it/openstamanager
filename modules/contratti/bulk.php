@@ -174,7 +174,7 @@ switch (post('op')) {
 
                 // Correzioni dei prezzi per gli interventi
                 $dbo->delete('co_contratti_tipiintervento', ['id_contratto' => $new_id_contratto]);
-                $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_id_contratto).', id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($contratto->id));
+                $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico) SELECT '.prepare($new_id_contratto).', id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($contratto->id));
                 $new_contratto->save();
 
                 // Replico le righe del contratto

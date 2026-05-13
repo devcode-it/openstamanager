@@ -150,7 +150,7 @@ function salvaTariffeSede($id_sede, $id_parent)
 
     $costo_ore = (array) post('costo_ore');
     $costo_km = (array) post('costo_km');
-    $costo_dirittochiamata = (array) post('costo_dirittochiamata');
+    $costo_diritto_chiamata = (array) post('costo_diritto_chiamata');
     $tariffa_attiva = (array) post('tariffa_attiva');
 
     // Verifica se l'anagrafica è di tipo Cliente
@@ -180,7 +180,7 @@ function salvaTariffeSede($id_sede, $id_parent)
                 $dbo->update('in_tariffe_sedi', [
                     'costo_ore' => $costo_ore[$id_tipo],
                     'costo_km' => $costo_km[$id_tipo],
-                    'costo_dirittochiamata' => $costo_dirittochiamata[$id_tipo],
+                    'costo_diritto_chiamata' => $costo_diritto_chiamata[$id_tipo],
                 ], [
                     'id' => $tariffe_map[$id_tipo],
                 ]);
@@ -190,7 +190,7 @@ function salvaTariffeSede($id_sede, $id_parent)
                     'id_tipo_intervento' => $id_tipo,
                     'costo_ore' => $costo_ore[$id_tipo],
                     'costo_km' => $costo_km[$id_tipo],
-                    'costo_dirittochiamata' => $costo_dirittochiamata[$id_tipo],
+                    'costo_diritto_chiamata' => $costo_diritto_chiamata[$id_tipo],
                 ]);
             }
         } else {

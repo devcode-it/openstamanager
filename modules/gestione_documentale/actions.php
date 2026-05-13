@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'add':
         $dbo->insert('do_documenti', [
-            'idcategoria' => post('idcategoria'),
+            'id_categoria' => post('id_categoria'),
             'nome' => post('nome'),
             'data' => post('data') ?: null,
         ]);
@@ -35,7 +35,7 @@ switch (post('op')) {
 
     case 'update':
         $dbo->update('do_documenti', [
-            'idcategoria' => post('idcategoria'),
+            'id_categoria' => post('id_categoria'),
             'nome' => post('nome'),
             'descrizione' => post('descrizione', true) ?: null,
             'data' => post('data') ?: null,

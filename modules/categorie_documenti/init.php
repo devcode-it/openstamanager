@@ -26,7 +26,7 @@ if (!empty($id_record)) {
     $categoria = Categoria::find($id_record);
 
     $record = $dbo->fetchOne('SELECT *,
-        (SELECT COUNT(`id`) FROM `do_documenti` WHERE `idcategoria` = '.prepare($id_record).") AS doc_associati,
+        (SELECT COUNT(`id`) FROM `do_documenti` WHERE `id_categoria` = '.prepare($id_record).") AS doc_associati,
         GROUP_CONCAT(`do_permessi`.`id_gruppo` SEPARATOR ',') AS permessi
     FROM 
         `do_categorie`

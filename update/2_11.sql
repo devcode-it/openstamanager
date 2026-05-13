@@ -1120,9 +1120,11 @@ ALTER TABLE `co_righe_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DEC
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
+ALTER TABLE `co_scadenzario` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
 ALTER TABLE `co_movimenti_modelli` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
+ALTER TABLE `co_stampecontabili` CHANGE `idmastrino` `id_mastrino` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `primanota` `prima_nota` TINYINT NOT NULL;
 ALTER TABLE `co_pagamenti` CHANGE `idconto_vendite` `id_conto_vendite` INT NULL DEFAULT NULL;
@@ -1150,6 +1152,7 @@ ALTER TABLE `co_provvigioni` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `co_righe_promemoria` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idordine` `id_ordine` INT NOT NULL;
@@ -1157,3 +1160,5 @@ ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
+
+ALTER TABLE `do_documenti` CHANGE `idcategoria` `id_categoria` INT NOT NULL;

@@ -38,7 +38,7 @@ include_once __DIR__.'/../../core.php';
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "Categoria", "name": "idcategoria", "required": 1, "ajax-source": "categorie_documenti", "value": "$idcategoria$", "extra": "" ]}
+					{[ "type": "select", "label": "Categoria", "name": "id_categoria", "required": 1, "ajax-source": "categorie_documenti", "value": "$id_categoria$", "extra": "" ]}
 				</div>
 
 

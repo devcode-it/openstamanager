@@ -41,10 +41,10 @@ class Mastrino extends Model
 
     protected $table = 'co_movimenti';
 
-    protected $primaryKey = 'idmastrino';
+    protected $primaryKey = 'id_mastrino';
 
     protected $hidden = [
-        'idmastrino',
+        'id_mastrino',
         'data_documento',
         'id_documento',
         'id_anagrafica',
@@ -54,7 +54,7 @@ class Mastrino extends Model
     {
         $model = new static();
 
-        $model->idmastrino = self::getNextMastrino();
+        $model->id_mastrino = self::getNextMastrino();
         $model->data = $data;
         $model->descrizione = $descrizione;
         $model->is_insoluto = $is_insoluto;
@@ -102,7 +102,7 @@ class Mastrino extends Model
 
     public function getIdAttribute()
     {
-        return $this->idmastrino;
+        return $this->id_mastrino;
     }
 
     public function getTotaleAttribute()
@@ -178,14 +178,14 @@ class Mastrino extends Model
 
     public function movimenti()
     {
-        return $this->hasMany(Movimento::class, 'idmastrino');
+        return $this->hasMany(Movimento::class, 'id_mastrino');
     }
 
     // Metodi statici
 
     public static function getNextMastrino()
     {
-        $ultimo = database()->fetchOne('SELECT MAX(idmastrino) AS max FROM co_movimenti');
+        $ultimo = database()->fetchOne('SELECT MAX(id_mastrino) AS max FROM co_movimenti');
 
         return intval($ultimo['max']) + 1;
     }

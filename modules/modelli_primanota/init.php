@@ -19,5 +19,5 @@
  */
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM co_movimenti_modelli WHERE idmastrino='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM co_movimenti_modelli WHERE id_mastrino='.prepare($id_record));
 }

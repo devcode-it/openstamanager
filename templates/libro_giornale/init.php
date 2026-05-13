@@ -38,8 +38,8 @@ WHERE
     co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 
 GROUP BY 
-    co_movimenti.idmastrino, 
+    co_movimenti.id_mastrino, 
     co_movimenti.id_conto,
     IF(co_pianodeiconti1.descrizione = \'Patrimoniale\', IF(co_movimenti.totale>0, 1, 0), 0)
 ORDER BY 
-    co_movimenti.data, co_movimenti.idmastrino');
+    co_movimenti.data, co_movimenti.id_mastrino');

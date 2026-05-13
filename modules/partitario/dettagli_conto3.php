@@ -42,7 +42,7 @@ WHERE
     `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND
     `co_movimenti`.`data` <= '.prepare($_SESSION['period_end']).'
 GROUP BY 
-    `co_movimenti`.`idmastrino` '.$group_by.'
+    `co_movimenti`.`id_mastrino` '.$group_by.'
 ORDER BY 
     `co_movimenti`.`data` DESC, `co_movimenti`.`id` DESC';
 $movimenti = $dbo->fetchArray($query);
@@ -68,7 +68,7 @@ if (!empty($movimenti)) {
         <td>';
 
         if (!empty($movimento['primanota'])) {
-            echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
+            echo Modules::link('Prima nota', $movimento['id_mastrino'], $movimento['descrizione']);
         } else {
             if (str_starts_with((string) $movimento['descrizione'], 'Vendita al banco')) {
                 echo Modules::link('Vendita al banco', $movimento['id_documento'], $movimento['descrizione']);

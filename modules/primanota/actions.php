@@ -77,18 +77,18 @@ switch (post('op')) {
 
         // Creo il modello di prima nota
         if (!empty(post('crea_modello'))) {
-            if (empty(post('idmastrino'))) {
-                $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+            if (empty(post('id_mastrino'))) {
+                $id_mastrino = get_new_id_mastrino('co_movimenti_modelli');
             } else {
-                $dbo->delete('co_movimenti_modelli', ['idmastrino' => post('idmastrino')]);
-                $idmastrino = post('idmastrino');
+                $dbo->delete('co_movimenti_modelli', ['id_mastrino' => post('id_mastrino')]);
+                $id_mastrino = post('id_mastrino');
             }
 
             foreach ($conti as $i => $id_conto) {
                 $id_conto = post('id_conto_add')[$i];
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto) VALUES (:idmastrino, :nome, :descrizione, :id_conto)';
+                $query = 'INSERT INTO co_movimenti_modelli(id_mastrino, nome, descrizione, id_conto) VALUES (:id_mastrino, :nome, :descrizione, :id_conto)';
                 $params = [
-                    ':idmastrino' => $idmastrino,
+                    ':id_mastrino' => $id_mastrino,
                     ':nome' => $descrizione,
                     ':descrizione' => $descrizione,
                     ':id_conto' => $id_conto,

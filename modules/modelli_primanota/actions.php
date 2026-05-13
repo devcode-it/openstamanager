@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'add':
-        $idmastrino = get_new_idmastrino('co_movimenti_modelli');
+        $id_mastrino = get_new_id_mastrino('co_movimenti_modelli');
         $descrizione = post('descrizione');
         $nome = post('nome');
 
@@ -37,16 +37,16 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto, totale) VALUES (:idmastrino, :nome, :descrizione, :id_conto, :totale)';
+                $query = 'INSERT INTO co_movimenti_modelli(id_mastrino, nome, descrizione, id_conto, totale) VALUES (:id_mastrino, :nome, :descrizione, :id_conto, :totale)';
                 $params = [
-                    ':idmastrino' => $idmastrino,
+                    ':id_mastrino' => $id_mastrino,
                     ':nome' => $nome,
                     ':descrizione' => $descrizione,
                     ':id_conto' => $id_conto,
                     ':totale' => $totale,
                 ];
                 if ($dbo->query($query, $params)) {
-                    $id_record = $idmastrino;
+                    $id_record = $id_mastrino;
                 }
             }
         }
@@ -54,12 +54,12 @@ switch (post('op')) {
         break;
 
     case 'editriga':
-        $idmastrino = post('idmastrino');
+        $id_mastrino = post('id_mastrino');
         $descrizione = post('descrizione');
         $nome = post('nome');
 
         // Eliminazione prima nota
-        $dbo->delete('co_movimenti_modelli', ['idmastrino' => $idmastrino]);
+        $dbo->delete('co_movimenti_modelli', ['id_mastrino' => $id_mastrino]);
 
         for ($i = 0; $i < sizeof(post('id_conto')); ++$i) {
             $id_conto = post('id_conto')[$i];
@@ -72,16 +72,16 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(idmastrino, nome, descrizione, id_conto, totale) VALUES (:idmastrino, :nome, :descrizione, :id_conto, :totale)';
+                $query = 'INSERT INTO co_movimenti_modelli(id_mastrino, nome, descrizione, id_conto, totale) VALUES (:id_mastrino, :nome, :descrizione, :id_conto, :totale)';
                 $params = [
-                    ':idmastrino' => $idmastrino,
+                    ':id_mastrino' => $id_mastrino,
                     ':nome' => $nome,
                     ':descrizione' => $descrizione,
                     ':id_conto' => $id_conto,
                     ':totale' => $totale,
                 ];
                 if ($dbo->query($query, $params)) {
-                    $id_record = $idmastrino;
+                    $id_record = $id_mastrino;
                 }
             }
         }
@@ -89,11 +89,11 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $idmastrino = post('idmastrino');
+        $id_mastrino = post('id_mastrino');
 
-        if (!empty($idmastrino)) {
+        if (!empty($id_mastrino)) {
             // Eliminazione prima nota
-            $dbo->delete('co_movimenti_modelli', ['idmastrino' => $idmastrino]);
+            $dbo->delete('co_movimenti_modelli', ['id_mastrino' => $id_mastrino]);
 
             flash()->info(tr('Movimento eliminato!'));
         }

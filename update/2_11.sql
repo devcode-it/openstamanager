@@ -637,7 +637,7 @@ FROM
 WHERE
     1=1 AND `primanota` = 1  |date_period(`co_movimenti`.`data`)|
 GROUP BY
-    `idmastrino`,
+    `id_mastrino`,
     `primanota`,
     `co_movimenti`.`data`,
     `numero_esterno`,
@@ -1088,3 +1088,5 @@ ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT
 ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
+
+ALTER TABLE `co_movimenti` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;

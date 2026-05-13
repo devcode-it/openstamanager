@@ -50,14 +50,14 @@ function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = nu
     $where_clause = implode(' AND ', $where_conditions);
 
     $query = "SELECT
-        co_movimenti.idmastrino,
+        co_movimenti.id_mastrino,
         co_movimenti.data,
         co_movimenti.descrizione as causale,
         SUM(CASE WHEN co_movimenti.totale > 0 THEN co_movimenti.totale ELSE 0 END) as importo_totale
     FROM co_movimenti
     WHERE $where_clause
-    GROUP BY co_movimenti.idmastrino, co_movimenti.data, co_movimenti.descrizione
-    ORDER BY co_movimenti.data DESC, co_movimenti.idmastrino DESC";
+    GROUP BY co_movimenti.id_mastrino, co_movimenti.data, co_movimenti.descrizione
+    ORDER BY co_movimenti.data DESC, co_movimenti.id_mastrino DESC";
 
     $movimenti = $dbo->fetchArray($query, $params);
 
@@ -86,7 +86,7 @@ function renderTabellaMovimentiPrimaNota($id_documento = null, $id_scadenza = nu
                             <td>'.$causale.'</td>
                             <td style="text-align: right; width: 100px;">'.$importo.'</td>
                             <td style="width: 100px;">
-                                <a href="'.base_path_osm().'/editor.php?id_module='.$dbo->fetchOne("SELECT id FROM zz_modules WHERE name = 'Prima nota'")['id'].'&id_record='.$movimento['idmastrino'].'"
+                                <a href="'.base_path_osm().'/editor.php?id_module='.$dbo->fetchOne("SELECT id FROM zz_modules WHERE name = 'Prima nota'")['id'].'&id_record='.$movimento['id_mastrino'].'"
                                    class="btn btn-primary btn-xs" target="_blank">
                                     Visualizza »
                                 </a>

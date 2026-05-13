@@ -85,7 +85,7 @@ switch (filter('op')) {
                 $movimento_avere->save();
 
                 // Salvataggio record ammortamento
-                $dbo->query('INSERT INTO `co_righe_ammortamenti` (`id_riga`, `anno`, `id_conto`, `percentuale`, `id_mastrino`) VALUES ('.prepare($id_record).', '.prepare($anno).', '.prepare($id_conto).', '.prepare($perc).', '.prepare($movimento_dare->idmastrino).')');
+                $dbo->query('INSERT INTO `co_righe_ammortamenti` (`id_riga`, `anno`, `id_conto`, `percentuale`, `id_mastrino`) VALUES ('.prepare($id_record).', '.prepare($anno).', '.prepare($id_conto).', '.prepare($perc).', '.prepare($movimento_dare->id_mastrino).')');
             }
         }
 

@@ -41,18 +41,18 @@ function verificaSbilanciLibroGiornale($date_start, $date_end)
         SELECT
             SUM(CASE WHEN totale_raggruppato >= 0 THEN totale_raggruppato ELSE 0 END) AS totale_dare,
             SUM(CASE WHEN totale_raggruppato < 0 THEN totale_raggruppato ELSE 0 END) AS totale_avere,
-            COUNT(DISTINCT idmastrino) AS numero_mastrini,
+            COUNT(DISTINCT id_mastrino) AS numero_mastrini,
             COUNT(*) AS numero_movimenti
         FROM (
             SELECT
-                co_movimenti.idmastrino,
+                co_movimenti.id_mastrino,
                 co_movimenti.id_conto,
                 SUM(co_movimenti.totale) AS totale_raggruppato
             FROM co_movimenti
             INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
             INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id
             WHERE co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
-            GROUP BY co_movimenti.idmastrino, co_movimenti.id_conto
+            GROUP BY co_movimenti.id_mastrino, co_movimenti.id_conto
         ) AS movimenti_raggruppati
     ');
 
@@ -860,7 +860,7 @@ function creaMovimentoLiquidazioneIva($date_start, $date_end)
             $movimento_dare->save();
         }
 
-        return $mastrino->idmastrino;
+        return $mastrino->id_mastrino;
     } catch (Exception $e) {
         // Log dell'errore
         error_log('Errore nella creazione del movimento di liquidazione IVA: '.$e->getMessage());

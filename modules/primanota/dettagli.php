@@ -38,7 +38,7 @@ $query = 'SELECT
         `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND
         `co_movimenti`.`data` <= '.prepare($_SESSION['period_end']).'
     GROUP BY 
-        `co_movimenti`.`idmastrino`
+        `co_movimenti`.`id_mastrino`
     ORDER BY 
         `co_movimenti`.`data` ASC, `co_movimenti`.`descrizione`';
 $movimenti = $dbo->fetchArray($query);
@@ -73,7 +73,7 @@ if (!empty($movimenti)) {
             $id_modulo_fattura = ($movimento['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id;
 
             if (!empty($movimento['primanota'])) {
-                echo Modules::link('Prima nota', $movimento['idmastrino'], $movimento['descrizione']);
+                echo Modules::link('Prima nota', $movimento['id_mastrino'], $movimento['descrizione']);
             } else {
                 echo Modules::link(($movimento['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto', $movimento['id_documento'], $movimento['descrizione']);
             }

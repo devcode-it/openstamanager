@@ -24,14 +24,14 @@ use Models\Module;
 	<input type="hidden" name="op" value="update">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
+	<input type="hidden" name="id_mastrino" value="<?php echo $record['id_mastrino']; ?>">
 	<input type="hidden" name="id_documento" value="<?php echo $record['id_documento']; ?>">
 
     <div class="row">
 	<?php
 
     // Controllo se alla prima nota solo collegate più fatture
-    $rs_doc = $dbo->fetchArray('SELECT DISTINCT id_documento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.id_documento) AS numero FROM co_movimenti WHERE idmastrino='.prepare($record['idmastrino']).' AND id_documento!=0');
+    $rs_doc = $dbo->fetchArray('SELECT DISTINCT id_documento, (SELECT IFNULL(numero_esterno, numero) FROM co_documenti WHERE id=co_movimenti.id_documento) AS numero FROM co_movimenti WHERE id_mastrino='.prepare($record['id_mastrino']).' AND id_documento!=0');
 
 if (sizeof($rs_doc) > 0) {
     if (sizeof($rs_doc) == 1) {
@@ -135,7 +135,7 @@ if (!empty($ammortamento)) {
 } else {
     // Mostro il pulsante elimina normalmente
     echo '
-    <a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="'.$record['idmastrino'].'">
+    <a class="btn btn-danger ask" data-backto="record-list" data-id_mastrino="'.$record['id_mastrino'].'">
         <i class="fa fa-trash"></i> '.tr('Elimina').'
     </a>';
 }

@@ -170,9 +170,9 @@ if (!function_exists('elimina_movimenti')) {
     {
         $dbo = database();
 
-        $idmastrino = $dbo->fetchOne('SELECT idmastrino FROM co_movimenti WHERE id_documento='.prepare($id_documento).' AND primanota='.prepare($prima_nota))['idmastrino'];
+        $id_mastrino = $dbo->fetchOne('SELECT id_mastrino FROM co_movimenti WHERE id_documento='.prepare($id_documento).' AND primanota='.prepare($prima_nota))['id_mastrino'];
 
-        $dbo->delete('co_movimenti', ['idmastrino' => $idmastrino, 'primanota' => $prima_nota]);
+        $dbo->delete('co_movimenti', ['id_mastrino' => $id_mastrino, 'primanota' => $prima_nota]);
     }
 }
 
@@ -270,7 +270,7 @@ if (!function_exists('aggiungi_movimento')) {
         $data = $rs[0]['data_competenza'];
         $ragione_sociale = $rs[0]['ragione_sociale'];
 
-        $idmastrino = get_new_idmastrino();
+        $id_mastrino = get_new_id_mastrino();
 
         // Prendo il numero doc. esterno se c'è, altrimenti quello normale
         if (!empty($rs[0]['numero_esterno'])) {
@@ -308,9 +308,9 @@ if (!function_exists('aggiungi_movimento')) {
             $importo_cliente = sum($importo_cliente, -$iva_fattura, 2);
         }
 
-        $query2 = 'INSERT INTO co_movimenti(idmastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+        $query2 = 'INSERT INTO co_movimenti(id_mastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
         $params = [
-            ':idmastrino' => $idmastrino,
+            ':id_mastrino' => $id_mastrino,
             ':data' => $data,
             ':id_documento' => $id_documento,
             ':id_anagrafica' => '',
@@ -330,9 +330,9 @@ if (!function_exists('aggiungi_movimento')) {
             $id_conto_riga = $riga['id_conto'];
             $riga['imponibile'] = $is_nota ? -$riga['imponibile'] : $riga['imponibile'];
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -350,9 +350,9 @@ if (!function_exists('aggiungi_movimento')) {
             $descrizione_conto_iva = ($dir == 'entrata') ? 'Iva su vendite' : 'Iva su acquisti';
             $id_conto_iva = setting('Conto per '.$descrizione_conto_iva);
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data, id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -368,9 +368,9 @@ if (!function_exists('aggiungi_movimento')) {
         if ($iva_indetraibile_fattura != 0 && !$split_payment) {
             $id_conto_iva2 = setting('Conto per Iva indetraibile');
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -387,9 +387,9 @@ if (!function_exists('aggiungi_movimento')) {
         if ($totale_rivalsa_inps != 0) {
             $id_conto_inps = setting('Conto per Erario c/INPS');
 
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -407,9 +407,9 @@ if (!function_exists('aggiungi_movimento')) {
             $id_conto_ritenuta_acconto = setting("Conto per Erario c/ritenute d'acconto");
 
             // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -421,9 +421,9 @@ if (!function_exists('aggiungi_movimento')) {
             $dbo->query($query2, $params);
 
             // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -441,9 +441,9 @@ if (!function_exists('aggiungi_movimento')) {
             $id_conto_ritenutaenasarco = setting('Conto per Erario c/enasarco');
 
             // DARE nel conto ritenuta
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -455,9 +455,9 @@ if (!function_exists('aggiungi_movimento')) {
             $dbo->query($query2, $params);
 
             // AVERE nel riepilogativo clienti
-            $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
+            $query2 = 'INSERT INTO co_movimenti(id_mastrino, data,  id_documento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:id_mastrino, :data, :id_documento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
             $params = [
-                ':idmastrino' => $idmastrino,
+                ':id_mastrino' => $id_mastrino,
                 ':data' => $data,
                 ':id_documento' => $id_documento,
                 ':id_anagrafica' => '',
@@ -475,14 +475,14 @@ if (!function_exists('aggiungi_movimento')) {
  *
  * @deprecated 2.4.17
  */
-if (!function_exists('get_new_idmastrino')) {
-    function get_new_idmastrino($table = 'co_movimenti')
+if (!function_exists('get_new_id_mastrino')) {
+    function get_new_id_mastrino($table = 'co_movimenti')
     {
         $dbo = database();
 
-        $maxidmastrino = $dbo->table($table)->max('idmastrino');
+        $maxid_mastrino = $dbo->table($table)->max('id_mastrino');
 
-        return intval($maxidmastrino) + 1;
+        return intval($maxid_mastrino) + 1;
     }
 }
 

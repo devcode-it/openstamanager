@@ -238,9 +238,9 @@ if (!empty($elementi)) {
 
         // Verifica se esiste un movimento di prima nota collegato
         $movimento_button = '';
-        if (!empty($elemento['idmastrino']) && $nome_stampa === 'Liquidazione IVA') {
+        if (!empty($elemento['id_mastrino']) && $nome_stampa === 'Liquidazione IVA') {
             $movimento_button = '
-                            <a class="btn btn-sm btn-primary" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_record='.$elemento['idmastrino'].'" target="_blank">
+                            <a class="btn btn-sm btn-primary" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Prima nota')->first()->id.'&id_record='.$elemento['id_mastrino'].'" target="_blank">
                                 <i class="fa fa-book"></i> '.tr('Prima nota').'
                             </a>';
         }

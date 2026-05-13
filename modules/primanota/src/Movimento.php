@@ -42,7 +42,7 @@ class Movimento extends Model
         $model = new static();
 
         // Informazioni dipendenti dal mastrino
-        $model->idmastrino = $mastrino->idmastrino;
+        $model->id_mastrino = $mastrino->id_mastrino;
         $model->data = $mastrino->data;
         $model->descrizione = $mastrino->descrizione;
         $model->note = $mastrino->note;

@@ -360,7 +360,7 @@ echo '
 	<input type="hidden" name="op" value="add">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="crea_modello" id="crea_modello" value="0">
-	<input type="hidden" name="idmastrino" id="idmastrino" value="0">
+	<input type="hidden" name="id_mastrino" id="id_mastrino" value="0">
     <input type="hidden" name="is_insoluto" value="'.$is_insoluto.'">
     <input type="hidden" name="id_anagrafica" id="id_anagrafica" value="'.$id_anagrafica.'">
     <input type="hidden" name="singola" id="singola" value="'.$singola.'">';
@@ -369,7 +369,7 @@ if ($permetti_modelli) {
     echo '
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "name": "modello_primanota", "values": "query=SELECT idmastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY idmastrino" ]}
+			{[ "type": "select", "label": "'.tr('Modello prima nota').'", "name": "modello_primanota", "values": "query=SELECT id_mastrino AS id, nome AS descrizione, descrizione as causale FROM co_movimenti_modelli GROUP BY id_mastrino" ]}
 		</div>
 	</div>';
 }
@@ -462,7 +462,7 @@ if ($permetti_modelli) {
             nuovoModello: "'.tr('Aggiungi e crea modello').'",
             modificaModello: "'.tr('Aggiungi e modifica modello').'",
         },
-        id_mastrino_input: input("idmastrino"),
+        id_mastrino_input: input("id_mastrino"),
         modello_input: input("modello_primanota"),
         modello_button: $("#modello-button"),
     };
@@ -497,7 +497,7 @@ if ($permetti_modelli) {
             $("#modals > div #desc_add").val(causale);
         }
 
-        $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&idmastrino=" + id_mastrino, function(data) {
+        $.get(globals.rootdir + "/ajax_complete.php?op=get_conti&id_mastrino=" + id_mastrino, function(data) {
             let conti = data.split(",");
             let table = $("#modals table.scadenze").first();
             let button = table.parent().find("button").first();

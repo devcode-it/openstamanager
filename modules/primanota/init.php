@@ -25,5 +25,5 @@ use Modules\PrimaNota\Mastrino;
 if (!empty($id_record)) {
     $mastrino = Mastrino::find($id_record);
 
-    $record = $dbo->fetchOne('SELECT * FROM co_movimenti WHERE idmastrino = '.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM co_movimenti WHERE id_mastrino = '.prepare($id_record));
 }

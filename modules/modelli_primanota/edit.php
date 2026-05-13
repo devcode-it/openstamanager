@@ -58,7 +58,7 @@ echo '
 	<input type="hidden" name="op" value="editriga">
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="id_record" value="<?php echo $id_record; ?>">
-	<input type="hidden" name="idmastrino" value="<?php echo $record['idmastrino']; ?>">
+	<input type="hidden" name="id_mastrino" value="<?php echo $record['id_mastrino']; ?>">
 	<input type="hidden" name="id_documento" value="<?php echo $record['id_documento']; ?>">
 
 
@@ -74,7 +74,7 @@ echo '
 <?php
 
 $conti3 = []; // contenitore conti di terzo livello
-$idmastrino = $record['idmastrino'];
+$id_mastrino = $record['id_mastrino'];
 
 // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
 $query2 = 'SELECT * FROM co_pianodeiconti2';
@@ -105,7 +105,7 @@ echo '
         </tr>';
 
 // Lettura movimenti del mastrino selezionato
-$rs = $dbo->fetchArray('SELECT * FROM co_movimenti_modelli WHERE idmastrino='.prepare($record['idmastrino']));
+$rs = $dbo->fetchArray('SELECT * FROM co_movimenti_modelli WHERE id_mastrino='.prepare($record['id_mastrino']));
 $counter = 0;
 
 foreach ($rs as $r) {
@@ -214,7 +214,7 @@ echo '
 ?>
 
 
-<a class="btn btn-danger ask" data-backto="record-list" data-idmastrino="<?php echo $record['idmastrino']; ?>">
+<a class="btn btn-danger ask" data-backto="record-list" data-id_mastrino="<?php echo $record['id_mastrino']; ?>">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
 </a>
 

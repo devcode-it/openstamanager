@@ -1042,3 +1042,5 @@ ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
 
 ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMENT 'Nome sede';
 ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idtipoanagrafica` `id_tipo_anagrafica` INT NOT NULL;
+
+ALTER TABLE `co_banche` CHANGE `id_pianodeiconti3` `id_piano_dei_conti3` INT NULL DEFAULT NULL;

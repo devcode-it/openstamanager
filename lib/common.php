@@ -654,7 +654,7 @@ function getBancaByPagamento($database, $id_anagrafica, $id_pagamento, $conto, $
     $query = "SELECT `id` FROM `co_banche`
               WHERE `deleted_at` IS NULL
               {$where_predefined}
-              AND `id_pianodeiconti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
+              AND `id_piano_dei_conti3` = (SELECT idconto_{$conto} FROM `co_pagamenti` WHERE `id` = :id_pagamento)
               AND `id_anagrafica` = :id_anagrafica";
 
     $result = $database->fetchOne($query, [

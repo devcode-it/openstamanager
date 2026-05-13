@@ -136,7 +136,7 @@ foreach ($id_documenti as $id_documento) {
     // Predisposizione prima riga
     $banca = Banca::find($fattura->id_banca_azienda);
     $conto_field = 'idconto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
-    $id_conto_aziendale = $banca->id_pianodeiconti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
+    $id_conto_aziendale = $banca->id_piano_dei_conti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
     // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {

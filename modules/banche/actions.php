@@ -57,7 +57,7 @@ switch (filter('op')) {
         $banca->bic = post('bic');
 
         $banca->note = post('note');
-        $banca->id_pianodeiconti3 = post('id_pianodeiconti3');
+        $banca->id_piano_dei_conti3 = post('id_piano_dei_conti3');
         $banca->filiale = post('filiale');
         $banca->creditor_id = post('creditor_id');
         $banca->codice_sia = post('codice_sia');

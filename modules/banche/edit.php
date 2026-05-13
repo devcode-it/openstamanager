@@ -54,7 +54,7 @@ $endpoint = setting('Endpoint ibanapi.com');
                 </div>
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_pianodeiconti3", "value": "$id_pianodeiconti3$", "ajax-source": "conti", "help": "<?php echo tr('Impostando un conto predefinito verrà pre-selezionata questa banca durante la scelta del tipo di pagamento in fattura.').'<br>'.tr('Anche il tipo di pagamento dovrà avere configurato lo stesso conto.'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto predefinito'); ?>", "name": "id_piano_dei_conti3", "value": "$id_piano_dei_conti3$", "ajax-source": "conti", "help": "<?php echo tr('Impostando un conto predefinito verrà pre-selezionata questa banca durante la scelta del tipo di pagamento in fattura.').'<br>'.tr('Anche il tipo di pagamento dovrà avere configurato lo stesso conto.'); ?>" ]}
                 </div>
 			</div>
 

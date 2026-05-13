@@ -80,7 +80,7 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
 } elseif (in_array($module->name, ['Ddt in uscita', 'Ddt in entrata'])) {
     $modulo = 'ddt';
     $ddt = DDT::find($id_record);
-    $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->idcausalet))['is_rientrabile'];
+    $is_rientrabile = $database->fetchOne('SELECT * FROM `dt_causalet` WHERE `id` = '.prepare($ddt->id_causale_t))['is_rientrabile'];
 } elseif (in_array($module->name, ['Ordini cliente', 'Ordini fornitore'])) {
     $modulo = 'ord';
 } elseif ($module->name == 'Interventi') {

@@ -67,7 +67,7 @@ $id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo Module::where('name', 'Causali')->first()->id; ?>|||" ]}
+			{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "id_causale_t", "required": 1, "value": "<?php echo $id_causalet; ?>", "ajax-source": "causali", "icon-after": "add|<?php echo Module::where('name', 'Causali')->first()->id; ?>|||" ]}
 		</div>
 
 		<div class="col-md-6">

@@ -208,7 +208,7 @@ class Fattura extends Document
             $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
 
             $model->idporto = $porto;
-            $model->idcausalet = $causalet;
+            $model->id_causale_t = $causalet;
             $model->idspedizione = $spedizione;
         }
 

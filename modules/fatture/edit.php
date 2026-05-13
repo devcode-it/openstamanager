@@ -616,7 +616,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "idcausalet", "placeholder": "", "ajax-source": "causali", "value": "$idcausalet$", "icon-after": "add|'.Module::where('name', 'Causali')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Causale trasporto').'", "name": "id_causale_t", "placeholder": "", "ajax-source": "causali", "value": "$id_causale_t$", "icon-after": "add|'.Module::where('name', 'Causali')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -669,7 +669,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         }
     });
 
-    $("#idcausalet").change(function() {
+    $("#id_causale_t").change(function() {
         if ($(this).val() == 3) {
             $("#tipo_resa").attr("disabled", false);
         }else{
@@ -844,7 +844,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `dt_ddt`
-            INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`idcausalet`
+            INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`id_causale_t`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`

@@ -231,7 +231,7 @@ if ($dir == 'entrata') {
 				</div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "idcausalet", "required": 1, "value": "$idcausalet$", "ajax-source": "causali", "icon-after": "add|<?php echo Module::where('name', 'Causali')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Causale trasporto'); ?>", "name": "id_causale_t", "required": 1, "value": "$id_causale_t$", "ajax-source": "causali", "icon-after": "add|<?php echo Module::where('name', 'Causali')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>", "help": "<?php echo tr('Definisce la causale del trasporto'); ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -290,7 +290,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
                         }
                     });
 
-                    $("#idcausalet").change(function() {
+                    $("#id_causale_t").change(function() {
                         if ($(this).val() == 3) {
                             $("#tipo_resa").attr("disabled", false);
                         }else{

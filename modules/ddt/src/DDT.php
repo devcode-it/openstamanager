@@ -417,7 +417,7 @@ class DDT extends Document
     {
         if ($this->causaleCache === null) {
             $database = database();
-            $this->causaleCache = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($this->idcausalet));
+            $this->causaleCache = $database->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($this->id_causale_t));
         }
 
         return $this->causaleCache;

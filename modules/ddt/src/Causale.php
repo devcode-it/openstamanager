@@ -36,7 +36,7 @@ class Causale extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idcausalet');
+        return $this->hasMany(DDT::class, 'id_causale_t');
     }
 
     public function getModuleAttribute()

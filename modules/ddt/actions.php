@@ -54,7 +54,7 @@ switch (filter('op')) {
         $ddt = DDT::build($anagrafica, $tipo, $data, $id_segment);
         $id_record = $ddt->id;
 
-        $ddt->idcausalet = post('idcausalet');
+        $ddt->id_causale_t = post('id_causale_t');
         $ddt->save();
 
         flash()->info(tr('Aggiunto ddt in _TYPE_!', [
@@ -97,7 +97,7 @@ switch (filter('op')) {
             $ddt->id_referentee = post(id_referentete');
             $ddt->id_agente = post('id_agente');
             $ddt->idspedizione = post('idspedizione') ?: null;
-            $ddt->idcausalet = post('idcausalet') ?: null;
+            $ddt->id_causale_t = post('id_causale_t') ?: null;
             $ddt->id_sede_partenza = post('id_sede_partenza');
             $ddt->id_sede_destinazione = post('id_sede_destinazione');
             $ddt->idvettore = post('idvettore') ?: null;
@@ -316,7 +316,7 @@ switch (filter('op')) {
             $ddt->id_sede_partenza = $id_sede_partenza;
             $ddt->id_sede_destinazione = $id_sede_destinazione;
 
-            $ddt->idcausalet = post('id_causale_trasporto');
+            $ddt->id_causale_t = post('id_causale_trasporto');
             $ddt->id_referentee = $documento-id_referentete;
             $ddt->id_agente = $documento->id_agente;
 
@@ -576,7 +576,7 @@ switch (filter('op')) {
         $copia->stato()->associate($stato);
         $copia->id_ddt_trasporto_interno = $ddt->id;
         $copia->idaspettobeni = $ddt->idaspettobeni;
-        $copia->idcausalet = $ddt->idcausalet;
+        $copia->id_causale_t = $ddt->id_causale_t;
         $copia->idspedizione = $ddt->idspedizione;
         $copia->n_colli = $ddt->n_colli;
         $copia->id_pagamento = $ddt->id_pagamento ?: setting('Tipo di pagamento predefinito');

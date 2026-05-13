@@ -73,7 +73,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idcausalet`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `idcausalet`='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_causale_t`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `id_causale_t`='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
             $dbo->delete('dt_causalet', ['id' => $id_record]);

@@ -744,7 +744,7 @@ FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
+    LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
@@ -774,7 +774,7 @@ FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`idcausalet` = `dt_causalet`.`id`
+    LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
@@ -1054,6 +1054,7 @@ ALTER TABLE `dt_ddt` CHANGE `idstatoddt` `id_stato` TINYINT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idstato` `id_stato` TINYINT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
+ALTER TABLE `co_documenti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
@@ -1067,3 +1068,6 @@ ALTER TABLE `co_contratti_tipiintervento` CHANGE `idcontratto` `id_contratto` IN
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
 
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_diritto_chiamata` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
+
+ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;

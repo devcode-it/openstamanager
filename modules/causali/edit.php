@@ -63,8 +63,8 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 // Collegamenti diretti (numerici)
-$numero_documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE idcausalet='.prepare($id_record).'
-UNION SELECT id FROM co_documenti WHERE idcausalet='.prepare($id_record));
+$numero_documenti = $dbo->fetchNum('SELECT id FROM dt_ddt WHERE id_causale_t='.prepare($id_record).'
+UNION SELECT id FROM co_documenti WHERE id_causale_t='.prepare($id_record));
 
 if (!empty($numero_documenti)) {
     echo '

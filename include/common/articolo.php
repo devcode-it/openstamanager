@@ -20,11 +20,11 @@
 
 $result['idarticolo'] ??= null;
 $qta_minima = 0;
-$idsede_destinazione = $options['select-options']['articoli']['idsede_destinazione'] ?? null;
+$id_sede_destinazione = $options['select-options']['articoli']['id_sede_destinazione'] ?? null;
 
 $id_listino = null;
-if ($idsede_destinazione) {
-    $id_listino = $dbo->selectOne('an_sedi', 'id_listino', ['id' => $idsede_destinazione])['id_listino'];
+if ($id_sede_destinazione) {
+    $id_listino = $dbo->selectOne('an_sedi', 'id_listino', ['id' => $id_sede_destinazione])['id_listino'];
 }
 if (!$id_listino) {
     $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['id' => $options['id_anagrafica']])['id_listino'];

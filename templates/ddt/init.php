@@ -30,7 +30,7 @@ $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $id_cliente = $documento['id_anagrafica'];
-$id_sede = $record['idsede_partenza'];
+$id_sede = $record['id_sede_partenza'];
 $id_azienda = setting('Azienda predefinita');
 
 $pagamento = Pagamento::find($documento['idpagamento']);
@@ -51,11 +51,11 @@ if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
-if (!empty($documento['idsede_destinazione'])) {
+if (!empty($documento['id_sede_destinazione'])) {
     if ($tipo_doc == 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['id_sede_destinazione']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['id_sede_destinazione']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {
@@ -89,11 +89,11 @@ if (!empty($documento['idsede_destinazione'])) {
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $partenza = '';
-if (!empty($documento['idsede_partenza'])) {
+if (!empty($documento['id_sede_partenza'])) {
     if ($tipo_doc != 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['id_sede_partenza']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['id_sede_partenza']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {

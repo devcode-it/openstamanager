@@ -20,10 +20,10 @@
 
 include_once __DIR__.'/../../core.php';
 
-if (empty($_SESSION['giacenze_sedi']['idsede'])) {
-    $_SESSION['giacenze_sedi']['idsede'] = 0;
+if (empty($_SESSION['giacenze_sedi']['id_sede'])) {
+    $_SESSION['giacenze_sedi']['id_sede'] = 0;
 }
-$id_sede = $_SESSION['giacenze_sedi']['idsede'];
+$id_sede = $_SESSION['giacenze_sedi']['id_sede'];
 
 echo '
 <div class="row">
@@ -34,6 +34,6 @@ echo '
 
 <script>
     $("#id_sede").change(function(){
-        session_set("giacenze_sedi,idsede", $(this).val(), 0).then(location.reload());
+        session_set("giacenze_sedi,id_sede", $(this).val(), 0).then(location.reload());
     });
 </script>';

@@ -59,7 +59,7 @@ if (!empty($id_record)) {
     }
 
     // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica
-    $field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
+    $field_name = ($dir == 'entrata') ? 'id_sede_partenza' : 'id_sede_destinazione';
     if (!AuthOSM::admin() && !in_array($record[$field_name], $user->sedi)) {
         $record['flag_completato'] = 1;
     }

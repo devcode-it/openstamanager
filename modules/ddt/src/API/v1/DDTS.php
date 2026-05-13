@@ -80,8 +80,8 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
 
         $ddt->idstatoddt = $data['id_stato'];
         $ddt->idcausalet = $data['idcausale'];
-        $ddt->idsede_partenza = $data['idsede_partenza'];
-        $ddt->idsede_destinazione = $data['idsede_destinazione'];
+        $ddt->id_sede_partenza = $data['id_sede_partenza'];
+        $ddt->id_sede_destinazione = $data['id_sede_destinazione'];
         $ddt->save();
 
         $module = ($data['tipo'] == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
@@ -103,8 +103,8 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $ddt->idcausalet = $data['idcausale'];
         $ddt->id_anagrafica = $data['id_anagrafica'];
         $ddt->numero_esterno = $data['numero_esterno'];
-        $ddt->idsede_partenza = $data['idsede_partenza'];
-        $ddt->idsede_destinazione = $data['idsede_destinazione'];
+        $ddt->id_sede_partenza = $data['id_sede_partenza'];
+        $ddt->id_sede_destinazione = $data['id_sede_destinazione'];
         $ddt->save();
 
         $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');

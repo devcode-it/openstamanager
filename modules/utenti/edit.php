@@ -129,7 +129,7 @@ if (!empty($utenti)) {
 				<td><span class="text-muted">-</span></td>';
         }
 
-        $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.idsede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user')['nomesede'];
+        $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(nomesede SEPARATOR ", "  ) as nomesede FROM zz_user_sedi INNER JOIN ((SELECT "0" AS id, "Sede legale" AS nomesede) UNION (SELECT id, nomesede FROM an_sedi)) sedi ON zz_user_sedi.id_sede=sedi.id WHERE id_user='.prepare($utente['id']).' GROUP BY id_user')['nomesede'];
 
         echo '
             <td>'.(!empty($sedi) ? $sedi : '<span class="text-muted">-</span>').'</td>';

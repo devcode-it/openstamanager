@@ -103,9 +103,9 @@ class DDT extends Document
         // Imposto la sede in base alla direzione
         $id_sede = self::getSedeUtente($direzione);
         if ($direzione == 'entrata') {
-            $model->idsede_partenza = $id_sede;
+            $model->id_sede_partenza = $id_sede;
         } else {
-            $model->idsede_destinazione = $id_sede;
+            $model->id_sede_destinazione = $id_sede;
         }
 
         $model->save();

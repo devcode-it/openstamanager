@@ -66,7 +66,7 @@ $img = !empty($impianto) ? $impianto->image : null;
 						<?php
                         echo '
 						<div class="col-md-4">
-							{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
+							{[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede", "value": "$id_sede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 						</div>';
 ?>
 						<div class="col-md-4">
@@ -206,7 +206,7 @@ $(document).ready(function() {
 
         var value = !$(this).val();
 
-		$("#idsede").prop("disabled", value)
+		$("#id_sede").prop("disabled", value)
             .selectReset();
 	});
 

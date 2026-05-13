@@ -639,7 +639,7 @@ class FatturaElettronica implements \Stringable
             $cliente = $fattura->getCliente();
         }
 
-        $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['idsede_destinazione']));
+        $sede = database()->fetchOne('SELECT `codice_destinatario` FROM `an_sedi` WHERE `id` = '.prepare($documento['id_sede_destinazione']));
         if (!empty($sede['codice_destinatario']) && empty($documento['is_fattura_conto_terzi'])) {
             $codice_destinatario = $sede['codice_destinatario'];
         } else {
@@ -1122,8 +1122,8 @@ class FatturaElettronica implements \Stringable
             }
         }
 
-        if (!empty($documento['idsede_destinazione'])) {
-            $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($documento['idsede_destinazione']));
+        if (!empty($documento['id_sede_destinazione'])) {
+            $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($documento['id_sede_destinazione']));
 
             if (!empty($sede['indirizzo'])) {
                 $result['IndirizzoResa']['Indirizzo'] = $sede['indirizzo'];
@@ -1382,7 +1382,7 @@ class FatturaElettronica implements \Stringable
             }
         }
 
-        if ($documento->tipo->getTranslation('title') == 'Fattura accompagnatoria di vendita' || !empty($documento['idsede_destinazione'])) {
+        if ($documento->tipo->getTranslation('title') == 'Fattura accompagnatoria di vendita' || !empty($documento['id_sede_destinazione'])) {
             $result['DatiTrasporto'] = static::getDatiTrasporto($fattura);
         }
 

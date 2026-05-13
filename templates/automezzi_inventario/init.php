@@ -46,7 +46,7 @@ $query = 'SELECT
         `mg_articoli`.`um`
     FROM 
         `an_sedi`
-        INNER JOIN `mg_movimenti` ON `mg_movimenti`.`idsede` = `an_sedi`.`id`
+        INNER JOIN `mg_movimenti` ON `mg_movimenti`.`id_sede` = `an_sedi`.`id`
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `zz_categorie` ON `zz_categorie`.`id` = `mg_articoli`.`id_sottocategoria`

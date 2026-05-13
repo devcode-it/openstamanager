@@ -43,7 +43,7 @@ foreach ($rs_spostamento as $row) {
 
     <div class="row">
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "<?php echo get('id_articolo'); ?>", "required": 1, "readonly": 1,  "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0 } ]}
+            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "<?php echo get('id_articolo'); ?>", "required": 1, "readonly": 1,  "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
         </div>
 
         <div class="col-md-2">
@@ -68,11 +68,11 @@ foreach ($rs_spostamento as $row) {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Sede partenza'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede partenza'); ?>", "name": "id_sede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "id_sede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
         </div>
     </div>
 
@@ -111,13 +111,13 @@ echo '
     }
 
     function controllaSpostamento() {
-        let idsede_partenza = $("#idsede_partenza").val();
-        let idsede_destinazione = $("#idsede_destinazione").val();
+        let id_sede_partenza = $("#id_sede_partenza").val();
+        let id_sede_destinazione = $("#id_sede_destinazione").val();
         let id_causale_spostamento = $("#id_causale_spostamento").val();
 
         // Se le sedi sono diverse e esiste la causale di spostamento
-        if (idsede_partenza !== "" && idsede_destinazione !== "" &&
-            idsede_partenza !== idsede_destinazione &&
+        if (id_sede_partenza !== "" && id_sede_destinazione !== "" &&
+            id_sede_partenza !== id_sede_destinazione &&
             id_causale_spostamento) {
             // Seleziona la causale di spostamento solo se non è già selezionata
             if ($("#causale").val() != id_causale_spostamento) {
@@ -136,41 +136,41 @@ echo '
                 $("#tipo_movimento").val(data.tipo_movimento);
 
                 if (data.tipo_movimento === "carico") {
-                    disabilitaSede("#idsede_partenza");
-                    abilitaSede("#idsede_destinazione");
+                    disabilitaSede("#id_sede_partenza");
+                    abilitaSede("#id_sede_destinazione");
                 } else if (data.tipo_movimento === "scarico") {
-                    abilitaSede("#idsede_partenza");
-                    disabilitaSede("#idsede_destinazione");
+                    abilitaSede("#id_sede_partenza");
+                    disabilitaSede("#id_sede_destinazione");
                 } else {
-                    abilitaSede("#idsede_partenza");
-                    abilitaSede("#idsede_destinazione");
+                    abilitaSede("#id_sede_partenza");
+                    abilitaSede("#id_sede_destinazione");
                 }
             } else {
-                disabilitaSede("#idsede_partenza");
-                disabilitaSede("#idsede_destinazione");
+                disabilitaSede("#id_sede_partenza");
+                disabilitaSede("#id_sede_destinazione");
             }
         });
 
         // Quando cambia la sede destinazione, controlla se impostare spostamento
-        $("#idsede_destinazione").on("change", function() {
-            let idsede_destinazione = $(this).val();
-            let idsede_partenza = $("#idsede_partenza").val();
+        $("#id_sede_destinazione").on("change", function() {
+            let id_sede_destinazione = $(this).val();
+            let id_sede_partenza = $("#id_sede_partenza").val();
 
             // Se la sede destinazione è diversa dalla sede partenza
-            if (idsede_destinazione !== "" && idsede_partenza !== "" &&
-                idsede_destinazione !== idsede_partenza) {
+            if (id_sede_destinazione !== "" && id_sede_partenza !== "" &&
+                id_sede_destinazione !== id_sede_partenza) {
                 controllaSpostamento();
             }
         });
 
         // Quando cambia la sede partenza, controlla se impostare spostamento
-        $("#idsede_partenza").on("change", function() {
-            let idsede_partenza = $(this).val();
-            let idsede_destinazione = $("#idsede_destinazione").val();
+        $("#id_sede_partenza").on("change", function() {
+            let id_sede_partenza = $(this).val();
+            let id_sede_destinazione = $("#id_sede_destinazione").val();
 
             // Se la sede partenza è diversa dalla sede destinazione
-            if (idsede_partenza !== "" && idsede_destinazione !== "" &&
-                idsede_partenza !== idsede_destinazione) {
+            if (id_sede_partenza !== "" && id_sede_destinazione !== "" &&
+                id_sede_partenza !== id_sede_destinazione) {
                 controllaSpostamento();
             }
         });

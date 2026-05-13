@@ -66,7 +66,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $impianto = Impianto::find($id);
             $impianto->id_anagrafica = post('id_anagrafica');
-            $impianto->idsede = post('idsede');
+            $impianto->id_sede = post('id_sede');
             $impianto->save();
         }
 
@@ -95,8 +95,8 @@ $operations['change_customer'] = [
     'data' => [
         'title' => tr('Cambiare l\'anagrafica degli impianti?'),
         'msg' => tr('Per ciascun impianto selezionato, verrà aggiornato il cliente').'
-        <br><br>{[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "ajax-source": "clienti", "required": 1, "extra": "onchange=\"$(\'#idsede\').enable();updateSelectOption(\'id_anagrafica\', $(\'#id_anagrafica\').val());session_set(\'superselect,id_anagrafica\', $(\'#id_anagrafica\').val(), 0);$(\'#idsede\').val(null).trigger(\'change\');\"" ]}<br>
-        {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "placeholder": "Sede legale", "disabled": "1" ]}',
+        <br><br>{[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "ajax-source": "clienti", "required": 1, "extra": "onchange=\"$(\'#id_sede\').enable();updateSelectOption(\'id_anagrafica\', $(\'#id_anagrafica\').val());session_set(\'superselect,id_anagrafica\', $(\'#id_anagrafica\').val(), 0);$(\'#id_sede\').val(null).trigger(\'change\');\"" ]}<br>
+        {[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede", "value": "$id_sede$", "ajax-source": "sedi", "placeholder": "Sede legale", "disabled": "1" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
     ],

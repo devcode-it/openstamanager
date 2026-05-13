@@ -72,7 +72,7 @@ class Intervento extends Document
 
         $user = auth_osm()->getUser();
         // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
-        $model->idsede_partenza = (!empty($user->sedi) && in_array(0, $user->sedi)) ? 0 : (!empty($user->sedi) ? $user->sedi[0] : 0);
+        $model->id_sede_partenza = (!empty($user->sedi) && in_array(0, $user->sedi)) ? 0 : (!empty($user->sedi) ? $user->sedi[0] : 0);
         $model->save();
 
         return $model;

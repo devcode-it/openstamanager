@@ -50,13 +50,13 @@ $query = '
         INNER JOIN `zz_users` ON `mg_movimenti`.`idutente`=`zz_users`.`id`
         INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
         LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        INNER JOIN `an_sedi` ON `mg_movimenti`.`idsede`=`an_sedi`.`id`
+        INNER JOIN `an_sedi` ON `mg_movimenti`.`id_sede`=`an_sedi`.`id`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `zz_categorie` ON `zz_categorie`.`id`=`mg_articoli`.`id_sottocategoria`
         LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
-        `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`idsede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
+        `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`id_sede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
         ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups_lang`.`title` = 'Amministratori'))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';

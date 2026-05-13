@@ -55,7 +55,7 @@ switch ($operazione) {
             $id_referenti = (array) post('id_referenti');
             foreach ($id_referenti as $id_referente) {
                 $dbo->update('an_referenti', [
-                    'idsede' => $id_record,
+                    'id_sede' => $id_record,
                 ], [
                     'id' => $id_referente,
                 ]);
@@ -108,13 +108,13 @@ switch ($operazione) {
         // Salva le tariffe specifiche per la sede
         salvaTariffeSede($id_record, $id_parent);
 
-        $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE idsede = '.prepare($id_record));
+        $referenti = $dbo->fetchArray('SELECT id FROM an_referenti WHERE id_sede = '.prepare($id_record));
         $id_referenti = (array) post('id_referenti');
         $refs = array_diff($referenti, $id_referenti);
 
         foreach ($id_referenti as $id_referente) {
             $dbo->update('an_referenti', [
-                'idsede' => $id_record,
+                'id_sede' => $id_record,
             ], [
                 'id' => $id_referente,
             ]);
@@ -122,7 +122,7 @@ switch ($operazione) {
 
         foreach ($refs as $ref) {
             $dbo->update('an_referenti', [
-                'idsede' => 0,
+                'id_sede' => 0,
             ], [
                 'id' => $ref,
             ]);
@@ -163,7 +163,7 @@ function salvaTariffeSede($id_sede, $id_parent)
     $tipi_interventi = $dbo->fetchArray('SELECT id FROM in_tipiintervento WHERE deleted_at IS NULL');
 
     // Recupera le tariffe esistenti per questa sede
-    $tariffe_esistenti = $dbo->fetchArray('SELECT id, id_tipo_intervento FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede));
+    $tariffe_esistenti = $dbo->fetchArray('SELECT id, id_tipo_intervento FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_sede));
     $tariffe_map = [];
     foreach ($tariffe_esistenti as $tariffa) {
         $tariffe_map[$tariffa['id_tipo_intervento']] = $tariffa['id'];
@@ -186,7 +186,7 @@ function salvaTariffeSede($id_sede, $id_parent)
                 ]);
             } else {
                 $dbo->insert('in_tariffe_sedi', [
-                    'idsede' => $id_sede,
+                    'id_sede' => $id_sede,
                     'id_tipo_intervento' => $id_tipo,
                     'costo_ore' => $costo_ore[$id_tipo],
                     'costo_km' => $costo_km[$id_tipo],

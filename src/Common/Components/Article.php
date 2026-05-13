@@ -304,9 +304,9 @@ abstract class Article extends Accounting
         if (isset($this->qta_movimentazione_sede)) {
             $id_sede = $this->qta_movimentazione_sede;
         } elseif ($documento instanceof \Modules\Interventi\Intervento) {
-            $id_sede = $documento->idsede_partenza;
+            $id_sede = $documento->id_sede_partenza;
         } else {
-            $id_sede = $documento->direzione == 'uscita' ? $documento->idsede_destinazione : $documento->idsede_partenza;
+            $id_sede = $documento->direzione == 'uscita' ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
         }
 
         // Fix per valori di sede a NULL
@@ -315,7 +315,7 @@ abstract class Article extends Accounting
 
         if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata' && !$this->articolo->servizio) {
             $qta_sede = Movimento::where('idarticolo', $this->articolo->id)
-                ->where('idsede', $id_sede)
+                ->where('id_sede', $id_sede)
                 ->groupBy('idarticolo')
                 ->sum('qta');
 
@@ -343,7 +343,7 @@ abstract class Article extends Accounting
         $this->articolo->movimenta($qta_finale, $movimento, $data, false, [
             'reference_type' => $documento::class,
             'reference_id' => $documento->id,
-            'idsede' => $id_sede,
+            'id_sede' => $id_sede,
         ]);
     }
 

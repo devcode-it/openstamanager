@@ -150,7 +150,7 @@ switch ($resource) {
 
         // Query per i tipi di intervento in base alla sede al contratto o al tecnico
         // Priorità: tariffe contratto > tariffe sede > tariffe tecnico
-        if (!empty($intervento->idsede_destinazione)) {
+        if (!empty($intervento->id_sede_destinazione)) {
             // Se c'è una sede configurata: prova prima tariffe contratto, poi sede, poi tecnico
             // Se c'è un contratto: mostra SOLO tipi presenti nelle righe del contratto
             if (!empty($intervento->id_contratto)) {
@@ -162,7 +162,7 @@ switch ($resource) {
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto).'
                     LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`id_sede` = '.prepare($intervento->id_sede_destinazione).'
                     LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
@@ -176,14 +176,14 @@ switch ($resource) {
                     COALESCE(`in_tariffe_sedi`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`id_sede` = '.prepare($intervento->id_sede_destinazione).'
                     LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
 
                 // Filtro: mostra tipi con tariffe sede o tecnico
                 $where[] = '(
-                    `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                    `in_tariffe_sedi`.`id_sede` = '.prepare($intervento->id_sede_destinazione).'
                     OR `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                 )';
             }

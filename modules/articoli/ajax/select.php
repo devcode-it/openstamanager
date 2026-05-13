@@ -24,12 +24,12 @@ switch ($resource) {
     /*
      * Opzioni utilizzate:
      * - permetti_movimento_a_zero
-     * - idsede_partenza e idsede_destinazione
+     * - id_sede_partenza e id_sede_destinazione
      * - dir
      * - id_anagrafica
      */
     case 'articoli':
-        $sedi_non_impostate = !isset($superselect['idsede_partenza']) && !isset($superselect['idsede_destinazione']);
+        $sedi_non_impostate = !isset($superselect['id_sede_partenza']) && !isset($superselect['id_sede_destinazione']);
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $usare_dettaglio_fornitore = $superselect['dir'] == 'uscita';
         $ricerca_codici_fornitore = 1;
@@ -142,8 +142,8 @@ switch ($resource) {
         // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
         if (!$sedi_non_impostate) {
             $query .= '
-            LEFT JOIN (SELECT `idarticolo`, `idsede` FROM `mg_movimenti` GROUP BY `idarticolo`, `idsede`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id`
-            LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `movimenti`.`idsede`';
+            LEFT JOIN (SELECT `idarticolo`, `id_sede` FROM `mg_movimenti` GROUP BY `idarticolo`, `id_sede`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id`
+            LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `movimenti`.`id_sede`';
         }
 
         $query .= '
@@ -208,20 +208,20 @@ switch ($resource) {
         // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
             // Lettura movimenti delle mie sedi
-            // Per documenti di acquisto (dir=uscita): usa idsede_destinazione
-            // Per documenti di vendita (dir=entrata): usa idsede_partenza
+            // Per documenti di acquisto (dir=uscita): usa id_sede_destinazione
+            // Per documenti di vendita (dir=entrata): usa id_sede_partenza
             if ($superselect['dir'] == 'uscita') {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`idsede` = '.prepare($superselect['idsede_destinazione']))['qta'];
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_destinazione']))['qta'];
                 $qta_da_usare = $qta_sede;
             } else {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`idsede` = '.prepare($superselect['idsede_partenza']))['qta'];
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_partenza']))['qta'];
                 $qta_da_usare = $qta_sede;
             }
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_da_usare).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),
                 'qta' => $qta_da_usare, // Usa la quantità della sede specificata in base alla direzione del documento
-                'qta_sede' => isset($superselect['idsede_partenza']) || isset($superselect['idsede_destinazione']) ? $qta_sede : null,
+                'qta_sede' => isset($superselect['id_sede_partenza']) || isset($superselect['id_sede_destinazione']) ? $qta_sede : null,
                 'disabled' => $qta_da_usare <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }

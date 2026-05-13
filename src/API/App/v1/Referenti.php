@@ -59,7 +59,7 @@ class Referenti extends AppResource implements RetrieveInterface
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `an_referenti`.`id`,
             `id_anagrafica` AS id_cliente,
-            IF(`idsede` = 0, NULL, `idsede`) AS id_sede,
+            IF(`id_sede` = 0, NULL, `id_sede`) AS id_sede,
             `an_referenti`.`nome`,
             `an_mansioni`.`nome` AS mansione,
             `telefono`,

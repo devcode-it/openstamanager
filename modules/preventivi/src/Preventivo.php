@@ -72,7 +72,7 @@ class Preventivo extends Document
      *
      * @return self
      */
-    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $idsede_destinazione, $id_segment = null)
+    public static function build(Anagrafica $anagrafica, TipoSessione $tipo_sessione, $nome, $data_bozza, $id_sede_destinazione, $id_segment = null)
     {
         $model = new static();
 
@@ -98,8 +98,8 @@ class Preventivo extends Document
             $model->data_bozza = $data_bozza;
         }
 
-        if (!empty($idsede_destinazione)) {
-            $model->idsede_destinazione = $idsede_destinazione;
+        if (!empty($id_sede_destinazione)) {
+            $model->id_sede_destinazione = $id_sede_destinazione;
         }
 
         if (!empty($id_agente)) {

@@ -32,8 +32,8 @@ $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentu
 
 // Recupera la sede dell'intervento se disponibile
 $nomesede = null;
-if (!empty($intervento['idsede_destinazione'])) {
-    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+if (!empty($intervento['id_sede_destinazione'])) {
+    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
 
     $nomesede = $sedi['nomesede'];
     $citta = $sedi['citta'];

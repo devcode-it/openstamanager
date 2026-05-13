@@ -94,8 +94,8 @@ if (empty($record['is_fiscale'])) {
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
-if (!empty($record['idsede_destinazione'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `cap`, `citta`, `provincia`, `p_iva`, `codice_fiscale`, `id_nazione`, `codice_destinatario` FROM `an_sedi` WHERE `id_anagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
+if (!empty($record['id_sede_destinazione'])) {
+    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `cap`, `citta`, `provincia`, `p_iva`, `codice_fiscale`, `id_nazione`, `codice_destinatario` FROM `an_sedi` WHERE `id_anagrafica`='.prepare($id_cliente).' AND id='.prepare($record['id_sede_destinazione']));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';

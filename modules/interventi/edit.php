@@ -83,7 +83,7 @@ echo '
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "$id_cliente_finale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_cliente_finale' => $record['id_cliente_finale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_cliente_finale' => $record['id_cliente_finale'], 'id_sede_destinazione' => $record['id_sede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
                         </div>
                     </div>
                     <!-- RIGA 2 -->
@@ -133,8 +133,8 @@ echo '
 
 $anagrafica_cliente = $intervento->anagrafica;
 $sede_cliente = $anagrafica_cliente->sedeLegale;
-if (!empty($intervento->idsede_destinazione)) {
-    $sede_cliente = Sede::find($intervento->idsede_destinazione);
+if (!empty($intervento->id_sede_destinazione)) {
+    $sede_cliente = Sede::find($intervento->id_sede_destinazione);
 }
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
@@ -198,10 +198,10 @@ echo '
 $articoli = $intervento->articoli;
 echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "id_sede_partenza", "ajax-source": "sedi_azienda", "value": "$id_sede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "id_sede_destinazione","value": "$id_sede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.Module::where('name', 'Tags')->first()->id.'|", "link": "module:Tags" ]}
@@ -386,7 +386,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 0, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "id_anagrafica": '.$record['id_anagrafica'].', "id_agente": '.$record['id_agente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 0, "id_sede_partenza": '.intval($record['id_sede_partenza']).', "id_sede_destinazione": '.intval($record['id_sede_destinazione']).', "dir": "entrata", "id_anagrafica": '.$record['id_anagrafica'].', "id_agente": '.$record['id_agente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-4" style="margin-top: 25px">
@@ -573,7 +573,7 @@ echo '
         caricaTecnici();
         caricaCosti();
 
-        $("#idsede_partenza").trigger("change");
+        $("#id_sede_partenza").trigger("change");
 
         $("#id_articolo").on("change", function(e) {
             e.preventDefault();
@@ -588,13 +588,13 @@ echo '
     });
 
     var anagrafica = input("id_anagrafica");
-    var sede = input("idsede_destinazione");
+    var sede = input("id_sede_destinazione");
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
     var cliente_finale = input("id_cliente_finale");
     var referente = input("idreferente");
-    var sede_partenza = input("idsede_partenza");
+    var sede_partenza = input("id_sede_partenza");
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
@@ -645,8 +645,8 @@ echo '
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {
-        updateSelectOption("idsede_destinazione", $(this).val());
-		session_set("superselect,idsede_destinazione", $(this).val(), 0);
+        updateSelectOption("id_sede_destinazione", $(this).val());
+		session_set("superselect,id_sede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
         input("idreferente").getElement().selectReset();
 
@@ -715,8 +715,8 @@ echo '
 
     // Impostazione della sede di partenza
     sede_partenza.change(function() {
-        updateSelectOption("idsede_partenza", $(this).val());
-        session_set("superselect,idsede_partenza", $(this).val(), 0);
+        updateSelectOption("id_sede_partenza", $(this).val());
+        session_set("superselect,id_sede_partenza", $(this).val(), 0);
     })
 
     $("#codice_cig, #codice_cup").bind("keyup change", function (e) {

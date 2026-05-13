@@ -76,7 +76,7 @@ class Articolo extends Model
     public function movimenta($qta, $descrizone = null, $data = null, $manuale = false, $array = [])
     {
         $data = ($data ?: date('Y-m-d H:i:s'));
-        $id = $this->registra($qta, $descrizone, $data, $manuale, $array, $array['idsede']);
+        $id = $this->registra($qta, $descrizone, $data, $manuale, $array, $array['id_sede']);
 
         if (empty($this->servizio)) {
             $this->qta += $qta;
@@ -101,8 +101,8 @@ class Articolo extends Model
 
                 // Passa la sede del documento anche ai movimenti automatici
                 $array_automatico = $array;
-                if (isset($array['idsede'])) {
-                    $array_automatico['idsede'] = $array['idsede'];
+                if (isset($array['id_sede'])) {
+                    $array_automatico['id_sede'] = $array['id_sede'];
                 }
 
                 $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_automatico);
@@ -118,8 +118,8 @@ class Articolo extends Model
 
                 // Passa la sede del documento anche ai movimenti automatici
                 $array_automatico = $array;
-                if (isset($array['idsede'])) {
-                    $array_automatico['idsede'] = $array['idsede'];
+                if (isset($array['id_sede'])) {
+                    $array_automatico['id_sede'] = $array['id_sede'];
                 }
 
                 $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_automatico);
@@ -135,8 +135,8 @@ class Articolo extends Model
 
                 // Passa la sede anche ai movimenti manuali
                 $array_manuale = $array;
-                if (isset($array['idsede'])) {
-                    $array_manuale['idsede'] = $array['idsede'];
+                if (isset($array['id_sede'])) {
+                    $array_manuale['id_sede'] = $array['id_sede'];
                 }
 
                 $this->movimenta(-$qta, $descrizione_ricorsivo, $data, false, $array_manuale);
@@ -354,16 +354,16 @@ class Articolo extends Model
     {
         $movimenti = $this->movimenti()
             ->select(
-                'idsede',
+                'id_sede',
                 database()->raw('SUM(qta) AS qta')
-            )->groupBy(['idsede']);
+            )->groupBy(['id_sede']);
 
         if (!empty($data)) {
             $movimenti = $movimenti->where('data', '<=', \Carbon\Carbon::parse($data)->format('Y-m-d'));
         }
 
         $movimenti = $movimenti->get()
-            ->mapToGroups(fn ($item, $key) => [$item->idsede => (float) $item->attributes['qta']])
+            ->mapToGroups(fn ($item, $key) => [$item->id_sede => (float) $item->attributes['qta']])
             ->toArray();
 
         return $movimenti;
@@ -509,8 +509,8 @@ class Articolo extends Model
 
             // Passa la sede anche ai componenti
             $array_componente = $array;
-            if (isset($array['idsede'])) {
-                $array_componente['idsede'] = $array['idsede'];
+            if (isset($array['id_sede'])) {
+                $array_componente['id_sede'] = $array['id_sede'];
             }
 
             $componente->movimenta($qta_componente, $descrizone, $data, $manuale, $array_componente);

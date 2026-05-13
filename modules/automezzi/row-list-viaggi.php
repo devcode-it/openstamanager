@@ -7,7 +7,7 @@ include_once __DIR__.'/../../core.php';
 /*
     REGISTRI VIAGGIO DELL'AUTOMEZZO
 */
-$q_viaggi = 'SELECT * FROM an_automezzi_viaggi WHERE idsede='.prepare($id_record).' ORDER BY data_inizio DESC';
+$q_viaggi = 'SELECT * FROM an_automezzi_viaggi WHERE id_sede='.prepare($id_record).' ORDER BY data_inizio DESC';
 $rs_viaggi = $dbo->fetchArray($q_viaggi);
 
 if (!empty($rs_viaggi)) {

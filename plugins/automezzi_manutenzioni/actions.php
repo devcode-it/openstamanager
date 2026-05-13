@@ -29,7 +29,7 @@ switch (post('op')) {
         $codice = post('codice');
 
         $dbo->insert('an_automezzi_scadenze', [
-            'idsede' => $id_record,
+            'id_sede' => $id_record,
             'descrizione' => $descrizione,
             'data_inizio' => $data_inizio,
             'km' => $km,

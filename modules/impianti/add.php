@@ -44,7 +44,7 @@ $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['id_anagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "id_sede", "value": "$id_sede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['id_anagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
@@ -123,7 +123,7 @@ $(document).ready(function () {
 
         let value = !input('id_anagrafica').get();
 
-        input('idsede').setDisabled(value)
+        input('id_sede').setDisabled(value)
             .getElement().selectReset();
 	});
 });

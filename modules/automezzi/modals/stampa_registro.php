@@ -18,7 +18,7 @@ if (empty($automezzo)) {
 $id_print = PrintTemplate::where('name', 'Registro viaggio')->first()->id;
 
 // Recupero il range di date dei viaggi
-$date_range = $dbo->fetchOne('SELECT MIN(data_inizio) as min_date, MAX(data_fine) as max_date FROM an_automezzi_viaggi WHERE idsede='.prepare($idautomezzo));
+$date_range = $dbo->fetchOne('SELECT MIN(data_inizio) as min_date, MAX(data_fine) as max_date FROM an_automezzi_viaggi WHERE id_sede='.prepare($idautomezzo));
 
 $data_inizio_default = $_SESSION['period_start'];
 $data_fine_default = $_SESSION['period_end'];

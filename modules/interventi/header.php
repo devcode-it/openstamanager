@@ -35,8 +35,8 @@ use Modules\Scadenzario\Scadenza;
 $anagrafica = $anagrafica = Anagrafica::withTrashed()->find($intervento->id_anagrafica);
 
 // Sede
-if ($intervento->idsede_destinazione) {
-    $sede = $dbo->selectOne('an_sedi', '*', ['id' => $intervento->idsede_destinazione]);
+if ($intervento->id_sede_destinazione) {
+    $sede = $dbo->selectOne('an_sedi', '*', ['id' => $intervento->id_sede_destinazione]);
 } else {
     $sede = $anagrafica ? $anagrafica->toArray() : null;
 }
@@ -90,7 +90,7 @@ if ($intervento->id_ordine) {
 $interventi_programmati = Intervento::select('in_interventi.*')
     ->join('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
     ->where('id_anagrafica', $intervento->id_anagrafica)
-    ->where('idsede_destinazione', $intervento->idsede_destinazione)
+    ->where('id_sede_destinazione', $intervento->id_sede_destinazione)
     ->where('is_bloccato', '!=', 1)
     ->where('in_interventi.id', '!=', $id_record)
     ->get();
@@ -277,8 +277,8 @@ echo '
 // Geolocalizzazione
 $anagrafica_cliente = $intervento->anagrafica;
 $sede_cliente = $anagrafica_cliente->sedeLegale;
-if (!empty($intervento->idsede_destinazione)) {
-    $sede_cliente = Sede::find($intervento->idsede_destinazione);
+if (!empty($intervento->id_sede_destinazione)) {
+    $sede_cliente = Sede::find($intervento->id_sede_destinazione);
 }
 
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));

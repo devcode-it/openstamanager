@@ -81,12 +81,12 @@ if (!$elenco_promemoria->isEmpty()) {
     // Elenco promemoria
     foreach ($elenco_promemoria as $promemoria) {
         // Sede
-        if ($promemoria['idsede'] == '-1') {
+        if ($promemoria['id_sede'] == '-1') {
             echo '- '.tr('Nessuna').' -';
-        } elseif (empty($promemoria['idsede'])) {
+        } elseif (empty($promemoria['id_sede'])) {
             $info_sede = tr('Sede legale');
         } else {
-            $info_sede = $dbo->fetchOne("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($promemoria->idsede))['descrizione'];
+            $info_sede = $dbo->fetchOne("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($promemoria->id_sede))['descrizione'];
         }
 
         // Intervento svolto

@@ -23,7 +23,7 @@ use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 
-$referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'id_anagrafica' => $id_parent]);
+$referenti = $dbo->select('an_referenti', 'id', [], ['id_sede' => $id_record, 'id_anagrafica' => $id_parent]);
 $referenti = implode(',', array_column($referenti, 'id'));
 
 // Verifica se l'anagrafica è di tipo Cliente
@@ -40,7 +40,7 @@ ORDER BY `title`');
 // Recupera le tariffe esistenti per questa sede
 $tariffe_sedi = [];
 if ($is_cliente) {
-    $tariffe_db = $dbo->fetchArray('SELECT * FROM in_tariffe_sedi WHERE idsede = '.prepare($id_record));
+    $tariffe_db = $dbo->fetchArray('SELECT * FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_record));
     foreach ($tariffe_db as $tariffa) {
         $tariffe_sedi[$tariffa['id_tipo_intervento']] = $tariffa;
     }
@@ -48,7 +48,7 @@ if ($is_cliente) {
 
 $id_azienda = setting('Azienda predefinita');
 if ($id_parent == $id_azienda) {
-    $utenti = $dbo->fetchNum('SELECT id_user FROM zz_user_sedi WHERE idsede = '.prepare($id_record));
+    $utenti = $dbo->fetchNum('SELECT id_user FROM zz_user_sedi WHERE id_sede = '.prepare($id_record));
 }
 
 echo '
@@ -196,7 +196,7 @@ $elementi = $dbo->fetchArray('SELECT
 			`zz_user_sedi` 
 			INNER JOIN `zz_users` ON `zz_user_sedi`.`id_user`=`zz_users`.`id` 
 		WHERE 
-			`zz_user_sedi`.`idsede` = '.prepare($id_record).'
+			`zz_user_sedi`.`id_sede` = '.prepare($id_record).'
 	UNION
 		SELECT 
 			`an_referenti`.`id` AS `id`, 
@@ -205,7 +205,7 @@ $elementi = $dbo->fetchArray('SELECT
 		FROM 
 			`an_referenti`
 		WHERE 
-			`an_referenti`.`idsede` = '.prepare($id_record).'
+			`an_referenti`.`id_sede` = '.prepare($id_record).'
 	UNION
 		SELECT 
 			`co_documenti`.`id` AS `id`, 
@@ -215,7 +215,7 @@ $elementi = $dbo->fetchArray('SELECT
 			`co_documenti` 
 			INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
 		WHERE 
-			`co_documenti`.`idsede_destinazione` = '.prepare($id_record).'
+			`co_documenti`.`id_sede_destinazione` = '.prepare($id_record).'
 	ORDER BY `id`');
 
 if (!empty($elementi)) {

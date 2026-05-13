@@ -39,8 +39,8 @@ if (empty($anagrafica)) {
 
 // Sede
 $sede = null;
-if (!empty($record['idsede'])) {
-    $sede = $dbo->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($record['idsede']));
+if (!empty($record['id_sede'])) {
+    $sede = $dbo->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($record['id_sede']));
 } else {
     $sede = $anagrafica ? $anagrafica->toArray() : null;
 }

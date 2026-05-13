@@ -27,7 +27,7 @@ $manutenzioni = $dbo->fetchArray('
     FROM
         an_automezzi_scadenze m
     WHERE
-        m.idsede = '.prepare($id_record).'
+        m.id_sede = '.prepare($id_record).'
         AND m.is_manutenzione = 1
     ORDER BY
         m.data_inizio DESC

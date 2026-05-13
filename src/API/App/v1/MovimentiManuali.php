@@ -82,7 +82,7 @@ class MovimentiManuali extends AppResource
             `mg_movimenti`.`qta`,
             `mg_movimenti`.`movimento` AS descrizione,
             `mg_movimenti`.`data`,
-            `mg_movimenti`.`idsede` AS id_sede_azienda,
+            `mg_movimenti`.`id_sede` AS id_sede_azienda,
             `mg_movimenti`.`idutente` AS id_utente,
             `mg_movimenti`.`manuale`
         FROM
@@ -107,7 +107,7 @@ class MovimentiManuali extends AppResource
         $id_sede = isset($data['id_sede_azienda']) && $data['id_sede_azienda'] !== null ? $data['id_sede_azienda'] : 0;
 
         $id_movimento = $articolo->movimenta($data['qta'], $data['descrizione'], $data_movimento, true, [
-            'idsede' => $id_sede,
+            'id_sede' => $id_sede,
             'idutente' => auth_osm()->getUser()->id,
         ]);
 

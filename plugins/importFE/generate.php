@@ -395,7 +395,7 @@ echo '
         </div>
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "help": "'.tr('Sede di destinazione per la movimentazione degli articoli').'" ]}
+                {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "id_sede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "help": "'.tr('Sede di destinazione per la movimentazione degli articoli').'" ]}
             </div>';
 
 $ritenuta = $dati_generali['DatiRitenuta'];

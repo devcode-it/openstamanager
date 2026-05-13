@@ -139,9 +139,9 @@ class Fattura extends Document
         }
 
         if ($direzione == 'entrata') {
-            $model->idsede_partenza = $id_sede;
+            $model->id_sede_partenza = $id_sede;
         } else {
-            $model->idsede_destinazione = $id_sede;
+            $model->id_sede_destinazione = $id_sede;
         }
 
         // Ritenuta contributi predefinita

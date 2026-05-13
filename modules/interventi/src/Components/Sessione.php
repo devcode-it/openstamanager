@@ -73,8 +73,8 @@ class Sessione extends Model
 
         if ($tipo_sessione->calcola_km) {
             // Sede secondaria
-            if (!empty($intervento['idsede_destinazione'])) {
-                $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+            if (!empty($intervento['id_sede_destinazione'])) {
+                $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
                 $km = $sede['km'];
             }
 
@@ -467,9 +467,9 @@ class Sessione extends Model
         $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE idtecnico='.prepare($this->anagrafica->id).' AND id_tipo_intervento = '.prepare($id_tipo));
 
         // Costi unitari specifici per la sede
-        $id_sede = $this->intervento->idsede_destinazione;
+        $id_sede = $this->intervento->id_sede_destinazione;
         if (!empty($id_sede) && $this->intervento->anagrafica->isTipo('Cliente')) {
-            $tariffa_sede = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede).' AND id_tipo_intervento = '.prepare($id_tipo));
+            $tariffa_sede = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_sede).' AND id_tipo_intervento = '.prepare($id_tipo));
 
             if (!empty($tariffa_sede)) {
                 $result = array_merge($result, $tariffa_sede);

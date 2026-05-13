@@ -520,8 +520,8 @@ switch ($resource) {
                 $where[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
             }
 
-            if (isset($superselect['idsede_destinazione'])) {
-                $where[] = '`idsede`='.prepare($superselect['idsede_destinazione']);
+            if (isset($superselect['id_sede_destinazione'])) {
+                $where[] = '`id_sede`='.prepare($superselect['id_sede_destinazione']);
             }
 
             if (!empty($search)) {

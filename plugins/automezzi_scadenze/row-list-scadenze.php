@@ -27,7 +27,7 @@ $scadenze = $dbo->fetchArray('
     FROM 
         an_automezzi_scadenze s
     WHERE 
-        s.idsede = '.prepare($id_record).'
+        s.id_sede = '.prepare($id_record).'
         AND s.is_manutenzione = 0
     ORDER BY 
         s.data_inizio DESC

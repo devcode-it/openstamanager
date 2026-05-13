@@ -41,8 +41,8 @@ class ArticoliAutomezzo extends AppResource
             `mg_movimenti`.`updated_at`
         FROM
             `mg_movimenti`
-            INNER JOIN `an_sedi` ON `an_sedi`.`id` = `mg_movimenti`.`idsede`
-            INNER JOIN `zz_user_sedi` ON `zz_user_sedi`.`idsede` = `an_sedi`.`id`
+            INNER JOIN `an_sedi` ON `an_sedi`.`id` = `mg_movimenti`.`id_sede`
+            INNER JOIN `zz_user_sedi` ON `zz_user_sedi`.`id_sede` = `an_sedi`.`id`
         WHERE
             `an_sedi`.`is_automezzo` = 1
             AND `an_sedi`.`deleted_at` IS NULL
@@ -64,7 +64,7 @@ class ArticoliAutomezzo extends AppResource
         $query = 'SELECT
             `mg_movimenti`.`id`,
             `mg_movimenti`.`idarticolo` AS id_articolo,
-            `mg_movimenti`.`idsede` AS id_automezzo,
+            `mg_movimenti`.`id_sede` AS id_automezzo,
             `mg_movimenti`.`qta`,
             `mg_movimenti`.`movimento` AS descrizione,
             `mg_movimenti`.`data`,

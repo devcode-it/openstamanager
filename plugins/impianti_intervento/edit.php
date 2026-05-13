@@ -58,7 +58,7 @@ echo '
             <div class="col-md-4">
                 <label class="control-label">'.tr('Seleziona Impianto').'</label>
                 <div style="margin-top: 5px;">
-                    {[ "type": "select", "name": "id_impianto_add", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "idsede_destinazione": '.($record['idsede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "idcontratto": "'.$record['idcontratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['id_anagrafica'].'" ]}
+                    {[ "type": "select", "name": "id_impianto_add", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($record['id_sede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "idcontratto": "'.$record['idcontratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['id_anagrafica'].'" ]}
                 </div>
             </div>
 

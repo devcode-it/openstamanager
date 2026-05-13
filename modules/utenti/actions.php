@@ -109,7 +109,7 @@ switch (filter('op')) {
             $utente->save();
 
             $dbo->delete('zz_user_sedi', ['id_user' => $id_utente]);
-            $sedi = post('idsede');
+            $sedi = post('id_sede');
 
             if (empty($sedi)) {
                 $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id_anagrafica = '.prepare($id_azienda));
@@ -118,7 +118,7 @@ switch (filter('op')) {
             }
             foreach ($sedi as $id_sede) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
-                $dbo->query('INSERT IGNORE INTO `zz_user_sedi` (`id_user`,`idsede`) VALUES ('.prepare($utente['id']).', '.prepare($id_sede).')');
+                $dbo->query('INSERT IGNORE INTO `zz_user_sedi` (`id_user`,`id_sede`) VALUES ('.prepare($utente['id']).', '.prepare($id_sede).')');
             }
 
             flash()->info(tr("Informazioni per l'utente _USERNAME_ salvate correttamente!", [

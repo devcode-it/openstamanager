@@ -130,14 +130,14 @@ class User extends Model implements Authenticatable
         $database = database();
 
         // Estraggo le sedi dell'utente loggato
-        $sedi = $database->fetchArray('SELECT idsede FROM zz_user_sedi WHERE id_user='.prepare($this->id));
+        $sedi = $database->fetchArray('SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($this->id));
 
         // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
         if (empty($sedi)) {
-            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE id_anagrafica='.prepare($this->id_anagrafica));
+            $sedi = $database->fetchArray('SELECT "0" AS id_sede UNION SELECT id AS id_sede FROM an_sedi WHERE id_anagrafica='.prepare($this->id_anagrafica));
         }
 
-        return array_column($sedi, 'idsede');
+        return array_column($sedi, 'id_sede');
     }
 
     public function setPasswordAttribute($value)

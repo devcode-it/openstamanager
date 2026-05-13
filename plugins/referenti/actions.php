@@ -29,9 +29,9 @@ switch ($operazione) {
         if (!empty(post('nome'))) {
             $nome = post('nome');
             $idmansione = post('idmansione');
-            $idsede = post('idsede');
+            $id_sede = post('id_sede');
 
-            $referente = Referente::build($id_parent, $nome, $idmansione, $idsede);
+            $referente = Referente::build($id_parent, $nome, $idmansione, $id_sede);
             $id_record = $referente->id;
 
             $referente->telefono = post('telefono');
@@ -57,7 +57,7 @@ switch ($operazione) {
             'idmansione' => post('idmansione'),
             'telefono' => post('telefono'),
             'email' => post('email'),
-            'idsede' => post('idsede'),
+            'id_sede' => post('id_sede'),
             'enable_newsletter' => post('enable_newsletter'),
         ], ['id' => $id_record]);
 

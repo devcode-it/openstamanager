@@ -38,7 +38,7 @@ $options = [
             'id_anagrafica' => $documento->id_anagrafica,
             'dir' => $documento->direzione,
             'permetti_movimento_a_zero' => 1,
-            'idsede_destinazione' => $documento->idsede_destinazione,
+            'id_sede_destinazione' => $documento->id_sede_destinazione,
         ],
     ],
 ];

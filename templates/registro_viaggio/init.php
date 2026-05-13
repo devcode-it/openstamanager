@@ -36,7 +36,7 @@ FROM
     an_automezzi_viaggi v
     LEFT JOIN an_anagrafiche t ON v.idtecnico = t.id
 WHERE 
-    v.idsede = '.prepare($id_record).'
+    v.id_sede = '.prepare($id_record).'
     AND v.data_inizio >= '.prepare($data_inizio.' 00:00:00').'
     AND v.data_fine <= '.prepare($data_fine.' 23:59:59').'
 ORDER BY 

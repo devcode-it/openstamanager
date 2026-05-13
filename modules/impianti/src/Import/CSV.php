@@ -512,7 +512,7 @@ class CSV extends CSVImporter
             ->first();
 
         if (!empty($sede)) {
-            $impianto->idsede = $sede->id;
+            $impianto->id_sede = $sede->id;
         }
     }
 

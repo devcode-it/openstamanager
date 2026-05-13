@@ -148,8 +148,8 @@ switch (post('op')) {
                 $id_anagrafica = $intervento['id_anagrafica'];
             }
 
-            $idsede_destinazione = $raggruppamento == 'sede' ? $intervento['idsede_destinazione'] : 0;
-            $id_documento = $id_documento_cliente[$id_anagrafica][$idsede_destinazione];
+            $id_sede_destinazione = $raggruppamento == 'sede' ? $intervento['id_sede_destinazione'] : 0;
+            $id_documento = $id_documento_cliente[$id_anagrafica][$id_sede_destinazione];
 
             $anagrafica = Anagrafica::find($id_anagrafica);
             $id_iva = $anagrafica->id_iva_vendite ?: setting('Iva predefinita');
@@ -157,7 +157,7 @@ switch (post('op')) {
             // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
-                    $where = $raggruppamento == 'sede' ? ' AND `idsede_destinazione` = '.prepare($intervento['idsede_destinazione']) : '';
+                    $where = $raggruppamento == 'sede' ? ' AND `id_sede_destinazione` = '.prepare($intervento['id_sede_destinazione']) : '';
                     $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`  INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento`.`name` = "Bozza"  AND `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
@@ -166,11 +166,11 @@ switch (post('op')) {
 
                 if (empty($id_documento)) {
                     $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
-                    $fattura->idsede_destinazione = $idsede_destinazione;
+                    $fattura->id_sede_destinazione = $id_sede_destinazione;
                     $fattura->save();
 
                     $id_documento = $fattura->id;
-                    $id_documento_cliente[$id_anagrafica][$idsede_destinazione] = $id_documento;
+                    $id_documento_cliente[$id_anagrafica][$id_sede_destinazione] = $id_documento;
                 }
             }
 

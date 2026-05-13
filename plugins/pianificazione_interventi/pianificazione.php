@@ -43,7 +43,7 @@ $id_impianti = explode(',', (string) $impianti[0]['idimpianti']);
 
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {
-    $id_sede = $dbo->fetchOne('SELECT idsede FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['idsede'];
+    $id_sede = $dbo->fetchOne('SELECT id_sede FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_sede'];
     $id_tecnico = $dbo->fetchOne('SELECT idtecnico FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['idtecnico'];
 }
 
@@ -52,7 +52,7 @@ $record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`title` AS tipointe
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');
-$id_sede = $record['idsede'];
+$id_sede = $record['id_sede'];
 $tempo_standard = $record['tempo_standard'];
 $id_tipo_intervento = $record['id_tipo_intervento'];
 
@@ -117,7 +117,7 @@ echo '
                 </div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE id_anagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE id_anagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
 			   </div>
 
 				<div class="col-md-6">

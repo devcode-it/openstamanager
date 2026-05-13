@@ -40,8 +40,8 @@ $options = [
         'articoli' => [
             'id_anagrafica' => $documento->id_anagrafica,
             'dir' => $documento->direzione,
-            'idsede_partenza' => $documento->idsede_partenza,
-            'idsede_destinazione' => $documento->idsede_destinazione,
+            'id_sede_partenza' => $documento->id_sede_partenza,
+            'id_sede_destinazione' => $documento->id_sede_destinazione,
             'permetti_movimento_a_zero' => intval($documento->direzione == 'uscita'),
             'id_agente' => $documento->id_agente,
         ],

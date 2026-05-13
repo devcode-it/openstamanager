@@ -50,7 +50,7 @@ switch ($operazione) {
             'id_tipo_intervento' => post('id_tipo_intervento'),
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti') ?: []),
-            'idsede' => post('idsede_c') ?: 0,
+            'id_sede' => post('id_sede_c') ?: 0,
             'data_scadenza' => post('data_scadenza') ?: null,
             'idtecnici' => implode(',', post('idtecnici') ?: []),
         ], ['id' => $id_record]);
@@ -152,7 +152,7 @@ switch ($operazione) {
                 if (post('pianifica_intervento') && empty($promemoria->intervento)) {
                     // Creazione intervento
                     $intervento = Intervento::build($contratto->anagrafica, $promemoria_originale->tipo, $stato, $data_richiesta, post('id_segment'));
-                    $intervento->idsede_destinazione = $promemoria_corrente->idsede ?: 0;
+                    $intervento->id_sede_destinazione = $promemoria_corrente->id_sede ?: 0;
                     $intervento->richiesta = $promemoria_corrente->richiesta;
                     $intervento->id_cliente_finale = post('id_cliente_finale') ?: 0;
                     $intervento->id_contratto = $contratto->id;

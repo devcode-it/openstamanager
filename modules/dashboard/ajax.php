@@ -298,8 +298,8 @@ switch (filter('op')) {
                 $rs = $dbo->fetchArray($query);
 
                 // correggo info indirizzo citta cap provincia con quelle della sede di destinazione
-                if (!empty($rs[0]['idsede_destinazione'])) {
-                    $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($rs[0]['idsede_destinazione']));
+                if (!empty($rs[0]['id_sede_destinazione'])) {
+                    $sede = $database->fetchOne('SELECT * FROM an_sedi WHERE id = '.prepare($rs[0]['id_sede_destinazione']));
                     $rs[0]['indirizzo'] = $sede['nomesede'].'<br>'.$sede['indirizzo'];
                     $rs[0]['cap'] = $sede['cap'];
                     $rs[0]['citta'] = $sede['citta'];

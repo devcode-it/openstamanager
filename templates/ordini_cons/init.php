@@ -29,6 +29,6 @@ $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
 $id_cliente = $documento['id_anagrafica'];
-$id_sede = $documento['idsede'];
+$id_sede = $documento['id_sede'];
 
 $pricing = $options['pricing'];

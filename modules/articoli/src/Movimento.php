@@ -36,7 +36,7 @@ class Movimento extends Model
     protected $table = 'mg_movimenti';
 
     protected $casts = [
-        'idsede' => 'integer',
+        'id_sede' => 'integer',
     ];
 
     public static function build(?Articolo $articolo = null, $qta = null, $descrizione = null, $data = null, $document = null, $id_sede = null)
@@ -49,7 +49,7 @@ class Movimento extends Model
         $model->movimento = $descrizione;
         $model->data = $data;
 
-        $model->idsede = $id_sede ?: 0; // Sede legale
+        $model->id_sede = $id_sede ?: 0; // Sede legale
 
         if (!empty($document)) {
             $class = $document::class;

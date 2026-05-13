@@ -28,7 +28,7 @@ switch (post('op')) {
         $luogo = post('luogo');
 
         $dbo->insert('an_automezzi_danni', [
-            'idsede' => $id_record,
+            'id_sede' => $id_record,
             'descrizione' => $descrizione,
             'data' => $data,
             'luogo' => $luogo,

@@ -27,7 +27,7 @@ include_once __DIR__.'/../../../core.php';
 
     <div class="row">
         <div class="col-md-5">
-            {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "id": "sede-inventario" ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "id_sede", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "id": "sede-inventario" ]}
         </div>
 
         <div class="col-md-5">
@@ -41,7 +41,7 @@ include_once __DIR__.'/../../../core.php';
         </div>
 
         <div class="col-md-5">
-            {[ "type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "id": "articolo-inventario", "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0 } ]}
+            {[ "type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "id": "articolo-inventario", "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
         </div>
 
         <div class="col-md-2" style="margin-top: 25px">
@@ -98,7 +98,7 @@ $(document).ready(function () {
         }
         
         // Aggiorna le opzioni degli articoli con la nuova sede
-        $("#articolo-inventario").data("select-options").idsede_partenza = sede_id;
+        $("#articolo-inventario").data("select-options").id_sede_partenza = sede_id;
         $("#articolo-inventario").selectReset();
     });
     
@@ -134,7 +134,7 @@ function ricercaBarcode(barcode) {
     
     // Ricerca via ajax del barcode negli articoli
     let options = $("#articolo-inventario").data("select-options");
-    options.idsede_partenza = sede_id;
+    options.id_sede_partenza = sede_id;
     
     $.get(globals.rootdir + "/ajax_select.php", {
         op: "articoli",
@@ -267,7 +267,7 @@ function salvaInventario() {
     // Prepara i dati per il salvataggio
     let dati = {
         op: 'salva_inventario',
-        idsede: sede_id,
+        id_sede: sede_id,
         data: data_inventario,
         righe: righeInventario
     };

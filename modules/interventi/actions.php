@@ -71,8 +71,8 @@ switch (post('op')) {
         $intervento->id_tipo_intervento = post('id_tipo_intervento');
 
         $intervento->idstatointervento = post('idstatointervento');
-        $intervento->idsede_partenza = post('idsede_partenza');
-        $intervento->idsede_destinazione = post('idsede_destinazione');
+        $intervento->id_sede_partenza = post('id_sede_partenza');
+        $intervento->id_sede_destinazione = post('id_sede_destinazione');
         $intervento->id_preventivo = post('idpreventivo') ?: null;
         $intervento->id_contratto = post('idcontratto') ?: null;
         $intervento->id_ordine = post('idordine') ?: null;
@@ -240,8 +240,8 @@ switch (post('op')) {
             $idcontratto = post('idcontratto');
             $id_promemoria = post('idcontratto_riga');
             $id_tipo_intervento = post('id_tipo_intervento');
-            $idsede_partenza = post('idsede_partenza');
-            $idsede_destinazione = post('idsede_destinazione') ?: 0;
+            $id_sede_partenza = post('id_sede_partenza');
+            $id_sede_destinazione = post('id_sede_destinazione') ?: 0;
 
             if (post('id_cliente_finale')) {
                 $intervento->id_cliente_finale = post('id_cliente_finale');
@@ -253,7 +253,7 @@ switch (post('op')) {
             $intervento->idreferente = post('idreferente') ?: null;
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');
-            $intervento->idsede_destinazione = $idsede_destinazione;
+            $intervento->id_sede_destinazione = $id_sede_destinazione;
             $intervento->data_scadenza = $data_scadenza;
 
             $intervento->save();
@@ -359,8 +359,8 @@ switch (post('op')) {
 
                     // Calcola i km se necessario
                     if ($tipo_sessione->calcola_km) {
-                        if (!empty($intervento['idsede_destinazione'])) {
-                            $sede = $dbo->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['idsede_destinazione']));
+                        if (!empty($intervento['id_sede_destinazione'])) {
+                            $sede = $dbo->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
                             $km = $sede['km'];
                         } else {
                             $km = $intervento->anagrafica->sedeLegale->km;
@@ -741,7 +741,7 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->idsede_partenza = post('idsede_partenza');
+        $articolo->id_sede_partenza = post('id_sede_partenza');
         $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
@@ -857,9 +857,9 @@ switch (post('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $idsede_partenza = $documento->idsede_partenza ?: 0;
-        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $idsede_destinazione = $idsede_destinazione ?: 0;
+        $id_sede_partenza = $documento->id_sede_partenza ?: 0;
+        $id_sede_destinazione = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        $id_sede_destinazione = $id_sede_destinazione ?: 0;
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
@@ -869,8 +869,8 @@ switch (post('op')) {
             $anagrafica = post('id_anagrafica') ? Anagrafica::find(post('id_anagrafica')) : $documento->anagrafica;
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'), post('id_segment'));
-            $intervento->idsede_partenza = $idsede_partenza;
-            $intervento->idsede_destinazione = $idsede_destinazione;
+            $intervento->id_sede_partenza = $id_sede_partenza;
+            $intervento->id_sede_destinazione = $id_sede_destinazione;
 
             if (!empty($documento->idpagamento)) {
                 $intervento->idpagamento = $documento->idpagamento;
@@ -1484,7 +1484,7 @@ switch (post('op')) {
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $intervento->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $intervento->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
                 }
@@ -1503,7 +1503,7 @@ switch (post('op')) {
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
                 $articolo->setSconto($sconto, 'PRC');
                 $articolo->setProvvigione($provvigione ?: 0, 'PRC');
-                $articolo->idsede_partenza = $intervento->idsede_partenza;
+                $articolo->id_sede_partenza = $intervento->id_sede_partenza;
                 $articolo->save();
 
                 flash()->info(tr('Nuovo articolo aggiunto!'));
@@ -1651,7 +1651,7 @@ switch (post('op')) {
                 $id_articolo = $riga->idarticolo;
 
                 if ($update_prezzo_vendita) {
-                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $intervento->idsede_destinazione);
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $intervento->id_sede_destinazione);
                     if (!$prezzo_consigliato['prezzo_unitario']) {
                         $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                     }

@@ -157,7 +157,7 @@ switch (filter('op')) {
                 'is_ritenuta_pagata' => post('is_ritenuta_pagata'),
                 'update_info' => post('update_info'),
                 'serial' => post('flag_crea_seriali') ? post('serial') : [],
-                'idsede_destinazione' => post('idsede_destinazione'),
+                'id_sede_destinazione' => post('id_sede_destinazione'),
             ];
         }
 

@@ -80,8 +80,8 @@ switch (post('op')) {
             }
 
             $contratto->id_anagrafica = post('id_anagrafica');
-            $contratto->idsede_partenza = post('idsede_partenza');
-            $contratto->idsede_destinazione = post('idsede_destinazione');
+            $contratto->id_sede_partenza = post('id_sede_partenza');
+            $contratto->id_sede_destinazione = post('id_sede_destinazione');
             $contratto->idstato = post('idstato');
             $contratto->nome = post('nome');
             $contratto->id_agente = post('id_agente');
@@ -587,18 +587,18 @@ switch (post('op')) {
         $is_renewal = $documento instanceof Contratto && post('is_evasione') == '1';
 
         // Individuazione sede
-        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
-        $idsede_partenza = $idsede_partenza ?: 0;
-        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $idsede_destinazione = $idsede_destinazione ?: 0;
+        $id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_partenza : $documento->id_sede_destinazione;
+        $id_sede_partenza = $id_sede_partenza ?: 0;
+        $id_sede_destinazione = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        $id_sede_destinazione = $id_sede_destinazione ?: 0;
 
         // Creazione del contratto al volo (solo se non è un rinnovo)
         if (post('create_document') == 'on' && !$is_renewal) {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
             $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
-            $contratto->idsede_partenza = $idsede_partenza;
-            $contratto->idsede_destinazione = $idsede_destinazione;
+            $contratto->id_sede_partenza = $id_sede_partenza;
+            $contratto->id_sede_destinazione = $id_sede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
             $contratto->giorni_preavviso_rinnovo = setting('Giorni di preavviso di default');
             $contratto->id_documento_fe = $documento->id_documento_fe;
@@ -619,8 +619,8 @@ switch (post('op')) {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
             $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
-            $contratto->idsede_partenza = $idsede_partenza;
-            $contratto->idsede_destinazione = $idsede_destinazione;
+            $contratto->id_sede_partenza = $id_sede_partenza;
+            $contratto->id_sede_destinazione = $id_sede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
             $contratto->giorni_preavviso_rinnovo = setting('Giorni di preavviso di default');
             $contratto->id_documento_fe = $documento->id_documento_fe;
@@ -878,7 +878,7 @@ switch (post('op')) {
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
-            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $contratto->idsede_destinazione);
+            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $contratto->id_sede_destinazione);
             if (!$prezzo_consigliato['prezzo_unitario']) {
                 $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
             }
@@ -979,7 +979,7 @@ switch (post('op')) {
                 $id_articolo = $riga->idarticolo;
 
                 if ($update_prezzo_vendita) {
-                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $contratto->idsede_destinazione);
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $contratto->id_sede_destinazione);
                     if (!$prezzo_consigliato['prezzo_unitario']) {
                         $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                     }

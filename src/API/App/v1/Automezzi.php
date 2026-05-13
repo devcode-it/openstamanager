@@ -41,7 +41,7 @@ class Automezzi extends AppResource
             `an_sedi`.`updated_at`
         FROM
             `an_sedi`
-            INNER JOIN `zz_user_sedi` ON `zz_user_sedi`.`idsede` = `an_sedi`.`id`
+            INNER JOIN `zz_user_sedi` ON `zz_user_sedi`.`id_sede` = `an_sedi`.`id`
         WHERE
             `an_sedi`.`is_automezzo` = 1
             AND `an_sedi`.`deleted_at` IS NULL

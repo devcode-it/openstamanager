@@ -38,13 +38,13 @@ switch (post('op')) {
         $nome = post('nome');
         $id_tipo_intervento = post('id_tipo_intervento');
         $data_bozza = post('data_bozza');
-        $idsede_destinazione = post('idsede_destinazione');
+        $id_sede_destinazione = post('id_sede_destinazione');
         $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = TipoSessione::find($id_tipo_intervento);
 
-        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $idsede_destinazione, $id_segment);
+        $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $id_sede_destinazione, $id_segment);
 
         $preventivo->esclusioni = setting('Esclusioni default preventivi');
         $preventivo->idstato = post('idstato');
@@ -67,8 +67,8 @@ switch (post('op')) {
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
             $preventivo->id_anagrafica = post('id_anagrafica');
-            $preventivo->idsede_partenza = post('idsede_partenza');
-            $preventivo->idsede_destinazione = post('idsede_destinazione');
+            $preventivo->id_sede_partenza = post('id_sede_partenza');
+            $preventivo->id_sede_destinazione = post('id_sede_destinazione');
             $preventivo->id_agente = post('id_agente');
             $preventivo->idreferente = post('idreferente');
             $preventivo->idpagamento = post('idpagamento') ?: null;
@@ -542,7 +542,7 @@ switch (post('op')) {
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
-            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $preventivo->idsede_destinazione);
+            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $preventivo->id_sede_destinazione);
             if (!$prezzo_consigliato['prezzo_unitario']) {
                 $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
             }
@@ -643,7 +643,7 @@ switch (post('op')) {
                 $id_articolo = $riga->idarticolo;
 
                 if ($update_prezzo_vendita) {
-                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $preventivo->idsede_destinazione);
+                    $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $preventivo->id_sede_destinazione);
                     if (!$prezzo_consigliato['prezzo_unitario']) {
                         $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                     }

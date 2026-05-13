@@ -23,7 +23,7 @@ include_once __DIR__.'/../../../core.php';
 $rs = $dbo->fetchArray('
 SELECT 
 	`co_contratti`.`id`,
-    `co_contratti`.`idsede_destinazione`,
+    `co_contratti`.`id_sede_destinazione`,
     ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`idstatointervento` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
     `co_contratti`.`nome`, 
     DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, 
@@ -100,10 +100,10 @@ if (!empty($rs)) {
         <td>
             '.Modules::link('Contratti', $r['id'], $r['nome']).'<br>
             <small class="help-block">'.$r['ragione_sociale'].' - ';
-        if ($r['idsede_destinazione'] == 0) {
+        if ($r['id_sede_destinazione'] == 0) {
             echo $r['citta'];
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['idsede_destinazione']));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r['id_sede_destinazione']));
 
             echo $rsp2[0]['descrizione'];
         }

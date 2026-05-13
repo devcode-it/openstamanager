@@ -28,10 +28,10 @@ $preventivo = $dbo->fetchOne('SELECT numero, data_bozza  FROM co_preventivi WHER
 $contratto = $dbo->fetchOne('SELECT nome, numero, data_bozza FROM co_contratti WHERE id = '.prepare($documento['id_contratto']));
 
 $id_cliente = $documento['id_anagrafica'];
-$id_sede = $documento['idsede'];
+$id_sede = $documento['id_sede'];
 
-if (!empty($documento['idsede_destinazione'])) {
-    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['idsede_destinazione']));
+if (!empty($documento['id_sede_destinazione'])) {
+    $sedi = $dbo->fetchOne('SELECT nomesede, cap, citta, indirizzo, provincia FROM an_sedi WHERE id = '.prepare($documento['id_sede_destinazione']));
 
     $s_nomesede = $sedi['nomesede'];
     $s_citta = $sedi['citta'];

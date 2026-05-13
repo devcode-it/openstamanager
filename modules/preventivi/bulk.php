@@ -73,9 +73,9 @@ switch (post('op')) {
                 ++$numero_totale;
 
                 // Ricerca fattura per anagrafica tra le registrate
-                $id_sede = $raggruppamento == 'sede' ? $documento_import->idsede_destinazione : 0;
+                $id_sede = $raggruppamento == 'sede' ? $documento_import->id_sede_destinazione : 0;
                 if ($raggruppamento == 'sede') {
-                    $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->idsede_destinazione == $id_sede);
+                    $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica && $item->id_sede_destinazione == $id_sede);
                 } else {
                     $fattura = $documenti->first(fn ($item, $key) => $item->anagrafica->id == $id_anagrafica);
                 }
@@ -86,7 +86,7 @@ switch (post('op')) {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                             ->where('idstatodocumento', $stato_documenti_accodabili->id)
                             ->where('idtipodocumento', $tipo_documento->id)
-                            ->where('idsede_destinazione', $id_sede)
+                            ->where('id_sede_destinazione', $id_sede)
                             ->first();
                     } else {
                         $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
@@ -103,7 +103,7 @@ switch (post('op')) {
                 // Creazione fattura per anagrafica
                 if (empty($fattura)) {
                     $fattura = Fattura::build($anagrafica, $tipo_documento, $data, $id_segment);
-                    $fattura->idsede_destinazione = $id_sede;
+                    $fattura->id_sede_destinazione = $id_sede;
                     $fattura->save();
                     $documenti->push($fattura);
                 }

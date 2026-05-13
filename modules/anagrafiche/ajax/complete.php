@@ -63,7 +63,7 @@ switch ($resource) {
         $results = [];
 
         // Tutti i referenti per questo cliente
-        $q = "SELECT DISTINCT(email), (SELECT nomesede FROM an_sedi WHERE an_sedi.id=an_referenti.idsede) AS sede, id_anagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY id_anagrafica';
+        $q = "SELECT DISTINCT(email), (SELECT nomesede FROM an_sedi WHERE an_sedi.id=an_referenti.id_sede) AS sede, id_anagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY id_anagrafica';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {

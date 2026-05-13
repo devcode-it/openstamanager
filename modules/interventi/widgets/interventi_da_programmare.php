@@ -46,12 +46,12 @@ if (!empty($rs)) {
 				<td><a target="_blank" >'.Modules::link('Interventi', $r->id, $r->codice).'</a></td>
                 <td><a target="_blank" >'.Modules::link('Anagrafiche', $r->id_anagrafica, $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id='.prepare($r->id_anagrafica))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
-        if ($r->idsede_destinazione == '-1') {
+        if ($r->id_sede_destinazione == '-1') {
             echo '- Nessuna -';
-        } elseif (empty($r->idsede_destinazione)) {
+        } elseif (empty($r->id_sede_destinazione)) {
             echo tr('Sede legale');
         } else {
-            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r->idsede_destinazione));
+            $rsp2 = $dbo->fetchArray("SELECT id, CONCAT( CONCAT_WS( ' (', CONCAT_WS(', ', nomesede, citta), indirizzo ), ')') AS descrizione FROM an_sedi WHERE id=".prepare($r->id_sede_destinazione));
 
             echo $rsp2[0]['descrizione'];
         }

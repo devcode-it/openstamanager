@@ -110,20 +110,20 @@ echo '
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "select-options": '.json_encode(['idsede_partenza' => $record['idsede_partenza']]).', "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "id_sede_partenza", "ajax-source": "sedi_azienda", "value": "$id_sede_partenza$", "select-options": '.json_encode(['id_sede_partenza' => $record['id_sede_partenza']]).', "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'" ]}
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "id_sede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$id_sede_destinazione$", "help": "'.tr('Sedi del destinatario').'" ]}
                 </div>';
 } else {
     echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "id_sede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$id_sede_partenza$", "help": "'.tr('Sedi del mittente').'" ]}
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "id_sede_destinazione", "ajax-source": "sedi_azienda", "value": "$id_sede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
                 </div>';
 }
 
@@ -136,7 +136,7 @@ if (!empty($record['idreferente'])) {
     echo Plugins::link('Referenti', $record['id_anagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'} ]}
                 </div>';
 
 if ($dir == 'entrata') {
@@ -357,7 +357,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "'.$dir.'", "id_anagrafica": '.$record['id_anagrafica'].', "id_agente": '.$record['id_agente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1, "id_sede_partenza": '.intval($record['id_sede_partenza']).', "id_sede_destinazione": '.intval($record['id_sede_destinazione']).', "dir": "'.$dir.'", "id_anagrafica": '.$record['id_anagrafica'].', "id_agente": '.$record['id_agente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">
@@ -561,8 +561,8 @@ $(document).ready(function() {
     });
 });
 
-$("#idsede").change(function(){
-    updateSelectOption("idsede_destinazione", $(this).val());
+$("#id_sede").change(function(){
+    updateSelectOption("id_sede_destinazione", $(this).val());
     $("#idreferente").selectReset();
 });
 
@@ -570,7 +570,7 @@ $("#id_anagrafica").change(function() {
     updateSelectOption("id_anagrafica", $(this).val());
     session_set("superselect,id_anagrafica", $(this).val(), 0);
 
-	$("#idsede").selectReset();
+	$("#id_sede").selectReset();
     $("#idpagamento").selectReset();
 
     let data = $(this).selectData();

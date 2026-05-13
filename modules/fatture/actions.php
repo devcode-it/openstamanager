@@ -147,8 +147,8 @@ switch ($op) {
         $fattura->idporto = post('idporto') ?: null;
         $fattura->idaspettobeni = post('idaspettobeni') ?: null;
         $fattura->idvettore = post('idvettore') ?: null;
-        $fattura->idsede_partenza = post('idsede_partenza') ?: null;
-        $fattura->idsede_destinazione = post('idsede_destinazione') ?: null;
+        $fattura->id_sede_partenza = post('id_sede_partenza') ?: null;
+        $fattura->id_sede_destinazione = post('id_sede_destinazione') ?: null;
         $fattura->idconto = post('idconto') ?: null;
         $fattura->split_payment = post('split_payment') ?: 0;
         $fattura->is_fattura_conto_terzi = post('is_fattura_conto_terzi') ?: 0;
@@ -888,10 +888,10 @@ switch ($op) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
-        $idsede_partenza = $idsede_partenza ?: 0;
-        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $idsede_destinazione = $idsede_destinazione ?: 0;
+        $id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_partenza : $documento->id_sede_destinazione;
+        $id_sede_partenza = $id_sede_partenza ?: 0;
+        $id_sede_destinazione = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        $id_sede_destinazione = $id_sede_destinazione ?: 0;
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
@@ -905,8 +905,8 @@ switch ($op) {
                 $fattura->idpagamento = setting('Tipo di pagamento predefinito');
             }
 
-            $fattura->idsede_partenza = $idsede_partenza ?: null;
-            $fattura->idsede_destinazione = $idsede_destinazione ?: null;
+            $fattura->id_sede_partenza = $id_sede_partenza ?: null;
+            $fattura->id_sede_destinazione = $id_sede_destinazione ?: null;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
             $fattura->idreferente = $documento->idreferente ?: null;
             $fattura->id_agente = $documento->id_agente ?: null;
@@ -1035,8 +1035,8 @@ switch ($op) {
         $nota->idpagamento = $fattura->idpagamento;
         $nota->id_banca_azienda = $fattura->id_banca_azienda;
         $nota->id_banca_controparte = $fattura->id_banca_controparte;
-        $nota->idsede_partenza = $fattura->idsede_partenza;
-        $nota->idsede_destinazione = $fattura->idsede_destinazione;
+        $nota->id_sede_partenza = $fattura->id_sede_partenza;
+        $nota->id_sede_destinazione = $fattura->id_sede_destinazione;
         $nota->split_payment = $fattura->split_payment;
         $nota->save();
 
@@ -1271,7 +1271,7 @@ switch ($op) {
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $fattura->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $fattura->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
                 }
@@ -1388,7 +1388,7 @@ switch ($op) {
             $sconto = 0;
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $fattura->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $fattura->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                 }
@@ -1566,8 +1566,8 @@ if (get('op') == 'nota_addebito') {
     $nota->idpagamento = $fattura->idpagamento;
     $nota->id_banca_azienda = $fattura->id_banca_azienda;
     $nota->id_banca_controparte = $fattura->id_banca_controparte;
-    $nota->idsede_partenza = $fattura->idsede_partenza;
-    $nota->idsede_destinazione = $fattura->idsede_destinazione;
+    $nota->id_sede_partenza = $fattura->id_sede_partenza;
+    $nota->id_sede_destinazione = $fattura->id_sede_destinazione;
     $nota->save();
 
     $id_record = $nota->id;

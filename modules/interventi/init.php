@@ -32,7 +32,7 @@ if (!empty($id_record)) {
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
         `in_statiintervento`.`is_bloccato` AS flag_completato,
         `in_statiintervento`.`colore` AS colore,
-        IF((`in_interventi`.`idsede_destinazione` = 0), `an_anagrafiche`.`id_zona`, `an_sedi`.`id_zona`) AS id_zona,
+        IF((`in_interventi`.`id_sede_destinazione` = 0), `an_anagrafiche`.`id_zona`, `an_sedi`.`id_zona`) AS id_zona,
         `in_interventi`.`id_anagrafica` as id_anagrafica,
         `in_interventi`.`id_preventivo` as idpreventivo,
         `in_interventi`.`id_contratto` as idcontratto,
@@ -40,7 +40,7 @@ if (!empty($id_record)) {
     FROM 
         `in_interventi`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
-        LEFT JOIN `an_sedi` ON `in_interventi`.`idsede_destinazione` = `an_sedi`.`id`
+        LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione` = `an_sedi`.`id`
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`id`
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));

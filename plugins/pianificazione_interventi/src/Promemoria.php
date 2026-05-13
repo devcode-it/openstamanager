@@ -61,7 +61,7 @@ class Promemoria extends Document
         $model->tipo()->associate($tipo);
 
         $model->data_richiesta = $data_richiesta;
-        $model->idsede = $contratto->idsede_destinazione;
+        $model->id_sede = $contratto->id_sede_destinazione;
 
         // Salvataggio delle informazioni
         $model->save();

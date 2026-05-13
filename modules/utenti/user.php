@@ -52,7 +52,7 @@ if (!empty(filter('id_anagrafica'))) {
 
 // Lettura sedi dell'utente già impostate
 if (!empty($user)) {
-    $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(idsede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
+    $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(id_sede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
 }
 
 // Verifica se si sta creando un utente per il gruppo Tecnici
@@ -145,7 +145,7 @@ echo '
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi.'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi.'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
 				</div>
 			</div>
 		</div>
@@ -186,7 +186,7 @@ function submitCheck() {
 $(document).ready(function() {
     $("#idanag").change(function() {
         session_set("superselect,id_anagrafica", $(this).val(), 0);
-        $("#idsede").selectReset();
+        $("#id_sede").selectReset();
 
         // Verifica tipo anagrafica per utenti tecnici
         var isNewUser = '.($is_new_user ? 'true' : 'false').';

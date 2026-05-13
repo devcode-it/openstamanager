@@ -24,9 +24,9 @@ use Modules\Articoli\Articolo;
 
 $articolo = Articolo::find($id_record);
 
-$idsede = (empty(get('idsede')) ? 0 : get('idsede'));
+$id_sede = (empty(get('id_sede')) ? 0 : get('id_sede'));
 $movimenti = $articolo->movimentiComposti()
-    ->where('idsede', $idsede)
+    ->where('id_sede', $id_sede)
     ->orderBy('mg_movimenti.data', 'DESC')
     ->orderBy('mg_movimenti.id', 'DESC');
 
@@ -49,16 +49,16 @@ if (!empty($movimenti)) {
 
     foreach ($movimenti as $i => $movimento) {
         // Quantità progressiva
-        if ($mov[$movimento['idsede']]['progressivo_finale'] === null) {
-            $movimento['progressivo_finale'] = $giacenze[$movimento['idsede']][0];
+        if ($mov[$movimento['id_sede']]['progressivo_finale'] === null) {
+            $movimento['progressivo_finale'] = $giacenze[$movimento['id_sede']][0];
         } else {
-            $movimento['progressivo_finale'] = $mov[$movimento['idsede']]['progressivo_iniziale'];
+            $movimento['progressivo_finale'] = $mov[$movimento['id_sede']]['progressivo_iniziale'];
         }
 
         $movimento['progressivo_iniziale'] = $movimento['progressivo_finale'] - $movimento->qta;
 
-        $mov[$movimento['idsede']]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
-        $mov[$movimento['idsede']]['progressivo_finale'] = $movimento['progressivo_finale'];
+        $mov[$movimento['id_sede']]['progressivo_iniziale'] = $movimento['progressivo_iniziale'];
+        $mov[$movimento['id_sede']]['progressivo_finale'] = $movimento['progressivo_finale'];
 
         $totale += $movimento->qta;
 

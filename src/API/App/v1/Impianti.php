@@ -75,7 +75,7 @@ class Impianti extends AppResource
         $query = 'SELECT
             `impianti`.`id`,
             `impianti`.`id_anagrafica` AS id_cliente,
-            `impianti`.`idsede` AS id_sede,
+            `impianti`.`id_sede` AS id_sede,
             `impianti`.`matricola`,
             `impianti`.`nome`,
             `impianti`.`descrizione`,

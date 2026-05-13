@@ -221,7 +221,7 @@ class CSV extends CSVImporter
             $this->aggiornaIntervento($intervento, $record);
 
             // Imposta la sede di partenza a 0 (sede legale di default)
-            $intervento->idsede_partenza = 0;
+            $intervento->id_sede_partenza = 0;
 
             // Collega l'impianto all'intervento se specificato
             if (!empty($impianto)) {

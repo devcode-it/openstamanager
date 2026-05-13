@@ -4,7 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 // Elenco articoli caricati sull'automezzo
 $rs2 = $dbo->fetchArray('SELECT 
-        `mg_movimenti`.`idsede` AS id, 
+        `mg_movimenti`.`id_sede` AS id, 
         `mg_articoli`.`codice` AS codice, 
         `idarticolo`, 
         SUM(`mg_movimenti`.`qta`) AS qta_automezzo, 
@@ -17,7 +17,7 @@ $rs2 = $dbo->fetchArray('SELECT
         INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id` 
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
-        `mg_movimenti`.`idsede`='.prepare($id_record).' 
+        `mg_movimenti`.`id_sede`='.prepare($id_record).' 
     GROUP BY 
         `idarticolo`
     HAVING 

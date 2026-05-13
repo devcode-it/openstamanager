@@ -25,7 +25,7 @@ include_once __DIR__.'/../../core.php';
 
 // Lettura dei parametri di interesse
 $id_anagrafica = filter('id_anagrafica');
-$id_sede = filter('idsede');
+$id_sede = filter('id_sede');
 $richiesta = filter('richiesta');
 $descrizione = filter('descrizione');
 $id_tipo = filter('id_tipo');
@@ -78,7 +78,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
     $descrizione = $promemoria['descrizione'];
-    $id_sede = $promemoria['idsede'];
+    $id_sede = $promemoria['id_sede'];
     $impianti_collegati = $promemoria['idimpianti'];
     $tecnici_assegnati = $promemoria['idtecnici'];
     $data_scadenza = $promemoria['data_scadenza'];
@@ -105,7 +105,7 @@ elseif (!empty($id_intervento)) {
     $data_scadenza = $intervento['data_scadenza'];
     $richiesta = $intervento['richiesta'];
     $descrizione = $intervento['descrizione'];
-    $id_sede = $intervento['idsede_destinazione'];
+    $id_sede = $intervento['id_sede_destinazione'];
     $id_anagrafica = $intervento['id_anagrafica'];
     $id_cliente_finale = $intervento['id_cliente_finale'];
     $id_contratto = $intervento['idcontratto'];
@@ -172,7 +172,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "id_sede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -186,7 +186,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "id_sede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -440,7 +440,7 @@ if (!empty($id_intervento)) {
     echo '
 <script type="text/javascript">
     $(document).ready(function() {
-       input("idsede_destinazione").disable();
+       input("id_sede_destinazione").disable();
        input("idpreventivo").disable();
        input("idcontratto").disable();
        input("idordine").disable();
@@ -470,7 +470,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 echo '
 <script type="text/javascript">
     var anagrafica = input("id_anagrafica");
-    var sede = input("idsede_destinazione");
+    var sede = input("id_sede_destinazione");
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
@@ -643,7 +643,7 @@ echo '
             $("#gdpr-badge-container").hide();
         }
 
-        plus_sede = $(".modal #idsede_destinazione").parent().find(".btn");
+        plus_sede = $(".modal #id_sede_destinazione").parent().find(".btn");
 
         if (plus_sede.length == 1) {
             plus_sede.attr("onclick", plus_sede.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));
@@ -679,8 +679,8 @@ echo '
 
     // Gestione della modifica della sede selezionato
 	sede.change(function() {
-        updateSelectOption("idsede_destinazione", $(this).val());
-		session_set("superselect,idsede_destinazione", $(this).val(), 0);
+        updateSelectOption("id_sede_destinazione", $(this).val());
+		session_set("superselect,id_sede_destinazione", $(this).val(), 0);
 
 
         let data = sede.getData();
@@ -753,16 +753,16 @@ echo '
         // Selezione anagrafica in automatico in base impianto
         if ($(this).val()[0]) {
             input("id_anagrafica").disable();
-            input("idsede_destinazione").disable();
+            input("id_sede_destinazione").disable();
 
             let data = $(this).selectData()[0];
             input("id_anagrafica").getElement()
             .selectSetNew(data.id_anagrafica, data.ragione_sociale);
-            input("idsede_destinazione").getElement()
-            .selectSetNew(data.idsede, data.nomesede);
+            input("id_sede_destinazione").getElement()
+            .selectSetNew(data.id_sede, data.nomesede);
         } else {
             input("id_anagrafica").enable();
-            input("idsede_destinazione").enable();
+            input("id_sede_destinazione").enable();
         }
 	});
 
@@ -1150,11 +1150,11 @@ echo '
             // Non fare nulla, usa quelle
         } else {
             // Recupera coordinate in base alla logica sede
-            var sedeSelezionata = input("idsede_destinazione").get();
+            var sedeSelezionata = input("id_sede_destinazione").get();
 
             if (sedeSelezionata && sedeSelezionata !== "0") {
                 // Caso C: Sede specifica selezionata
-                var sedeData = input("idsede_destinazione").getData("select-options");
+                var sedeData = input("id_sede_destinazione").getData("select-options");
                 if (sedeData) {
                     lat = sedeData.lat;
                     lng = sedeData.lng;

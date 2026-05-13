@@ -45,7 +45,7 @@ switch ($op) {
                 'id_modello' => post('id_modello') ?: null,
                 'descrizione' => post('descrizione'),
                 'note' => post('note'),
-                'idsede' => post('idsede'),
+                'id_sede' => post('id_sede'),
                 'data' => post('data') ?: null,
                 'proprietario' => post('proprietario'),
                 'palazzo' => post('palazzo'),
@@ -95,7 +95,7 @@ switch ($op) {
         $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
         $idtecnico = post('idtecnico');
-        $idsede = post('idsede');
+        $id_sede = post('id_sede');
         $id_categoria = post('id_categoria');
         $id_sottocategoria = post('id_sottocategoria');
         $id_marca = post('id_marca');
@@ -108,7 +108,7 @@ switch ($op) {
                 'nome' => $nome,
                 'data' => date('Y-m-d'),
                 'idtecnico' => $idtecnico ?: 0,
-                'idsede' => $idsede ?: 0,
+                'id_sede' => $id_sede ?: 0,
                 'id_categoria' => $id_categoria ?: null,
                 'id_sottocategoria' => $id_sottocategoria ?: null,
                 'id_marca' => $id_marca ?: null,

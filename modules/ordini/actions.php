@@ -94,8 +94,8 @@ switch (post('op')) {
             $ordine->idspedizione = post('idspedizione') ?: null;
             $ordine->idporto = post('idporto') ?: null;
             $ordine->idvettore = post('idvettore') ?: null;
-            $ordine->idsede_partenza = post('idsede_partenza');
-            $ordine->idsede_destinazione = post('idsede_destinazione');
+            $ordine->id_sede_partenza = post('id_sede_partenza');
+            $ordine->id_sede_destinazione = post('id_sede_destinazione');
             $ordine->idconto = post('idconto');
             $ordine->idrivalsainps = $idrivalsainps ?: null;
             $ordine->idritenutaacconto = $idritenutaacconto ?: null;
@@ -535,10 +535,10 @@ switch (post('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
-        $idsede_partenza = $idsede_partenza ?: 0;
-        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $idsede_destinazione = $idsede_destinazione ?: 0;
+        $id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_partenza : $documento->id_sede_destinazione;
+        $id_sede_partenza = $id_sede_partenza ?: 0;
+        $id_sede_destinazione = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        $id_sede_destinazione = $id_sede_destinazione ?: 0;
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
@@ -546,8 +546,8 @@ switch (post('op')) {
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, $documento->nome, post('data'), post('id_segment'));
             $ordine->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
-            $ordine->idsede_partenza = $idsede_partenza;
-            $ordine->idsede_destinazione = $idsede_destinazione;
+            $ordine->id_sede_partenza = $id_sede_partenza;
+            $ordine->id_sede_destinazione = $id_sede_destinazione;
 
             $ordine->id_documento_fe = $documento->id_documento_fe;
             $ordine->numero_cliente = $documento->id_documento_fe;
@@ -818,7 +818,7 @@ switch (post('op')) {
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
-            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $ordine->idsede_destinazione);
+            $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $ordine->id_sede_destinazione);
             if (!$prezzo_consigliato['prezzo_unitario']) {
                 $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
             }
@@ -926,7 +926,7 @@ switch (post('op')) {
             $sconto = 0;
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ordine->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ordine->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                 }

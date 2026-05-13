@@ -26,6 +26,6 @@ $documento = Contratto::find($id_record);
 $records = $documento->interventi;
 
 $id_cliente = $documento['id_anagrafica'];
-$id_sede = $documento['idsede'];
+$id_sede = $documento['id_sede'];
 
 $pricing = $options['pricing'];

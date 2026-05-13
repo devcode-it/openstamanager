@@ -235,7 +235,7 @@ switch ($resource) {
         $id_articolo = get('id_articolo');
         $id_anagrafica = get('id_anagrafica');
         $direzione = get('dir') == 'uscita' ? 'uscita' : 'entrata';
-        $idsede_destinazione = get('idsede_destinazione');
+        $id_sede_destinazione = get('id_sede_destinazione');
 
         if (empty($id_articolo) || empty($id_anagrafica)) {
             return;
@@ -257,7 +257,7 @@ switch ($resource) {
 
         // prezzi listini sede
         $listino_sede = [];
-        if ($idsede_destinazione) {
+        if ($id_sede_destinazione) {
             $query = 'SELECT minimo, massimo,
                 sconto_percentuale AS sconto_percentuale_listino,
                 '.($prezzi_ivati ? 'prezzo_unitario_ivato' : 'prezzo_unitario').' AS prezzo_unitario_listino
@@ -269,7 +269,7 @@ switch ($resource) {
             AND mg_listini.attivo=1
             AND id_articolo = '.prepare($id_articolo).'
             AND dir = '.prepare($direzione).'
-            AND an_sedi.id = '.prepare($idsede_destinazione).'
+            AND an_sedi.id = '.prepare($id_sede_destinazione).'
             ORDER BY minimo ASC, massimo DESC';
             $listino_sede = $database->fetchArray($query);
         }

@@ -42,7 +42,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
     <div class="row">
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "idsede_partenza": 0, "idsede_destinazione": 0} ]}
+            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0} ]}
         </div>
 
         <div class="col-md-2">
@@ -67,11 +67,11 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Sede partenza'); ?>", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede partenza'); ?>", "name": "id_sede_partenza", "ajax-source": "sedi_azienda", "value": "0", "required": 1, "disabled": "1" ]}
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
+            {[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "id_sede_destinazione", "ajax-source": "sedi_azienda", "value": "0", "required": 1 ]}
         </div>
     </div>
 
@@ -157,18 +157,18 @@ echo '
                 $("#tipo_movimento").val(data.tipo_movimento);
 
                 if (data.tipo_movimento === "carico") {
-                    disabilitaSede("#idsede_partenza");
-                    abilitaSede("#idsede_destinazione");
+                    disabilitaSede("#id_sede_partenza");
+                    abilitaSede("#id_sede_destinazione");
                 } else if (data.tipo_movimento === "scarico") {
-                    abilitaSede("#idsede_partenza");
-                    disabilitaSede("#idsede_destinazione");
+                    abilitaSede("#id_sede_partenza");
+                    disabilitaSede("#id_sede_destinazione");
                 } else {
-                    abilitaSede("#idsede_partenza");
-                    abilitaSede("#idsede_destinazione");
+                    abilitaSede("#id_sede_partenza");
+                    abilitaSede("#id_sede_destinazione");
                 }
             } else {
-                disabilitaSede("#idsede_partenza");
-                disabilitaSede("#idsede_destinazione");
+                disabilitaSede("#id_sede_partenza");
+                disabilitaSede("#id_sede_destinazione");
             }
         });
 
@@ -399,16 +399,16 @@ echo '
 echo '
 <script>
 
-    $("#idsede_partenza").change(function(){
-        updateSelectOption("idsede_partenza", $(this).val());
-        session_set("superselect,idsede_partenza", $(this).val(), 0);
+    $("#id_sede_partenza").change(function(){
+        updateSelectOption("id_sede_partenza", $(this).val());
+        session_set("superselect,id_sede_partenza", $(this).val(), 0);
 
         $("#idarticolo").selectReset();
     });
 
-    $("#idsede_destinazione").change(function(){
-        updateSelectOption("idsede_destinazione", $(this).val());
-        session_set("superselect,idsede_destinazione", $(this).val(), 0);
+    $("#id_sede_destinazione").change(function(){
+        updateSelectOption("id_sede_destinazione", $(this).val());
+        session_set("superselect,id_sede_destinazione", $(this).val(), 0);
 
         $("#idarticolo").selectReset();
     });

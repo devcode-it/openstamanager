@@ -61,7 +61,7 @@ echo '
 
 	<div class="row">
 		<div class="col-md-12">
-		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi.'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
+		    {[ "type": "select", "label": "'.tr('Sede').'", "name": "id_sede[]", "ajax-source": "sedi_azienda", "multiple": "1", "value":"'.$sedi.'", "help": "'.tr('Sede Azienda abilitata per la movimentazione degli articoli. L\'impostazione non viene considerata per gli utenti del gruppo \'Amministratori\'.').'" ]}
 		</div>
 	</div>';
 
@@ -71,7 +71,7 @@ echo '
             $("#idanag").change(function() {
                 session_set("superselect,id_anagrafica", $(this).val(), 0);
 
-                $("#idsede").selectReset();
+                $("#id_sede").selectReset();
             })
         });
     </script>';

@@ -27,7 +27,7 @@ $danni = $dbo->fetchArray('
     FROM
         an_automezzi_danni m
     WHERE
-        m.idsede = '.prepare($id_record).'
+        m.id_sede = '.prepare($id_record).'
     ORDER BY
         m.data DESC
 ');

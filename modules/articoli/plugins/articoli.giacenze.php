@@ -296,9 +296,9 @@ echo '
 echo '
 <script>
 
-function getDettagli(idsede) {
+function getDettagli(id_sede) {
     // Apertura modal
-    openModal("'.tr('Dettagli').'", "'.$rootdir.'/modules/articoli/plugins/dettagli_giacenze.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&idsede=" + idsede );
+    openModal("'.tr('Dettagli').'", "'.$rootdir.'/modules/articoli/plugins/dettagli_giacenze.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&id_sede=" + id_sede );
 }
 
 function aggiornaSogliaMinima(id_sede) {

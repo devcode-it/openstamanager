@@ -344,7 +344,7 @@ echo '
                 <div class="col-md-3">';
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
             </div>
         </div>
@@ -397,20 +397,20 @@ $id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "id_sede_partenza", "ajax-source": "sedi_azienda", "value": "$id_sede_partenza$", "help": "'.tr("Sedi di partenza dell'azienda").'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "id_sede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$id_sede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 } else {
     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "id_sede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$id_sede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi_azienda", "value": "$idsede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "id_sede_destinazione", "ajax-source": "sedi_azienda", "value": "$id_sede_destinazione$", "help": "'.tr("Sedi di arrivo dell'azienda").'" ]}
                 </div>';
 }
 ?>
@@ -891,7 +891,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "id_anagrafica": '.$fattura->id_anagrafica.', "dir": "'.$dir.'", "id_agente": '.$fattura->id_agente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "id_sede_partenza": '.intval($fattura->id_sede_partenza).', "id_sede_destinazione": '.intval($fattura->id_sede_destinazione).', "id_anagrafica": '.$fattura->id_anagrafica.', "dir": "'.$dir.'", "id_agente": '.$fattura->id_agente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-3" style="margin-top: 25px">
@@ -1060,9 +1060,9 @@ echo '
         }';
 
 if ($dir == 'entrata') {
-    echo '$("#idsede_destinazione").selectReset();';
+    echo '$("#id_sede_destinazione").selectReset();';
 } else {
-    echo '$("#idsede_partenza").selectReset();';
+    echo '$("#id_sede_partenza").selectReset();';
 }
 
 echo '
@@ -1184,7 +1184,7 @@ echo '
 
 <?php
 // Eliminazione ddt solo se ho accesso alla sede aziendale
-$field_name = ($dir == 'entrata') ? 'idsede_partenza' : 'idsede_destinazione';
+$field_name = ($dir == 'entrata') ? 'id_sede_partenza' : 'id_sede_destinazione';
 if (in_array($record[$field_name], $user->sedi) || AuthOSM::admin()) {
     $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT']);
 
@@ -1255,8 +1255,8 @@ $(document).ready(function () {
         }
     });
 
-    $("#idsede_destinazione").change(function(){
-        updateSelectOption("idsede_destinazione", $(this).val());
+    $("#id_sede_destinazione").change(function(){
+        updateSelectOption("id_sede_destinazione", $(this).val());
         $("#idreferente").selectReset();
     });
 
@@ -1351,7 +1351,7 @@ if ($dir == 'entrata') {
         }
     }
     $(document).ready(function() {
-        $("#idsede_partenza").trigger("change");
+        $("#id_sede_partenza").trigger("change");
 
         if(!$("#volume_manuale").is(":checked")){
             input("volume").set($("#volume_calcolato").val());
@@ -1457,11 +1457,11 @@ function risolviStato() {
 }
 
 // Impostazione della sede di partenza
-var sede_partenza = input("idsede_partenza");
+var sede_partenza = input("id_sede_partenza");
 
 sede_partenza.change(function() {
-    updateSelectOption("idsede_partenza", $(this).val());
-    session_set("superselect,idsede_partenza", $(this).val(), 0);
+    updateSelectOption("id_sede_partenza", $(this).val());
+    session_set("superselect,id_sede_partenza", $(this).val(), 0);
 })
 </script>';
 

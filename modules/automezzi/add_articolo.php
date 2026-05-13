@@ -9,7 +9,7 @@ $op = 'addrow';
 $qta = 1;
 
 if (!empty($idarticolo) && !empty($idautomezzo)) {
-    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.idsede='.prepare($idautomezzo))['qta'];
+    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.id_sede='.prepare($idautomezzo))['qta'];
     $op = 'editrow';
 }
 
@@ -25,7 +25,7 @@ echo '
 // Seleziona articolo
 echo '
     <div class="col-md-8">
-        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli", "select-options": '.json_encode(['idsede_partenza' => 0]).' ]}
+        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli", "select-options": '.json_encode(['id_sede_partenza' => 0]).' ]}
     </div>';
 
 // Quantità

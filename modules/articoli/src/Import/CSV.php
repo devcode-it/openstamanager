@@ -813,7 +813,7 @@ class CSV extends CSVImporter
 
             if ($qta_movimento != 0) {
                 $articolo->movimenta($qta_movimento, tr('Movimento da importazione'), new Carbon($record['data_qta']), true, [
-                    'idsede' => $id_sede,
+                    'id_sede' => $id_sede,
                 ]);
             }
         } catch (\Exception $e) {

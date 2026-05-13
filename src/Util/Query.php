@@ -151,7 +151,7 @@ class Query
             '|'.$segment_filter.'|' => (!empty($segment) && $is_sezionale) ? ' AND '.$segment_name.' = '.prepare($segment) : '',
 
             // Filtro dinamico per il modulo Giacenze sedi - con validazione
-            '|giacenze_sedi_idsede|' => prepare($_SESSION['giacenze_sedi']['idsede'] ?? null),
+            '|giacenze_sedi_id_sede|' => prepare($_SESSION['giacenze_sedi']['id_sede'] ?? null),
 
             // Filtro per lingua
             '|lang|' => '`id_lang` = '.prepare($lang),

@@ -98,8 +98,8 @@ switch (filter('op')) {
             $ddt->id_agente = post('id_agente');
             $ddt->idspedizione = post('idspedizione') ?: null;
             $ddt->idcausalet = post('idcausalet') ?: null;
-            $ddt->idsede_partenza = post('idsede_partenza');
-            $ddt->idsede_destinazione = post('idsede_destinazione');
+            $ddt->id_sede_partenza = post('id_sede_partenza');
+            $ddt->id_sede_destinazione = post('id_sede_destinazione');
             $ddt->idvettore = post('idvettore') ?: null;
             $ddt->data_ora_trasporto = post('data_ora_trasporto') ?: null;
             $ddt->idporto = post('idporto') ?: null;
@@ -297,10 +297,10 @@ switch (filter('op')) {
         $documento = $class::find($id_documento);
 
         // Individuazione sede
-        $idsede_partenza = ($documento->direzione == 'entrata') ? $documento->idsede_partenza : $documento->idsede_destinazione;
-        $idsede_partenza = $idsede_partenza ?: 0;
-        $idsede_destinazione = ($documento->direzione == 'entrata') ? $documento->idsede_destinazione : $documento->idsede_partenza;
-        $idsede_destinazione = $idsede_destinazione ?: 0;
+        $id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_partenza : $documento->id_sede_destinazione;
+        $id_sede_partenza = $id_sede_partenza ?: 0;
+        $id_sede_destinazione = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        $id_sede_destinazione = $id_sede_destinazione ?: 0;
 
         // Creazione del ddt al volo
         if (post('create_document') == 'on') {
@@ -313,8 +313,8 @@ switch (filter('op')) {
             $ddt->codice_cup = $documento->codice_cup;
             $ddt->codice_cig = $documento->codice_cig;
             $ddt->num_item = $documento->num_item;
-            $ddt->idsede_partenza = $idsede_partenza;
-            $ddt->idsede_destinazione = $idsede_destinazione;
+            $ddt->id_sede_partenza = $id_sede_partenza;
+            $ddt->id_sede_destinazione = $id_sede_destinazione;
 
             $ddt->idcausalet = post('id_causale_trasporto');
             $ddt->idreferente = $documento->idreferente;
@@ -583,8 +583,8 @@ switch (filter('op')) {
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;
-        $copia->idsede_partenza = $ddt->idsede_partenza;
-        $copia->idsede_destinazione = $ddt->idsede_destinazione;
+        $copia->id_sede_partenza = $ddt->id_sede_partenza;
+        $copia->id_sede_destinazione = $ddt->id_sede_destinazione;
 
         // Assegna il numero progressivo poiché il DDT viene creato già evaso
         $copia->numero_esterno = DDT::getNextNumeroSecondario($copia->data, $dir, $copia->id_segment);
@@ -756,7 +756,7 @@ switch (filter('op')) {
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $ddt->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $articolo, $ddt->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $articolo);
                 }
@@ -862,7 +862,7 @@ switch (filter('op')) {
             $sconto = 0;
             if ($riga->isArticolo()) {
                 $id_articolo = $riga->idarticolo;
-                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ddt->idsede_destinazione);
+                $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ddt->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);
                 }

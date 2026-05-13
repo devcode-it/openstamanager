@@ -69,7 +69,7 @@ $sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - "
 $movimenti = $articolo->movimentiComposti();
 
 // Raggruppamento per documento e ordinamento
-$movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.idsede', 'an_sedi.id')
+$movimenti = $movimenti->leftJoin('an_sedi', 'mg_movimenti.id_sede', 'an_sedi.id')
     ->orderByDesc('mg_movimenti.data')
     ->orderByDesc('mg_movimenti.created_at')
     ->orderByDesc('mg_movimenti.id')
@@ -84,8 +84,8 @@ if (empty($_GET['movimentazione_completa'])) {
 // Raggruppamento movimenti per sede
 $movimenti_per_sede = [];
 foreach ($movimenti as $movimento) {
-    $idsede = (int) $movimento->idsede;
-    $movimenti_per_sede[$idsede][] = $movimento;
+    $id_sede = (int) $movimento->id_sede;
+    $movimenti_per_sede[$id_sede][] = $movimento;
 }
 
 if (!empty($movimenti)) {
@@ -116,16 +116,16 @@ if (!empty($movimenti)) {
 
         foreach ($movimenti_sede as $i => $movimento) {
             // Quantità progressiva
-            if ($mov[$movimento->idsede]['progressivo_finale'] === null) {
-                $movimento->progressivo_finale = $giacenze[$movimento->idsede][0];
+            if ($mov[$movimento->id_sede]['progressivo_finale'] === null) {
+                $movimento->progressivo_finale = $giacenze[$movimento->id_sede][0];
             } else {
-                $movimento->progressivo_finale = $mov[$movimento->idsede]['progressivo_iniziale'];
+                $movimento->progressivo_finale = $mov[$movimento->id_sede]['progressivo_iniziale'];
             }
 
             $movimento->progressivo_iniziale = $movimento->progressivo_finale - $movimento->qta;
 
-            $mov[$movimento->idsede]['progressivo_iniziale'] = $movimento->progressivo_iniziale;
-            $mov[$movimento->idsede]['progressivo_finale'] = $movimento->progressivo_finale;
+            $mov[$movimento->id_sede]['progressivo_iniziale'] = $movimento->progressivo_iniziale;
+            $mov[$movimento->id_sede]['progressivo_finale'] = $movimento->progressivo_finale;
 
             // Quantità
             echo '

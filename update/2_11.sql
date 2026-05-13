@@ -746,7 +746,7 @@ FROM
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
     LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
+    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` AS `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`id`
     LEFT JOIN `an_sedi` AS `sedi` ON `dt_ddt`.`id_sede_partenza` = `sedi`.`id`
@@ -776,7 +776,7 @@ FROM
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
     LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
-    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`idspedizione` = `dt_spedizione`.`id`
+    LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`id`
     LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`id_sede_partenza` = sedi.`id`
@@ -1071,3 +1071,4 @@ ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata` `costo_
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;

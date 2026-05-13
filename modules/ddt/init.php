@@ -55,7 +55,7 @@ if (!empty($id_record)) {
     if (!empty($record)) {
         $record['idporto'] = $record['idporto'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
         $record['id_causale_t'] = $record['id_causale_t'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
-        $record['idspedizione'] = $record['idspedizione'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
+        $record['id_spedizione'] = $record['id_spedizione'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
     }
 
     // Se la sede del ddt non è di mia competenza, blocco il ddt in modifica

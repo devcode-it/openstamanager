@@ -36,7 +36,7 @@ class Spedizione extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idspedizione');
+        return $this->hasMany(DDT::class, 'id_spedizione');
     }
 
     public function getModuleAttribute()

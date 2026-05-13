@@ -630,19 +630,19 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "idspedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "$idspedizione$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "id_spedizionee", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "id_spedizionene$" ]}
                 </div>
 
                 <div class="col-md-3">';
     $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-        'id' => $record['idspedizione'],
+        'id' => $record['id_spedizionee'],
     ])['esterno']; ?>
 
                     {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['idvettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
 <script>
-    $("#idspedizione").change(function() {
+    $("#id_spedizionee").change(function() {
         if($(this).val()){
             if (!$(this).selectData().esterno) {
                 $("#idvettore").attr("required", false);

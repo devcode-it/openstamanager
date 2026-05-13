@@ -209,7 +209,7 @@ class Fattura extends Document
 
             $model->idporto = $porto;
             $model->id_causale_t = $causalet;
-            $model->idspedizione = $spedizione;
+            $model->id_spedizione = $spedizione;
         }
 
         $model->save();

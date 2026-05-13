@@ -79,8 +79,8 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `idspedizione`='.prepare($id_record).'
-            UNION SELECT `id` FROM `co_documenti` WHERE `idspedizione`='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_spedizionee`='.prepare($id_record).'
+            UNION SELECT `id` FROM `co_documenti` WHERE `id_spedizionee`='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
             $dbo->delete('dt_spedizione', ['id' => $id_record]);

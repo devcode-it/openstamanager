@@ -205,7 +205,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "idspedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idspedizione$", "link": "module:Tipi di spedizione" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di spedizione'); ?>", "name": "id_spedizione", "placeholder": "-", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as `descrizione`, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$id_spedizione$", "link": "module:Tipi di spedizione" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -214,7 +214,7 @@ echo '
             echo Modules::link('Anagrafiche', $record['idvettore'], null, null, 'class="pull-right"');
         }
 $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-    'id' => $record['idspedizione'],
+    'id' => $record['id_spedizione'],
 ])['esterno'];
 ?>
 					{[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "idvettore", "ajax-source": "vettori", "value": "$idvettore$", "disabled": <?php echo empty($esterno) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_idvettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['idvettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['idvettore']) ? 'unblockable' : ''; ?>" ]}
@@ -226,7 +226,7 @@ $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
             </div>
 
             <script>
-                $("#idspedizione").change(function() {
+                $("#id_spedizione").change(function() {
                     if($(this).val()){
                         if (!$(this).selectData().esterno) {
                             $("#idvettore").attr("required", false);

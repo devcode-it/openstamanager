@@ -143,7 +143,7 @@ switch ($op) {
         $fattura->id_banca_azienda = post('id_banca_azienda') ?: null;
         $fattura->id_banca_controparte = post('id_banca_controparte') ?: null;
         $fattura->id_causale_t = post('id_causale_t') ?: null;
-        $fattura->idspedizione = post('idspedizione') ?: null;
+        $fattura->id_spedizione = post('id_spedizione') ?: null;
         $fattura->idporto = post('idporto') ?: null;
         $fattura->idaspettobeni = post('idaspettobeni') ?: null;
         $fattura->idvettore = post('idvettore') ?: null;

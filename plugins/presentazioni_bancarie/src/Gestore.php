@@ -421,7 +421,7 @@ class Gestore
 
         $banca_controparte = $documento->id_banca_controparte ? Banca::find($documento->id_banca_controparte) : null;
         if (empty($banca_controparte)) {
-            $banca_controparte = Banca::where('id_anagrafica', $scadenza->idanagrafica)
+            $banca_controparte = Banca::where('id_anagrafica', $scadenza->id_anagrafica)
                 ->where('predefined', 1)
                 ->whereNull('deleted_at')
                 ->first();

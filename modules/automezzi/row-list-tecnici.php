@@ -5,7 +5,7 @@ include_once __DIR__.'/../../core.php';
 /*
     TECNICI ASSEGNATI ALL'AUTOMEZZO
 */
-$q_art = 'SELECT zz_users.*, an_anagrafiche.ragione_sociale, zz_groups.nome FROM zz_user_sedi INNER JOIN zz_users ON zz_user_sedi.id_user = zz_users.id INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica=zz_users.idanagrafica INNER JOIN zz_groups ON zz_users.idgruppo = zz_groups.id WHERE zz_user_sedi.idsede='.prepare($id_record).' ORDER BY an_anagrafiche.ragione_sociale';
+$q_art = 'SELECT zz_users.*, an_anagrafiche.ragione_sociale, zz_groups.nome FROM zz_user_sedi INNER JOIN zz_users ON zz_user_sedi.id_user = zz_users.id INNER JOIN an_anagrafiche ON an_anagrafiche.id=zz_users.id_anagrafica INNER JOIN zz_groups ON zz_users.idgruppo = zz_groups.id WHERE zz_user_sedi.idsede='.prepare($id_record).' ORDER BY an_anagrafiche.ragione_sociale';
 $rs_art = $dbo->fetchArray($q_art);
 
 if (!empty($rs_art)) {

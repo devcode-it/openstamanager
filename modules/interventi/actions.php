@@ -64,7 +64,7 @@ switch (post('op')) {
         $intervento->descrizione = post('descrizione');
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
 
-        $intervento->idanagrafica = post('idanagrafica');
+        $intervento->id_anagrafica = post('id_anagrafica');
         $intervento->idclientefinale = post('idclientefinale') ?: null;
         $intervento->idreferente = post('idreferente');
         $intervento->idagente = post('idagente');
@@ -191,7 +191,7 @@ switch (post('op')) {
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
             foreach ($tecnici as $tecnico) {
-                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id_anagrafica' => $tecnico]);
                 if (!empty($mail_tecnico['email'])) {
                     $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($mail_tecnico['email']);
@@ -219,14 +219,14 @@ switch (post('op')) {
 
     case 'add':
         if (post('id_intervento') == null) {
-            $idanagrafica = post('idanagrafica');
+            $id_anagrafica = post('id_anagrafica');
             $idtipointervento = post('idtipointervento');
             $idstatointervento = post('id');
             $data_richiesta = post('data_richiesta');
             $data_scadenza = post('data_scadenza') ?: null;
             $id_segment = post('id_segment');
 
-            $anagrafica = Anagrafica::find($idanagrafica);
+            $anagrafica = Anagrafica::find($id_anagrafica);
             $tipo = TipoSessione::find($idtipointervento);
             $stato = Stato::find($idstatointervento);
 
@@ -866,7 +866,7 @@ switch (post('op')) {
             $stato = Stato::find(post('id_stato_intervento'));
             $tipo = TipoSessione::find(post('id_tipo_intervento'));
 
-            $anagrafica = post('idanagrafica') ? Anagrafica::find(post('idanagrafica')) : $documento->anagrafica;
+            $anagrafica = post('id_anagrafica') ? Anagrafica::find(post('id_anagrafica')) : $documento->anagrafica;
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, post('data'), post('id_segment'));
             $intervento->idsede_partenza = $idsede_partenza;
@@ -1019,7 +1019,7 @@ switch (post('op')) {
                         $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                         foreach ($tecnici as $tecnico) {
-                            $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                            $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id' => $tecnico]);
                             if (!empty($mail_tecnico['email'])) {
                                 if (!empty($template)) {
                                     $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
@@ -1106,7 +1106,7 @@ switch (post('op')) {
                                 $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                                 foreach ($tecnici as $tecnico) {
-                                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['idanagrafica' => $tecnico]);
+                                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id' => $tecnico]);
                                     if (!empty($mail_tecnico['email'])) {
                                         $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                                         $mail->addReceiver($mail_tecnico['email']);
@@ -1480,7 +1480,7 @@ switch (post('op')) {
                     $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                 }
                 $id_iva = ($intervento->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $intervento->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
-                $id_anagrafica = $intervento->idanagrafica;
+                $id_anagrafica = $intervento->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
@@ -1492,10 +1492,10 @@ switch (post('op')) {
                 $sconto = $prezzo_consigliato['sconto'];
 
                 $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $intervento->idagente])['provvigione_default'];
+                $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $intervento->idagente])['provvigione_default'];
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
                 if (!empty($piano_sconto)) {
                     $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
                 }
@@ -1633,7 +1633,7 @@ switch (post('op')) {
 
     case 'update-price':
         $dir = 'entrata';
-        $id_anagrafica = $intervento->idanagrafica;
+        $id_anagrafica = $intervento->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');
@@ -1672,7 +1672,7 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }

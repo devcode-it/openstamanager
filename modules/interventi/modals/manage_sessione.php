@@ -26,10 +26,10 @@ use Models\Module;
 $show_prezzi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
-    $show_prezzi = !empty($user['idanagrafica']) && setting('Mostra i prezzi al tecnico');
+    $show_prezzi = !empty($user['id_anagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');

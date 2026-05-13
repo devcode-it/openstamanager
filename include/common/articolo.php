@@ -27,7 +27,7 @@ if ($idsede_destinazione) {
     $id_listino = $dbo->selectOne('an_sedi', 'id_listino', ['id' => $idsede_destinazione])['id_listino'];
 }
 if (!$id_listino) {
-    $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['idanagrafica' => $options['idanagrafica']])['id_listino'];
+    $id_listino = $dbo->selectOne('an_anagrafiche', 'id_listino', ['id' => $options['id_anagrafica']])['id_listino'];
 }
 
 // Articolo
@@ -95,7 +95,7 @@ echo '
     </div>
 
     <div class="col-md-4 text-center">
-        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.base_path_osm()."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&idanagrafica=".$options['idanagrafica'].'\');">
+        <button type="button" class="btn btn-sm btn-info btn-block '.($disabled ? 'disabled' : '').'" '.($disabled ? 'disabled' : '').' onclick="$(\'#prezzi\').toggleClass(\'hide\'); $(\'#prezzi\').load(\''.base_path_osm()."/ajax_complete.php?module=Articoli&op=getprezzi&idarticolo=' + ( $('#idarticolo option:selected').val() || $('#idarticolo').val()) + '&id_anagrafica=".$options['id_anagrafica'].'\');">
             <i class="fa fa-handshake-o"></i> '.($options['dir'] == 'entrata' ? tr('Ultimi prezzi al cliente') : tr('Ultimi prezzi dal fornitore')).'
         </button>
         <div id="prezzi" class="hide"></div>
@@ -419,7 +419,7 @@ function getScontoPerQuantita(qta) {
 * Funzione per registrare localmente i dettagli definiti per l\'articolo in relazione ad una specifica anagrafica.
 */
 function ottieniDettagliArticolo(id_articolo) {
-    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=dettagli_articolo&id_anagrafica='.$options['idanagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
+    return $.get(globals.rootdir + "/ajax_complete.php?module=Articoli&op=dettagli_articolo&id_anagrafica='.$options['id_anagrafica'].'&id_articolo=" + id_articolo + "&dir=" + direzione, function(response) {
         const data = JSON.parse(response);
 
         globals.aggiunta_articolo.dettagli = data;

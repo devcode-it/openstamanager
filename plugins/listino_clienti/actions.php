@@ -56,7 +56,7 @@ switch (filter('op')) {
                 $dettaglio_predefinito->sconto_percentuale = $sconto;
                 $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
                 $dettaglio_predefinito->save();
-                if ($articolo->id_fornitore == $anagrafica->idanagrafica && $direzione == 'uscita') {
+                if ($articolo->id_fornitore == $anagrafica->id && $direzione == 'uscita') {
                     $prezzo_unitario = $prezzo_unitario - ($prezzo_unitario * $sconto / 100);
                     $articolo->prezzo_acquisto = $prezzo_unitario;
                     $articolo->save();

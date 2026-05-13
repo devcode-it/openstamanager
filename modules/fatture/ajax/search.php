@@ -39,7 +39,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `iddocumento`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM co_righe_documenti GROUP BY `iddocumento`) righe ON `righe`.`iddocumento`=`co_documenti`.`id` WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `iddocumento`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM co_righe_documenti GROUP BY `iddocumento`) righe ON `righe`.`iddocumento`=`co_documenti`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -78,7 +78,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori

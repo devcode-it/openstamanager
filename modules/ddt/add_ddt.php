@@ -44,7 +44,7 @@ if (!empty($id_documento)) {
     return;
 }
 
-$id_anagrafica = $documento_finale->idanagrafica;
+$id_anagrafica = $documento_finale->id_anagrafica;
 
 echo '
 <div class="row">

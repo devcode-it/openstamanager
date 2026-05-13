@@ -27,22 +27,22 @@ class Clienti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('an_anagrafiche', 'idanagrafica', $last_sync_at);
+        return $this->getDeleted('an_anagrafiche', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)
     {
         $parameters = [];
         $query = 'SELECT
-            `an_anagrafiche`.`idanagrafica` AS id,
+            `an_anagrafiche`.`id`,
             `an_anagrafiche`.`updated_at`
         FROM 
             `an_anagrafiche`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
-            `an_tipianagrafiche_lang`.`title` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`idanagrafica` IN(SELECT `in_interventi`.`idanagrafica` FROM `in_interventi`))';
+            `an_tipianagrafiche_lang`.`title` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`id` IN(SELECT `in_interventi`.`id_anagrafica` FROM `in_interventi`))';
 
         // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');
@@ -59,8 +59,8 @@ class Clienti extends AppResource
             // Risolto da applicazione con ricerca del record locale per il Cliente
             $id_interventi = array_keys($interventi);
             $query .= '
-                AND an_anagrafiche.idanagrafica IN (
-                    SELECT idanagrafica FROM in_interventi
+                AND an_anagrafiche.id IN (
+                    SELECT id_anagrafica FROM in_interventi
                     WHERE in_interventi.id IN ('.implode(',', array_map(prepare(...), $id_interventi)).')
                 )';
         }
@@ -78,7 +78,7 @@ class Clienti extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id,
+        $query = 'SELECT `an_anagrafiche`.`id` AS id,
             `an_anagrafiche`.`ragione_sociale`,
             `an_anagrafiche`.`tipo`,
             `an_anagrafiche`.`piva` AS partita_iva,
@@ -104,7 +104,7 @@ class Clienti extends AppResource
         FROM `an_anagrafiche`
             LEFT JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id`
             LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-        WHERE `an_anagrafiche`.`idanagrafica` = '.prepare($id);
+        WHERE `an_anagrafiche`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

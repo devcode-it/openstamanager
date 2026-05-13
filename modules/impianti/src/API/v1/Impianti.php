@@ -31,7 +31,7 @@ class Impianti extends Resource implements RetrieveInterface
 
         $select = [
             'my_impianti.id',
-            'my_impianti.idanagrafica',
+            'my_impianti.id_anagrafica',
             'my_impianti.matricola',
             'my_impianti.nome',
             'my_impianti.descrizione',

@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Anagrafica;
 
 $agente = Anagrafica::where([
-    ['idanagrafica', '=', $id_record],
+    ['id', '=', $id_record],
 ])->first();
 
 if (get('is_parz_pagata') == 'true') {

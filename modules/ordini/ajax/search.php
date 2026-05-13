@@ -37,7 +37,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`= `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idordine`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM or_righe_ordini GROUP BY `idordine`) righe ON `righe`.`idordine`=`or_ordini`.`id` WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `or_ordini` INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id` LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id`= `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idordine`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM or_righe_ordini GROUP BY `idordine`) righe ON `righe`.`idordine`=`or_ordini`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -72,7 +72,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori

@@ -78,7 +78,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
-        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
     WHERE
         `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY
@@ -107,11 +107,11 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
         INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`idstato` = `vb_stati_vendita`.`id`
         LEFT JOIN `in_interventi` ON `vb_righe_venditabanco`.`idintervento` = `in_interventi`.`id`
-        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `in_interventi`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `in_interventi`.`id_anagrafica`
     WHERE
         `vb_stati_vendita`.`descrizione` = "Pagato"
     GROUP BY
-        `co_iva`.`id`, `id`, `an_anagrafiche`.`idanagrafica`
+        `co_iva`.`id`, `id`, `an_anagrafiche`.`id`
         HAVING
         data_competenza_iva BETWEEN '.prepare($date_start).' AND '.prepare($date_end).' AND totale != 0
     ) AS tabella
@@ -146,7 +146,7 @@ FROM
     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`idiva` = `co_iva`.`id`
     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
-    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_documenti`.`idanagrafica`
+    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
 WHERE
     `dir` = '.prepare($dir).' AND `idstatodocumento` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY

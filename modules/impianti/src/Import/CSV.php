@@ -482,7 +482,7 @@ class CSV extends CSVImporter
         }
 
         $impianto->nome = $record['nome'];
-        $impianto->idanagrafica = $anagrafica->idanagrafica;
+        $impianto->id_anagrafica = $anagrafica->id;
         $impianto->id_marca = $id_marca;
 
         if (!empty($record['modello'])) {
@@ -508,7 +508,7 @@ class CSV extends CSVImporter
         }
 
         $sede = Sede::where('nomesede', $record['sede'])
-            ->where('idanagrafica', $anagrafica->idanagrafica)
+            ->where('id_anagrafica', $anagrafica->id)
             ->first();
 
         if (!empty($sede)) {

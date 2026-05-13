@@ -40,7 +40,7 @@ if ($module->name == 'Ddt in uscita') {
     $label = tr('Mittente');
 }
 $id_causalet = $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined`=1')['id'];
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
+$id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -56,7 +56,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $label; ?>", "name": "id_anagrafica", "id": "id_anagrafica_add", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti_fornitori", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 
 		<!-- il campo idtipoddt può essere anche rimosso -->

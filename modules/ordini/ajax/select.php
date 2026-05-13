@@ -23,17 +23,17 @@ include_once __DIR__.'/../../../core.php';
 switch ($resource) {
     /*
      * Opzioni utilizzate:
-     * - idanagrafica
+     * - id_anagrafica
      */
     case 'ordini-cliente':
-        if (isset($superselect['idanagrafica'])) {
+        if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT
                 `or_ordini`.`id` AS id,
                 CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`title` , "]") AS descrizione
             FROM
                 `or_ordini`
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
-                INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
                 INNER JOIN `or_statiordine` ON `or_ordini`.`idstatoordine` = `or_statiordine`.`id`
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             |where|
@@ -46,7 +46,7 @@ switch ($resource) {
 
             $where[] = '`or_tipiordine`.`dir`='.prepare('entrata');
             if (empty($elements)) {
-                $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
+                $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
 
                 $stati_consentiti = ['is_fatturabile', 'is_evadibile', 'is_completato'];
                 $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)

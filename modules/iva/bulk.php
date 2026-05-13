@@ -32,7 +32,7 @@ switch (post('op')) {
             ' UNION SELECT `dt_righe_ddt`.`id` FROM `dt_righe_ddt` WHERE `dt_righe_ddt`.`idiva` = '.prepare($id).
             ' UNION SELECT `or_righe_ordini`.`id` FROM `or_righe_ordini` WHERE `or_righe_ordini`.`idiva` = '.prepare($id).
             ' UNION SELECT `mg_articoli`.`id` FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.prepare($id).
-            ' UNION SELECT `an_anagrafiche`.`idanagrafica` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id));
+            ' UNION SELECT `an_anagrafiche`.`id` AS `id` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.prepare($id).' OR `an_anagrafiche`.`idiva_acquisti` = '.prepare($id));
 
             if (empty($res)) {
                 $query_update = 'UPDATE `co_iva` SET `deleted_at` = NOW() WHERE `id` = :id';

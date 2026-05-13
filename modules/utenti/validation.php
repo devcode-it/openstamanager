@@ -70,7 +70,7 @@ switch ($name) {
         $disponibile = User::where([
             ['email', $value],
             ['email', '<>', ''],
-            // ['idanagrafica', '<>', $id_record],
+            // ['id_anagrafica', '<>', $id_record],
         ])->count() == 0;
         $result = $disponibile;
 

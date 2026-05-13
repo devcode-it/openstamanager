@@ -30,7 +30,7 @@ switch ($resource) {
     // Legge gli ultimi prezzi di vendita di un determinato cliente e un determinato articolo e li visualizza per suggerire il prezzo di vendita
     case 'getprezzi':
         $ids = [];
-        $idanagrafica = get('idanagrafica');
+        $id_anagrafica = get('id_anagrafica');
         $ids = ['""'];
 
         echo '<small>';
@@ -45,13 +45,13 @@ switch ($resource) {
                     `co_documenti`.`numero` AS n_documento, 
                     `co_documenti`.`numero_esterno` AS n2_documento, 
                     `co_documenti`.`data` AS data_documento,
-                    `co_documenti`.`idanagrafica` AS idanagrafica
+                    `co_documenti`.`id_anagrafica` AS id_anagrafica
                 FROM 
                     `co_righe_documenti`
                     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
                     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
                 WHERE 
-                    `idarticolo`='.prepare($idarticolo).' AND `co_tipidocumento`.`dir`="entrata" AND `idanagrafica`='.prepare($idanagrafica).'
+                    `idarticolo`='.prepare($idarticolo).' AND `co_tipidocumento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
             UNION
                 SELECT 
                     `idddt` AS id, 
@@ -61,7 +61,7 @@ switch ($resource) {
                     (SELECT `numero` FROM `dt_ddt` WHERE `id`=`idddt`) AS n_documento, 
                     (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`idddt`) AS n2_documento, 
                     (SELECT `data` FROM `dt_ddt` WHERE `id`=`idddt`) AS data_documento,
-                    `dt_ddt`.`idanagrafica` AS idanagrafica
+                    `dt_ddt`.`id_anagrafica` AS id_anagrafica
                 FROM 
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -69,7 +69,7 @@ switch ($resource) {
                 WHERE
                     `idarticolo`='.prepare($idarticolo).' AND
                     `dt_tipiddt`.`dir`="entrata" AND 
-                    `idanagrafica`='.prepare($idanagrafica).'
+                    `id_anagrafica`='.prepare($id_anagrafica).'
             ORDER BY 
                 `id` DESC LIMIT 0,5');
 
@@ -108,7 +108,7 @@ switch ($resource) {
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
                 `co_documenti`.`data` AS data_documento,
-                `co_documenti`.`idanagrafica` AS idanagrafica
+                `co_documenti`.`id_anagrafica` AS id_anagrafica
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
@@ -125,7 +125,7 @@ switch ($resource) {
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,
                 `dt_ddt`.`data` AS data_documento,
-                `dt_ddt`.`idanagrafica` AS idanagrafica
+                `dt_ddt`.`id_anagrafica` AS id_anagrafica
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -148,7 +148,7 @@ switch ($resource) {
 
                 $link_id = Module::where('name', $documenti[$i]['modulo'])->first()->id;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path_osm().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
-                $anagrafica = Anagrafica::find($documenti[$i]['idanagrafica']);
+                $anagrafica = Anagrafica::find($documenti[$i]['id_anagrafica']);
                 echo "<td class='table_cell text-left'>".$anagrafica->ragione_sociale."</td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -174,7 +174,7 @@ switch ($resource) {
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
                 `co_documenti`.`data` AS data_documento,
-                `co_documenti`.`idanagrafica` AS idanagrafica
+                `co_documenti`.`id_anagrafica` AS id_anagrafica
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`
@@ -191,7 +191,7 @@ switch ($resource) {
                 `dt_ddt`.`numero` AS n_documento,
                 `dt_ddt`.`numero_esterno` AS n2_documento,
                 `dt_ddt`.`data` AS data_documento,
-                `dt_ddt`.`idanagrafica` AS idanagrafica
+                `dt_ddt`.`id_anagrafica` AS id_anagrafica
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
@@ -214,7 +214,7 @@ switch ($resource) {
 
                 $link_id = Module::where('name', $documenti[$i]['modulo'])->first()->id;
                 echo "<tr><td class='first_cell text-left'><a href='".base_path_osm().'/editor.php?id_module='.$link_id.'&id_record='.$documenti[$i]['id']."'  target=\"_blank\" title=\"Apri il documento su una nuova finestra\">".$documenti[$i]['tipo'].' n. '.$n_documento.' del '.Translator::dateToLocale($documenti[$i]['data_documento'])." </a></td>\n";
-                $anagrafica = Anagrafica::find($documenti[$i]['idanagrafica']);
+                $anagrafica = Anagrafica::find($documenti[$i]['id_anagrafica']);
                 echo "<td class='table_cell text-left'>".$anagrafica->ragione_sociale."</td>\n";
                 echo "<td class='table_cell text-right'>".moneyFormat($documenti[$i]['costo_unitario'])."</td></tr>\n";
                 $ids[] = '"'.$documenti[$i]['id'].'"';
@@ -286,7 +286,7 @@ switch ($resource) {
         AND mg_listini.attivo=1
         AND id_articolo = '.prepare($id_articolo).'
         AND dir = '.prepare($direzione).'
-        AND idanagrafica = '.prepare($id_anagrafica).'
+        AND `an_anagrafiche`.`id` = '.prepare($id_anagrafica).'
         ORDER BY minimo ASC, massimo DESC';
         $listino = $database->fetchArray($query);
 
@@ -315,7 +315,7 @@ switch ($resource) {
         }
 
         // Ultimo prezzo al cliente
-        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `idarticolo`='.prepare($id_articolo).' AND `idanagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
+        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`iddocumento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`idtipodocumento` WHERE `idarticolo`='.prepare($id_articolo).' AND `id_anagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
 
         $results = array_merge($prezzi, $listini, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
 

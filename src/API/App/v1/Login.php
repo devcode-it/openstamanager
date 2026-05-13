@@ -37,11 +37,11 @@ class Login extends Resource implements CreateInterface
 
             if (setting("Permetti l'accesso agli amministratori")) {
                 $utente = $database->fetchOne('SELECT
-                    `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
+                    `an_anagrafiche`.`id` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,
                     `zz_groups_lang`.`title` AS gruppo
                 FROM `zz_users`
-                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
                     INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`
                     LEFT JOIN `zz_groups_lang` ON (`zz_groups_lang`.`id_record` = `zz_groups`.`id` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                 WHERE `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id', [
@@ -49,12 +49,12 @@ class Login extends Resource implements CreateInterface
                 ]);
             } else {
                 $utente = $database->fetchOne('SELECT
-                    `an_anagrafiche`.`idanagrafica` AS id_anagrafica,
+                    `an_anagrafiche`.`id` AS id_anagrafica,
                     `an_anagrafiche`.`ragione_sociale`,
                     `zz_groups_lang`.`title` AS gruppo
                 FROM `zz_users`
-                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-                    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+                    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
+                    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
                     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                     INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`

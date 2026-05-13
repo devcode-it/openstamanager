@@ -98,7 +98,7 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_parent.'" ]}
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$id_parent.'}, "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_parent.'" ]}
 		</div>
 	</div>';
 

@@ -31,12 +31,12 @@ switch (post('op')) {
         $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
         foreach ($id_records as $id) {
-            $anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`='.prepare($id));
+            $anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `id`='.prepare($id));
             $tipi = array_column($anagrafica, 'id');
 
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
-                $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `idanagrafica` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
                 ++$eliminate;
             }
         }
@@ -64,7 +64,7 @@ switch (post('op')) {
         $exporter = new CSV($file);
 
         // Esportazione dei record selezionati
-        $anagrafiche = Anagrafica::whereIn('idanagrafica', $id_records)->get();
+        $anagrafiche = Anagrafica::whereIn('id', $id_records)->get();
         $exporter->setRecords($anagrafiche);
 
         $count = $exporter->exportRecords();
@@ -119,7 +119,7 @@ switch (post('op')) {
         if ($tipo_esportazione == 'anagrafiche') {
             // Esportazione email e ragione sociale dalle anagrafiche selezionate
             $query = "SELECT DISTINCT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
-                WHERE idanagrafica IN ($id_records_list)
+                WHERE id IN ($id_records_list)
                 AND email != ''
                 AND email IS NOT NULL
                 AND enable_newsletter = 1
@@ -128,8 +128,8 @@ switch (post('op')) {
             // Esportazione email, ragione sociale e nome sede dalle sedi delle anagrafiche selezionate
             $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
                 FROM an_sedi s
-                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
-                WHERE s.idanagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
+                WHERE s.id_anagrafica IN ($id_records_list)
                 AND s.email != ''
                 AND s.email IS NOT NULL
                 AND s.enable_newsletter = 1";
@@ -137,8 +137,8 @@ switch (post('op')) {
             // Esportazione email, ragione sociale e nome referente dai referenti delle anagrafiche selezionate
             $query = "SELECT DISTINCT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
                 FROM an_referenti r
-                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
-                WHERE r.idanagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON r.id_anagrafica = a.id
+                WHERE r.id_anagrafica IN ($id_records_list)
                 AND r.email != ''
                 AND r.email IS NOT NULL
                 AND r.enable_newsletter = 1";
@@ -146,7 +146,7 @@ switch (post('op')) {
             // Esportazione email, ragione sociale e nomi da tutte e tre le fonti delle anagrafiche selezionate
             $query = "SELECT DISTINCT email, ragione_sociale, fonte, sede_referente FROM (
                 SELECT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
-                WHERE idanagrafica IN ($id_records_list)
+                WHERE id IN ($id_records_list)
                 AND email != ''
                 AND email IS NOT NULL
                 AND enable_newsletter = 1
@@ -154,16 +154,16 @@ switch (post('op')) {
                 UNION
                 SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
                 FROM an_sedi s
-                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
-                WHERE s.idanagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
+                WHERE s.id_anagrafica IN ($id_records_list)
                 AND s.email != ''
                 AND s.email IS NOT NULL
                 AND s.enable_newsletter = 1
                 UNION
                 SELECT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
                 FROM an_referenti r
-                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
-                WHERE r.idanagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON r.id_anagrafica = a.id
+                WHERE r.id_anagrafica IN ($id_records_list)
                 AND r.email != ''
                 AND r.email IS NOT NULL
                 AND r.enable_newsletter = 1

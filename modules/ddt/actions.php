@@ -43,12 +43,12 @@ if ($module->name == 'Ddt in uscita') {
 
 switch (filter('op')) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $data = post('data');
         $id_tipo = post('idtipoddt');
         $id_segment = post('id_segment');
 
-        $anagrafica = Anagrafica::find($idanagrafica);
+        $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = Tipo::find($id_tipo);
 
         $ddt = DDT::build($anagrafica, $tipo, $data, $id_segment);
@@ -68,7 +68,7 @@ switch (filter('op')) {
             $idstatoddt = post('idstatoddt');
             $idpagamento = post('idpagamento');
             $numero_esterno = post('numero_esterno');
-            $id_anagrafica = post('idanagrafica');
+            $id_anagrafica = post('id_anagrafica');
 
             if ($dir == 'uscita') {
                 $idrivalsainps = post('id_rivalsa_inps');
@@ -93,7 +93,7 @@ switch (filter('op')) {
             $ddt->idstatoddt = $idstatoddt;
             $ddt->idpagamento = $idpagamento;
             $ddt->idconto = post('idconto');
-            $ddt->idanagrafica = $id_anagrafica;
+            $ddt->id_anagrafica = $id_anagrafica;
             $ddt->idreferente = post('idreferente');
             $ddt->idagente = post('idagente');
             $ddt->idspedizione = post('idspedizione') ?: null;
@@ -149,7 +149,7 @@ switch (filter('op')) {
             if ($direzione == 'uscita' and !empty($numero_esterno)) {
                 $count = DDT::where('numero_esterno', $numero_esterno)
                     ->where('id', '!=', $id_record)
-                    ->where('idanagrafica', '=', $id_anagrafica)
+                    ->where('id_anagrafica', '=', $id_anagrafica)
                     ->whereRaw('DATE_FORMAT(data, "%Y")='.date('Y'))
                     ->whereHas('tipo', function ($query) use ($direzione) {
                         $query->where('dir', '=', $direzione);
@@ -752,7 +752,7 @@ switch (filter('op')) {
                 } else {
                     $id_iva = ($ddt->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
-                $id_anagrafica = $ddt->idanagrafica;
+                $id_anagrafica = $ddt->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
@@ -846,7 +846,7 @@ switch (filter('op')) {
         break;
 
     case 'update-price':
-        $id_anagrafica = $ddt->idanagrafica;
+        $id_anagrafica = $ddt->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');

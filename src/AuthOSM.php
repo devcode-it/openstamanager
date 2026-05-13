@@ -1009,7 +1009,7 @@ class AuthOSM extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `idanagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `id_anagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 
@@ -1104,7 +1104,7 @@ class AuthOSM extends Util\Singleton
             'gruppo' => 'Token',
             'is_admin' => false,
             'enabled' => true,
-            'idanagrafica' => 0,
+            'id_anagrafica' => 0,
             'idgruppo' => 0,
         ];
 

@@ -125,7 +125,7 @@ class FatturaElettronica
                 'progressivo_invio' => $progressivo_invio,
                 'numero_esterno' => $numero,
                 'data' => $data,
-                'idanagrafica' => $anagrafica->id,
+                'id_anagrafica' => $anagrafica->id,
             ])->first();
 
             if (!empty($fattura) && $fattura->tipo->dir == 'uscita') {

@@ -54,10 +54,10 @@ switch ($resource) {
         // Tutte le anagrafiche (query specifica senza join su se stessa)
         $q = "
             SELECT DISTINCT(an_anagrafiche.email) AS email,
-                   an_anagrafiche.idanagrafica,
-                   an_anagrafiche.ragione_sociale
+                an_anagrafiche.id,
+                an_anagrafiche.ragione_sociale
             FROM an_anagrafiche
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
             INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
             INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
             WHERE an_anagrafiche.email != '' $where
@@ -69,11 +69,11 @@ switch ($resource) {
         $fetchEmails = function ($table, $email_column, $name_column) use ($dbo, $where) {
             $query = "
                 SELECT DISTINCT($table.$email_column) AS email,
-                       $table.idanagrafica,
-                       $table.$name_column AS ragione_sociale
+                    $table.id_anagrafica,
+                    $table.$name_column AS ragione_sociale
                 FROM $table
-                INNER JOIN an_anagrafiche ON an_anagrafiche.idanagrafica = $table.idanagrafica
-                INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.idanagrafica = an_anagrafiche.idanagrafica
+                INNER JOIN an_anagrafiche ON an_anagrafiche.id = $table.id_anagrafica
+                INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
                 INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
                 INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
                 WHERE $table.$email_column != '' $where

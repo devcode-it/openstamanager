@@ -64,4 +64,4 @@ $query .= '	ORDER BY `an_sedi`.`targa`, `mg_articoli_lang`.`title`';
 
 $rs = $dbo->fetchArray($query);
 $totrows = sizeof($rs);
-$azienda = Anagrafica::where('idanagrafica', '=', setting('Azienda predefinita'))->first();
+$azienda = Anagrafica::where('id', '=', setting('Azienda predefinita'))->first();

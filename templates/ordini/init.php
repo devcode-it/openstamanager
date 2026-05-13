@@ -28,12 +28,12 @@ $d_qta = (int) setting('Cifre decimali per quantità in stampa');
 $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
-$id_cliente = $documento['idanagrafica'];
+$id_cliente = $documento['id_anagrafica'];
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($documento->idsede_destinazione)) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, codice_destinatario FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede_destinazione));
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, codice_destinatario FROM an_sedi WHERE id_anagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede_destinazione));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';
@@ -69,7 +69,7 @@ $pagamento = $dbo->fetchOne('SELECT `co_pagamenti_lang`.`title` FROM `co_pagamen
 
 $porto = $dbo->fetchOne('SELECT `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['idporto']));
 $spedizione = $dbo->fetchOne('SELECT `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['idspedizione']));
-$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
+$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['idvettore']));
 
 // Sostituzioni specifiche
 $custom = [

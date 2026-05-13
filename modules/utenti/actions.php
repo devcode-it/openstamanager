@@ -112,7 +112,7 @@ switch (filter('op')) {
             $sedi = post('idsede');
 
             if (empty($sedi)) {
-                $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE idanagrafica = '.prepare($id_azienda));
+                $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id_anagrafica = '.prepare($id_azienda));
                 $sedi = array_column($sedi, 'id');
                 $sedi = array_merge([0], $sedi);
             }

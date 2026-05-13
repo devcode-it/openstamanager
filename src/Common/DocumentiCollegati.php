@@ -998,7 +998,7 @@ class DocumentiCollegati
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $fatture = $dbo->fetchArray($query_fatture);
         $documenti = array_merge($documenti, $fatture);
@@ -1014,7 +1014,7 @@ class DocumentiCollegati
             0 AS `dir`,
             NULL AS `deleted_at`
         FROM `zz_users`
-        WHERE `zz_users`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `zz_users`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $utenti = $dbo->fetchArray($query_utenti);
         $documenti = array_merge($documenti, $utenti);
@@ -1040,7 +1040,7 @@ class DocumentiCollegati
             `or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND
             `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `or_ordini`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `or_ordini`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $ordini = $dbo->fetchArray($query_ordini);
         $documenti = array_merge($documenti, $ordini);
@@ -1066,7 +1066,7 @@ class DocumentiCollegati
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `dt_ddt`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $ddt = $dbo->fetchArray($query_ddt);
         $documenti = array_merge($documenti, $ddt);
@@ -1092,7 +1092,7 @@ class DocumentiCollegati
             SELECT `idintervento`
             FROM `in_interventi_tecnici`
             WHERE `idtecnico` = '.prepare($id_anagrafica).'
-        ) OR `in_interventi`.`idanagrafica` = '.prepare($id_anagrafica);
+        ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $interventi = $dbo->fetchArray($query_interventi);
         $documenti = array_merge($documenti, $interventi);
@@ -1113,7 +1113,7 @@ class DocumentiCollegati
             `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
             `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_contratti`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `co_contratti`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $contratti = $dbo->fetchArray($query_contratti);
         $documenti = array_merge($documenti, $contratti);
@@ -1134,7 +1134,7 @@ class DocumentiCollegati
             `co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
+        WHERE `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
 
         $preventivi = $dbo->fetchArray($query_preventivi);
         $documenti = array_merge($documenti, $preventivi);
@@ -1540,7 +1540,7 @@ class DocumentiCollegati
         // Conta le fatture collegate
         $query_fatture = 'SELECT COUNT(*) AS total
         FROM `co_documenti`
-        WHERE `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_fatture);
         $total += (int) $result['total'];
@@ -1548,7 +1548,7 @@ class DocumentiCollegati
         // Conta gli utenti collegati
         $query_utenti = 'SELECT COUNT(*) AS total
         FROM `zz_users`
-        WHERE `zz_users`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `zz_users`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_utenti);
         $total += (int) $result['total'];
@@ -1556,7 +1556,7 @@ class DocumentiCollegati
         // Conta gli ordini collegati
         $query_ordini = 'SELECT COUNT(*) AS total
         FROM `or_ordini`
-        WHERE `or_ordini`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `or_ordini`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_ordini);
         $total += (int) $result['total'];
@@ -1564,7 +1564,7 @@ class DocumentiCollegati
         // Conta i DDT collegati
         $query_ddt = 'SELECT COUNT(*) AS total
         FROM `dt_ddt`
-        WHERE `dt_ddt`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `dt_ddt`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_ddt);
         $total += (int) $result['total'];
@@ -1577,7 +1577,7 @@ class DocumentiCollegati
             SELECT `idintervento`
             FROM `in_interventi_tecnici`
             WHERE `idtecnico` = '.prepare($id_anagrafica).'
-        ) OR `in_interventi`.`idanagrafica` = '.prepare($id_anagrafica);
+        ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_interventi);
         $total += (int) $result['total'];
@@ -1585,7 +1585,7 @@ class DocumentiCollegati
         // Conta i contratti collegati
         $query_contratti = 'SELECT COUNT(*) AS total
         FROM `co_contratti`
-        WHERE `co_contratti`.`idanagrafica` = '.prepare($id_anagrafica);
+        WHERE `co_contratti`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_contratti);
         $total += (int) $result['total'];
@@ -1593,7 +1593,7 @@ class DocumentiCollegati
         // Conta i preventivi collegati
         $query_preventivi = 'SELECT COUNT(*) AS total
         FROM `co_preventivi`
-        WHERE `co_preventivi`.`idanagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
+        WHERE `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
 
         $result = $dbo->fetchOne($query_preventivi);
         $total += (int) $result['total'];

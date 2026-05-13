@@ -72,12 +72,12 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
 
     // Elenco interventi da pianificare
     foreach ($raggruppamento as $r) {
-        $rs_tecnici = $dbo->fetchArray("SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') AS tecnici FROM an_anagrafiche INNER JOIN in_interventi_tecnici_assegnati ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.idanagrafica WHERE id_intervento=".prepare($r['id']).' GROUP BY id_intervento');
+        $rs_tecnici = $dbo->fetchArray("SELECT GROUP_CONCAT(ragione_sociale SEPARATOR ',') AS tecnici FROM an_anagrafiche INNER JOIN in_interventi_tecnici_assegnati ON in_interventi_tecnici_assegnati.id_tecnico=an_anagrafiche.id WHERE id_intervento=".prepare($r['id']).' GROUP BY id_intervento');
 
         echo '
             <tr id="int_'.$r['id'].'">
                 <td><a target="_blank" >'.Modules::link('Interventi', $r['id'], $r['codice']).'</a></td>
-                <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['idanagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.prepare($r['idanagrafica']))['ragione_sociale']).'<br><small>Presso: ';
+                <td><a target="_blank" >'.Modules::link('Anagrafiche', $r['id_anagrafica'], $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id='.prepare($r['id_anagrafica']))['ragione_sociale']).'<br><small>Presso: ';
         // Sede promemoria
         if ($r['idsede_destinazione'] == '-1') {
             echo '- Nessuna -';

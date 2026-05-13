@@ -205,7 +205,7 @@ class Checklists extends AppResource
         $check->checked_at = (!empty($data['checked_at']) ? $data['checked_at'] : null);
         $check->content = $data['content'];
         $check->note = $data['note'];
-        $user = User::where('idanagrafica', $data['checked_by'])->first();
+        $user = User::where('id_anagrafica', $data['checked_by'])->first();
         if (!empty($user)) {
             $check->checked_by = $user->id;
         }

@@ -22,8 +22,8 @@ include_once __DIR__.'/../../core.php';
 use Models\Group;
 use Models\Module;
 
-if (!empty(filter('idanagrafica'))) {
-    $utente['id_anagrafica'] = filter('idanagrafica');
+if (!empty(filter('id_anagrafica'))) {
+    $utente['id_anagrafica'] = filter('id_anagrafica');
 } else {
     $current_idgruppo = !empty($id_record) ? Group::find($id_record)->id : null;
 }
@@ -69,7 +69,7 @@ echo '
     <script type="text/javascript">
         $(document).ready(function() {
             $("#idanag").change(function() {
-                session_set("superselect,idanagrafica", $(this).val(), 0);
+                session_set("superselect,id_anagrafica", $(this).val(), 0);
 
                 $("#idsede").selectReset();
             })

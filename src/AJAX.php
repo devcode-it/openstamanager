@@ -357,11 +357,11 @@ class AJAX
         $ragioni_sociali = ['-1'];
 
         try {
-            $rs = $dbo->fetchArray('SELECT idanagrafica, ragione_sociale FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%'));
+            $rs = $dbo->fetchArray('SELECT id as id_anagrafica, ragione_sociale FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%'));
 
             for ($a = 0; $a < sizeof($rs); ++$a) {
-                $idanagrafiche[] = $rs[$a]['idanagrafica'];
-                $ragioni_sociali[$rs[$a]['idanagrafica']] = $rs[$a]['ragione_sociale'];
+                $idanagrafiche[] = $rs[$a]['id_anagrafica'];
+                $ragioni_sociali[$rs[$a]['id_anagrafica']] = $rs[$a]['ragione_sociale'];
             }
         } catch (Exception $e) {
             // Continua senza anagrafiche

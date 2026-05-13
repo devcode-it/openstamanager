@@ -29,7 +29,7 @@ $d_qta = (int) setting('Cifre decimali per quantità in stampa');
 $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
-$id_cliente = $documento['idanagrafica'];
+$id_cliente = $documento['id_anagrafica'];
 $id_sede = $record['idsede_partenza'];
 $id_azienda = setting('Azienda predefinita');
 
@@ -39,7 +39,7 @@ $porto = $dbo->fetchOne('SELECT `dt_porto`.*, `dt_porto_lang`.`title` as descriz
 $aspetto_beni = $dbo->fetchOne('SELECT `dt_aspettobeni`.*, `dt_aspettobeni_lang`.`title` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']));
 $spedizione = $dbo->fetchOne('SELECT `dt_spedizione`.*, `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['idspedizione']));
 
-$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($documento['idvettore']));
+$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['idvettore']));
 
 $tipo_doc = $documento->tipo->getTranslation('title');
 if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {
@@ -53,9 +53,9 @@ if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {
 $destinazione = '';
 if (!empty($documento['idsede_destinazione'])) {
     if ($tipo_doc == 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($documento['idanagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {
@@ -94,9 +94,9 @@ if (!empty($documento['idsede_destinazione'])) {
 $partenza = '';
 if (!empty($documento['idsede_partenza'])) {
     if ($tipo_doc != 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($documento['idanagrafica']).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_partenza']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE idanagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {
@@ -148,9 +148,9 @@ $custom = [
 ];
 
 // Accesso solo a:
-// - cliente se è impostato l'idanagrafica di un Cliente
+// - cliente se è impostato l'id_anagrafica di un Cliente
 // - utente qualsiasi con permessi almeno in lettura sul modulo
 // - admin
-if ((auth_osm()->getUser()['gruppo'] == 'Clienti' && $id_cliente != auth_osm()->getUser()['idanagrafica'] && !AuthOSM::admin()) || Modules::getPermission($documento->module) == '-') {
+if ((auth_osm()->getUser()['gruppo'] == 'Clienti' && $id_cliente != auth_osm()->getUser()['id_anagrafica'] && !AuthOSM::admin()) || Modules::getPermission($documento->module) == '-') {
     exit(tr('Non hai i permessi per questa stampa!'));
 }

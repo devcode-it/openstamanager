@@ -73,10 +73,10 @@ switch ($resource) {
 
         if (!empty($superselect['idtipiintervento'])) {
             $where[] = '`in_tipiintervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
-        } elseif (!empty($superselect['idanagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']));
+        } elseif (!empty($superselect['id_anagrafica'])) {
+            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 
@@ -87,11 +87,11 @@ switch ($resource) {
             $disabled = false;
 
             // Controllo se il tipo intervento è compatibile con la tipologia dell'anagrafica
-            if (!empty($superselect['idanagrafica'])) {
+            if (!empty($superselect['id_anagrafica'])) {
                 // Ottengo la tipologia dell'anagrafica selezionata
                 $anagrafica_tipo = $dbo->fetchOne('SELECT `tipo`
                     FROM `an_anagrafiche`
-                    WHERE `idanagrafica` = '.prepare($superselect['idanagrafica']));
+                    WHERE `id` = '.prepare($superselect['id_anagrafica']));
 
                 // Ottengo le tipologie associate al tipo intervento
                 $tipologie_tipo_intervento = $dbo->fetchArray('SELECT `tipo`
@@ -226,10 +226,10 @@ switch ($resource) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
-        if (!empty($superselect['idanagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']));
+        if (!empty($superselect['id_anagrafica'])) {
+            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($superselect['idanagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 

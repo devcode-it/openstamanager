@@ -63,7 +63,7 @@ echo '
 
 // Calcolo la quantità dai movimenti in magazzino
 $giacenze = $articolo->getGiacenze();
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE idanagrafica='.prepare(setting('Azienda predefinita')).')');
+$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nomesede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nomesede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nomesede, citta )) AS nomesede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
 
 // Individuazione movimenti
 $movimenti = $articolo->movimentiComposti();
@@ -148,7 +148,7 @@ if (!empty($movimenti)) {
                         '.$movimento->descrizione.''.($movimento->hasDocument() ? ' - '.reference($movimento->getDocument()) : '').'
                     </td>
                     <td>
-                        '.Anagrafica::find($movimento->getDocument()->idanagrafica)->ragione_sociale.'
+                        '.Anagrafica::find($movimento->getDocument()->id_anagrafica)->ragione_sociale.'
                     </td>';
 
             // Data

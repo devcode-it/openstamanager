@@ -55,7 +55,7 @@ if (!empty($template['tipo_reply_to'])) {
 // Aggiungo email referenti in base alla mansione impostata nel template
 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
 foreach ($mansioni as $mansione) {
-    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
     foreach ($referenti as $referente) {
         if (!in_array($referente->email, $emails)) {
             $emails[] = $referente->email;
@@ -67,7 +67,7 @@ foreach ($mansioni as $mansione) {
 if ($template->name == 'Notifica intervento') {
     $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
     foreach ($tecnici as $tecnico) {
-        $anagrafica = $dbo->table('an_anagrafiche')->where('idanagrafica', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
+        $anagrafica = $dbo->table('an_anagrafiche')->where('id', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
         if (!in_array($anagrafica->email, $emails)) {
             $emails[] = $anagrafica->email;
         }

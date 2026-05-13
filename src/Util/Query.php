@@ -136,7 +136,7 @@ class Query
         // Elenco delle sostituzioni
         $replace = [
             // Identificatori
-            '|id_anagrafica|' => prepare($user['idanagrafica'] ?? 0),
+            '|id_anagrafica|' => prepare($user['id_anagrafica'] ?? 0),
             '|id_utente|' => prepare($user['id'] ?? 0),
             '|id_parent|' => prepare($id_parent),
 

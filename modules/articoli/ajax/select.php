@@ -26,14 +26,14 @@ switch ($resource) {
      * - permetti_movimento_a_zero
      * - idsede_partenza e idsede_destinazione
      * - dir
-     * - idanagrafica
+     * - id_anagrafica
      */
     case 'articoli':
         $sedi_non_impostate = !isset($superselect['idsede_partenza']) && !isset($superselect['idsede_destinazione']);
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $usare_dettaglio_fornitore = $superselect['dir'] == 'uscita';
         $ricerca_codici_fornitore = 1;
-        $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['idanagrafica']);
+        $usare_iva_anagrafica = $superselect['dir'] == 'entrata' && !empty($superselect['id_anagrafica']);
         $solo_non_varianti = $superselect['solo_non_varianti'];
         $idagente = $superselect['idagente'];
         $id_listino = $superselect['id_listino'];
@@ -120,7 +120,7 @@ switch ($resource) {
 
         if ($usare_iva_anagrafica) {
             $query .= '
-            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `idiva_vendite` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($superselect['idanagrafica']).')
+            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `idiva_vendite` FROM `an_anagrafiche` WHERE `id` = '.prepare($superselect['id_anagrafica']).')
             LEFT JOIN `co_iva_lang` AS iva_anagrafica_lang on (`iva_anagrafica`.`id` = `iva_anagrafica_lang`.`id_record` AND `iva_anagrafica_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
         }
 
@@ -132,7 +132,7 @@ switch ($resource) {
         if ($dir == 'uscita') {
             $query .= '
 
-            LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`deleted_at` IS NULL AND `mg_fornitore_articolo`.`id_fornitore` = '.prepare($superselect['idanagrafica']);
+            LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`deleted_at` IS NULL AND `mg_fornitore_articolo`.`id_fornitore` = '.prepare($superselect['id_anagrafica']);
         } else {
             $query .= '
 
@@ -289,7 +289,7 @@ switch ($resource) {
 
         /*
          * Opzioni utilizzate:
-         * - idanagrafica
+         * - id_anagrafica
          */
     case 'articoli_barcode':
         $id_anagrafica = filter('id_anagrafica'); // ID passato via URL in modo fisso
@@ -324,10 +324,10 @@ switch ($resource) {
         break;
 
     case 'fornitori-articolo':
-        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`an_anagrafiche`.`ragione_sociale`, IF(`mg_fornitore_articolo`.`codice_fornitore` IS NOT NULL, CONCAT( " (", `mg_fornitore_articolo`.`codice_fornitore`, ")" ), "-") ) AS descrizione, (`mg_prezzi_articoli`.`prezzo_unitario`-(`mg_prezzi_articoli`.`prezzo_unitario`*`mg_prezzi_articoli`.`sconto_percentuale`)/100) AS prezzo_unitario FROM `mg_prezzi_articoli` LEFT JOIN `an_anagrafiche` ON `mg_prezzi_articoli`.`id_anagrafica`=`an_anagrafiche`.`idanagrafica` LEFT JOIN `mg_fornitore_articolo` ON (`mg_fornitore_articolo`.`id_articolo`=`mg_prezzi_articoli`.`id_articolo` AND `mg_fornitore_articolo`.`id_fornitore` = `mg_prezzi_articoli`.`id_anagrafica`) |where| GROUP BY id ORDER BY `an_anagrafiche`.`ragione_sociale`';
+        $query = 'SELECT `an_anagrafiche`.`id` AS id, CONCAT(`an_anagrafiche`.`ragione_sociale`, IF(`mg_fornitore_articolo`.`codice_fornitore` IS NOT NULL, CONCAT( " (", `mg_fornitore_articolo`.`codice_fornitore`, ")" ), "-") ) AS descrizione, (`mg_prezzi_articoli`.`prezzo_unitario`-(`mg_prezzi_articoli`.`prezzo_unitario`*`mg_prezzi_articoli`.`sconto_percentuale`)/100) AS prezzo_unitario FROM `mg_prezzi_articoli` LEFT JOIN `an_anagrafiche` ON `mg_prezzi_articoli`.`id_anagrafica`=`an_anagrafiche`.`id` LEFT JOIN `mg_fornitore_articolo` ON (`mg_fornitore_articolo`.`id_articolo`=`mg_prezzi_articoli`.`id_articolo` AND `mg_fornitore_articolo`.`id_fornitore` = `mg_prezzi_articoli`.`id_anagrafica`) |where| GROUP BY id ORDER BY `an_anagrafiche`.`ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`id`='.prepare($element);
         }
 
         $where[] = '`dir`="uscita"';

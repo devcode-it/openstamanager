@@ -30,7 +30,7 @@ echo '
         <div class="card-header with-border">
             <h3 class="card-title"><i class="fa fa-user"></i> '.$record['ragione_sociale'].'</h3>
             <div class="card-tools pull-right">
-                '.Modules::link('Anagrafiche', $record['idanagrafica']).'
+                '.Modules::link('Anagrafiche', $record['id_anagrafica']).'
             </div>
         </div>
 

@@ -46,7 +46,7 @@ foreach ($fields as $name => $value) {
 }
 
 // Ricerca anche per anagrafica se il termine corrisponde a una ragione sociale
-$query .= ' OR co_contratti.idanagrafica IN (SELECT idanagrafica FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%').')';
+$query .= ' OR co_contratti.id_anagrafica IN (SELECT id FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%').')';
 
 // Ricerca anche negli articoli associati al contratto
 $query .= ' OR co_contratti.id IN (
@@ -91,7 +91,7 @@ foreach ($rs as $r) {
     }
 
     // Aggiunta nome anagrafica
-    $anagrafica_query = 'SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($r['idanagrafica']);
+    $anagrafica_query = 'SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($r['id_anagrafica']);
     $anagrafica_rs = $dbo->fetchOne($anagrafica_query);
     if (!empty($anagrafica_rs['ragione_sociale'])) {
         $result['labels'][] = 'Anagrafica: '.$anagrafica_rs['ragione_sociale'].'<br/>';

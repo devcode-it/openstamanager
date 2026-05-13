@@ -97,11 +97,11 @@ echo '
 
 if ($dir == 'entrata') {
     ?>
-                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti" ]}
 					<?php
 } else {
     ?>
-                    {[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "fornitori", "value": "$id_anagrafica$" ]}
 					<?php
 }
 echo '
@@ -114,12 +114,12 @@ if ($dir == 'entrata') {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'" ]}
+                    {[ "type": "select", "label": "'.tr('Destinazione merce').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'" ]}
                 </div>';
 } else {
     echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'" ]}
+                    {[ "type": "select", "label": "'.tr('Partenza merce').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -133,10 +133,10 @@ echo '
             <div class="row">
                 <div class="col-md-4">';
 if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+    echo Plugins::link('Referenti', $record['id_anagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
                 </div>';
 
 if ($dir == 'entrata') {
@@ -146,7 +146,7 @@ if ($dir == 'entrata') {
         echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
     }
     echo '
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente$" ]}
                 </div>';
 }
 echo '
@@ -340,7 +340,7 @@ if (!$block_edit) {
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
         WHERE
-            `idanagrafica`='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa` > 0)';
+            `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa` > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
     echo '
 		<div class="clearfix"></div>';
@@ -357,7 +357,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "'.$dir.'", "idanagrafica": '.$record['idanagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero":  1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "'.$dir.'", "id_anagrafica": '.$record['id_anagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-4" style="margin-top: 25px">
@@ -566,9 +566,9 @@ $("#idsede").change(function(){
     $("#idreferente").selectReset();
 });
 
-$("#idanagrafica").change(function() {
-    updateSelectOption("idanagrafica", $(this).val());
-    session_set("superselect,idanagrafica", $(this).val(), 0);
+$("#id_anagrafica").change(function() {
+    updateSelectOption("id_anagrafica", $(this).val());
+    session_set("superselect,id_anagrafica", $(this).val(), 0);
 
 	$("#idsede").selectReset();
     $("#idpagamento").selectReset();

@@ -46,7 +46,7 @@ $dettagli = DettaglioPrezzo::dettagli($id_articolo, $id_anagrafica, $direzione)
 
 $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($id_articolo, $id_anagrafica, $direzione)
     ->first();
-if ($articolo->id_fornitore == $anagrafica->idanagrafica) {
+if ($articolo->id_fornitore == $anagrafica->id) {
     $color = 'success';
     $icon = 'check';
     $text = tr('Sì');

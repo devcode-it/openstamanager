@@ -89,7 +89,7 @@ class Lista extends Model
     public function getNumeroDestinatariSenzaEmail()
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
-            ->join('an_anagrafiche', 'idanagrafica', '=', 'record_id')
+            ->join('an_anagrafiche', 'id', '=', 'record_id')
             ->where('email', '=', '')
             ->count();
 
@@ -109,19 +109,19 @@ class Lista extends Model
     public function getNumeroDestinatariSenzaConsenso()
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
-            ->join('an_anagrafiche', 'idanagrafica', '=', 'record_id')
+            ->join('an_anagrafiche', 'id', '=', 'record_id')
             ->where('an_anagrafiche.enable_newsletter', '=', false)
             ->count();
 
         $sedi = $this->getDestinatari(Sede::class)
             ->join('an_sedi', 'an_sedi.id', '=', 'record_id')
-            ->join('an_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_sedi.idanagrafica')
+            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_sedi.id_anagrafica')
             ->where('an_anagrafiche.enable_newsletter', '=', false)
             ->count();
 
         $referenti = $this->getDestinatari(Referente::class)
             ->join('an_referenti', 'an_referenti.id', '=', 'record_id')
-            ->join('an_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_referenti.idanagrafica')
+            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_referenti.id_anagrafica')
             ->where('an_anagrafiche.enable_newsletter', '=', false)
             ->count();
 

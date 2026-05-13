@@ -36,7 +36,7 @@ if ($module->name == 'Fatture di vendita') {
 
 $fattura = Fattura::find($id_record);
 $numero = ($fattura->numero_esterno != '') ? $fattura->numero_esterno : $fattura->numero;
-$idanagrafica = $fattura->idanagrafica;
+$id_anagrafica = $fattura->id_anagrafica;
 
 $idconto = ($dir == 'entrata') ? setting('Conto predefinito fatture di vendita') : setting('Conto predefinito fatture di acquisto');
 
@@ -71,13 +71,13 @@ $rs = $dbo->fetchArray('SELECT
         CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
         CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
-        IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
+        IF(`idclientefinale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
         `in_interventi` 
         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
-        (`in_interventi`.`idanagrafica`='.prepare($idanagrafica).' OR `in_interventi`.`idclientefinale`='.prepare($idanagrafica).')
+        (`in_interventi`.`id_anagrafica`='.prepare($id_anagrafica).' OR `in_interventi`.`idclientefinale`='.prepare($id_anagrafica).')
         AND `in_statiintervento`.`is_fatturabile`=1
         AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL)
         '.$where);
@@ -122,7 +122,7 @@ $options = [
 ];
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($idanagrafica));
+$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
 $options['id_ritenuta_acconto_predefined'] = $ritenuta_acconto['id_ritenuta_acconto'];
 
 echo App::internalLoad('conti.php', [], $options);

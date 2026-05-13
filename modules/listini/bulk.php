@@ -26,7 +26,7 @@ use Plugins\ListinoClienti\DettaglioPrezzo;
 
 switch (post('op')) {
     case 'copy_listino':
-        $id_anagrafiche = explode(',', post('idanagrafica', true)[0]);
+        $id_anagrafiche = explode(',', post('id_anagrafica', true)[0]);
 
         // Lettura righe selezionate
         foreach ($id_records as $id) {
@@ -59,7 +59,7 @@ switch (post('op')) {
                             $dettaglio_predefinito->sconto_percentuale = $sconto;
                             $dettaglio_predefinito->setPrezzoUnitario($prezzo_unitario);
                             $dettaglio_predefinito->save();
-                            if ($articolo->id_fornitore == $anagrafica->idanagrafica && $direzione == 'uscita') {
+                            if ($articolo->id_fornitore == $anagrafica->id && $direzione == 'uscita') {
                                 $prezzo_unitario = $prezzo_unitario - ($prezzo_unitario * $sconto / 100);
                                 $articolo->prezzo_acquisto = $prezzo_unitario;
                                 $articolo->save();
@@ -135,7 +135,7 @@ if ($segment != 'Tutti') {
         'text' => '<span><i class="fa fa-file-code-o"></i> '.tr('Copia _TYPE_', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
         'data' => [
             'title' => tr('Copiare i listini selezionati?'),
-            'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Selezionare le anagrafiche in cui copiare i listini selezionati:').'</small>", "ajax-source":"'.strtolower((string) $segment).'", "name": "idanagrafica[]" ]}',
+            'msg' => '{[ "type": "select", "multiple":"1", "label": "<small>'.tr('Selezionare le anagrafiche in cui copiare i listini selezionati:').'</small>", "ajax-source":"'.strtolower((string) $segment).'", "name": "id_anagrafica[]" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',
             'blank' => false,

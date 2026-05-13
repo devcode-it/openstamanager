@@ -74,7 +74,7 @@ echo '
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "id": "idanagrafica_c", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "id": "id_anagrafica_c", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -82,13 +82,13 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "placeholder": "Sede legale" ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 
                 <div class="col-md-4">';
@@ -96,7 +96,7 @@ if ($record['idagente'] != 0) {
     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente$" ]}
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": <?php echo $record['idanagrafica'] ?: '""'; ?>, "idsede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['idanagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": <?php echo $record['id_anagrafica'] ?: '""'; ?>, "idsede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['id_anagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-2">
@@ -301,7 +301,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "idanagrafica": '.$record['idanagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "id_anagrafica": '.$record['id_anagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -508,9 +508,9 @@ function aggiungiRigaOre(idTipoIntervento, titoloTipo) {
     });
 }
 
-$("#idanagrafica_c").change(function() {
-    updateSelectOption("idanagrafica", $(this).val());
-    session_set("superselect,idanagrafica", $(this).val(), 0);
+$("#id_anagrafica_c").change(function() {
+    updateSelectOption("id_anagrafica", $(this).val());
+    session_set("superselect,id_anagrafica", $(this).val(), 0);
 
     $("#idsede_destinazione").selectReset();
     $("#matricolaimpianto").selectReset();

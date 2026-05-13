@@ -65,7 +65,7 @@ class PianoContiRagioneSociale extends Controllo
          */
         $anagrafiche_interessate = $database->fetchArray('
         SELECT
-            `an_anagrafiche`.`idanagrafica` AS id,
+            `an_anagrafiche`.`id` AS id,
             `an_anagrafiche`.`ragione_sociale`,
             `co_pianodeiconti3`.`descrizione` as nome_conto,
             `idconto_cliente`,
@@ -75,7 +75,7 @@ class PianoContiRagioneSociale extends Controllo
             INNER JOIN `co_pianodeiconti3` ON (`an_anagrafiche`.`idconto_cliente` = `co_pianodeiconti3`.`id` OR `an_anagrafiche`.`idconto_fornitore` = `co_pianodeiconti3`.`id`)
         WHERE
             `deleted_at` IS NULL
-        GROUP BY `idanagrafica`, `co_pianodeiconti3`.`descrizione`');
+        GROUP BY `id`, `co_pianodeiconti3`.`descrizione`');
 
         foreach ($anagrafiche_interessate as $anagrafica) {
             if ($anagrafica['nome_conto'] != $anagrafica['ragione_sociale']) {
@@ -241,7 +241,7 @@ class PianoContiRagioneSociale extends Controllo
         $anagrafica->save();
 
         // Aggiorna tutti i movimenti contabili collegati a questa anagrafica
-        $this->aggiornaMovimentiContabili($anagrafica->idanagrafica, $vecchio_id_conto, $nuovo_id_conto);
+        $this->aggiornaMovimentiContabili($anagrafica->id, $vecchio_id_conto, $nuovo_id_conto);
 
         // Verifica se il vecchio conto è rimasto vuoto e lo elimina
         $this->eliminaContoSeVuoto($vecchio_id_conto);

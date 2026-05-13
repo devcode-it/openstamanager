@@ -31,7 +31,7 @@ if ($module->name == 'Fatture di vendita') {
     $tipo_anagrafica = tr('Fornitore');
 }
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
+$id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id;
 
@@ -63,7 +63,7 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "idanagrafica", "id": "idanagrafica_add", "required": 1, "ajax-source": "<?php echo $module->name == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
+			{[ "type": "select", "label": "<?php echo $tipo_anagrafica; ?>", "name": "id_anagrafica", "id": "id_anagrafica_add", "required": 1, "ajax-source": "<?php echo $module->name == 'Fatture di vendita' ? 'clienti' : 'fornitori'; ?>", "value": "<?php echo $id_anagrafica; ?>", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>" ]}
 		</div>
 	</div>
 
@@ -145,14 +145,14 @@ if ($dir == 'entrata') {
     echo '
 <script>
 $(document).ready(function () {
-    if($("#idanagrafica_add").val()){
+    if($("#id_anagrafica_add").val()){
         // Carico nel card i dettagli del cliente
-        $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#idanagrafica_add").val(), function(data){
+        $.get("'.base_path_osm().'/ajax_complete.php?module=Interventi&op=dettagli&id_anagrafica=" + $("#id_anagrafica_add").val(), function(data){
             $("#dettagli_cliente").html(data);
         });
     }
     
-    $("#idanagrafica_add").change(function () {
+    $("#id_anagrafica_add").change(function () {
         let data = $(this).selectData();
 
         if (data !== undefined) {
@@ -245,10 +245,10 @@ $(document).ready(function () {
             },
             success: function (result) {
                 if (result){
-                    input("idanagrafica").getElement().selectSetNew(result.id, result.ragione_sociale);
-                    input("idanagrafica").disable();
+                    input("id_anagrafica").getElement().selectSetNew(result.id, result.ragione_sociale);
+                    input("id_anagrafica").disable();
                 } else {
-                    input("idanagrafica").enable();
+                    input("id_anagrafica").enable();
                 }
             }
         });

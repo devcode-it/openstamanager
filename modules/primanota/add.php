@@ -152,7 +152,7 @@ foreach ($id_documenti as $id_documento) {
 
     // Raggruppamento fatture per direzione e anagrafica - solo se ci sono scadenze selezionate
     if (!empty($scadenze)) {
-        $chiave_anagrafica = $dir.'_'.$fattura->idanagrafica;
+        $chiave_anagrafica = $dir.'_'.$fattura->id_anagrafica;
         if (!isset($fatture_per_anagrafica[$chiave_anagrafica])) {
             $fatture_per_anagrafica[$chiave_anagrafica] = [
                 'ragione_sociale' => $fattura->anagrafica['ragione_sociale'],
@@ -269,7 +269,7 @@ if ($numero_documenti + $numero_scadenze > 1) {
         // Una sola anagrafica - estrai i dati
         $dati_unica = reset($fatture_per_anagrafica);
 
-        // Estrai l'ID anagrafica dalla chiave (formato: direzione_idanagrafica)
+        // Estrai l'ID anagrafica dalla chiave (formato: direzione_id_anagrafica)
         $chiave_unica = array_key_first($fatture_per_anagrafica);
         $id_anagrafica_unica = (int) substr((string) $chiave_unica, strpos((string) $chiave_unica, '_') + 1);
         $anagrafica_movimenti = Anagrafica::find($id_anagrafica_unica);
@@ -350,10 +350,10 @@ if (!empty(get('id_anagrafica'))) {
     $id_anagrafica = get('id_anagrafica');
 }
 if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',', array_map(prepare(...), $id_documenti)) : 0).')')['idanagrafica'];
+    $id_anagrafica = $dbo->fetchOne('SELECT id_anagrafica FROM co_documenti WHERE id IN('.($id_documenti ? implode(',', array_map(prepare(...), $id_documenti)) : 0).')')['id_anagrafica'];
 }
 if (empty($id_anagrafica)) {
-    $id_anagrafica = $dbo->fetchOne('SELECT idanagrafica FROM co_scadenzario WHERE id IN('.($id_scadenze ? implode(',', array_map(prepare(...), $id_scadenze)) : 0).')')['idanagrafica'];
+    $id_anagrafica = $dbo->fetchOne('SELECT id_anagrafica FROM co_scadenzario WHERE id IN('.($id_scadenze ? implode(',', array_map(prepare(...), $id_scadenze)) : 0).')')['id_anagrafica'];
 }
 echo '
 <form action="'.base_path_osm().'/controller.php?id_module='.$id_module.'" method="post" id="add-form">

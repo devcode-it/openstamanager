@@ -31,6 +31,6 @@ if (!empty($id_record)) {
 
 // id_parent = anagrafica
 if (isset($id_parent)) {
-    $record['tipo_anagrafica'] = $dbo->fetchOne('SELECT tipo FROM an_anagrafiche WHERE an_anagrafiche.idanagrafica ='.prepare($id_parent))['tipo'];
+    $record['tipo_anagrafica'] = $dbo->fetchOne('SELECT tipo FROM an_anagrafiche WHERE an_anagrafiche.id ='.prepare($id_parent))['tipo'];
     $record['iso2'] = Nazione::find($record['id_nazione'])->iso2;
 }

@@ -86,13 +86,13 @@ switch (post('op')) {
                     // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
                     if (!empty($accodare) && empty($fattura)) {
                         if ($raggruppamento == 'sede') {
-                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                            $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->where('idsede_destinazione', $id_sede)
                                 ->first();
                         } else {
-                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                            $fattura = Fattura::where('v', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->first();

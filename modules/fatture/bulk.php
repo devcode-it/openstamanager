@@ -57,7 +57,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da stampare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         if (!empty($fatture)) {
             foreach ($fatture as $r) {
@@ -249,7 +249,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         $failed = [];
         $added = 0;
@@ -328,7 +328,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         $failed = [];
         $added = 0;
@@ -676,7 +676,7 @@ switch (post('op')) {
             foreach ($mansioni as $mansione) {
                 $referenti = $dbo->table('an_referenti')
                     ->where('idmansione', $mansione['idmansione'])
-                    ->where('idanagrafica', $fattura->idanagrafica)
+                    ->where('id_anagrafica', $fattura->id_anagrafica)
                     ->where('email', '!=', '')
                     ->get();
 
@@ -812,7 +812,7 @@ $operations['change_bank'] = [
     'data' => [
         'title' => tr('Aggiornare la banca?'),
         'msg' => tr('Per ciascuna fattura selezionata, verrà aggiornata la banca').'
-        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).' AND deleted_at IS NULL" ]}',
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->id).' AND deleted_at IS NULL" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

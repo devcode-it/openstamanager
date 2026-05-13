@@ -31,7 +31,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
     {
         $user = $this->getUser();
 
-        $query = 'SELECT id, idtecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine, ragione_sociale AS tecnico FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON idanagrafica = idtecnico  WHERE `idintervento` = :id_intervento';
+        $query = 'SELECT id, idtecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine, ragione_sociale AS tecnico FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON an_anagrafiche.id = in_interventi_tecnici.idtecnico  WHERE `idintervento` = :id_intervento';
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],
@@ -39,7 +39,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
 
         if ($user['gruppo'] == 'Tecnici') {
             $query .= ' AND `idtecnico` = :id_tecnico';
-            $parameters[':id_tecnico'] = $user['idanagrafica'];
+            $parameters[':id_tecnico'] = $user['id_anagrafica'];
         }
 
         return [
@@ -54,7 +54,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
         $data = $request['data'];
 
         try {
-            add_tecnico($data['id_intervento'], $user['idanagrafica'], $data['orario_inizio'], $data['orario_fine']);
+            add_tecnico($data['id_intervento'], $user['id_anagrafica'], $data['orario_inizio'], $data['orario_fine']);
         } catch (\InvalidArgumentException) {
         }
 
@@ -70,7 +70,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
         $user = $this->getUser();
         $data = $request['data'];
 
-        $database->delete('in_interventi_tecnici', ['idintervento' => $data['id_intervento'], 'idtecnico' => $user['idanagrafica']]);
+        $database->delete('in_interventi_tecnici', ['idintervento' => $data['id_intervento'], 'idtecnico' => $user['id_anagrafica']]);
 
         return [
             'id' => $data['id_intervento'],

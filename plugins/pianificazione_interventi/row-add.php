@@ -29,7 +29,7 @@ $options = [
     'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
-    'idanagrafica' => $documento['idanagrafica'],
+    'id_anagrafica' => $documento['id_anagrafica'],
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'id_plugin' => $id_plugin, // Modificato
@@ -49,7 +49,7 @@ $result = [
 ];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
+$iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Importazione della gestione dedicata
@@ -62,7 +62,7 @@ if (!empty(get('is_descrizione'))) {
     $file = 'articolo';
 
     // Aggiunta sconto di default da listino per le vendite
-    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($documento['id_anagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
         $result['sconto_percentuale'] = $listino['prc_guadagno'];

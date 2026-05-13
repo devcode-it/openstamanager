@@ -40,7 +40,7 @@ if (!empty($id_record)) {
             `or_ordini`
             LEFT JOIN `or_statiordine` ON `or_ordini`.`idstatoordine`=`or_statiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-            INNER JOIN `an_anagrafiche` ON `or_ordini`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica`=`an_anagrafiche`.`id`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
         WHERE

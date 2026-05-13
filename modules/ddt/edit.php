@@ -43,7 +43,7 @@ if ($dir == 'entrata') {
         </div>';
     }
 
-    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE idanagrafica='.prepare($record['idanagrafica']));
+    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE id='.prepare($record['id_anagrafica']));
     $campi_mancanti = [];
     if ($rs2[0]['piva'] == '') {
         if ($rs2[0]['codice_fiscale'] == '') {
@@ -62,7 +62,7 @@ if ($dir == 'entrata') {
 
     if (count($campi_mancanti) > 0) {
         echo "<div class='alert alert-warning'><i class='fa fa-warning'></i> Prima di procedere alla stampa completa i seguenti campi dell'anagrafica:<br/><b>".implode(', ', $campi_mancanti).'</b><br/>
-        '.Modules::link('Anagrafiche', $record['idanagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
+        '.Modules::link('Anagrafiche', $record['id_anagrafica'], tr('Vai alla scheda anagrafica'), null).'</div>';
     }
 }
 
@@ -137,17 +137,17 @@ echo '
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti_fornitori" ]}
+                    {[ "type": "select", "label": "'.($dir == 'uscita' ? tr('Mittente') : tr('Destinatario')).'", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti_fornitori" ]}
                 </div>';
 if ($dir == 'entrata') {
     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente$" ]}
                 </div>';
 }
 echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"v": '.$record['id_anagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'} ]}
                 </div>
             </div>
         </div>
@@ -191,12 +191,12 @@ if ($dir == 'entrata') {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                         </div>';
 } else {
     echo '
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                            {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                         </div>
 
                         <div class="col-md-3">
@@ -400,7 +400,7 @@ if (!$block_edit) {
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
         WHERE
-            `idanagrafica`='.prepare($record['idanagrafica']).'
+            `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `or_statiordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
             AND `or_tipiordine`.`dir`='.prepare($dir).'
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
@@ -436,7 +436,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "idanagrafica": '.$ddt->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($ddt->idsede_partenza).', "idsede_destinazione": '.intval($ddt->idsede_destinazione).', "id_anagrafica": '.$ddt->id_anagrafica.', "dir": "'.$dir.'", "idagente": '.$ddt->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -590,9 +590,9 @@ $(document).ready(function() {
     content_was_modified = false;
 });
 
-$("#idanagrafica").change(function() {
-    updateSelectOption("idanagrafica", $(this).val());
-    session_set("superselect,idanagrafica", $(this).val(), 0);
+$("#id_anagrafica").change(function() {
+    updateSelectOption("id_anagrafica", $(this).val());
+    session_set("superselect,id_anagrafica", $(this).val(), 0);
 
     $("#idsede_'.($dir == 'uscita' ? 'partenza' : 'destinazione').'").selectReset();
     $("#idpagamento").selectReset();

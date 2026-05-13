@@ -381,7 +381,7 @@ class Fattura extends Document
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function tipo()
@@ -798,7 +798,7 @@ class Fattura extends Document
         $pagamento = $this->pagamento;
 
         if ($pagamento->isRiBa() || $pagamento->isSepa()) {
-            $banca = Banca::find($this->id_banca_controparte) ?: Banca::where('id_anagrafica', $this->idanagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
+            $banca = Banca::find($this->id_banca_controparte) ?: Banca::where('id_anagrafica', $this->id_anagrafica)->where('predefined', 1)->whereNull('deleted_at')->first();
         } else {
             $banca = Banca::find($this->id_banca_azienda);
         }

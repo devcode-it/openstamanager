@@ -29,12 +29,12 @@ class Tecnici extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('an_anagrafiche', 'idanagrafica', $last_sync_at);
+        return $this->getDeleted('an_anagrafiche', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Anagrafica::select('idanagrafica', 'updated_at')
+        $statement = Anagrafica::select('id', 'updated_at')
             ->whereHas('tipi', function (Builder $query) {
                 $tipo_tecnico = Tipo::where('name', 'Tecnico')->first()->id;
                 $query->where('id', '=', $tipo_tecnico);
@@ -53,10 +53,10 @@ class Tecnici extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT an_anagrafiche.idanagrafica AS id,
+        $query = 'SELECT an_anagrafiche.id AS id,
             an_anagrafiche.ragione_sociale
         FROM an_anagrafiche
-        WHERE an_anagrafiche.idanagrafica = '.prepare($id);
+        WHERE an_anagrafiche.id = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

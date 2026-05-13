@@ -85,13 +85,13 @@ switch (post('op')) {
                     // Ricerca fattura per anagrafica se l'impostazione di accodamento è selezionata
                     if (!empty($accodare) && empty($fattura)) {
                         if ($raggruppamento == 'sede') {
-                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                            $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->where('idsede_destinazione', $id_sede)
                                 ->first();
                         } else {
-                            $fattura = Fattura::where('idanagrafica', $id_anagrafica)
+                            $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('idstatodocumento', $stato_documenti_accodabili->id)
                                 ->where('idtipodocumento', $tipo_documento->id)
                                 ->first();
@@ -179,16 +179,16 @@ switch (post('op')) {
 
             if (in_array($ordine->stato->getTranslation('title'), ['Bozza', 'In attesa di conferma', 'Accettato'])) {
                 // Controllo se è già stato creato un nuovo ordine per l'anagrafica
-                if (in_array($ordine->idanagrafica, array_keys($new_ordini))) {
-                    $new_ordine = Ordine::find($new_ordini[$ordine->idanagrafica]);
+                if (in_array($ordine->id_anagrafica, array_keys($new_ordini))) {
+                    $new_ordine = Ordine::find($new_ordini[$ordine->id_anagrafica]);
                 } else {
-                    $anagrafica = Anagrafica::find($ordine->idanagrafica);
+                    $anagrafica = Anagrafica::find($ordine->id_anagrafica);
                     $new_ordine = Ordine::build($anagrafica, $tipo, '', $data, post('id_segment'));
                     $new_ordine->idstatoordine = $id_stato;
                     $new_ordine->data = $data;
                     $new_ordine->save();
 
-                    $new_ordini[$ordine->idanagrafica] = $new_ordine->id;
+                    $new_ordini[$ordine->id_anagrafica] = $new_ordine->id;
                     $numero_ordini[] = $new_ordine->numero;
                 }
 
@@ -264,7 +264,7 @@ switch (post('op')) {
         $list = [];
         foreach ($id_records as $id) {
             $ordine = Ordine::find($id);
-            $id_anagrafica = $ordine->idanagrafica;
+            $id_anagrafica = $ordine->id_anagrafica;
 
             // Selezione destinatari e invio mail
             if (!empty($template)) {
@@ -282,7 +282,7 @@ switch (post('op')) {
                 // Aggiungo email referenti in base alla mansione impostata nel template
                 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                 foreach ($mansioni as $mansione) {
-                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                     if (!$referenti->isEmpty() && $creata_mail == false) {
                         $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                         $creata_mail = true;

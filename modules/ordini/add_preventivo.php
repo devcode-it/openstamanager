@@ -45,12 +45,12 @@ if (!empty($id_documento)) {
     return;
 }
 
-$id_anagrafica = $documento_finale->idanagrafica;
+$id_anagrafica = $documento_finale->id_anagrafica;
 
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_documento", "ajax-source": "preventivi", "select-options": {"idanagrafica": '.$id_anagrafica.', "stato": "is_fatturabile=1 OR is_bloccato"} ]}
+        {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "id_documento", "ajax-source": "preventivi", "select-options": {"id_anagrafica": '.$id_anagrafica.', "stato": "is_fatturabile=1 OR is_bloccato"} ]}
     </div>
 </div>
 

@@ -39,7 +39,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idpreventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `idpreventivo`) righe ON `righe`.`idpreventivo`=`co_preventivi`.`id` WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
+$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idpreventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `idpreventivo`) righe ON `righe`.`idpreventivo`=`co_preventivi`.`id` WHERE id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -76,7 +76,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori

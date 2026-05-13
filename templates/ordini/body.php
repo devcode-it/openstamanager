@@ -203,7 +203,7 @@ foreach ($righe as $riga) {
                 '.$riga->articolo->codice.'
             </td>
             <td class="text-center" style="vertical-align: middle">
-                '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->idanagrafica)->codice_fornitore : '').'
+                '.($riga->articolo ? $riga->articolo->dettaglioFornitore($documento->id_anagrafica)->codice_fornitore : '').'
             </td>';
     }
 

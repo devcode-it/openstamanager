@@ -21,12 +21,12 @@
 $r = $dbo->fetchOne('SELECT *, 
     co_preventivi.nome as nome_preventivo,
     an_anagrafiche.ragione_sociale, 
-    co_preventivi.idanagrafica, 
+    co_preventivi.id_anagrafica, 
     an_referenti.nome as nome_referente,
     IF((an_referenti.email IS NOT NULL AND an_referenti.email!=""), an_referenti.email, an_anagrafiche.email) AS email
 FROM 
     co_preventivi 
-    INNER JOIN an_anagrafiche ON co_preventivi.idanagrafica=an_anagrafiche.idanagrafica 
+    INNER JOIN an_anagrafiche ON co_preventivi.id_anagrafica=an_anagrafiche.id 
     LEFT JOIN an_referenti ON an_referenti.id=co_preventivi.idreferente 
 WHERE 
     co_preventivi.id='.prepare($id_record));
@@ -40,7 +40,7 @@ return [
     'ragione_sociale' => $r['ragione_sociale'],
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_bozza']),
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'revisione' => $revisione,
     'nome_referente' => $r['nome_referente'],
     'nome_preventivo' => $r['nome_preventivo'],

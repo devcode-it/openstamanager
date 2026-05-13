@@ -55,7 +55,7 @@ switch ($op) {
         $modulo_contratti = Module::where('name', 'Contratti')->first();
         if ($modulo_contratti->permission != '-') {
             // Contratti attivi per l'anagrafica
-            $contratti = Contratto::where('idanagrafica', '=', $id_anagrafica)
+            $contratti = Contratto::where('id_anagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
                     $query->where('is_pianificabile', '=', 1);
                 })
@@ -87,7 +87,7 @@ switch ($op) {
         $modulo_preventivi = Module::where('name', 'Preventivi')->first();
         if ($modulo_preventivi->permission != '-') {
             // Preventivi attivi
-            $preventivi = Preventivo::where('idanagrafica', '=', $id_anagrafica)
+            $preventivi = Preventivo::where('id_anagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
                     $query->where('is_pianificabile', '=', 1);
                 })
@@ -118,7 +118,7 @@ switch ($op) {
         $modulo_interventi = Module::where('name', 'Interventi')->first();
         if ($modulo_interventi->permission != '-') {
             // Attività recenti
-            $interventi = Intervento::where('idanagrafica', '=', $id_anagrafica)
+            $interventi = Intervento::where('id_anagrafica', '=', $id_anagrafica)
                 ->latest()->take($numero_documenti)->get();
             echo '
             <div class="col-md-6 mb-3">
@@ -146,7 +146,7 @@ switch ($op) {
         $modulo_fatture_vendita = Module::where('name', 'Fatture di vendita')->first();
         if ($modulo_fatture_vendita->permission != '-') {
             // Fatture attive
-            $fatture = Fattura::where('idanagrafica', '=', $id_anagrafica)
+            $fatture = Fattura::where('id_anagrafica', '=', $id_anagrafica)
                 ->whereHas('stato', function ($query) {
                     $id_bozza = Stato::where('name', 'Bozza')->first()->id;
                     $id_parz_pagato = Stato::where('name', 'Parzialmente pagato')->first()->id;

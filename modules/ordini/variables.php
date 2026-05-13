@@ -24,14 +24,14 @@ $r = $dbo->fetchOne('SELECT or_ordini.*,
     an_anagrafiche.ragione_sociale,
     IF((an_referenti.email IS NOT NULL AND an_referenti.email != ""), an_referenti.email, an_anagrafiche.email) AS email
 FROM or_ordini
-    INNER JOIN an_anagrafiche ON or_ordini.idanagrafica = an_anagrafiche.idanagrafica
+    INNER JOIN an_anagrafiche ON or_ordini.id_anagrafica = an_anagrafiche.id
     LEFT JOIN an_referenti ON an_referenti.id = or_ordini.idreferente
 WHERE or_ordini.id='.prepare($id_record));
 
 // Variabili da sostituire
 return [
     'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),

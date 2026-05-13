@@ -23,7 +23,7 @@ use Models\Module;
 use Models\Plugin;
 use Modules\Anagrafiche\Anagrafica;
 
-$referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'idanagrafica' => $id_parent]);
+$referenti = $dbo->select('an_referenti', 'id', [], ['idsede' => $id_record, 'id_anagrafica' => $id_parent]);
 $referenti = implode(',', array_column($referenti, 'id'));
 
 // Verifica se l'anagrafica è di tipo Cliente
@@ -143,7 +143,7 @@ echo '
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$id_parent.'}, "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_parent.'" ]}
+			{[ "type": "select", "multiple": "1", "label": "'.tr('Referenti').'", "name": "id_referenti[]", "value": "'.$referenti.'", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$id_parent.'}, "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_parent.'" ]}
 		</div>
 		<div class="col-md-6">
 			{[ "type": "textarea", "label": "'.tr('Note').'", "name": "note", "value": "$note$" ]}

@@ -92,7 +92,7 @@ class Scadenze
         $assicurazioni = [];
 
         // Ottimizzazione: raccogli tutte le anagrafiche delle scadenze e carica le assicurazioni in una sola query
-        $id_anagrafiche = $scadenze->pluck('idanagrafica')->unique()->filter()->values();
+        $id_anagrafiche = $scadenze->pluck('id_anagrafica')->unique()->filter()->values();
         $assicurazioni_map = [];
 
         if ($id_anagrafiche->isNotEmpty()) {
@@ -106,7 +106,7 @@ class Scadenze
         }
 
         foreach ($scadenze as $scadenza) {
-            $key = $scadenza->idanagrafica.'_'.$scadenza->scadenza->format('Y-m-d').'_'.$scadenza->scadenza->format('Y-m-d');
+            $key = $scadenza->id_anagrafica.'_'.$scadenza->scadenza->format('Y-m-d').'_'.$scadenza->scadenza->format('Y-m-d');
             if (isset($assicurazioni_map[$key])) {
                 $assicurazioni[] = $assicurazioni_map[$key];
             }
@@ -132,15 +132,15 @@ class Scadenze
     {
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $descrizione = $fattura->tipo->getTranslation('title').' numero '.$numero;
-        $idanagrafica = $fattura->idanagrafica;
+        $id_anagrafica = $fattura->id_anagrafica;
 
-        $scadenza = Scadenza::build($idanagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato, $fattura->id);
+        $scadenza = Scadenza::build($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato, $fattura->id);
 
         $scadenza->data_emissione = $fattura->data;
         $scadenza->save();
 
         // TODO: Considerare di passare le assicurazioni come parametro se chiamato da rimuovi()
-        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->id_anagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
             $assicurazione_crediti->save();
@@ -154,7 +154,7 @@ class Scadenze
                 $dir = $fattura->tipo->dir;
 
                 // Recupero conto anagrafica
-                $id_conto_anagrafica = database()->selectOne('an_anagrafiche', $dir == 'entrata' ? 'idconto_cliente' : 'idconto_fornitore', ['idanagrafica' => $idanagrafica]);
+                $id_conto_anagrafica = database()->selectOne('an_anagrafiche', $dir == 'entrata' ? 'idconto_cliente' : 'idconto_fornitore', ['id_anagrafica' => $id_anagrafica]);
                 $id_conto_anagrafica = $id_conto_anagrafica[$dir == 'entrata' ? 'idconto_cliente' : 'idconto_fornitore'];
 
                 // Recupero conto contropartita
@@ -217,7 +217,7 @@ class Scadenze
         $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
-        $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->idpagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->idanagrafica);
+        $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->idpagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->id_anagrafica);
         $direzione = $this->fattura->tipo->dir;
 
         foreach ($rate as $rata) {

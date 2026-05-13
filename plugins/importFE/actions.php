@@ -191,13 +191,13 @@ switch (filter('op')) {
         }
 
         // Aggiorno la tipologia di anagrafica fornitore
-        $anagrafica = $database->fetchOne('SELECT `idanagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
+        $anagrafica = $database->fetchOne('SELECT `id_anagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
         $id_tipo = Tipo::where('name', 'Fornitore')->first()->id;
-        $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `idanagrafica`='.prepare($anagrafica['idanagrafica']));
+        $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `id_anagrafica`='.prepare($anagrafica['id_anagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
         if (empty($rs_t)) {
-            $database->query("INSERT INTO `an_tipianagrafiche_anagrafiche` (`idtipoanagrafica`, `idanagrafica`) VALUES ($id_tipo, ".prepare($anagrafica['idanagrafica']).')');
+            $database->query("INSERT INTO `an_tipianagrafiche_anagrafiche` (`idtipoanagrafica`, `id_anagrafica`) VALUES ($id_tipo, ".prepare($anagrafica['id_anagrafica']).')');
         }
 
         // Processo il file ricevuto
@@ -465,7 +465,7 @@ switch (filter('op')) {
                 WHERE
                     `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
                     YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
-                    `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id).' AND
+                    `dt_ddt`.`id_anagrafica` = '.prepare($anagrafica->id).' AND
                     `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
                     |where|';
 
@@ -507,7 +507,7 @@ switch (filter('op')) {
                 WHERE
                     `or_ordini`.`numero_esterno` = '.prepare($ordine['numero']).'
                     AND YEAR(`or_ordini`.`data`) = '.prepare($ordine['anno']).'
-                    AND `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id).'
+                    AND `or_ordini`.`id_anagrafica` = '.prepare($anagrafica->id).'
                     AND `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa`
                     AND |where|';
 
@@ -552,7 +552,7 @@ switch (filter('op')) {
                         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                     WHERE
-                        `dt_ddt`.`idanagrafica` = '.prepare($anagrafica->id)." AND
+                        `dt_ddt`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ddt| AND
                         `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
                         `dt_statiddt_lang`.`title` != 'Fatturato' AND
@@ -573,7 +573,7 @@ switch (filter('op')) {
                         LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
                     WHERE
-                        `or_ordini`.`idanagrafica` = '.prepare($anagrafica->id)." AND
+                        `or_ordini`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ordini| AND
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND
                         `or_statiordine_lang`.`title` != 'Fatturato' AND

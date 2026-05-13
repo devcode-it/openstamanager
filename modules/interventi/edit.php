@@ -74,7 +74,7 @@ echo '
                     <!-- RIGA 1 -->
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
+                            {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
                         </div>
                         <div class="col-md-3">
                             {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
@@ -83,13 +83,13 @@ echo '
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
                         </div>
                     </div>
                     <!-- RIGA 2 -->
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                            {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente$" ]}
                         </div>
 
 
@@ -99,7 +99,7 @@ echo '
 
                         <div class="col-md-6">';
 echo '
-                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'"  ]}
+                            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$record['id_preventivo'].'", "ajax-source": "preventivi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Preventivi')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'"  ]}
                         </div>
 
                         <div class="col-md-6">';
@@ -108,7 +108,7 @@ $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idinterv
 
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$record['idanagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'" ]}
 
                             <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
                         </div>
@@ -123,7 +123,7 @@ if (!empty($record['idordine'])) {
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['idanagrafica' => $record['idanagrafica'], 'idcontratto' => $record['id_contratto']]); ?> ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idcontratto' => $record['id_contratto']]); ?> ]}
                 </div>
                 <div class="col-md-3">
 <?php
@@ -201,7 +201,7 @@ echo '
                     {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi_azienda", "value": "$idsede_partenza$", "readonly": "'.(($record['flag_completato'] || !$articoli->isEmpty()) ? 1 : 0).'" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione","value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'", "readonly": "'.$record['flag_completato'].'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Tags').'", "multiple": "1", "name": "tags[]", "values": "query=SELECT `id`, `name` as descrizione FROM `in_tags` ORDER BY `name`", "value": "'.implode(',', $tags).'", "icon-after": "add|'.Module::where('name', 'Tags')->first()->id.'|", "link": "module:Tags" ]}
@@ -336,11 +336,11 @@ if (!$block_edit) {
             INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato` = `co_statipreventivi`.`id`
             INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
         WHERE
-            idanagrafica='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
+            id_anagrafica='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision`=1 AND ((`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0)';
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
     // Lettura contratti accettati, in attesa di conferma o in lavorazione
-    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `idanagrafica`='.prepare($record['idanagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
+    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
     $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
 
     // Lettura ddt (entrata o uscita)
@@ -354,7 +354,7 @@ if (!$block_edit) {
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE
-            `idanagrafica`='.prepare($record['idanagrafica']).'
+            `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `dt_statiddt_lang`.`title` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")
             AND `dt_tipiddt`.`dir` = '.prepare($intervento->direzione).'
             AND `dt_causalet`.`is_importabile` = 1
@@ -369,7 +369,7 @@ if (!$block_edit) {
             INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         WHERE
-            ((`or_tipiordine`.`dir` = "entrata" AND `idanagrafica`='.prepare($record['idanagrafica']).') || `or_tipiordine`.`dir` = "uscita")
+            ((`or_tipiordine`.`dir` = "entrata" AND `id_anagrafica`='.prepare($record['id_anagrafica']).') || `or_tipiordine`.`dir` = "uscita")
             AND `or_statiordine`.`is_fatturabile` = 1
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
     $ordine = $dbo->fetchArray($ordini_query)[0]['tot'];
@@ -386,7 +386,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 0, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "idanagrafica": '.$record['idanagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 0, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "id_anagrafica": '.$record['id_anagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-4" style="margin-top: 25px">
@@ -587,7 +587,7 @@ echo '
         content_was_modified = false;
     });
 
-    var anagrafica = input("idanagrafica");
+    var anagrafica = input("id_anagrafica");
     var sede = input("idsede_destinazione");
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
@@ -598,8 +598,8 @@ echo '
 
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-        session_set("superselect,idanagrafica", $(this).val(), 0);
+        updateSelectOption("id_anagrafica", $(this).val());
+        session_set("superselect,id_anagrafica", $(this).val(), 0);
 
         let value = !$(this).val();
         let placeholder = value ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";

@@ -34,18 +34,18 @@ $tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiin
 // Tecnici disponibili
 $id_tipo_tecnico = Tipo::where('name', 'Tecnico')->first()->id;
 $tecnici_disponibili = $dbo->fetchArray('SELECT
-    `an_anagrafiche`.`idanagrafica` AS id, `ragione_sociale`, `colore`
+    `an_anagrafiche`.`id` AS id, `ragione_sociale`, `colore`
 FROM
     `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
+    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`idanagrafica`
+    LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`id`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
 WHERE
     `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
 GROUP BY
-    `an_anagrafiche`.`idanagrafica`
+    `an_anagrafiche`.`id`
 ORDER BY
     `ragione_sociale` ASC');
 
@@ -57,7 +57,7 @@ if (!isset($_SESSION['dashboard']['idtecnici'])) {
     $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
 
     foreach ($tecnici_disponibili as $tecnico) {
-        if (($user['gruppo'] == 'Tecnici' && $user['idanagrafica'] == $tecnico['id']) || $user['gruppo'] != 'Tecnici') {
+        if (($user['gruppo'] == 'Tecnici' && $user['id_anagrafica'] == $tecnico['id']) || $user['gruppo'] != 'Tecnici') {
             $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
         }
     }
@@ -244,8 +244,8 @@ echo '
 
 $solo_promemoria_assegnati = setting('Visualizza solo promemoria assegnati');
 $id_tecnico = null;
-if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-    $id_tecnico = $user['idanagrafica'];
+if ($user['gruppo'] == 'Tecnici' && !empty($user['id_anagrafica'])) {
+    $id_tecnico = $user['id_anagrafica'];
 }
 
 $query_da_programmare = 'SELECT
@@ -255,7 +255,7 @@ $query_da_programmare = 'SELECT
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
             LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
         WHERE
             `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
     UNION
@@ -263,7 +263,7 @@ $query_da_programmare = 'SELECT
             IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data
         FROM
             `in_interventi`
-            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`';
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`';
 
 // Visualizzo solo promemoria del tecnico loggato
 if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
@@ -309,7 +309,7 @@ if (!empty($risultati_da_programmare)) {
             `in_interventi`.`id`
         FROM
             `in_interventi`
-            INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`';
+            INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`';
 
     // Visualizzo solo promemoria del tecnico loggato
     if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {

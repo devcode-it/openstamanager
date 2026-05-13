@@ -26,7 +26,7 @@ $numero = $documento->numero_esterno ?: $documento->numero;
 $id_modulo_banche = Module::where('name', 'Banche')->first()->id;
 $id_modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
 
-$mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']));
+$mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHERE id_anagrafica = '.prepare($record['id_anagrafica']));
 $scadenza_in_chiusura = 0;
 
 foreach ($scadenze as $scadenza) {
@@ -42,7 +42,7 @@ if ($scadenza_in_chiusura) {
     echo '
 <div class="alert alert-warning">
 <i class="fa fa-warning"></i> '.tr("E' presente una scadenza che rientra nel periodo di chiusura dell'azienda, impostato nel plugin").'
-    <b>'.Plugins::link('Regole pagamenti', $scadenza['idanagrafica'], tr('Regole pagamenti')).'</b>
+    <b>'.Plugins::link('Regole pagamenti', $scadenza['id_anagrafica'], tr('Regole pagamenti')).'</b>
 </div>';
 }
 
@@ -55,7 +55,7 @@ echo '
 	<input type="hidden" name="tipo" value="'.$record['tipo'].'">
 	<input type="hidden" name="descrizione" value="'.$record['descrizione'].'">
 	<input type="hidden" name="iddocumento" value="'.$record['iddocumento'].'">
-    <input type="hidden" name="idanagrafica" value="'.$record['idanagrafica'].'">
+    <input type="hidden" name="id_anagrafica" value="'.$record['id_anagrafica'].'">
 
 	<div class="card card-primary">
 		<div class="card-header">
@@ -73,7 +73,7 @@ echo '
                         <tr>
                             <th width="125">'.($dir == 'entrata' ? tr('Cliente') : ($dir == 'uscita' ? tr('Fornitore') : tr('Anagrafica'))).':</th>
                             <td>
-                                '.Modules::link('Anagrafiche', $record['idanagrafica'], $record['ragione_sociale']).'
+                                '.Modules::link('Anagrafiche', $record['id_anagrafica'], $record['ragione_sociale']).'
                             </td>
                         </tr>';
 if (!empty($documento)) {
@@ -227,13 +227,13 @@ foreach ($scadenze as $i => $scadenza) {
                                     '.($dir == 'entrata' ?
                                 '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')" ]}'
                                 :
-                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')"]}
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['id_anagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')"]}
                                     ').'
                                 </td>
 
                                 <td>
                                     '.($dir == 'entrata' ?
-                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')"]}'
+                                '{[ "type": "select", "name": "id_banca_controparte['.$i.']", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['id_anagrafica']]).', "value": "'.$scadenza['id_banca_controparte'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')"]}'
                                 :
                                 '{[ "type": "select", "name": "id_banca_azienda['.$i.']", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "'.$scadenza['id_banca_azienda'].'", "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "onchange": "aggiornaScadenzaInline('.$scadenza['id'].')", "onblur": "aggiornaScadenzaInline('.$scadenza['id'].')" ]}'
                                 ).'
@@ -321,12 +321,12 @@ echo '
                     '.($dir == 'entrata' ?
 '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)" ]}'
 :
-'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).', "icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)"]}
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['id_anagrafica']]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)"]}
                     ').'
                 </td>
                 <td>
                     '.($dir == 'entrata' ?
-'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['idanagrafica']]).',"icon-after": "add|'.$id_modulo_banche.'|idanagrafica='.$record['idanagrafica'].'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)"]}'
+'{[ "type": "select", "name": "id_banca_controparte[-id-]", "ajax-source": "banche", "select-options":'.json_encode(['id_anagrafica' => $scadenza['id_anagrafica']]).',"icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)"]}'
 :
 '{[ "type": "select", "name": "id_banca_azienda[-id-]", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "icon-after": "add|'.$id_modulo_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "onchange": "aggiornaScadenzaNuova(-id-)", "onblur": "aggiornaScadenzaNuova(-id-)" ]}'
 ).'
@@ -382,7 +382,7 @@ echo '
                 id_module: globals.id_module,
                 id_record: globals.id_record,
                 op: "add",
-                idanagrafica: '.$record['idanagrafica'].',
+                id_anagrafica: '.$record['id_anagrafica'].',
                 iddocumento: '.$documento['id'].',
                 data_emissione: "'.$documento['data_emissione'].'",
             },
@@ -439,7 +439,7 @@ echo '
                 op: "save_new_scadenza",
                 index: index,
                 iddocumento: '.$documento['id'].',
-                idanagrafica: '.$record['idanagrafica'].',
+                id_anagrafica: '.$record['id_anagrafica'].',
                 id_banca_azienda: id_banca_azienda,
                 id_banca_controparte: id_banca_controparte,
                 id_pagamento: id_pagamento,

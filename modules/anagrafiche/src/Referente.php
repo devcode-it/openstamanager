@@ -43,11 +43,11 @@ class Referente extends Model
      *
      * @return self
      */
-    public static function build($idanagrafica = null, $nome = null, $idmansione = null, $idsede = null)
+    public static function build($id = null, $nome = null, $idmansione = null, $idsede = null)
     {
         $model = new static();
 
-        $model->idanagrafica = $idanagrafica;
+        $model->id = $id;
 
         $model->nome = $nome;
 
@@ -61,7 +61,7 @@ class Referente extends Model
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function sede()

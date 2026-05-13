@@ -42,7 +42,7 @@ if (!empty($intervento['idsede_destinazione'])) {
     $provincia = $sedi['provincia'];
 } else {
     // Se non c'è sede, usa l'anagrafica
-    $sedi = $dbo->fetchOne('SELECT cap, citta, indirizzo, provincia FROM an_anagrafiche WHERE idanagrafica = '.prepare($intervento['idanagrafica']));
+    $sedi = $dbo->fetchOne('SELECT cap, citta, indirizzo, provincia FROM an_anagrafiche WHERE id = '.prepare($intervento['id_anagrafica']));
 
     $citta = $sedi['citta'];
     $indirizzo = $sedi['indirizzo'];

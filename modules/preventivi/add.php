@@ -21,7 +21,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Preventivi\Stato;
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
+$id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 $stati = get('pianificabile') ? 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` as descrizione FROM `co_statipreventivi`  LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_pianificabile`=1 AND `co_statipreventivi`.`deleted_at` is NULL ORDER BY `title`' : 'SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` as descrizione FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statipreventivi`.`deleted_at` is NULL ORDER BY `title`';
 
@@ -40,13 +40,13 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 		</div>
 
 		<div class="col-md-6">
-				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('idanagrafica'))) ? 0 : 1; ?>" ]}
+				{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "<?php echo (empty(get('id_anagrafica'))) ? 0 : 1; ?>" ]}
 		</div>
 	</div>
 	<div class="row">
 
 		<div class="col-md-4">
-				{[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
+				{[ "type": "select", "label": "<?php echo tr('Sede destinazione'); ?>", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": <?php echo json_encode(['id_anagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 
 		<div class="col-md-4">
@@ -78,9 +78,9 @@ $stato = Stato::where('name', 'Bozza')->first()->id;
 </form>
 
 <script>
-	$('#modals > div #idanagrafica').change(function() {
+	$('#modals > div #id_anagrafica').change(function() {
 		$(".modal #idsede_destinazione").selectReset();
-        updateSelectOption("idanagrafica", $(this).val());
-        session_set('superselect,idanagrafica', $(this).val(), 0);
+        updateSelectOption("id_anagrafica", $(this).val());
+        session_set('superselect,id_anagrafica', $(this).val(), 0);
 	});
 </script>

@@ -40,7 +40,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM my_impianti WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
+$query .= ' FROM my_impianti WHERE id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -69,7 +69,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     $results[] = $result;

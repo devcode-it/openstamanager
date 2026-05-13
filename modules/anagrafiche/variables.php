@@ -37,7 +37,7 @@ elseif ($anagrafica->idconto_fornitore != '') {
 return [
     'ragione_sociale' => $anagrafica->ragione_sociale,
     'codice' => $anagrafica->codice,
-    'id_anagrafica' => $anagrafica->idanagrafica,
+    'id_anagrafica' => $anagrafica->id,
     'conto' => $conto,
     'conto_descrizione' => $conto_descrizione,
     'email' => $anagrafica->email,

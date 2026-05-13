@@ -40,8 +40,8 @@ FROM
 	`co_contratti` 
     INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato` 
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_contratti`.`idanagrafica`
-    LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`idanagrafica` = `co_contratti`.`idagente`
+    LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
+    LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`idagente`
     LEFT JOIN `co_categorie_contratti` ON `co_categorie_contratti`.`id` = `co_contratti`.`id_categoria`
     LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti_lang`.`id_record`=`co_categorie_contratti`.`id` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 

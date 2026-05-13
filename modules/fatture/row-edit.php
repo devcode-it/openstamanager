@@ -30,14 +30,14 @@ $options = [
     'action' => 'edit',
     'dir' => $documento->direzione,
     'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',
-    'idanagrafica' => $documento['idanagrafica'],
+    'id_anagrafica' => $documento['id_anagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'is_nota' => $documento->isNota(),
     'select-options' => [
         'articoli' => [
-            'idanagrafica' => $documento->idanagrafica,
+            'id_anagrafica' => $documento->id_anagrafica,
             'dir' => $documento->direzione,
             'idsede_partenza' => $documento->idsede_partenza,
             'idsede_destinazione' => $documento->idsede_destinazione,

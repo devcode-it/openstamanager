@@ -65,7 +65,7 @@ if (count($preventivo->revisioni) > 1) {
             <!-- RIGA 1 -->
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "ajax-source": "clienti" ]}
+                    {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti" ]}
                 </div>
 
                 <div class="col-md-4">
@@ -73,17 +73,17 @@ if (count($preventivo->revisioni) > 1) {
                 </div>
 
                  <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "placeholder": "Sede legale" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "$idsede_destinazione$", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "placeholder": "Sede legale" ]}
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4">';
 if (!empty($record['idreferente'])) {
-    echo Plugins::link('Referenti', $record['idanagrafica'], null, null, 'class="pull-right"');
+    echo Plugins::link('Referenti', $record['id_anagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"idsede_destinazione": '.$record['idsede_destinazione'].'} ]}
                 </div>
 
                 <div class="col-md-4">';
@@ -91,7 +91,7 @@ if ($record['idagente'] != 0) {
     echo Modules::link('Anagrafiche', $record['idagente'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente$" ]}
+                    {[ "type": "select", "label": "'.tr('Agente').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente$" ]}
                 </div>
             </div>
         </div>
@@ -146,7 +146,7 @@ echo '
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
+                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
 ?>
                 </div>
 
@@ -273,7 +273,7 @@ if (!$block_edit) {
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "idanagrafica": '.$record['idanagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                    {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli", "select-options": {"permetti_movimento_a_zero": 1, "idsede_partenza": '.intval($record['idsede_partenza']).', "idsede_destinazione": '.intval($record['idsede_destinazione']).', "dir": "entrata", "id_anagrafica": '.$record['id_anagrafica'].', "idagente": '.$record['idagente'].'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                 </div>
 
                 <div class="col-md-3" style="margin-top: 25px">
@@ -367,9 +367,9 @@ function caricaRighe(id_riga) {
 $(document).ready(function() {
     caricaRighe(null);
 
-    $("#idanagrafica").change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-        session_set("superselect,idanagrafica", $(this).val(), 0);
+    $("#id_anagrafica").change(function() {
+        updateSelectOption("id_anagrafica", $(this).val());
+        session_set("superselect,id_anagrafica", $(this).val(), 0);
 
         $("#idsede_destinazione").selectReset();
         $("#idpagamento").selectReset();

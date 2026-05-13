@@ -267,7 +267,7 @@ class Interventi extends AppResource
             data_richiesta,
             data_scadenza,
             descrizione,
-            idanagrafica AS id_cliente,
+            id_anagrafica AS id_cliente,
             id_contratto,
             id_preventivo,
             idtipointervento AS id_tipo_intervento,

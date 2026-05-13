@@ -27,9 +27,9 @@ $id_cliente = $id_cliente ?: $idcliente;
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 if (empty($id_sede) || $id_sede == '-1') {
-    $queryc = 'SELECT * FROM `an_anagrafiche` WHERE `idanagrafica`='.prepare($id_cliente);
+    $queryc = 'SELECT * FROM `an_anagrafiche` WHERE `id`='.prepare($id_cliente);
 } else {
-    $queryc = 'SELECT `an_anagrafiche`.*, `an_sedi`.*, if(`an_sedi`.`codice_fiscale` != "", `an_sedi`.`codice_fiscale`, `an_anagrafiche`.`codice_fiscale`) AS codice_fiscale, if(`an_sedi`.`piva` != "", `an_sedi`.`piva`, `an_anagrafiche`.`piva`) AS piva, if(`an_sedi`.`id_nazione` != "", `an_sedi`.`id_nazione`, `an_anagrafiche`.`id_nazione`) AS id_nazione FROM `an_sedi` JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_sedi`.`idanagrafica` WHERE `an_sedi`.`idanagrafica`='.prepare($id_cliente).' AND `an_sedi`.`id`='.prepare($id_sede);
+    $queryc = 'SELECT `an_anagrafiche`.*, `an_sedi`.*, if(`an_sedi`.`codice_fiscale` != "", `an_sedi`.`codice_fiscale`, `an_anagrafiche`.`codice_fiscale`) AS codice_fiscale, if(`an_sedi`.`piva` != "", `an_sedi`.`piva`, `an_anagrafiche`.`piva`) AS piva, if(`an_sedi`.`id_nazione` != "", `an_sedi`.`id_nazione`, `an_anagrafiche`.`id_nazione`) AS id_nazione FROM `an_sedi` JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`an_sedi`.`id_anagrafica` WHERE `an_sedi`.`id_anagrafica`='.prepare($id_cliente).' AND `an_sedi`.`id`='.prepare($id_sede);
 }
 /**
  * @deprecated
@@ -41,7 +41,7 @@ $cliente = $dbo->fetchOne($queryc);
  * @deprecated
  */
 $id_azienda = setting('Azienda predefinita');
-$azienda = $dbo->fetchOne('SELECT *, (SELECT `iban` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS codiceiban, (SELECT `nome` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS appoggiobancario, (SELECT `bic` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).")) AS bic FROM `an_anagrafiche` WHERE `idanagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome`='Azienda predefinita')");
+$azienda = $dbo->fetchOne('SELECT *, (SELECT `iban` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS codiceiban, (SELECT `nome` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS appoggiobancario, (SELECT `bic` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).")) AS bic FROM `an_anagrafiche` WHERE `id` = (SELECT `valore` FROM `zz_settings` WHERE `nome`='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 /**

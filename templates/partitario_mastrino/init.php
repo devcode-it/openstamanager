@@ -19,7 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
-$azienda = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica='.setting('Azienda predefinita'));
+$azienda = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id='.setting('Azienda predefinita'));
 $date_start = $_SESSION['period_start'];
 $date_end = $_SESSION['period_end'];
 $saldo_iniziale = 0;

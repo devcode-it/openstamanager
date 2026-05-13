@@ -37,12 +37,12 @@ class Referenti extends AppResource implements RetrieveInterface
             `an_referenti`.`updated_at` 
         FROM 
             `an_referenti`
-            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_referenti`.`idanagrafica`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `an_referenti`.`id_anagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).")
         WHERE 
-            `an_tipianagrafiche_lang`.`title` = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.idanagrafica IN(SELECT in_interventi.idanagrafica FROM in_interventi))";
+            `an_tipianagrafiche_lang`.`title` = 'Cliente' AND (an_anagrafiche.deleted_at IS NULL OR an_anagrafiche.id IN(SELECT in_interventi.id_anagrafica FROM in_interventi))";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -58,7 +58,7 @@ class Referenti extends AppResource implements RetrieveInterface
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `an_referenti`.`id`,
-            `idanagrafica` AS id_cliente,
+            `id_anagrafica` AS id_cliente,
             IF(`idsede` = 0, NULL, `idsede`) AS id_sede,
             `an_referenti`.`nome`,
             `an_mansioni`.`nome` AS mansione,

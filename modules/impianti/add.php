@@ -40,11 +40,11 @@ $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 
 	<div class="row">
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "id": "idanagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica) ? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica) ? 1 : 0; ?>"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "id": "id_anagrafica_impianto", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "clienti", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Cliente&readonly_tipo=1||<?php echo !empty($id_anagrafica) ? 'disabled' : ''; ?>", "readonly": "<?php echo !empty($id_anagrafica) ? 1 : 0; ?>"  ]}
 		</div>
 
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['idanagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "idsede", "value": "$idsede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['id_anagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
@@ -117,11 +117,11 @@ $(document).ready(function () {
         }
     });
 
-	input('idanagrafica').change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+	input('id_anagrafica').change(function() {
+        updateSelectOption("id_anagrafica", $(this).val());
+		session_set('superselect,id_anagrafica', $(this).val(), 0);
 
-        let value = !input('idanagrafica').get();
+        let value = !input('id_anagrafica').get();
 
         input('idsede').setDisabled(value)
             .getElement().selectReset();

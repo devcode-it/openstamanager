@@ -52,7 +52,7 @@ switch ($operazione) {
 
     case 'updatereferente':
         $dbo->update('an_referenti', [
-            'idanagrafica' => $id_parent,
+            'id_anagrafica' => $id_parent,
             'nome' => post('nome'),
             'idmansione' => post('idmansione'),
             'telefono' => post('telefono'),

@@ -45,12 +45,12 @@ if ($module->name == 'Ordini cliente') {
 
 switch (post('op')) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
         $data = post('data');
         $id_segment = post('id_segment');
 
-        $anagrafica = Anagrafica::find($idanagrafica);
+        $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = Tipo::where('dir', $dir)->first();
 
         $ordine = Ordine::build($anagrafica, $tipo, $nome, $data, $id_segment);
@@ -80,7 +80,7 @@ switch (post('op')) {
             }
 
             $ordine->nome = post('nome');
-            $ordine->idanagrafica = post('idanagrafica');
+            $ordine->id_anagrafica = post('id_anagrafica');
             $ordine->idreferente = post('idreferente');
             $ordine->data = post('data') ?: null;
             $ordine->numero = post('numero');
@@ -115,11 +115,11 @@ switch (post('op')) {
             $ordine->condizioni_fornitura = post('condizioni_fornitura');
 
             // Verifica la presenza di ordini con lo stesso numero
-            $query = 'SELECT * FROM `or_ordini` WHERE `numero_cliente` = :numero_cliente AND `numero_cliente` IS NOT NULL AND `numero_cliente` != \'\' AND `id` != :id_record AND `idanagrafica` = :idanagrafica AND DATE_FORMAT(`or_ordini`.`data`, \'%Y\') = :anno';
+            $query = 'SELECT * FROM `or_ordini` WHERE `numero_cliente` = :numero_cliente AND `numero_cliente` IS NOT NULL AND `numero_cliente` != \'\' AND `id` != :id_record AND `id_anagrafica` = :id_anagrafica AND DATE_FORMAT(`or_ordini`.`data`, \'%Y\') = :anno';
             $params = [
                 ':numero_cliente' => post('numero_cliente'),
                 ':id_record' => $id_record,
-                ':idanagrafica' => post('idanagrafica'),
+                ':id_anagrafica' => post('id_anagrafica'),
                 ':anno' => Carbon::parse(post('data'))->copy()->format('Y'),
             ];
             $ordini = $dbo->fetchArray($query, $params);
@@ -602,7 +602,7 @@ switch (post('op')) {
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
-            $anagrafica = Anagrafica::find(post('idanagrafica'));
+            $anagrafica = Anagrafica::find(post('id_anagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
 
             $ordine = Ordine::build($anagrafica, $tipo, '', post('data'), post('id_segment'));
@@ -687,7 +687,7 @@ switch (post('op')) {
 
         // Creazione dell' ordine al volo
         if (post('create_document') == 'on') {
-            $anagrafica = Anagrafica::find(post('idanagrafica'));
+            $anagrafica = Anagrafica::find(post('id_anagrafica'));
             $tipo = Tipo::where('dir', $dir)->first();
 
             $ordine = Ordine::build($anagrafica, $tipo, '', post('data'), post('id_segment'));
@@ -814,7 +814,7 @@ switch (post('op')) {
             } else {
                 $id_iva = ($ordine->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
             }
-            $id_anagrafica = $ordine->idanagrafica;
+            $id_anagrafica = $ordine->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
@@ -910,7 +910,7 @@ switch (post('op')) {
         break;
 
     case 'update-price':
-        $id_anagrafica = $ordine->idanagrafica;
+        $id_anagrafica = $ordine->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');

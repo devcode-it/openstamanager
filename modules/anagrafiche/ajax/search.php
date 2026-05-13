@@ -50,7 +50,7 @@ $fields = [
     'Numero di iscrizione albo artigiani' => 'n_alboartigiani',
 ];
 
-$query = 'SELECT *, idanagrafica AS id';
+$query = 'SELECT *, id AS id';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
@@ -95,13 +95,13 @@ $fields = [
     'Email' => 'an_referenti.email',
 ];
 
-$query = 'SELECT *, idanagrafica as id';
+$query = 'SELECT *, id_anagrafica as id';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
+$query .= ' FROM an_referenti LEFT JOIN an_mansioni ON an_referenti.idmansione=an_mansioni.id WHERE id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -130,7 +130,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     $results[] = $result;
@@ -150,13 +150,13 @@ $fields = [
     'Note' => 'note',
 ];
 
-$query = 'SELECT *, idanagrafica as id';
+$query = 'SELECT *, id_anagrafica as id';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM an_sedi WHERE idanagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
+$query .= ' FROM an_sedi WHERE id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -185,7 +185,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     $results[] = $result;

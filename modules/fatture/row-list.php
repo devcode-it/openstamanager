@@ -233,7 +233,7 @@ foreach ($righe as $riga) {
             </td>';
 
         if ($riga->isArticolo()) {
-            $id_anagrafica = $fattura->idanagrafica;
+            $id_anagrafica = $fattura->id_anagrafica;
             $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $fattura->idsede_destinazione);
         }
 

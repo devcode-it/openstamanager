@@ -29,7 +29,7 @@ if (empty($anagrafica)) {
 
 // Logo
 $logo_record = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)
-    ->where('id_record', $anagrafica->idanagrafica)
+    ->where('id_record', $anagrafica->id)
     ->where('name', 'Logo azienda')
     ->first();
 
@@ -41,7 +41,7 @@ $tipologie_string = !empty($tipologie) ? implode(', ', $tipologie) : tr('Nessuna
 $sedi_aggiuntive = $anagrafica->sedi()->count();
 
 // Referenti
-$referenti = $dbo->fetchArray('SELECT * FROM an_referenti WHERE idanagrafica = '.prepare($anagrafica->idanagrafica).' ORDER BY nome');
+$referenti = $dbo->fetchArray('SELECT * FROM an_referenti WHERE id_anagrafica = '.prepare($anagrafica->id).' ORDER BY nome');
 
 echo '
 <div class="row mb-4">

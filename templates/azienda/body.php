@@ -22,7 +22,7 @@ use Modules\Banche\Banca;
 
 include_once __DIR__.'/../../core.php';
 
-$banca = Banca::where('id_anagrafica', $anagrafica->idanagrafica)
+$banca = Banca::where('id_anagrafica', $anagrafica->id)
     ->where('predefined', 1)
     ->whereNull('deleted_at')
     ->first();

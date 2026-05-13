@@ -181,17 +181,17 @@ if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
     if ($fattura->is_fattura_conto_terzi) {
         echo '
 <div class="alert alert-info">
-    <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
+    <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
 </div>';
     }
 
-    $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $fattura->idanagrafica)->where('data_inizio', '<=', $fattura->data)->where('data_fine', '>=', $fattura->data)->first();
+    $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $fattura->id_anagrafica)->where('data_inizio', '<=', $fattura->data)->where('data_fine', '>=', $fattura->data)->first();
     if (!empty($assicurazione_crediti)) {
         if (($assicurazione_crediti->totale + $fattura->totale) >= $assicurazione_crediti->fido_assicurato) {
             echo '
 <div class="alert alert-warning text-center">
     <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione! Il fido assicurato per questo cliente è stato superato!').'<br>('.moneyFormat($assicurazione_crediti->totale + $fattura->totale, 2).' / '.moneyFormat($assicurazione_crediti->fido_assicurato, 2).')
-    '.Plugins::link('Assicurazione crediti', $fattura->idanagrafica).'
+    '.Plugins::link('Assicurazione crediti', $fattura->id_anagrafica).'
 </div>';
         }
     }
@@ -322,11 +322,11 @@ $query .= ' ORDER BY `title`';
 
 if ($dir == 'entrata') {
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes((string) $database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes((string) $database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$id_anagrafica$" ]}
 <?php
 } else {
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "fornitori", "value": "$idanagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Fornitore'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "fornitori", "value": "$id_anagrafica$" ]}
 <?php
 }
 
@@ -336,7 +336,7 @@ echo '
 if ($dir == 'entrata') {
     echo '
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idagente_fattura$" ]}
+					{[ "type": "select", "label": "'.tr('Agente di riferimento').'", "name": "idagente", "ajax-source": "agenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idagente_fattura$" ]}
 				</div>';
 }
 
@@ -344,7 +344,7 @@ echo '
                 <div class="col-md-3">';
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "idsede_destinazione": '.($dir == 'entrata' ? $record['idsede_destinazione'] : $record['idsede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
             </div>
         </div>
@@ -401,12 +401,12 @@ if ($dir == 'entrata') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_destinazione$", "help": "'.tr('Sedi del destinatario').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>';
 } else {
     echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"idanagrafica": '.$record['idanagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['idanagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Sede partenza').'", "name": "idsede_partenza", "ajax-source": "sedi", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].'}, "value": "$idsede_partenza$", "help": "'.tr('Sedi del mittente').'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -422,7 +422,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE idanagrafica = '.prepare($record['idanagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipidocumento`.`id` = <?php echo $record['idtipodocumento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$idtipodocumento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE id = '.prepare($record['id_anagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -444,10 +444,10 @@ if ($dir == 'entrata') {
                     {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
+                    {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
 } else {
     echo '
-                    {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['idanagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|idanagrafica='.$record['idanagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Banca accredito').'", "name": "id_banca_controparte", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "value": "$id_banca_controparte$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$record['id_anagrafica'].'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
                 <div class="col-md-3">
                     {[ "type": "select", "label": "'.tr('Banca addebito').'", "name": "id_banca_azienda", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_azienda$", "icon-after": "add|'.$id_module_banche.'|id_anagrafica='.$anagrafica_azienda->id.'", "extra": "'.(intval($block_edit) ? 'disabled' : '').'" ]}';
@@ -468,7 +468,7 @@ if ($dir == 'entrata') {
     if ($dir == 'entrata') {
         ?>
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
                 </div>
 
                 <?php
@@ -559,11 +559,11 @@ if ($dir == 'entrata') {
                 <div class="col-md-6">';
 
     if (!empty($record['id_dichiarazione_intento'])) {
-        echo Plugins::link("Dichiarazioni d'Intento", $record['idanagrafica'], null, null, 'class="pull-right"');
+        echo Plugins::link("Dichiarazioni d'Intento", $record['id_anagrafica'], null, null, 'class="pull-right"');
     }
 
     echo '
-                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$record['idanagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Dichiarazioni d\'intento')->first()->id.'&id_parent='.$record['idanagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
+                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento", "help": "'.tr('Elenco delle dichiarazioni d\'intento definite all\'interno dell\'anagrafica del cliente').'.", "ajax-source": "dichiarazioni_intento", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "data": "'.$record['data'].'"},"value": "$id_dichiarazione_intento$", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Dichiarazioni d\'intento')->first()->id.'&id_parent='.$record['id_anagrafica'].'", "extra": "'.((intval($block_edit)) ? 'disabled' : '').'"  ]}
                 </div>';
 }
 echo '
@@ -809,13 +809,13 @@ if (!$block_edit) {
             }
 
             // Lettura interventi non rifiutati, non fatturati
-            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `idanagrafica`='.prepare($record['idanagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati
-                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `idclientefinale`='.prepare($record['idanagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id` WHERE `idclientefinale`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 
@@ -827,11 +827,11 @@ if (!$block_edit) {
                     LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.idpreventivo
                     INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.idstato
                 WHERE
-                    `idanagrafica`='.prepare($record['idanagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
+                    `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `idanagrafica`='.prepare($record['idanagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
+            $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `idstato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
             $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
         }
 
@@ -850,7 +850,7 @@ if (!$block_edit) {
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
         WHERE
-            `idanagrafica`='.prepare($record['idanagrafica']).'
+            `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `dt_statiddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
             AND `dt_tipiddt`.`dir` = '.prepare($dir).'
             AND `dt_causalet`.`is_importabile` = 1
@@ -872,7 +872,7 @@ if (!$block_edit) {
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
             WHERE
-                idanagrafica='.prepare($record['idanagrafica']).'
+                id_anagrafica='.prepare($record['id_anagrafica']).'
                 AND `or_statiordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
                 AND `dir`='.prepare($dir).'
                 AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
@@ -891,7 +891,7 @@ if (!$block_edit) {
                         </div>
 
                         <div class="col-md-4">
-                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "idanagrafica": '.$fattura->idanagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
+                            {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "", "ajax-source": "articoli",  "select-options": {"permetti_movimento_a_zero": '.($dir == 'entrata' ? 0 : 1).', "idsede_partenza": '.intval($fattura->idsede_partenza).', "idsede_destinazione": '.intval($fattura->idsede_destinazione).', "id_anagrafica": '.$fattura->id_anagrafica.', "dir": "'.$dir.'", "idagente": '.$fattura->idagente.'}, "icon-after": "add|'.Module::where('name', 'Articoli')->first()->id.'" ]}
                         </div>
 
                         <div class="col-md-3" style="margin-top: 25px">
@@ -1041,9 +1041,9 @@ echo '
          session_set("superselect,idtipodocumento",$(this).val(), 0);
     });
 
-	$("#idanagrafica").change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-        session_set("superselect,idanagrafica", $(this).val(), 0);
+	$("#id_anagrafica").change(function() {
+        updateSelectOption("id_anagrafica", $(this).val());
+        session_set("superselect,id_anagrafica", $(this).val(), 0);
 
         $("#idreferente").selectReset();
         $("#id_dichiarazione_intento").selectReset();

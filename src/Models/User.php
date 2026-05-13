@@ -99,12 +99,12 @@ class User extends Model implements Authenticatable
 
     public function getIdAnagraficaAttribute()
     {
-        return $this->attributes['idanagrafica'];
+        return $this->attributes['id_anagrafica'];
     }
 
     public function setIdAnagraficaAttribute($value)
     {
-        $this->attributes['idanagrafica'] = $value;
+        $this->attributes['id_anagrafica'] = $value;
     }
 
     public function getGruppoAttribute()
@@ -134,7 +134,7 @@ class User extends Model implements Authenticatable
 
         // Se l'utente non ha sedi, è come se ce le avesse tutte disponibili per retrocompatibilità
         if (empty($sedi)) {
-            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE idanagrafica='.prepare($this->idanagrafica));
+            $sedi = $database->fetchArray('SELECT "0" AS idsede UNION SELECT id AS idsede FROM an_sedi WHERE id_anagrafica='.prepare($this->id_anagrafica));
         }
 
         return array_column($sedi, 'idsede');
@@ -266,7 +266,7 @@ class User extends Model implements Authenticatable
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function image()

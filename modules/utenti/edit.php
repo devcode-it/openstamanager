@@ -46,8 +46,8 @@ $utenti = $dbo->fetchArray('
         GROUP_CONCAT(`an_tipianagrafiche_lang`.`title` SEPARATOR ", ") AS tipo
     FROM
         `zz_users`
-        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-        LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
+        LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `zz_users`.`id_anagrafica`
         LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
         LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
@@ -119,9 +119,9 @@ if (!empty($utenti)) {
             <td><span class="text-muted">-</span></td>';
         }
 
-        if (!empty($utente['idanagrafica'])) {
+        if (!empty($utente['id_anagrafica'])) {
             echo '
-				<td>'.Modules::link('Anagrafiche', $utente['idanagrafica'], $utente['ragione_sociale']).'</td>
+				<td>'.Modules::link('Anagrafiche', $utente['id_anagrafica'], $utente['ragione_sociale']).'</td>
 				<td>'.$utente['tipo'].'</td>';
         } else {
             echo '

@@ -28,12 +28,12 @@ $d_qta = (int) setting('Cifre decimali per quantità in stampa');
 $d_importi = (int) setting('Cifre decimali per importi in stampa');
 $d_totali = (int) setting('Cifre decimali per totali in stampa');
 
-$id_cliente = $documento['idanagrafica'];
+$id_cliente = $documento['id_anagrafica'];
 
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($documento->idsede_destinazione)) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica=an_sedi.idanagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE idanagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede_destinazione));
+    $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, piva, codice_fiscale, id_nazione FROM an_sedi WHERE id_anagrafica='.prepare($id_cliente).' AND id='.prepare($documento->idsede_destinazione));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';

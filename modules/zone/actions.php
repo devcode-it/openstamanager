@@ -90,7 +90,7 @@ switch (post('op')) {
         $dbo->delete('an_zone', ['id' => $id_record, 'default' => 0]);
 
         // Reimposto a 0 tutti gli idzona su an_anagrafiche (scollego la zona da tutte le anagrafiche associate)
-        $query = 'UPDATE an_anagrafiche SET idzona = 0 WHERE idanagrafica = :id_record';
+        $query = 'UPDATE an_anagrafiche SET idzona = 0 WHERE id = :id_record';
         $params = [
             ':id_record' => $id_record,
         ];

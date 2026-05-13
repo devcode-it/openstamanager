@@ -168,7 +168,7 @@ foreach ($righe as $riga) {
 
     if ($show_prezzi) {
         if ($riga->isArticolo()) {
-            $id_anagrafica = $intervento->idanagrafica;
+            $id_anagrafica = $intervento->id_anagrafica;
             $dir = 'entrata';
             $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $intervento->idsede_destinazione);
         }

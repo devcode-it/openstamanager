@@ -61,8 +61,8 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $joins[] = [
             'an_anagrafiche',
-            'in_interventi.idanagrafica',
-            'an_anagrafiche.idanagrafica',
+            'in_interventi.id_anagrafica',
+            'an_anagrafiche.id',
         ];
 
         $joins[] = [
@@ -80,7 +80,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
         $where = [];
 
         if (!$user->is_admin) {
-            $where[] = ['in_interventi_tecnici.idtecnico', '=', $user->idanagrafica];
+            $where[] = ['in_interventi_tecnici.idtecnico', '=', $user->id_anagrafica];
         }
 
         $whereraw = [];

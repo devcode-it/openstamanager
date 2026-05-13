@@ -573,11 +573,11 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE idanagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
+                                    {[ "type": "select", "label": "'.tr('Indirizzo di fatturazione').'", "name": "idsede_fatturazione", "values": "query=SELECT id, IF(citta = \'\', nomesede, CONCAT_WS(\', \', nomesede, citta)) AS descrizione FROM an_sedi WHERE id_anagrafica='.prepare($id_record).' UNION SELECT \'0\' AS id, \'Sede legale\' AS descrizione ORDER BY descrizione", "value": "$idsede_fatturazione$"  ]}
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`idanagrafica` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`idanagrafica` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
+                                    {[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "values": "query=SELECT `an_anagrafiche`.`id` AS id, IF(deleted_at IS NOT NULL, CONCAT(`ragione_sociale`, \' (Eliminato)\'), `ragione_sociale` ) AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE (`title`=\'Agente\' AND `deleted_at` IS NULL)'.(isset($record['idagente']) ? 'OR (`an_anagrafiche`.`id` = '.prepare($record['idagente']).' AND `deleted_at` IS NOT NULL) ' : '').'ORDER BY `ragione_sociale`", "value": "$idagente$" ]}
                                 </div>
                             </div>
 
@@ -591,7 +591,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">';
-    $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($id_record));
+    $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($id_record));
     $idtipiintervento = ['-1'];
     for ($i = 0; $i < count($rs); ++$i) {
         array_push($idtipiintervento, $rs[$i]['idtipointervento']);
@@ -616,7 +616,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                     {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
                                 </div>
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"idanagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
+                                    {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"id_anagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                                 </div>';
 
     // Collegamento con il conto
@@ -767,7 +767,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                 <div class="row">
                     <div class="col-md-6">
-                        {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `x`.`idanagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
+                        {[ "type": "select", "multiple": "1", "label": "<?php echo tr('Tipo di anagrafica'); ?>", "name": "idtipoanagrafica[]", "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `t`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `x`.`id_anagrafica` WHERE `an_tipianagrafiche_lang`.`title` = 'Azienda' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "$idtipianagrafica$" ]}
                             <?php
     if (in_array($id_azienda, $tipi_anagrafica)) {
         echo '

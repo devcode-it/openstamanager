@@ -30,7 +30,7 @@ switch (post('op')) {
         // Inserisco l'automezzo solo se non esiste un altro articolo con stesso targa
         if ($dbo->fetchNum('SELECT targa FROM an_sedi WHERE targa='.prepare($targa)) == 0) {
             $dbo->insert('an_sedi', [
-                'idanagrafica' => setting('Azienda predefinita'),
+                'id_anagrafica' => setting('Azienda predefinita'),
                 'nomesede' => $nome.' - '.$targa,
                 'is_automezzo' => 1,
                 'targa' => $targa,

@@ -389,7 +389,7 @@ function getPrezzoConsigliato($id_anagrafica, $direzione, $id_articolo, $riga = 
         AND mg_listini.attivo=1
         AND id_articolo = '.prepare($id_articolo).'
         AND dir = '.prepare($direzione).'
-        AND idanagrafica = '.prepare($id_anagrafica);
+        AND `an_anagrafiche`.`id` = '.prepare($id_anagrafica);
         $listini = database()->fetchArray($query);
     }
 

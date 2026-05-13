@@ -24,7 +24,7 @@ $r = $dbo->fetchOne('SELECT dt_ddt.*,
     an_anagrafiche.ragione_sociale,
     an_referenti.nome
 FROM dt_ddt
-    INNER JOIN an_anagrafiche ON dt_ddt.idanagrafica = an_anagrafiche.idanagrafica
+    INNER JOIN an_anagrafiche ON dt_ddt.id_anagrafica = an_anagrafiche.id
     LEFT OUTER JOIN an_referenti ON an_referenti.id = dt_ddt.idreferente
 WHERE dt_ddt.id='.prepare($id_record));
 
@@ -34,7 +34,7 @@ return [
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'note' => $r['note'],
     'data' => Translator::dateToLocale($r['data']),
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'ragione_sociale' => $r['ragione_sociale'],
     'nome_referente' => $r['nome'],
 ];

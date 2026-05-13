@@ -57,7 +57,7 @@ class Movimento extends Model
         $documento_scadenza = $scadenza ? $scadenza->documento : null;
         $documento = $documento ?: $documento_scadenza;
         if (!empty($documento)) {
-            $model->id_anagrafica = $documento->idanagrafica;
+            $model->id_anagrafica = $documento->id_anagrafica;
             $model->iddocumento = $documento->id;
         }
 
@@ -158,7 +158,7 @@ class Movimento extends Model
         ]);
 
         // Creo il mastrino
-        $mastrino = Mastrino::build($descrizione, $data_pagamento, false, true, $documento->idanagrafica);
+        $mastrino = Mastrino::build($descrizione, $data_pagamento, false, true, $documento->id_anagrafica);
         $mastrino->save();
 
         // Determino dare/avere in base alla direzione

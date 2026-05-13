@@ -115,7 +115,7 @@ echo '
             <tbody>';
 
 foreach ($elenco_conflitti as $id_tecnico => $elenco_conflitti_tecnico) {
-    $anagrafica_tecnico = $database->fetchOne('SELECT ragione_sociale, deleted_at FROM an_anagrafiche WHERE idanagrafica = '.prepare($id_tecnico));
+    $anagrafica_tecnico = $database->fetchOne('SELECT ragione_sociale, deleted_at FROM an_anagrafiche WHERE id = '.prepare($id_tecnico));
 
     foreach ($elenco_conflitti_tecnico as $conflitto) {
         echo '

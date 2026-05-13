@@ -99,7 +99,7 @@ class Ordine extends Document
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function tipo()

@@ -192,12 +192,12 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
             in_interventi.idstatointervento,
             in_statiintervento_lang.title as stato_descrizione,
             an_anagrafiche.ragione_sociale as cliente,
-            an_anagrafiche.idanagrafica as id_cliente
+            an_anagrafiche.id as id_cliente
         FROM in_interventi
         LEFT JOIN in_statiintervento ON in_interventi.idstatointervento = in_statiintervento.id
         LEFT JOIN in_statiintervento_lang ON in_statiintervento.id = in_statiintervento_lang.id_record
             AND in_statiintervento_lang.id_lang = '.prepare(\Models\Locale::getDefault()->id).'
-        LEFT JOIN an_anagrafiche ON in_interventi.idanagrafica = an_anagrafiche.idanagrafica
+        LEFT JOIN an_anagrafiche ON in_interventi.id_anagrafica = an_anagrafiche.id
         WHERE in_interventi.id = '.prepare($id_intervento);
 
         return $database->fetchOne($query);
@@ -218,8 +218,8 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
             an_anagrafiche.ragione_sociale,
             zz_users.id as user_id
         FROM in_interventi_tecnici
-        LEFT JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.idanagrafica
-        LEFT JOIN zz_users ON an_anagrafiche.idanagrafica = zz_users.idanagrafica
+        LEFT JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.id
+        LEFT JOIN zz_users ON an_anagrafiche.id = zz_users.id_anagrafica
         WHERE in_interventi_tecnici.idintervento = '.prepare($id_intervento).'
             AND zz_users.id IS NOT NULL';
 

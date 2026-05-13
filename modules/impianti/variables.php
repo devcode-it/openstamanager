@@ -23,7 +23,7 @@ $r = $dbo->fetchOne('SELECT
         `ragione_sociale`
     FROM 
         `my_impianti`
-        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `my_impianti`.`idanagrafica`
+        LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `my_impianti`.`id_anagrafica`
     WHERE 
         `my_impianti`.`id`='.prepare($id_record));
 

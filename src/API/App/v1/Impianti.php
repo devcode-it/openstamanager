@@ -74,7 +74,7 @@ class Impianti extends AppResource
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT
             `impianti`.`id`,
-            `impianti`.`idanagrafica` AS id_cliente,
+            `impianti`.`id_anagrafica` AS id_cliente,
             `impianti`.`idsede` AS id_sede,
             `impianti`.`matricola`,
             `impianti`.`nome`,

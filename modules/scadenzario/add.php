@@ -29,7 +29,7 @@ use Models\Module;
 
   <div class="row">
     <div class="col-md-6">
-      {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "idanagrafica", "required": 1, "ajax-source": "anagrafiche" ]}
+      {[ "type": "select", "label": "<?php echo tr('Anagrafica'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "anagrafiche" ]}
     </div>
 
     <div class="col-md-6">

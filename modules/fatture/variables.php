@@ -30,7 +30,7 @@ $r = $dbo->fetchOne('SELECT
         `righe`.`totale`,
         (SELECT `pec` FROM `em_accounts` WHERE `em_accounts`.`id`='.prepare($template['id_account']).') AS is_pec
     FROM `co_documenti`
-        INNER JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
         LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `an_referenti` ON `an_referenti`.`id` = `co_documenti`.`idreferente`
@@ -49,13 +49,13 @@ if (!empty(setting('Logo stampe'))) {
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 
-$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(auth_osm()->getUser()['idanagrafica']));
-$r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
+$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE id='.prepare(auth_osm()->getUser()['id_anagrafica']));
+$r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE id='.prepare(setting('Azienda predefinita')));
 
 // Variabili da sostituire
 return [
     'email' => $options['is_pec'] ? $r['pec'] : $r['email'],
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'ragione_sociale' => $r['ragione_sociale'],
     'numero' => empty($r['numero_esterno']) ? $r['numero'] : $r['numero_esterno'],
     'tipo_documento' => $r['tipo_documento'],

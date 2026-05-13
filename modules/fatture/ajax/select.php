@@ -37,7 +37,7 @@ switch ($resource) {
                 LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`
             WHERE 
-                `idanagrafica` = '.prepare($id_anagrafica)."
+                `id_anagrafica` = '.prepare($id_anagrafica)."
                 AND `title` != 'Fatturato'
                 AND `dir` = ".prepare($direzione).'
                 AND |where|
@@ -60,7 +60,7 @@ switch ($resource) {
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                 LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 
-                `idanagrafica` = '.prepare($id_anagrafica)." AND
+                `id_anagrafica` = '.prepare($id_anagrafica)." AND
                 `dt_statiddt_lang`.`title` != 'Fatturato' AND
                 `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
                 |where|

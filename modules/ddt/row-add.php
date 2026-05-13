@@ -31,12 +31,12 @@ $options = [
     'op' => 'manage_riga',
     'action' => 'add',
     'dir' => $documento->direzione,
-    'idanagrafica' => $documento['idanagrafica'],
+    'id_anagrafica' => $documento['id_anagrafica'],
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'select-options' => [
         'articoli' => [
-            'idanagrafica' => $documento->idanagrafica,
+            'id_anagrafica' => $documento->id_anagrafica,
             'dir' => $documento->direzione,
             'idsede_partenza' => $documento->idsede_partenza,
             'idsede_destinazione' => $documento->idsede_destinazione,
@@ -60,10 +60,10 @@ $result = [
 ];
 
 // Leggo la provvigione predefinita per l'anagrafica
-$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE idanagrafica='.prepare($documento->idagente))['provvigione_default'];
+$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE id='.prepare($documento->idagente))['provvigione_default'];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
+$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Importazione della gestione dedicata

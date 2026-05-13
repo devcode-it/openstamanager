@@ -25,7 +25,7 @@ use Modules\Contratti\Contratto;
 switch ($resource) {
     /*
      * Opzioni utilizzate:
-     * - idanagrafica
+     * - id_anagrafica
      * - stato
      */
     case 'contratti':
@@ -40,7 +40,7 @@ switch ($resource) {
                 `in_tipiintervento`.`tempo_standard` AS tempo_standard
             FROM
                 `co_contratti`
-                INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+                INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica`=`an_anagrafiche`.`id`
                 LEFT JOIN `in_tipiintervento` ON (`co_contratti`.`idtipointervento`=`in_tipiintervento`.`id`)
                 LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
             |where|
@@ -52,7 +52,7 @@ switch ($resource) {
         }
 
         if (empty($elements)) {
-            $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
+            $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
             $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile'];
             $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                 ? $superselect['stato']

@@ -80,7 +80,7 @@ if ($dir === 'entrata' && in_array($stato_fe['codice_stato_fe'], ['WAIT', 'RC', 
 
 switch ($op) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $data = post('data');
         $idtipodocumento = post('idtipodocumento_add');
         $id_segment = post('id_segment_add');
@@ -89,7 +89,7 @@ switch ($op) {
             $numero_esterno = post('numero_esterno');
         }
 
-        $anagrafica = Anagrafica::find($idanagrafica);
+        $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = Tipo::find($idtipodocumento);
 
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
@@ -136,7 +136,7 @@ switch ($op) {
         $fattura->note = post('note');
         $fattura->note_aggiuntive = post('note_aggiuntive');
 
-        $fattura->idanagrafica = post('idanagrafica');
+        $fattura->id_anagrafica = post('id_anagrafica');
         $fattura->idagente = post('idagente') ?: null;
         $fattura->idreferente = post('idreferente') ?: null;
         $fattura->idpagamento = post('idpagamento') ?: null;
@@ -195,7 +195,7 @@ switch ($op) {
 
         $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
-        $anagrafica = Anagrafica::find($fattura->idanagrafica);
+        $anagrafica = Anagrafica::find($fattura->id_anagrafica);
         if ($anagrafica->tipo === 'Privato' && $fattura->is_fattura_conto_terzi) {
             flash()->warning(tr('L\'anagrafica selezionata è del tipo "Privato", correggere la tipologia dalla scheda anagrafica!'));
         } else {
@@ -248,7 +248,7 @@ switch ($op) {
         if ($direzione == 'uscita') {
             $count = Fattura::where('numero_esterno', $fattura->numero_esterno)
                 ->where('id', '!=', $id_record)
-                ->where('idanagrafica', '=', $fattura->anagrafica->id)
+                ->where('id_anagrafica', '=', $fattura->anagrafica->id)
                 ->where('data', '>=', $_SESSION['period_start'])
                 ->where('data', '<=', $_SESSION['period_end'])
                 ->whereHas('tipo', function ($query) use ($direzione) {
@@ -320,7 +320,7 @@ switch ($op) {
         $stato = Stato::where('name', 'Bozza')->first();
 
         $fatture = Fattura::vendita()
-            ->where('idanagrafica', $id_anagrafica)
+            ->where('id_anagrafica', $id_anagrafica)
             ->where('idstatodocumento', $stato->id)
             ->get();
 
@@ -341,7 +341,7 @@ switch ($op) {
 
         $fatture = Fattura::vendita()
             ->select('*', 'co_documenti.id AS id', 'co_documenti.data AS data')
-            ->where('co_documenti.idanagrafica', '=', $id_anagrafica)
+            ->where('co_documenti.id_anagrafica', '=', $id_anagrafica)
             ->whereIn('idstatodocumento', [$stato1->id, $stato2->id])
             ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.iddocumento')
             ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')
@@ -1267,7 +1267,7 @@ switch ($op) {
                 } else {
                     $id_iva = ($fattura->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
-                $id_anagrafica = $fattura->idanagrafica;
+                $id_anagrafica = $fattura->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
                 // CALCOLO PREZZO UNITARIO
@@ -1372,7 +1372,7 @@ switch ($op) {
         break;
 
     case 'update-price':
-        $id_anagrafica = $fattura->idanagrafica;
+        $id_anagrafica = $fattura->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');

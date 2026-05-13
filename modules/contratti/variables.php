@@ -24,12 +24,12 @@ $r = $dbo->fetchOne('
         `co_contratti`.`nome` AS nome_contratto,
         `an_anagrafiche`.`pec`,
         IF((`an_referenti`.`email` IS NOT NULL AND `an_referenti`.`email` != ""), `an_referenti`.`email`, `an_anagrafiche`.`email`) AS email,
-        `an_anagrafiche`.`idanagrafica`,
+        `an_anagrafiche`.`id`,
         IF(`an_referenti`.`nome`,`an_referenti`.`nome`, \'\') AS nome_referente,
         `an_anagrafiche`.`ragione_sociale`
     FROM 
         `co_contratti`
-        INNER JOIN `an_anagrafiche` ON `co_contratti`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica`=`an_anagrafiche`.`id`
         LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`co_contratti`.`idreferente`
     WHERE 
         `co_contratti`.`id`='.prepare($id_record));
@@ -42,6 +42,6 @@ return [
     'numero' => $r['numero'],
     'descrizione' => $r['descrizione'],
     'data' => Translator::dateToLocale($r['data_bozza']),
-    'id_anagrafica' => $r['idanagrafica'],
+    'id_anagrafica' => $r['id_anagrafica'],
     'nome_referente' => $r['nome_referente'],
 ];

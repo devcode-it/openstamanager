@@ -23,7 +23,7 @@ use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';
 
-$anagrafica = Anagrafica::find($documento['idanagrafica']);
+$anagrafica = Anagrafica::find($documento['id_anagrafica']);
 $anagrafica_azienda = Anagrafica::find(setting('Azienda predefinita'));
 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 

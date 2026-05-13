@@ -857,7 +857,7 @@ class FatturaElettronica implements \Stringable
     {
         // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         $cliente = $fattura->getCliente();
-        $azienda = Sede::where('idanagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nomesede AS ragione_sociale')->first();
+        $azienda = Sede::where('id_anagrafica', $cliente->id)->where('is_rappresentante_fiscale', 1)->selectRaw('*, nomesede AS ragione_sociale')->first();
 
         $result = [
             'DatiAnagrafici' => static::getDatiAnagrafici($azienda, true),
@@ -1683,7 +1683,7 @@ class FatturaElettronica implements \Stringable
         $co_scadenzario = $database->fetchArray('SELECT * FROM `co_scadenzario` WHERE `iddocumento` = '.prepare($documento['id']));
         foreach ($co_scadenzario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
-            $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['idanagrafica'])->where('predefined', 1)->first();
+            $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['id_anagrafica'])->where('predefined', 1)->first();
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
                 'DataScadenzaPagamento' => $scadenza['scadenza'],
@@ -1798,7 +1798,7 @@ class FatturaElettronica implements \Stringable
         // Fattura per conto terzi, il cliente diventa il cedente al posto della mia Azienda (fornitore)
         if ($documento['is_fattura_conto_terzi']) {
             $azienda = $fattura->getCliente();
-            $rappresentante_fiscale = Sede::where('idanagrafica', $azienda->id)->where('is_rappresentante_fiscale', 1)->first();
+            $rappresentante_fiscale = Sede::where('id_anagrafica', $azienda->id)->where('is_rappresentante_fiscale', 1)->first();
         } else {
             $azienda = static::getAzienda();
         }

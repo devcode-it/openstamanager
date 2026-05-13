@@ -31,14 +31,14 @@ $options = [
     'action' => 'add',
     'dir' => $documento->direzione,
     'conti' => $documento->direzione == 'entrata' ? 'conti-vendite' : 'conti-acquisti',
-    'idanagrafica' => $documento['idanagrafica'],
+    'id_anagrafica' => $documento['id_anagrafica'],
     'show-ritenuta-contributi' => !empty($documento['id_ritenuta_contributi']),
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'is_nota' => $documento->isNota(),
     'select-options' => [
         'articoli' => [
-            'idanagrafica' => $documento->idanagrafica,
+            'id_anagrafica' => $documento->id_anagrafica,
             'dir' => $documento->direzione,
             'idsede_partenza' => $documento->idsede_partenza,
             'idsede_destinazione' => $documento->idsede_destinazione,
@@ -73,10 +73,10 @@ $result = [
 ];
 
 // Leggo la provvigione predefinita per l'anagrafica
-$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE idanagrafica='.prepare($documento->idagente))['provvigione_default'];
+$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE id='.prepare($documento->idagente))['provvigione_default'];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
+$iva = $dbo->fetchArray('SELECT idiva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 if (!empty($documento->dichiarazione)) {
@@ -85,7 +85,7 @@ if (!empty($documento->dichiarazione)) {
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 // id_ritenuta_acconto_vendite oppure id_ritenuta_acconto_acquisti
-$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE idanagrafica='.prepare($documento['idanagrafica']));
+$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
 $id_ritenuta_acconto = $ritenuta_acconto['id_ritenuta_acconto'];
 if ($dir == 'entrata' && empty($id_ritenuta_acconto)) {
     $id_ritenuta_acconto = setting("Ritenuta d'acconto predefinita");
@@ -103,7 +103,7 @@ if (!empty(get('is_descrizione'))) {
 
     // Aggiunta sconto di default da listino per le vendite
     $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE idanagrafica='.prepare($documento['idanagrafica']));
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE id_anagrafica='.prepare($documento['id_anagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
         $result['sconto_percentuale'] = $listino['prc_guadagno'];

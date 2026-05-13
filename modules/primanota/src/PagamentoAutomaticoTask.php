@@ -46,7 +46,7 @@ class PagamentoAutomaticoTask extends Manager
         $scadenze = $database->fetchArray('
             SELECT 
                 `co_scadenzario`.*,
-                `co_documenti`.`idanagrafica`,
+                `co_documenti`.`id_anagrafica`,
                 `co_documenti`.`idtipodocumento`,
                 `co_tipidocumento`.`dir`,
                 `co_pagamenti`.`idconto_vendite`,
@@ -82,10 +82,10 @@ class PagamentoAutomaticoTask extends Manager
                 $id_conto_anagrafica = null;
                 if ($scadenza['dir'] == 'entrata') {
                     // Fattura di vendita: conto cliente
-                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_cliente', ['idanagrafica' => $scadenza['idanagrafica']])['idconto_cliente'];
+                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_cliente', ['id_anagrafica' => $scadenza['id_anagrafica']])['idconto_cliente'];
                 } else {
                     // Fattura di acquisto: conto fornitore
-                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_fornitore', ['idanagrafica' => $scadenza['idanagrafica']])['idconto_fornitore'];
+                    $id_conto_anagrafica = $database->selectOne('an_anagrafiche', 'idconto_fornitore', ['id_anagrafica' => $scadenza['id_anagrafica']])['idconto_fornitore'];
                 }
 
                 // Determino il conto di contropartita

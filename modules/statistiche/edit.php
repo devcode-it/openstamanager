@@ -231,8 +231,8 @@ $clienti = $dbo->fetchArray('SELECT
             INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
-            `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
-        `an_anagrafiche`.`idanagrafica`,
+            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
+        `an_anagrafiche`.`id`,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
@@ -240,7 +240,7 @@ $clienti = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
-        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='entrata'
@@ -248,7 +248,7 @@ $clienti = $dbo->fetchArray('SELECT
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
-        `an_anagrafiche`.`idanagrafica`
+        `an_anagrafiche`.`id`
     ORDER BY
         `totale` DESC LIMIT 20');
 
@@ -298,7 +298,7 @@ if (!empty($clienti)) {
     foreach ($clienti as $cliente) {
         echo '
                             <tr>
-                                <td>'.Modules::link('Anagrafiche', $cliente['idanagrafica'], $cliente['ragione_sociale']).'</td>
+                                <td>'.Modules::link('Anagrafiche', $cliente['id_anagrafica'], $cliente['ragione_sociale']).'</td>
                                 <td class="text-right">'.intval($cliente['qta']).'</td>
                                 <td class="text-right">'.moneyFormat($cliente['totale'], 2).'</td>
                                 <td class="text-right">
@@ -441,8 +441,8 @@ $fornitori = $dbo->fetchArray('SELECT
             INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
-            `co_documenti`.`idanagrafica` = `an_anagrafiche`.`idanagrafica` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
-        `an_anagrafiche`.`idanagrafica`,
+            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
+        `an_anagrafiche`.`id`,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
@@ -450,7 +450,7 @@ $fornitori = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
-        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='uscita'
@@ -458,7 +458,7 @@ $fornitori = $dbo->fetchArray('SELECT
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
-        `an_anagrafiche`.`idanagrafica`
+        `an_anagrafiche`.`id`
     ORDER BY
         `totale` DESC LIMIT 20');
 
@@ -508,7 +508,7 @@ if (!empty($fornitori)) {
     foreach ($fornitori as $fornitore) {
         echo '
                             <tr>
-                                <td>'.Modules::link('Anagrafiche', $fornitore['idanagrafica'], $fornitore['ragione_sociale']).'</td>
+                                <td>'.Modules::link('Anagrafiche', $fornitore['id_anagrafica'], $fornitore['ragione_sociale']).'</td>
                                 <td class="text-right">'.intval($fornitore['qta']).'</td>
                                 <td class="text-right">'.moneyFormat($fornitore['totale'], 2).'</td>
                                 <td class="text-right">
@@ -851,18 +851,18 @@ $(document).ready(function() {
 
 // Interventi per tecnico
 $tecnici = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche_lang.id_record', '=', 'an_tipianagrafiche.id')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->leftJoin('in_interventi_tecnici', 'in_interventi_tecnici.idtecnico', '=', 'an_anagrafiche.idanagrafica')
+    ->leftJoin('in_interventi_tecnici', 'in_interventi_tecnici.idtecnico', '=', 'an_anagrafiche.id')
     ->join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
     ->whereNull('an_anagrafiche.deleted_at')
     ->where('an_tipianagrafiche_lang.title', 'Tecnico')
-    ->select('an_anagrafiche.idanagrafica as id', 'ragione_sociale', 'colore')
-    ->groupBy('an_anagrafiche.idanagrafica')
+    ->select('an_anagrafiche.id as id', 'ragione_sociale', 'colore')
+    ->groupBy('an_anagrafiche.id')
     ->orderBy('ragione_sociale')
     ->get()
     ->toArray();
@@ -1010,7 +1010,7 @@ $(document).ready(function() {
 $dataset = '';
 
 $nuovi_clienti = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
@@ -1027,7 +1027,7 @@ $nuovi_clienti = $dbo->table('an_anagrafiche')
     ->toArray();
 
 $nuovi_fornitori = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
@@ -1045,9 +1045,9 @@ $nuovi_fornitori = $dbo->table('an_anagrafiche')
 
 // Nuovi clienti per i quali ho emesso almeno una fattura di vendita
 $clienti_acquisiti = $dbo->table('an_anagrafiche')
-    ->join('co_documenti', 'an_anagrafiche.idanagrafica', '=', 'co_documenti.idanagrafica')
+    ->join('co_documenti', 'an_anagrafiche.id', '=', 'co_documenti.id_anagrafica')
     ->join('co_tipidocumento', 'co_documenti.idtipodocumento', '=', 'co_tipidocumento.id')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.idanagrafica', '=', 'an_tipianagrafiche_anagrafiche.idanagrafica')
+    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')

@@ -34,14 +34,14 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
 
 switch (post('op')) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
         $idtipointervento = post('idtipointervento');
         $data_bozza = post('data_bozza');
         $idsede_destinazione = post('idsede_destinazione');
         $id_segment = post('id_segment');
 
-        $anagrafica = Anagrafica::find($idanagrafica);
+        $anagrafica = Anagrafica::find($id_anagrafica);
         $tipo = TipoSessione::find($idtipointervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $idsede_destinazione, $id_segment);
@@ -66,7 +66,7 @@ switch (post('op')) {
         if (!empty($id_record)) {
             $preventivo->idstato = post('idstato');
             $preventivo->nome = post('nome');
-            $preventivo->idanagrafica = post('idanagrafica');
+            $preventivo->id_anagrafica = post('id_anagrafica');
             $preventivo->idsede_partenza = post('idsede_partenza');
             $preventivo->idsede_destinazione = post('idsede_destinazione');
             $preventivo->idagente = post('idagente');
@@ -538,7 +538,7 @@ switch (post('op')) {
                 $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
             }
             $id_iva = ($preventivo->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
-            $id_anagrafica = $preventivo->idanagrafica;
+            $id_anagrafica = $preventivo->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
@@ -625,7 +625,7 @@ switch (post('op')) {
 
     case 'update-price':
         $dir = 'entrata';
-        $id_anagrafica = $preventivo->idanagrafica;
+        $id_anagrafica = $preventivo->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');

@@ -187,7 +187,7 @@ class FatturaOrdinaria extends FatturaElettronica
 
         $righe = $this->getRighe();
         $fattura = $this->getFattura();
-        $anagrafica = Anagrafica::find($fattura->idanagrafica);
+        $anagrafica = Anagrafica::find($fattura->id_anagrafica);
         $direzione = 'uscita';
         $id_ritenuta_acconto = $info['id_ritenuta_acconto'];
         $id_rivalsa = $info['id_rivalsa'];
@@ -486,7 +486,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Aggiornamento prezzo di acquisto e fornitore predefinito in base alle impostazioni
                 if (!empty($articolo)) {
                     if ($update_info[$key] == 'update_price' || $update_info[$key] == 'update_all') {
-                        $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->idanagrafica, $direzione)
+                        $dettaglio_predefinito = DettaglioPrezzo::dettaglioPredefinito($articolo->id, $anagrafica->id, $direzione)
                         ->first();
 
                         // Aggiungo associazione fornitore-articolo se non presente
@@ -537,14 +537,14 @@ class FatturaOrdinaria extends FatturaElettronica
                         if (!empty($codice_fornitore) || !empty($barcode_fornitore) || !empty($descrizione_fornitore)) {
                             $fornitore_articolo = database()->table('mg_fornitore_articolo')
                                 ->where('id_articolo', $articolo->id)
-                                ->where('id_fornitore', $anagrafica->idanagrafica)
+                                ->where('id_fornitore', $anagrafica->id)
                                 ->first();
 
                             if (empty($fornitore_articolo)) {
                                 // Creiamo un nuovo record - inseriamo solo i campi non nulli
                                 $insert_data = [
                                     'id_articolo' => $articolo->id,
-                                    'id_fornitore' => $anagrafica->idanagrafica,
+                                    'id_fornitore' => $anagrafica->id,
                                     'codice_fornitore' => $codice_fornitore ?: '',
                                     'descrizione' => $descrizione_fornitore,
                                 ];
@@ -575,7 +575,7 @@ class FatturaOrdinaria extends FatturaElettronica
                         if ($update_info[$key] == 'update_all') {
                             // Aggiornamento prezzo di acquisto e fornitore predefinito
                             $articolo->prezzo_acquisto = $prezzo_acquisto;
-                            $articolo->id_fornitore = $anagrafica->idanagrafica;
+                            $articolo->id_fornitore = $anagrafica->id;
                             $articolo->save();
                         }
                     }

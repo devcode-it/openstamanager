@@ -46,7 +46,7 @@ include_once __DIR__.'/../../core.php';
 </form>
 
 <?php
-$righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE id_provenienza='.prepare($id_record));
+$righe = $dbo->fetchNum('SELECT id FROM an_anagrafiche WHERE id_provenienza='.prepare($id_record));
 
 if (!empty($righe)) {
     echo '

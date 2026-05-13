@@ -25,10 +25,10 @@ $conto_secondo = $dbo->selectOne('co_pianodeiconti2', '*', ['id' => $id_conto]);
 $conto_primo = $dbo->selectOne('co_pianodeiconti1', '*', ['id' => $conto_secondo['idpianodeiconti1']]);
 
 // Livello 3
-$query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.idanagrafica, anagrafica.deleted_at
+$query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.id, anagrafica.deleted_at
     FROM `co_pianodeiconti3`
         LEFT OUTER JOIN (
-            SELECT idanagrafica,
+            SELECT id,
                 idconto_cliente,
                 idconto_fornitore,
                 deleted_at
@@ -119,7 +119,7 @@ if (!empty($terzo_livello)) {
                         <span class="hide tools pull-right">';
 
         //  Possibilità di visionare l'anagrafica
-        $id_anagrafica = $conto_terzo['idanagrafica'];
+        $id_anagrafica = $conto_terzo['id_anagrafica'];
         $anagrafica_deleted = $conto_terzo['deleted_at'];
         if (isset($id_anagrafica)) {
             echo Modules::link('Anagrafiche', $id_anagrafica, ' <i title="'.(isset($anagrafica_deleted) ? tr('Anagrafica eliminata') : tr('Visualizza anagrafica')).'" class="btn btn-'.(isset($anagrafica_deleted) ? 'danger' : 'primary').' btn-xs fa fa-user" ></i>');

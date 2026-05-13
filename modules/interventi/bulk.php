@@ -55,7 +55,7 @@ switch (post('op')) {
         }
 
         // Selezione degli interventi da stampare
-        $interventi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, data_richiesta, ragione_sociale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.idanagrafica=an_anagrafiche.idanagrafica WHERE in_interventi.id IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $interventi = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, data_richiesta, ragione_sociale FROM in_interventi INNER JOIN an_anagrafiche ON in_interventi.id_anagrafica=an_anagrafiche.id WHERE in_interventi.id IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         if (!empty($interventi)) {
             foreach ($interventi as $r) {
@@ -145,7 +145,7 @@ switch (post('op')) {
             if (!empty($intervento['idclientefinale'])) {
                 $id_anagrafica = $intervento['idclientefinale'];
             } else {
-                $id_anagrafica = $intervento['idanagrafica'];
+                $id_anagrafica = $intervento['id_anagrafica'];
             }
 
             $idsede_destinazione = $raggruppamento == 'sede' ? $intervento['idsede_destinazione'] : 0;
@@ -158,7 +158,7 @@ switch (post('op')) {
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
                     $where = $raggruppamento == 'sede' ? ' AND `idsede_destinazione` = '.prepare($intervento['idsede_destinazione']) : '';
-                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`  INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento`.`name` = "Bozza"  AND `co_documenti`.`idanagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
+                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento` = `co_statidocumento`.`id`  INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_statidocumento`.`name` = "Bozza"  AND `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
@@ -393,7 +393,7 @@ switch (post('op')) {
         $list = [];
         foreach ($id_records as $id) {
             $intervento = Intervento::find($id);
-            $id_anagrafica = $intervento->idanagrafica;
+            $id_anagrafica = $intervento->id_anagrafica;
 
             // Selezione destinatari e invio mail
             if (!empty($template)) {
@@ -411,7 +411,7 @@ switch (post('op')) {
                 // Aggiungo email referenti in base alla mansione impostata nel template
                 $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                 foreach ($mansioni as $mansione) {
-                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                     if (!$referenti->isEmpty() && $creata_mail == false) {
                         $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                         $creata_mail = true;

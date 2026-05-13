@@ -24,8 +24,8 @@ use Models\Module;
 
 switch ($resource) {
     case 'get_sedi':
-        $idanagrafica = get('idanagrafica');
-        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica=".prepare($idanagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
+        $id_anagrafica = get('id_anagrafica');
+        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 
@@ -39,8 +39,8 @@ switch ($resource) {
 
         // Elenco sedi con <option>
     case 'get_sedi_select':
-        $idanagrafica = get('idanagrafica');
-        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE idanagrafica=".prepare($idanagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
+        $id_anagrafica = get('id_anagrafica');
+        $q = "SELECT id, CONCAT_WS( ' - ', nomesede, citta ) AS descrizione FROM an_sedi WHERE id_anagrafica=".prepare($id_anagrafica).' '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).' ORDER BY id';
         $rs = $dbo->fetchArray($q);
         $n = sizeof($rs);
 
@@ -57,13 +57,13 @@ switch ($resource) {
         $id_anagrafica = get('id_anagrafica');
 
         if (!empty($id_anagrafica)) {
-            $where = 'AND idanagrafica = '.prepare($id_anagrafica);
+            $where = 'AND id_anagrafica = '.prepare($id_anagrafica);
         }
 
         $results = [];
 
         // Tutti i referenti per questo cliente
-        $q = "SELECT DISTINCT(email), (SELECT nomesede FROM an_sedi WHERE an_sedi.id=an_referenti.idsede) AS sede, idanagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY idanagrafica';
+        $q = "SELECT DISTINCT(email), (SELECT nomesede FROM an_sedi WHERE an_sedi.id=an_referenti.idsede) AS sede, id_anagrafica, nome AS ragione_sociale FROM an_referenti WHERE email != '' ".$where.' ORDER BY id_anagrafica';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {
@@ -74,7 +74,7 @@ switch ($resource) {
         }
 
         // Tutti le sedi per questo cliente
-        $q = "SELECT DISTINCT(email), id AS idanagrafica, nomesede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
+        $q = "SELECT DISTINCT(email), id AS id_anagrafica, nomesede AS ragione_sociale FROM an_sedi WHERE email != '' ".$where.' ORDER BY id';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {
@@ -85,7 +85,7 @@ switch ($resource) {
         }
 
         // Tutti gli agenti del cliente
-        $q = "SELECT DISTINCT(email), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' AND (idanagrafica=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.') OR idanagrafica IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';
+        $q = "SELECT DISTINCT(email), ragione_sociale, id FROM an_anagrafiche WHERE email != '' AND (id=(SELECT idagente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.') OR id IN (SELECT idagente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {
@@ -96,12 +96,12 @@ switch ($resource) {
         }
 
         // Email del cliente
-        $query = "SELECT DISTINCT(email) AS email, ragione_sociale, idanagrafica FROM an_anagrafiche WHERE email != '' ".$where;
+        $query = "SELECT DISTINCT(email) AS email, ragione_sociale, id FROM an_anagrafiche WHERE email != '' ".$where;
         // Se type pec, propongo anche la pec
         if (get('type') == 'pec') {
-            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, idanagrafica FROM an_anagrafiche WHERE pec != '' ".$where;
+            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, id FROM an_anagrafiche WHERE pec != '' ".$where;
         }
-        $query .= ' ORDER BY idanagrafica';
+        $query .= ' ORDER BY id';
 
         $rs = $dbo->fetchArray($query);
         foreach ($rs as $r) {

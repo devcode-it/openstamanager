@@ -36,7 +36,7 @@ $token = auth_osm()->getToken();
 $session_token = auth_osm()->getSessionToken();
 $last_login = auth_osm()->getLastLogin();
 
-$rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE idanagrafica = '.prepare($user['idanagrafica']));
+$rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE id = '.prepare($user['id_anagrafica']));
 $anagrafica = [];
 if (!empty($rs)) {
     $anagrafica = $rs[0];

@@ -99,7 +99,7 @@ function getHtmlSconto($sconto)
 /**
  * Funzione helper per ottenere la query degli interventi disponibili.
  */
-function getQueryInterventiDisponibili($idanagrafica)
+function getQueryInterventiDisponibili($id_anagrafica)
 {
     global $dbo;
 
@@ -110,7 +110,7 @@ function getQueryInterventiDisponibili($idanagrafica)
                 AND id_ordine IS NULL 
                 AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) 
                 AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) 
-                AND idanagrafica='.prepare($idanagrafica);
+                AND id_anagrafica='.prepare($id_anagrafica);
 }
 
 // Tabella con riepilogo interventi
@@ -836,7 +836,7 @@ echo '
 </div>';
 
 // Aggiunta interventi se il documento é aperto o in attesa o pagato (non si possono inserire interventi collegati ad altri preventivi)
-$query = getQueryInterventiDisponibili($record['idanagrafica']);
+$query = getQueryInterventiDisponibili($record['id_anagrafica']);
 
 $count = $dbo->fetchNum($query);
 

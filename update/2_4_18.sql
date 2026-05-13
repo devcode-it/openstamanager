@@ -178,9 +178,6 @@ WHERE `dt_righe_ddt`.`original_type` LIKE '%Interventi%';
 -- Aggiunta campi per i riferimenti in Preventivi
 ALTER TABLE `co_righe_preventivi` ADD `original_id` int(11), ADD `original_type` varchar(255);
 
--- Fix query per plugin Impianti del cliente
-UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Matricola, Nome, Data, Descrizione", "query": "SELECT id, (SELECT `id` FROM `zz_modules` WHERE `name` = ''Impianti'') AS _link_module_, id AS _link_record_, matricola AS Matricola, nome AS Nome, DATE_FORMAT(data, ''%d/%m/%Y'') AS Data, descrizione AS Descrizione FROM my_impianti WHERE idanagrafica=|id_parent| HAVING 2=2 ORDER BY id DESC"} ]}' WHERE `zz_plugins`.`name` = 'Impianti del cliente';
-
 -- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
 ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255), ADD `predefined` BOOLEAN NOT NULL DEFAULT FALSE, ADD `creditor_id` varchar(255), ADD `codice_sia` varchar(5);
 UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
@@ -201,7 +198,6 @@ UPDATE `an_anagrafiche` SET `idbanca_acquisti` = (SELECT `id` FROM `co_banche` W
 UPDATE `an_anagrafiche` SET `idbanca_vendite` = (SELECT `id` FROM `co_banche` WHERE `co_banche`.`id_anagrafica` = `an_anagrafiche`.`idanagrafica` LIMIT 1) WHERE `idbanca_vendite` IS NULL;
 
 -- Aggiornamento tabella principale per Banche
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_banche` INNER JOIN an_anagrafiche ON `an_anagrafiche`.`idanagrafica` = `co_banche`.`id_anagrafica` WHERE 1=1 AND `co_banche`.`deleted_at` IS NULL AND `an_anagrafiche`.`deleted_at` IS NULL HAVING 2=2' WHERE `name` = 'Banche';
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `summable`, `default`) VALUES
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Anagrafica', 'an_anagrafiche.ragione_sociale', 0, 1, 0, 0, 1, 0, 1),
 (NULL, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Banche'), 'Predefinito', 'IF(`co_banche`.`predefined`, ''Si'', ''No'')', 6, 1, 0, 0, 1, 0, 1);

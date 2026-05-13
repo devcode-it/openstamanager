@@ -200,7 +200,7 @@ function reload_pointers() {
             svgContent = data;
 
             // Get markers data
-            $.get(ROOTDIR + '/modules/mappa/actions.php?op=get_markers&idanagrafica='+$('#idanagrafica').val()+'&check='+check, function(data){
+            $.get(ROOTDIR + '/modules/mappa/actions.php?op=get_markers&id_anagrafica='+$('#id_anagrafica').val()+'&check='+check, function(data){
                 var dettagli = JSON.parse(data);
                 var markerArray = [];
 
@@ -320,7 +320,7 @@ $("input[type='checkbox']").change(function() {
 });
 
 // Gestione del cambio anagrafica
-$('#idanagrafica').change(function() {
+$('#id_anagrafica').change(function() {
     // Mostra un messaggio di caricamento
     $('#mappa').append('<div class="map-loading"><i class="fa fa-spinner fa-spin"></i> Caricamento...</div>');
 

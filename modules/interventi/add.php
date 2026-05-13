@@ -24,7 +24,7 @@ use Models\Plugin;
 include_once __DIR__.'/../../core.php';
 
 // Lettura dei parametri di interesse
-$id_anagrafica = filter('idanagrafica');
+$id_anagrafica = filter('id_anagrafica');
 $id_sede = filter('idsede');
 $richiesta = filter('richiesta');
 $descrizione = filter('descrizione');
@@ -46,10 +46,10 @@ if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
 $id_tecnico = filter('id_tecnico') ?: filter('idtecnico');
 $id_cliente = null;
 
-if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-    $id_tecnico = $user['idanagrafica'];
-} elseif ($user['gruppo'] == 'Clienti' && !empty($user['idanagrafica'])) {
-    $id_cliente = $user['idanagrafica'];
+if ($user['gruppo'] == 'Tecnici' && !empty($user['id_anagrafica'])) {
+    $id_tecnico = $user['id_anagrafica'];
+} elseif ($user['gruppo'] == 'Clienti' && !empty($user['id_anagrafica'])) {
+    $id_cliente = $user['id_anagrafica'];
 }
 
 // Gestione dell'impostazione dei Contratti
@@ -59,17 +59,17 @@ $id_promemoria_contratto = filter('idcontratto_riga');
 $id_ordine = null;
 
 if (empty($id_anagrafica)) {
-    $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->idanagrafica;
+    $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->id_anagrafica;
 }
 
-$anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE idanagrafica='.prepare($id_anagrafica));
+$anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
 $id_tipo = $anagrafica['idtipointervento_default'];
 $id_zona = $anagrafica['idzona'];
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
-    $contratto = $dbo->fetchOne('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE idanagrafica = co_contratti.idanagrafica) AS idzona FROM co_contratti WHERE id = '.prepare($id_contratto));
-    $id_anagrafica = $contratto['idanagrafica'];
+    $contratto = $dbo->fetchOne('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE id = co_contratti.id_anagrafica) AS idzona FROM co_contratti WHERE id = '.prepare($id_contratto));
+    $id_anagrafica = $contratto['id_anagrafica'];
     $id_zona = $contratto['idzona'];
 
     // Informazioni del Promemoria
@@ -106,7 +106,7 @@ elseif (!empty($id_intervento)) {
     $richiesta = $intervento['richiesta'];
     $descrizione = $intervento['descrizione'];
     $id_sede = $intervento['idsede_destinazione'];
-    $id_anagrafica = $intervento['idanagrafica'];
+    $id_anagrafica = $intervento['id_anagrafica'];
     $id_cliente_finale = $intervento['idclientefinale'];
     $id_contratto = $intervento['idcontratto'];
     $id_preventivo = $intervento['idpreventivo'];
@@ -168,11 +168,11 @@ echo '
                     </span>
                 </span>
             </div>
-            {[ "type": "select", "label": "", "name": "idanagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
+            {[ "type": "select", "label": "", "name": "id_anagrafica", "required": 1, "value": "'.(!$id_cliente ? $id_anagrafica : $id_cliente).'", "ajax-source": "clienti", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Cliente&readonly_tipo=1", "readonly": "'.((empty($id_anagrafica) && empty($id_cliente)) ? 0 : 1).'" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Sede destinazione').'", "name": "idsede_destinazione", "value": "'.$id_sede.'", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.$id_plugin_sedi.'&id_parent='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -182,11 +182,11 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&idanagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"idanagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "idsede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -196,11 +196,11 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+            {[ "type": "select", "label": "'.tr('Preventivo').'", "name": "idpreventivo", "value": "'.$id_preventivo.'", "ajax-source": "preventivi", "readonly": "'.(empty($id_preventivo) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica]).' ]}
+            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -214,7 +214,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -318,7 +318,7 @@ echo '
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
                             </div>
                         </div>
                     </div>
@@ -349,7 +349,7 @@ echo '
                         <h5 class="text-primary border-bottom pb-2 mb-4"><i class="fa fa-clock-o"></i> '.tr('Sessioni di lavoro').'</h5>
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtiposessione", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['idanagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).', "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
+                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtiposessione", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).', "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
                             </div>
 
                             <div class="col-md-2">
@@ -446,7 +446,7 @@ if (!empty($id_intervento)) {
        input("idordine").disable();
        input("idreferente").disable();
        input("componenti").disable();
-       input("idanagrafica").disable();
+       input("id_anagrafica").disable();
        input("idclientefinale").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
@@ -460,7 +460,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     echo '
 <script type="text/javascript">
     $(document).ready(function() {
-       input("idanagrafica").disable();
+       input("id_anagrafica").disable();
        input("idclientefinale").disable();
        input("idtipointervento").disable();
     });
@@ -469,7 +469,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 echo '
 <script type="text/javascript">
-    var anagrafica = input("idanagrafica");
+    var anagrafica = input("id_anagrafica");
     var sede = input("idsede_destinazione");
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
@@ -488,8 +488,8 @@ echo '
            input("componenti").disable();
         } else{
            let value = anagrafica.get();
-           updateSelectOption("idanagrafica", value);
-           session_set("superselect,idanagrafica",value, 0);
+           updateSelectOption("id_anagrafica", value);
+           session_set("superselect,id_anagrafica",value, 0);
 
             // Carico nel card i dettagli del cliente
             $("#dettagli_cliente").html(\'<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i><p>'.tr('Caricamento informazioni cliente...').'</p></div>\');
@@ -560,8 +560,8 @@ echo '
     // Gestione della modifica dell\'anagrafica
 	anagrafica.change(function() {
         let value = $(this).val();
-        updateSelectOption("idanagrafica", value);
-        session_set("superselect,idanagrafica",value, 0);
+        updateSelectOption("id_anagrafica", value);
+        session_set("superselect,id_anagrafica",value, 0);
 
         let selected = !$(this).val();
         let placeholder = selected ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
@@ -658,7 +658,7 @@ echo '
         plus_contratto = $(".modal #idcontratto").parent().find(".btn");
 
         if (plus_contratto.length == 1) {
-            plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/idanagrafica=null/, "idanagrafica=").replace(/idanagrafica=[0-9]*/, "idanagrafica=" + value));
+            plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
         }
 
         plus_referente = $(".modal #idreferente").parent().find(".btn");
@@ -752,16 +752,16 @@ echo '
 
         // Selezione anagrafica in automatico in base impianto
         if ($(this).val()[0]) {
-            input("idanagrafica").disable();
+            input("id_anagrafica").disable();
             input("idsede_destinazione").disable();
 
             let data = $(this).selectData()[0];
-            input("idanagrafica").getElement()
-            .selectSetNew(data.idanagrafica, data.ragione_sociale);
+            input("id_anagrafica").getElement()
+            .selectSetNew(data.id_anagrafica, data.ragione_sociale);
             input("idsede_destinazione").getElement()
             .selectSetNew(data.idsede, data.nomesede);
         } else {
-            input("idanagrafica").enable();
+            input("id_anagrafica").enable();
             input("idsede_destinazione").enable();
         }
 	});
@@ -1124,7 +1124,7 @@ echo '
         }
 
         // Controllo 1: Verificare se è stato selezionato un cliente
-        var clienteSelezionato = input("idanagrafica").get();
+        var clienteSelezionato = input("id_anagrafica").get();
         if (!clienteSelezionato) {
             // Nessun cliente selezionato
             $("#no-client-message").removeClass("hide");
@@ -1161,7 +1161,7 @@ echo '
                 }
             } else {
                 // Caso A/B: Nessuna sede o sede legale - usa anagrafica
-                var anagraficaData = input("idanagrafica").getData("select-options");
+                var anagraficaData = input("id_anagrafica").getData("select-options");
                 if (anagraficaData) {
                     lat = anagraficaData.lat;
                     lng = anagraficaData.lng;
@@ -1192,7 +1192,7 @@ echo '
         }
 
         // Renderizza la mappa solo se ci sono coordinate valide e un cliente selezionato
-        if (input("idanagrafica").getData("select-options") && hasValidCoordinates) {
+        if (input("id_anagrafica").getData("select-options") && hasValidCoordinates) {
             var container = L.DomUtil.get("map-add");
             if(container._leaflet_id != null){
                 map.eachLayer(function (layer) {

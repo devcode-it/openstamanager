@@ -41,20 +41,20 @@ if (empty($anagrafica)) {
 
 // Preventivi
 $preventivi = Preventivo::whereBetween('data_bozza', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->where('default_revision', 1)
     ->get();
 $totale_preventivi = $preventivi->sum('totale_imponibile');
 
 // Contratti
 $contratti = Contratto::whereBetween('data_bozza', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->get();
 $totale_contratti = $contratti->sum('totale_imponibile');
 
 // Ordini cliente
 $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->get();
 $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 
@@ -62,8 +62,8 @@ $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 $interventi = [];
 // Clienti
 if ($anagrafica->isTipo('Cliente')) {
-    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi WHERE in_interventi.idanagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
-    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi.idanagrafica='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi WHERE in_interventi.id_anagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.idintervento WHERE in_interventi.id_anagrafica='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
 }
 
 // Tecnici
@@ -83,7 +83,7 @@ if ($sessioni) {
 
 // Ddt in uscita
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', function ($query) {
         $query->where('dt_tipiddt.dir', '=', 'entrata');
     })
@@ -93,13 +93,13 @@ $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 // Fatture di vendita
 $segmenti = $dbo->select('zz_segments', 'id', [], ['autofatture' => 0]);
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', fn ($query) => $query->where('co_tipidocumento.dir', '=', 'entrata')
         ->where('co_tipidocumento.reversed', '=', 0))
     ->whereIn('id_segment', array_column($segmenti, 'id'))
     ->get();
 $note_credito = Fattura::whereBetween('data', [$start, $end])
-    ->where('idanagrafica', $id_record)
+    ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', fn ($query) => $query->where('co_tipidocumento.dir', '=', 'entrata')
         ->where('co_tipidocumento.reversed', '=', 1))
     ->get();

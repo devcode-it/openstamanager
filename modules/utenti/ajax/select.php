@@ -22,12 +22,12 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'anagrafiche_utenti':
-        $query = 'SELECT `an_anagrafiche`.`idanagrafica` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica` |where| ORDER BY `optgroup` ASC';
+        $query = 'SELECT `an_anagrafiche`.`id` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica` |where| ORDER BY `optgroup` ASC';
 
         $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
         foreach ($elements as $element) {
-            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`id`='.prepare($element);
         }
 
         if (!empty($search)) {
@@ -67,11 +67,11 @@ switch ($resource) {
         break;
 
     case 'utenti':
-        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`idanagrafica` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup
+        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`id` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup
         FROM
             `zz_users`
-            LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
+            LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`=".prepare(Models\Locale::getDefault()->id).')
         |where|

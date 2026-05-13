@@ -37,7 +37,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`= `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idddt`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM dt_righe_ddt GROUP BY `idddt`) righe ON `righe`.`idddt`=`dt_ddt`.`id` WHERE `idanagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`= `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idddt`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM dt_righe_ddt GROUP BY `idddt`) righe ON `righe`.`idddt`=`dt_ddt`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -76,7 +76,7 @@ foreach ($rs as $r) {
 
     // Aggiunta nome anagrafica come ultimo campo
     if (sizeof($ragioni_sociali) > 1) {
-        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['idanagrafica']].'<br/>';
+        $result['labels'][] = 'Anagrafica: '.$ragioni_sociali[$r['id_anagrafica']].'<br/>';
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori

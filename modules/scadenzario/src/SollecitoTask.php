@@ -90,7 +90,7 @@ class SollecitoTask extends Manager
                     $documento = $scadenza->documento;
 
                     $id_documento = $documento->id;
-                    $id_anagrafica = $documento->idanagrafica;
+                    $id_anagrafica = $documento->id_anagrafica;
                     $id_module = Module::where('name', 'Scadenzario')->first()->id;
 
                     $fattura_allegata = database()->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id, 'original' => 'Fattura di vendita.pdf'])['id'];
@@ -127,7 +127,7 @@ class SollecitoTask extends Manager
                         // Aggiungo email referenti in base alla mansione impostata nel template
                         $mansioni = database()->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                         foreach ($mansioni as $mansione) {
-                            $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                            $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                             if (!$referenti->isEmpty() && $creata_mail == false) {
                                 $mail = Mail::build($user, $template, $id);
                                 $creata_mail = true;
@@ -197,7 +197,7 @@ class SollecitoTask extends Manager
                     $documento = $scadenza->documento;
 
                     $id_documento = $documento->id;
-                    $id_anagrafica = $documento->idanagrafica;
+                    $id_anagrafica = $documento->id_anagrafica;
                     $id_module = Module::where('name', 'Scadenzario')->first()->id;
 
                     $fattura_allegata = database()->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $id, 'original' => 'Fattura di vendita.pdf'])['id'];
@@ -240,7 +240,7 @@ class SollecitoTask extends Manager
                             // Aggiungo email referenti in base alla mansione impostata nel template
                             $mansioni = database()->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                             foreach ($mansioni as $mansione) {
-                                $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                                $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                                 if (!$referenti->isEmpty() && $creata_mail == false) {
                                     $mail = Mail::build($user, $template, $id);
                                     $creata_mail = true;

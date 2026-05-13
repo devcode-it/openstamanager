@@ -90,7 +90,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             $is_estera = false;
 
             if (setting('Rimuovi avviso fatture estere')) {
-                $is_estera = $database->fetchOne('SELECT `idanagrafica` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` WHERE `an_nazioni`.`name` != "Italia" AND `an_anagrafiche`.`idanagrafica` = '.prepare($documento->idanagrafica));
+                $is_estera = $database->fetchOne('SELECT `id` FROM `an_anagrafiche` INNER JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id` WHERE `an_nazioni`.`name` != "Italia" AND `an_anagrafiche`.`id` = '.prepare($documento->id_anagrafica));
             }
 
             if ($documento->data <= $data_limite_invio && !$is_estera) {

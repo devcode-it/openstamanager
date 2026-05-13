@@ -23,14 +23,14 @@ include_once __DIR__.'/../../../core.php';
 switch ($resource) {
     /*
      * Opzioni utilizzate:
-     * - idanagrafica
+     * - id_anagrafica
      * - stato
      */
     case 'preventivi':
-        if (isset($superselect['idanagrafica'])) {
+        if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT
                     `co_preventivi`.`id` AS id,
-                    `an_anagrafiche`.`idanagrafica`,
+                    `an_anagrafiche`.`id`,
                     CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_statipreventivi_lang`.`title` , "]") AS descrizione,
                     `co_preventivi`.`idtipointervento`,
                     `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
@@ -39,7 +39,7 @@ switch ($resource) {
                     (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS sconto
                 FROM
                     `co_preventivi`
-                    INNER JOIN `an_anagrafiche` ON `co_preventivi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
+                    INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica`=`an_anagrafiche`.`id`
                     INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato`=`co_statipreventivi`.`id`
                     LEFT JOIN `co_statipreventivi_lang` ON (`co_preventivi`.`idstato`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                     INNER JOIN `in_tipiintervento` ON (`co_preventivi`.`idtipointervento`=`in_tipiintervento`.`id`)
@@ -53,7 +53,7 @@ switch ($resource) {
             }
 
             if (empty($elements)) {
-                $where[] = '`an_anagrafiche`.`idanagrafica`='.prepare($superselect['idanagrafica']);
+                $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
                 $where[] = '`co_preventivi`.`default_revision`=1';
 
                 $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile', 'is_concluso'];

@@ -67,8 +67,8 @@ class Intervento extends Document
         $model->idagente = $anagrafica->idagente;
         $model->idpagamento = $anagrafica->idpagamento_vendite ?: setting('Tipo di pagamento predefinito');
 
-        // Set idclientefinale to the same as idanagrafica by default to avoid foreign key constraint violation
-        $model->idclientefinale = $anagrafica->idanagrafica;
+        // Set idclientefinale to the same as id_anagrafica by default to avoid foreign key constraint violation
+        $model->idclientefinale = $anagrafica->id;
 
         $user = auth_osm()->getUser();
         // Imposto, come sede aziendale, la sede legale (0) se disponibile, altrimenti la prima sede disponibile
@@ -154,7 +154,7 @@ class Intervento extends Document
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function preventivo()

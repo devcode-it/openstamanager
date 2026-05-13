@@ -85,7 +85,7 @@ switch (post('op')) {
         // Salvo le scadenze selezionate in sessione
         $_SESSION['scadenzario_selected_ids'] = $id_records;
 
-        $scadenze = $database->FetchArray('SELECT * FROM co_scadenzario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenzario.iddocumento = nota.ref_documento WHERE co_scadenzario.id IN ('.implode(',', array_map(prepare(...), $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY idanagrafica, iddocumento');
+        $scadenze = $database->FetchArray('SELECT * FROM co_scadenzario LEFT JOIN (SELECT id as id_nota, ref_documento FROM co_documenti)as nota ON co_scadenzario.iddocumento = nota.ref_documento WHERE co_scadenzario.id IN ('.implode(',', array_map(prepare(...), $id_records)).') AND pagato < da_pagare AND nota.id_nota IS NULL ORDER BY id_anagrafica, iddocumento');
         foreach ($scadenze as $key => $scadenza) {
             $scadenza = Scadenza::find($scadenza['id']);
             $documento = Fattura::find($scadenza['iddocumento']);
@@ -93,7 +93,7 @@ switch (post('op')) {
             // Controllo se è una fattura di vendita
             if ($documento->direzione == 'entrata' && $scadenza->scadenza <= date('Y-m-d')) {
                 $id_documento = $documento->id;
-                $id_anagrafica = $documento->idanagrafica;
+                $id_anagrafica = $documento->id_anagrafica;
 
                 $fattura_allegata = $dbo->selectOne('zz_files', 'id', ['id_module' => $id_module, 'id_record' => $scadenza->id, 'original' => $scadenza->descrizione.'.pdf'])['id'];
 
@@ -116,7 +116,7 @@ switch (post('op')) {
                 // Selezione destinatari e invio mail
                 if (!empty($template)) {
                     // Invio unico per scadenze della stessa anagrafica
-                    if (!in_array($documento->idanagrafica, $anagrafiche)) {
+                    if (!in_array($documento->id_anagrafica, $anagrafiche)) {
                         $creata_mail = false;
                         $emails = [];
 
@@ -131,7 +131,7 @@ switch (post('op')) {
                         // Aggiungo email referenti in base alla mansione impostata nel template
                         $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
                         foreach ($mansioni as $mansione) {
-                            $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('idanagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                            $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                             if (!$referenti->isEmpty() && $creata_mail == false) {
                                 $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                                 $creata_mail = true;
@@ -155,7 +155,7 @@ switch (post('op')) {
 
                     array_push($list, $documento->numero_esterno);
                     array_push($id_records_inviati, $scadenza->id);
-                    array_push($anagrafiche, $scadenza->idanagrafica);
+                    array_push($anagrafiche, $scadenza->id_anagrafica);
 
                     $next_scadenza = $scadenze[$key + 1];
                     // Allego unica fattura per più scadenze collegate
@@ -163,7 +163,7 @@ switch (post('op')) {
                         $mail->addUpload($fattura_allegata);
                     }
                     // Invio unico per scadenze della stessa anagrafica
-                    if ($scadenza->idanagrafica != $next_scadenza['idanagrafica']) {
+                    if ($scadenza->id_anagrafica != $next_scadenza['id_anagrafica']) {
                         $mail->save();
                     }
                 }
@@ -194,7 +194,7 @@ $operations['change_bank'] = [
     'data' => [
         'title' => tr('Aggiornare la banca?'),
         'msg' => tr('Per ciascuna scadenza selezionata, verrà aggiornata la banca della fattura di riferimento e quindi di conseguenza di tutte le scadenze collegate').'
-        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->idanagrafica).'" ]}',
+        <br><br>{[ "type": "select", "label": "'.tr('Banca').'", "name": "id_banca", "required": 1, "values": "query=SELECT id, CONCAT (nome, \' - \' , iban) AS descrizione FROM co_banche WHERE id_anagrafica='.prepare($anagrafica_azienda->id).'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

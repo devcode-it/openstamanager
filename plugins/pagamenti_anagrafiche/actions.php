@@ -24,9 +24,9 @@ $operazione = filter('op');
 
 switch ($operazione) {
     case 'addpagamento':
-        if (count($dbo->selectOne('an_pagamenti_anagrafiche', 'id', ['idanagrafica' => $id_parent, 'mese' => post('mese')])) == 0) {
+        if (count($dbo->selectOne('an_pagamenti_anagrafiche', 'id', ['id_anagrafica' => $id_parent, 'mese' => post('mese')])) == 0) {
             $dbo->insert('an_pagamenti_anagrafiche', [
-                'idanagrafica' => $id_parent,
+                'id_anagrafica' => $id_parent,
                 'mese' => post('mese'),
                 'giorno_fisso' => post('giorno_fisso'),
             ]);

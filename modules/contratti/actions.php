@@ -35,8 +35,8 @@ use Plugins\PianificazioneInterventi\Promemoria;
 
 switch (post('op')) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
-        $anagrafica = Anagrafica::find($idanagrafica);
+        $id_anagrafica = post('id_anagrafica');
+        $anagrafica = Anagrafica::find($id_anagrafica);
         $id_segment = post('id_segment');
 
         // Generazione Contratto
@@ -79,7 +79,7 @@ switch (post('op')) {
                 $budget = $rs[0]['budget'];
             }
 
-            $contratto->idanagrafica = post('idanagrafica');
+            $contratto->id_anagrafica = post('id_anagrafica');
             $contratto->idsede_partenza = post('idsede_partenza');
             $contratto->idsede_destinazione = post('idsede_destinazione');
             $contratto->idstato = post('idstato');
@@ -874,7 +874,7 @@ switch (post('op')) {
                 $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
             }
             $id_iva = ($contratto->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $contratto->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
-            $id_anagrafica = $contratto->idanagrafica;
+            $id_anagrafica = $contratto->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 
             // CALCOLO PREZZO UNITARIO
@@ -886,10 +886,10 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['idanagrafica' => $contratto->idagente])['provvigione_default'];
+            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id_anagrafica' => $contratto->idagente])['provvigione_default'];
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }
@@ -961,7 +961,7 @@ switch (post('op')) {
 
     case 'update-price':
         $dir = 'entrata';
-        $id_anagrafica = $contratto->idanagrafica;
+        $id_anagrafica = $contratto->id_anagrafica;
         $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
         $numero_totale = 0;
         $id_righe = (array) post('righe');
@@ -1000,7 +1000,7 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE idanagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }

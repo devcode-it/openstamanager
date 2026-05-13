@@ -44,19 +44,17 @@ class Anagrafica extends Model
 
     protected $table = 'an_anagrafiche';
 
-    protected $primaryKey = 'idanagrafica';
+    protected $primaryKey = 'id';
 
     protected $module = 'Anagrafiche';
 
     protected $guarded = [];
 
     protected $appends = [
-        'id',
         'partita_iva',
     ];
 
     protected $hidden = [
-        'idanagrafica',
         'piva',
     ];
 
@@ -242,16 +240,6 @@ class Anagrafica extends Model
         return 'Anagrafiche';
     }
 
-    /**
-     * Restituisce l'identificativo.
-     *
-     * @return int
-     */
-    public function getIdAttribute()
-    {
-        return $this->idanagrafica;
-    }
-
     public function getPartitaIvaAttribute()
     {
         return $this->attributes['piva'];
@@ -379,12 +367,12 @@ class Anagrafica extends Model
 
     public function tipi()
     {
-        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'idanagrafica', 'idtipoanagrafica');
+        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'id_anagrafica', 'idtipoanagrafica', 'id', 'id');
     }
 
     public function sedi()
     {
-        return $this->hasMany(Sede::class, 'idanagrafica');
+        return $this->hasMany(Sede::class, 'id_anagrafica');
     }
 
     public function nazione()
@@ -394,7 +382,7 @@ class Anagrafica extends Model
 
     public function fatture()
     {
-        return $this->hasMany(Fattura::class, 'idanagrafica');
+        return $this->hasMany(Fattura::class, 'id_anagrafica');
     }
 
     public function fattureVendita()
@@ -409,22 +397,22 @@ class Anagrafica extends Model
 
     public function ordini()
     {
-        return $this->hasMany(Ordine::class, 'idanagrafica');
+        return $this->hasMany(Ordine::class, 'id_anagrafica');
     }
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idanagrafica');
+        return $this->hasMany(DDT::class, 'id_anagrafica');
     }
 
     public function contratti()
     {
-        return $this->hasMany(Contratto::class, 'idanagrafica');
+        return $this->hasMany(Contratto::class, 'id_anagrafica');
     }
 
     public function preventivi()
     {
-        return $this->hasMany(Preventivo::class, 'idanagrafica');
+        return $this->hasMany(Preventivo::class, 'id_anagrafica');
     }
 
     public function dichiarazioni()
@@ -434,7 +422,7 @@ class Anagrafica extends Model
 
     public function interventi()
     {
-        return $this->hasMany(Intervento::class, 'idanagrafica');
+        return $this->hasMany(Intervento::class, 'id_anagrafica');
     }
 
     public function pianoScontoVendite()

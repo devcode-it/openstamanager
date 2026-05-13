@@ -28,7 +28,7 @@ switch ($name) {
     case 'codice':
         $disponibile = Anagrafica::where([
             ['codice', $value],
-            ['idanagrafica', '<>', $id_record],
+            ['id', '<>', $id_record],
         ])->count() == 0;
 
         $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Il codice anagrafica è disponibile.') : '<i class="fa fa-warning text-yellow"></i> '.tr("Il codice anagrafica è già utilizzato in un'altra anagrafica.");
@@ -44,7 +44,7 @@ switch ($name) {
         $disponibile = Anagrafica::where([
             ['codice_fiscale', $value],
             ['codice_fiscale', '<>', ''],
-            ['idanagrafica', '<>', $id_record],
+            ['id', '<>', $id_record],
         ])->count() == 0;
 
         $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questo codice fiscale non è ancora stato utilizzato.') : '<i class="fa fa-warning text-yellow"></i> '.tr("Il codice fiscale è già utilizzato in un'altra anagrafica.");
@@ -120,7 +120,7 @@ switch ($name) {
         $disponibile = Anagrafica::where([
             ['piva', $value],
             ['piva', '<>', ''],
-            ['idanagrafica', '<>', $id_record],
+            ['id', '<>', $id_record],
         ])->count() == 0;
 
         $message = $disponibile ? '<i class="fa fa-check text-green"></i> '.tr('Questa partita iva non è ancora stata utilizzata') : '<i class="fa fa-warning text-yellow"></i> '.tr("La partita iva è già utilizzata in un'altra anagrafica");
@@ -166,7 +166,7 @@ switch ($name) {
         $disponibile = Anagrafica::where([
             ['email', $value],
             ['email', '<>', ''],
-            ['idanagrafica', '<>', $id_record],
+            ['id', '<>', $id_record],
         ])->count() == 0;
         $result = $disponibile;
 

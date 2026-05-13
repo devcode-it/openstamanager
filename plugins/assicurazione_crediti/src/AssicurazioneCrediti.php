@@ -60,7 +60,7 @@ class AssicurazioneCrediti extends Model
      */
     public function fixTotale()
     {
-        $scadenze = Scadenza::where('idanagrafica', $this->id_anagrafica)->where('scadenza', '>=', $this->data_inizio)->where('scadenza', '<=', $this->data_fine)->get();
+        $scadenze = Scadenza::where('id_anagrafica', $this->id_anagrafica)->where('scadenza', '>=', $this->data_inizio)->where('scadenza', '<=', $this->data_fine)->get();
         $totale = 0;
         foreach ($scadenze as $scadenza) {
             $totale += $scadenza->da_pagare - $scadenza->pagato;

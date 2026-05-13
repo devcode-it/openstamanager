@@ -60,13 +60,13 @@ $img = !empty($impianto) ? $impianto->image : null;
 						<div class="clearfix"></div>
 
 						<div class="col-md-4">
-							<?php echo Modules::link('Anagrafiche', $record['idanagrafica'], null, null, 'class="pull-right"'); ?>
-							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "idanagrafica", "required": 1, "value": "$idanagrafica$", "extra": "", "ajax-source": "clienti" ]}
+							<?php echo Modules::link('Anagrafiche', $record['id_anagrafica'], null, null, 'class="pull-right"'); ?>
+							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
 						<?php
                         echo '
 						<div class="col-md-4">
-							{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['idanagrafica' => $record['idanagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
+							{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede", "value": "$idsede$", "required": "1", "ajax-source": "sedi", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "placeholder": "'.tr('Sede legale').'" ]}
 						</div>';
 ?>
 						<div class="col-md-4">
@@ -200,9 +200,9 @@ echo '
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$('#idanagrafica').change(function() {
-        updateSelectOption("idanagrafica", $(this).val());
-		session_set('superselect,idanagrafica', $(this).val(), 0);
+	$('#id_anagrafica').change(function() {
+        updateSelectOption("id_anagrafica", $(this).val());
+		session_set('superselect,id_anagrafica', $(this).val(), 0);
 
         var value = !$(this).val();
 

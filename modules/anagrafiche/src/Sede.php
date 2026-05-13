@@ -56,7 +56,7 @@ class Sede extends Model
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id');
     }
 
     public function nazione()
@@ -127,7 +127,7 @@ class Sede extends Model
         $rappresentante_fiscale = post('is_rappresentante_fiscale');
 
         if (!empty($rappresentante_fiscale)) {
-            self::where('idanagrafica', $this->idanagrafica)
+            self::where('id', $this->id)
                 ->where('id', '!=', $this->id)
                 ->update([
                     'is_rappresentante_fiscale' => 0,

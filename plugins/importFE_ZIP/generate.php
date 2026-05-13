@@ -329,7 +329,7 @@ if (!empty($anagrafica)) {
             `co_tipidocumento`.`dir` = 'entrata' AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
-            `co_documenti`.`idanagrafica` = ".prepare($anagrafica->id);
+            `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);
 
     // Riferimenti ad altre fatture
     if (in_array($dati_generali['TipoDocumento'], ['TD04', 'TD05'])) {
@@ -355,7 +355,7 @@ if (!empty($anagrafica)) {
             `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             `co_documenti`.`idstatodocumento` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` != 'Bozza') AND
-            `co_documenti`.`idanagrafica` = ".prepare($anagrafica->id);
+            `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);
 
         $autofattura_collegata = Fattura::where('progressivo_invio', '=', $fattura->getHeader()['DatiTrasmissione']['ProgressivoInvio'])->first();
 
@@ -662,7 +662,7 @@ if (!empty($righe)) {
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-5">
-                                {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'idanagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.tr('Crea articolo').'|'.base_path_osm().'/add.php?id_module='.Modules::get('Articoli')['id'].'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
+                                {[ "type": "select", "label": "'.tr('Articolo').'", "name": "articoli['.$key.']", "ajax-source": "articoli", "select-options": '.json_encode(['permetti_movimento_a_zero' => 1, 'dir' => 'entrata', 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'id_anagrafica' => $anagrafica ? $anagrafica->id : 0, 'idsede_partenza' => 0, 'idsede_destinazione' => 0]).', "value": "'.$id_articolo.'", "icon-after": "add|'.tr('Crea articolo').'|'.base_path_osm().'/add.php?id_module='.Modules::get('Articoli')['id'].'", "readonly": "'.($is_descrizione ? 1 : 0).'", "onchange": "verificaSerial(this)" ]}
                             </div>
 
                             <div class="col-md-3">

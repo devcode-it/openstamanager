@@ -190,7 +190,7 @@ class Preventivo extends Document
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function stato()
@@ -257,7 +257,7 @@ class Preventivo extends Document
             // Prima cerca la banca controparte specificata, altrimenti cerca quella predefinita
             $banca = $this->id_banca_controparte
                 ? Banca::find($this->id_banca_controparte)
-                : Banca::where('id_anagrafica', $this->idanagrafica)
+                : Banca::where('id_anagrafica', $this->id_anagrafica)
                     ->where('predefined', 1)
                     ->whereNull('deleted_at')
                     ->first();

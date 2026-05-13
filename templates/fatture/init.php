@@ -47,8 +47,8 @@ $record = $dbo->fetchOne('SELECT
     `an_anagrafiche`.`codice_destinatario` as codice_destinatario
 FROM 
     `co_documenti`
-    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica`=`co_documenti`.`idanagrafica`
-    LEFT JOIN `an_anagrafiche` AS vettore ON `vettore`.`idanagrafica` = `co_documenti`.`idvettore`
+    INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
+    LEFT JOIN `an_anagrafiche` AS vettore ON `vettore`.`id` = `co_documenti`.`idvettore`
     INNER JOIN `co_statidocumento` ON `co_documenti`.`idstatodocumento`=`co_statidocumento`.`id`
     LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
@@ -78,7 +78,7 @@ $bic_banca = $banca->bic;
 
 $module_name = ($record['dir'] == 'entrata') ? 'Fatture di vendita' : 'Fatture di acquisto';
 
-$id_cliente = $record['idanagrafica'];
+$id_cliente = $record['id_anagrafica'];
 $tipo_cliente = $record['tipo_cliente'];
 
 $tipo_doc = $record['tipo_doc'];
@@ -95,7 +95,7 @@ if (empty($record['is_fiscale'])) {
 // Leggo i dati della destinazione (se 0=sede legale, se!=altra sede da leggere da tabella an_sedi)
 $destinazione = '';
 if (!empty($record['idsede_destinazione'])) {
-    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `idanagrafica`=`an_sedi`.`idanagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `indirizzo2`, `cap`, `citta`, `provincia`, `piva`, `codice_fiscale`, `id_nazione`, `codice_destinatario` FROM `an_sedi` WHERE `idanagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
+    $rsd = $dbo->fetchArray('SELECT (SELECT `codice` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS codice, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id`=`an_sedi`.`id_anagrafica`) AS ragione_sociale, `nomesede`, `indirizzo`, `indirizzo2`, `cap`, `citta`, `provincia`, `piva`, `codice_fiscale`, `id_nazione`, `codice_destinatario` FROM `an_sedi` WHERE `id_anagrafica`='.prepare($id_cliente).' AND id='.prepare($record['idsede_destinazione']));
 
     if (!empty($rsd[0]['nomesede'])) {
         $destinazione .= $rsd[0]['nomesede'].'<br/>';
@@ -146,9 +146,9 @@ $custom = [
 ];
 
 // Accesso solo a:
-// - cliente se è impostato l'idanagrafica di un Cliente
+// - cliente se è impostato l'id_anagrafica di un Cliente
 // - utente qualsiasi con permessi almeno in lettura sul modulo
 // - admin
-if ((auth_osm()->getUser()['gruppo'] == 'Clienti' && $id_cliente != auth_osm()->getUser()['idanagrafica'] && !AuthOSM::admin()) || Modules::getPermission($module_name) == '-') {
+if ((auth_osm()->getUser()['gruppo'] == 'Clienti' && $id_cliente != auth_osm()->getUser()['id_anagrafica'] && !AuthOSM::admin()) || Modules::getPermission($module_name) == '-') {
     exit(tr('Non hai i permessi per questa stampa!'));
 }

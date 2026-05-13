@@ -126,9 +126,9 @@ $endpoint = setting('Endpoint ibanapi.com');
 
 <?php
 // Collegamenti diretti (numerici)
-$numero_documenti = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
-UNION SELECT idanagrafica FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record).'
-UNION SELECT idanagrafica FROM co_documenti WHERE id_banca_azienda = '.prepare($id_record).' OR id_banca_controparte = '.prepare($id_record));
+$numero_documenti = $dbo->fetchNum('SELECT id FROM an_anagrafiche WHERE idbanca_vendite='.prepare($id_record).'
+UNION SELECT id FROM an_anagrafiche WHERE idbanca_acquisti='.prepare($id_record).'
+UNION SELECT id_anagrafica FROM co_documenti WHERE id_banca_azienda = '.prepare($id_record).' OR id_banca_controparte = '.prepare($id_record));
 
 if (!empty($numero_documenti)) {
     echo '

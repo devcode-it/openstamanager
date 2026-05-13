@@ -479,7 +479,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 $record_name = 'ID '.$token_record['id_record_target'];
 
                 if ($module_info['name'] == 'Anagrafiche') {
-                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
+                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
                     if ($anagrafica) {
                         $record_name = $anagrafica['ragione_sociale'].' (ID '.$token_record['id_record_target'].')';
                     }
@@ -614,7 +614,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 $record_name = 'ID '.$token_record['id_record_target'];
 
                 if ($module_info['name'] == 'Anagrafiche') {
-                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
+                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
                     if ($anagrafica) {
                         $record_name = $anagrafica['ragione_sociale'].' (ID '.$token_record['id_record_target'].')';
                     }
@@ -782,7 +782,7 @@ if ($show_request_button && !empty($token_record) && $tipo_accesso == 'otp') {
                 $record_name = 'ID '.$token_record['id_record_target'];
 
                 if ($module_info['name'] == 'Anagrafiche') {
-                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE idanagrafica = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
+                    $anagrafica = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($token_record['id_record_target']).' AND deleted_at IS NULL');
                     if ($anagrafica) {
                         $record_name = $anagrafica['ragione_sociale'].' (ID '.$token_record['id_record_target'].')';
                     }

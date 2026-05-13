@@ -75,8 +75,8 @@ $query = "SELECT
     FROM 
         `in_interventi_tecnici`
         INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
-        INNER JOIN `an_anagrafiche` ON `in_interventi`.`idanagrafica`=`an_anagrafiche`.`idanagrafica`
-        LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`idanagrafica`
+        INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
+        LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`idtecnico`=`tecnico`.`id`
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
     WHERE
         ".$where.'

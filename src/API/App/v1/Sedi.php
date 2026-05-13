@@ -36,8 +36,8 @@ class Sedi extends AppResource
             `an_sedi`.`updated_at` 
         FROM
             `an_sedi`
-            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `an_sedi`.`idanagrafica`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `an_sedi`.`id_anagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).")
         WHERE 
@@ -57,7 +57,7 @@ class Sedi extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT `an_sedi`.`id`,
-            `an_sedi`.`idanagrafica` AS id_cliente,
+            `an_sedi`.`id_anagrafica` AS id_cliente,
             `an_sedi`.`nomesede` AS nome,
             `an_sedi`.`piva` AS partita_iva,
             `an_sedi`.`codice_fiscale`,

@@ -32,7 +32,7 @@ if (!empty($rs_viaggi)) {
         $firma_disabled = '';
         $tecnico = Anagrafica::find($viaggio['idtecnico']);
 
-        if ($user->gruppo == 'Tecnici' && $user->idanagrafica != $viaggio['idtecnico']) {
+        if ($user->gruppo == 'Tecnici' && $user->id_anagrafica != $viaggio['idtecnico']) {
             $disabled = 'disabled';
             $firma_disabled = 'disabled';
         }

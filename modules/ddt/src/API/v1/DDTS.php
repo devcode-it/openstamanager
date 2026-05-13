@@ -101,7 +101,7 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $ddt->data = $data['data'];
         $ddt->idstatoddt = $data['id_stato'];
         $ddt->idcausalet = $data['idcausale'];
-        $ddt->idanagrafica = $data['id_anagrafica'];
+        $ddt->id_anagrafica = $data['id_anagrafica'];
         $ddt->numero_esterno = $data['numero_esterno'];
         $ddt->idsede_partenza = $data['idsede_partenza'];
         $ddt->idsede_destinazione = $data['idsede_destinazione'];

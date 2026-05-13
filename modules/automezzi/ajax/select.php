@@ -26,12 +26,12 @@ switch ($resource) {
     case 'tecnici_automezzo':
         $tipologia = Tipo::where('name', 'Tecnico')->first()->id;
 
-        $query = "SELECT DISTINCT `an_anagrafiche`.`idanagrafica` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`idanagrafica`=`an_tipianagrafiche_anagrafiche`.`idanagrafica`
-        LEFT JOIN `zz_users` ON `an_anagrafiche`.`idanagrafica` = `zz_users`.`idanagrafica`
+        $query = "SELECT DISTINCT `an_anagrafiche`.`id` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `idtipointervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
+        LEFT JOIN `zz_users` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
         |where| ORDER BY `ragione_sociale`';
 
         foreach ($elements as $element) {
-            $filter[] = '`an_anagrafiche`.`idanagrafica`='.prepare($element);
+            $filter[] = '`an_anagrafiche`.`id`='.prepare($element);
         }
 
         if (empty($filter)) {
@@ -39,8 +39,8 @@ switch ($resource) {
 
             // come tecnico posso aprire viaggi solo a mio nome
             $user = AuthOSM::user();
-            if ($user['gruppo'] == 'Tecnici' && !empty($user['idanagrafica'])) {
-                $where[] = '`an_anagrafiche`.`idanagrafica`='.$user['idanagrafica'];
+            if ($user['gruppo'] == 'Tecnici' && !empty($user['id_anagrafica'])) {
+                $where[] = '`an_anagrafiche`.`id`='.$user['id_anagrafica'];
             }
 
             if (!empty($superselect['idautomezzo'])) {

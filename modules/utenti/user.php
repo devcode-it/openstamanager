@@ -44,8 +44,8 @@ if (!empty($id_record)) {
 }
 
 // Preseleziona il gruppo quando si aggiunge un nuovo utente dal contesto di un gruppo
-if (!empty(filter('idanagrafica'))) {
-    $utente['id_anagrafica'] = filter('idanagrafica');
+if (!empty(filter('id_anagrafica'))) {
+    $utente['id_anagrafica'] = filter('id_anagrafica');
 } else {
     $current_idgruppo = !empty($id_record) ? Group::find($id_record)->id : null;
 }
@@ -185,7 +185,7 @@ function submitCheck() {
 // Script per gestire il cambio dell\'anagrafica
 $(document).ready(function() {
     $("#idanag").change(function() {
-        session_set("superselect,idanagrafica", $(this).val(), 0);
+        session_set("superselect,id_anagrafica", $(this).val(), 0);
         $("#idsede").selectReset();
 
         // Verifica tipo anagrafica per utenti tecnici
@@ -201,7 +201,7 @@ $(document).ready(function() {
                     data: {
                         module: "Utenti",
                         op: "check_anagrafica_tipo",
-                        idanagrafica: $(this).val()
+                        id_anagrafica: $(this).val()
                     },
                     success: function(data) {
                         try {

@@ -34,7 +34,7 @@ if ($module->name == 'Ordini cliente') {
     $ajax = 'fornitori';
 }
 
-$id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
+$id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 ?><form action="" method="post" id="add-form">
 	<input type="hidden" name="op" value="add">
@@ -46,7 +46,7 @@ $id_anagrafica = !empty(get('idanagrafica')) ? get('idanagrafica') : '';
 
 	<div class="row">
 		<div class="col-md-6">
-            {[ "type": "select", "label": "<?php echo tr($tipo_anagrafica); ?>", "name": "idanagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
+            {[ "type": "select", "label": "<?php echo tr($tipo_anagrafica); ?>", "name": "id_anagrafica", "required": 1, "value": "<?php echo $id_anagrafica; ?>", "ajax-source": "<?php echo $ajax; ?>", "icon-after": "add|<?php echo Module::where('name', 'Anagrafiche')->first()->id; ?>|tipoanagrafica=<?php echo $tipo_anagrafica; ?>&readonly_tipo=1" ]}
 		</div>
 
 		<div class="col-md-6">

@@ -35,10 +35,10 @@ switch (filter('op')) {
         $listino->note = post('note');
         $listino->save();
 
-        $id_anagrafiche = (array) post('idanagrafica');
+        $id_anagrafiche = (array) post('id_anagrafica');
         $dbo->query('UPDATE `an_anagrafiche` SET id_listino=null WHERE id_listino='.prepare($id_record));
         foreach ($id_anagrafiche as $id_anagrafica) {
-            $dbo->query('UPDATE `an_anagrafiche` SET id_listino='.prepare($id_record).' WHERE idanagrafica='.prepare($id_anagrafica));
+            $dbo->query('UPDATE `an_anagrafiche` SET id_listino='.prepare($id_record).' WHERE id='.prepare($id_anagrafica));
         }
 
         flash()->info(tr('Listino modificato correttamente!'));

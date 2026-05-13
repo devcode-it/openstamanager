@@ -116,7 +116,7 @@ foreach ($righe as $riga) {
         echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
 
         if ($id_module == Module::where('name', 'Ordini fornitore')->first()->id) {
-            $codice_fornitore = $riga->articolo->dettaglioFornitore($ordine->idanagrafica)->codice_fornitore;
+            $codice_fornitore = $riga->articolo->dettaglioFornitore($ordine->id_anagrafica)->codice_fornitore;
             if (!empty($codice_fornitore)) {
                 echo '
                     <br>
@@ -269,7 +269,7 @@ foreach ($righe as $riga) {
                 </td>';
 
         if ($riga->isArticolo()) {
-            $id_anagrafica = $ordine->idanagrafica;
+            $id_anagrafica = $ordine->id_anagrafica;
             $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $ordine->idsede_destinazione);
         }
 

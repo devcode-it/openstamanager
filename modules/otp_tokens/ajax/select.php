@@ -46,12 +46,12 @@ switch ($resource) {
             $module = Module::find($superselect['id_module_target']);
 
             if ($module->name == 'Anagrafiche') {
-                $query = 'SELECT idanagrafica AS id, ragione_sociale AS descrizione FROM an_anagrafiche |where| ORDER BY ragione_sociale';
+                $query = 'SELECT id, ragione_sociale AS descrizione FROM an_anagrafiche |where| ORDER BY ragione_sociale';
 
                 $where[] = 'deleted_at IS NULL';
 
                 foreach ($elements as $element) {
-                    $filter[] = 'idanagrafica='.prepare($element);
+                    $filter[] = 'id='.prepare($element);
                 }
 
                 $where[] = 'deleted_at IS NULL';

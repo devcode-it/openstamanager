@@ -110,16 +110,16 @@ switch (post('op')) {
 
         // Aggiorno i tipi attività utilizzabili
         $idtipiintervento = (array) post('idtipiintervento');
-        $dbo->query('DELETE FROM an_anagrafiche_tipiintervento WHERE idanagrafica='.prepare($id_record));
+        $dbo->query('DELETE FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($id_record));
         foreach ($idtipiintervento as $idtipointervento) {
             if (!empty($idtipointervento) && $idtipointervento != '-1') {
-                $dbo->query('INSERT INTO an_anagrafiche_tipiintervento(idtipointervento, idanagrafica) VALUES('.prepare($idtipointervento).', '.prepare($id_record).')');
+                $dbo->query('INSERT INTO an_anagrafiche_tipiintervento(idtipointervento, id_anagrafica) VALUES('.prepare($idtipointervento).', '.prepare($id_record).')');
             }
         }
 
         // Aggiorno gli agenti collegati
         $idagenti = array_filter((array) post('idagenti'), fn ($value) => $value !== '' && $value !== null);
-        $dbo->sync('an_anagrafiche_agenti', ['idanagrafica' => $id_record], ['idagente' => $idagenti]);
+        $dbo->sync('an_anagrafiche_agenti', ['id_anagrafica' => $id_record], ['idagente' => $idagenti]);
 
         flash()->info(tr('Informazioni per l\'anagrafica \"_NAME_\" salvate correttamente.', [
             '_NAME_' => $anagrafica->ragione_sociale,
@@ -129,7 +129,7 @@ switch (post('op')) {
         $codice = $anagrafica->codice;
         if (!empty($codice)) {
             $anagrafiche_codice = Anagrafica::where('codice', $codice)
-                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice->isEmpty()) {
                 flash()->warning(tr('Il codice anagrafica _COD_ risulta essere già stato censito.', [
@@ -142,7 +142,7 @@ switch (post('op')) {
         $codice_fiscale = $anagrafica->codice_fiscale;
         if (!empty($codice_fiscale)) {
             $anagrafiche_codice_fiscale = Anagrafica::where('codice_fiscale', $codice_fiscale)
-                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice_fiscale->isEmpty()) {
                 $message = tr('Il codice fiscale _COD_ risulta essere già stato censito.', [
@@ -160,7 +160,7 @@ switch (post('op')) {
         $partita_iva = $anagrafica->partita_iva;
         if (!empty($partita_iva)) {
             $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
-                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
                 $message = tr('La partita IVA _IVA_ risulta essere già stato censita.', [
@@ -204,8 +204,8 @@ switch (post('op')) {
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
-        if (!empty($user['idanagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica` = '.prepare($user['idanagrafica']));
+        if (!empty($user['id_anagrafica'])) {
+            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {
@@ -215,7 +215,7 @@ switch (post('op')) {
             }
         }
 
-        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['idanagrafica'] : 0;
+        $idagente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['id_anagrafica'] : 0;
 
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');
@@ -257,7 +257,7 @@ switch (post('op')) {
         $codice_fiscale = $anagrafica->codice_fiscale;
         if (!empty($codice_fiscale)) {
             $anagrafiche_codice_fiscale = Anagrafica::where('codice_fiscale', $codice_fiscale)
-                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_codice_fiscale->isEmpty()) {
                 $message = tr('Attenzione: il codice fiscale _COD_ è già stato censito', [
@@ -275,7 +275,7 @@ switch (post('op')) {
         $partita_iva = $anagrafica->partita_iva;
         if (!empty($partita_iva)) {
             $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
-                ->where('idanagrafica', '!=', $anagrafica->id)
+                ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
                 $message = tr('La partita IVA _IVA_ è già stata censita', [
@@ -323,10 +323,10 @@ switch (post('op')) {
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!$anagrafica->isAzienda()) {
             // $anagrafica->delete();
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE idanagrafica = '.prepare($id_record));
+            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE id = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE idanagrafica = '.prepare($id_record));
+            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE id_anagrafica = '.prepare($id_record));
             // Disabilito anche il token
             $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
 

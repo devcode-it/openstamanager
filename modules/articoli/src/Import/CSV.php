@@ -401,7 +401,7 @@ class CSV extends CSVImporter
             unset($record['immagine']);
 
             if (!empty($record['id_fornitore'])) {
-                $result = $database->fetchOne('SELECT idanagrafica AS id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')');
+                $result = $database->fetchOne('SELECT id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')');
                 if ($result) {
                     $dettagli['id_fornitore'] = $result['id'];
                     $dettagli['anagrafica_listino'] = $record['id_fornitore'];
@@ -802,7 +802,7 @@ class CSV extends CSVImporter
 
             if (!empty($nome_sede)) {
                 $sede = Sede::where('nomesede', $nome_sede)
-                    ->where('idanagrafica', $anagrafica_azienda->id)
+                    ->where('id', $anagrafica_azienda->id)
                     ->first();
                 $id_sede = $sede ? $sede->id : 0;
             }

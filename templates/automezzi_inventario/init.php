@@ -20,7 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-$azienda = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica='.prepare(setting('Azienda predefinita')));
+$azienda = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE id='.prepare(setting('Azienda predefinita')));
 
 $where = [];
 $search_targa = get('search_targa');

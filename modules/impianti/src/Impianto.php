@@ -35,7 +35,7 @@ class Impianto extends Model
     // Relazioni Eloquent
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'idanagrafica');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public static function build($matricola = null, $nome = null, ?Categoria $categoria = null, $anagrafica = null)
@@ -43,7 +43,7 @@ class Impianto extends Model
         $model = new static();
         $model->matricola = $matricola;
         $model->nome = $nome;
-        $model->idanagrafica = $anagrafica;
+        $model->id_anagrafica = $anagrafica;
 
         $model->categoria()->associate($categoria);
 

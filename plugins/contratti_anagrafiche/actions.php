@@ -27,7 +27,7 @@ switch ($operazione) {
         if (!empty(post('predefined'))) {
             $dbo->update('co_contratti', [
                 'predefined' => 0,
-            ], ['idanagrafica' => $id_parent]);
+            ], ['id_anagrafica' => $id_parent]);
         }
 
         $dbo->update('co_contratti', [

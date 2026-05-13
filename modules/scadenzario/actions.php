@@ -28,7 +28,7 @@ use Plugins\AssicurazioneCrediti\AssicurazioneCrediti;
 
 switch (post('op')) {
     case 'add':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $data = post('data');
         $tipo = post('tipo');
         $da_pagare = post('da_pagare');
@@ -37,7 +37,7 @@ switch (post('op')) {
         $data_emissione = post('data_emissione') ?: date('Y-m-d');
 
         $dbo->insert('co_scadenzario', [
-            'idanagrafica' => $idanagrafica,
+            'id_anagrafica' => $id_anagrafica,
             'iddocumento' => $iddocumento,
             'descrizione' => $descrizione,
             'tipo' => $tipo,
@@ -48,7 +48,7 @@ switch (post('op')) {
         ]);
         $id_record = $dbo->lastInsertedID();
 
-        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $data)->where('data_fine', '>=', $data)->first();
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $id_anagrafica)->where('data_inizio', '<=', $data)->where('data_fine', '>=', $data)->first();
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
             $assicurazione_crediti->save();
@@ -63,7 +63,7 @@ switch (post('op')) {
         break;
 
     case 'update':
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $tipo = post('tipo');
         $descrizione = strip_tags(post('descrizione'));
         $iddocumento = post('iddocumento') ?: 0;
@@ -113,7 +113,7 @@ switch (post('op')) {
             $id_scadenza = $scadenza->id ?? $scadenza['id'];
             if (!empty($id_scadenza)) {
                 $database->update('co_scadenzario', [
-                    'idanagrafica' => $idanagrafica,
+                    'id_anagrafica' => $id_anagrafica,
                     'descrizione' => $descrizione,
                     'da_pagare' => $da_pagare,
                     'pagato' => $pagato,
@@ -131,7 +131,7 @@ switch (post('op')) {
                 }
             } else {
                 $database->insert('co_scadenzario', [
-                    'idanagrafica' => $idanagrafica,
+                    'id_anagrafica' => $id_anagrafica,
                     'descrizione' => $descrizione,
                     'tipo' => $tipo,
                     'iddocumento' => $iddocumento,
@@ -150,7 +150,7 @@ switch (post('op')) {
                 $id_scadenza_non_completa = $id_scadenza;
             }
 
-            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $id_anagrafica)
             ->where('data_inizio', '<=', $data_scadenza)
             ->where('data_fine', '>=', $data_scadenza)
             ->first();
@@ -167,7 +167,7 @@ switch (post('op')) {
 
     case 'delete':
         $scadenza = Scadenza::find($id_record);
-        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->idanagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->id_anagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
 
         $dbo->table('co_scadenzario')
             ->where('id', $id_record)
@@ -225,7 +225,7 @@ switch (post('op')) {
     case 'save_new_scadenza':
         $index = post('index');
         $iddocumento = post('iddocumento');
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
 
         // Recupera i dati dai campi del form
         $id_banca_azienda = post('id_banca_azienda');
@@ -244,7 +244,7 @@ switch (post('op')) {
             $data_emissione = date('Y-m-d');
 
             $dbo->insert('co_scadenzario', [
-                'idanagrafica' => $idanagrafica,
+                'id_anagrafica' => $id_anagrafica,
                 'iddocumento' => $iddocumento,
                 'descrizione' => $descrizione,
                 'tipo' => $tipo,
@@ -259,7 +259,7 @@ switch (post('op')) {
             ]);
             $id_record = $dbo->lastInsertedID();
 
-            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $idanagrafica)->where('data_inizio', '<=', $scadenza)->where('data_fine', '>=', $scadenza)->first();
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $id_anagrafica)->where('data_inizio', '<=', $scadenza)->where('data_fine', '>=', $scadenza)->first();
             if (!empty($assicurazione_crediti)) {
                 $assicurazione_crediti->fixTotale();
                 $assicurazione_crediti->save();

@@ -55,8 +55,8 @@ class Preventivi extends AppResource implements RetrieveInterface
         FROM 
             `co_preventivi`
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
-            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`idanagrafica` = `co_preventivi`.`idanagrafica`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idanagrafica` = `an_anagrafiche`.`idanagrafica`
+            INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_preventivi`.`id_anagrafica`
+            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.")
         WHERE 
@@ -77,7 +77,7 @@ class Preventivi extends AppResource implements RetrieveInterface
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT 
             `co_preventivi`.`id`,
-            `co_preventivi`.`idanagrafica` AS id_cliente,
+            `co_preventivi`.`id_anagrafica` AS id_cliente,
             IF(`co_preventivi`.`idsede_destinazione` = 0, NULL, `co_preventivi`.`idsede_destinazione`) AS id_sede,
             `co_preventivi`.`nome`,
             `co_preventivi`.`numero`,

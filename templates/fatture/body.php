@@ -251,7 +251,7 @@ foreach ($righe as $riga) {
 $diciture = [];
 
 // Aggiungo diciture particolari per l'anagrafica cliente
-$diciture[] = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_anagrafiche` WHERE `idanagrafica` = '.prepare($id_cliente))['dicitura'];
+$diciture[] = $dbo->fetchOne('SELECT `diciturafissafattura` AS dicitura FROM `an_anagrafiche` WHERE `id` = '.prepare($id_cliente))['dicitura'];
 
 // Aggiungo diciture per condizioni iva particolari
 foreach ($v_iva as $key => $value) {

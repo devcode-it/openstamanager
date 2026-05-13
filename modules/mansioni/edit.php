@@ -43,7 +43,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT an_referenti.nome, an_anagrafiche.ragione_sociale, an_anagrafiche.idanagrafica FROM an_referenti LEFT JOIN an_anagrafiche ON an_referenti.idanagrafica=an_anagrafiche.idanagrafica WHERE idmansione='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT an_referenti.nome, an_anagrafiche.ragione_sociale, an_anagrafiche.id FROM an_referenti LEFT JOIN an_anagrafiche ON an_referenti.id_anagrafica=an_anagrafiche.id WHERE idmansione='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '
@@ -66,7 +66,7 @@ if (!empty($elementi)) {
         ]);
 
         $plugin = 'Referenti';
-        $id = $elemento['idanagrafica'];
+        $id = $elemento['id_anagrafica'];
 
         echo '
             <li>'.Plugins::link($plugin, $id, $descrizione).'</li>';

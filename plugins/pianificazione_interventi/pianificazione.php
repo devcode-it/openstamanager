@@ -33,7 +33,7 @@ $contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
 ]);
 $data_accettazione = $contratto['data_accettazione'];
 $data_conclusione = $contratto['data_conclusione'];
-$id_anagrafica = $contratto['idanagrafica'];
+$id_anagrafica = $contratto['id_anagrafica'];
 
 // Impianti del contratto
 $impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `idcontratto` = :id', [
@@ -117,7 +117,7 @@ echo '
                 </div>
 
 				<div class="col-md-3">
-					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE idanagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
+					{[ "type": "select", "label": "'.tr('Sede').'", "name": "idsede_c", "values": "query=SELECT 0 AS id, \'Sede legale\' AS descrizione UNION SELECT id, CONCAT( CONCAT_WS( \' (\', CONCAT_WS(\', \', `nomesede`, `citta`), `indirizzo` ), \')\') AS descrizione FROM an_sedi WHERE id_anagrafica='.$id_anagrafica.'", "value": "'.$id_sede.'", "readonly": '.intval($block_edit).', "required" : "1" ]}
 			   </div>
 
 				<div class="col-md-6">

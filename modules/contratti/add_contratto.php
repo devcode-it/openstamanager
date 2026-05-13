@@ -62,13 +62,13 @@ if (!empty($id_documento)) {
 }
 
 // Se non è stato passato id_documento, mostro la select per scegliere il contratto precedente
-$id_anagrafica = $record['idanagrafica'] ?? null;
+$id_anagrafica = $record['id_anagrafica'] ?? null;
 $id_record_current = $id_record ?? null;
 
 echo '
 <div class="row">
     <div class="col-md-12">
-        {[ "type": "select", "label": "'.tr('Contratto precedente').'", "name": "id_documento", "ajax-source": "contratti", "select-options": {"idanagrafica": '.$id_anagrafica.', "id_record": "'.$id_record_current.'"} ]}
+        {[ "type": "select", "label": "'.tr('Contratto precedente').'", "name": "id_documento", "ajax-source": "contratti", "select-options": {"id_anagrafica": '.$id_anagrafica.', "id_record": "'.$id_record_current.'"} ]}
     </div>
 </div>
 

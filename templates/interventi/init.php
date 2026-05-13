@@ -27,7 +27,7 @@ $documento = Intervento::find($id_record);
 $preventivo = $dbo->fetchOne('SELECT numero, data_bozza  FROM co_preventivi WHERE id = '.prepare($documento['id_preventivo']));
 $contratto = $dbo->fetchOne('SELECT nome, numero, data_bozza FROM co_contratti WHERE id = '.prepare($documento['id_contratto']));
 
-$id_cliente = $documento['idanagrafica'];
+$id_cliente = $documento['id_anagrafica'];
 $id_sede = $documento['idsede'];
 
 if (!empty($documento['idsede_destinazione'])) {

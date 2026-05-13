@@ -36,7 +36,7 @@ switch ($op) {
 
         if (!empty($matricola)) {
             $dbo->update('my_impianti', [
-                'idanagrafica' => post('idanagrafica'),
+                'id_anagrafica' => post('id_anagrafica'),
                 'nome' => post('nome'),
                 'matricola' => $matricola,
                 'id_categoria' => post('id_categoria') ?: null,
@@ -92,7 +92,7 @@ switch ($op) {
         // Aggiungo impianto
     case 'add':
         $matricola = post('matricola');
-        $idanagrafica = post('idanagrafica');
+        $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
         $idtecnico = post('idtecnico');
         $idsede = post('idsede');
@@ -104,7 +104,7 @@ switch ($op) {
         if (!empty($matricola)) {
             $dbo->insert('my_impianti', [
                 'matricola' => $matricola,
-                'idanagrafica' => $idanagrafica,
+                'id_anagrafica' => $id_anagrafica,
                 'nome' => $nome,
                 'data' => date('Y-m-d'),
                 'idtecnico' => $idtecnico ?: 0,

@@ -32,7 +32,7 @@ use Modules\Preventivi\Preventivo;
 use Modules\Scadenzario\Scadenza;
 
 // Anagrafica
-$anagrafica = $anagrafica = Anagrafica::withTrashed()->find($intervento->idanagrafica);
+$anagrafica = $anagrafica = Anagrafica::withTrashed()->find($intervento->id_anagrafica);
 
 // Sede
 if ($intervento->idsede_destinazione) {
@@ -89,20 +89,20 @@ if ($intervento->id_ordine) {
 // Altre attività
 $interventi_programmati = Intervento::select('in_interventi.*')
     ->join('in_statiintervento', 'in_interventi.idstatointervento', '=', 'in_statiintervento.id')
-    ->where('idanagrafica', $intervento->idanagrafica)
+    ->where('id_anagrafica', $intervento->id_anagrafica)
     ->where('idsede_destinazione', $intervento->idsede_destinazione)
     ->where('is_bloccato', '!=', 1)
     ->where('in_interventi.id', '!=', $id_record)
     ->get();
 
 // Insoluti
-$insoluti = Scadenza::where('idanagrafica', $intervento->idanagrafica)
+$insoluti = Scadenza::where('id_anagrafica', $intervento->id_anagrafica)
     ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
     ->whereRaw('co_scadenzario.scadenza < NOW()')
     ->count();
 
 // Logo
-$logo = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', $intervento->idanagrafica)->where('name', 'Logo azienda')->first()->filename;
+$logo = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', $intervento->id_anagrafica)->where('name', 'Logo azienda')->first()->filename;
 
 $logo = $logo ? base_path_osm().'/files/anagrafiche/'.$logo : App::getPaths()['img'].'/logo_header.png';
 
@@ -124,7 +124,7 @@ echo '
 
 // Cliente
 echo '
-                        <h4 class="mb-2"><b>'.Modules::link('Anagrafiche', $anagrafica->idanagrafica, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
+                        <h4 class="mb-2"><b>'.Modules::link('Anagrafiche', $anagrafica->id, $anagrafica->ragione_sociale, $anagrafica->ragione_sociale).'</b></h4>
 
                         <p class="mb-2">
                             '.($sede['nomesede'] ? '<i class="fa fa-building-o text-muted mr-1"></i> '.$sede['nomesede'].'<br>' : '').'

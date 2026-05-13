@@ -80,7 +80,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $righe = $dbo->fetchNum('SELECT idanagrafica FROM an_anagrafiche WHERE id_provenienza='.prepare($id_record));
+        $righe = $dbo->fetchNum('SELECT id FROM an_anagrafiche WHERE id_provenienza='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($righe)) {
             $dbo->delete('an_provenienze', ['id' => $id_record]);

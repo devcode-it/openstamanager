@@ -203,7 +203,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
 
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "idanagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "tipo_anagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 
@@ -291,7 +291,7 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
                 CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
                 CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
                 CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
-                IF(`idclientefinale`='.prepare($idanagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
+                IF(`idclientefinale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
             FROM
                 `in_interventi`
                 INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
@@ -485,7 +485,7 @@ foreach ($righe as $i => $riga) {
 
     if ($riga->isArticolo()) {
         $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->idarticolo)
-            ->where('id_fornitore', $documento->idanagrafica)
+            ->where('id_fornitore', $documento->id_anagrafica)
             ->first();
 
         if (!empty($dettaglio_fornitore->codice_fornitore)) {

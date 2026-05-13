@@ -83,7 +83,7 @@ echo '
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "$id_cliente_finale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_cliente_finale' => $record['id_cliente_finale'], 'id_sede_destinazione' => $record['id_sede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_cliente_finale' => $record['id_cliente_finale'], 'id_sede_destinazione' => $record['id_sede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
                         </div>
                     </div>
                     <!-- RIGA 2 -->
@@ -593,7 +593,7 @@ echo '
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
     var cliente_finale = input("id_cliente_finale");
-    var referente = input("idreferente");
+    var referente = input("id_referente");
     var sede_partenza = input("id_sede_partenza");
 
     // Gestione della modifica dell\'anagrafica
@@ -648,7 +648,7 @@ echo '
         updateSelectOption("id_sede_destinazione", $(this).val());
 		session_set("superselect,id_sede_destinazione", $(this).val(), 0);
         input("idimpianti").getElement().selectReset();
-        input("idreferente").getElement().selectReset();
+        input("id_referente").getElement().selectReset();
 
         let data = sede.getData();
 		if (data) {

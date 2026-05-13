@@ -88,7 +88,7 @@ switch (post('op')) {
             $contratto->idpagamento = post('idpagamento');
             $contratto->numero = post('numero');
             $contratto->budget = $budget;
-            $contratto->idreferente = post('idreferente');
+            $contratto->id_referente = post('id_referente');
             $contratto->condizioni_fornitura = post('condizioni_fornitura');
             $contratto->informazioniaggiuntive = post('informazioniaggiuntive');
             $contratto->id_categoria = post('id_categoria') ?: null;
@@ -608,7 +608,7 @@ switch (post('op')) {
 
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
-            $contratto->idreferente = $documento->idreferente;
+            $contratto->id_referente = $documento->id_referente;
             $contratto->id_agente = $documento->id_agente;
 
             $contratto->save();
@@ -631,7 +631,7 @@ switch (post('op')) {
 
             $contratto->descrizione = $documento->descrizione;
             $contratto->esclusioni = $documento->esclusioni;
-            $contratto->idreferente = $documento->idreferente;
+            $contratto->id_referente = $documento->id_referente;
             $contratto->id_agente = $documento->id_agente;
             $contratto->id_categoria = $documento->id_categoria;
             $contratto->id_sottocategoria = $documento->id_sottocategoria;

@@ -318,7 +318,7 @@ echo '
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'id_cliente_finale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'id_cliente_finale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
                             </div>
                         </div>
                     </div>
@@ -444,7 +444,7 @@ if (!empty($id_intervento)) {
        input("idpreventivo").disable();
        input("idcontratto").disable();
        input("idordine").disable();
-       input("idreferente").disable();
+       input("id_referente").disable();
        input("componenti").disable();
        input("id_anagrafica").disable();
        input("id_cliente_finale").disable();
@@ -474,7 +474,7 @@ echo '
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
-    var referente = input("idreferente");
+    var referente = input("id_referente");
     var cliente_finale = input("id_cliente_finale");
     var autoload_mappa = false;
 
@@ -661,7 +661,7 @@ echo '
             plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
         }
 
-        plus_referente = $(".modal #idreferente").parent().find(".btn");
+        plus_referente = $(".modal #id_referente").parent().find(".btn");
 
         if (plus_referente.length == 1) {
             plus_referente.attr("onclick", plus_referente.attr("onclick").replace(/id_parent=null/, "id_parent=").replace(/id_parent=[0-9]*/, "id_parent=" + value));

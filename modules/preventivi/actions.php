@@ -70,7 +70,7 @@ switch (post('op')) {
             $preventivo->id_sede_partenza = post('id_sede_partenza');
             $preventivo->id_sede_destinazione = post('id_sede_destinazione');
             $preventivo->id_agente = post('id_agente');
-            $preventivo->idreferente = post('idreferente');
+            $preventivo->id_referentee = post(id_referentete');
             $preventivo->idpagamento = post('idpagamento') ?: null;
             $preventivo->id_banca_controparte = post('id_banca_controparte') ?: null;
             $preventivo->id_banca_azienda = post('id_banca_azienda') ?: null;

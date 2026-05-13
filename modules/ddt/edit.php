@@ -147,7 +147,7 @@ if ($dir == 'entrata') {
 }
 echo '
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"v": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": {"v": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'} ]}
                 </div>
             </div>
         </div>
@@ -747,7 +747,7 @@ echo '
 <script>
 $("#id_sede_destinazione").change(function(){
     updateSelectOption("id_sede_destinazione", $(this).val());
-    $("#idreferente").selectReset();
+    $("#id_referente").selectReset();
 });
 
 input("ordinamento").on("change", function(){

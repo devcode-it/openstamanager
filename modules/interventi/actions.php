@@ -66,7 +66,7 @@ switch (post('op')) {
 
         $intervento->id_anagrafica = post('id_anagrafica');
         $intervento->id_cliente_finale = post('id_cliente_finale') ?: null;
-        $intervento->idreferente = post('idreferente');
+        $intervento->id_referente = post('id_referente');
         $intervento->id_agente = post('id_agente');
         $intervento->id_tipo_intervento = post('id_tipo_intervento');
 
@@ -250,7 +250,7 @@ switch (post('op')) {
             $intervento->id_preventivo = $idpreventivo ?: null;
             $intervento->id_contratto = $idcontratto ?: null;
             $intervento->id_ordine = post('idordine') ?: null;
-            $intervento->idreferente = post('idreferente') ?: null;
+            $intervento->id_referente = post('id_referente') ?: null;
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');
             $intervento->id_sede_destinazione = $id_sede_destinazione;
@@ -882,7 +882,7 @@ switch (post('op')) {
             $intervento->codice_cup = $documento->codice_cup;
             $intervento->codice_cig = $documento->codice_cig;
             $intervento->num_item = $documento->num_item;
-            $intervento->idreferente = $documento->idreferente;
+            $intervento->id_referente = $documento->id_referente;
             $intervento->id_agente = $documento->id_agente;
 
             if ($class == Modules\Preventivi\Preventivo::class) {

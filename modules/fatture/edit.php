@@ -344,7 +344,7 @@ echo '
                 <div class="col-md-3">';
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'}, "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'||'.(intval($block_edit) ? 'disabled' : '').'" ]}
                 </div>
             </div>
         </div>
@@ -1045,7 +1045,7 @@ echo '
         updateSelectOption("id_anagrafica", $(this).val());
         session_set("superselect,id_anagrafica", $(this).val(), 0);
 
-        $("#idreferente").selectReset();
+        $("#id_referente").selectReset();
         $("#id_dichiarazione_intento").selectReset();
         $("#idpagamento").selectReset();
         $("#id_banca_azienda").selectReset();
@@ -1257,7 +1257,7 @@ $(document).ready(function () {
 
     $("#id_sede_destinazione").change(function(){
         updateSelectOption("id_sede_destinazione", $(this).val());
-        $("#idreferente").selectReset();
+        $("#id_referente").selectReset();
     });
 
     $("#id_articolo").on("change", function(e) {

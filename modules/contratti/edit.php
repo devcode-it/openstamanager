@@ -88,7 +88,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"id_sede_destinazione": '.$record['id_sede_destinazione'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"id_sede_destinazione": '.$record['id_sede_destinazione'].'} ]}
                 </div>
 
                 <div class="col-md-4">';
@@ -705,7 +705,7 @@ $(document).ready(function() {
 
     $("#id_sede_destinazione").change(function(){
         updateSelectOption("id_sede_destinazione", $(this).val());
-        $("#idreferente").selectReset();
+        $("#id_referente").selectReset();
     });
 });
 

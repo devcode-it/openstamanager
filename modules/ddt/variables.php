@@ -25,7 +25,7 @@ $r = $dbo->fetchOne('SELECT dt_ddt.*,
     an_referenti.nome
 FROM dt_ddt
     INNER JOIN an_anagrafiche ON dt_ddt.id_anagrafica = an_anagrafiche.id
-    LEFT OUTER JOIN an_referenti ON an_referenti.id = dt_ddt.idreferente
+    LEFT OUTER JOIN an_referenti ON an_referenti.id = dt_ddt.id_referente
 WHERE dt_ddt.id='.prepare($id_record));
 
 // Variabili da sostituire

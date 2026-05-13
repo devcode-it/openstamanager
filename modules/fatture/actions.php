@@ -138,7 +138,7 @@ switch ($op) {
 
         $fattura->id_anagrafica = post('id_anagrafica');
         $fattura->id_agente = post('id_agente') ?: null;
-        $fattura->idreferente = post('idreferente') ?: null;
+        $fattura->id_referente = post('id_referente') ?: null;
         $fattura->idpagamento = post('idpagamento') ?: null;
         $fattura->id_banca_azienda = post('id_banca_azienda') ?: null;
         $fattura->id_banca_controparte = post('id_banca_controparte') ?: null;
@@ -908,7 +908,7 @@ switch ($op) {
             $fattura->id_sede_partenza = $id_sede_partenza ?: null;
             $fattura->id_sede_destinazione = $id_sede_destinazione ?: null;
             $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
-            $fattura->idreferente = $documento->idreferente ?: null;
+            $fattura->id_referente = $documento->id_referente ?: null;
             $fattura->id_agente = $documento->id_agente ?: null;
 
             $fattura->save();

@@ -43,8 +43,8 @@ if ($intervento->id_sede_destinazione) {
 
 // Referente
 $referente = null;
-if ($intervento->idreferente) {
-    $referente = $dbo->selectOne('an_referenti', '*', ['id' => $intervento->idreferente]);
+if ($intervento->id_referenteee) {
+    $referente = $dbo->selectOne('an_referenti', '*', ['id' => $intervento->id_referenteee]);
 }
 
 // Contratto

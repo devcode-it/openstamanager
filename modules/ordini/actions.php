@@ -81,7 +81,7 @@ switch (post('op')) {
 
             $ordine->nome = post('nome');
             $ordine->id_anagrafica = post('id_anagrafica');
-            $ordine->idreferente = post('idreferente');
+            $ordine->id_referente = post('id_referente');
             $ordine->data = post('data') ?: null;
             $ordine->numero = post('numero');
             $ordine->numero_esterno = post('numero_esterno');
@@ -554,7 +554,7 @@ switch (post('op')) {
             $ordine->codice_cup = $documento->codice_cup;
             $ordine->codice_cig = $documento->codice_cig;
             $ordine->num_item = $documento->num_item;
-            $ordine->idreferente = $documento->idreferente;
+            $ordine->id_referente = $documento->id_referente;
             $ordine->id_agente = $documento->id_agente;
 
             $ordine->save();

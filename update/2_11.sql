@@ -514,7 +514,7 @@ FROM
     LEFT JOIN (SELECT `idintervento`, SUM(`prezzo_unitario` * `qta` - `sconto`) AS `ricavo_righe`, SUM(`costo_unitario` * `qta`) AS `costo_righe` FROM `in_righe_interventi` GROUP BY `idintervento`) AS `righe` ON `righe`.`idintervento` = `in_interventi`.`id`
     INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
     LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.|lang|)
-    LEFT JOIN `an_referenti` ON `in_interventi`.`idreferente` = `an_referenti`.`id`
+    LEFT JOIN `an_referenti` ON `in_interventi`.`id_referente` = `an_referenti`.`id`
     LEFT JOIN (SELECT `an_sedi`.`id`, CONCAT(`an_sedi`.`nomesede`, '<br />', IF(`an_sedi`.`telefono` != '', CONCAT(`an_sedi`.`telefono`, '<br />'), ''), IF(`an_sedi`.`cellulare` != '', CONCAT(`an_sedi`.`cellulare`, '<br />'), ''), `an_sedi`.`citta`, IF(`an_sedi`.`indirizzo` != '', CONCAT(' - ', `an_sedi`.`indirizzo`), '')) AS `info` FROM `an_sedi`) AS `sede_destinazione` ON `sede_destinazione`.`id` = `in_interventi`.`id_sede_destinazione`
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `idintervento` FROM `co_documenti`INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`iddocumento` WHERE `original_document_type` = 'Modules\\Interventi\\Intervento' GROUP BY `idintervento`, `original_document_id`) AS `fattura` ON `fattura`.`idintervento` = `in_interventi`.`id`
     LEFT JOIN (SELECT `in_interventi_tecnici_assegnati`.`id_intervento`, GROUP_CONCAT(DISTINCT `ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `an_anagrafiche`.`id` GROUP BY `id_intervento`) AS `tecnici_assegnati` ON `in_interventi`.`id` = `tecnici_assegnati`.`id_intervento`
@@ -1012,7 +1012,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idbanca_vendite` `id_banca_vendite` INT NUL
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `id_banca_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idconto_fornitore` `id_conto_fornitore` INT NOT NULL;
 
-ALTER TABLE `an_anagrafiche` CHANGE `id_agente` `id_agente` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idagente` `id_agente` INT NOT NULL;
@@ -1029,7 +1029,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idzona` `id_zona` INT NOT NULL;
 ALTER TABLE `an_sedi` CHANGE `idzona` `id_zona` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `id_tipo_intervento_default` INT NULL DEFAULT NULL;
-ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `id_tipo_intervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
+ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
 
 ALTER TABLE `an_automezzi_danni` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_scadenze` CHANGE `idsede` `id_sede` INT NOT NULL;
@@ -1052,3 +1052,5 @@ ALTER TABLE `in_interventi` CHANGE `idstatointervento` `id_stato` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idstatoordine` `id_stato` TINYINT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idstatoddt` `id_stato` TINYINT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idstato` `id_stato` TINYINT NOT NULL;
+
+ALTER TABLE `co_contratti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;

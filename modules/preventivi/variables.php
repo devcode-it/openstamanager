@@ -27,7 +27,7 @@ $r = $dbo->fetchOne('SELECT *,
 FROM 
     co_preventivi 
     INNER JOIN an_anagrafiche ON co_preventivi.id_anagrafica=an_anagrafiche.id 
-    LEFT JOIN an_referenti ON an_referenti.id=co_preventivi.idreferente 
+    LEFT JOIN an_referenti ON an_referenti.id=co_preventivi.id_referente 
 WHERE 
     co_preventivi.id='.prepare($id_record));
 

@@ -25,7 +25,7 @@ $r = $dbo->fetchOne('SELECT or_ordini.*,
     IF((an_referenti.email IS NOT NULL AND an_referenti.email != ""), an_referenti.email, an_anagrafiche.email) AS email
 FROM or_ordini
     INNER JOIN an_anagrafiche ON or_ordini.id_anagrafica = an_anagrafiche.id
-    LEFT JOIN an_referenti ON an_referenti.id = or_ordini.idreferente
+    LEFT JOIN an_referenti ON an_referenti.id = or_ordini.id_referente
 WHERE or_ordini.id='.prepare($id_record));
 
 // Variabili da sostituire

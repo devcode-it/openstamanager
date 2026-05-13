@@ -79,11 +79,11 @@ if (count($preventivo->revisioni) > 1) {
 
             <div class="row">
                 <div class="col-md-4">';
-if (!empty($record['idreferente'])) {
+if (!empty($record['id_referente'])) {
     echo Plugins::link('Referenti', $record['id_anagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"id_sede_destinazione": '.$record['id_sede_destinazione'].'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].',"id_sede_destinazione": '.$record['id_sede_destinazione'].'} ]}
                 </div>
 
                 <div class="col-md-4">';
@@ -580,7 +580,7 @@ echo '
 <script>
 $("#id_sede_destinazione").change(function(){
     updateSelectOption("id_sede_destinazione", $(this).val());
-    $("#idreferente").selectReset();
+    $("#id_referente").selectReset();
 });
 
 input("ordinamento").on("change", function(){

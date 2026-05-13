@@ -132,11 +132,11 @@ echo '
 
             <div class="row">
                 <div class="col-md-4">';
-if (!empty($record['idreferente'])) {
+if (!empty($record['id_referente'])) {
     echo Plugins::link('Referenti', $record['id_anagrafica'], null, null, 'class="pull-right"');
 }
 echo '
-                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'} ]}
+                    {[ "type": "select", "label": "'.tr('Referente').'", "name": "id_referente", "value": "$id_referente$", "ajax-source": "referenti", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($dir == 'entrata' ? $record['id_sede_destinazione'] : $record['id_sede_partenza']).'} ]}
                 </div>';
 
 if ($dir == 'entrata') {
@@ -563,7 +563,7 @@ $(document).ready(function() {
 
 $("#id_sede").change(function(){
     updateSelectOption("id_sede_destinazione", $(this).val());
-    $("#idreferente").selectReset();
+    $("#id_referente").selectReset();
 });
 
 $("#id_anagrafica").change(function() {

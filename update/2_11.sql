@@ -472,7 +472,7 @@ FROM
         SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
         FROM `co_pagamenti`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    ) AS pagacquisto ON `an_anagrafiche`.`idpagamento_acquisti` = `pagacquisto`.`id`
+    ) AS pagacquisto ON `an_anagrafiche`.`id_pagamento_acquisti` = `pagacquisto`.`id`
     LEFT JOIN `an_zone` ON `an_anagrafiche`.`idzona` = `an_zone`.`id`
 WHERE
     1=1
@@ -989,3 +989,6 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 
 -- Modifica colonna idpagamento_vendite in id_pagamento_vendite
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
+
+-- Modifica colonna idpagamento_acquisti in id_pagamento_acquisti
+ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;

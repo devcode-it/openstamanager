@@ -137,7 +137,7 @@ $custom = [
     'n_colli' => !empty($record['n_colli']) ? $record['n_colli'] : '',
     'spedizione' => $record['spedizione'],
     'vettore' => $record['vettore'],
-    'appoggiobancario' => $nome_banca,
+    'appoggio_bancario' => $nome_banca,
     'codiceiban' => $iban_banca,
     'bic' => $bic_banca,
 ];

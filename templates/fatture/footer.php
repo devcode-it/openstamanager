@@ -173,7 +173,7 @@ if (!empty($v_iva)) {
                                 <td>
                                 </td>
                                 <td>
-                                    <p><small>$appoggiobancario$</small></p>
+                                    <p><small>$appoggio_bancario$</small></p>
                                 </td>
                             </tr>
                             <tr>

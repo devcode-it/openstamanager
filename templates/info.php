@@ -41,7 +41,7 @@ $cliente = $dbo->fetchOne($queryc);
  * @deprecated
  */
 $id_azienda = setting('Azienda predefinita');
-$azienda = $dbo->fetchOne('SELECT *, (SELECT `iban` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS codiceiban, (SELECT `nome` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS appoggiobancario, (SELECT `bic` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).")) AS bic FROM `an_anagrafiche` WHERE `id` = (SELECT `valore` FROM `zz_settings` WHERE `nome`='Azienda predefinita')");
+$azienda = $dbo->fetchOne('SELECT *, (SELECT `iban` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS codiceiban, (SELECT `nome` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).')) AS appoggio_bancario, (SELECT `bic` FROM `co_banche` WHERE `id` IN (SELECT `id_banca_azienda` FROM `co_documenti` WHERE `id` = '.prepare($id_record).")) AS bic FROM `an_anagrafiche` WHERE `id` = (SELECT `valore` FROM `zz_settings` WHERE `nome`='Azienda predefinita')");
 
 // Prefissi e contenuti del replace
 /**

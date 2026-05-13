@@ -77,7 +77,7 @@ echo '
                             {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "ajax-source": "clienti", "readonly": "'.($user['gruppo'] == 'Clienti' ? '1' : $record['flag_completato']).'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
+                            {[ "type": "select", "label": "'.tr('Zona').'", "name": "id_zona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$id_zona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
                         </div>
                         <div class="col-md-3">
                             {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "$id_cliente_finale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
@@ -623,8 +623,8 @@ echo '
 
         let data = anagrafica.getData();
 		if (data) {
-		    input("idzona").set(data.idzona ? data.idzona : "");
-			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
+		    input("id_zona").set(data.id_zona ? data.id_zona : "");
+			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 
             // Impostazione del tipo intervento da anagrafica
             if (data.idtipointervento) {
@@ -652,8 +652,8 @@ echo '
 
         let data = sede.getData();
 		if (data) {
-		    input("idzona").set(data.idzona ? data.idzona : "");
-			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
+		    input("id_zona").set(data.id_zona ? data.id_zona : "");
+			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 		}
 	});
 

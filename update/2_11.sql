@@ -473,7 +473,7 @@ FROM
         FROM `co_pagamenti`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
     ) AS pagacquisto ON `an_anagrafiche`.`id_pagamento_acquisti` = `pagacquisto`.`id`
-    LEFT JOIN `an_zone` ON `an_anagrafiche`.`idzona` = `an_zone`.`id`
+    LEFT JOIN `an_zone` ON `an_anagrafiche`.`id_zona` = `an_zone`.`id`
 WHERE
     1=1
     AND `an_anagrafiche`.`deleted_at` IS NULL
@@ -528,7 +528,7 @@ FROM
     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(' ', `zz_files`.`name`) AS name, `zz_files`.`id_record` FROM `zz_files` INNER JOIN `zz_modules` ON `zz_files`.`id_module` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules`.`name` = 'Interventi' GROUP BY id_record) AS `files` ON `files`.`id_record` = `in_interventi`.`id`
     LEFT JOIN (SELECT `in_interventi_tags`.`id_intervento`, GROUP_CONCAT(DISTINCT `name` SEPARATOR ', ') AS `nomi` FROM `in_tags` INNER JOIN `in_interventi_tags` ON `in_interventi_tags`.`id_tag` = `in_tags`.`id` GROUP BY `in_interventi_tags`.`id_intervento`) AS `tags` ON `in_interventi`.`id` = `tags`.`id_intervento`
-    LEFT JOIN `an_zone` ON `an_anagrafiche`.`idzona` = `an_zone`.`id`
+    LEFT JOIN `an_zone` ON `an_anagrafiche`.`id_zona` = `an_zone`.`id`
 WHERE
     1=1
     |segment(`in_interventi`.`id_segment`)|
@@ -1021,3 +1021,5 @@ ALTER TABLE `or_ordini` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_provvigioni` CHANGE `idagente` `id_agente` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` DROP `agentemaster`;
+ALTER TABLE `an_anagrafiche` CHANGE `idzona` `id_zona` INT NOT NULL;

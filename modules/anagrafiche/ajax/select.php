@@ -34,7 +34,7 @@ switch ($resource) {
                 CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
                 `idtipointervento_default` AS idtipointervento,
                 `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
-                `an_anagrafiche`.`idzona`,
+                `an_anagrafiche`.`id_zona`,
                 `contratto`.`id` AS id_contratto,
                 `contratto`.`descrizione` AS descrizione_contratto,
                 `co_pagamenti`.`id` AS id_pagamento,
@@ -448,7 +448,7 @@ switch ($resource) {
             SELECT
                 *
             FROM
-                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, NULL AS deleted_at, (SELECT `idzona` FROM `an_anagrafiche` |where|) AS idzona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
+                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, NULL AS deleted_at, (SELECT `id_zona` FROM `an_anagrafiche` |where|) AS id_zona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
 
             UNION
 
@@ -456,7 +456,7 @@ switch ($resource) {
                 `id`,
                 `lat`,
                 `lng`,
-                `idzona`,
+                `id_zona`,
                 `deleted_at`,
                 CONCAT_WS(' - ', `nomesede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab
             HAVING

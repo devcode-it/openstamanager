@@ -134,7 +134,7 @@ echo '
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone",  "value": "$idzona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "id_zona", "ajax-source": "zone",  "value": "$id_zona$", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
 		</div>
 
 		<div class="col-md-3">

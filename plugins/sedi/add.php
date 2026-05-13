@@ -65,7 +65,7 @@ echo '
 			{[ "type": "select", "label": "'.tr('Nazione').'", "name": "id_nazione", "ajax-source": "nazioni", "required": 1 ]}
 		</div>
         <div class="col-md-3">
-			{[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
+			{[ "type": "select", "label": "'.tr('Zona').'", "name": "id_zona", "ajax-source": "zone", "placeholder": "'.tr('Nessuna zona').'", "icon-after": "add|'.Module::where('name', 'Zone')->first()->id.'" ]}
 		</div>
 	</div>
 

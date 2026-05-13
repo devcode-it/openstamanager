@@ -57,7 +57,7 @@ switch (filter('op')) {
             `tecnico`.`colore` AS colore_tecnico,
             IF(`have_attachments`.`cont`, 1, 0) AS have_attachments,
             `an_anagrafiche`.`ragione_sociale` as cliente,
-            `an_anagrafiche`.`idzona` as idzona,
+            `an_anagrafiche`.`id_zona` as id_zona,
             `in_statiintervento`.`is_bloccato` AS is_bloccato
         FROM `in_interventi_tecnici`
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
@@ -96,7 +96,7 @@ switch (filter('op')) {
             AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
         HAVING
-            `idzona` IN ('.implode(',', $zone).')';
+            `id_zona` IN ('.implode(',', $zone).')';
         $sessioni = $dbo->fetchArray($query);
 
         $results = [];
@@ -284,7 +284,7 @@ switch (filter('op')) {
                         `in_interventi`.`idtipointervento` AS parent_idtipo,
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
-                        (SELECT idzona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS idzona
+                        (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM
                         `in_interventi`
                         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`

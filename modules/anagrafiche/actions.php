@@ -45,7 +45,7 @@ switch (post('op')) {
         $sede->telefono = post('telefono');
         $sede->cellulare = post('cellulare');
         $sede->fax = post('fax');
-        $sede->idzona = post('idzona');
+        $sede->id_zona = post('id_zona');
         $sede->email = post('email');
         $sede->enable_newsletter = post('enable_newsletter');
 

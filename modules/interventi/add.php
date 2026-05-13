@@ -62,15 +62,15 @@ if (empty($id_anagrafica)) {
     $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->id_anagrafica;
 }
 
-$anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, idzona FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
+$anagrafica = $dbo->fetchOne('SELECT idtipointervento_default, id_zona FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
 $id_tipo = $anagrafica['idtipointervento_default'];
-$id_zona = $anagrafica['idzona'];
+$id_zona = $anagrafica['id_zona'];
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
-    $contratto = $dbo->fetchOne('SELECT *, (SELECT idzona FROM an_anagrafiche WHERE id = co_contratti.id_anagrafica) AS idzona FROM co_contratti WHERE id = '.prepare($id_contratto));
+    $contratto = $dbo->fetchOne('SELECT *, (SELECT id_zona FROM an_anagrafiche WHERE id = co_contratti.id_anagrafica) AS id_zona FROM co_contratti WHERE id = '.prepare($id_contratto));
     $id_anagrafica = $contratto['id_anagrafica'];
-    $id_zona = $contratto['idzona'];
+    $id_zona = $contratto['id_zona'];
 
     // Informazioni del Promemoria
     $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`idtipointervento`) AS tempo_standard FROM `co_promemoria` WHERE `idcontratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
@@ -110,7 +110,7 @@ elseif (!empty($id_intervento)) {
     $id_cliente_finale = $intervento['id_cliente_finale'];
     $id_contratto = $intervento['idcontratto'];
     $id_preventivo = $intervento['idpreventivo'];
-    $id_zona = $intervento['idzona'] ?: $id_zona;
+    $id_zona = $intervento['id_zona'] ?: $id_zona;
 
     // Generazione dell'orario di fine sulla base del tempo standard definito dall'Intervento
     if (!empty($intervento['tempo_standard'])) {
@@ -147,7 +147,7 @@ echo '
 
     <!-- Fix creazione da Anagrafica -->
     <input type="hidden" name="id_record" value="0">
-    <input type="hidden" name="idzona" id="idzona_hidden" value="'.$id_zona.'">';
+    <input type="hidden" name="id_zona" id="id_zona_hidden" value="'.$id_zona.'">';
 
 if (!empty($id_promemoria_contratto)) {
     echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';
@@ -585,8 +585,8 @@ echo '
 
         let data = anagrafica.getData();
 		if (data) {
-		    $("#idzona_hidden").val(data.idzona ? data.idzona : "");
-			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
+		    $("#id_zona_hidden").val(data.id_zona ? data.id_zona : "");
+			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 
             // Impostazione del tipo intervento da anagrafica
             input("idtipointervento").getElement()
@@ -685,8 +685,8 @@ echo '
 
         let data = sede.getData();
 		if (data) {
-		    $("#idzona_hidden").val(data.idzona ? data.idzona : "");
-			// session_set("superselect,idzona", $(this).selectData().idzona, 0);
+		    $("#id_zona_hidden").val(data.id_zona ? data.id_zona : "");
+			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 
             caricaMappa(data.lat, data.lng);
 		} else {

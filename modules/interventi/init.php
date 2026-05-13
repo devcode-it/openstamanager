@@ -32,7 +32,7 @@ if (!empty($id_record)) {
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
         `in_statiintervento`.`is_bloccato` AS flag_completato,
         `in_statiintervento`.`colore` AS colore,
-        IF((`in_interventi`.`idsede_destinazione` = 0), `an_anagrafiche`.`idzona`, `an_sedi`.`idzona`) AS idzona,
+        IF((`in_interventi`.`idsede_destinazione` = 0), `an_anagrafiche`.`id_zona`, `an_sedi`.`id_zona`) AS id_zona,
         `in_interventi`.`id_anagrafica` as id_anagrafica,
         `in_interventi`.`id_preventivo` as idpreventivo,
         `in_interventi`.`id_contratto` as idcontratto,

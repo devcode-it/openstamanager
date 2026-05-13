@@ -521,7 +521,7 @@ class CSV extends CSVImporter
             'fax',
             'cellulare',
             'email',
-            'idzona',
+            'id_zona',
             'gaddress',
             'lat',
             'lng',

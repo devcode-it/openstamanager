@@ -37,7 +37,7 @@ switch ($operazione) {
             $sede->provincia = strtoupper(post('provincia'));
             $sede->km = post('km');
             $sede->id_nazione = !empty(post('id_nazione')) ? post('id_nazione') : null;
-            $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;
+            $sede->id_zona = !empty(post('id_zona')) ? post('id_zona') : 0;
             $sede->cellulare = post('cellulare');
             $sede->telefono = post('telefono');
             $sede->email = post('email');
@@ -93,7 +93,7 @@ switch ($operazione) {
         $sede->p_iva = post('p_iva');
         $sede->codice_fiscale = post('codice_fiscale');
         $sede->is_automezzo = post('is_automezzo');
-        $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;
+        $sede->id_zona = !empty(post('id_zona')) ? post('id_zona') : 0;
         $sede->km = post('km');
         $sede->note = post('note');
         $sede->gaddress = post('gaddress');

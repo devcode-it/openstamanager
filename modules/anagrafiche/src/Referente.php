@@ -43,7 +43,7 @@ class Referente extends Model
      *
      * @return self
      */
-    public static function build($id = null, $nome = null, $idmansione = null, $id_sede = null)
+    public static function build($id = null, $nome = null, $id_mansione = null, $id_sede = null)
     {
         $model = new static();
 
@@ -51,7 +51,7 @@ class Referente extends Model
 
         $model->nome = $nome;
 
-        $model->idmansione = $idmansione;
+        $model->id_mansione = $id_mansione;
         $model->id_sede = $id_sede;
 
         $model->save();

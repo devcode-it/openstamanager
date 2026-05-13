@@ -36,7 +36,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "idmansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.Module::where('name', 'Mansioni referenti')->first()->id.'" ]}
+			{[ "type": "select", "label": "'.tr('Mansione').'", "name": "id_mansione", "ajax-source": "mansioni", "required": 1, "icon-after": "add|'.Module::where('name', 'Mansioni referenti')->first()->id.'" ]}
 		</div>
 	</div>
 

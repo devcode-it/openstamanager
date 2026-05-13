@@ -66,7 +66,7 @@ switch (post('op')) {
         $mansioni[] = post('idmansioni');
         foreach ($mansioni as $mansione) {
             if (!empty($mansione)) {
-                $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['idmansione' => $mansione]);
+                $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansione]);
             }
         }
 

@@ -61,7 +61,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $referenti = $dbo->fetchNum('SELECT id FROM an_referenti WHERE idmansione='.prepare($id_record));
+        $referenti = $dbo->fetchNum('SELECT id FROM an_referenti WHERE id_mansione='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($referenti)) {
             $dbo->delete('an_mansioni', ['id' => $id_record]);

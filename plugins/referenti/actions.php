@@ -28,10 +28,10 @@ switch ($operazione) {
     case 'addreferente':
         if (!empty(post('nome'))) {
             $nome = post('nome');
-            $idmansione = post('idmansione');
+            $id_mansione = post('id_mansione');
             $id_sede = post('id_sede');
 
-            $referente = Referente::build($id_parent, $nome, $idmansione, $id_sede);
+            $referente = Referente::build($id_parent, $nome, $id_mansione, $id_sede);
             $id_record = $referente->id;
 
             $referente->telefono = post('telefono');
@@ -54,7 +54,7 @@ switch ($operazione) {
         $dbo->update('an_referenti', [
             'id_anagrafica' => $id_parent,
             'nome' => post('nome'),
-            'idmansione' => post('idmansione'),
+            'id_mansione' => post('id_mansione'),
             'telefono' => post('telefono'),
             'email' => post('email'),
             'id_sede' => post('id_sede'),

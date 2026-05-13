@@ -43,7 +43,7 @@ include_once __DIR__.'/../../core.php';
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT an_referenti.nome, an_anagrafiche.ragione_sociale, an_anagrafiche.id FROM an_referenti LEFT JOIN an_anagrafiche ON an_referenti.id_anagrafica=an_anagrafiche.id WHERE idmansione='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT an_referenti.nome, an_anagrafiche.ragione_sociale, an_anagrafiche.id FROM an_referenti LEFT JOIN an_anagrafiche ON an_referenti.id_anagrafica=an_anagrafiche.id WHERE id_mansione='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

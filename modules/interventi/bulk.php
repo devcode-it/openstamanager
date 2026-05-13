@@ -409,9 +409,9 @@ switch (post('op')) {
                 }
 
                 // Aggiungo email referenti in base alla mansione impostata nel template
-                $mansioni = $dbo->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
+                $mansioni = $dbo->select('em_mansioni_template', 'id_mansione', [], ['id_template' => $template->id]);
                 foreach ($mansioni as $mansione) {
-                    $referenti = $dbo->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                    $referenti = $dbo->table('an_referenti')->where('id_mansione', $mansione['id_mansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                     if (!$referenti->isEmpty() && $creata_mail == false) {
                         $mail = Mail::build(auth_osm()->getUser(), $template, $id);
                         $creata_mail = true;

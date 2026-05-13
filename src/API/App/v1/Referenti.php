@@ -66,7 +66,7 @@ class Referenti extends AppResource implements RetrieveInterface
             `email`
         FROM 
             `an_referenti` 
-            LEFT JOIN `an_mansioni` ON `an_referenti`.`idmansione`=`an_mansioni`.`id` 
+            LEFT JOIN `an_mansioni` ON `an_referenti`.`id_mansione`=`an_mansioni`.`id` 
         WHERE 
             `an_referenti`.`id` = '.prepare($id);
 

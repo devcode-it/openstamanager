@@ -125,9 +125,9 @@ class SollecitoTask extends Manager
                         }
 
                         // Aggiungo email referenti in base alla mansione impostata nel template
-                        $mansioni = database()->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
+                        $mansioni = database()->select('em_mansioni_template', 'id_mansione', [], ['id_template' => $template->id]);
                         foreach ($mansioni as $mansione) {
-                            $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                            $referenti = database()->table('an_referenti')->where('id_mansione', $mansione['id_mansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                             if (!$referenti->isEmpty() && $creata_mail == false) {
                                 $mail = Mail::build($user, $template, $id);
                                 $creata_mail = true;
@@ -238,9 +238,9 @@ class SollecitoTask extends Manager
                             }
 
                             // Aggiungo email referenti in base alla mansione impostata nel template
-                            $mansioni = database()->select('em_mansioni_template', 'idmansione', [], ['id_template' => $template->id]);
+                            $mansioni = database()->select('em_mansioni_template', 'id_mansione', [], ['id_template' => $template->id]);
                             foreach ($mansioni as $mansione) {
-                                $referenti = database()->table('an_referenti')->where('idmansione', $mansione['idmansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
+                                $referenti = database()->table('an_referenti')->where('id_mansione', $mansione['id_mansione'])->where('id_anagrafica', $id_anagrafica)->where('email', '!=', '')->get();
                                 if (!$referenti->isEmpty() && $creata_mail == false) {
                                     $mail = Mail::build($user, $template, $id);
                                     $creata_mail = true;

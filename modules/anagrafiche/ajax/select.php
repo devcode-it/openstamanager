@@ -508,7 +508,7 @@ switch ($resource) {
          */
     case 'referenti':
         if (isset($superselect['id_anagrafica'])) {
-            $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`idmansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';
+            $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`id_mansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';
 
             foreach ($elements as $element) {
                 $filter[] = '`an_referenti`.`id`='.prepare($element);

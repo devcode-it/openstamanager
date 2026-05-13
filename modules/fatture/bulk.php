@@ -672,10 +672,10 @@ switch (post('op')) {
             }
 
             // Aggiungo email referenti in base alla mansione impostata nel template
-            $mansioni = $dbo->select('em_mansioni_template', ['idmansione'], [], ['id_template' => $template->id]);
+            $mansioni = $dbo->select('em_mansioni_template', ['id_mansione'], [], ['id_template' => $template->id]);
             foreach ($mansioni as $mansione) {
                 $referenti = $dbo->table('an_referenti')
-                    ->where('idmansione', $mansione['idmansione'])
+                    ->where('id_mansione', $mansione['id_mansione'])
                     ->where('id_anagrafica', $fattura->id_anagrafica)
                     ->where('email', '!=', '')
                     ->get();

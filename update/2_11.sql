@@ -1029,6 +1029,9 @@ ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `id_tipo_intervento` `id_tipo
 
 ALTER TABLE `an_automezzi_danni` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_scadenze` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `an_automezzi_viaggi` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `an_referenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
+ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;

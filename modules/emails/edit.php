@@ -106,8 +106,8 @@ if (!$record['predefined']) {
 $selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($id_record));
 $selected_prints = array_column($selected_prints, 'id_print');
 
-$selected_mansioni = $dbo->fetchArray('SELECT idmansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
-$selected_mansioni = array_column($selected_mansioni, 'idmansione');
+$selected_mansioni = $dbo->fetchArray('SELECT id_mansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
+$selected_mansioni = array_column($selected_mansioni, 'id_mansione');
 
 $selected_categories = $dbo->fetchArray('SELECT id_category FROM em_files_categories_template WHERE id_template = '.prepare($id_record));
 $selected_categories = array_column($selected_categories, 'id_category');

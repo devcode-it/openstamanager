@@ -46,7 +46,7 @@ class Relazione extends Model
 
     public function anagrafiche()
     {
-        return $this->hasMany(Anagrafica::class, 'idrelazione');
+        return $this->hasMany(Anagrafica::class, 'id_relazione');
     }
 
     public function getModuleAttribute()

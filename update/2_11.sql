@@ -1019,3 +1019,5 @@ ALTER TABLE `co_documenti` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_provvigioni` CHANGE `idagente` `id_agente` INT NOT NULL;
+
+ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;

@@ -73,12 +73,12 @@ switch (post('op')) {
         exit;
 
     case 'change_relation':
-        $idrelazione = post('idrelazione');
+        $id_relazione = post('id_relazione');
 
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
 
-            $anagrafica->idrelazione = $idrelazione;
+            $anagrafica->id_relazione = $id_relazione;
 
             $anagrafica->save();
         }
@@ -257,7 +257,7 @@ $operations = [];
 $operations['change_relation'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Cambia relazione').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "required": 1, "ajax-source": "relazioni"]}',
+        'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "id_relazione", "required": 1, "ajax-source": "relazioni"]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],

@@ -582,7 +582,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                     {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
                                 </div>
                                 <div class="col-md-6">
-                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "idrelazione", "ajax-source": "relazioni", "value": "$idrelazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
+                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "id_relazione", "ajax-source": "relazioni", "value": "$id_relazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
                                 </div>
                             </div>
                             <div class="row">

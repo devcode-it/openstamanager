@@ -58,7 +58,7 @@ switch (post('op')) {
                 'costo_km_tecnico' => $fascia_km_tecnico[$key],
                 'costo_diritto_chiamata_tecnico' => $fascia_diritto_chiamata_tecnico[$key],
             ], [
-                'idfasciaoraria' => $key, 'id_tipo_intervento' => $id_record,
+                'id_fascia_oraria' => $key, 'id_tipo_intervento' => $id_record,
             ]);
         }
 
@@ -119,7 +119,7 @@ switch (post('op')) {
         $fasce_orarie = $dbo->select('in_fasceorarie', '*', [], ['deleted_at' => null]);
         foreach ($fasce_orarie as $fascia_oraria) {
             $dbo->insert('in_fasceorarie_tipiintervento', [
-                'idfasciaoraria' => $fascia_oraria['id'],
+                'id_fascia_oraria' => $fascia_oraria['id'],
                 'id_tipo_intervento' => $tipo->id,
                 'costo_orario' => post('costo_orario'),
                 'costo_km' => post('costo_km'),

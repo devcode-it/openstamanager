@@ -75,7 +75,7 @@ switch (post('op')) {
                 $tipi_intervento = $dbo->select('in_tipiintervento', '*');
                 foreach ($tipi_intervento as $tipo_intervento) {
                     $dbo->insert('in_fasceorarie_tipiintervento', [
-                        'idfasciaoraria' => $id_record,
+                        'id_fascia_oraria' => $id_record,
                         'id_tipo_intervento' => $tipo_intervento['id'],
                         'costo_orario' => $tipo_intervento['costo_orario'],
                         'costo_km' => $tipo_intervento['costo_km'],
@@ -107,7 +107,7 @@ switch (post('op')) {
             'deleted_at' => date('Y-m-d H:i:s'),
         ], ['id' => $id_record, 'can_delete' => 1]);
 
-        $dbo->delete('in_fasceorarie_tipiintervento', ['idfasciaoraria' => $id_record]);
+        $dbo->delete('in_fasceorarie_tipiintervento', ['id_fascia_oraria' => $id_record]);
 
         flash()->info(tr('_TYPE_ eliminata con successo.', [
             '_TYPE_' => 'Fascia oraria',

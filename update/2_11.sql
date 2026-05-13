@@ -1045,6 +1045,7 @@ ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 
 ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
+ALTER TABLE `em_mansioni_template` CHANGE `idmansione` `id_mansione` INT NOT NULL;
 
 ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMENT 'Nome sede';
 ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idtipoanagrafica` `id_tipo_anagrafica` INT NOT NULL;
@@ -1064,14 +1065,18 @@ ALTER TABLE `co_documenti` CHANGE `idreferente` `id_referente` INT NULL DEFAULT 
 ALTER TABLE `co_preventivi` CHANGE `idreferente` `id_referente` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idreferente` `id_referente` INT NULL DEFAULT NULL;
 
-ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
-ALTER TABLE `co_preventivi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+
+ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
+ALTER TABLE `co_preventivi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idpagamento` `id_pagamento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `id_contratto_prev` `id_contratto_prev` INT NOT NULL;
 
@@ -1115,17 +1120,26 @@ ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti_modelli` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idconto` `id_conto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
-ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
-ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NULL DEFAULT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
+
+ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
+
+ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NULL DEFAULT NULL;
+ALTER TABLE `dt_ddt` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `dt_ddt` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
@@ -1150,6 +1164,7 @@ ALTER TABLE `co_righe_documenti` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
@@ -1164,12 +1179,19 @@ ALTER TABLE `co_righe_contratti` CHANGE `idarticolo` `id_articolo` INT NULL DEFA
 ALTER TABLE `co_righe_documenti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_promemoria` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
+
 ALTER TABLE `co_righe_documenti` CHANGE `idordine` `id_ordine` INT NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `idordine` `id_ordine` INT NOT NULL;
+
 ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
+ALTER TABLE `dt_righe_ddt` CHANGE `idddt` `id_ddt` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 
 ALTER TABLE `do_documenti` CHANGE `idcategoria` `id_categoria` INT NOT NULL;
+
+ALTER TABLE `in_fasceorarie_tipiintervento` CHANGE `idfasciaoraria` `id_fascia_oraria` INT NOT NULL;

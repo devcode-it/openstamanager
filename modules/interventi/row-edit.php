@@ -43,7 +43,7 @@ $options = [
             'permetti_movimento_a_zero' => 0,
         ],
         'impianti' => [
-            'idintervento' => $documento->id,
+            'id_intervento' => $documento->id,
         ],
     ],
 ];

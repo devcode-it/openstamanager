@@ -809,13 +809,13 @@ if (!$block_edit) {
             }
 
             // Lettura interventi non rifiutati, non fatturati
-            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) '.$where;
             $interventi = $dbo->fetchArray($int_query)[0]['tot'];
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati
-                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_cliente_finale`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) '.$where;
+                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` WHERE `id_cliente_finale`='.prepare($record['id_anagrafica']).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) '.$where;
                 $interventi = $dbo->fetchArray($int_query)[0]['tot'];
             }
 

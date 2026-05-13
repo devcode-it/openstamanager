@@ -52,7 +52,7 @@ $query = 'SELECT
         INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipiintervento`.`id`
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
-        `in_interventi_tecnici`.`idintervento`='.prepare($id_record).'
+        `in_interventi_tecnici`.`id_intervento`='.prepare($id_record).'
     ORDER BY
         `ragione_sociale` ASC,
         `in_interventi_tecnici`.`orario_inizio` ASC,

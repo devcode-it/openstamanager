@@ -47,7 +47,7 @@ switch (filter('op')) {
 
         $query = 'SELECT
             `in_interventi_tecnici`.`id`,
-            `in_interventi_tecnici`.`idintervento`,
+            `in_interventi_tecnici`.`id_intervento`,
             `in_interventi`.`codice`,
             `in_statiintervento`.`colore`,
             `in_interventi_tecnici`.`id_tecnico`,
@@ -60,7 +60,7 @@ switch (filter('op')) {
             `an_anagrafiche`.`id_zona` as id_zona,
             `in_statiintervento`.`is_bloccato` AS is_bloccato
         FROM `in_interventi_tecnici`
-            INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+            INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`id_tecnico` = `tecnico`.`id`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
             LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_interventi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `in_interventi`.`id`
@@ -115,8 +115,8 @@ switch (filter('op')) {
                 'start' => $sessione['orario_inizio'],
                 'end' => $sessione['orario_fine'],
                 'extendedProps' => [
-                    'link' => base_path_osm().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['idintervento'],
-                    'idintervento' => $sessione['idintervento'],
+                    'link' => base_path_osm().'/editor.php?id_module='.$modulo_interventi->id.'&id_record='.$sessione['id_intervento'],
+                    'id_intervento' => $sessione['id_intervento'],
                     'id_tecnico' => $sessione['id_tecnico'],
                 ],
                 'backgroundColor' => $backgroundcolor,
@@ -158,7 +158,7 @@ switch (filter('op')) {
                         $query.'AND `co_statipreventivi`.`is_pianificabile`=1';
                         $results[] = [
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
-                            'idintervento' => $preventivo['id'],
+                            'id_intervento' => $preventivo['id'],
                             'id_tecnico' => '',
                             'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Accettazione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_accettazione'],
@@ -176,7 +176,7 @@ switch (filter('op')) {
                     if ($preventivo['data_accettazione'] != $preventivo['data_conclusione'] && $preventivo['data_conclusione'] != '0000-00-00' && !empty($preventivo['data_conclusione'])) {
                         $results[] = [
                             'id' => 'B_'.$modulo_preventivi->id.'_'.$preventivo['id'],
-                            'idintervento' => $preventivo['id'],
+                            'id_intervento' => $preventivo['id'],
                             'id_tecnico' => '',
                             'title' => '<div style=\'position:absolute; top:7%; right:3%;\' > '.(($preventivo['is_bloccato']) ? '<i class="fa fa-lock" aria-hidden="true"></i>' : '<i class="fa fa-pencil" aria-hidden="true"></i>').' '.(($preventivo['have_attachments']) ? '<i class="fa fa-paperclip" aria-hidden="true"></i>' : '').'</div><b>'.tr('Conclusione prev.').' '.$preventivo['numero'].'</b> '.$preventivo['nome'].'<br><b>'.tr('Cliente').':</b> '.$preventivo['cliente'],
                             'start' => $preventivo['data_conclusione'],
@@ -218,7 +218,7 @@ switch (filter('op')) {
                     // 'end' => $evento['data'],
                     'extendedProps' => [
                         'link' => base_path_osm().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
-                        'idintervento' => $evento['id'],
+                        'id_intervento' => $evento['id'],
                         'id_tecnico' => '',
                     ],
                     'backgroundColor' => '#ffebcd',
@@ -237,7 +237,7 @@ switch (filter('op')) {
 
     case 'modifica_intervento':
         $id_sessione = filter('id');
-        $intervento = Intervento::find(filter('idintervento'));
+        $intervento = Intervento::find(filter('id_intervento'));
         $orario_inizio = filter('timeStart');
         $orario_fine = filter('timeEnd');
 
@@ -257,14 +257,14 @@ switch (filter('op')) {
 
     case 'tooltip_info':
         $id_sessione = filter('id_record');
-        $id_intervento = filter('idintervento');
+        $id_intervento = filter('id_intervento');
         $allDay = filter('allDay');
         $timeStart = filter('timeStart');
         $timeEnd = filter('timeEnd');
 
         if ($allDay == 'false') {
             // Lettura dati sessione tecnica specifica
-            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, id_tecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=id_tecnico) AS colore, in_interventi_tecnici.id_tipo_intervento AS id_tipo_intervento_sessione, in_tipiintervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento=in_tipiintervento.id LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+            $query = 'SELECT in_interventi_tecnici.id_intervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, id_tecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=id_tecnico) AS colore, in_interventi_tecnici.id_tipo_intervento AS id_tipo_intervento_sessione, in_tipiintervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.id_intervento=in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento=in_tipiintervento.id LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
             $rs_sessione = $dbo->fetchArray($query);
 
             if (!empty($rs_sessione)) {
@@ -282,7 +282,7 @@ switch (filter('op')) {
                         `in_statiintervento`.`id` AS parent_id_stato,
                         `in_statiintervento_lang`.`title` AS stato,
                         `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
-                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
+                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`id_intervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM
@@ -291,7 +291,7 @@ switch (filter('op')) {
                         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipiintervento`.`id`
                         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento`
+                        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`id_intervento`
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
                     WHERE
                         `in_interventi`.`id`='.prepare($id_intervento).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
@@ -503,7 +503,7 @@ switch (filter('op')) {
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
         WHERE
-            `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
+            `id_intervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
         UNION
         (SELECT
             `in_interventi`.`id` AS id,
@@ -536,7 +536,7 @@ switch (filter('op')) {
                     LEFT JOIN `in_interventi_tecnici_assegnati` ON `in_interventi`.`id` = `in_interventi_tecnici_assegnati`.`id_intervento`';
         }
 
-        $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+        $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
             INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`id`
         WHERE

@@ -358,10 +358,10 @@ if (empty(get('modal'))) {
                     $module = 'Interventi';
 
                     // Ricerca inserimenti su interventi
-                    $query = 'SELECT in_righe_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE idintervento=in_righe_interventi.idintervento LIMIT 0,1 ) AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.idintervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
+                    $query = 'SELECT in_righe_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE id_intervento=in_righe_interventi.id_intervento LIMIT 0,1 ) AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.id_intervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
                     $data = $dbo->fetchArray($query);
 
-                    $id = $data[0]['idintervento'];
+                    $id = $data[0]['id_intervento'];
 
                     $data[0]['tipo_documento'] = tr('Intervento').' '.$data[0]['codice'];
                 }

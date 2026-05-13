@@ -67,7 +67,7 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
 
         $joins[] = [
             'in_interventi_tecnici',
-            'in_interventi_tecnici.idintervento',
+            'in_interventi_tecnici.id_intervento',
             'in_interventi.id',
         ];
 

@@ -39,7 +39,7 @@ if ($is_bloccato) {
  * Aggiunta impianti all'intervento
 */
 // Elenco impianti collegati all'intervento
-$impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+$impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record));
 $impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
 
 // Elenco sedi
@@ -58,7 +58,7 @@ echo '
             <div class="col-md-4">
                 <label class="control-label">'.tr('Seleziona Impianto').'</label>
                 <div style="margin-top: 5px;">
-                    {[ "type": "select", "name": "id_impianto_add", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($record['id_sede_destinazione'] ?: '0').', "idintervento": '.$id_record.', "id_contratto": "'.$record['id_contratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['id_anagrafica'].'" ]}
+                    {[ "type": "select", "name": "id_impianto_add", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.$record['id_anagrafica'].', "id_sede_destinazione": '.($record['id_sede_destinazione'] ?: '0').', "id_intervento": '.$id_record.', "id_contratto": "'.$record['id_contratto'].'"}, "extra": "'.$readonly.'", "icon-after": "add|'.$id_modulo_impianti.'|id_anagrafica='.$record['id_anagrafica'].'" ]}
                 </div>
             </div>
 

@@ -56,7 +56,7 @@ $query = '
         LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id`=`zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
-        `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`id_sede` > 0) AND (`mg_movimenti`.`idintervento` IS NULL) AND
+        `mg_movimenti`.`qta`>0 AND (`mg_movimenti`.`id_sede` > 0) AND (`mg_movimenti`.`id_intervento` IS NULL) AND
         ((`mg_movimenti`.`data` BETWEEN '.prepare($startTM).' AND '.prepare($endTM).") AND (`zz_groups_lang`.`title` = 'Amministratori'))";
 
 $query .= ' AND (`an_sedi`.`targa` LIKE '.prepare('%'.$search_targa.'%').') AND (`an_sedi`.`nome` LIKE '.prepare('%'.$search_nome.'%').') ';

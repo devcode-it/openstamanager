@@ -82,7 +82,7 @@ if (!function_exists('link_componente_to_articolo')) {
 
             $dati = [
                 'idimpianto' => $id_impianto,
-                'idintervento' => $id_intervento,
+                'id_intervento' => $id_intervento,
                 'nome' => $nome_componente,
                 'data' => $data,
                 'filename' => $componente_articolo['componente_filename'],
@@ -195,7 +195,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
         if (!empty($descrizione)) {
             $riga = Descrizione::build($fattura);
             $riga->descrizione = $descrizione;
-            $riga->idintervento = $id_intervento;
+            $riga->id_intervento = $id_intervento;
             $riga->save();
         }
 
@@ -287,7 +287,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
                 '_NUM_' => $intervento->codice,
                 '_DATE_' => implode(', ', $date),
             ]);
-            $riga->idintervento = $id_intervento;
+            $riga->id_intervento = $id_intervento;
             $riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
@@ -343,7 +343,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
                 '_NUM_' => $intervento->codice,
                 '_DATE_' => implode(', ', $date),
             ]);
-            $riga->idintervento = $id_intervento;
+            $riga->id_intervento = $id_intervento;
             // $riga->um = 'ore';
 
             $riga->id_iva = $id_iva;
@@ -393,7 +393,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
                 '_NUM_' => $intervento->codice,
                 '_DATE_' => implode(', ', $date),
             ]);
-            $riga->idintervento = $id_intervento;
+            $riga->id_intervento = $id_intervento;
             $riga->um = 'km';
 
             $riga->id_iva = $id_iva;

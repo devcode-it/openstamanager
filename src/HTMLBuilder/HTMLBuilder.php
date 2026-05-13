@@ -26,7 +26,7 @@ namespace HTMLBuilder;
  * <b>Tag di input</b>
  *
  * Campo di input generico:
- * {[ "type": "text", "required": 1, "value": "$idintervento$" ]}
+ * {[ "type": "text", "required": 1, "value": "$id_intervento$" ]}
  *
  * Campo di testo normale e non modificabile:
  * {[ "type": "span", "value": "$testo$" ]}

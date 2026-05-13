@@ -220,7 +220,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
         FROM in_interventi_tecnici
         LEFT JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id
         LEFT JOIN zz_users ON an_anagrafiche.id = zz_users.id_anagrafica
-        WHERE in_interventi_tecnici.idintervento = '.prepare($id_intervento).'
+        WHERE in_interventi_tecnici.id_intervento = '.prepare($id_intervento).'
             AND zz_users.id IS NOT NULL';
 
         return $database->fetchArray($query);

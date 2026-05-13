@@ -32,10 +32,10 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
 
         $select = [
             'idimpianto AS id_impianto',
-            'idintervento AS id_intervento',
+            'id_intervento AS id_intervento',
         ];
 
-        $where[] = ['my_impianti_interventi.idintervento', '=', $request['id_intervento']];
+        $where[] = ['my_impianti_interventi.id_intervento', '=', $request['id_intervento']];
 
         return [
             'table' => $table,
@@ -49,12 +49,12 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         $data = $request['data'];
         $id_record = $data['id_intervento'];
 
-        database()->delete('my_impianti_interventi', ['idintervento' => $id_record]);
+        database()->delete('my_impianti_interventi', ['id_intervento' => $id_record]);
 
         $impianti = $data['impianti'];
         foreach ($impianti as $impianto) {
             database()->insert('my_impianti_interventi', [
-                'idintervento' => $id_record,
+                'id_intervento' => $id_record,
                 'idimpianto' => $impianto,
             ]);
         }

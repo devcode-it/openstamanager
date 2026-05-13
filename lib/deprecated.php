@@ -317,11 +317,11 @@ function doc_references($info, $dir, $ignore = [])
     }
 
     // Intervento
-    elseif (!empty($info['idintervento'])) {
-        $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($info['idintervento']));
+    elseif (!empty($info['id_intervento'])) {
+        $data = $dbo->fetchArray('SELECT codice AS numero, IFNULL( (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id_intervento=in_interventi.id), data_richiesta) AS data FROM in_interventi WHERE id='.prepare($info['id_intervento']));
 
         $module = 'Interventi';
-        $id = $info['idintervento'];
+        $id = $info['id_intervento'];
 
         $document = tr('Intervento');
     }

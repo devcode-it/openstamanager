@@ -441,14 +441,14 @@ switch (post('op')) {
 
         // Scollegamento intervento da contratto
     case 'unlink':
-        if (!empty(get('id_contratto')) && !empty(get('idintervento'))) {
+        if (!empty(get('id_contratto')) && !empty(get('id_intervento'))) {
             $id_contratto = get('id_contratto');
-            $idintervento = get('idintervento');
+            $id_intervento = get('id_intervento');
 
-            $dbo->delete('co_promemoria', ['id_contratto' => $id_contratto, 'idintervento' => $idintervento]);
+            $dbo->delete('co_promemoria', ['id_contratto' => $id_contratto, 'id_intervento' => $id_intervento]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
-                '_NUM_' => $idintervento,
+                '_NUM_' => $id_intervento,
             ]));
         }
         break;
@@ -773,7 +773,7 @@ switch (post('op')) {
             LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
                 AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
             LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
-            LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+            LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
                 AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
             WHERE `co_contratti_tipiintervento`.`id_contratto` = '.prepare($documento->id).'
                 AND `co_contratti_tipiintervento`.`id_tipo_intervento` IN ('.implode(',', $tipi_attivita_list).')

@@ -31,7 +31,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
     {
         $user = $this->getUser();
 
-        $query = 'SELECT id, id_tecnico AS id_tecnico, idintervento AS id_intervento, orario_inizio, orario_fine, ragione_sociale AS tecnico FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON an_anagrafiche.id = in_interventi_tecnici.id_tecnico  WHERE `idintervento` = :id_intervento';
+        $query = 'SELECT id, id_tecnico AS id_tecnico, id_intervento AS id_intervento, orario_inizio, orario_fine, ragione_sociale AS tecnico FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON an_anagrafiche.id = in_interventi_tecnici.id_tecnico  WHERE `id_intervento` = :id_intervento';
 
         $parameters = [
             ':id_intervento' => $request['id_intervento'],
@@ -70,7 +70,7 @@ class Sessioni extends Resource implements RetrieveInterface, CreateInterface, D
         $user = $this->getUser();
         $data = $request['data'];
 
-        $database->delete('in_interventi_tecnici', ['idintervento' => $data['id_intervento'], 'id_tecnico' => $user['id_anagrafica']]);
+        $database->delete('in_interventi_tecnici', ['id_intervento' => $data['id_intervento'], 'id_tecnico' => $user['id_anagrafica']]);
 
         return [
             'id' => $data['id_intervento'],

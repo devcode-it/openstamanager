@@ -154,7 +154,7 @@ switch (post('op')) {
                 UNION
 
                 SELECT `in_interventi`.`id` FROM `in_interventi`
-                INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+                INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
                 WHERE `in_righe_interventi`.`idarticolo` = '.prepare($id)
             );
 

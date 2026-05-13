@@ -38,13 +38,13 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $select = [
             'in_righe_interventi.id',
             'in_righe_interventi.idarticolo AS id_articolo',
-            'in_righe_interventi.idintervento AS id_intervento',
+            'in_righe_interventi.id_intervento AS id_intervento',
             'in_righe_interventi.descrizione',
             'in_righe_interventi.qta',
             'in_righe_interventi.created_at as data',
         ];
 
-        $where = [['in_righe_interventi.idintervento', '=', $request['id_intervento']]];
+        $where = [['in_righe_interventi.id_intervento', '=', $request['id_intervento']]];
 
         return [
             'table' => $table,
@@ -101,11 +101,11 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $data = $request['data'];
         $riga = Articolo::find($data['id_riga']) ?: Riga::find($data['id_riga']);
         $riga = $riga ?: Descrizione::find($requdataest['id_riga']);
-        $idintervento = $riga->idintervento;
+        $id_intervento = $riga->id_intervento;
         $riga->delete();
 
         return [
-            'id' => $idintervento,
+            'id' => $id_intervento,
             'op' => 'delete_riga',
         ];
     }
@@ -138,7 +138,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga->save();
 
         return [
-            'id' => $riga->idintervento,
+            'id' => $riga->id_intervento,
             'module' => 'Interventi',
             'op' => ($riga->isArticolo() ? 'manage_articolo' : 'manage_riga'),
         ];

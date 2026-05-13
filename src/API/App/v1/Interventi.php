@@ -63,13 +63,13 @@ class Interventi extends AppResource
             deleted_at IS NOT NULL
             OR (
                 in_interventi.id NOT IN (
-                    SELECT idintervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
                 )
                 AND in_interventi.id IN (
-                    SELECT idintervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
                 )
             )';
@@ -85,14 +85,14 @@ class Interventi extends AppResource
             deleted_at IS NOT NULL
             OR (
                 in_interventi.id NOT IN (
-                    SELECT idintervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
                         AND in_interventi_tecnici.id_tecnico = :id_tecnico_q1
                 )
                 AND in_interventi.id IN (
-                    SELECT idintervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.idintervento = in_interventi.id
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
                         AND in_interventi_tecnici.id_tecnico = :id_tecnico_q2
                 )
@@ -134,9 +134,9 @@ class Interventi extends AppResource
                     `in_interventi`
                 WHERE
                     `deleted_at` IS NULL AND (`in_interventi`.`id` IN (
-                        SELECT `idintervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end)
+                        SELECT `id_intervento` FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end)
                         OR 
-                        (`in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+                        (`in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `in_interventi_tecnici`) AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                         )
                     )';
             } else {
@@ -149,14 +149,14 @@ class Interventi extends AppResource
                     WHERE
                         `deleted_at` IS NULL AND (
                         `in_interventi`.`id` IN (
-                            SELECT `idintervento` FROM `in_interventi_tecnici`
-                            WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                            SELECT `id_intervento` FROM `in_interventi_tecnici`
+                            WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
                                 AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
                                 AND `in_interventi_tecnici`.`id_tecnico` = :id_tecnico_q1
                         )
                         OR (
                             `in_interventi`.`id` NOT IN (
-                                SELECT `idintervento` FROM `in_interventi_tecnici`
+                                SELECT `id_intervento` FROM `in_interventi_tecnici`
                             )
                             AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0) AND `in_interventi`.`id` IN (
                                 SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`id_tecnico` = :id_tecnico_q2
@@ -175,13 +175,13 @@ class Interventi extends AppResource
                     WHERE
                         `deleted_at` IS NULL AND (
                             `in_interventi`.`id` IN (
-                                SELECT `idintervento` FROM `in_interventi_tecnici`
-                                WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                                SELECT `id_intervento` FROM `in_interventi_tecnici`
+                                WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
                                     AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
                             )
                             OR (
                                 `in_interventi`.`id` NOT IN (
-                                    SELECT `idintervento` FROM `in_interventi_tecnici`
+                                    SELECT `id_intervento` FROM `in_interventi_tecnici`
                                 )
                                 AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
@@ -196,14 +196,14 @@ class Interventi extends AppResource
                     WHERE
                         `deleted_at` IS NULL AND (
                             `in_interventi`.`id` IN (
-                                SELECT `idintervento` FROM `in_interventi_tecnici`
-                                WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
+                                SELECT `id_intervento` FROM `in_interventi_tecnici`
+                                WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
                                     AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
                                     AND `in_interventi_tecnici`.`id_tecnico` = :id_tecnico_q1
                             )
                             OR (
                                 `in_interventi`.`id` NOT IN (
-                                    SELECT `idintervento` FROM `in_interventi_tecnici`
+                                    SELECT `id_intervento` FROM `in_interventi_tecnici`
                                 )
                                 AND `in_interventi`.`id_stato` IN (SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
                             )
@@ -218,7 +218,7 @@ class Interventi extends AppResource
             $query .= ' AND (
                 `in_interventi`.`updated_at` > '.prepare($last_sync_at).' OR
                 `in_interventi`.`id` IN (
-                    SELECT `idintervento` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`created_at` > '.prepare($last_sync_at).'
+                    SELECT `id_intervento` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`created_at` > '.prepare($last_sync_at).'
                     UNION SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`created_at` > '.prepare($last_sync_at).'
                 )
             )';
@@ -283,7 +283,7 @@ class Interventi extends AppResource
         $record = $database->fetchOne($query);
 
         // Individuazione degli impianti collegati
-        $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE idintervento = '.prepare($id));
+        $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE id_intervento = '.prepare($id));
         $record['impianti'] = array_column($impianti, 'id');
 
         // Individuazione dei tecnici assegnati
@@ -346,12 +346,12 @@ class Interventi extends AppResource
         }
 
         // Aggiornamento degli impianti collegati
-        $database->query('DELETE FROM my_impianti_interventi WHERE idintervento = '.prepare($record->id));
+        $database->query('DELETE FROM my_impianti_interventi WHERE id_intervento = '.prepare($record->id));
         foreach ($data['impianti'] as $id_impianto) {
             if (!empty($id_impianto)) {
                 $database->insert('my_impianti_interventi', [
                     'idimpianto' => $id_impianto,
-                    'idintervento' => $record->id,
+                    'id_intervento' => $record->id,
                 ]);
             }
         }
@@ -366,7 +366,7 @@ class Interventi extends AppResource
         ]);
 
         if (!empty($data['idrichiesta'])) {
-            database()->query('UPDATE in_richieste SET idintervento = '.prepare($record->id).', updated_at=NOW() WHERE id = '.prepare($data['idrichiesta']));
+            database()->query('UPDATE in_richieste SET id_intervento = '.prepare($record->id).', updated_at=NOW() WHERE id = '.prepare($data['idrichiesta']));
         }
     }
 

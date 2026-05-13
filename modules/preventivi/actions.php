@@ -142,14 +142,14 @@ switch (post('op')) {
         break;
 
     case 'addintervento':
-        if (post('idintervento') !== null) {
+        if (post('id_intervento') !== null) {
             // Selezione costi da intervento
-            $idintervento = post('idintervento');
-            $intervento = Modules\Interventi\Intervento::find($idintervento);
+            $id_intervento = post('id_intervento');
+            $intervento = Modules\Interventi\Intervento::find($id_intervento);
             $costo_km = $intervento->prezzo_km_unitario;
             $costo_orario = $intervento->prezzo_ore_unitario;
 
-            $dbo->table('in_interventi')->where('id', $idintervento)->update(['id_preventivo' => $id_record]);
+            $dbo->table('in_interventi')->where('id', $id_intervento)->update(['id_preventivo' => $id_record]);
 
             // Imposto il preventivo nello stato "In lavorazione" se inizio ad aggiungere interventi
             $stato_in_lavorazione = Stato::where('name', 'In lavorazione')->first()->id;
@@ -163,13 +163,13 @@ switch (post('op')) {
 
         // Scollegamento intervento da preventivo
     case 'unlink':
-        if (isset($_GET['idpreventivo']) && isset($_GET['idintervento'])) {
-            $idintervento = get('idintervento');
+        if (isset($_GET['idpreventivo']) && isset($_GET['id_intervento'])) {
+            $id_intervento = get('id_intervento');
 
-            $dbo->table('in_interventi')->where('id', $idintervento)->update(['id_preventivo' => null]);
+            $dbo->table('in_interventi')->where('id', $id_intervento)->update(['id_preventivo' => null]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
-                '_NUM_' => $idintervento,
+                '_NUM_' => $id_intervento,
             ]));
         }
         break;

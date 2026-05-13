@@ -68,8 +68,8 @@ echo '
 
 $rs = $dbo->fetchArray('SELECT
         `in_interventi`.`id`,
-        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
-        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
         IF(`id_cliente_finale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
@@ -79,7 +79,7 @@ $rs = $dbo->fetchArray('SELECT
     WHERE
         (`in_interventi`.`id_anagrafica`='.prepare($id_anagrafica).' OR `in_interventi`.`id_cliente_finale`='.prepare($id_anagrafica).')
         AND `in_statiintervento`.`is_fatturabile`=1
-        AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL)
+        AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL)
         '.$where);
 foreach ($rs as $key => $value) {
     $intervento = Modules\Interventi\Intervento::find($value['id']);
@@ -97,7 +97,7 @@ foreach ($rs as $key => $value) {
 echo '
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "idintervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); if($data){  $(\'#descrizione\').val($data.info); $(\'#prezzo\').val($data.prezzo);};\"" ]}
+            {[ "type": "select", "label": "'.tr('Intervento').'", "name": "id_intervento", "required": 1, "values": '.json_encode($rs).', "extra": "onchange=\"$data = $(this).selectData(); if($data){  $(\'#descrizione\').val($data.info); $(\'#prezzo\').val($data.prezzo);};\"" ]}
         </div>
 
 		<div class="col-md-6">

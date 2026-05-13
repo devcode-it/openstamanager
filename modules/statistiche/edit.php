@@ -654,7 +654,7 @@ $tipi = $dbo->table('in_tipiintervento')
 $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->table('in_interventi')
-        ->leftJoin($dbo->raw('(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni'), 'in_interventi.id', '=', 'sessioni.idintervento')
+        ->leftJoin($dbo->raw('(SELECT `in_interventi_tecnici`.`id_intervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `id_intervento`) sessioni'), 'in_interventi.id', '=', 'sessioni.id_intervento')
         ->where('in_interventi.id_tipo_intervento', $tipo->id_tipo_intervento)
         ->whereBetween('sessioni.orario_fine', [$start, $end])
         ->select($dbo->raw('COUNT(`in_interventi`.`id`) AS result, YEAR(`sessioni`.`orario_fine`) AS `year`, MONTH(`sessioni`.`orario_fine`) AS `month`'))
@@ -751,7 +751,7 @@ $(document).ready(function() {
 $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->table('in_interventi')
-        ->join('in_interventi_tecnici', 'in_interventi.id', '=', 'in_interventi_tecnici.idintervento')
+        ->join('in_interventi_tecnici', 'in_interventi.id', '=', 'in_interventi_tecnici.id_intervento')
         ->where('in_interventi.id_tipo_intervento', $tipo->id_tipo_intervento)
         ->whereBetween('in_interventi.data_richiesta', [$start, $end])
         ->whereBetween('in_interventi_tecnici.orario_fine', [$start, $end])
@@ -858,7 +858,7 @@ $tecnici = $dbo->table('an_anagrafiche')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
     ->leftJoin('in_interventi_tecnici', 'in_interventi_tecnici.id_tecnico', '=', 'an_anagrafiche.id')
-    ->join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
+    ->join('in_interventi', 'in_interventi_tecnici.id_intervento', '=', 'in_interventi.id')
     ->whereNull('an_anagrafiche.deleted_at')
     ->where('an_tipianagrafiche_lang.title', 'Tecnico')
     ->select('an_anagrafiche.id as id', 'ragione_sociale', 'colore')
@@ -874,7 +874,7 @@ $where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect
 
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->table('in_interventi_tecnici')
-        ->join('in_interventi', 'in_interventi_tecnici.idintervento', '=', 'in_interventi.id')
+        ->join('in_interventi', 'in_interventi_tecnici.id_intervento', '=', 'in_interventi.id')
         ->leftJoin('in_statiintervento', 'in_interventi.id_stato', '=', 'in_statiintervento.id')
         ->where('in_interventi_tecnici.id_tecnico', $tecnico->id)
         ->whereBetween('in_interventi_tecnici.orario_inizio', [$start, $end])

@@ -45,7 +45,7 @@ $options = [
             'id_agente' => $documento->id_agente,
         ],
         'impianti' => [
-            'idintervento' => $documento->id,
+            'id_intervento' => $documento->id,
         ],
     ],
 ];

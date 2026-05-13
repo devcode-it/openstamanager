@@ -62,7 +62,7 @@ $data = [
     ],
     'int' => [
         'table' => 'in_righe_interventi',
-        'id' => 'idintervento',
+        'id' => 'id_intervento',
     ],
     'veb' => [
         'table' => 'vb_righe_venditabanco',

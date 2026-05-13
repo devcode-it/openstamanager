@@ -107,7 +107,7 @@ class Sessione extends Model
             $tariffa = $this->getTariffa($id_tipo);
 
             // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
-            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND idintervento = '.prepare($this->intervento->id));
+            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND id_intervento = '.prepare($this->intervento->id));
             if (!empty($sessioni) && setting('Applica diritto di chiamata una volta al giorno')) {
                 $tariffa['costo_diritto_chiamata_tecnico'] = 0;
                 $tariffa['costo_diritto_chiamata'] = 0;
@@ -177,7 +177,7 @@ class Sessione extends Model
 
     public function getDocumentID()
     {
-        return 'idintervento';
+        return 'id_intervento';
     }
 
     // Relazioni Eloquent

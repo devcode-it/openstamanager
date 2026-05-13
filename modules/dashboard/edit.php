@@ -41,7 +41,7 @@ FROM
     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipianagrafiche`.`id`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id`
-    INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
+    INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`
 WHERE
     `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
 GROUP BY
@@ -257,7 +257,7 @@ $query_da_programmare = 'SELECT
             LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
         WHERE
-            `co_staticontratti`.`is_pianificabile` = 1 AND `idintervento` IS NULL
+            `co_staticontratti`.`is_pianificabile` = 1 AND `id_intervento` IS NULL
     UNION
         SELECT
             IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data
@@ -273,7 +273,7 @@ if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
 
 $query_da_programmare .= '
         WHERE
-            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0 AND
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`) = 0 AND
             `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
@@ -302,7 +302,7 @@ if (!empty($risultati_da_programmare)) {
             INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto`=`co_contratti`.`id`
         WHERE
             `id_stato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1)
-            AND `idintervento` IS NULL
+            AND `id_intervento` IS NULL
             AND DATE_ADD(`co_promemoria`.`data_richiesta`, INTERVAL 1 DAY) <= NOW()
     UNION
         SELECT
@@ -319,7 +319,7 @@ if (!empty($risultati_da_programmare)) {
 
     $query_mesi_precenti .= '
         WHERE
-            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`) = 0
+            (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`) = 0
             AND `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
             AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
@@ -664,7 +664,7 @@ globals.dashboard = {
                     $.post(globals.dashboard.load_url, {
                         op: "modifica_intervento",
                         id: event.id,
-                        idintervento: event.extendedProps.idintervento,
+                        id_intervento: event.extendedProps.id_intervento,
                         timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
                         timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                     }, function (data, responseType) {
@@ -692,7 +692,7 @@ globals.dashboard = {
                 $.post(globals.dashboard.load_url, {
                     op: "modifica_intervento",
                     id: event.id,
-                    idintervento: event.extendedProps.idintervento,
+                    id_intervento: event.extendedProps.id_intervento,
                     timeStart: moment(start).format("YYYY-MM-DD HH:mm"),
                     timeEnd: moment(end).format("YYYY-MM-DD HH:mm")
                 }, function (data, responseType) {
@@ -751,7 +751,7 @@ echo '
             eventDidMount: function(info){
                 let element = $(info.el);
 
-                let id_record = info.event.extendedProps.idintervento;
+                let id_record = info.event.extendedProps.id_intervento;
 
                 if (globals.dashboard.tooltip == 1 && element[0].childElementCount > 0 ) {
                     element.tooltipster({
@@ -784,7 +784,7 @@ echo '
                                 $.post(globals.dashboard.load_url, {
                                     op: "tooltip_info",
                                     id_record: info.event.id,
-                                    idintervento: id_record,
+                                    id_intervento: id_record,
                                     allDay: info.event.allDay,
                                 }, function (data, response) {
                                     if (data !== "") {

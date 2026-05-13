@@ -137,9 +137,9 @@ foreach ($righe as $riga) {
                     <br>'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
     }
     // Fix per righe da altre componenti degli Interventi
-    elseif (!empty($riga->idintervento)) {
+    elseif (!empty($riga->id_intervento)) {
         echo '
-                    <br>'.reference(Intervento::find($riga->idintervento), tr('Origine'));
+                    <br>'.reference(Intervento::find($riga->id_intervento), tr('Origine'));
     }
 
     echo '

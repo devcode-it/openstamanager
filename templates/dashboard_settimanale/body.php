@@ -74,7 +74,7 @@ $query = "SELECT
         `in_statiintervento`.`colore` AS color
     FROM 
         `in_interventi_tecnici`
-        INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`idintervento`=`in_interventi`.`id`
+        INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
         LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`id_tecnico`=`tecnico`.`id`
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`

@@ -556,14 +556,14 @@ if (!function_exists('verifica_numero_fattura')) {
         $righe = [];
 
         // Righe documento
-        $righe_documento = $documento->getRighe()->where('idintervento', '!=', null)->groupBy(fn ($item, $key) => $item['prezzo_unitario'].'|'.$item['id_iva'].'|'.$item['sconto_unitario']);
+        $righe_documento = $documento->getRighe()->where('id_intervento', '!=', null)->groupBy(fn ($item, $key) => $item['prezzo_unitario'].'|'.$item['id_iva'].'|'.$item['sconto_unitario']);
 
         if (setting('Raggruppa attività per tipologia in fattura') && !$righe_documento->isEmpty()) {
             $articoli = [];
             foreach ($righe_documento as $gruppo) {
                 $riga_base = [];
                 foreach ($gruppo as $riga) {
-                    $intervento = Intervento::find($riga->idintervento);
+                    $intervento = Intervento::find($riga->id_intervento);
 
                     if (!empty($intervento)) {
                         if ($riga['is_descrizione'] == 1) {
@@ -612,7 +612,7 @@ if (!function_exists('verifica_numero_fattura')) {
             }
 
             // Estraggo le righe non collegate a interventi
-            $righe_esterne = $documento->getRighe()->where('idintervento', '=', null);
+            $righe_esterne = $documento->getRighe()->where('id_intervento', '=', null);
             foreach ($righe_esterne as $riga) {
                 $righe[] = $riga;
             }

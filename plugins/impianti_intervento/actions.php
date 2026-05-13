@@ -29,7 +29,7 @@ $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 switch ($operazione) {
     case 'add_impianto':
         if (post('id_impianto')) {
-            $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, idintervento) VALUES('.prepare(post('id_impianto')).', '.prepare($id_record).')');
+            $dbo->query('INSERT INTO my_impianti_interventi(idimpianto, id_intervento) VALUES('.prepare(post('id_impianto')).', '.prepare($id_record).')');
 
             $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare(post('id_impianto')));
             foreach ($checks_impianti as $check_impianto) {
@@ -75,7 +75,7 @@ switch ($operazione) {
         $dbo->update('my_impianti_interventi', [
             'note' => $note,
         ], [
-            'idintervento' => $id_record,
+            'id_intervento' => $id_record,
             'idimpianto' => $id_impianto,
         ]);
 
@@ -92,16 +92,16 @@ switch ($operazione) {
             }
 
             // Verifica che l'impianto esista prima di rimuoverlo
-            $exists = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+            $exists = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
 
             if ($exists['count'] == 0) {
                 throw new Exception(tr('Impianto non trovato nell\'intervento'));
             }
 
-            $result = $dbo->delete('my_impianti_interventi', ['idintervento' => $id_record, 'idimpianto' => $id_impianto]);
+            $result = $dbo->delete('my_impianti_interventi', ['id_intervento' => $id_record, 'idimpianto' => $id_impianto]);
 
             // Verifica che l'eliminazione sia avvenuta
-            $remaining = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE idintervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
+            $remaining = $dbo->fetchOne('SELECT COUNT(*) as count FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record).' AND idimpianto = '.prepare($id_impianto));
             if ($remaining['count'] > 0) {
                 throw new Exception(tr('Errore durante l\'eliminazione dell\'impianto dal database'));
             }

@@ -104,7 +104,7 @@ echo '
 
                         <div class="col-md-6">';
 
-$idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+$idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
 
 echo '
 
@@ -115,7 +115,7 @@ echo '
 
                         <div class="col-md-6">';
 
-$id_contratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+$id_contratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
 
 if (!empty($record['idordine'])) {
     echo '

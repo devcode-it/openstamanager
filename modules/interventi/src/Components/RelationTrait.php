@@ -28,7 +28,7 @@ trait RelationTrait
 
     public function getDocumentID()
     {
-        return 'idintervento';
+        return 'id_intervento';
     }
 
     public function document()

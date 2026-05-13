@@ -103,13 +103,13 @@ function getQueryInterventiDisponibili($id_anagrafica)
 {
     global $dbo;
 
-    return 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.idintervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione 
+    return 'SELECT id, CONCAT(\'Intervento \', codice, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE in_interventi_tecnici.id_intervento=in_interventi.id), data_richiesta), \'%d/%m/%Y\')) AS descrizione 
             FROM in_interventi 
             WHERE id_preventivo IS NULL 
                 AND id_contratto IS NULL 
                 AND id_ordine IS NULL 
-                AND id NOT IN( SELECT idintervento FROM co_righe_documenti WHERE idintervento IS NOT NULL) 
-                AND id NOT IN( SELECT idintervento FROM co_promemoria WHERE idintervento IS NOT NULL) 
+                AND id NOT IN( SELECT id_intervento FROM co_righe_documenti WHERE id_intervento IS NOT NULL) 
+                AND id NOT IN( SELECT id_intervento FROM co_promemoria WHERE id_intervento IS NOT NULL) 
                 AND id_anagrafica='.prepare($id_anagrafica);
 }
 
@@ -852,7 +852,7 @@ echo '<hr>
 
             <div class="row">
                 <div class="col-md-8">
-                    {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo documento').' ('.$count.')", "name": "idintervento", "values": "query='.$query.'", "required":"1" ]}
+                    {[ "type": "select", "label": "'.tr('Aggiungi un intervento a questo documento').' ('.$count.')", "name": "id_intervento", "values": "query='.$query.'", "required":"1" ]}
                 </div>
 
                 <!-- PULSANTI -->

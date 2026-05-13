@@ -154,7 +154,7 @@ if (!empty($preventivo) or !empty($contratto)) {
 
 // riga 3
 // Elenco impianti su cui è stato fatto l'intervento
-$rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE idintervento='.prepare($id_record));
+$rs2 = $dbo->fetchArray('SELECT *, (SELECT nome FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS nome, (SELECT matricola FROM my_impianti WHERE id=my_impianti_interventi.idimpianto) AS matricola FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record));
 $impianti = [];
 for ($j = 0; $j < count($rs2); ++$j) {
     $impianti[] = ''.$rs2[$j]['nome']." <small style='color:#777;'>(".$rs2[$j]['matricola'].')</small>';
@@ -633,7 +633,7 @@ if ($options['checklist']) {
             echo renderChecklistHtml($check, 0, $has_images, $options['note']);
         }
 
-        $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE idintervento = '.prepare($id_record));
+        $impianti_collegati = $dbo->fetchArray('SELECT * FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE id_intervento = '.prepare($id_record));
         foreach ($impianti_collegati as $impianto) {
             $checks = Check::where('id_module_from', Module::where('name', 'Impianti')->first()->id)->where('id_record_from', $impianto['id'])->where('id_module', Module::where('name', 'Interventi')->first()->id)->where('id_record', $id_record)->where('id_parent', null)->get();
             $has_images = $checks->where('id_immagine', '!=', null)->count();

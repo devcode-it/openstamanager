@@ -53,7 +53,7 @@ switch (post('op')) {
 
         // Rimozione del collegamento al promemoria
         if (!empty($id_promemoria) && $intervento->id_contratto != $id_contratto) {
-            $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
+            $dbo->update('co_promemoria', ['id_intervento' => null], ['id_intervento' => $id_record]);
         }
 
         // Salvataggio modifiche intervento
@@ -180,7 +180,7 @@ switch (post('op')) {
 
             $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
-                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
+                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
             }
 
             $tecnici_assegnati = [];
@@ -269,7 +269,7 @@ switch (post('op')) {
             foreach ($impianti as $impianto) {
                 if (!empty($impianto)) {
                     $dbo->insert('my_impianti_interventi', [
-                        'idintervento' => $id_record,
+                        'id_intervento' => $id_record,
                         'idimpianto' => $impianto,
                     ]);
 
@@ -317,7 +317,7 @@ switch (post('op')) {
             $intervento->id_stato = $id_stato;
             $intervento->save();
 
-            $id_contratto = $dbo->fetchOne('SELECT id_contratto FROM co_promemoria WHERE idintervento = :id', [
+            $id_contratto = $dbo->fetchOne('SELECT id_contratto FROM co_promemoria WHERE id_intervento = :id', [
                 ':id' => $id_record,
             ])['id_contratto'];
         }
@@ -541,7 +541,7 @@ switch (post('op')) {
                     $new->data_richiesta = $data_ricorrenza;
                     $new->id_stato = $stato->id;
                     $new->save();
-                    $idintervento = $new->id;
+                    $id_intervento = $new->id;
                     ++$ricorrenze_create;
                 } catch (Exception $e) {
                     flash()->error(tr('Errore durante la creazione della ricorrenza per la data _DATE_: _ERROR_', [
@@ -568,7 +568,7 @@ switch (post('op')) {
                         $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                         $new_sessione = $sessione->replicate();
-                        $new_sessione->idintervento = $new->id;
+                        $new_sessione->id_intervento = $new->id;
                         $new_sessione->orario_inizio = $orario_inizio;
                         $new_sessione->orario_fine = $orario_fine;
                         $new_sessione->save();
@@ -1014,7 +1014,7 @@ switch (post('op')) {
                     }
 
                     if (!empty($stato['notifica_tecnici'])) {
-                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
+                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
                         $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
                         $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
@@ -1101,7 +1101,7 @@ switch (post('op')) {
                             }
 
                             if (!empty($stato['notifica_tecnici'])) {
-                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
+                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
                                 $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
                                 $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
@@ -1376,7 +1376,7 @@ switch (post('op')) {
                             $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                             $new_sessione = $sessione->replicate();
-                            $new_sessione->idintervento = $new->id;
+                            $new_sessione->id_intervento = $new->id;
 
                             $new_sessione->orario_inizio = $orario_inizio;
                             $new_sessione->orario_fine = $orario_fine;
@@ -1389,10 +1389,10 @@ switch (post('op')) {
 
                     // Copia degli impianti
                     if (!empty($copia_impianti)) {
-                        $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
+                        $impianti = $dbo->select('my_impianti_interventi', '*', [], ['id_intervento' => $intervento->id]);
                         foreach ($impianti as $impianto) {
                             $dbo->insert('my_impianti_interventi', [
-                                'idintervento' => $id_record,
+                                'id_intervento' => $id_record,
                                 'idimpianto' => $impianto['idimpianto'],
                             ]);
                         }

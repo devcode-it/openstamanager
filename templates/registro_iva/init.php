@@ -106,7 +106,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `vb_righe_venditabanco` ON `vb_righe_venditabanco`.`id_iva` = `co_iva`.`id`
         INNER JOIN `vb_venditabanco` ON `vb_venditabanco`.`id` = `vb_righe_venditabanco`.`idvendita`
         INNER JOIN `vb_stati_vendita` ON `vb_venditabanco`.`id_stato` = `vb_stati_vendita`.`id`
-        LEFT JOIN `in_interventi` ON `vb_righe_venditabanco`.`idintervento` = `in_interventi`.`id`
+        LEFT JOIN `in_interventi` ON `vb_righe_venditabanco`.`id_intervento` = `in_interventi`.`id`
         LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `in_interventi`.`id_anagrafica`
     WHERE
         `vb_stati_vendita`.`descrizione` = "Pagato"

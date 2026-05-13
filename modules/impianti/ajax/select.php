@@ -73,8 +73,8 @@ switch ($resource) {
             $where[] = 'my_impianti.id_sede='.prepare($superselect['id_sede_destinazione'] ?: 0);
         }
 
-        if (!empty($superselect['idintervento'])) {
-            $where[] = 'my_impianti.id NOT IN(SELECT idimpianto FROM my_impianti_interventi WHERE idintervento='.prepare($superselect['idintervento']).')';
+        if (!empty($superselect['id_intervento'])) {
+            $where[] = 'my_impianti.id NOT IN(SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento='.prepare($superselect['id_intervento']).')';
         }
 
         if (!empty($search)) {
@@ -99,17 +99,17 @@ switch ($resource) {
 
         /*
          * Opzioni utilizzate:
-         * - idintervento
+         * - id_intervento
          */
     case 'impianti-intervento':
-        if (isset($superselect['idintervento'])) {
+        if (isset($superselect['id_intervento'])) {
             $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto |where| ORDER BY id_sede';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);
             }
 
-            $where[] = 'my_impianti_interventi.idintervento='.prepare($superselect['idintervento']);
+            $where[] = 'my_impianti_interventi.id_intervento='.prepare($superselect['id_intervento']);
 
             if (!empty($search)) {
                 $search_fields[] = 'nome LIKE '.prepare('%'.$search.'%');

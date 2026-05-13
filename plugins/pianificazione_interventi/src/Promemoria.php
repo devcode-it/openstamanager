@@ -106,7 +106,7 @@ class Promemoria extends Document
             $impianti = array_unique($impianti);
             foreach ($impianti as $impianto) {
                 $database->insert('my_impianti_interventi', [
-                    'idintervento' => $intervento->id,
+                    'id_intervento' => $intervento->id,
                     'idimpianto' => $impianto,
                 ]);
             }
@@ -125,7 +125,7 @@ class Promemoria extends Document
 
     public function intervento()
     {
-        return $this->belongsTo(Intervento::class, 'idintervento');
+        return $this->belongsTo(Intervento::class, 'id_intervento');
     }
 
     public function tipo()

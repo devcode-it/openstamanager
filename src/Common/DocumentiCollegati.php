@@ -191,7 +191,7 @@ class DocumentiCollegati
         WHERE `co_documenti`.`id` IN (
             SELECT `id_documento` 
             FROM `co_righe_documenti` 
-            WHERE `idintervento` = '.prepare($id_intervento).'
+            WHERE `id_intervento` = '.prepare($id_intervento).'
         )
         ORDER BY `co_documenti`.`data` DESC';
 
@@ -631,7 +631,7 @@ class DocumentiCollegati
             \'Interventi\' AS modulo,
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
@@ -750,7 +750,7 @@ class DocumentiCollegati
             \'Interventi\' AS modulo,
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND
@@ -843,7 +843,7 @@ class DocumentiCollegati
             \'Interventi\' AS modulo,
             `in_statiintervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
@@ -1082,14 +1082,14 @@ class DocumentiCollegati
             0 AS dir,
             in_interventi.deleted_at AS `deleted_at`
         FROM `in_interventi`
-        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`
+        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`id_intervento`
         LEFT JOIN in_statiintervento ON in_interventi.id_stato=in_statiintervento.id
         LEFT JOIN `in_statiintervento_lang` ON (
             `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
             `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_interventi`.`id` IN (
-            SELECT `idintervento`
+            SELECT `id_intervento`
             FROM `in_interventi_tecnici`
             WHERE `id_tecnico` = '.prepare($id_anagrafica).'
         ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
@@ -1156,7 +1156,7 @@ class DocumentiCollegati
         // Query ottimizzata per il conteggio (conta documenti unici, non righe)
         $query = 'SELECT COUNT(DISTINCT `id_documento`) AS total
         FROM `co_righe_documenti`
-        WHERE `idintervento` = '.prepare($id_intervento);
+        WHERE `id_intervento` = '.prepare($id_intervento);
 
         $result = $dbo->fetchOne($query);
 
@@ -1370,7 +1370,7 @@ class DocumentiCollegati
         // Conta gli interventi collegati
         $query_interventi = 'SELECT COUNT(DISTINCT `in_interventi`.`id`) AS total
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_preventivo).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\')
         OR `in_interventi`.`id_preventivo` = '.prepare($id_preventivo);
@@ -1425,7 +1425,7 @@ class DocumentiCollegati
         // Conta gli interventi collegati
         $query_interventi = 'SELECT COUNT(DISTINCT `in_interventi`.`id`) AS total
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_ordine).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\')
         OR `in_interventi`.`id_ordine` = '.prepare($id_ordine);
@@ -1471,7 +1471,7 @@ class DocumentiCollegati
         // Conta gli interventi collegati
         $query_interventi = 'SELECT COUNT(DISTINCT `in_interventi`.`id`) AS total
         FROM `in_interventi`
-        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`idintervento` = `in_interventi`.`id`
+        INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
         WHERE `in_righe_interventi`.`original_document_id` = '.prepare($id_ddt).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\'';
 
@@ -1572,9 +1572,9 @@ class DocumentiCollegati
         // Conta gli interventi collegati
         $query_interventi = 'SELECT COUNT(DISTINCT `in_interventi`.`id`) AS total
         FROM `in_interventi`
-        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`idintervento`
+        LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`id_intervento`
         WHERE `in_interventi`.`id` IN (
-            SELECT `idintervento`
+            SELECT `id_intervento`
             FROM `in_interventi_tecnici`
             WHERE `id_tecnico` = '.prepare($id_anagrafica).'
         ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
@@ -1701,7 +1701,7 @@ class DocumentiCollegati
                 break;
             case 'intervento':
                 $tabella_righe = 'in_righe_interventi';
-                $campo_id_documento = 'idintervento';
+                $campo_id_documento = 'id_intervento';
                 break;
             case 'preventivo':
                 $tabella_righe = 'co_righe_preventivi';
@@ -1825,7 +1825,7 @@ class DocumentiCollegati
             'co_righe_documenti' => ['id_documento', 'fattura_vendita', 'fattura_acquisto'],
             'or_righe_ordini' => ['idordine', 'ordine'],
             'dt_righe_ddt' => ['idddt', 'ddt'],
-            'in_righe_interventi' => ['idintervento', 'intervento'],
+            'in_righe_interventi' => ['id_intervento', 'intervento'],
             'co_righe_preventivi' => ['idpreventivo', 'preventivo'],
             'co_righe_contratti' => ['id_contratto', 'contratto'],
         ];

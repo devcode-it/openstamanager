@@ -97,7 +97,7 @@ switch (post('op')) {
         $raggruppamento = post('raggruppamento');
 
         $where = '';
-        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_statiintervento_lang`.`title` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record`=`in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `idintervento` FROM `co_righe_documenti` WHERE `idintervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
+        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_statiintervento_lang`.`title` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record`=`in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
 
         // Se non è attiva la relativa impostazione considero solo interventi non collegati a contratti, ordini o preventivi (default)
         if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
@@ -246,8 +246,8 @@ switch (post('op')) {
         $copia_impianti = post('impianti');
         $copia_allegati = post('allegati');
 
-        foreach ($id_records as $idintervento) {
-            $intervento = Intervento::find($idintervento);
+        foreach ($id_records as $id_intervento) {
+            $intervento = Intervento::find($id_intervento);
 
             $new = $intervento->replicate();
             $new->id_stato = $id_stato;
@@ -289,7 +289,7 @@ switch (post('op')) {
                     $orario_fine = date('Y-m-d H:i:s', strtotime($orario_inizio) + $diff_fine);
 
                     $new_sessione = $sessione->replicate();
-                    $new_sessione->idintervento = $new->id;
+                    $new_sessione->id_intervento = $new->id;
 
                     $new_sessione->orario_inizio = $orario_inizio;
                     $new_sessione->orario_fine = $orario_fine;
@@ -302,10 +302,10 @@ switch (post('op')) {
 
             // Copia degli impianti
             if (!empty($copia_impianti)) {
-                $impianti = $dbo->select('my_impianti_interventi', '*', [], ['idintervento' => $intervento->id]);
+                $impianti = $dbo->select('my_impianti_interventi', '*', [], ['id_intervento' => $intervento->id]);
                 foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
-                        'idintervento' => $id_record,
+                        'id_intervento' => $id_record,
                         'idimpianto' => $impianto['idimpianto'],
                     ]);
                 }
@@ -349,7 +349,7 @@ switch (post('op')) {
                 `co_documenti`
                 INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             WHERE
-                `co_righe_documenti`.`idintervento` = '.prepare($id).' OR
+                `co_righe_documenti`.`id_intervento` = '.prepare($id).' OR
                 (`co_righe_documenti`.`original_document_id` = '.prepare($id).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\')
             GROUP BY id
 
@@ -358,7 +358,7 @@ switch (post('op')) {
             if (empty($elementi)) {
                 try {
                     // Eliminazione associazioni tra interventi e contratti
-                    $dbo->query('UPDATE co_promemoria SET idintervento = NULL WHERE idintervento='.prepare($id_record));
+                    $dbo->query('UPDATE co_promemoria SET id_intervento = NULL WHERE id_intervento='.prepare($id_record));
 
                     $intervento->delete();
                 } catch (InvalidArgumentException) {

@@ -49,17 +49,17 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         }
 
         // Normalizzazione degli interventi a database
-        $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.id=in_interventi.id_anagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');
+        $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.id=in_interventi.id_anagrafica WHERE in_interventi.id=in_interventi_tecnici.id_intervento) WHERE summary IS NULL');
         $database->query('UPDATE in_interventi_tecnici SET uid = id WHERE uid IS NULL');
-        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE description=""');
+        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.id_intervento) WHERE description=""');
 
         // Individuazione degli interventi
         $query = 'SELECT 
-            in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS cliente, in_interventi_tecnici.description, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, summary 
+            in_interventi_tecnici.id AS idriga, in_interventi_tecnici.id_intervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS cliente, in_interventi_tecnici.description, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, summary 
         FROM 
             in_interventi_tecnici 
         INNER JOIN 
-            in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id
+            in_interventi ON in_interventi_tecnici.id_intervento=in_interventi.id
         LEFT JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipiintervento`.`id`
         WHERE 
             DATE(orario_inizio) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE() + INTERVAL 3 MONTH AND in_interventi.deleted_at IS NULL';
@@ -136,9 +136,9 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         }
 
         // Normalizzazione degli interventi a database
-        $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.id=in_interventi.id_anagrafica WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE summary IS NULL');
+        $database->query('UPDATE in_interventi_tecnici SET summary = (SELECT ragione_sociale FROM an_anagrafiche INNER JOIN in_interventi ON an_anagrafiche.id=in_interventi.id_anagrafica WHERE in_interventi.id=in_interventi_tecnici.id_intervento) WHERE summary IS NULL');
         $database->query('UPDATE in_interventi_tecnici SET uid = id WHERE uid IS NULL');
-        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE description=""');
+        $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.id_intervento) WHERE description=""');
 
         // Interpretazione degli eventi
         $id_tecnico = $user['id_anagrafica'];
@@ -199,7 +199,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                     $intervento->save();
 
                     add_tecnico($intervento->id, $id_tecnico, $orario_inizio, $orario_fine);
-                    $sessione = Sessione::where('idintervento', $intervento->id)->get()->last();
+                    $sessione = Sessione::where('id_intervento', $intervento->id)->get()->last();
                     $sessione->summary = $summary;
                     $sessione->description = $description;
                     $sessione->uid = $event['UID'];

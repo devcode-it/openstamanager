@@ -61,7 +61,7 @@ class SessioniInterventi extends AppResource
         $id_interventi = array_keys($interventi);
         $query = 'SELECT in_interventi_tecnici.id
         FROM in_interventi_tecnici
-            INNER JOIN in_interventi ON in_interventi_tecnici.idintervento = in_interventi.id
+            INNER JOIN in_interventi ON in_interventi_tecnici.id_intervento = in_interventi.id
         WHERE
             in_interventi.id IN ('.implode(',', array_map(prepare(...), $id_interventi)).')
             AND (orario_fine BETWEEN :period_start AND :period_end)';
@@ -82,7 +82,7 @@ class SessioniInterventi extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = "SELECT id,
-            idintervento AS id_intervento,
+            id_intervento AS id_intervento,
             id_tecnico AS id_tecnico,
             id_tipo_intervento AS id_tipo_intervento,
             orario_inizio,

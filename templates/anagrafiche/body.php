@@ -139,7 +139,7 @@ if (!empty($impianti)) {
     Attività
 */
 
-$interventi = $dbo->fetchArray('SELECT id, sessione.inizio FROM in_interventi LEFT JOIN (SELECT MIN(orario_inizio) AS inizio, in_interventi_tecnici.idintervento FROM in_interventi_tecnici GROUP BY in_interventi_tecnici.idintervento) AS sessione ON sessione.idintervento=in_interventi.id  WHERE id_anagrafica='.prepare($anagrafica->id));
+$interventi = $dbo->fetchArray('SELECT id, sessione.inizio FROM in_interventi LEFT JOIN (SELECT MIN(orario_inizio) AS inizio, in_interventi_tecnici.id_intervento FROM in_interventi_tecnici GROUP BY in_interventi_tecnici.id_intervento) AS sessione ON sessione.id_intervento=in_interventi.id  WHERE id_anagrafica='.prepare($anagrafica->id));
 
 if (!empty($interventi)) {
     echo '

@@ -394,7 +394,7 @@ switch ($op) {
             // Rimozione riferimenti (deprecati)
             $new_riga->idpreventivo = 0;
             $new_riga->id_contratto = 0;
-            $new_riga->idintervento = null;
+            $new_riga->id_intervento = null;
             $new_riga->idddt = 0;
             $new_riga->idordine = 0;
 
@@ -426,7 +426,7 @@ switch ($op) {
         break;
 
     case 'add_intervento':
-        $id_intervento = post('idintervento');
+        $id_intervento = post('id_intervento');
 
         if (!empty($id_record) && $id_intervento !== null) {
             $copia_descrizione = post('copia_descrizione');
@@ -434,7 +434,7 @@ switch ($op) {
             if (!empty($copia_descrizione) && !empty($intervento->descrizione)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = $intervento['descrizione'];
-                $riga->idintervento = $id_intervento;
+                $riga->id_intervento = $id_intervento;
                 $riga->save();
             }
 
@@ -455,7 +455,7 @@ switch ($op) {
             aggiungi_intervento_in_fattura($id_intervento, $id_record, post('descrizione'), $id_iva_intervento, post('id_conto'), post('id_rivalsa_inps'), post('id_ritenuta_acconto'), post('calcolo_ritenuta_acconto'));
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
-                '_NUM_' => $idintervento,
+                '_NUM_' => $id_intervento,
             ]));
         }
         break;
@@ -672,7 +672,7 @@ switch ($op) {
                     $riga->delete();
 
                     flash()->info(tr('Intervento _NUM_ rimosso!', [
-                        '_NUM_' => $idintervento,
+                        '_NUM_' => $id_intervento,
                     ]));
                 } catch (InvalidArgumentException) {
                     flash()->error(tr('Errore durante l\'eliminazione della riga!'));
@@ -936,7 +936,7 @@ switch ($op) {
             if (!empty($descrizione_personalizzata)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = post('descrizione_intervento');
-                $riga->idintervento = $documento->id;
+                $riga->id_intervento = $documento->id;
                 $riga->save();
             }
 
@@ -944,7 +944,7 @@ switch ($op) {
             if (!empty($copia_descrizione) && !empty($documento->descrizione)) {
                 $riga = Descrizione::build($fattura);
                 $riga->descrizione = $documento->descrizione;
-                $riga->idintervento = $documento->id;
+                $riga->id_intervento = $documento->id;
                 $riga->save();
             }
 

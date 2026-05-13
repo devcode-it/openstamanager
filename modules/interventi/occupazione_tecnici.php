@@ -72,7 +72,7 @@ if (empty($tecnici) || setting('Alert occupazione tecnici') != 1) {
 // Individuazione dei conflitti con altri interventi
 $elenco_conflitti = [];
 foreach ($tecnici as $id_tecnico => $ore) {
-    $query = 'SELECT idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_tecnico).($id_record ? ' AND idintervento != '.prepare($id_record) : '');
+    $query = 'SELECT id_intervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_tecnico).($id_record ? ' AND id_intervento != '.prepare($id_record) : '');
 
     // Conflitti ristretti per orario
     foreach ($ore as $orario) {
@@ -126,7 +126,7 @@ foreach ($elenco_conflitti as $id_tecnico => $elenco_conflitti_tecnico) {
                 </tr>';
 
         foreach ($conflitto['conflitti'] as $conflitto_intervento) {
-            $intervento = Intervento::find($conflitto_intervento['idintervento']);
+            $intervento = Intervento::find($conflitto_intervento['id_intervento']);
             echo '
                 <tr>
                     <td>'.$anagrafica_tecnico['ragione_sociale'].' '.(!empty($anagrafica_tecnico['deleted_at']) ? '<small class="text-danger">('.tr('Eliminato').')' : '').'</td>

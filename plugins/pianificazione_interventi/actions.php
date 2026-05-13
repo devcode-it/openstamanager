@@ -72,11 +72,11 @@ switch ($operazione) {
 
         // Eliminazione tutti i promemoria di questo contratto con non hanno l'intervento associato
     case 'delete-non-associati':
-        $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria IN (SELECT id FROM `co_promemoria` WHERE id_contratto = :id_contratto AND idintervento IS NULL)', [
+        $dbo->query('DELETE FROM `co_righe_promemoria` WHERE id_promemoria IN (SELECT id FROM `co_promemoria` WHERE id_contratto = :id_contratto AND id_intervento IS NULL)', [
             ':id_contratto' => $id_record,
         ]);
 
-        $dbo->query('DELETE FROM `co_promemoria` WHERE id_contratto = :id_contratto AND idintervento IS NULL', [
+        $dbo->query('DELETE FROM `co_promemoria` WHERE id_contratto = :id_contratto AND id_intervento IS NULL', [
             ':id_contratto' => $id_record,
         ]);
 
@@ -121,7 +121,7 @@ switch ($operazione) {
                 if (!in_array($data_promemoria, $date_preimpostate)) {
                     $promemoria_corrente = $promemoria_originale->replicate();
                     $promemoria_corrente->data_richiesta = $data_richiesta;
-                    $promemoria_corrente->idintervento = null;
+                    $promemoria_corrente->id_intervento = null;
                     $promemoria_corrente->save();
 
                     // Copia delle righe

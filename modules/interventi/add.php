@@ -97,7 +97,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `id_intervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];
@@ -117,7 +117,7 @@ elseif (!empty($id_intervento)) {
         $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $intervento['tempo_standard']));
     }
 
-    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE idintervento = '.prepare($id_intervento));
+    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento = '.prepare($id_intervento));
     $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
 
     $rs = $dbo->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_intervento));

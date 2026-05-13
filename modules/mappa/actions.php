@@ -45,7 +45,7 @@ switch (get('op')) {
         // Filtri per data
         $add_query .= ' |date_period(`orario_inizio`,`data_richiesta`)|';
 
-        $query = 'SELECT *, `in_statiintervento`.`colore` AS `colore_stato`, `in_interventi`.`id` AS idintervento, `an_anagrafiche`.`lat` AS lat_anagrafica, `an_anagrafiche`.`lng` AS lng_anagrafica, `an_anagrafiche`.`indirizzo` AS indirizzo_anagrafica, `an_anagrafiche`.`cap` AS cap_anagrafica, `an_anagrafiche`.`citta` AS citta_anagrafica, `an_anagrafiche`.`provincia` AS provincia_anagrafica, `an_sedi`.`lat` AS lat_sede, `an_sedi`.`lng` AS lng_sede, `an_sedi`.`indirizzo` AS indirizzo_sede, `an_sedi`.`cap` AS cap_sede, `an_sedi`.`citta` AS citta_sede, `an_sedi`.`provincia` AS provincia_sede, `in_statiintervento_lang`.`title` AS stato FROM `in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id` LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione`=`an_sedi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id` '.$add_query;
+        $query = 'SELECT *, `in_statiintervento`.`colore` AS `colore_stato`, `in_interventi`.`id` AS id_intervento, `an_anagrafiche`.`lat` AS lat_anagrafica, `an_anagrafiche`.`lng` AS lng_anagrafica, `an_anagrafiche`.`indirizzo` AS indirizzo_anagrafica, `an_anagrafiche`.`cap` AS cap_anagrafica, `an_anagrafiche`.`citta` AS citta_anagrafica, `an_anagrafiche`.`provincia` AS provincia_anagrafica, `an_sedi`.`lat` AS lat_sede, `an_sedi`.`lng` AS lng_sede, `an_sedi`.`indirizzo` AS indirizzo_sede, `an_sedi`.`cap` AS cap_sede, `an_sedi`.`citta` AS citta_sede, `an_sedi`.`provincia` AS provincia_sede, `in_statiintervento_lang`.`title` AS stato FROM `in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id` LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione`=`an_sedi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` '.$add_query;
 
         $query = Query::replacePlaceholder($query);
         $query = Modules::replaceAdditionals(Module::where('name', 'Interventi')->first()->id, $query);
@@ -100,7 +100,7 @@ switch (get('op')) {
                                     </button>';
 
                     // dettagli intervento
-                    $rs_sessioni = $dbo->fetchOne("SELECT MIN(orario_inizio) AS data, GROUP_CONCAT(DISTINCT ragione_sociale SEPARATOR ', ') AS tecnici FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnicoo=an_anagrafiche.id WHERE idintervento=".prepare($records[$i]['idintervento']).' GROUP BY idintervento');
+                    $rs_sessioni = $dbo->fetchOne("SELECT MIN(orario_inizio) AS data, GROUP_CONCAT(DISTINCT ragione_sociale SEPARATOR ', ') AS tecnici FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnicoo=an_anagrafiche.id WHERE id_intervento=".prepare($records[$i]['id_intervento']).' GROUP BY id_intervento');
 
                     $descrizione .= '<hr>';
                     $descrizione .= '<b>Data</b>: '.(!empty($rs_sessioni['data']) ? Translator::dateToLocale($rs_sessioni['data']) : Translator::dateToLocale($records[$i]['data_richiesta'])).'<br>';
@@ -112,7 +112,7 @@ switch (get('op')) {
 
                     $descrizione .= '<hr>';
 
-                    $descrizione .= '<button class="btn btn-info btn-block btn-xs" onclick="window.open(\''.$rootdir.'/editor.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&id_record='.$records[$i]['idintervento'].'\');">
+                    $descrizione .= '<button class="btn btn-info btn-block btn-xs" onclick="window.open(\''.$rootdir.'/editor.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&id_record='.$records[$i]['id_intervento'].'\');">
                                             <i class="fa fa-external-link"></i> Apri attività
                                         </button>';
 

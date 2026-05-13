@@ -179,27 +179,27 @@ class Intervento extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idintervento');
+        return $this->hasMany(Components\Articolo::class, 'id_intervento');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idintervento');
+        return $this->hasMany(Components\Riga::class, 'id_intervento');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'idintervento');
+        return $this->hasMany(Components\Sconto::class, 'id_intervento');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idintervento');
+        return $this->hasMany(Components\Descrizione::class, 'id_intervento');
     }
 
     public function sessioni()
     {
-        return $this->hasMany(Components\Sessione::class, 'idintervento');
+        return $this->hasMany(Components\Sessione::class, 'id_intervento');
     }
 
     #[\Override]

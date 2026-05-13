@@ -256,7 +256,7 @@ function getDestinationComponents($riga)
     }
 
     $interventi = Intervento::whereIn('id', function ($query) use ($riga) {
-        $query->select('idintervento')
+        $query->select('id_intervento')
             ->from('in_righe_interventi')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class);
@@ -265,7 +265,7 @@ function getDestinationComponents($riga)
         $riga_intervento = database()->table('in_righe_interventi')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class)
-            ->where('idintervento', $intervento->id)
+            ->where('id_intervento', $intervento->id)
             ->first();
         $documents['documento'][] = $intervento;
         $documents['qta'][] = $riga_intervento->qta;

@@ -1004,3 +1004,4 @@ ALTER TABLE `an_anagrafiche` CHANGE `sitoweb` `sito_web` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `codiceri` `codice_r_i` VARCHAR(15) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codice_rea` VARCHAR(23) NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `appoggiobancario` `appoggio_bancario` VARCHAR(255) NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `codiceiban` `codice_iban` VARCHAR(40) NOT NULL;

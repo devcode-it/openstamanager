@@ -103,7 +103,7 @@ class CSV extends CSVExporter
                 'label' => 'Partita IVA',
             ],
             [
-                'field' => 'codiceiban',
+                'field' => 'codice_iban',
                 'label' => 'IBAN',
             ],
             [

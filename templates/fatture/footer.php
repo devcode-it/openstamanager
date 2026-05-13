@@ -181,7 +181,7 @@ if (!empty($v_iva)) {
                                     <p class="small-bold text-muted">'.tr('IBAN').'</p>
                                 </td>
                                 <td>
-                                    <p><small>$codiceiban$</small></p>
+                                    <p><small>$codice_iban$</small></p>
                                 </td>
                             </tr>
                             <tr>

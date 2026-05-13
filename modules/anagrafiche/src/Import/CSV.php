@@ -175,7 +175,7 @@ class CSV extends CSVImporter
                 'required' => false, // Almeno uno tra telefono e partita IVA deve essere presente
             ],
             [
-                'field' => 'codiceiban',
+                'field' => 'codice_iban',
                 'label' => 'IBAN',
             ],
             [
@@ -323,7 +323,7 @@ class CSV extends CSVImporter
             unset($record['id_settore']);
 
             $id_banca = $this->processaIBAN($record, $anagrafica);
-            unset($record['codiceiban']);
+            unset($record['codice_iban']);
 
             $dati_sede = $this->estraiDatiSede($record, $primary_key);
 
@@ -472,12 +472,12 @@ class CSV extends CSVImporter
      */
     private function processaIBAN($record, $anagrafica)
     {
-        if (empty($record['codiceiban'])) {
+        if (empty($record['codice_iban'])) {
             return null;
         }
 
         $database = database();
-        $iban = trim((string) $record['codiceiban']);
+        $iban = trim((string) $record['codice_iban']);
         $cache_key = 'iban_'.$anagrafica->id.'_'.md5(strtolower($iban));
 
         if (!isset($this->cache[$cache_key])) {

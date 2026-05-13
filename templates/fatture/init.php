@@ -138,7 +138,7 @@ $custom = [
     'spedizione' => $record['spedizione'],
     'vettore' => $record['vettore'],
     'appoggio_bancario' => $nome_banca,
-    'codiceiban' => $iban_banca,
+    'codice_iban' => $iban_banca,
     'bic' => $bic_banca,
 ];
 

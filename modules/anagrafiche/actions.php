@@ -68,7 +68,7 @@ switch (post('op')) {
         $anagrafica->codice_rea = strtoupper(post('codice_rea')) ?: null;
         $anagrafica->appoggio_bancario = post('appoggio_bancario');
         $anagrafica->filiale = post('filiale');
-        $anagrafica->codiceiban = post('codiceiban');
+        $anagrafica->codice_iban = post('codice_iban');
         $anagrafica->bic = post('bic');
         $anagrafica->diciturafissafattura = post('diciturafissafattura');
         $anagrafica->id_pagamento_acquisti = post('id_pagamento_acquisti') ?: null;

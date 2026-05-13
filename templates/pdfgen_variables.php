@@ -47,7 +47,7 @@ foreach ($prefixes as $prefix) {
     $replaces[$prefix.'fax'] = !empty($replaces[$prefix.'fax']) ? 'Fax: '.$replaces[$prefix.'fax'] : '';
     $replaces[$prefix.'cellulare'] = !empty($replaces[$prefix.'cellulare']) ? 'Cell: '.$replaces[$prefix.'cellulare'] : '';
     $replaces[$prefix.'email'] = !empty($replaces[$prefix.'email']) ? 'Email: '.$replaces[$prefix.'email'] : '';
-    $replaces[$prefix.'codiceiban'] = !empty($replaces[$prefix.'codiceiban']) ? 'IBAN: '.$replaces[$prefix.'codiceiban'] : '';
+    $replaces[$prefix.'codice_iban'] = !empty($replaces[$prefix.'codice_iban']) ? 'IBAN: '.$replaces[$prefix.'codice_iban'] : '';
     $replaces[$prefix.'pec'] = !empty($replaces[$prefix.'pec']) ? 'PEC: '.$replaces[$prefix.'pec'] : '';
 
     foreach ($replaces as $key => $value) {

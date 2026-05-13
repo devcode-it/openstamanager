@@ -98,6 +98,12 @@ This document provides a comprehensive overview of OpenSTAManager's architecture
 - Core tables: `zz_` (settings, modules, plugins, hooks, groups, etc.)
 - Localized tables: suffix `_lang` (e.g., `zz_modules_lang`, `co_pagamenti_lang`)
 
+### Field Naming Conventions
+
+- **Primary keys**: Always named `id` (e.g., `an_anagrafiche.id`, `in_interventi.id`)
+- **Foreign keys**: Named `id_tablename` pattern (e.g., `an_sedi.id_anagrafica`, `co_documenti.id_anagrafica`)
+- **Multi-word fields**: Use underscore as separator (e.g., `codice_fiscale`, `ragione_sociale`, `indirizzo_completo`)
+
 ### Core Tables (zz\_*)
 
 | Table | Description |

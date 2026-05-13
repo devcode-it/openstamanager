@@ -70,7 +70,7 @@ switch (post('op')) {
         $anagrafica->filiale = post('filiale');
         $anagrafica->codice_iban = post('codice_iban');
         $anagrafica->bic = post('bic');
-        $anagrafica->diciturafissafattura = post('diciturafissafattura');
+        $anagrafica->dicitura_fissa_fattura = post('dicitura_fissa_fattura');
         $anagrafica->id_pagamento_acquisti = post('id_pagamento_acquisti') ?: null;
         $anagrafica->id_pagamento_vendite = post('id_pagamento_vendite') ?: null;
         $anagrafica->id_piano_sconto_acquisti = post('id_piano_sconto_acquisti') ?: null;

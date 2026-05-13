@@ -500,7 +500,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "diciturafissafattura", "value": "$diciturafissafattura$" ]}
+                                    {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "dicitura_fissa_fattura", "value": "$dicitura_fissa_fattura$" ]}
                                 </div>
                             </div>
 

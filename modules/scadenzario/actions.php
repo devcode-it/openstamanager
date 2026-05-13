@@ -81,7 +81,7 @@ switch (post('op')) {
             $da_pagare = post('da_pagare')[$id];
 
             if (!empty($iddocumento)) {
-                $tipo_documento = Tipo::find($documento->idtipodocumento);
+                $tipo_documento = Tipo::find($documento->id_tipo_documento);
 
                 if ($tipo_documento['dir'] == 'uscita') {
                     if ($pagato > 0) {

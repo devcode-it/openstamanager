@@ -33,7 +33,7 @@ if ($module->name == 'Fatture di vendita') {
 
 $id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
-$idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id;
+$id_tipo_documento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id;
 
 ?>
 <form action="" method="post" id="add-form">
@@ -69,11 +69,11 @@ $idtipodocumento = Tipo::where('predefined', 1)->where('dir', $dir)->first()->id
 
 	<div class="row">
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "idtipodocumento_add", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, ' - ', `co_tipidocumento_lang`.`title`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`title` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `co_tipidocumento`.`enabled` = 1 AND `co_tipidocumento`.`dir` = '<?php echo $dir; ?>' ORDER BY `co_tipidocumento`.`codice_tipo_documento_fe`", "value": "<?php echo $idtipodocumento; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "id_tipo_documento_add", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, ' - ', `co_tipidocumento_lang`.`title`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`title` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `co_tipidocumento`.`enabled` = 1 AND `co_tipidocumento`.`dir` = '<?php echo $dir; ?>' ORDER BY `co_tipidocumento`.`codice_tipo_documento_fe`", "value": "<?php echo $id_tipo_documento; ?>" ]}
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment_add", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo Tipo::where('id', $idtipodocumento)->where('dir', $dir)->first()->id_segment; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment_add", "required": 1, "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "value": "<?php echo Tipo::where('id', $id_tipo_documento)->where('dir', $dir)->first()->id_segment; ?>" ]}
 		</div>
 	</div>
 
@@ -231,7 +231,7 @@ $(document).ready(function () {
         }
     });
 
-    input("idtipodocumento_add").change(function () {
+    input("id_tipo_documento_add").change(function () {
         $("#id_segment_add").selectSetNew($(this).selectData().id_segment, $(this).selectData().name_segment);
 
         $.ajax({
@@ -240,7 +240,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 id_module: globals.id_module,
-                idtipodocumento:input(this).get(),
+                id_tipo_documento:input(this).get(),
                 op: "check_tipodocumento",
             },
             success: function (result) {
@@ -259,7 +259,7 @@ $(document).ready(function () {
     echo '
     <script>
 $(document).ready(function () {
-    input("idtipodocumento_add").change(function () {
+    input("id_tipo_documento_add").change(function () {
         $("#id_segment_add").selectSetNew($(this).selectData().id_segment, $(this).selectData().name_segment);
     });
 })

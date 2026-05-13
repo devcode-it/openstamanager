@@ -69,7 +69,7 @@ class SollecitoTask extends Manager
                 FROM 
                     `co_scadenzario` 
                     INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento`=`co_documenti`.`id` 
-                    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` 
+                    INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` 
                     INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` 
                 WHERE 
                     `co_tipidocumento`.`dir`='entrata' 
@@ -156,7 +156,7 @@ class SollecitoTask extends Manager
                 }
             }
 
-            $rs = database()->fetchArray("SELECT `co_scadenzario`.*, IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) AS `data_scadenza` FROM `co_scadenzario` INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` WHERE `co_tipidocumento`.`dir`='entrata' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`) AND IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) < DATE_SUB(NOW(), INTERVAL ".prepare($giorni_scadenza).' DAY) GROUP BY iddocumento');
+            $rs = database()->fetchArray("SELECT `co_scadenzario`.*, IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) AS `data_scadenza` FROM `co_scadenzario` INNER JOIN `co_documenti` ON `co_scadenzario`.`iddocumento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` WHERE `co_tipidocumento`.`dir`='entrata' AND `is_fiscale`=1  AND `zz_segments`.`autofatture`=0 AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`) AND IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) < DATE_SUB(NOW(), INTERVAL ".prepare($giorni_scadenza).' DAY) GROUP BY iddocumento');
 
             foreach ($rs as $r) {
                 $da_inviare = false;

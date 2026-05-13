@@ -228,7 +228,7 @@ $clienti = $dbo->fetchArray('SELECT
             COUNT(*)
         FROM
             `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
             `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
@@ -238,7 +238,7 @@ $clienti = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
@@ -258,7 +258,7 @@ $totale = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
@@ -335,7 +335,7 @@ $articoli = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
@@ -357,7 +357,7 @@ $totale = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
@@ -438,7 +438,7 @@ $fornitori = $dbo->fetchArray('SELECT
             COUNT(*)
         FROM
             `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
             `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
@@ -448,7 +448,7 @@ $fornitori = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
@@ -468,7 +468,7 @@ $totale_fornitori = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
@@ -545,7 +545,7 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
@@ -567,7 +567,7 @@ $totale_acquistati = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
@@ -1046,7 +1046,7 @@ $nuovi_fornitori = $dbo->table('an_anagrafiche')
 // Nuovi clienti per i quali ho emesso almeno una fattura di vendita
 $clienti_acquisiti = $dbo->table('an_anagrafiche')
     ->join('co_documenti', 'an_anagrafiche.id', '=', 'co_documenti.id_anagrafica')
-    ->join('co_tipidocumento', 'co_documenti.idtipodocumento', '=', 'co_tipidocumento.id')
+    ->join('co_tipidocumento', 'co_documenti.id_tipo_documento', '=', 'co_tipidocumento.id')
     ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {

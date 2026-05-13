@@ -386,7 +386,7 @@ class Fattura extends Document
 
     public function tipo()
     {
-        return $this->belongsTo(Tipo::class, 'idtipodocumento');
+        return $this->belongsTo(Tipo::class, 'id_tipo_documento');
     }
 
     public function stato()

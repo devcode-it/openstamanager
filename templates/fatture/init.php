@@ -51,7 +51,7 @@ FROM
     LEFT JOIN `an_anagrafiche` AS vettore ON `vettore`.`id` = `co_documenti`.`id_vettore`
     INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato`=`co_statidocumento`.`id`
     LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
+    INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

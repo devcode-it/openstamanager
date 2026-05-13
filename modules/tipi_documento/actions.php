@@ -85,7 +85,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_documenti` WHERE `idtipodocumento` ='.prepare($id_record));
+        $documenti = $dbo->fetchNum('SELECT `id` FROM `co_documenti` WHERE `id_tipo_documento` ='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
             $dbo->delete('co_tipidocumento', ['id' => $id_record]);

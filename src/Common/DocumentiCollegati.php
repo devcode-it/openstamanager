@@ -178,9 +178,9 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`title` AS stato_documento,
             `co_tipidocumento`.`dir`
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
-            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND 
+            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`id_tipo_documento` AND 
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
@@ -458,9 +458,9 @@ class DocumentiCollegati
             IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
             `co_statidocumento_lang`.`title` AS stato_documento
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
-            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND
+            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`id_tipo_documento` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
@@ -549,7 +549,7 @@ class DocumentiCollegati
             IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
             `co_statidocumento_lang`.`title` AS stato_documento
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -694,7 +694,7 @@ class DocumentiCollegati
             IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
             `co_statidocumento_lang`.`title` AS stato_documento
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -816,7 +816,7 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`title` AS stato_documento
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -886,7 +886,7 @@ class DocumentiCollegati
             ((SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`))*SUM(`co_righe_documenti`.`qta`)) AS prezzo_totale,
             SUM(`co_righe_documenti`.`prezzo_unitario`)-SUM(`co_righe_documenti`.`sconto_unitario`) AS prezzo_unitario
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
             `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -988,9 +988,9 @@ class DocumentiCollegati
             `co_tipidocumento`.`dir`,
             NULL AS `deleted_at`
         FROM `co_documenti`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         LEFT JOIN `co_tipidocumento_lang` ON (
-            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`idtipodocumento` AND
+            `co_tipidocumento_lang`.`id_record` = `co_documenti`.`id_tipo_documento` AND
             `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         LEFT JOIN co_statidocumento ON co_documenti.id_stato=co_statidocumento.id
@@ -2018,7 +2018,7 @@ class DocumentiCollegati
                 IF(`co_tipidocumento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
                 `co_statidocumento_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `co_tipidocumento` ON `'.$tabella.'`.`idtipodocumento` = `co_tipidocumento`.`id`
+            INNER JOIN `co_tipidocumento` ON `'.$tabella.'`.`id_tipo_documento` = `co_tipidocumento`.`id`
             LEFT JOIN `co_tipidocumento_lang` ON (
                 `co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND
                 `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'

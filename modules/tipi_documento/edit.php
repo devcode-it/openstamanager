@@ -70,7 +70,7 @@ echo '
    
 </form>';
 // Collegamenti diretti (numerici)
-$numero_documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE idtipodocumento='.prepare($id_record));
+$numero_documenti = $dbo->fetchNum('SELECT id FROM co_documenti WHERE id_tipo_documento='.prepare($id_record));
 
 if (!empty($numero_documenti)) {
     echo '

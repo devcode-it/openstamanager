@@ -42,7 +42,7 @@ if (!isset($_SESSION['module_'.$id_modulo_fatture]['id_segment'])) {
 $id_segment = $_SESSION['module_'.$id_modulo_fatture]['id_segment'];
 $id_segment_ordini = $_SESSION['module_'.$id_module]['id_segment'];
 $idconto = setting('Conto predefinito fatture di vendita');
-$idtipodocumento = $dbo->selectOne('co_tipidocumento', ['id'], [
+$id_tipo_documento = $dbo->selectOne('co_tipidocumento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
@@ -52,7 +52,7 @@ switch (post('op')) {
         $documenti = collect();
         $numero_totale = 0;
 
-        $tipo_documento = TipoFattura::where('id', post('idtipodocumento'))->first();
+        $tipo_documento = TipoFattura::where('id', post('id_tipo_documento'))->first();
 
         $stato_documenti_accodabili = Stato::where('name', 'Bozza')->first();
         $accodare = post('accodare');
@@ -87,13 +87,13 @@ switch (post('op')) {
                         if ($raggruppamento == 'sede') {
                             $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('id_stato', $stato_documenti_accodabili->id)
-                                ->where('idtipodocumento', $tipo_documento->id)
+                                ->where('id_tipo_documento', $tipo_documento->id)
                                 ->where('id_sede_destinazione', $id_sede)
                                 ->first();
                         } else {
                             $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('id_stato', $stato_documenti_accodabili->id)
-                                ->where('idtipodocumento', $tipo_documento->id)
+                                ->where('id_tipo_documento', $tipo_documento->id)
                                 ->first();
                         }
 
@@ -360,7 +360,7 @@ if ($module->name == 'Ordini cliente') {
             'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
             'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle _TYPE_ non ancora emesse?', ['_TYPE_' => $module_fatture]).'", "placeholder": "'.tr('Aggiungere alle _TYPE_ nello stato bozza?', ['_TYPE_' => $module_fatture]).'</small>", "name": "accodare" ]}
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_modulo_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$idtipodocumento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"", "value": "'.setting('Raggruppamento fatturazione massiva ordini').'" ]}',
             'button' => tr('Procedi'),
             'class' => 'btn btn-lg btn-warning',

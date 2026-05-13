@@ -34,10 +34,10 @@ echo '
 
     <div class="row">
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "idtipodocumento_autofattura", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, \" - \", `co_tipidocumento_lang`.`title`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`title` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `fe_tipi_documento` ON `co_tipidocumento`.`codice_tipo_documento_fe` = `fe_tipi_documento`.`codice`  INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\"entrata\" AND `fe_tipi_documento`.`is_autofattura` = 1 ORDER BY `fe_tipi_documento`.`codice`", "value": "'.$idtipodocumento.'" ]}
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento_autofattura", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`co_tipidocumento`.`codice_tipo_documento_fe`, \" - \", `co_tipidocumento_lang`.`title`) AS descrizione, `co_tipidocumento`.`id_segment`, `zz_segments_lang`.`title` as name_segment FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id`=`co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `fe_tipi_documento` ON `co_tipidocumento`.`codice_tipo_documento_fe` = `fe_tipi_documento`.`codice`  INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_tipidocumento`.`id_segment` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\"entrata\" AND `fe_tipi_documento`.`is_autofattura` = 1 ORDER BY `fe_tipi_documento`.`codice`", "value": "'.$id_tipo_documento.'" ]}
         </div>
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment_autofattura", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_fatture_vendita, 'is_sezionale' => 1]).', "value": "'.Tipo::where('id', $idtipodocumento)->where('dir', 'entrata')->first()->id_segment.'" ]}
+            {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment_autofattura", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_fatture_vendita, 'is_sezionale' => 1]).', "value": "'.Tipo::where('id', $id_tipo_documento)->where('dir', 'entrata')->first()->id_segment.'" ]}
         </div>
     </div>
 
@@ -55,7 +55,7 @@ echo '
 $(document).ready(function () {
     init();
 
-    input("idtipodocumento_autofattura").change(function () {
+    input("id_tipo_documento_autofattura").change(function () {
             $("#id_segment_autofattura").selectSetNew($(this).selectData().id_segment, $(this).selectData().name_segment);
         });
     });

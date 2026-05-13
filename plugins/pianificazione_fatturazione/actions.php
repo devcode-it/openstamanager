@@ -171,7 +171,7 @@ switch ($operazione) {
 
         $data = post('data');
         $id_segment = post('id_segment');
-        $tipo = Tipo::find(post('idtipodocumento'));
+        $tipo = Tipo::find(post('id_tipo_documento'));
 
         if (!empty($accodare)) {
             $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id` WHERE `co_statidocumento`.`name` = \'Bozza\' AND `id_anagrafica` = '.prepare($contratto->id_anagrafica));
@@ -221,8 +221,8 @@ switch ($operazione) {
         $data = post('data');
         $accodare = post('accodare');
         $id_segment = post('id_segment');
-        $id_tipodocumento = post('idtipodocumento');
-        $tipo = Tipo::find($id_tipodocumento);
+        $id_tipo_documento = post('id_tipo_documento');
+        $tipo = Tipo::find($id_tipo_documento);
 
         foreach ($rate as $i => $rata) {
             $id_rata = $rata;

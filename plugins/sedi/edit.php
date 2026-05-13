@@ -213,7 +213,7 @@ $elementi = $dbo->fetchArray('SELECT
 			`co_tipidocumento`.`dir` AS dir 
 		FROM 
 			`co_documenti` 
-			INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` 
+			INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` 
 		WHERE 
 			`co_documenti`.`id_sede_destinazione` = '.prepare($id_record).'
 	ORDER BY `id`');

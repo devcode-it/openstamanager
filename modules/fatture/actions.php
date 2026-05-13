@@ -82,7 +82,7 @@ switch ($op) {
     case 'add':
         $id_anagrafica = post('id_anagrafica');
         $data = post('data');
-        $idtipodocumento = post('idtipodocumento_add');
+        $id_tipo_documento = post('id_tipo_documento_add');
         $id_segment = post('id_segment_add');
 
         if ($dir == 'uscita') {
@@ -90,7 +90,7 @@ switch ($op) {
         }
 
         $anagrafica = Anagrafica::find($id_anagrafica);
-        $tipo = Tipo::find($idtipodocumento);
+        $tipo = Tipo::find($id_tipo_documento);
 
         $fattura = Fattura::build($anagrafica, $tipo, $data, $id_segment, $numero_esterno);
 
@@ -105,7 +105,7 @@ switch ($op) {
         $fattura->stato()->associate($stato);
         $data = post('data');
 
-        $tipo = Tipo::find(post('idtipodocumento'));
+        $tipo = Tipo::find(post('id_tipo_documento'));
         $fattura->tipo()->associate($tipo);
 
         $data_fattura_precedente = Fattura::whereHas('stato', function ($query) {
@@ -344,7 +344,7 @@ switch ($op) {
             ->where('co_documenti.id_anagrafica', '=', $id_anagrafica)
             ->whereIn('id_stato', [$stato1->id, $stato2->id])
             ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.iddocumento')
-            ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.idtipodocumento')
+            ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.id_tipo_documento')
             ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
             ->whereRaw('co_scadenzario.scadenza < NOW()')
             ->groupBy('co_scadenzario.iddocumento')
@@ -895,7 +895,7 @@ switch ($op) {
 
         // Creazione della fattura al volo
         if (post('create_document') == 'on') {
-            $tipo = Tipo::find(post('idtipodocumento'));
+            $tipo = Tipo::find(post('id_tipo_documento'));
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
@@ -1078,7 +1078,7 @@ switch ($op) {
         $anagrafica = $fattura->anagrafica;
 
         $id_segment = post('id_segment_autofattura');
-        $tipo = Tipo::find(post('idtipodocumento_autofattura'));
+        $tipo = Tipo::find(post('id_tipo_documento_autofattura'));
         $iva = Aliquota::find(setting('Iva predefinita'));
 
         $imponibile = $database->table('co_righe_documenti')
@@ -1313,12 +1313,12 @@ switch ($op) {
 
         // Controllo se impostare anagrafica azienda in base a tipologia documento
     case 'check_tipodocumento':
-        $idtipodocumento = post('idtipodocumento');
+        $id_tipo_documento = post('id_tipo_documento');
         $tipologie = Tipo::wherein('codice_tipo_documento_fe', ['TD21', 'TD27'])->where('dir', 'entrata')->get()->pluck('id')->toArray();
         $azienda = Anagrafica::find(setting('Azienda predefinita'));
 
         $result = false;
-        if (in_array($idtipodocumento, $tipologie)) {
+        if (in_array($id_tipo_documento, $tipologie)) {
             // Aggiunta tipologia cliente se necessario
             if (!$azienda->isTipo('Cliente')) {
                 $tipo_cliente = TipoAnagrafica::where('name', 'Cliente')->first()->id;

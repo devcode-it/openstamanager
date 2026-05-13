@@ -545,18 +545,18 @@ class FatturaElettronica
         if (!empty($numero_tipo)) {
             $query = $query_tipo;
         }
-        $id_tipodocumento = database()->fetchOne($query)['id'];
+        $id_tipo_documento = database()->fetchOne($query)['id'];
 
         // Sezionale
         $id_segment = null;
-        if (!empty($id_tipodocumento)) {
-            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+        if (!empty($id_tipo_documento)) {
+            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipo_documento)->value('id_segment');
         }
 
         $info = [
             'id_pagamento' => $pagamento->id ?? setting('Tipo di pagamento predefinito'),
             'id_segment' => $id_segment ?? getSegmentPredefined($id_module_fatture_acquisto),
-            'id_tipo' => $id_tipodocumento,
+            'id_tipo' => $id_tipo_documento,
             'ref_fattura' => null,
             'data_registrazione' => $data_registrazione,
             'articoli' => [],

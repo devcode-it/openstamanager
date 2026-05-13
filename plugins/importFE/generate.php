@@ -285,18 +285,18 @@ if (!empty($numero_tipo)) {
 }
 
 $tipo_doc = $database->fetchOne($query_tipo);
-$id_tipodocumento = $tipo_doc['id'] ?? null;
+$id_tipo_documento = $tipo_doc['id'] ?? null;
 
 echo '
         <div class="row">
             <div class="col-md-3">
-                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 && !empty($id_tipodocumento) ? $id_tipodocumento : '').'" ]}
+                {[ "type": "select", "label": "'.tr('Tipo fattura').'", "name": "id_tipo", "required": 1, "values": "query='.$query.'", "value": "'.($numero_tipo != 1 && !empty($id_tipo_documento) ? $id_tipo_documento : '').'" ]}
             </div>';
 
 // Sezionale
 $id_segment = null;
-if (!empty($id_tipodocumento)) {
-    $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipodocumento)->value('id_segment');
+if (!empty($id_tipo_documento)) {
+    $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipo_documento)->value('id_segment');
 }
 
 echo '
@@ -322,7 +322,7 @@ if (!empty($anagrafica)) {
             `co_documenti`.`id`,
             CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
         FROM `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
             `co_tipidocumento`.`dir` = 'uscita' AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
@@ -347,7 +347,7 @@ if (!empty($anagrafica)) {
             `co_documenti`.`id`,
             CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
         FROM `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento`
+            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
             `co_tipidocumento`.`dir` = 'entrata' AND
             `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND

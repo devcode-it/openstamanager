@@ -42,7 +42,7 @@ foreach ($prefixes as $prefix) {
 
     $replaces[$prefix.'codice_destinatario'] = !empty($replaces[$prefix.'codice_destinatario']) ? 'Cod.Fatturazione: '.$replaces[$prefix.'codice_destinatario'] : '';
     $replaces[$prefix.'capsoc'] = !empty($replaces[$prefix.'capsoc']) ? 'Cap.Soc.: '.$replaces[$prefix.'capsoc'] : '';
-    $replaces[$prefix.'sitoweb'] = !empty($replaces[$prefix.'sitoweb']) ? 'Web: '.$replaces[$prefix.'sitoweb'] : '';
+    $replaces[$prefix.'sito_web'] = !empty($replaces[$prefix.'sito_web']) ? 'Web: '.$replaces[$prefix.'sito_web'] : '';
     $replaces[$prefix.'telefono'] = !empty($replaces[$prefix.'telefono']) ? 'Tel: '.$replaces[$prefix.'telefono'] : '';
     $replaces[$prefix.'fax'] = !empty($replaces[$prefix.'fax']) ? 'Fax: '.$replaces[$prefix.'fax'] : '';
     $replaces[$prefix.'cellulare'] = !empty($replaces[$prefix.'cellulare']) ? 'Cell: '.$replaces[$prefix.'cellulare'] : '';

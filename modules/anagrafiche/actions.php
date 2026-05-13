@@ -86,7 +86,7 @@ switch (post('op')) {
         $anagrafica->idagente = post('idagente');
         $anagrafica->id_provenienza = post('id_provenienza') ?: null;
         $anagrafica->idrelazione = post('idrelazione');
-        $anagrafica->sitoweb = post('sitoweb');
+        $anagrafica->sito_web = post('sito_web');
         $anagrafica->iscrizione_tribunale = post('iscrizione_tribunale');
         $anagrafica->n_alboartigiani = post('n_alboartigiani') ?: null;
         $anagrafica->foro_competenza = post('foro_competenza');

@@ -325,7 +325,7 @@ class Anagrafica extends Model
 
     public function setSitewebAttribute($value)
     {
-        $this->attributes['sitoweb'] = trim((string) $value);
+        $this->attributes['sito_web'] = trim((string) $value);
     }
 
     public function setLuogoNascitaAttribute($value)

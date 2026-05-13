@@ -66,6 +66,6 @@ return [
     'logo_azienda' => !empty($logo_azienda) ? '<img src="'.$logo_azienda.'" />' : '',
     'nome_utente' => $r_user['ragione_sociale'],
     'telefono_utente' => $r_user['cellulare'],
-    'sito_web' => $r_company['sitoweb'],
+    'sito_web' => $r_company['sito_web'],
     'nome_referente' => $r['nome'],
 ];

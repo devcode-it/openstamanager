@@ -95,7 +95,7 @@ class Clienti extends AppResource
             `an_anagrafiche`.`telefono`,
             `an_anagrafiche`.`cellulare`,
             `an_anagrafiche`.`email`,
-            `an_anagrafiche`.`sitoweb` AS sito_web,
+            `an_anagrafiche`.`sito_web` AS sito_web,
             `an_anagrafiche`.`note`,
             `an_anagrafiche`.`deleted_at`,
             IF(`an_anagrafiche`.`deleted_at` IS NULL, 0, 1) AS deleted,

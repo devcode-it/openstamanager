@@ -169,7 +169,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                     </div>
 
                     <div class="col-md-4">
-                        {[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sitoweb", "placeholder":"www.dominio.ext", "value": "$sitoweb$", "icon-before": "<i class='fa fa-globe'></i>" ]}
+                        {[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sito_web", "placeholder":"www.dominio.ext", "value": "$sito_web$", "icon-before": "<i class='fa fa-globe'></i>" ]}
                     </div>
                 </div>
             </div>

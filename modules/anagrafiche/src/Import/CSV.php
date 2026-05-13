@@ -139,7 +139,7 @@ class CSV extends CSVImporter
                 ],
             ],
             [
-                'field' => 'sitoweb',
+                'field' => 'sito_web',
                 'label' => 'Sito Web',
                 'names' => [
                     'Sito web',

@@ -84,7 +84,7 @@ echo '
                                     '.(!empty($anagrafica->cellulare) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="tel:'.$anagrafica->cellulare.'" target="_blank"><i class="fa fa-mobile text-primary"></i> '.$anagrafica->cellulare.'</a>' : '').'
                                     '.(!empty($anagrafica->email) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$anagrafica->email.'"><i class="fa fa-envelope text-primary"></i> '.$anagrafica->email.'</a>' : '').'
                                     '.(!empty($anagrafica->pec) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="mailto:'.$anagrafica->pec.'"><i class="fa fa-envelope-o text-primary"></i> PEC</a>' : '').'
-                                    '.(!empty($anagrafica->sitoweb) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="'.(str_starts_with((string) $anagrafica->sitoweb, 'http') ? $anagrafica->sitoweb : 'http://'.$anagrafica->sitoweb).'" target="_blank"><i class="fa fa-globe text-primary"></i> '.tr('Sito web').'</a>' : '').'
+                                    '.(!empty($anagrafica->sito_web) ? '<a class="btn btn-light btn-xs mr-1 mb-1" href="'.(str_starts_with((string) $anagrafica->sito_web, 'http') ? $anagrafica->sito_web : 'http://'.$anagrafica->sito_web).'" target="_blank"><i class="fa fa-globe text-primary"></i> '.tr('Sito web').'</a>' : '').'
                                 </div>';
 
 // Mostra informazioni su sedi aggiuntive

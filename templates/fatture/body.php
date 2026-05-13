@@ -33,7 +33,7 @@ $rows_per_page = $fattura_accompagnatoria ? 20 : 25;
 $c = 0;
 
 // Calcolo ottimizzato delle righe intestazione
-if ($f_sitoweb || $f_pec) {
+if ($f_sito_web || $f_pec) {
     ++$c;
 }
 if ($destinazione) {

@@ -45,7 +45,7 @@ $autofill->setRows($rows_per_page, 0, $rows_first_page);
 
 // Calcolo ottimizzato delle righe intestazione
 $c = 0;
-if ($f_sitoweb || $f_pec) {
+if ($f_sito_web || $f_pec) {
     ++$c;
 }
 if ($destinazione) {

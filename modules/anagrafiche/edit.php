@@ -184,12 +184,8 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-md-<?php echo (empty($record['indirizzo2'])) ? '10' : '8'; ?>">
+                            <div class="col-md-'8'">
                                 {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
-                            </div>
-
-                            <div class="col-md-2<?php echo (empty($record['indirizzo2'])) ? ' hide' : ''; ?>">
-                                {[ "type": "text", "label": "<?php echo tr('Civico'); ?>", "name": "indirizzo2", "value": "$indirizzo2$" ]}
                             </div>
 
                             <div class="col-md-2">

@@ -35,7 +35,6 @@ $fields = [
     'Partita iva' => 'p_iva',
     'Codice fiscale' => 'codice_fiscale',
     'Indirizzo' => 'indirizzo',
-    'Indirizzo2' => 'indirizzo2',
     'Città' => 'citta',
     'C.A.P.' => 'cap',
     'Provincia' => 'provincia',

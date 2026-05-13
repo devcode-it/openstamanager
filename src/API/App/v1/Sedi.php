@@ -62,7 +62,6 @@ class Sedi extends AppResource
             `an_sedi`.`p_iva` AS partita_iva,
             `an_sedi`.`codice_fiscale`,
             `an_sedi`.`indirizzo`,
-            `an_sedi`.`indirizzo2`,
             `an_sedi`.`citta`,
             `an_sedi`.`cap`,
             `an_sedi`.`provincia`,

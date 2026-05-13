@@ -63,10 +63,6 @@ class CSV extends CSVExporter
                 'label' => 'Indirizzo',
             ],
             [
-                'field' => 'indirizzo2',
-                'label' => 'Civico',
-            ],
-            [
                 'field' => 'cap',
                 'label' => 'CAP',
             ],

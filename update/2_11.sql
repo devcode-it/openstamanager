@@ -994,3 +994,8 @@ ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DE
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_acquisti` `id_iva_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idsede_fatturazione` `id_sede_fatturazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `piva` `p_iva` VARCHAR(16) NOT NULL;
+
+UPDATE an_anagrafiche SET indirizzo = CONCAT_WS(' ', indirizzo, indirizzo2) WHERE indirizzo2 IS NOT NULL AND TRIM(indirizzo2) <> '';
+UPDATE an_sedi SET indirizzo = CONCAT_WS(' ', indirizzo, indirizzo2) WHERE indirizzo2 IS NOT NULL AND TRIM(indirizzo2) <> '';
+ALTER TABLE `an_anagrafiche` DROP `indirizzo2`;
+ALTER TABLE `an_sedi` DROP `indirizzo2`;

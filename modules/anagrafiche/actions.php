@@ -37,7 +37,6 @@ switch (post('op')) {
         // Informazioni sulla sede
         $sede = $anagrafica->sedeLegale;
         $sede->indirizzo = post('indirizzo');
-        $sede->indirizzo2 = post('indirizzo2');
         $sede->citta = post('citta');
         $sede->cap = post('cap');
         $sede->provincia = post('provincia');

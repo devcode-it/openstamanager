@@ -84,7 +84,6 @@ class Clienti extends AppResource
             `an_anagrafiche`.`p_iva` AS partita_iva,
             `an_anagrafiche`.`codice_fiscale`,
             `an_anagrafiche`.`indirizzo`,
-            `an_anagrafiche`.`indirizzo2`,
             `an_anagrafiche`.`citta`,
             `an_anagrafiche`.`cap`,
             `an_anagrafiche`.`provincia`,

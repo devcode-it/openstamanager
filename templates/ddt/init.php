@@ -53,9 +53,9 @@ if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {
 $destinazione = '';
 if (!empty($documento['idsede_destinazione'])) {
     if ($tipo_doc == 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_destinazione']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_destinazione']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {
@@ -63,9 +63,6 @@ if (!empty($documento['idsede_destinazione'])) {
     }
     if (!empty($rsd[0]['indirizzo'])) {
         $destinazione .= $rsd[0]['indirizzo'].'<br/>';
-    }
-    if (!empty($rsd[0]['indirizzo2'])) {
-        $destinazione .= $rsd[0]['indirizzo2'].'<br/>';
     }
     if (!empty($rsd[0]['cap'])) {
         $destinazione .= $rsd[0]['cap'].' ';
@@ -94,9 +91,9 @@ if (!empty($documento['idsede_destinazione'])) {
 $partenza = '';
 if (!empty($documento['idsede_partenza'])) {
     if ($tipo_doc != 'Ddt in uscita') {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($documento['id_anagrafica']).' AND id='.prepare($documento['idsede_partenza']));
     } else {
-        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, indirizzo2, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
+        $rsd = $dbo->fetchArray('SELECT (SELECT codice FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS codice, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=an_sedi.id_anagrafica) AS ragione_sociale, nomesede, indirizzo, cap, citta, provincia, p_iva, codice_fiscale, id_nazione, telefono, cellulare FROM an_sedi WHERE id_anagrafica='.prepare($id_azienda).' AND id='.prepare($documento['idsede_partenza']));
     }
 
     if (!empty($rsd[0]['nomesede'])) {
@@ -104,9 +101,6 @@ if (!empty($documento['idsede_partenza'])) {
     }
     if (!empty($rsd[0]['indirizzo'])) {
         $partenza .= $rsd[0]['indirizzo'].'<br/>';
-    }
-    if (!empty($rsd[0]['indirizzo2'])) {
-        $partenza .= $rsd[0]['indirizzo2'].'<br/>';
     }
     if (!empty($rsd[0]['cap'])) {
         $partenza .= $rsd[0]['cap'].' ';

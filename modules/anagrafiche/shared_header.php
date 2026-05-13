@@ -58,7 +58,7 @@ echo '
                                 <h4 class="mb-2"><b>'.$anagrafica->ragione_sociale.'</b></h4>
                                 
                                 <p class="mb-2">
-                                    '.(!empty($anagrafica->indirizzo) ? '<i class="fa fa-map-marker text-muted mr-1"></i> '.$anagrafica->indirizzo.(!empty($anagrafica->indirizzo2) ? ', '.$anagrafica->indirizzo2 : '').'<br>' : '').'
+                                    '.(!empty($anagrafica->indirizzo) ? '<i class="fa fa-map-marker text-muted mr-1"></i> '.$anagrafica->indirizzo.'<br>' : '').'
                                     '.(!empty($anagrafica->cap) || !empty($anagrafica->citta) ? '<i class="fa fa-map text-muted mr-1"></i> '.trim(($anagrafica->cap ?? '').' - '.($anagrafica->citta ?? '').' '.($anagrafica->provincia ?? ''), ' -()') : '').'
                                 </p>
                                 

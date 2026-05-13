@@ -42,7 +42,7 @@ echo '
         <td class="text-left" >'.tr('Cap').': <b>'.$anagrafica['cap'].'</b></td>
     </tr>
     <tr>
-        <td class="text-left" colspan="2" >'.tr('Partita IVA').': <b>'.$anagrafica['piva'].'</b></td>
+        <td class="text-left" colspan="2" >'.tr('Partita IVA').': <b>'.$anagrafica['p_iva'].'</b></td>
         <td class="text-left" colspan="2">'.tr('Codice fiscale').': <b>'.$anagrafica['codice_fiscale'].'</b></td>
     </tr>
     <tr>

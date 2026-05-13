@@ -327,7 +327,7 @@ class CSV extends CSVImporter
 
                 $anagrafica = null;
                 if (!empty($record['p_iva'])) {
-                    $anagrafica = Anagrafica::where('piva', $record['p_iva'])->first();
+                    $anagrafica = Anagrafica::where('p_iva', $record['p_iva'])->first();
                 }
 
                 if (empty($anagrafica)) {
@@ -824,7 +824,7 @@ class CSV extends CSVImporter
     protected function aggiornaDettaglioPrezzi(Articolo $articolo, $dettagli)
     {
         if ($dettagli['partita_iva']) {
-            $anagrafica = Anagrafica::where('piva', $dettagli['partita_iva'])->first();
+            $anagrafica = Anagrafica::where('p_iva', $dettagli['partita_iva'])->first();
         }
 
         if (empty($anagrafica) && $dettagli['anagrafica_listino']) {
@@ -833,7 +833,7 @@ class CSV extends CSVImporter
 
         if (empty($anagrafica)) {
             $anagrafica = Anagrafica::build($dettagli['anagrafica_listino']);
-            $anagrafica->piva = $dettagli['partita_iva'];
+            $anagrafica->p_iva = $dettagli['partita_iva'];
             $anagrafica->save();
         }
 

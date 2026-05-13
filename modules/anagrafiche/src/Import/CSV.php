@@ -164,7 +164,7 @@ class CSV extends CSVImporter
                 'label' => 'Sesso',
             ],
             [
-                'field' => 'piva',
+                'field' => 'p_iva',
                 'label' => 'Partita IVA',
                 'names' => [
                     'P.IVA',

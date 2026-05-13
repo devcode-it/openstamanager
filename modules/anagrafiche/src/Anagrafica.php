@@ -55,7 +55,7 @@ class Anagrafica extends Model
     ];
 
     protected $hidden = [
-        'piva',
+        'p_iva',
     ];
 
     /**
@@ -242,7 +242,7 @@ class Anagrafica extends Model
 
     public function getPartitaIvaAttribute()
     {
-        return $this->attributes['piva'];
+        return $this->attributes['p_iva'];
     }
 
     public function setPartitaIvaAttribute($value)
@@ -251,7 +251,7 @@ class Anagrafica extends Model
             $value = null;
         }
 
-        $this->attributes['piva'] = trim(strtoupper((string) $value));
+        $this->attributes['p_iva'] = trim(strtoupper((string) $value));
     }
 
     public function setNomeAttribute($value)

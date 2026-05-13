@@ -903,7 +903,7 @@ function generaXmlLipe($date_start, $date_end)
     $cf_dichiarante = setting('Codice fiscale dichiarante') ?: $azienda->codice_fiscale;
     $cf_intermediario = setting('Codice fiscale intermediario');
     $identificativo_software = setting('Identificativo software');
-    $piva = $azienda->piva ?: '';
+    $p_iva = $azienda->p_iva ?: '';
 
     // Crea il documento DOM
     $dom = new DOMDocument('1.0', 'UTF-8');
@@ -945,7 +945,7 @@ function generaXmlLipe($date_start, $date_end)
 
     // CodiceFiscale (Partita IVA)
     $codiceFiscale = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:CodiceFiscale');
-    $codiceFiscale->appendChild($dom->createTextNode($piva ?: ''));
+    $codiceFiscale->appendChild($dom->createTextNode($p_iva ?: ''));
     $frontespizio->appendChild($codiceFiscale);
 
     // AnnoImposta
@@ -955,7 +955,7 @@ function generaXmlLipe($date_start, $date_end)
 
     // PartitaIVA
     $partitaIVA = $dom->createElementNS('urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp', 'iv:PartitaIVA');
-    $partitaIVA->appendChild($dom->createTextNode($piva ?: ''));
+    $partitaIVA->appendChild($dom->createTextNode($p_iva ?: ''));
     $frontespizio->appendChild($partitaIVA);
 
     // CFDichiarante

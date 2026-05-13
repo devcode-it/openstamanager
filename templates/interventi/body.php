@@ -74,7 +74,7 @@ echo '
             <p class="text-muted">'.tr('P.Iva', [], ['upper' => true]).':</p>
         </td>
         <td width="180">
-            '.strtoupper((string) $c_piva).'
+            '.strtoupper((string) $c_p_iva).'
         </td>
         <td width="100">
             <p class="text-muted">'.tr('C.F.', [], ['upper' => true]).':</p>

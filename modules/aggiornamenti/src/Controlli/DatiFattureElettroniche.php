@@ -278,17 +278,17 @@ class DatiFattureElettroniche extends Controllo
             $anagrafica = $fattura_vendita->anagrafica;
 
             // Controllo P.IVA
-            $piva_xml = $dati_anagrafici['IdFiscaleIVA']['IdCodice'] ?? '';
-            $piva_gestionale = $anagrafica->piva ?? '';
+            $p_iva_xml = $dati_anagrafici['IdFiscaleIVA']['IdCodice'] ?? '';
+            $p_iva_gestionale = $anagrafica->p_iva ?? '';
 
-            if ($piva_xml !== $piva_gestionale) {
+            if ($p_iva_xml !== $p_iva_gestionale) {
                 $errors[] = [
                     'type' => self::ERROR_WARNING,
                     'category' => self::CATEGORY_ANAGRAFICA,
-                    'field' => 'piva',
+                    'field' => 'p_iva',
                     'message' => tr('P.IVA non corrispondente'),
-                    'xml_value' => $piva_xml,
-                    'gestionale_value' => $piva_gestionale,
+                    'xml_value' => $p_iva_xml,
+                    'gestionale_value' => $p_iva_gestionale,
                     'suggestion' => tr('Verificare e aggiornare la P.IVA dell\'anagrafica cliente'),
                 ];
             }

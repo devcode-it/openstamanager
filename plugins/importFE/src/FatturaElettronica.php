@@ -71,27 +71,27 @@ class FatturaElettronica
         $azienda = Anagrafica::find(setting('Azienda predefinita'));
         if (!empty($azienda)) {
             $cessionario = $this->getHeader()['CessionarioCommittente']['DatiAnagrafici'] ?? null;
-            $piva_cessionario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
+            $p_iva_cessionario = $cessionario['IdFiscaleIVA']['IdCodice'] ?? null;
             $cf_cessionario = $cessionario['CodiceFiscale'] ?? null;
             $cedente = $this->getHeader()['CedentePrestatore']['DatiAnagrafici'] ?? null;
-            $piva_cedente = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
+            $p_iva_cedente = $cedente['IdFiscaleIVA']['IdCodice'] ?? null;
             $cf_cedente = $cedente['CodiceFiscale'] ?? null;
 
-            $piva_match = (!empty($piva_cessionario) && $azienda->piva === $piva_cessionario) || (!empty($piva_cedente) && $azienda->piva === $piva_cedente);
+            $p_iva_match = (!empty($p_iva_cessionario) && $azienda->p_iva === $p_iva_cessionario) || (!empty($p_iva_cedente) && $azienda->p_iva === $p_iva_cedente);
             $cf_match = (!empty($cf_cessionario) && $azienda->codice_fiscale === $cf_cessionario) || (!empty($cf_cedente) && $azienda->codice_fiscale === $cf_cedente);
 
-            if (!$piva_match && !$cf_match) {
+            if (!$p_iva_match && !$cf_match) {
                 $message = tr('Impossibile importare la fattura: P.IVA/CF non corrispondono.')."\n";
-                $message .= tr('Azienda: P.IVA _PIVA_, CF _CF_', [
-                    '_PIVA_' => !empty($azienda->piva) ? $azienda->piva : '-',
+                $message .= tr('Azienda: P.IVA _p_iva_, CF _CF_', [
+                    '_p_iva_' => !empty($azienda->p_iva) ? $azienda->p_iva : '-',
                     '_CF_' => !empty($azienda->codice_fiscale) ? $azienda->codice_fiscale : '-',
                 ])."\n";
-                $message .= tr('Cessionario: P.IVA _PIVA_, CF _CF_', [
-                    '_PIVA_' => !empty($piva_cessionario) ? $piva_cessionario : '-',
+                $message .= tr('Cessionario: P.IVA _p_iva_, CF _CF_', [
+                    '_p_iva_' => !empty($p_iva_cessionario) ? $p_iva_cessionario : '-',
                     '_CF_' => !empty($cf_cessionario) ? $cf_cessionario : '-',
                 ])."\n";
-                $message .= tr('Cedente: P.IVA _PIVA_, CF _CF_', [
-                    '_PIVA_' => !empty($piva_cedente) ? $piva_cedente : '-',
+                $message .= tr('Cedente: P.IVA _p_iva_, CF _CF_', [
+                    '_p_iva_' => !empty($p_iva_cedente) ? $p_iva_cedente : '-',
                     '_CF_' => !empty($cf_cedente) ? $cf_cedente : '-',
                 ]);
 
@@ -113,7 +113,7 @@ class FatturaElettronica
         // Ricerca anagrafica corrispondente per partita IVA o codice fiscale
         $anagrafica = null;
         if (!empty($partita_iva)) {
-            $anagrafica = Anagrafica::where('piva', $partita_iva)->first();
+            $anagrafica = Anagrafica::where('p_iva', $partita_iva)->first();
         }
         if (empty($anagrafica) && !empty($codice_fiscale)) {
             $anagrafica = Anagrafica::where('codice_fiscale', $codice_fiscale)->first();
@@ -288,12 +288,12 @@ class FatturaElettronica
         $info = $this->getAnagrafe($tipo);
 
         if (!empty($info['partita_iva']) && !empty($info['codice_fiscale'])) {
-            $anagrafica = Anagrafica::where('piva', $info['partita_iva'])
+            $anagrafica = Anagrafica::where('p_iva', $info['partita_iva'])
                 ->orWhere('codice_fiscale', $info['codice_fiscale']);
         } elseif (!empty($info['codice_fiscale'])) {
             $anagrafica = Anagrafica::where('codice_fiscale', $info['codice_fiscale']);
         } elseif (!empty($info['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', '=', $info['partita_iva']);
+            $anagrafica = Anagrafica::where('p_iva', '=', $info['partita_iva']);
         }
 
         $anagrafica = $anagrafica ? $anagrafica->first() : '';

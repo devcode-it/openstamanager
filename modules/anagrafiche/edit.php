@@ -100,7 +100,7 @@ if (count($problemi_anagrafica) > 0) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "piva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$piva$", "validation": "partita_iva" ]}
+                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "p_iva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$p_iva$", "validation": "partita_iva" ]}
                     </div>
 
                     <div class="col-md-3">

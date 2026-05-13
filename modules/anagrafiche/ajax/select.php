@@ -74,7 +74,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -138,7 +138,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -202,7 +202,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -245,7 +245,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -276,7 +276,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -327,7 +327,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -357,7 +357,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -408,7 +408,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 
@@ -692,7 +692,7 @@ switch ($resource) {
             $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`piva` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
         }
 

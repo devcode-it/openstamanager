@@ -74,7 +74,7 @@ echo '
                                         <strong>'.tr('Dati Fiscali').'</strong>
                                     </h5>
                                     <p class="text-muted mb-2">
-                                        '.(!empty($anagrafica->piva) ? '<i class="fa fa-building text-muted mr-1"></i> <strong>'.tr('P.IVA').':</strong> '.$anagrafica->piva.'<br>' : '').'
+                                        '.(!empty($anagrafica->p_iva) ? '<i class="fa fa-building text-muted mr-1"></i> <strong>'.tr('P.IVA').':</strong> '.$anagrafica->p_iva.'<br>' : '').'
                                         '.(!empty($anagrafica->codice_fiscale) ? '<i class="fa fa-id-card text-muted mr-1"></i> <strong>'.tr('C.F.').':</strong> '.$anagrafica->codice_fiscale : '').'
                                     </p>
                                 </div>

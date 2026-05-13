@@ -32,7 +32,7 @@ class ControlloClienti extends Resource implements RetrieveInterface
         // Ricerca per Partita IVA
         $partita_iva = $data['partita_iva'];
         if (!empty($partita_iva)) {
-            $cliente_partita_iva = Anagrafica::where('piva', $partita_iva)
+            $cliente_partita_iva = Anagrafica::where('p_iva', $partita_iva)
                 ->first();
         }
 

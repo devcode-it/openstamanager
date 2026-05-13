@@ -28,7 +28,7 @@ echo "
     <tr class='border-0'>
         <td class='gdpr-cell'>
             Il Titolare del trattamento è $f_ragionesociale con sede in $f_indirizzo, $f_citta_full.<br>
-            Codice Fiscale: $f_codicefiscale - P.IVA: $f_piva<br><br>
+            Codice Fiscale: $f_codicefiscale - P.IVA: $f_p_iva<br><br>
             Per qualsiasi informazione relativa al trattamento dei dati personali, è possibile contattare il Titolare all'indirizzo sopra indicato o all'email $f_email.
         </td>
     </tr>

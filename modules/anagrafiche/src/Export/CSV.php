@@ -103,7 +103,7 @@ class CSV extends CSVExporter
                 'label' => 'Sesso',
             ],
             [
-                'field' => 'piva',
+                'field' => 'p_iva',
                 'label' => 'Partita IVA',
             ],
             [

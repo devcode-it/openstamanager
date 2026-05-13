@@ -235,7 +235,7 @@ class CSV extends CSVImporter
         $anagrafica = null;
 
         if (!empty($record['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', $record['partita_iva'])->first();
+            $anagrafica = Anagrafica::where('p_iva', $record['partita_iva'])->first();
         }
 
         if (empty($anagrafica)) {

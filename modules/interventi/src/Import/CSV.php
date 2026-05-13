@@ -275,7 +275,7 @@ class CSV extends CSVImporter
 
         // Ricerca per partita IVA
         if (!empty($record['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', '=', $record['partita_iva'])->first();
+            $anagrafica = Anagrafica::where('p_iva', '=', $record['partita_iva'])->first();
         }
 
         // Ricerca per codice fiscale se non trovata con partita IVA
@@ -514,7 +514,7 @@ class CSV extends CSVImporter
 
             // Imposta partita IVA se presente
             if (!empty($record['partita_iva'])) {
-                $anagrafica->piva = $record['partita_iva'];
+                $anagrafica->p_iva = $record['partita_iva'];
             }
 
             // Imposta codice fiscale se presente
@@ -523,7 +523,7 @@ class CSV extends CSVImporter
             }
 
             // Imposta un telefono fittizio se mancante (richiesto per le anagrafiche)
-            if (empty($anagrafica->telefono) && empty($anagrafica->piva)) {
+            if (empty($anagrafica->telefono) && empty($anagrafica->p_iva)) {
                 $anagrafica->telefono = '000000000'; // Telefono fittizio per soddisfare i vincoli
             }
 

@@ -32,11 +32,11 @@ $prefixes = [
 ];
 
 foreach ($prefixes as $prefix) {
-    if ($replaces[$prefix.'piva'] != $replaces[$prefix.'codicefiscale']) {
-        $replaces[$prefix.'piva'] = !empty($replaces[$prefix.'piva']) ? 'P.Iva: '.$replaces[$prefix.'piva'] : '';
+    if ($replaces[$prefix.'p_iva'] != $replaces[$prefix.'codicefiscale']) {
+        $replaces[$prefix.'p_iva'] = !empty($replaces[$prefix.'p_iva']) ? 'P.Iva: '.$replaces[$prefix.'p_iva'] : '';
         $replaces[$prefix.'codicefiscale'] = !empty($replaces[$prefix.'codicefiscale']) ? 'C.F.: '.$replaces[$prefix.'codicefiscale'] : '';
     } else {
-        $replaces[$prefix.'piva'] = !empty($replaces[$prefix.'piva']) ? 'P.Iva/C.F.: '.$replaces[$prefix.'piva'] : '';
+        $replaces[$prefix.'p_iva'] = !empty($replaces[$prefix.'p_iva']) ? 'P.Iva/C.F.: '.$replaces[$prefix.'p_iva'] : '';
         $replaces[$prefix.'codicefiscale'] = '';
     }
 

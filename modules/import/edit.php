@@ -70,7 +70,7 @@ if (empty($id_record)) {
 
     // Caso speciale per anagrafiche: telefono e partita IVA (almeno uno dei due è obbligatorio)
     foreach ($fields as $key => $value) {
-        if (($value['field'] === 'telefono' || $value['field'] === 'piva')
+        if (($value['field'] === 'telefono' || $value['field'] === 'p_iva')
             && isset($value['required']) && $value['required'] === false) {
             // Sposta questi campi tra quelli obbligatori
             foreach ($campi_opzionali as $index => $campo) {

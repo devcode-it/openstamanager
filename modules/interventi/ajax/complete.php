@@ -40,7 +40,7 @@ switch ($op) {
             <div class="row">
                 <div class="col-md-6">
                     <p class="mb-2"><i class="fa fa-building text-muted"></i> <strong>'.tr('Ragione sociale').':</strong> '.$anagrafica->ragione_sociale.'</p>
-                    <p class="mb-0"><i class="fa fa-id-card text-muted"></i> <strong>'.tr('Partita IVA').':</strong> '.(!empty($anagrafica->piva) ? $anagrafica->piva : '<em class="text-muted">'.tr('Non specificata').'</em>').'</p>
+                    <p class="mb-0"><i class="fa fa-id-card text-muted"></i> <strong>'.tr('Partita IVA').':</strong> '.(!empty($anagrafica->p_iva) ? $anagrafica->p_iva : '<em class="text-muted">'.tr('Non specificata').'</em>').'</p>
                 </div>
                 <div class="col-md-6">
                     <p class="mb-2"><i class="fa fa-credit-card text-muted"></i> <strong>'.tr('Codice fiscale').':</strong> '.(!empty($anagrafica->codice_fiscale) ? $anagrafica->codice_fiscale : '<em class="text-muted">'.tr('Non specificato').'</em>').'</p>

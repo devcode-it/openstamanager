@@ -118,7 +118,7 @@ echo '
 		</div>
 
 		<div class="col-md-3">
-			{[ "type": "text", "label": "'.tr('Partita IVA').'", "name": "piva", "value": "'.$record['piva'].'", "help": "'.tr('Partita IVA del rappresentante fiscale.').'", "disabled":"disabled"]}
+			{[ "type": "text", "label": "'.tr('Partita IVA').'", "name": "p_iva", "value": "'.$record['p_iva'].'", "help": "'.tr('Partita IVA del rappresentante fiscale.').'", "disabled":"disabled"]}
 		</div>
 		<div class="col-md-3">
 			{[ "type": "text", "label": "'.tr('Codice fiscale').'", "name": "codice_fiscale", "value": "'.$record['codice_fiscale'].'", "help": "'.tr('Codice fiscale del rappresentante fiscale.').'", "disabled":"disabled" ]}
@@ -374,14 +374,14 @@ echo '
 
 function rappresentante_fiscale() {
 	let rappresentante_fiscale = input("is_rappresentante_fiscale");
-	let piva = input("piva");
+	let p_iva = input("p_iva");
 	let codice_fiscale = input("codice_fiscale");
 
 	if(rappresentante_fiscale.get()==1){
-		input("piva").enable();
+		input("p_iva").enable();
 		input("codice_fiscale").enable();
 	} else {
-		input("piva").disable();
+		input("p_iva").disable();
 		input("codice_fiscale").disable();
 	}
 }

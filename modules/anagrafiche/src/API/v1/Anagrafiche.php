@@ -126,8 +126,8 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
         if (isset($data['ragione_sociale'])) {
             $anagrafica->ragione_sociale = $data['ragione_sociale'];
         }
-        if (isset($data['piva'])) {
-            $anagrafica->piva = $data['piva'];
+        if (isset($data['p_iva'])) {
+            $anagrafica->p_iva = $data['p_iva'];
         }
         if (isset($data['codice_fiscale'])) {
             $anagrafica->codice_fiscale = $data['codice_fiscale'];

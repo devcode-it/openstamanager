@@ -104,7 +104,7 @@ switch (post('op')) {
         $anagrafica->tipologie = (array) post('idtipoanagrafica');
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-        $anagrafica->partita_iva = strtoupper(post('piva'));
+        $anagrafica->partita_iva = strtoupper(post('p_iva'));
 
         $anagrafica->save();
 
@@ -159,7 +159,7 @@ switch (post('op')) {
         // Controllo che la Partita IVA non sia già presente
         $partita_iva = $anagrafica->partita_iva;
         if (!empty($partita_iva)) {
-            $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
+            $anagrafiche_partita_iva = Anagrafica::where('p_iva', $partita_iva)
                 ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {
@@ -231,7 +231,7 @@ switch (post('op')) {
         $anagrafica->codice_destinatario = strtoupper(post('codice_destinatario')) ?: null;
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
-        $anagrafica->partita_iva = strtoupper(post('piva'));
+        $anagrafica->partita_iva = strtoupper(post('p_iva'));
 
         $anagrafica->save();
 
@@ -274,7 +274,7 @@ switch (post('op')) {
         // Controllo che la Partita IVA non sia già presente
         $partita_iva = $anagrafica->partita_iva;
         if (!empty($partita_iva)) {
-            $anagrafiche_partita_iva = Anagrafica::where('piva', $partita_iva)
+            $anagrafiche_partita_iva = Anagrafica::where('p_iva', $partita_iva)
                 ->where('id', '!=', $anagrafica->id)
                 ->get();
             if (!$anagrafiche_partita_iva->isEmpty()) {

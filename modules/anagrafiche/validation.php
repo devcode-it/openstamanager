@@ -118,8 +118,8 @@ switch ($name) {
 
     case 'partita_iva':
         $disponibile = Anagrafica::where([
-            ['piva', $value],
-            ['piva', '<>', ''],
+            ['p_iva', $value],
+            ['p_iva', '<>', ''],
             ['id', '<>', $id_record],
         ])->count() == 0;
 

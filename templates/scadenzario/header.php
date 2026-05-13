@@ -29,5 +29,5 @@
 
 echo '
 <div class="text-right" style="'.((!empty($settings['header-font-size'])) ? 'font-size:'.$settings['header-font-size'].'px;' : '').'"  >
-    <p><b>'.$f_ragionesociale.'</b>'.(!empty($f_piva) ? ', '.tr('P.Iva').': '.$f_piva : '').'</p>
+    <p><b>'.$f_ragionesociale.'</b>'.(!empty($f_p_iva) ? ', '.tr('P.Iva').': '.$f_p_iva : '').'</p>
 </div>';

@@ -43,9 +43,9 @@ if ($dir == 'entrata') {
         </div>';
     }
 
-    $rs2 = $dbo->fetchArray('SELECT piva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE id='.prepare($record['id_anagrafica']));
+    $rs2 = $dbo->fetchArray('SELECT p_iva, codice_fiscale, citta, indirizzo, cap, provincia FROM an_anagrafiche WHERE id='.prepare($record['id_anagrafica']));
     $campi_mancanti = [];
-    if ($rs2[0]['piva'] == '') {
+    if ($rs2[0]['p_iva'] == '') {
         if ($rs2[0]['codice_fiscale'] == '') {
             array_push($campi_mancanti, 'codice fiscale');
         }

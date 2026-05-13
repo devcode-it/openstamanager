@@ -59,7 +59,7 @@ class SediAzienda extends AppResource
         $query = 'SELECT `an_sedi`.`id`,
             `an_sedi`.`id_anagrafica` AS id_cliente,
             `an_sedi`.`nomesede` AS nome,
-            `an_sedi`.`piva` AS partita_iva,
+            `an_sedi`.`p_iva` AS partita_iva,
             `an_sedi`.`codice_fiscale`,
             `an_sedi`.`indirizzo`,
             `an_sedi`.`indirizzo2`,

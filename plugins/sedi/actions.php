@@ -90,7 +90,7 @@ switch ($operazione) {
         $sede->enable_newsletter = post('enable_newsletter');
         $sede->codice_destinatario = post('codice_destinatario');
         $sede->is_rappresentante_fiscale = post('is_rappresentante_fiscale');
-        $sede->piva = post('piva');
+        $sede->p_iva = post('p_iva');
         $sede->codice_fiscale = post('codice_fiscale');
         $sede->is_automezzo = post('is_automezzo');
         $sede->idzona = !empty(post('idzona')) ? post('idzona') : 0;

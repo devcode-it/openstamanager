@@ -81,7 +81,7 @@ class Clienti extends AppResource
         $query = 'SELECT `an_anagrafiche`.`id` AS id,
             `an_anagrafiche`.`ragione_sociale`,
             `an_anagrafiche`.`tipo`,
-            `an_anagrafiche`.`piva` AS partita_iva,
+            `an_anagrafiche`.`p_iva` AS partita_iva,
             `an_anagrafiche`.`codice_fiscale`,
             `an_anagrafiche`.`indirizzo`,
             `an_anagrafiche`.`indirizzo2`,
@@ -122,7 +122,7 @@ class Clienti extends AppResource
 
         $anagrafica->ragione_sociale = $data['ragione_sociale'];
         $anagrafica->tipo = $data['tipo'];
-        $anagrafica->piva = $data['partita_iva'];
+        $anagrafica->p_iva = $data['partita_iva'];
         $anagrafica->codice_fiscale = $data['codice_fiscale'];
         $anagrafica->indirizzo = $data['indirizzo'];
         $anagrafica->cap = $data['cap'];
@@ -162,7 +162,7 @@ class Clienti extends AppResource
         // Aggiornamento anagrafica
         $record->ragione_sociale = $data['ragione_sociale'];
         $record->tipo = $data['tipo'];
-        $record->piva = $data['partita_iva'];
+        $record->p_iva = $data['partita_iva'];
         $record->codice_fiscale = $data['codice_fiscale'];
         $record->indirizzo = $data['indirizzo'];
         $record->cap = $data['cap'];

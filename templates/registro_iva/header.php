@@ -33,7 +33,7 @@ echo '
         <p><b>'.$f_ragionesociale.'</b></p>
         <p>'.$f_indirizzo.'</p>
         <p>'.$f_citta_full.'</p>
-        <p>'.(!empty($f_piva) ? tr('P.Iva').': '.$f_piva : '').'</p>
+        <p>'.(!empty($f_p_iva) ? tr('P.Iva').': '.$f_p_iva : '').'</p>
         <p>'.(!empty($f_codicefiscale) ? tr('C.F.').': '.$f_codicefiscale : '').'</p>
     </div>
 </div>';

@@ -72,7 +72,7 @@ echo '
 		<div class="card-body collapse">
 			<div class="row">
 				<div class="col-md-4">
-					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "piva", "id": "piva_add", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
+					{[ "type": "text", "label": "'.tr('Partita IVA').'", "maxlength": 16, "name": "p_iva", "id": "p_iva_add", "class": "text-center alphanumeric-mask", "validation": "partita_iva"]}
 				</div>
 
 				<div class="col-md-4">
@@ -186,7 +186,7 @@ echo '
 			}
 
 			// Aggiunta nazione come parametro aggiuntivo per la validazione partita iva
-			$("#piva_add").data("additional", $(this).selectData().iso2);
+			$("#p_iva_add").data("additional", $(this).selectData().iso2);
 		}
 	});
 

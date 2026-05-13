@@ -271,7 +271,7 @@ class CSV extends CSVImporter
         $anagrafica = null;
 
         if (!empty($record['partita_iva'])) {
-            $anagrafica = Anagrafica::where('piva', $record['partita_iva'])->first();
+            $anagrafica = Anagrafica::where('p_iva', $record['partita_iva'])->first();
         }
 
         if (empty($anagrafica) && !empty($record['codice_fiscale'])) {
@@ -313,14 +313,14 @@ class CSV extends CSVImporter
             $anagrafica = Anagrafica::build($ragione_sociale, '', '', $tipologie);
 
             if (!empty($record['partita_iva'])) {
-                $anagrafica->piva = $record['partita_iva'];
+                $anagrafica->p_iva = $record['partita_iva'];
             }
 
             if (!empty($record['codice_fiscale'])) {
                 $anagrafica->codice_fiscale = $record['codice_fiscale'];
             }
 
-            if (empty($anagrafica->telefono) && empty($anagrafica->piva)) {
+            if (empty($anagrafica->telefono) && empty($anagrafica->p_iva)) {
                 $anagrafica->telefono = '000000000';
             }
 

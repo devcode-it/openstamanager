@@ -365,7 +365,7 @@ class FatturaElettronica implements \Stringable
             $anagrafica = static::getAzienda();
         }
 
-        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']));
+        $prefix = 'IT'.(!empty($anagrafica['codice_fiscale'] and ($anagrafica['codice_fiscale'] != $anagrafica['p_iva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['p_iva']));
 
         if (empty($this->documento['progressivo_invio']) || !empty($new)) {
             $database = database();
@@ -517,7 +517,7 @@ class FatturaElettronica implements \Stringable
 
         // Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico'
         if ($data['tipo'] == 'Azienda' || $data['tipo'] == 'Ente pubblico') {
-            $extraFields = ($data['tipo'] == 'Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+            $extraFields = ($data['tipo'] == 'Azienda') ? ['p_iva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
             $fields = array_merge($fields, $extraFields);
         } elseif ($data['tipo'] == 'Privato') {
             echo "<div class='alert alert-danger fade in alert-dismissible'><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4><i class=\"icon fa fa-ban\"></i>".tr('Errore').' </h4>'.tr("L'Anagrafica Azienda non può avere tipologia \"Privato\"").'.</div>';
@@ -553,7 +553,7 @@ class FatturaElettronica implements \Stringable
 
         // Controllo p.iva valorizzata in caso l'anagrafica Azienda sia di tipologia 'Azienda' o codice fiscale in caso sia tipologia 'Ente pubblico' o 'Privato'
         if (!empty($data['tipo'])) {
-            $extraFields = ($data['tipo'] == 'Azienda') ? ['piva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
+            $extraFields = ($data['tipo'] == 'Azienda') ? ['p_iva' => tr('Partita IVA')] : ['codice_fiscale' => tr('Codice Fiscale')];
             $fields = array_merge($fields, $extraFields);
         }
 
@@ -565,7 +565,7 @@ class FatturaElettronica implements \Stringable
             $fields['codice_destinatario'] = ($data['tipo'] == 'Ente pubblico' && empty($data['codice_destinatario'])) ? 'Codice unico ufficio' : '';
         } else {
             // se azienda chiedo partita iva
-            $fields['piva'] = 'Partita IVA';
+            $fields['p_iva'] = 'Partita IVA';
         }
 
         $missing = [];
@@ -591,7 +591,7 @@ class FatturaElettronica implements \Stringable
         if (!empty($id_vettore)) {
             $data = Anagrafica::find($id_vettore);
             $fields = [
-                'piva' => 'Partita IVA',
+                'p_iva' => 'Partita IVA',
                 'nazione' => 'Nazione',
             ];
 
@@ -658,7 +658,7 @@ class FatturaElettronica implements \Stringable
         $result = [
             'IdTrasmittente' => [
                 'IdPaese' => $anagrafica->nazione->iso2,
-                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale'] != $anagrafica['piva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']),
+                'IdCodice' => (!empty($anagrafica['codice_fiscale']) and ($anagrafica['codice_fiscale'] != $anagrafica['p_iva'])) ? $anagrafica['codice_fiscale'] : str_replace($anagrafica->nazione->iso2, '', $anagrafica['p_iva']),
             ],
         ];
 
@@ -698,12 +698,12 @@ class FatturaElettronica implements \Stringable
         $is_privato_estero = ($anagrafica->nazione->iso2 != 'IT' && $anagrafica->tipo == 'Privato');
 
         // Partita IVA (obbligatoria se presente)
-        if (!empty($anagrafica['piva'])) {
+        if (!empty($anagrafica['p_iva'])) {
             if (!empty($anagrafica->nazione->iso2)) {
                 $result['IdFiscaleIVA']['IdPaese'] = $anagrafica->nazione->iso2;
             }
             // Rimuovo eventuali idicazioni relative alla nazione
-            $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['piva']);
+            $result['IdFiscaleIVA']['IdCodice'] = str_replace($anagrafica->nazione->iso2, '', $anagrafica['p_iva']);
         }
 
         // Codice fiscale
@@ -965,7 +965,7 @@ class FatturaElettronica implements \Stringable
             $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta_acconto))['percentuale'];
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result[]['DatiRitenuta'] = [
-                'TipoRitenuta' => ($azienda['piva'] != $azienda['codice_fiscale'] & $azienda['tipo'] != 'Ente pubblico') ? 'RT01' : 'RT02',
+                'TipoRitenuta' => ($azienda['p_iva'] != $azienda['codice_fiscale'] & $azienda['tipo'] != 'Ente pubblico') ? 'RT01' : 'RT02',
                 'ImportoRitenuta' => $totale_ritenuta_acconto,
                 'AliquotaRitenuta' => $percentuale,
                 'CausalePagamento' => setting("Causale ritenuta d'acconto"),

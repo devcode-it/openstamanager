@@ -89,7 +89,7 @@ echo '
                     <p class="small-bold text-muted">'.tr('Partita IVA', [], ['upper' => true]).'</p>
                 </td>
                 <td class="border-bottom text-right">
-                    <small>$c_piva$</small>
+                    <small>$c_p_iva$</small>
                 </td>
             </tr>
 

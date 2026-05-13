@@ -269,7 +269,7 @@ abstract class CSVImporter implements ImporterInterface
 
         // Caso speciale per anagrafiche: almeno uno tra telefono, partita IVA, codice fiscale e email deve essere mappato
         $telefono_mapped = in_array('telefono', $mapped_fields);
-        $piva_mapped = in_array('piva', $mapped_fields);
+        $p_iva_mapped = in_array('p_iva', $mapped_fields);
         $codice_fiscale_mapped = in_array('codice_fiscale', $mapped_fields);
         $email_mapped = in_array('email', $mapped_fields);
 
@@ -277,7 +277,7 @@ abstract class CSVImporter implements ImporterInterface
         // parte di una condizione OR (almeno uno deve essere presente)
         $fields = $this->getAvailableFields();
         $has_telefono_field = false;
-        $has_piva_field = false;
+        $has_p_iva_field = false;
         $has_codice_fiscale_field = false;
         $has_email_field = false;
 
@@ -285,8 +285,8 @@ abstract class CSVImporter implements ImporterInterface
             if ($field['field'] === 'telefono' && isset($field['required']) && $field['required'] === false) {
                 $has_telefono_field = true;
             }
-            if ($field['field'] === 'piva' && isset($field['required']) && $field['required'] === false) {
-                $has_piva_field = true;
+            if ($field['field'] === 'p_iva' && isset($field['required']) && $field['required'] === false) {
+                $has_p_iva_field = true;
             }
             if ($field['field'] === 'codice_fiscale' && isset($field['required']) && $field['required'] === false) {
                 $has_codice_fiscale_field = true;
@@ -297,8 +297,8 @@ abstract class CSVImporter implements ImporterInterface
         }
 
         // Se i campi sono presenti con required=false, allora almeno uno deve essere mappato
-        if ($has_telefono_field && $has_piva_field && $has_codice_fiscale_field && $has_email_field
-            && !$telefono_mapped && !$piva_mapped && !$codice_fiscale_mapped && !$email_mapped) {
+        if ($has_telefono_field && $has_p_iva_field && $has_codice_fiscale_field && $has_email_field
+            && !$telefono_mapped && !$p_iva_mapped && !$codice_fiscale_mapped && !$email_mapped) {
             return false;
         }
 

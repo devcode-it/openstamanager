@@ -35,11 +35,11 @@ switch (post('op')) {
         if (post('id_conto') !== null) {
             if ($lvl == '2') {
                 // Controllo che non sia stato usato un numero non valido del conto
-                $query = 'SELECT idpianodeiconti1, numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND idpianodeiconti1='.prepare($id_conto);
+                $query = 'SELECT id_piano_dei_conti1, numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND id_piano_dei_conti1='.prepare($id_conto);
                 $rs = $dbo->fetchArray($query);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, idpianodeiconti1) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).')';
+                    $query = 'INSERT INTO co_pianodeiconti2(numero, descrizione, id_piano_dei_conti1) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).')';
                 }
             } else {
                 // Controllo che non sia stato usato un numero non valido del conto
@@ -83,7 +83,7 @@ switch (post('op')) {
         }
 
         if ($lvl == 2) {
-            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND idpianodeiconti1='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT numero FROM co_pianodeiconti2 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND id_piano_dei_conti1='.prepare($idpianodeiconti);
 
             $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', dir='.prepare($dir).' WHERE id='.prepare($id_conto);
         } else {
@@ -174,7 +174,7 @@ switch (post('op')) {
         $data_fine = $_SESSION['period_start'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Apertura conto'), $_SESSION['period_start'], 0, true);
 
@@ -229,7 +229,7 @@ switch (post('op')) {
         $data_fine = $_SESSION['period_end'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Chiusura conto'), $_SESSION['period_end'], 0, true);
 

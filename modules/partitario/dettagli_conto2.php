@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 $id_conto = get('id_conto');
 $conto_secondo = $dbo->selectOne('co_pianodeiconti2', '*', ['id' => $id_conto]);
-$conto_primo = $dbo->selectOne('co_pianodeiconti1', '*', ['id' => $conto_secondo['idpianodeiconti1']]);
+$conto_primo = $dbo->selectOne('co_pianodeiconti1', '*', ['id' => $conto_secondo['id_piano_dei_conti1']]);
 
 // Livello 3
 $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.id, anagrafica.deleted_at

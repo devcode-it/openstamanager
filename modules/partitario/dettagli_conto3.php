@@ -25,7 +25,7 @@ use Models\User;
 $id_conto = get('id_conto');
 
 // Se il conto è di stato patrimoniale, devo raggruppare i movimenti anche per segno
-$is_patrimoniale = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti1 WHERE id=(SELECT idpianodeiconti1 FROM co_pianodeiconti2 WHERE id=(SELECT idpianodeiconti2 FROM co_pianodeiconti3 WHERE id='.prepare($id_conto).'))')['descrizione'] == 'Patrimoniale';
+$is_patrimoniale = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti1 WHERE id=(SELECT id_piano_dei_conti1 FROM co_pianodeiconti2 WHERE id=(SELECT idpianodeiconti2 FROM co_pianodeiconti3 WHERE id='.prepare($id_conto).'))')['descrizione'] == 'Patrimoniale';
 $group_by = $is_patrimoniale ? ', IF(`totale`>0, 1, 0)' : '';
 
 // Calcolo totale conto da elenco movimenti di questo conto

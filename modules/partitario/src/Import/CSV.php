@@ -49,7 +49,7 @@ class CSV extends CSVImporter
                 'required' => true,
             ],
             [
-                'field' => 'idpianodeiconti1',
+                'field' => 'id_piano_dei_conti1',
                 'label' => 'Sezione',
                 'required' => true,
             ],
@@ -80,7 +80,7 @@ class CSV extends CSVImporter
             $database = database();
 
             // Validazione dei campi obbligatori
-            if (empty($record['numero']) || empty($record['descrizione']) || empty($record['idpianodeiconti1'])) {
+            if (empty($record['numero']) || empty($record['descrizione']) || empty($record['id_piano_dei_conti1'])) {
                 return false;
             }
 
@@ -165,11 +165,11 @@ class CSV extends CSVImporter
      */
     protected function trovaConto1($record, $database)
     {
-        if (empty($record['idpianodeiconti1'])) {
+        if (empty($record['id_piano_dei_conti1'])) {
             return null;
         }
 
-        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['idpianodeiconti1']).')');
+        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['id_piano_dei_conti1']).')');
 
         return !empty($result) ? $result : null;
     }
@@ -229,7 +229,7 @@ class CSV extends CSVImporter
             $database->insert('co_pianodeiconti2', [
                 'numero' => $parti_conto['codice_conto2'],
                 'descrizione' => $record['descrizione'],
-                'idpianodeiconti1' => $conto1['id'],
+                'id_piano_dei_conti1' => $conto1['id'],
                 'dir' => $record['dir'],
             ]);
         }

@@ -32,7 +32,7 @@ $anno_inizio = date('Y', strtotime((string) $documento['data_competenza']));
 $readonly = $anno_inizio == date('Y') ? 0 : 1;
 
 // Recupero conti patrimoniali
-$conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeiconti2 WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale") ORDER BY descrizione ASC');
+$conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale") ORDER BY descrizione ASC');
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">

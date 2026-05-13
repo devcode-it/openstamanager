@@ -96,7 +96,7 @@ foreach ($primo_livello as $conto_primo) {
                 <tbody>';
 
     // Livello 2
-    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE idpianodeiconti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
+    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
     $secondo_livello = $dbo->fetchArray($query2);
 
     foreach ($secondo_livello as $conto_secondo) {

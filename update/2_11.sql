@@ -1084,6 +1084,7 @@ ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `co_movimenti_modelli` CHANGE `idconto` `id_conto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
@@ -1095,4 +1096,9 @@ ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT 
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 
 ALTER TABLE `co_movimenti` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
+ALTER TABLE `co_movimenti_modelli` CHANGE `idmastrino` `id_mastrino` INT NOT NULL;
+
 ALTER TABLE `co_movimenti` CHANGE `primanota` `prima_nota` TINYINT NOT NULL;
+ALTER TABLE `co_pagamenti` CHANGE `idconto_vendite` `id_conto_vendite` INT NULL DEFAULT NULL;
+ALTER TABLE `co_pagamenti` CHANGE `idconto_acquisti` `id_conto_acquisti` INT NULL DEFAULT NULL;
+ALTER TABLE `co_pianodeiconti2` CHANGE `idpianodeiconti1` `id_piano_dei_conti1` INT NOT NULL;

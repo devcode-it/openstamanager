@@ -33,7 +33,7 @@ FROM
     co_movimenti 
     INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id 
     INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id
-    INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.idpianodeiconti1=co_pianodeiconti1.id
+    INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id
 WHERE 
     co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 

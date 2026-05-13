@@ -184,7 +184,7 @@ if (in_array($id_azienda, $tipi_anagrafica)) {
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-md-'8'">
+                            <div class="col-md-10">
                                 {[ "type": "text", "label": "<?php echo tr('Indirizzo'); ?>", "name": "indirizzo", "value": "$indirizzo$" ]}
                             </div>
 

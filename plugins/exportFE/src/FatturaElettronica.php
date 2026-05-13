@@ -1088,7 +1088,7 @@ class FatturaElettronica implements \Stringable
         $database = database();
 
         $causale = $database->fetchOne('SELECT `title` FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id`=`dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['id_causale_t']))['name'];
-        $aspetto = $database->fetchOne('SELECT `title` FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']))['name'];
+        $aspetto = $database->fetchOne('SELECT `title` FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['id_aspetto_beni']))['name'];
 
         $result = [];
 

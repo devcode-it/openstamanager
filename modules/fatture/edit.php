@@ -612,7 +612,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
         <div class="card-body">
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "idaspettobeni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$idaspettobeni$", "icon-after": "add|'.Module::where('name', 'Aspetto beni')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
+                    {[ "type": "select", "label": "'.tr('Aspetto beni').'", "name": "id_aspetto_beni", "placeholder": "", "ajax-source": "aspetto-beni", "value": "$id_aspetto_beni$", "icon-after": "add|'.Module::where('name', 'Aspetto beni')->first()->id.'||'.(($fattura->stato->id != $id_stato_bozza) ? 'disabled' : '').'" ]}
                 </div>
 
                 <div class="col-md-3">

@@ -227,7 +227,7 @@ if ($dir == 'entrata') {
         <div class="card-body">
 			<div class="row">
 				<div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "idaspettobeni", "value": "$idaspettobeni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo Module::where('name', 'Aspetto beni')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Aspetto beni'); ?>", "name": "id_aspetto_beni", "value": "$id_aspetto_beni$", "ajax-source": "aspetto-beni", "icon-after": "add|<?php echo Module::where('name', 'Aspetto beni')->first()->id; ?>|||<?php echo $block_edit ? 'disabled' : ''; ?>" ]}
 				</div>
 
 				<div class="col-md-3">

@@ -36,7 +36,7 @@ class AspettoBeni extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idaspettobeni');
+        return $this->hasMany(DDT::class, 'id_aspetto_beni');
     }
 
     public function getModuleAttribute()

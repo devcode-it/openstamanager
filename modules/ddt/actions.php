@@ -103,7 +103,7 @@ switch (filter('op')) {
             $ddt->idvettore = post('idvettore') ?: null;
             $ddt->data_ora_trasporto = post('data_ora_trasporto') ?: null;
             $ddt->id_porto = post('id_porto') ?: null;
-            $ddt->idaspettobeni = post('idaspettobeni') ?: null;
+            $ddt->id_aspetto_beni = post('id_aspetto_beni') ?: null;
             $ddt->idrivalsainps = $idrivalsainps ?: null;
             $ddt->idritenutaacconto = $idritenutaacconto ?: null;
 
@@ -575,7 +575,7 @@ switch (filter('op')) {
         $copia = DDT::build($ddt->anagrafica, $tipo, $ddt->data, $id_segment);
         $copia->stato()->associate($stato);
         $copia->id_ddt_trasporto_interno = $ddt->id;
-        $copia->idaspettobeni = $ddt->idaspettobeni;
+        $copia->id_aspetto_beni = $ddt->id_aspetto_beni;
         $copia->id_causale_t = $ddt->id_causale_t;
         $copia->id_spedizione = $ddt->id_spedizione;
         $copia->n_colli = $ddt->n_colli;

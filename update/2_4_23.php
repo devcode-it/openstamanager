@@ -5,8 +5,10 @@ use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 
 // Correzione movimenti contabili automatici per Fatture dalla versione 2.4.17 in poi
-$fatture = Fattura::where('created_at', '>', '2020-08-01')
-    ->whereHas('stato', fn ($query) => $query->whereNotIn('descrizione', ['Bozza', 'Annullata']))
+$fatture = Fattura::join('co_statidocumento', 'co_statidocumento.id', '=', 'co_documenti.idstatodocumento')
+    ->where('co_documenti.created_at', '>', '2020-08-01')
+    ->whereNotIn('co_statidocumento.descrizione', ['Bozza', 'Annullata'])
+    ->select('co_documenti.*')
     ->get();
 
 foreach ($fatture as $fattura) {

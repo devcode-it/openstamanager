@@ -44,7 +44,7 @@ $id_impianti = explode(',', (string) $impianti[0]['idimpianti']);
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {
     $id_sede = $dbo->fetchOne('SELECT id_sede FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_sede'];
-    $id_tecnico = $dbo->fetchOne('SELECT id_tecnicoo FROM my_impianti WHERE id = '.prepare($id_impianti[0]))[id_tecnicoco'];
+    $id_tecnico = $dbo->fetchOne('SELECT id_tecnicoo FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_tecnico'];
 }
 
 // Informazioni del promemoria

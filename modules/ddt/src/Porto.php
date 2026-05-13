@@ -36,7 +36,7 @@ class Porto extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'idporto');
+        return $this->hasMany(DDT::class, 'id_porto');
     }
 
     public function getModuleAttribute()

@@ -246,7 +246,7 @@ if ($dir == 'entrata') {
 			<div class="row">
 
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "idporto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$idporto$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Porto'); ?>", "name": "id_porto", "placeholder": "-", "help": "<?php echo tr('<ul><li>Franco: pagamento del trasporto a carico del mittente</li> <li>Assegnato: pagamento del trasporto a carico del destinatario</li> </ul>'); ?>", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) ORDER BY `title` ASC", "value": "$id_porto$" ]}
 				</div>
 
 				<div class="col-md-3">

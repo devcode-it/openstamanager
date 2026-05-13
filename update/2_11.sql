@@ -1072,3 +1072,4 @@ ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico`
 
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idporto` `id_porto` INT NOT NULL;

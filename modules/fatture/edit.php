@@ -620,7 +620,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "idporto", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "$idporto$" ]}
+                    {[ "type": "select", "label": "'.tr('Porto').'", "name": "id_portoo", "placeholder": "", "values": "query=SELECT `dt_porto`.`id`, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "id_portoto$" ]}
                 </div>
 
                 <div class="col-md-3">

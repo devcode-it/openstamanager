@@ -1023,3 +1023,4 @@ ALTER TABLE `co_provvigioni` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` DROP `agentemaster`;
 ALTER TABLE `an_anagrafiche` CHANGE `idzona` `id_zona` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `id_tipo_intervento_default` INT NULL DEFAULT NULL;

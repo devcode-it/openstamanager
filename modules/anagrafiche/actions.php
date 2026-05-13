@@ -92,7 +92,7 @@ switch (post('op')) {
         $anagrafica->foro_competenza = post('foro_competenza');
         $anagrafica->riferimento_amministrazione = post('riferimento_amministrazione') ?: null;
         $anagrafica->colore = post('colore');
-        $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
+        $anagrafica->id_tipo_intervento_default = post('id_tipo_intervento_default') ?: null;
         $anagrafica->id_dichiarazione_intento_default = post('id_dichiarazione_intento_default') ?: null;
         $anagrafica->id_cliente_finale = post('id_cliente_finale') ?: null;
         $anagrafica->provvigione_default = post('provvigione_default');

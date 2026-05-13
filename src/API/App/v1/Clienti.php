@@ -99,7 +99,7 @@ class Clienti extends AppResource
             `an_anagrafiche`.`note`,
             `an_anagrafiche`.`deleted_at`,
             IF(`an_anagrafiche`.`deleted_at` IS NULL, 0, 1) AS deleted,
-            `an_anagrafiche`.`idtipointervento_default` AS id_tipo_intervento_default
+            `an_anagrafiche`.`id_tipo_intervento_default` AS id_tipo_intervento_default
         FROM `an_anagrafiche`
             LEFT JOIN `an_nazioni` ON `an_anagrafiche`.`id_nazione` = `an_nazioni`.`id`
             LEFT JOIN `an_nazioni_lang` ON (`an_nazioni`.`id` = `an_nazioni_lang`.`id_record` AND `an_nazioni_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')

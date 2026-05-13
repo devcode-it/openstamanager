@@ -21,7 +21,7 @@ try {
     // Query per recuperare i documenti collegati (senza duplicare le sessioni di intervento)
     $query = 'SELECT `in_interventi`.`idtipointervento`, id, codice AS numero, data_richiesta AS data, "Attività" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
     UNION
-    SELECT `an_anagrafiche`.`idtipointervento_default` AS `idtipointervento`, id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idtipointervento_default` = '.prepare($id_record).'
+    SELECT `an_anagrafiche`.`id_tipo_intervento_default` AS `idtipointervento`, id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_tipo_intervento_default` = '.prepare($id_record).'
     UNION
     SELECT `co_preventivi`.`idtipointervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`idtipointervento` = '.prepare($id_record).'
     UNION

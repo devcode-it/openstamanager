@@ -190,7 +190,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                     $sessione->save();
                 } else {
                     $anagrafica = Anagrafica::find(setting('Azienda predefinita'));
-                    $tipo = $anagrafica->idtipointervento_default ?: TipoSessione::first();
+                    $tipo = $anagrafica->id_tipo_intervento_default ?: TipoSessione::first();
                     $stato = Stato::find(setting('Stato predefinito dell\'attività'));
                     $data_richiesta = Carbon::now();
 

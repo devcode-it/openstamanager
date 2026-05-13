@@ -706,7 +706,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codicerea", "value": "$codicerea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
+                        {[ "type": "text", "label": "<?php echo tr('Codice R.E.A.').' <small>('.tr('provincia-C.C.I.A.A.').')</small>'; ?>", "name": "codice_rea", "value": "$codice_rea$", "class": "rea-mask text-uppercase", "help": "<?php echo tr('Esempio: _PATTERN_', [
                             '_PATTERN_' => 'RM-123456',
                         ]); ?>" ]}
                     </div>

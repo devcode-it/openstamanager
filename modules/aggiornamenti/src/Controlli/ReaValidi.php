@@ -65,7 +65,7 @@ class ReaValidi extends Controllo
          */
         $anagrafiche_interessate = $database->fetchArray('SELECT
             `an_anagrafiche`.`id` AS id,
-            `an_anagrafiche`.`codicerea`,
+            `an_anagrafiche`.`codice_rea`,
             `an_anagrafiche`.`ragione_sociale`,
             GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipi_anagrafica
         FROM `an_anagrafiche`
@@ -73,7 +73,7 @@ class ReaValidi extends Controllo
            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.id = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
-            `codicerea` NOT REGEXP "([A-Za-z]{2})-([0-9]{1,20})" AND `codicerea` != ""
+            `codice_rea` NOT REGEXP "([A-Za-z]{2})-([0-9]{1,20})" AND `codice_rea` != ""
         AND
             `deleted_at` IS NULL
         GROUP BY `an_anagrafiche`.`id`');
@@ -87,7 +87,7 @@ class ReaValidi extends Controllo
                 'id' => $anagrafica['id'],
                 'nome' => \Modules::link('Anagrafiche', $anagrafica['id'], $anagrafica['ragione_sociale']),
                 'descrizione' => tr('Il codice REA "_REA_" non è valido.', [
-                    '_REA_' => $anagrafica['codicerea'],
+                    '_REA_' => $anagrafica['codice_rea'],
                 ]),
             ]);
         }
@@ -96,7 +96,7 @@ class ReaValidi extends Controllo
     public function execute($record, $params = [])
     {
         $anagrafica = Anagrafica::find($record['id']);
-        $anagrafica->codicerea = null;
+        $anagrafica->codice_rea = null;
         $anagrafica->save();
 
         return true;
@@ -111,7 +111,7 @@ class ReaValidi extends Controllo
         $results = [];
         foreach ($this->results as $record) {
             $anagrafica = Anagrafica::find($record['id']);
-            $anagrafica->codicerea = null;
+            $anagrafica->codice_rea = null;
             $anagrafica->save();
 
             $results[$record['id']] = true;

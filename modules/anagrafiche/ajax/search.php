@@ -44,7 +44,7 @@ $fields = [
     'Email' => 'email',
     'Sito web' => 'sito_web',
     'Note' => 'note',
-    'Codice REA' => 'codicerea',
+    'Codice REA' => 'codice_rea',
     'Marche' => 'marche',
     'Numero di iscrizione albo artigiani' => 'n_alboartigiani',
 ];

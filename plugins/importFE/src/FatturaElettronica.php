@@ -342,7 +342,7 @@ class FatturaElettronica
         // Informazioni sull'anagrafica
         if (!empty($info['rea'])) {
             if (!empty($info['rea']['codice'])) {
-                $anagrafica->codicerea = $info['rea']['codice'];
+                $anagrafica->codice_rea = $info['rea']['codice'];
             }
 
             if (!empty($info['rea']['capitale_sociale'])) {

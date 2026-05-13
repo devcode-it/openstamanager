@@ -800,8 +800,8 @@ class FatturaElettronica implements \Stringable
 
         // IscrizioneREA
         // Controllo che i codice non sia vuoto e che i primi due caratteri siano lettere
-        if (!empty($azienda['codicerea']) && (ctype_alpha((string) $azienda['codicerea'][0]) && ctype_alpha((string) $azienda['codicerea'][1]))) {
-            $codice = explode('-', clean($azienda['codicerea'], '\-'));
+        if (!empty($azienda['codice_rea']) && (ctype_alpha((string) $azienda['codice_rea'][0]) && ctype_alpha((string) $azienda['codice_rea'][1]))) {
+            $codice = explode('-', clean($azienda['codice_rea'], '\-'));
 
             if (!empty($codice[0]) && !empty($codice[1])) {
                 $result['IscrizioneREA'] = [

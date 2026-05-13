@@ -685,11 +685,11 @@ function cleanInvalidBankReferences($anagrafica)
         }
     }
 
-    // Verifica idbanca_acquisti
-    if ($anagrafica->idbanca_acquisti) {
-        $banca = Banca::find($anagrafica->idbanca_acquisti);
+    // Verifica id_banca_acquisti
+    if ($anagrafica->id_banca_acquisti) {
+        $banca = Banca::find($anagrafica->id_banca_acquisti);
         if (!$banca || $banca->deleted_at) {
-            $anagrafica->idbanca_acquisti = null;
+            $anagrafica->id_banca_acquisti = null;
             $changed = true;
         }
     }

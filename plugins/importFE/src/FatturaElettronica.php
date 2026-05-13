@@ -441,8 +441,8 @@ class FatturaElettronica
         }
 
         // Banca addebito del cliente o banca collegata al pagamento
-        if (!empty($fattura->anagrafica->idbanca_acquisti)) {
-            $banca = $fattura->anagrafica->idbanca_acquisti;
+        if (!empty($fattura->anagrafica->id_banca_acquisti)) {
+            $banca = $fattura->anagrafica->id_banca_acquisti;
         } else {
             $banca = Banca::where('id_pianodeiconti3', $fattura->pagamento->idconto_acquisti)->where('id_anagrafica', setting('Azienda predefinita'))->first()->id;
         }

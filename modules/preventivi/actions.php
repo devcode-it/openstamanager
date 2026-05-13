@@ -537,7 +537,7 @@ switch (post('op')) {
             if ($originale->idiva_vendita) {
                 $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
             }
-            $id_iva = ($preventivo->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+            $id_iva = ($preventivo->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $preventivo->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             $id_anagrafica = $preventivo->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');
 

@@ -557,7 +557,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "idiva_vendite", "ajax-source": "iva", "value": "$idiva_vendite$" ]}
+                                    {[ "type": "select", "label": "'.tr('Iva predefinita').'", "name": "id_iva_vendite", "ajax-source": "iva", "value": "$id_iva_vendite$" ]}
                                 </div>
                             </div>
 

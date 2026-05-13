@@ -78,7 +78,7 @@ if (!empty(get('id_tipointervento'))) {
 $result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE id='.prepare($documento->idagente))['provvigione_default'];
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT idiva_vendite AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
+$iva = $dbo->fetchArray('SELECT id_iva_vendite AS idiva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
 $result['idiva'] = $iva[0]['idiva'] ?: setting('Iva predefinita');
 
 // Importazione della gestione dedicata

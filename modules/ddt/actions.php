@@ -360,7 +360,7 @@ switch (filter('op')) {
 
                         $prezzo = ($tipo == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto);
                         if ($dir == 'entrata') {
-                            $id_iva = ($ddt->anagrafica->idiva_vendite ?: setting('Iva predefinita'));
+                            $id_iva = ($ddt->anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
                         } else {
                             $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
                         }
@@ -748,7 +748,7 @@ switch (filter('op')) {
                     if ($originale->idiva_vendita) {
                         $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                     }
-                    $id_iva = ($ddt->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ddt->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+                    $id_iva = ($ddt->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ddt->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
                     $id_iva = ($ddt->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }

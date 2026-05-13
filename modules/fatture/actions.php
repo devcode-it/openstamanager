@@ -949,7 +949,7 @@ switch ($op) {
             }
 
             if (post('importa_sessioni')) {
-                $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
+                $id_iva = $anagrafica->id_iva_vendite ?: setting('Iva predefinita');
 
                 // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
                 if (!empty($fattura->id_dichiarazione_intento)) {
@@ -1263,7 +1263,7 @@ switch ($op) {
                     if ($originale->idiva_vendita) {
                         $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                     }
-                    $id_iva = ($fattura->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+                    $id_iva = ($fattura->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
                     $id_iva = ($fattura->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }

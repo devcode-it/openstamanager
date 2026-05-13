@@ -77,7 +77,7 @@ switch (post('op')) {
         $anagrafica->id_piano_sconto_acquisti = post('id_piano_sconto_acquisti') ?: null;
         $anagrafica->id_piano_sconto_vendite = post('id_piano_sconto_vendite') ?: null;
         $anagrafica->idiva_acquisti = post('idiva_acquisti') ?: null;
-        $anagrafica->idiva_vendite = post('idiva_vendite') ?: null;
+        $anagrafica->id_iva_vendite = post('id_iva_vendite') ?: null;
         $anagrafica->idbanca_acquisti = post('idbanca_acquisti') ?: null;
         $anagrafica->idbanca_vendite = post('idbanca_vendite') ?: null;
         $anagrafica->id_settore = post('id_settore');

@@ -152,7 +152,7 @@ switch (post('op')) {
             $id_documento = $id_documento_cliente[$id_anagrafica][$idsede_destinazione];
 
             $anagrafica = Anagrafica::find($id_anagrafica);
-            $id_iva = $anagrafica->idiva_vendite ?: setting('Iva predefinita');
+            $id_iva = $anagrafica->id_iva_vendite ?: setting('Iva predefinita');
 
             // Se non c'è già una fattura appena creata per questo cliente, creo una fattura nuova
             if (empty($id_documento)) {

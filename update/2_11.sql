@@ -987,8 +987,7 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.idagente=an_anagrafiche.id WHERE co_provvigioni.idarticolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
 
--- Modifica colonna idpagamento_vendite in id_pagamento_vendite
+-- Modifica colonne an_anagrafiche
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
-
--- Modifica colonna idpagamento_acquisti in id_pagamento_acquisti
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DEFAULT NULL;

@@ -50,7 +50,7 @@ $res = $dbo->fetchOne('
     ) + (
         SELECT COUNT(*) FROM `mg_articoli` WHERE `mg_articoli`.`idiva_vendita` = '.$id.'
     ) + (
-        SELECT COUNT(*) FROM `an_anagrafiche` WHERE `an_anagrafiche`.`idiva_vendite` = '.$id.' OR `an_anagrafiche`.`idiva_acquisti` = '.$id.'
+        SELECT COUNT(*) FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_iva_vendite` = '.$id.' OR `an_anagrafiche`.`idiva_acquisti` = '.$id.'
     ) AS total')['total'];
 $is_readonly = 0;
 if ($res > 0) {

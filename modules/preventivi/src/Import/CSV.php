@@ -319,7 +319,7 @@ class CSV extends CSVImporter
             }
 
             $anagrafica = $preventivo->anagrafica;
-            $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->idiva_vendite ?: setting('Iva predefinita'));
+            $idiva = $articolo_orig->idiva_vendita ?: ($anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
 
             $riga_articolo->descrizione = $articolo_orig->getTranslation('title');
             $riga_articolo->setPrezzoUnitario($record['prezzo_unitario'], $idiva);
@@ -387,7 +387,7 @@ class CSV extends CSVImporter
 
         $anagrafica = $preventivo->anagrafica;
 
-        return $anagrafica->idiva_vendite ?: setting('Iva predefinita');
+        return $anagrafica->id_iva_vendite ?: setting('Iva predefinita');
     }
 
     /**

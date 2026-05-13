@@ -810,7 +810,7 @@ switch (post('op')) {
                 if ($originale->idiva_vendita) {
                     $aliquota_articolo = floatval(Aliquota::find($originale->idiva_vendita)->percentuale);
                 }
-                $id_iva = ($ordine->anagrafica->idiva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ordine->anagrafica->idiva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
+                $id_iva = ($ordine->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ordine->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             } else {
                 $id_iva = ($ordine->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
             }

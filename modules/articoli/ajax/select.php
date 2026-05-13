@@ -120,7 +120,7 @@ switch ($resource) {
 
         if ($usare_iva_anagrafica) {
             $query .= '
-            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `idiva_vendite` FROM `an_anagrafiche` WHERE `id` = '.prepare($superselect['id_anagrafica']).')
+            LEFT JOIN `co_iva` AS iva_anagrafica ON `iva_anagrafica`.`id` = (SELECT `id_iva_vendite` FROM `an_anagrafiche` WHERE `id` = '.prepare($superselect['id_anagrafica']).')
             LEFT JOIN `co_iva_lang` AS iva_anagrafica_lang on (`iva_anagrafica`.`id` = `iva_anagrafica_lang`.`id_record` AND `iva_anagrafica_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
         }
 

@@ -549,7 +549,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Banca predefinita azienda per accrediti').'", "name": "idbanca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$idbanca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
+                                    {[ "type": "select", "label": "'.tr('Banca predefinita azienda per accrediti').'", "name": "id_banca_vendite", "ajax-source": "banche", "select-options": '.json_encode(['id_anagrafica' => $anagrafica_azienda->id]).', "value": "$id_banca_vendite$", "help": "'.tr("Banca predefinita dell'Azienda su cui accreditare i pagamenti").'" ]}
                                 </div>
 
                                 <div class="col-md-6">

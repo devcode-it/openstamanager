@@ -588,8 +588,8 @@ function getBancaAzienda($azienda, $id_pagamento, $conto, $direzione, $anagrafic
     cleanInvalidBankReferences($anagrafica_controparte);
 
     // Per i documenti di vendita, verifica prima la banca predefinita per accrediti del cliente
-    if ($direzione == 'entrata' && !empty($anagrafica_controparte->idbanca_vendite)) {
-        $id_banca = $anagrafica_controparte->idbanca_vendite;
+    if ($direzione == 'entrata' && !empty($anagrafica_controparte->id_banca_vendite)) {
+        $id_banca = $anagrafica_controparte->id_banca_vendite;
 
         // Verifica che la banca esista effettivamente
         $banca_esistente = Banca::find($id_banca);
@@ -676,11 +676,11 @@ function cleanInvalidBankReferences($anagrafica)
 {
     $changed = false;
 
-    // Verifica idbanca_vendite
-    if ($anagrafica->idbanca_vendite) {
-        $banca = Banca::find($anagrafica->idbanca_vendite);
+    // Verifica id_banca_vendite
+    if ($anagrafica->id_banca_vendite) {
+        $banca = Banca::find($anagrafica->id_banca_vendite);
         if (!$banca || $banca->deleted_at) {
-            $anagrafica->idbanca_vendite = null;
+            $anagrafica->id_banca_vendite = null;
             $changed = true;
         }
     }

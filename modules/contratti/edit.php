@@ -495,7 +495,7 @@ function aggiungiRigaOre(id_tipo_intervento, titoloTipo) {
             var costoOre = response.costo_ore || 0;
 
             // Apri il modal per aggiungere una riga
-            var options = "is_riga=1&descrizione=" + encodeURIComponent("'.tr('Ore di').' " + titoloTipo) + "&prezzo_unitario=" + costoOre + "&id_tipointervento=" + id_tipo_intervento + "&um=" + encodeURIComponent("'.tr('Ore').'");
+            var options = "is_riga=1&descrizione=" + encodeURIComponent("'.tr('Ore di').' " + titoloTipo) + "&prezzo_unitario=" + costoOre + "&id_tipo_intervento=" + id_tipo_intervento + "&um=" + encodeURIComponent("'.tr('Ore').'");
             openModal("'.tr('Aggiungi riga').'", globals.rootdir + "/modules/contratti/row-add.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&" + options);
         },
         error: function() {

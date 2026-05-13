@@ -261,7 +261,7 @@ switch (post('op')) {
         $riga->data_fine_competenza = post('data_fine_competenza') ?: null;
 
         $riga->id_iva = post('id_iva');
-        $riga->id_tipointervento = post('id_tipointervento') ?: null;
+        $riga->id_tipo_intervento = post('id_tipo_intervento') ?: null;
 
         $riga->costo_unitario = post('costo_unitario') ?: 0;
         $riga->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
@@ -771,7 +771,7 @@ switch (post('op')) {
             INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
-                AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
+                AND `co_righe_contratti`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
             LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
             LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
                 AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
@@ -789,7 +789,7 @@ switch (post('op')) {
                     if ($qta_ore > 0) {
                         // Recupera la riga originale del contratto precedente per questo tipo di attività
                         $riga_originale = $documento->getRighe()
-                            ->where('id_tipointervento', $id_tipo_intervento)
+                            ->where('id_tipo_intervento', $id_tipo_intervento)
                             ->first();
 
                         if ($riga_originale) {

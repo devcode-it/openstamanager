@@ -36,7 +36,7 @@ if (!empty($id_documento)) {
     INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`id_tipo_intervento` = `in_tipiintervento`.`id`
     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
-        AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
+        AND `co_righe_contratti`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
     LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
         AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`

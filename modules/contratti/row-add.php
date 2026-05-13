@@ -70,8 +70,8 @@ if (!empty(get('prezzo_unitario'))) {
 if (!empty(get('um'))) {
     $result['um'] = get('um');
 }
-if (!empty(get('id_tipointervento'))) {
-    $result['id_tipointervento'] = get('id_tipointervento');
+if (!empty(get('id_tipo_intervento'))) {
+    $result['id_tipo_intervento'] = get('id_tipo_intervento');
 }
 
 // Leggo la provvigione predefinita per l'anagrafica

@@ -35,8 +35,8 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 -- Aggiunta campo per calendario
 ALTER TABLE `in_interventi_tecnici` ADD `description` TEXT NOT NULL AFTER `summary`;
 
--- Aggiunta colonna id_tipointervento alla tabella co_righe_contratti
-ALTER TABLE `co_righe_contratti` ADD `id_tipointervento` INT(11) NULL;
+-- Aggiunta colonna id_tipo_intervento alla tabella co_righe_contratti
+ALTER TABLE `co_righe_contratti` ADD `id_tipo_intervento` INT(11) NULL;
 
 ALTER TABLE `co_contratti_tipiintervento` ADD `is_abilitato` TINYINT(1) NOT NULL DEFAULT 1;
 
@@ -1120,7 +1120,9 @@ ALTER TABLE `co_pianodeiconti2` CHANGE `idpianodeiconti1` `id_piano_dei_conti1` 
 ALTER TABLE `co_pianodeiconti3` CHANGE `idpianodeiconti2` `id_piano_dei_conti2` INT NOT NULL;
 
 ALTER TABLE `co_preventivi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
+
 ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `co_righe_contratti` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;

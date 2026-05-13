@@ -171,12 +171,12 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $qta = post('qta');
         $um = post('um');
-        $id_tipointervento = post('id_tipointervento');
+        $id_tipo_intervento = post('id_tipo_intervento');
         $prezzo_acquisto = post('prezzo_acquisto');
         $prezzo_vendita = post('prezzo_vendita');
         $subtotale = $qta * $prezzo_vendita;
 
-        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipointervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, id_iva) VALUES ('.prepare($id_tipointervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($id_iva).')';
+        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipo_intervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, id_iva) VALUES ('.prepare($id_tipo_intervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($id_iva).')';
         $dbo->query($query);
 
         flash()->info(tr('Riga aggiunta!'));
@@ -189,7 +189,7 @@ switch (post('op')) {
         $qta = post('qta');
         $um = post('um');
         $idriga = post('idriga');
-        $id_tipointervento = post('id_tipointervento');
+        $id_tipo_intervento = post('id_tipo_intervento');
         $prezzo_acquisto = post('prezzo_acquisto');
         $prezzo_vendita = post('prezzo_vendita');
         $subtotale = $qta * $prezzo_vendita;
@@ -199,7 +199,7 @@ switch (post('op')) {
             ' qta='.prepare($qta).','.
             ' id_iva='.prepare($id_iva).','.
             ' um='.prepare($um).','.
-            ' id_tipointervento='.prepare($id_tipointervento).','.
+            ' id_tipo_intervento='.prepare($id_tipo_intervento).','.
             ' prezzo_acquisto='.prepare($prezzo_acquisto).','.
             ' prezzo_vendita='.prepare($prezzo_vendita).','.
             ' subtotale='.$subtotale.

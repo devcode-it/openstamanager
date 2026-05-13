@@ -122,10 +122,10 @@ if ($pricing || !empty($totale_ore)) {
         $righe = $documento->getRighe();
         foreach ($righe as $riga) {
             if ($riga->um == 'ore') {
-                $id_tipointervento = $riga->id_tipointervento ?? null;
+                $id_tipo_intervento = $riga->id_tipo_intervento ?? null;
 
-                if (!empty($id_tipointervento)) {
-                    $tipo_intervento = Tipo::where('id', $id_tipointervento)->first();
+                if (!empty($id_tipo_intervento)) {
+                    $tipo_intervento = Tipo::where('id', $id_tipo_intervento)->first();
                     if ($tipo_intervento) {
                         $tipo_name = $tipo_intervento->name;
                         if (!isset($ore_contratto_per_tipo[$tipo_name])) {

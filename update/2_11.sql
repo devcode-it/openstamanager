@@ -41,7 +41,7 @@ ALTER TABLE `co_righe_contratti` ADD `id_tipointervento` INT(11) NULL;
 ALTER TABLE `co_contratti_tipiintervento` ADD `is_abilitato` TINYINT(1) NOT NULL DEFAULT 1;
 
 -- Aggiunta gestione per conto di in scheda anagrafica
-ALTER TABLE `an_anagrafiche` ADD `idclientefinale` INT NOT NULL AFTER `idanagrafica`; 
+ALTER TABLE `an_anagrafiche` ADD `id_cliente_finale` INT NOT NULL AFTER `idanagrafica`; 
 
 -- Aggiunta impostazione per il ritardo di apertura dei tooltip sulla Dashboard
 INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES

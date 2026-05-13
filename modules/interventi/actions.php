@@ -65,7 +65,7 @@ switch (post('op')) {
         $intervento->informazioniaggiuntive = post('informazioniaggiuntive');
 
         $intervento->id_anagrafica = post('id_anagrafica');
-        $intervento->idclientefinale = post('idclientefinale') ?: null;
+        $intervento->id_cliente_finale = post('id_cliente_finale') ?: null;
         $intervento->idreferente = post('idreferente');
         $intervento->idagente = post('idagente');
         $intervento->idtipointervento = post('idtipointervento');
@@ -243,8 +243,8 @@ switch (post('op')) {
             $idsede_partenza = post('idsede_partenza');
             $idsede_destinazione = post('idsede_destinazione') ?: 0;
 
-            if (post('idclientefinale')) {
-                $intervento->idclientefinale = post('idclientefinale');
+            if (post('id_cliente_finale')) {
+                $intervento->id_cliente_finale = post('id_cliente_finale');
             }
 
             $intervento->id_preventivo = $idpreventivo ?: null;

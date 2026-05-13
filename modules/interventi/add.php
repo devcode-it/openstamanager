@@ -107,7 +107,7 @@ elseif (!empty($id_intervento)) {
     $descrizione = $intervento['descrizione'];
     $id_sede = $intervento['idsede_destinazione'];
     $id_anagrafica = $intervento['id_anagrafica'];
-    $id_cliente_finale = $intervento['idclientefinale'];
+    $id_cliente_finale = $intervento['id_cliente_finale'];
     $id_contratto = $intervento['idcontratto'];
     $id_preventivo = $intervento['idpreventivo'];
     $id_zona = $intervento['idzona'] ?: $id_zona;
@@ -176,7 +176,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
+            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
         </div>
     </div>
 
@@ -318,7 +318,7 @@ echo '
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idclientefinale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
+                                {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'id_cliente_finale' => $id_cliente_finale]).', "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$id_anagrafica.'" ]}
                             </div>
                         </div>
                     </div>
@@ -447,7 +447,7 @@ if (!empty($id_intervento)) {
        input("idreferente").disable();
        input("componenti").disable();
        input("id_anagrafica").disable();
-       input("idclientefinale").disable();
+       input("id_cliente_finale").disable();
        input("idtipointervento").disable();
        input("idstatointervento").disable();
        input("data_richiesta").disable();
@@ -461,7 +461,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 <script type="text/javascript">
     $(document).ready(function() {
        input("id_anagrafica").disable();
-       input("idclientefinale").disable();
+       input("id_cliente_finale").disable();
        input("idtipointervento").disable();
     });
 </script>';
@@ -475,7 +475,7 @@ echo '
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
     var referente = input("idreferente");
-    var cliente_finale = input("idclientefinale");
+    var cliente_finale = input("id_cliente_finale");
     var autoload_mappa = false;
 
 	$(document).ready(function() {
@@ -599,9 +599,9 @@ echo '
             }
 
             // Impostazione del cliente finale da anagrafica
-            if(data.idclientefinale) {
-                input("idclientefinale").getElement()
-                    .selectSetNew(data.idclientefinale, data.idclientefinale_descrizione);
+            if(data.id_cliente_finale) {
+                input("id_cliente_finale").getElement()
+                    .selectSetNew(data.id_cliente_finale, data.id_cliente_finale_descrizione);
             }
 
             caricaMappa(data.lat, data.lng);
@@ -670,8 +670,8 @@ echo '
 
     //gestione del cliente finale
     cliente_finale.change(function() {
-        updateSelectOption("idclientefinale", $(this).val());
-        session_set("superselect,idclientefinale", $(this).val(), 0);
+        updateSelectOption("id_cliente_finale", $(this).val());
+        session_set("superselect,id_cliente_finale", $(this).val(), 0);
 
         referente.getElement()
             .selectReset("'.tr("Seleziona un'opzione").'");

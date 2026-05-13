@@ -41,8 +41,8 @@ switch ($resource) {
                 `co_pagamenti_lang`.`title` AS desc_pagamento,
                 `banca_vendite`.`id` AS id_banca_vendite,
                 CONCAT(`banca_vendite`.`nome`, ' - ', `banca_vendite`.`iban`) AS descrizione_banca_vendite,
-                `an_anagrafiche`.`idclientefinale`,
-                (SELECT CONCAT(`cliente_finale`.`ragione_sociale`, IF(`cliente_finale`.`citta` IS NULL OR `cliente_finale`.`citta` = '', '', CONCAT(' (', `cliente_finale`.`citta`, ')')), ' - ', `cliente_finale`.`codice`) FROM `an_anagrafiche` AS `cliente_finale` WHERE `cliente_finale`.`id` = `an_anagrafiche`.`idclientefinale`) AS idclientefinale_descrizione
+                `an_anagrafiche`.`id_cliente_finale`,
+                (SELECT CONCAT(`cliente_finale`.`ragione_sociale`, IF(`cliente_finale`.`citta` IS NULL OR `cliente_finale`.`citta` = '', '', CONCAT(' (', `cliente_finale`.`citta`, ')')), ' - ', `cliente_finale`.`codice`) FROM `an_anagrafiche` AS `cliente_finale` WHERE `cliente_finale`.`id` = `an_anagrafiche`.`id_cliente_finale`) AS id_cliente_finale_descrizione
             FROM
                 `an_anagrafiche`
                 INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
@@ -514,8 +514,8 @@ switch ($resource) {
                 $filter[] = '`an_referenti`.`id`='.prepare($element);
             }
 
-            if (isset($superselect['idclientefinale'])) {
-                $where[] = '(`id_anagrafica`='.prepare($superselect['id_anagrafica']).' OR `id_anagrafica`='.prepare($superselect['idclientefinale']).')';
+            if (isset($superselect['id_cliente_finale'])) {
+                $where[] = '(`id_anagrafica`='.prepare($superselect['id_anagrafica']).' OR `id_anagrafica`='.prepare($superselect['id_cliente_finale']).')';
             } else {
                 $where[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
             }

@@ -154,7 +154,7 @@ switch ($operazione) {
                     $intervento = Intervento::build($contratto->anagrafica, $promemoria_originale->tipo, $stato, $data_richiesta, post('id_segment'));
                     $intervento->idsede_destinazione = $promemoria_corrente->idsede ?: 0;
                     $intervento->richiesta = $promemoria_corrente->richiesta;
-                    $intervento->idclientefinale = post('idclientefinale') ?: 0;
+                    $intervento->id_cliente_finale = post('id_cliente_finale') ?: 0;
                     $intervento->id_contratto = $contratto->id;
                     $intervento->save();
 

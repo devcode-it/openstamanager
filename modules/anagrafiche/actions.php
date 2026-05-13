@@ -95,7 +95,7 @@ switch (post('op')) {
         $anagrafica->colore = post('colore');
         $anagrafica->idtipointervento_default = post('idtipointervento_default') ?: null;
         $anagrafica->id_dichiarazione_intento_default = post('id_dichiarazione_intento_default') ?: null;
-        $anagrafica->idclientefinale = post('idclientefinale') ?: null;
+        $anagrafica->id_cliente_finale = post('id_cliente_finale') ?: null;
         $anagrafica->provvigione_default = post('provvigione_default');
         $anagrafica->id_ritenuta_acconto_acquisti = post('id_ritenuta_acconto_acquisti') ?: null;
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite') ?: null;

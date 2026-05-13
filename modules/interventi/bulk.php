@@ -142,8 +142,8 @@ switch (post('op')) {
 
         // Lettura righe selezionate
         foreach ($interventi as $intervento) {
-            if (!empty($intervento['idclientefinale'])) {
-                $id_anagrafica = $intervento['idclientefinale'];
+            if (!empty($intervento['id_cliente_finale'])) {
+                $id_anagrafica = $intervento['id_cliente_finale'];
             } else {
                 $id_anagrafica = $intervento['id_anagrafica'];
             }

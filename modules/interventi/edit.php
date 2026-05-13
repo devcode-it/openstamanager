@@ -80,10 +80,10 @@ echo '
                             {[ "type": "select", "label": "'.tr('Zona').'", "name": "idzona", "values": "query=SELECT id, CONCAT_WS( \' - \', nome, descrizione) AS descrizione FROM an_zone ORDER BY nome", "value": "$idzona$" , "placeholder": "'.tr('Nessuna zona').'", "extra": "readonly", "help":"'.tr('La zona viene definita automaticamente in base al cliente selezionato.').'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "$idclientefinale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "$id_cliente_finale$", "ajax-source": "clienti", "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idclientefinale' => $record['idclientefinale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Referente').'", "name": "idreferente", "value": "$idreferente$", "ajax-source": "referenti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_cliente_finale' => $record['id_cliente_finale'], 'idsede_destinazione' => $record['idsede_destinazione']]).', "readonly": "'.intval($record['flag_completato']).'", "icon-after": "add|'.$id_modulo_anagrafiche.'|id_plugin='.Plugin::where('name', 'Referenti')->first()->id.'&id_parent='.$record['id_anagrafica'].'" ]}
                         </div>
                     </div>
                     <!-- RIGA 2 -->
@@ -592,7 +592,7 @@ echo '
     var contratto = input("idcontratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
-    var cliente_finale = input("idclientefinale");
+    var cliente_finale = input("id_cliente_finale");
     var referente = input("idreferente");
     var sede_partenza = input("idsede_partenza");
 
@@ -636,8 +636,8 @@ echo '
 
     //gestione del cliente finale
     cliente_finale.change(function() {
-        updateSelectOption("idclientefinale", $(this).val());
-        session_set("superselect,idclientefinale", $(this).val(), 0);
+        updateSelectOption("id_cliente_finale", $(this).val());
+        session_set("superselect,id_cliente_finale", $(this).val(), 0);
 
         referente.getElement()
             .selectReset("'.tr("Seleziona un'opzione").'");

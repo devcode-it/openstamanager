@@ -26,7 +26,7 @@ use Modules\Banche\Banca;
 
 include_once __DIR__.'/../../core.php';
 
-$id_cliente_finale = $record['idclientefinale'] ?? null;
+$id_cliente_finale = $record['id_cliente_finale'] ?? null;
 
 $is_fornitore = in_array($id_fornitore, $tipi_anagrafica);
 $is_cliente = in_array($id_cliente, $tipi_anagrafica);
@@ -613,7 +613,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "idclientefinale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
+                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"id_anagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}

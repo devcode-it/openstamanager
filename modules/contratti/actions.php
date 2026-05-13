@@ -123,10 +123,10 @@ switch (post('op')) {
             $contratto->save();
 
             // Verifico impianti presenti
-            $matricole_presenti_array = $dbo->select('my_impianti_contratti', 'idimpianto', [], ['id_contratto' => $id_record]);
+            $matricole_presenti_array = $dbo->select('my_impianti_contratti', 'id_impianto', [], ['id_contratto' => $id_record]);
             $matricole_presenti = [];
             foreach ($matricole_presenti_array as $matricola) {
-                $matricole_presenti[] = $matricola['idimpianto'];
+                $matricole_presenti[] = $matricola['id_impianto'];
             }
 
             // Verifico nuovi impianti
@@ -141,7 +141,7 @@ switch (post('op')) {
             $dbo->sync('my_impianti_contratti', [
                 'id_contratto' => $id_record,
             ], [
-                'idimpianto' => $matricole,
+                'id_impianto' => $matricole,
             ]);
 
             // Salvataggio costi attività unitari del contratto
@@ -660,8 +660,8 @@ switch (post('op')) {
             $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($documento->id));
 
             // Copia gli impianti dal contratto precedente
-            $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto='.prepare($documento->id));
-            $dbo->sync('my_impianti_contratti', ['id_contratto' => $id_record], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+            $impianti = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_contratti WHERE id_contratto='.prepare($documento->id));
+            $dbo->sync('my_impianti_contratti', ['id_contratto' => $id_record], ['id_impianto' => array_column($impianti, 'id_impianto')]);
 
             // Replicazione dei promemoria
             $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE id_contratto='.prepare($documento->id));

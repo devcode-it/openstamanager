@@ -39,8 +39,8 @@ if ($is_bloccato) {
  * Aggiunta impianti all'intervento
 */
 // Elenco impianti collegati all'intervento
-$impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record));
-$impianti = !empty($impianti) ? array_column($impianti, 'idimpianto') : [];
+$impianti = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_interventi WHERE id_intervento='.prepare($id_record));
+$impianti = !empty($impianti) ? array_column($impianti, 'id_impianto') : [];
 
 // Elenco sedi
 $sedi = $dbo->fetchArray('SELECT id, nome_sede, citta FROM an_sedi WHERE id_anagrafica='.prepare($record['id_anagrafica'])." UNION SELECT 0, 'Sede legale', '' ORDER BY id");

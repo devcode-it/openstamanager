@@ -81,7 +81,7 @@ if (!function_exists('link_componente_to_articolo')) {
             $nome_componente = Ini::getValue($contenuto_ini, 'Nome');
 
             $dati = [
-                'idimpianto' => $id_impianto,
+                'id_impianto' => $id_impianto,
                 'id_intervento' => $id_intervento,
                 'nome' => $nome_componente,
                 'data' => $data,

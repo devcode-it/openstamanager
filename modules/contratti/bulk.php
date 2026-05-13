@@ -188,8 +188,8 @@ switch (post('op')) {
                 }
 
                 // Replicazione degli impianti
-                $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto='.prepare($contratto->id));
-                $dbo->sync('my_impianti_contratti', ['id_contratto' => $new_id_contratto], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+                $impianti = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_contratti WHERE id_contratto='.prepare($contratto->id));
+                $dbo->sync('my_impianti_contratti', ['id_contratto' => $new_id_contratto], ['id_impianto' => array_column($impianti, 'id_impianto')]);
 
                 // Replicazione dei promemoria
                 $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE id_contratto='.prepare($contratto->id));

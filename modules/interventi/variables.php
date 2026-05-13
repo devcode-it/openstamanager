@@ -39,7 +39,7 @@ $r = $dbo->fetchOne('SELECT *,
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
         LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`in_interventi`.`id_referente`
-        LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != "", CONCAT(" - ", `nome`), "")) SEPARATOR "<br>") AS descrizione, `my_impianti_interventi`.`id_intervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`idimpianto` GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti ON `impianti`.`id_intervento` = `in_interventi`.`id`
+        LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != "", CONCAT(" - ", `nome`), "")) SEPARATOR "<br>") AS descrizione, `my_impianti_interventi`.`id_intervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`id_impianto` GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti ON `impianti`.`id_intervento` = `in_interventi`.`id`
     WHERE `in_interventi`.`id`='.prepare($id_record));
 
 $user = auth_osm()->getUser();

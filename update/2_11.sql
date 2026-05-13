@@ -520,7 +520,7 @@ FROM
     LEFT JOIN (SELECT `in_interventi_tecnici_assegnati`.`id_intervento`, GROUP_CONCAT(DISTINCT `ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici_assegnati` ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `an_anagrafiche`.`id` GROUP BY `id_intervento`) AS `tecnici_assegnati` ON `in_interventi`.`id` = `tecnici_assegnati`.`id_intervento`
     LEFT JOIN (SELECT `in_interventi_tecnici`.`id_intervento`, GROUP_CONCAT(DISTINCT `ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `an_anagrafiche` INNER JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id` GROUP BY `id_intervento`) AS `tecnici` ON `in_interventi`.`id` = `tecnici`.`id_intervento`
     LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `zz_modules`.`id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS `email` ON `email`.`id_record` = `in_interventi`.`id`
-    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != '', CONCAT(' - ', `nome`), '')) SEPARATOR '<br />') AS `descrizione`,`my_impianti_interventi`.`id_intervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`idimpianto` GROUP BY `my_impianti_interventi`.`id_intervento`) AS `impianti` ON `impianti`.`id_intervento` = `in_interventi`.`id`
+    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != '', CONCAT(' - ', `nome`), '')) SEPARATOR '<br />') AS `descrizione`,`my_impianti_interventi`.`id_intervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`id_impianto` GROUP BY `my_impianti_interventi`.`id_intervento`) AS `impianti` ON `impianti`.`id_intervento` = `in_interventi`.`id`
     LEFT JOIN (SELECT `co_contratti`.`id`, CONCAT(`co_contratti`.`numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y')) AS `info` FROM `co_contratti`) AS `contratto` ON `contratto`.`id` = `in_interventi`.`id_contratto`
     LEFT JOIN (SELECT `co_preventivi`.`id`, CONCAT(`co_preventivi`.`numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y')) AS `info` FROM `co_preventivi`) AS `preventivo` ON `preventivo`.`id` = `in_interventi`.`id_preventivo`
     LEFT JOIN (SELECT `or_ordini`.`id`, CONCAT(`or_ordini`.`numero`, ' del ', DATE_FORMAT(`data`, '%d/%m/%Y')) AS `info` FROM `or_ordini`) AS `ordine` ON `ordine`.`id` = `in_interventi`.`id_ordine`
@@ -843,7 +843,7 @@ FROM
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND |lang|)
     LEFT JOIN (SELECT `id_contratto`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_contratti` GROUP BY `id_contratto`) AS righe ON `co_contratti`.`id` = `righe`.`id_contrattoo`
     LEFT JOIN (WITH RigheAgg AS (SELECT id_intervento,SUM(prezzo_unitario * qta) AS sommacosti_per_intervento FROM in_righe_interventi GROUP BY id_intervento), TecniciAgg AS (SELECT id_intervento, SUM(prezzo_ore_consuntivo) AS sommasessioni_per_intervento FROM in_interventi_tecnici GROUP BY id_intervento) SELECT SUM(COALESCE(RigheAgg.sommacosti_per_intervento, 0)) AS sommacosti, SUM(COALESCE(TecniciAgg.sommasessioni_per_intervento, 0)) AS sommasessioni, i.id_contratto FROM in_interventi i LEFT JOIN RigheAgg ON RigheAgg.id_intervento = i.id LEFT JOIN TecniciAgg ON TecniciAgg.id_intervento = i.id GROUP BY i.id_contratto) AS spesacontratto ON spesacontratto.id_contratto = co_contratti.id
-    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '', CONCAT(' - ', nome), '')) SEPARATOR '<br />') AS descrizione, my_impianti_contratti.id_contratto FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.idimpianto GROUP BY my_impianti_contratti.id_contratto) AS impianti ON impianti.id_contratto = co_contratti.id
+    LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '', CONCAT(' - ', nome), '')) SEPARATOR '<br />') AS descrizione, my_impianti_contratti.id_contratto FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.id_impianto GROUP BY my_impianti_contratti.id_contratto) AS impianti ON impianti.id_contratto = co_contratti.id
     LEFT JOIN (SELECT um, SUM(qta) AS somma, id_contratto FROM co_righe_contratti GROUP BY um, id_contratto) AS orecontratti ON orecontratti.um = 'ore' AND orecontratti.id_contratto = co_contratti.id
     LEFT JOIN (SELECT in_interventi.id_contratto, SUM(ore) AS sommatecnici FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.id_intervento = in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento=in_tipiintervento.id WHERE non_conteggiare=0 GROUP BY in_interventi.id_contratto) AS tecnici ON tecnici.id_contratto = co_contratti.id
     LEFT JOIN `co_categorie_contratti` ON `co_contratti`.`id_categoria` = `co_categorie_contratti`.`id`
@@ -1021,6 +1021,7 @@ ALTER TABLE `in_interventi` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_provvigioni` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche_agenti` CHANGE `idagente` `id_agente` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idagente` `id_agente` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` DROP `agentemaster`;
@@ -1039,7 +1040,10 @@ ALTER TABLE `an_referenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idsede` `id_sede` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
+
 ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
+
 ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
 
 ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMENT 'Nome sede';
@@ -1073,11 +1077,11 @@ ALTER TABLE `co_contratti` CHANGE `id_contratto_prev` `id_contratto_prev` INT NO
 ALTER TABLE `co_contratti` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;
 ALTER TABLE `co_preventivi` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;
 
-
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
 ALTER TABLE `co_fatturazione_contratti` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idcontratto` `id_contratto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `id_tipo_intervento` INT NOT NULL;
@@ -1100,12 +1104,18 @@ ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti_modelli` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
-ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NULL DEFAULT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
+
+ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NULL DEFAULT NULL;
 ALTER TABLE `co_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
@@ -1124,18 +1134,26 @@ ALTER TABLE `co_preventivi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 
 ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `co_righe_documenti` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `co_righe_promemoria` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;
-ALTER TABLE `co_promemoria` CHANGE `idtecnici` `id_tecnici` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+ALTER TABLE `co_righe_promemoria` CHANGE `idimpianto` `id_impianto` INT NULL DEFAULT NULL;
+
+ALTER TABLE `co_promemoria` CHANGE `idtecnici` `id_tecnici` VARCHAR(255) NOT NULL;
 
 ALTER TABLE `co_provvigioni` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
 ALTER TABLE `co_righe_contratti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idordine` `id_ordine` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
+
 ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
+ALTER TABLE `co_righe_preventivi` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;

@@ -38,7 +38,7 @@ if ($is_bloccato) {
 }
 
 $where = get('search') ? 'AND (my_impianti.matricola LIKE '.prepare('%'.get('search').'%').' OR my_impianti.nome LIKE '.prepare('%'.get('search').'%').')' : '';
-$impianti_collegati = $dbo->fetchArray('SELECT my_impianti.id, my_impianti.matricola, my_impianti.nome, my_impianti.descrizione, my_impianti.data, my_impianti_interventi.note FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.idimpianto = my_impianti.id WHERE id_intervento = '.prepare($id_record).' '.$where);
+$impianti_collegati = $dbo->fetchArray('SELECT my_impianti.id, my_impianti.matricola, my_impianti.nome, my_impianti.descrizione, my_impianti.data, my_impianti_interventi.note FROM my_impianti_interventi INNER JOIN my_impianti ON my_impianti_interventi.id_impianto = my_impianti.id WHERE id_intervento = '.prepare($id_record).' '.$where);
 $n_impianti = count($impianti_collegati);
 
 // Calcolo percentuali rimosso - non più necessario

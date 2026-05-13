@@ -107,7 +107,7 @@ class Promemoria extends Document
             foreach ($impianti as $impianto) {
                 $database->insert('my_impianti_interventi', [
                     'id_intervento' => $intervento->id,
-                    'idimpianto' => $impianto,
+                    'id_impianto' => $impianto,
                 ]);
             }
         }

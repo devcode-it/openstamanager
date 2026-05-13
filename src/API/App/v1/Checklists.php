@@ -186,7 +186,7 @@ class Checklists extends AppResource
             `zz_checks`.`checked_by`,
             `zz_checks`.`order` AS ordine,
             `zz_checks`.`is_titolo`,
-            `zz_checks`.`id_record_from` AS idimpianto
+            `zz_checks`.`id_record_from` AS id_impianto
         FROM 
             `zz_checks`
         WHERE 

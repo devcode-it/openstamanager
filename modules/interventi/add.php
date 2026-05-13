@@ -90,8 +90,8 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
     // Caricamento degli impianti a Contratto se non definiti in Promemoria
     if (empty($impianti_collegati)) {
-        $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($id_contratto));
-        $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
+        $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($id_contratto));
+        $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
     }
 }
 
@@ -117,8 +117,8 @@ elseif (!empty($id_intervento)) {
         $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $intervento['tempo_standard']));
     }
 
-    $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento = '.prepare($id_intervento));
-    $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
+    $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_interventi WHERE id_intervento = '.prepare($id_intervento));
+    $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
 
     $rs = $dbo->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_intervento));
     $tecnici_assegnati = implode(',', array_column($rs, 'id_tecnico'));

@@ -282,7 +282,7 @@ switch (filter('op')) {
                         `in_statiintervento`.`id` AS parent_id_stato,
                         `in_statiintervento_lang`.`title` AS stato,
                         `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
-                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`id_intervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti,
+                        (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`id_impianto` WHERE `my_impianti_interventi`.`id_intervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM

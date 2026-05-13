@@ -283,7 +283,7 @@ class Interventi extends AppResource
         $record = $database->fetchOne($query);
 
         // Individuazione degli impianti collegati
-        $impianti = $database->fetchArray('SELECT idimpianto AS id FROM my_impianti_interventi WHERE id_intervento = '.prepare($id));
+        $impianti = $database->fetchArray('SELECT id_impianto AS id FROM my_impianti_interventi WHERE id_intervento = '.prepare($id));
         $record['impianti'] = array_column($impianti, 'id');
 
         // Individuazione dei tecnici assegnati
@@ -350,7 +350,7 @@ class Interventi extends AppResource
         foreach ($data['impianti'] as $id_impianto) {
             if (!empty($id_impianto)) {
                 $database->insert('my_impianti_interventi', [
-                    'idimpianto' => $id_impianto,
+                    'id_impianto' => $id_impianto,
                     'id_intervento' => $record->id,
                 ]);
             }

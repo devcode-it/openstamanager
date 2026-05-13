@@ -42,9 +42,9 @@ switch (post('op')) {
         $n_impianti = 0;
 
         foreach ($id_records as $id) {
-            $elementi = $dbo->fetchArray('SELECT `idimpianto` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`idimpianto` = '.prepare($id).'
+            $elementi = $dbo->fetchArray('SELECT `id_impianto` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`id_impianto` = '.prepare($id).'
             UNION
-            SELECT `idimpianto` FROM `my_impianti_contratti` WHERE `my_impianti_contratti`.`idimpianto` = '.prepare($id));
+            SELECT `id_impianto` FROM `my_impianti_contratti` WHERE `my_impianti_contratti`.`id_impianto` = '.prepare($id));
 
             if (empty($elementi)) {
                 $dbo->delete('my_impianti', ['id' => $id]);
@@ -80,10 +80,10 @@ switch (post('op')) {
             $dbo->query('CREATE TEMPORARY TABLE tmp SELECT * FROM my_impianti WHERE id= '.prepare($id_record));
             $dbo->query('ALTER TABLE tmp DROP id');
             $dbo->query('INSERT INTO my_impianti SELECT NULL,tmp. * FROM tmp');
-            $idimpianto_new = $dbo->lastInsertedID();
+            $id_impianto_new = $dbo->lastInsertedID();
             $dbo->query('DROP TEMPORARY TABLE tmp');
 
-            $dbo->query('UPDATE my_impianti SET matricola = CONCAT (matricola, " (copia)") WHERE id = '.prepare($idimpianto_new));
+            $dbo->query('UPDATE my_impianti SET matricola = CONCAT (matricola, " (copia)") WHERE id = '.prepare($id_impianto_new));
         }
 
         flash()->info(tr('Impianti duplicati correttamente!'));

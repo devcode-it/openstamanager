@@ -270,7 +270,7 @@ switch (post('op')) {
                 if (!empty($impianto)) {
                     $dbo->insert('my_impianti_interventi', [
                         'id_intervento' => $id_record,
-                        'idimpianto' => $impianto,
+                        'id_impianto' => $impianto,
                     ]);
 
                     $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare($impianto));
@@ -747,7 +747,7 @@ switch (post('op')) {
         $articolo->um = post('um') ?: null;
         $articolo->data_inizio_competenza = post('data_inizio_competenza') ?: null;
         $articolo->data_fine_competenza = post('data_fine_competenza') ?: null;
-        $articolo->idimpianto = post('id_impianto') ?: null;
+        $articolo->id_impianto = post('id_impianto') ?: null;
 
         $articolo->costo_unitario = post('costo_unitario') ?: 0;
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
@@ -1393,7 +1393,7 @@ switch (post('op')) {
                         foreach ($impianti as $impianto) {
                             $dbo->insert('my_impianti_interventi', [
                                 'id_intervento' => $id_record,
-                                'idimpianto' => $impianto['idimpianto'],
+                                'id_impianto' => $impianto['id_impianto'],
                             ]);
                         }
 

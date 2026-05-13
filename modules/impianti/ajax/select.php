@@ -56,7 +56,7 @@ switch ($resource) {
     case 'impianti-cliente':
         $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.id_anagrafica, an_anagrafiche.ragione_sociale, my_impianti.id_sede, IFNULL(an_sedi.nome_sede, "Sede legale") AS nome_sede, IFNULL(my_statiimpianti.is_abilitato,1) AS is_abilitato FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.id_anagrafica=an_anagrafiche.id LEFT JOIN an_sedi ON my_impianti.id_sede=an_sedi.id LEFT JOIN my_statiimpianti ON my_impianti.id_stato=my_statiimpianti.id';
         if (!empty($superselect['id_contratto'])) {
-            $query .= ' INNER JOIN my_impianti_contratti ON my_impianti.id=my_impianti_contratti.idimpianto';
+            $query .= ' INNER JOIN my_impianti_contratti ON my_impianti.id=my_impianti_contratti.id_impianto';
             $where[] = 'my_impianti_contratti.id_contratto='.prepare($superselect['id_contratto']);
         }
         $query .= ' |where| ORDER BY id_sede';
@@ -74,7 +74,7 @@ switch ($resource) {
         }
 
         if (!empty($superselect['id_intervento'])) {
-            $where[] = 'my_impianti.id NOT IN(SELECT idimpianto FROM my_impianti_interventi WHERE id_intervento='.prepare($superselect['id_intervento']).')';
+            $where[] = 'my_impianti.id NOT IN(SELECT id_impianto FROM my_impianti_interventi WHERE id_intervento='.prepare($superselect['id_intervento']).')';
         }
 
         if (!empty($search)) {
@@ -103,7 +103,7 @@ switch ($resource) {
          */
     case 'impianti-intervento':
         if (isset($superselect['id_intervento'])) {
-            $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.idimpianto |where| ORDER BY id_sede';
+            $query = 'SELECT id, CONCAT(matricola, " - ", nome) AS descrizione FROM my_impianti INNER JOIN my_impianti_interventi ON my_impianti.id=my_impianti_interventi.id_impianto |where| ORDER BY id_sede';
 
             foreach ($elements as $element) {
                 $filter[] = 'id='.prepare($element);

@@ -31,7 +31,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         $table = 'my_impianti_interventi';
 
         $select = [
-            'idimpianto AS id_impianto',
+            'id_impianto AS id_impianto',
             'id_intervento AS id_intervento',
         ];
 
@@ -55,7 +55,7 @@ class Impianti extends Resource implements RetrieveInterface, CreateInterface
         foreach ($impianti as $impianto) {
             database()->insert('my_impianti_interventi', [
                 'id_intervento' => $id_record,
-                'idimpianto' => $impianto,
+                'id_impianto' => $impianto,
             ]);
         }
 

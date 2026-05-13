@@ -306,7 +306,7 @@ switch (post('op')) {
                 foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
                         'id_intervento' => $id_record,
-                        'idimpianto' => $impianto['idimpianto'],
+                        'id_impianto' => $impianto['id_impianto'],
                     ]);
                 }
 

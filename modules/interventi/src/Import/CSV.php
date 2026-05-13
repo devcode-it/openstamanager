@@ -420,13 +420,13 @@ class CSV extends CSVImporter
 
         // Verifica se l'impianto è già collegato all'intervento
         $collegamento = $database->table('my_impianti_interventi')
-            ->where('idimpianto', $impianto->id)
+            ->where('id_impianto', $impianto->id)
             ->where('id_intervento', $intervento->id)
             ->first();
 
         if (empty($collegamento)) {
             // Collega l'impianto all'intervento
-            $database->query('INSERT INTO my_impianti_interventi(idimpianto, id_intervento) VALUES('.prepare($impianto->id).', '.prepare($intervento->id).')');
+            $database->query('INSERT INTO my_impianti_interventi(id_impianto, id_intervento) VALUES('.prepare($impianto->id).', '.prepare($intervento->id).')');
         }
     }
 

@@ -70,7 +70,7 @@ $img = !empty($impianto) ? $impianto->image : null;
 						</div>';
 ?>
 						<div class="col-md-4">
-							{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "value": "$idtecnico$" ]}
+							{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "id_tecnico", "ajax-source": "tecnici", "value": "$id_tecnico$" ]}
 						</div>
 					</div>
 					<div class ="row">

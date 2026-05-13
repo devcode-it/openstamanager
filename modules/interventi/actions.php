@@ -180,12 +180,12 @@ switch (post('op')) {
 
             $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
-                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
+                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
             }
 
             $tecnici_assegnati = [];
             if (!empty($stato['notifica_tecnico_assegnato'])) {
-                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
             }
 
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
@@ -324,9 +324,9 @@ switch (post('op')) {
 
         // Collegamenti tecnici/interventi
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
-            $idtecnico = post('idtecnico');
-            if (!empty($idtecnico)) {
-                add_tecnico($id_record, $idtecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+            $id_tecnico = post('id_tecnico');
+            if (!empty($id_tecnico)) {
+                add_tecnico($id_record, $id_tecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
 
                 OperationLog::setInfo('id_module', $id_module);
                 OperationLog::setInfo('id_plugin', $id_plugin);
@@ -340,10 +340,10 @@ switch (post('op')) {
         $sessioni_aggiuntive = post('sessioni');
         if (!empty($sessioni_aggiuntive) && is_array($sessioni_aggiuntive)) {
             foreach ($sessioni_aggiuntive as $sessione) {
-                if (!empty($sessione['orario_inizio']) && !empty($sessione['orario_fine']) && !empty($sessione['idtecnico'])) {
+                if (!empty($sessione['orario_inizio']) && !empty($sessione['orario_fine']) && !empty($sessione['id_tecnico'])) {
                     // Crea la sessione manualmente per poter specificare un tipo attività diverso
                     $intervento = Intervento::find($id_record);
-                    $anagrafica = Anagrafica::find($sessione['idtecnico']);
+                    $anagrafica = Anagrafica::find($sessione['id_tecnico']);
 
                     $sessione_obj = new Sessione();
                     $sessione_obj->document()->associate($intervento);
@@ -1014,8 +1014,8 @@ switch (post('op')) {
                     }
 
                     if (!empty($stato['notifica_tecnici'])) {
-                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
-                        $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
+                        $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
                         $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                         foreach ($tecnici as $tecnico) {
@@ -1101,8 +1101,8 @@ switch (post('op')) {
                             }
 
                             if (!empty($stato['notifica_tecnici'])) {
-                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'idtecnico', [], ['idintervento' => $id_record]);
-                                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS idtecnico', [], ['id_intervento' => $id_record]);
+                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['idintervento' => $id_record]);
+                                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
                                 $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
                                 foreach ($tecnici as $tecnico) {
@@ -1218,8 +1218,8 @@ switch (post('op')) {
         $sessione->km = post('km');
 
         // Modifica del tecnico (se cambiato)
-        $id_tecnico = post('idtecnico');
-        if (!empty($id_tecnico) && $id_tecnico != $sessione->idtecnico) {
+        $id_tecnico = post('id_tecnico');
+        if (!empty($id_tecnico) && $id_tecnico != $sessione->id_tecnico) {
             $sessione->setTecnico($id_tecnico);
         }
 

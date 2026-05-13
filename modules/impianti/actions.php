@@ -50,7 +50,7 @@ switch ($op) {
                 'proprietario' => post('proprietario'),
                 'palazzo' => post('palazzo'),
                 'ubicazione' => post('ubicazione'),
-                'idtecnico' => post('idtecnico'),
+                'id_tecnico' => post('id_tecnico'),
                 'scala' => post('scala'),
                 'piano' => post('piano'),
                 'interno' => post('interno'),
@@ -94,7 +94,7 @@ switch ($op) {
         $matricola = post('matricola');
         $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
-        $idtecnico = post('idtecnico');
+        $id_tecnico = post('id_tecnico');
         $id_sede = post('id_sede');
         $id_categoria = post('id_categoria');
         $id_sottocategoria = post('id_sottocategoria');
@@ -107,7 +107,7 @@ switch ($op) {
                 'id_anagrafica' => $id_anagrafica,
                 'nome' => $nome,
                 'data' => date('Y-m-d'),
-                'idtecnico' => $idtecnico ?: 0,
+                'id_tecnico' => $id_tecnico ?: 0,
                 'id_sede' => $id_sede ?: 0,
                 'id_categoria' => $id_categoria ?: null,
                 'id_sottocategoria' => $id_sottocategoria ?: null,

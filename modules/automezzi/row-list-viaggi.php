@@ -30,9 +30,9 @@ if (!empty($rs_viaggi)) {
     foreach ($rs_viaggi as $viaggio) {
         $disabled = !empty($viaggio['firma_data']) && $user->gruppo == 'Tecnici' ? 'disabled' : '';
         $firma_disabled = '';
-        $tecnico = Anagrafica::find($viaggio['idtecnico']);
+        $tecnico = Anagrafica::find($viaggio['id_tecnico']);
 
-        if ($user->gruppo == 'Tecnici' && $user->id_anagrafica != $viaggio['idtecnico']) {
+        if ($user->gruppo == 'Tecnici' && $user->id_anagrafica != $viaggio['id_tecnico']) {
             $disabled = 'disabled';
             $firma_disabled = 'disabled';
         }

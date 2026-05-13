@@ -43,7 +43,7 @@ if (null == $orario_inizio || '00:00:00' == $orario_inizio) {
 }
 
 // Un utente del gruppo Tecnici può aprire attività solo a proprio nome
-$id_tecnico = filter('id_tecnico') ?: filter('idtecnico');
+$id_tecnico = filter('id_tecnico') ?: filter('id_tecnico');
 $id_cliente = null;
 
 if ($user['gruppo'] == 'Tecnici' && !empty($user['id_anagrafica'])) {
@@ -126,8 +126,8 @@ elseif (!empty($id_intervento)) {
 
 // Selezione dei tecnici predefiniti per gli impianti selezionati
 if (!empty($impianti_collegati)) {
-    $tecnici_impianti = $dbo->fetchArray('SELECT idtecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
-    $id_tecnico = array_unique(array_column($tecnici_impianti, 'idtecnico'));
+    $tecnici_impianti = $dbo->fetchArray('SELECT id_tecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
+    $id_tecnico = array_unique(array_column($tecnici_impianti, 'id_tecnico'));
 }
 
 // Impostazione della data se mancante
@@ -361,7 +361,7 @@ echo '
                             </div>
 
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
+                                {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "id_tecnico", "required": '.($origine_dashboard ? 1 : 0).', "ajax-source": "tecnici", "value": "'.$id_tecnico.'", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1||'.(empty($id_tecnico) ? '' : 'disabled').'" ]}
                             </div>
                         </div>
 
@@ -553,7 +553,7 @@ echo '
         caricaMappa();
     });
 
-	input("idtecnico").change(function() {
+	input("id_tecnico").change(function() {
 	    calcolaConflittiTecnici();
 	});
 
@@ -794,7 +794,7 @@ echo '
 
 if (!$origine_dashboard) {
     echo '
-	input("idtecnico").change(function() {
+	input("id_tecnico").change(function() {
 	    var value = $(this).val() > 0 ? true : false;
 	    input("orario_inizio").setRequired(value);
 	    input("orario_fine").setRequired(value);
@@ -872,7 +872,7 @@ echo '
     }
 
     function calcolaConflittiTecnici() {
-        let tecnico = input("idtecnico").get();
+        let tecnico = input("id_tecnico").get();
 
         if (tecnico) {
             return $("#info-conflitti-add").load("'.$module->fileurl('occupazione_tecnici.php').'", {
@@ -928,7 +928,7 @@ echo '
                     {[ "type": "timestamp", "label": "'.tr('Fine attività').'", "name": "sessioni[${sessioneCounter}][orario_fine]", "value": "${nuovoOrarioFine}", "class": "text-center" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "sessioni[${sessioneCounter}][idtecnico]", "ajax-source": "tecnici", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "sessioni[${sessioneCounter}][id_tecnico]", "ajax-source": "tecnici", "icon-after": "add|'.$id_modulo_anagrafiche.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-danger btn-block" onclick="rimuoviSessione(${sessioneCounter})" style="margin-top: 27px;">

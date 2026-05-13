@@ -149,14 +149,14 @@ class Anagrafica extends Model
     {
         $database = database();
 
-        $presenti = $database->fetchArray('SELECT id_tipo_intervento FROM in_tariffe WHERE idtecnico = '.prepare($anagrafica->id));
+        $presenti = $database->fetchArray('SELECT id_tipo_intervento FROM in_tariffe WHERE id_tecnico = '.prepare($anagrafica->id));
 
         // Aggiunta associazioni costi unitari al contratto
         $tipi = TipoSessione::whereNotIn('id', array_column($presenti, 'id_tipo_intervento'))->get();
 
         foreach ($tipi as $tipo) {
             $database->insert('in_tariffe', [
-                'idtecnico' => $anagrafica->id,
+                'id_tecnico' => $anagrafica->id,
                 'id_tipo_intervento' => $tipo->id,
                 'costo_ore' => $tipo->costo_orario,
                 'costo_km' => $tipo->costo_km,

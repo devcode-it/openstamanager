@@ -47,7 +47,7 @@ $id_modulo_marca_impianti = Module::where('name', 'Marche')->first()->id;
 			{[ "type": "select", "label": "<?php echo tr('Sede'); ?>", "name": "id_sede", "value": "$id_sede$", "ajax-source": "sedi", "select-options": <?php echo json_encode(['id_anagrafica' => $id_anagrafica]); ?>, "placeholder": "Sede legale" ]}
 		</div>
 		<div class="col-md-4">
-			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "idtecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
+			{[ "type": "select", "label": "<?php echo tr('Tecnico predefinito'); ?>", "name": "id_tecnico", "ajax-source": "tecnici", "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Tecnico&readonly_tipo=1"  ]}
 		</div>
 	</div>
 

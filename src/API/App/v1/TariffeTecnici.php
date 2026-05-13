@@ -47,7 +47,7 @@ class TariffeTecnici extends AppResource
     {
         // Gestione della visualizzazione dei dettagli del record
         $query = 'SELECT id,
-            idtecnico AS id_tecnico,
+            id_tecnico AS id_tecnico,
             id_tipo_intervento AS id_tipo_intervento,
             NULL AS id_contratto,
             costo_ore AS prezzo_orario,

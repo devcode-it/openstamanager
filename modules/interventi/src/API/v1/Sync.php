@@ -55,7 +55,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
 
         // Individuazione degli interventi
         $query = 'SELECT 
-            in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS cliente, in_interventi_tecnici.description, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=idtecnico) AS nome_tecnico, summary 
+            in_interventi_tecnici.id AS idriga, in_interventi_tecnici.idintervento, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS cliente, in_interventi_tecnici.description, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, summary 
         FROM 
             in_interventi_tecnici 
         INNER JOIN 
@@ -65,7 +65,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             DATE(orario_inizio) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE() + INTERVAL 3 MONTH AND in_interventi.deleted_at IS NULL';
 
         if ($user->anagrafica->isTipo('Tecnico')) {
-            $query .= ' AND in_interventi_tecnici.idtecnico = '.prepare($user['id_anagrafica']);
+            $query .= ' AND in_interventi_tecnici.id_tecnico = '.prepare($user['id_anagrafica']);
         } elseif ($user->anagrafica->isTipo('Cliente')) {
             $query .= ' AND in_interventi.id_anagrafica = '.prepare($user['id_anagrafica']);
         }
@@ -141,7 +141,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
         $database->query('UPDATE in_interventi_tecnici SET description = (SELECT richiesta FROM in_interventi WHERE in_interventi.id=in_interventi_tecnici.idintervento) WHERE description=""');
 
         // Interpretazione degli eventi
-        $idtecnico = $user['id_anagrafica'];
+        $id_tecnico = $user['id_anagrafica'];
 
         $response = \API\Response::getRequest(true);
 
@@ -198,7 +198,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
                     $intervento->richiesta = $description;
                     $intervento->save();
 
-                    add_tecnico($intervento->id, $idtecnico, $orario_inizio, $orario_fine);
+                    add_tecnico($intervento->id, $id_tecnico, $orario_inizio, $orario_fine);
                     $sessione = Sessione::where('idintervento', $intervento->id)->get()->last();
                     $sessione->summary = $summary;
                     $sessione->description = $description;

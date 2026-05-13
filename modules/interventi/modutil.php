@@ -98,10 +98,10 @@ if (!function_exists('link_componente_to_articolo')) {
 }
 
 if (!function_exists('add_tecnico')) {
-    function add_tecnico($id_intervento, $idtecnico, $inizio, $fine, $idcontratto = null)
+    function add_tecnico($id_intervento, $id_tecnico, $inizio, $fine, $idcontratto = null)
     {
         $intervento = Intervento::find($id_intervento);
-        $anagrafica = Anagrafica::find($idtecnico);
+        $anagrafica = Anagrafica::find($id_tecnico);
 
         $sessione = Sessione::build($intervento, $anagrafica, $inizio, $fine);
 

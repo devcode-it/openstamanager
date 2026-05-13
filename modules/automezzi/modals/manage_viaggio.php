@@ -14,7 +14,7 @@ if (!empty($id_viaggio)) {
 } else {
     // Valori di default per nuovo viaggio
     $viaggio = [
-        'idtecnico' => '',
+        'id_tecnico' => '',
         'data_inizio' => '-now-',
         'data_fine' => '-now-',
         'km_inizio' => '',
@@ -48,7 +48,7 @@ echo '
 // Tecnico
 echo '
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "required": 1, "ajax-source": "tecnici_automezzo", "select-options": {"idautomezzo": '.$idautomezzo.'}, "value": "'.$viaggio['idtecnico'].'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "id_tecnico", "required": 1, "ajax-source": "tecnici_automezzo", "select-options": {"idautomezzo": '.$idautomezzo.'}, "value": "'.$viaggio['id_tecnico'].'" ]}
         </div>';
 
 // Data

@@ -29,7 +29,7 @@ if ($user['gruppo'] == 'Tecnici') {
     $show_prezzi = !empty($user['id_anagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_scontokm AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -43,11 +43,11 @@ echo '
 echo '
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "idtecnico", "value": "'.$sessione['idtecnico'].'", "required": 1, "ajax-source": "tecnici", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "id_tecnico", "value": "'.$sessione['id_tecnico'].'", "required": 1, "ajax-source": "tecnici", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica=Tecnico&readonly_tipo=1" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['idtecnico' => $sessione['idtecnico'], 'id_intervento' => $id_record]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['id_tecnico' => $sessione['id_tecnico'], 'id_intervento' => $id_record]).' ]}
         </div>
     </div>';
 
@@ -143,15 +143,15 @@ $(document).ready(function () {
     });
 
     // Quando cambio il tecnico, aggiorno le select-options del tipo attività
-    $("#idtecnico").change(function() {
-        var idtecnico = $(this).val();
+    $("#id_tecnico").change(function() {
+        var id_tecnico = $(this).val();
 
-        if (!idtecnico) {
+        if (!id_tecnico) {
             return;
         }
 
         // Aggiorno le select-options per ricaricare i tipi di intervento del nuovo tecnico
-        $("#id_tipo_interventot").setSelectOption("idtecnico", idtecnico);
+        $("#id_tipo_interventot").setSelectOption("id_tecnico", id_tecnico);
         $("#id_tipo_interventot").setSelectOption("id_intervento", globals.id_record);
 
         // Resetto e ricarico il select dei tipi di intervento

@@ -39,7 +39,7 @@ switch (post('op')) {
             // Aggiorno il record
             $dbo->update('in_tariffe', $values, [
                 'id_tipo_intervento' => $id_tipo_intervento,
-                'idtecnico' => $id_record,
+                'id_tecnico' => $id_record,
             ]);
         }
 
@@ -70,7 +70,7 @@ switch (post('op')) {
         // Aggiorno il record
         $dbo->update('in_tariffe', $values, [
             'id_tipo_intervento' => $id_tipo_intervento,
-            'idtecnico' => $id_record,
+            'id_tecnico' => $id_record,
         ]);
 
         break;

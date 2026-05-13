@@ -88,13 +88,13 @@ class Interventi extends AppResource
                     SELECT idintervento FROM in_interventi_tecnici
                     WHERE in_interventi_tecnici.idintervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q1
+                        AND in_interventi_tecnici.id_tecnico = :id_tecnico_q1
                 )
                 AND in_interventi.id IN (
                     SELECT idintervento FROM in_interventi_tecnici
                     WHERE in_interventi_tecnici.idintervento = in_interventi.id
                         AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
-                        AND in_interventi_tecnici.idtecnico = :id_tecnico_q2
+                        AND in_interventi_tecnici.id_tecnico = :id_tecnico_q2
                 )
             )';
 
@@ -152,7 +152,7 @@ class Interventi extends AppResource
                             SELECT `idintervento` FROM `in_interventi_tecnici`
                             WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                                 AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
-                                AND `in_interventi_tecnici`.`idtecnico` = :id_tecnico_q1
+                                AND `in_interventi_tecnici`.`id_tecnico` = :id_tecnico_q1
                         )
                         OR (
                             `in_interventi`.`id` NOT IN (
@@ -199,7 +199,7 @@ class Interventi extends AppResource
                                 SELECT `idintervento` FROM `in_interventi_tecnici`
                                 WHERE `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                                     AND `in_interventi_tecnici`.`orario_fine` BETWEEN :period_start AND :period_end
-                                    AND `in_interventi_tecnici`.`idtecnico` = :id_tecnico_q1
+                                    AND `in_interventi_tecnici`.`id_tecnico` = :id_tecnico_q1
                             )
                             OR (
                                 `in_interventi`.`id` NOT IN (

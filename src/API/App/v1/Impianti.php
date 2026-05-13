@@ -44,7 +44,7 @@ class Impianti extends AppResource
 
     public function getModifiedRecords($last_sync_at)
     {
-        $statement = Impianto::select('id', 'updated_at', 'idtecnico')
+        $statement = Impianto::select('id', 'updated_at', 'id_tecnico')
             ->whereHas('anagrafica.tipi', function (Builder $query) {
                 $tipo_cliente = Tipo::where('name', 'Cliente')->first()->id;
                 $query->where('id', '=', $tipo_cliente);
@@ -61,7 +61,7 @@ class Impianti extends AppResource
         if ($limite_impianti == 1 && !auth_osm()->getUser()->is_admin) {
             $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
-            $statement->where('idtecnico', $id_tecnico);
+            $statement->where('id_tecnico', $id_tecnico);
         }
 
         $records = $statement->get();

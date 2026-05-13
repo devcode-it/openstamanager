@@ -1091,7 +1091,7 @@ class DocumentiCollegati
         WHERE `in_interventi`.`id` IN (
             SELECT `idintervento`
             FROM `in_interventi_tecnici`
-            WHERE `idtecnico` = '.prepare($id_anagrafica).'
+            WHERE `id_tecnico` = '.prepare($id_anagrafica).'
         ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $interventi = $dbo->fetchArray($query_interventi);
@@ -1576,7 +1576,7 @@ class DocumentiCollegati
         WHERE `in_interventi`.`id` IN (
             SELECT `idintervento`
             FROM `in_interventi_tecnici`
-            WHERE `idtecnico` = '.prepare($id_anagrafica).'
+            WHERE `id_tecnico` = '.prepare($id_anagrafica).'
         ) OR `in_interventi`.`id_anagrafica` = '.prepare($id_anagrafica);
 
         $result = $dbo->fetchOne($query_interventi);

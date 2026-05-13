@@ -34,7 +34,7 @@ SELECT
     t.ragione_sociale as tecnico_nome
 FROM 
     an_automezzi_viaggi v
-    LEFT JOIN an_anagrafiche t ON v.idtecnico = t.id
+    LEFT JOIN an_anagrafiche t ON v.id_tecnico = t.id
 WHERE 
     v.id_sede = '.prepare($id_record).'
     AND v.data_inizio >= '.prepare($data_inizio.' 00:00:00').'

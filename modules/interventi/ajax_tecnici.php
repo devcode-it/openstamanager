@@ -47,7 +47,7 @@ $query = 'SELECT
         `user`.`id` AS id_user
     FROM
         `in_interventi_tecnici` 
-        INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`idtecnico` = `an_anagrafiche`.`id`
+        INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id`
         LEFT JOIN (SELECT `zz_users`.`id_anagrafica`, `zz_users`.`id` FROM `zz_users` GROUP BY `zz_users`.`id_anagrafica`) AS user ON `user`.`id_anagrafica` = `an_anagrafiche`.`id` 
         INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipiintervento`.`id`
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
@@ -72,7 +72,7 @@ if (!empty($sessioni)) {
         <tr><th>';
 
             if ($sessione['id_user']) {
-                $user = User::where('id_anagrafica', $sessione['idtecnico'])->orderByRaw('CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END')->first();
+                $user = User::where('id_anagrafica', $sessione['id_tecnico'])->orderByRaw('CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END')->first();
                 echo '
                 <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
             } else {

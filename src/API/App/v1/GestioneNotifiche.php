@@ -163,7 +163,7 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
                         'operation_type' => $operazione['op'],
                         'intervento_id' => $operazione['id_record'],
                         'intervento_codice' => $intervento_info['codice'],
-                        'tecnico_id' => $tecnico['idtecnico'],
+                        'tecnico_id' => $tecnico['id_tecnico'],
                         'tecnico_nome' => $tecnico['ragione_sociale'],
                         'timestamp' => $operazione['created_at'],
                     ],
@@ -214,11 +214,11 @@ class GestioneNotifiche extends Resource implements RetrieveInterface
     private function getTecniciInteressati($database, $id_intervento)
     {
         $query = 'SELECT DISTINCT
-            in_interventi_tecnici.idtecnico,
+            in_interventi_tecnici.id_tecnico,
             an_anagrafiche.ragione_sociale,
             zz_users.id as user_id
         FROM in_interventi_tecnici
-        LEFT JOIN an_anagrafiche ON in_interventi_tecnici.idtecnico = an_anagrafiche.id
+        LEFT JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id
         LEFT JOIN zz_users ON an_anagrafiche.id = zz_users.id_anagrafica
         WHERE in_interventi_tecnici.idintervento = '.prepare($id_intervento).'
             AND zz_users.id IS NOT NULL';

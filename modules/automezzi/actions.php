@@ -112,7 +112,7 @@ switch (post('op')) {
 
         // Aggiunta viaggio
     case 'addviaggio':
-        $idtecnico = post('idtecnico');
+        $id_tecnico = post('id_tecnico');
         $data_inizio = post('data_inizio');
         $data_fine = post('data_fine') ?: null;
         $km_inizio = post('km_inizio');
@@ -123,7 +123,7 @@ switch (post('op')) {
         // Inserisco il viaggio
         $dbo->insert('an_automezzi_viaggi', [
             'id_sede' => $id_record,
-            'idtecnico' => $idtecnico,
+            'id_tecnico' => $id_tecnico,
             'data_inizio' => $data_inizio,
             'data_fine' => $data_fine,
             'km_inizio' => $km_inizio,
@@ -139,7 +139,7 @@ switch (post('op')) {
         // Modifica viaggio
     case 'editviaggio':
         $id_viaggio = post('id_viaggio');
-        $idtecnico = post('idtecnico');
+        $id_tecnico = post('id_tecnico');
         $data_inizio = post('data_inizio');
         $data_fine = post('data_fine') ?: null;
         $km_inizio = post('km_inizio');
@@ -149,7 +149,7 @@ switch (post('op')) {
 
         // Aggiorno il viaggio
         $dbo->update('an_automezzi_viaggi', [
-            'idtecnico' => $idtecnico,
+            'id_tecnico' => $id_tecnico,
             'data_inizio' => $data_inizio,
             'data_fine' => $data_fine,
             'km_inizio' => $km_inizio,

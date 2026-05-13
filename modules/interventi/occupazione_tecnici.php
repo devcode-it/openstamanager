@@ -28,7 +28,7 @@ if (!empty($id_record)) {
     $sessioni = $documento->sessioni;
 
     foreach ($sessioni as $sessione) {
-        $id_tecnico = $sessione->idtecnico;
+        $id_tecnico = $sessione->id_tecnico;
         $inizio = $sessione->orario_inizio;
         $fine = $sessione->orario_fine;
         if (!isset($tecnici[$id_tecnico])) {
@@ -72,7 +72,7 @@ if (empty($tecnici) || setting('Alert occupazione tecnici') != 1) {
 // Individuazione dei conflitti con altri interventi
 $elenco_conflitti = [];
 foreach ($tecnici as $id_tecnico => $ore) {
-    $query = 'SELECT idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE idtecnico = '.prepare($id_tecnico).($id_record ? ' AND idintervento != '.prepare($id_record) : '');
+    $query = 'SELECT idintervento, orario_inizio, orario_fine FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_tecnico).($id_record ? ' AND idintervento != '.prepare($id_record) : '');
 
     // Conflitti ristretti per orario
     foreach ($ore as $orario) {

@@ -53,12 +53,12 @@ ORDER BY
 $zone = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS descrizione) UNION (SELECT 1 AS ordine, id, descrizione FROM an_zone) ORDER BY ordine, descrizione ASC');
 
 // Prima selezione globale per tutti i filtri
-if (!isset($_SESSION['dashboard']['idtecnici'])) {
-    $_SESSION['dashboard']['idtecnici'] = ["'-1'"];
+if (!isset($_SESSION['dashboard']['id_tecnici'])) {
+    $_SESSION['dashboard']['id_tecnici'] = ["'-1'"];
 
     foreach ($tecnici_disponibili as $tecnico) {
         if (($user['gruppo'] == 'Tecnici' && $user['id_anagrafica'] == $tecnico['id']) || $user['gruppo'] != 'Tecnici') {
-            $_SESSION['dashboard']['idtecnici'][] = "'".$tecnico['id']."'";
+            $_SESSION['dashboard']['id_tecnici'][] = "'".$tecnico['id']."'";
         }
     }
 }
@@ -174,7 +174,7 @@ echo '
         </button>
 		<ul class="dropdown-menu" role="menu">';
 
-$tecnici_sessione = session_get('dashboard.idtecnici', []);
+$tecnici_sessione = session_get('dashboard.id_tecnici', []);
 foreach ($tecnici_disponibili as $tecnico) {
     $attr = '';
     if (in_array("'".$tecnico['id']."'", $tecnici_sessione)) {
@@ -516,7 +516,7 @@ globals.dashboard = {
         $(".dashboard_tecnico").click(function (event) {
             let id = $(this).val();
 
-            session_set_array("dashboard,idtecnici", id).then(function () {
+            session_set_array("dashboard,id_tecnici", id).then(function () {
                 aggiorna_contatore("#dashboard_tecnici");
                 globals.dashboard.calendar.refetchEvents();
             });

@@ -25,7 +25,7 @@ use Modules\CategorieFiles\Categoria;
 
 switch (filter('op')) {
     // Imposta un valore ad un array di $_SESSION
-    // esempio: push di un valore in $_SESSION['dashboard']['idtecnici']
+    // esempio: push di un valore in $_SESSION['dashboard']['id_tecnici']
     // iversed: specifica se rimuovere dall'array il valore trovato e applicare quindi una deselezione (valori 0 o 1, default 1)
     case 'session_set_array':
         $array = explode(',', get('session'));

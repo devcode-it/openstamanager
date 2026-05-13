@@ -78,7 +78,7 @@ $height = '80';
 
 $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
-$tecnici = (array) $calendar['idtecnici'];
+$tecnici = (array) $calendar['id_tecnici'];
 
 $query = "
     SELECT

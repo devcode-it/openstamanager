@@ -52,7 +52,7 @@ switch ($operazione) {
             'id_impianti' => implode(',', post('id_impianti') ?: []),
             'id_sede' => post('id_sede_c') ?: 0,
             'data_scadenza' => post('data_scadenza') ?: null,
-            'idtecnici' => implode(',', post('idtecnici') ?: []),
+            'id_tecnici' => implode(',', post('id_tecnici') ?: []),
         ], ['id' => $id_record]);
 
         flash()->info(tr('Promemoria inserito!'));
@@ -159,8 +159,8 @@ switch ($operazione) {
                     $intervento->save();
 
                     // Aggiungo i tecnici selezionati
-                    $idtecnici = post('id_tecnicoo');
-                    foreach ($idtecnici as $id_tecnicoo) {
+                    $id_tecnici = post('id_tecnicoo');
+                    foreach ($id_tecnici as $id_tecnicoo) {
                         add_tecnico($intervento->id, $id_tecnicoo, $data_promemoria.' '.post('orario_inizio'), $data_promemoria.' '.post('orario_fine'));
                     }
 

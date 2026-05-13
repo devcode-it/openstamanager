@@ -62,7 +62,7 @@ $max_date = new Carbon($date_end);
 
 $stati = (array) $calendar['idstatiintervento'];
 $tipi = (array) $calendar['idtipiintervento'];
-$tecnici = (array) $calendar['idtecnici'];
+$tecnici = (array) $calendar['id_tecnici'];
 
 $query = "SELECT
         DATE(`orario_inizio`) AS data,

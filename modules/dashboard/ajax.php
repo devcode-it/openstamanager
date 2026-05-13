@@ -43,7 +43,7 @@ switch (filter('op')) {
 
         $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
         $zone = (array) $_SESSION['dashboard']['idzone'];
-        $tecnici = (array) $_SESSION['dashboard']['idtecnici'];
+        $tecnici = (array) $_SESSION['dashboard']['id_tecnici'];
 
         $query = 'SELECT
             `in_interventi_tecnici`.`id`,

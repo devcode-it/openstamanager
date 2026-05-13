@@ -127,7 +127,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-12">
-                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "idtecnici[]", "ajax-source": "tecnici", "value": "'.$record['idtecnici'].'", "readonly": '.intval($block_edit).' ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici assegnati').'", "multiple": "1", "name": "id_tecnici[]", "ajax-source": "tecnici", "value": "'.$record['id_tecnici'].'", "readonly": '.intval($block_edit).' ]}
                 </div>
             </div>
 

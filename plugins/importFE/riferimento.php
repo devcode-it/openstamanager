@@ -79,7 +79,7 @@ foreach ($righe as $riga) {
     $qta_rimanente = $riga->qta_rimanente - (float) $righe_utilizzate[$riga->id];
     $riga_origine = $riga->getOriginalComponent();
 
-    if (!empty($riga->idarticolo)) {
+    if (!empty($riga->id_articolo)) {
         $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->id_conto_acquisto))['descrizione'];
     }
 
@@ -92,7 +92,7 @@ foreach ($righe as $riga) {
         'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
         'id_iva' => $riga->id_iva,
         'iva_percentuale' => $riga->aliquota->percentuale,
-        'id_articolo' => $riga->idarticolo,
+        'id_articolo' => $riga->id_articolo,
         'desc_articolo' => str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')),
         'id_conto' => $riga->articolo->id_conto_acquisto,
         'desc_conto' => $desc_conto ? str_replace(' ', '_', $desc_conto) : null,

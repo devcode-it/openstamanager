@@ -144,7 +144,7 @@ abstract class Article extends Accounting
         database()->sync('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $dir,
-            'id_articolo' => $this->idarticolo,
+            'id_articolo' => $this->id_articolo,
         ], [
             'serial' => $serials,
         ]);
@@ -166,7 +166,7 @@ abstract class Article extends Accounting
         database()->detach('mg_prodotti', [
             'id_riga_'.$this->serialRowID => $this->id,
             'dir' => $this->getDirection(),
-            'id_articolo' => $this->idarticolo,
+            'id_articolo' => $this->id_articolo,
         ], [
             'serial' => array_clean($serials),
         ]);
@@ -232,7 +232,7 @@ abstract class Article extends Accounting
 
     public function articolo()
     {
-        return $this->belongsTo(Original::class, 'idarticolo')
+        return $this->belongsTo(Original::class, 'id_articolo')
             ->withTrashed();
     }
 
@@ -314,9 +314,9 @@ abstract class Article extends Accounting
         $qta_finale = $qta_movimento;
 
         if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') && $documento->direzione == 'entrata' && !$this->articolo->servizio) {
-            $qta_sede = Movimento::where('idarticolo', $this->articolo->id)
+            $qta_sede = Movimento::where('id_articolo', $this->articolo->id)
                 ->where('id_sede', $id_sede)
-                ->groupBy('idarticolo')
+                ->groupBy('id_articolo')
                 ->sum('qta');
 
             $qta_modifica = $this->attributes['qta'] - $this->original['qta'];
@@ -359,7 +359,7 @@ abstract class Article extends Accounting
 
         $table = static::getTableName();
         static::addGlobalScope('articles', function (Builder $builder) use ($table) {
-            $builder->whereNotNull($table.'.idarticolo')->where($table.'.idarticolo', '<>', 0);
+            $builder->whereNotNull($table.'.id_articolo')->where($table.'.id_articolo', '<>', 0);
         });
     }
 

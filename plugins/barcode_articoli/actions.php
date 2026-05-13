@@ -37,7 +37,7 @@ switch ($operazione) {
             // Verifica che il barcode non sia già presente nella tabella mg_articoli_barcode escludendo articoli con deleted_at valorizzato
             $esistente_barcode = $dbo->table('mg_articoli_barcode')
                 ->where('mg_articoli_barcode.barcode', $barcode_value)
-                ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.idarticolo')
+                ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.id_articolo')
                 ->where('mg_articoli.deleted_at', null)
                 ->count() > 0;
 
@@ -50,7 +50,7 @@ switch ($operazione) {
             // Se il barcode è unico, procede con l'inserimento
             if (!$esistente_articoli && !$esistente_barcode && !$coincide_codice) {
                 $dbo->insert('mg_articoli_barcode', [
-                    'idarticolo' => $id_parent,
+                    'id_articolo' => $id_parent,
                     'barcode' => $barcode_value,
                 ]);
                 $id_record = $dbo->lastInsertedID();
@@ -115,7 +115,7 @@ switch ($operazione) {
                 'colore' => post('colore'),
                 'descrizione' => post('descrizione_pulsante'),
                 'usa_immagine' => post('usa_immagine'),
-                'idarticolo' => post('idarticolo'),
+                'id_articolo' => post('id_articolo'),
             ]);
 
             $btnid = $dbo->lastInsertedID();

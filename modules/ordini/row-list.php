@@ -111,9 +111,9 @@ foreach ($righe as $riga) {
                 <td>';
 
     if ($riga->isArticolo()) {
-        $articolo_riga = Articolo::find($riga->idarticolo);
+        $articolo_riga = Articolo::find($riga->id_articolo);
 
-        echo Modules::link('Articoli', $riga->idarticolo, $articolo_riga->codice.' - '.$riga->descrizione);
+        echo Modules::link('Articoli', $riga->id_articolo, $articolo_riga->codice.' - '.$riga->descrizione);
 
         if ($id_module == Module::where('name', 'Ordini fornitore')->first()->id) {
             $codice_fornitore = $riga->articolo->dettaglioFornitore($ordine->id_anagrafica)->codice_fornitore;
@@ -270,7 +270,7 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo()) {
             $id_anagrafica = $ordine->id_anagrafica;
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $ordine->id_sede_destinazione);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->id_articolo, $riga, $ordine->id_sede_destinazione);
         }
 
         // Costi unitari
@@ -330,9 +330,9 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
-    if (hasArticoliFiglio($riga->idarticolo)) {
+    if (hasArticoliFiglio($riga->id_articolo)) {
         echo '
-                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->id_articolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
     }

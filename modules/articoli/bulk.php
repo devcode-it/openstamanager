@@ -125,37 +125,37 @@ switch (post('op')) {
             $elementi = $dbo->fetchArray('
                 SELECT `co_documenti`.`id` FROM `co_documenti`
                 INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
-                WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id).'
+                WHERE `co_righe_documenti`.`id_articolo` = '.prepare($id).'
 
                 UNION
 
                 SELECT `dt_ddt`.`id` FROM `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-                WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id).'
+                WHERE `dt_righe_ddt`.`id_articolo` = '.prepare($id).'
 
                 UNION
 
                 SELECT `or_ordini`.`id` FROM `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
-                WHERE `or_righe_ordini`.`idarticolo` = '.prepare($id).'
+                WHERE `or_righe_ordini`.`id_articolo` = '.prepare($id).'
 
                 UNION
 
                 SELECT `co_contratti`.`id` FROM `co_contratti`
                 INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`
-                WHERE `co_righe_contratti`.`idarticolo` = '.prepare($id).'
+                WHERE `co_righe_contratti`.`id_articolo` = '.prepare($id).'
 
                 UNION
 
                 SELECT `co_preventivi`.`id` FROM `co_preventivi`
                 INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
-                WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id).'
+                WHERE `co_righe_preventivi`.`id_articolo` = '.prepare($id).'
 
                 UNION
 
                 SELECT `in_interventi`.`id` FROM `in_interventi`
                 INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
-                WHERE `in_righe_interventi`.`idarticolo` = '.prepare($id)
+                WHERE `in_righe_interventi`.`id_articolo` = '.prepare($id)
             );
 
             if (!empty($elementi)) {
@@ -311,7 +311,7 @@ switch (post('op')) {
             $articolo = Articolo::find($id);
 
             if ($articolo->prezzo_acquisto == 0 && empty($articolo->idfornitore)) {
-                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (`prezzo_unitario`-`sconto_unitario`) AS prezzo_acquisto FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `idarticolo`='.prepare($id).' AND `dir`="uscita" ORDER BY `co_documenti`.`data` DESC, `co_righe_documenti`.`id` DESC LIMIT 0,1')['prezzo_acquisto'];
+                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (`prezzo_unitario`-`sconto_unitario`) AS prezzo_acquisto FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_articolo`='.prepare($id).' AND `dir`="uscita" ORDER BY `co_documenti`.`data` DESC, `co_righe_documenti`.`id` DESC LIMIT 0,1')['prezzo_acquisto'];
 
                 $articolo->prezzo_acquisto = $new_prezzo_acquisto;
                 $articolo->save();
@@ -397,17 +397,17 @@ switch (post('op')) {
     case 'set_commission':
         $n_art = 0;
         foreach ($id_records as $id) {
-            $exist = $dbo->selectOne('co_provvigioni', 'id', ['idarticolo' => $id, 'id_agente' => post('id_agente')]);
+            $exist = $dbo->selectOne('co_provvigioni', 'id', ['id_articolo' => $id, 'id_agente' => post('id_agente')]);
 
             if ($exist) {
                 $dbo->update('co_provvigioni', [
                     'id_agente' => post('id_agente'),
                     'provvigione' => post('provvigione'),
                     'tipo_provvigione' => post('tipo_provvigione'),
-                ], ['idarticolo' => $id, 'id_agente' => post('id_agente')]);
+                ], ['id_articolo' => $id, 'id_agente' => post('id_agente')]);
             } else {
                 $dbo->insert('co_provvigioni', [
-                    'idarticolo' => $id,
+                    'id_articolo' => $id,
                     'id_agente' => post('id_agente'),
                     'provvigione' => post('provvigione'),
                     'tipo_provvigione' => post('tipo_provvigione'),
@@ -483,7 +483,7 @@ switch (post('op')) {
             // Se è stato trovato un barcode unico, lo assegna all'articolo come barcode principale
             if ($tentativi < $max_tentativi) {
                 $dbo->insert('mg_articoli_barcode', [
-                    'idarticolo' => $id,
+                    'id_articolo' => $id,
                     'barcode' => $barcode,
                 ]);
                 ++$barcode_generati;
@@ -514,8 +514,8 @@ switch (post('op')) {
     case 'copy_bulk':
         $copia_allegati = post('allegati');
 
-        foreach ($id_records as $idarticolo) {
-            $articolo = Articolo::find($idarticolo);
+        foreach ($id_records as $id_articolo) {
+            $articolo = Articolo::find($id_articolo);
             $new = $articolo->replicate();
 
             // Se non specifico il codice articolo lo imposto uguale all'id della riga
@@ -567,19 +567,19 @@ switch (post('op')) {
         try {
             foreach ($id_articoli_da_unire as $id_articolo_da_unire) {
                 // Trasferimento movimenti di magazzino
-                database()->table('mg_movimenti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('mg_movimenti')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe documenti
-                database()->table('co_righe_documenti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('co_righe_documenti')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe ordini
-                database()->table('or_righe_ordini')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('or_righe_ordini')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe preventivi
-                database()->table('co_righe_preventivi')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('co_righe_preventivi')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe DDT
-                database()->table('dt_righe_ddt')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('dt_righe_ddt')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe contratti
-                database()->table('co_righe_contratti')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('co_righe_contratti')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento righe interventi
-                database()->table('in_righe_interventi')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('in_righe_interventi')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento prodotti
                 database()->table('mg_prodotti')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento prezzi articoli
@@ -589,9 +589,9 @@ switch (post('op')) {
                 // Trasferimento fornitori
                 database()->table('mg_fornitore_articolo')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento barcode
-                database()->table('mg_articoli_barcode')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('mg_articoli_barcode')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Trasferimento provvigioni
-                database()->table('co_provvigioni')->where('idarticolo', $id_articolo_da_unire)->update(['idarticolo' => $id_articolo_principale]);
+                database()->table('co_provvigioni')->where('id_articolo', $id_articolo_da_unire)->update(['id_articolo' => $id_articolo_principale]);
                 // Aggiornamento riferimenti combinazioni
                 database()->table('mg_articoli')->where('id_combinazione', $id_articolo_da_unire)->update(['id_combinazione' => $id_articolo_principale]);
                 // Trasferimento attributi
@@ -605,7 +605,7 @@ switch (post('op')) {
             $qta_movimenti = database()->fetchOne('
                 SELECT COALESCE(SUM(`qta`), 0) AS `totale` 
                 FROM `mg_movimenti` 
-                WHERE `idarticolo` = '.prepare($id_articolo_principale)
+                WHERE `id_articolo` = '.prepare($id_articolo_principale)
             )['totale'];
 
             $nuova_qta = $qta_attuale + $qta_movimenti;

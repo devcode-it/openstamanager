@@ -209,7 +209,7 @@ switch ($operazione) {
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
         } else {
-            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $originale = ArticoloOriginale::find(post('id_articolo'));
             $articolo = Articolo::build($promemoria, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }

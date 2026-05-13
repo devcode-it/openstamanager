@@ -281,7 +281,7 @@ if (!empty($interventi)) {
                 echo '
                             <tr>
                                 <td>
-                                    '.Modules::link('Articoli', $articolo->idarticolo, $articolo->descrizione).'
+                                    '.Modules::link('Articoli', $articolo->id_articolo, $articolo->descrizione).'
                                 </td>
                                 <td class="text-right">'.numberFormat($articolo->qta, 'qta').'</td>
                                 <td class="text-right text-danger">'.moneyFormat($articolo->spesa).'</td>

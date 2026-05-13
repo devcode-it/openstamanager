@@ -46,10 +46,10 @@ switch (post('op')) {
 
         // Aggiunta quantità nell'automezzo
     case 'addrow':
-        $idarticolo = post('idarticolo');
+        $id_articolo = post('id_articolo');
         $qta = post('qta');
 
-        $articolo = Articolo::find($idarticolo);
+        $articolo = Articolo::find($id_articolo);
         $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
         // Registrazione del movimento verso la sede di destinazione
@@ -66,12 +66,12 @@ switch (post('op')) {
         break;
 
     case 'editrow':
-        $idarticolo = post('idarticolo');
+        $id_articolo = post('id_articolo');
 
-        $articolo = Articolo::find($idarticolo);
+        $articolo = Articolo::find($id_articolo);
         $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
-        $qta = post('qta') - $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.id_sede='.prepare($id_record))['qta'];
+        $qta = post('qta') - $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.id_articolo='.prepare($id_articolo).' AND mg_movimenti.id_sede='.prepare($id_record))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
         $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
@@ -88,12 +88,12 @@ switch (post('op')) {
 
         // Spostamento scorta da automezzo a magazzino generale
     case 'moverow':
-        $idarticolo = post('idarticolo');
+        $id_articolo = post('id_articolo');
         $idautomezzotecnico = post('idautomezzotecnico');
 
-        $articolo = Articolo::find($idarticolo);
+        $articolo = Articolo::find($id_articolo);
         $automezzo = $dbo->table('an_sedi')->where('id', $idautomezzotecnico)->first();
-        $qta = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE idarticolo='.prepare($idarticolo).' AND id_sede='.prepare($idautomezzotecnico))['qta'];
+        $qta = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE id_articolo='.prepare($id_articolo).' AND id_sede='.prepare($idautomezzotecnico))['qta'];
 
         // Registrazione del movimento verso la sede di destinazione
         $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [

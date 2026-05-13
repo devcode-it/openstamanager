@@ -38,7 +38,7 @@ $query = 'SELECT
         INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
     WHERE 
-        `idarticolo` = '.prepare($articolo->id)."
+        `id_articolo` = '.prepare($articolo->id)."
         AND `or_tipiordine`.`dir`= '|dir|'
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1

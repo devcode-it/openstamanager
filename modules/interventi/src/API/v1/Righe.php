@@ -37,7 +37,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
 
         $select = [
             'in_righe_interventi.id',
-            'in_righe_interventi.idarticolo AS id_articolo',
+            'in_righe_interventi.id_articolo AS id_articolo',
             'in_righe_interventi.id_intervento AS id_intervento',
             'in_righe_interventi.descrizione',
             'in_righe_interventi.qta',
@@ -124,7 +124,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
             $descrizione = ($descrizione ?: '-');
 
             $riga->descrizione = $descrizione;
-            $riga->idarticolo = $originale->id;
+            $riga->id_articolo = $originale->id;
             $riga->costo_unitario = $originale->prezzo_acquisto;
             $id_iva = ($originale->id_iva_vendita ?: setting('Iva predefinita'));
             $riga->setPrezzoUnitario($originale->prezzo_vendita, $id_iva);

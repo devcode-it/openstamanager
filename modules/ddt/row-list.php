@@ -101,7 +101,7 @@ foreach ($righe as $riga) {
 
                 <td>';
     if ($riga->isArticolo()) {
-        echo Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$riga->descrizione);
+        echo Modules::link('Articoli', $riga->id_articolo, $riga->codice.' - '.$riga->descrizione);
     } else {
         echo nl2br((string) $riga->descrizione);
     }
@@ -210,7 +210,7 @@ foreach ($righe as $riga) {
 
         if ($riga->isArticolo()) {
             $id_anagrafica = $ddt->id_anagrafica;
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $ddt->id_sede_destinazione);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->id_articolo, $riga, $ddt->id_sede_destinazione);
         }
 
         // Costi unitari
@@ -270,9 +270,9 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
-    if (hasArticoliFiglio($riga->idarticolo)) {
+    if (hasArticoliFiglio($riga->id_articolo)) {
         echo '
-                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->id_articolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
     }

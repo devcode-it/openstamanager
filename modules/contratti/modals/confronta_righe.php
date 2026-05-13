@@ -34,7 +34,7 @@ $righe = $dbo->fetchArray(
         `co_righe_contratti`.*
     FROM 
         `co_righe_contratti`
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_contratti`.`idarticolo`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_contratti`.`id_articolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
         `co_righe_contratti`.`id` IN ('.$placeholders.')',
@@ -59,19 +59,19 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_preventivo = $dbo->fetchArray(
                     'SELECT
-                        `co_righe_contratti`.`idarticolo`,
+                        `co_righe_contratti`.`id_articolo`,
                         `co_righe_preventivi`.`prezzo_unitario`,
                         DATE(`co_righe_preventivi`.`updated_at`) AS updated_at
                     FROM
                         `co_preventivi`
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
-                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`idarticolo`
-                        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idarticolo` = `mg_articoli`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`id_articolo`
+                        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_articolo` = `mg_articoli`.`id`
                         LEFT JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
                         LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
                         `co_preventivi`.`id_anagrafica` ='.prepare($id_anagrafica).' AND 
-                        `co_righe_contratti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND 
+                        `co_righe_contratti`.`id_articolo` ='.prepare($riga['id_articolo']).' AND 
                         `co_statipreventivi_lang`.`title` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY 
                         `mg_articoli`.`id`, `co_righe_preventivi`.`id`
@@ -81,18 +81,18 @@ $righe = $dbo->fetchArray(
 
                 $ultimo_prezzo_vendita = $dbo->fetchArray(
                     'SELECT
-                        `co_righe_contratti`.`idarticolo`,
+                        `co_righe_contratti`.`id_articolo`,
                         `co_righe_documenti`.`prezzo_unitario`,
                         DATE(`co_righe_documenti`.`updated_at`) AS updated_at
                     FROM
                         `co_documenti`
                         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
-                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`idarticolo`
-                        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idarticolo` = `mg_articoli`.`id`
+                        INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
+                        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_articolo` = `mg_articoli`.`id`
                         INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
                         LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     WHERE
-                        `co_documenti`.`id_anagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`idarticolo` ='.prepare($riga['idarticolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
+                        `co_documenti`.`id_anagrafica` ='.prepare($id_anagrafica).' AND `co_righe_documenti`.`id_articolo` ='.prepare($riga['id_articolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY 
                         `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY

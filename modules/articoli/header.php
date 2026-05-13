@@ -86,9 +86,9 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).')');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE id_articolo='.prepare($articolo->id).')');
 } else {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE idarticolo='.prepare($articolo->id).') AND id IN(SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
+    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE id_articolo='.prepare($articolo->id).') AND id IN(SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
 }
 
 $giacenze = $articolo->getGiacenze();

@@ -337,7 +337,7 @@ $articoli = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
@@ -346,7 +346,7 @@ $articoli = $dbo->fetchArray('SELECT
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
-        `co_righe_documenti`.`idarticolo`
+        `co_righe_documenti`.`id_articolo`
     ORDER BY
         `qta` DESC LIMIT 20');
 
@@ -359,7 +359,7 @@ $totale = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='entrata'
@@ -547,7 +547,7 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
@@ -556,7 +556,7 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
-        `co_righe_documenti`.`idarticolo`
+        `co_righe_documenti`.`id_articolo`
     ORDER BY
         `qta` DESC LIMIT 20');
 
@@ -569,7 +569,7 @@ $totale_acquistati = $dbo->fetchArray('SELECT
         LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
-        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`idarticolo`
+        INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='uscita'

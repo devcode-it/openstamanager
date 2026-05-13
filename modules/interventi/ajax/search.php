@@ -52,8 +52,8 @@ foreach ($fields as $name => $value) {
 }
 
 $query .= ' FROM in_interventi
-    LEFT JOIN in_righe_interventi ON in_interventi.id = in_righe_interventi.id_intervento AND in_righe_interventi.idarticolo IS NOT NULL AND in_righe_interventi.idarticolo != 0
-    LEFT JOIN mg_articoli ON in_righe_interventi.idarticolo = mg_articoli.id
+    LEFT JOIN in_righe_interventi ON in_interventi.id = in_righe_interventi.id_intervento AND in_righe_interventi.id_articolo IS NOT NULL AND in_righe_interventi.id_articolo != 0
+    LEFT JOIN mg_articoli ON in_righe_interventi.id_articolo = mg_articoli.id
     LEFT JOIN mg_articoli_lang ON (mg_articoli.id = mg_articoli_lang.id_record AND mg_articoli_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN (SELECT `id_intervento`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM in_righe_interventi GROUP BY `id_intervento`) righe ON `righe`.`id_intervento`=`in_interventi`.`id` ';
 

@@ -44,7 +44,7 @@ foreach ($fields as $name => $value) {
 }
 
 // Aggiunta ricerca diretta negli articoli
-$query .= ' OR `or_ordini`.`id` IN (SELECT DISTINCT `or_righe_ordini`.`idordine` FROM `or_righe_ordini` LEFT JOIN `mg_articoli` ON `or_righe_ordini`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
+$query .= ' OR `or_ordini`.`id` IN (SELECT DISTINCT `or_righe_ordini`.`idordine` FROM `or_righe_ordini` LEFT JOIN `mg_articoli` ON `or_righe_ordini`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
 
 $rs = $dbo->fetchArray($query);
 
@@ -76,7 +76,7 @@ foreach ($rs as $r) {
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori
-    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `or_righe_ordini`.`qta`, `or_righe_ordini`.`prezzo_unitario`, `or_righe_ordini`.`costo_unitario`, `or_righe_ordini`.`sconto`, `or_righe_ordini`.`subtotale` FROM or_righe_ordini LEFT JOIN `mg_articoli` ON `or_righe_ordini`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_righe_ordini`.`idordine` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE '.prepare('%'.$term.'%').' OR `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
+    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `or_righe_ordini`.`qta`, `or_righe_ordini`.`prezzo_unitario`, `or_righe_ordini`.`costo_unitario`, `or_righe_ordini`.`sconto`, `or_righe_ordini`.`subtotale` FROM or_righe_ordini LEFT JOIN `mg_articoli` ON `or_righe_ordini`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_righe_ordini`.`idordine` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE '.prepare('%'.$term.'%').' OR `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
     $articoli_rs = $dbo->fetchArray($articoli_query);
 
     $articoli = [];

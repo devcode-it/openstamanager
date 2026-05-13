@@ -26,7 +26,7 @@ class Stats
     {
         $database = database();
 
-        $from = 'FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` WHERE `co_righe_documenti`.`subtotale` != 0 AND `dir` ='.prepare($dir).' AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `co_righe_documenti`.`idarticolo`='.prepare($id_articolo).' AND `zz_segments`.`autofatture`=0';
+        $from = 'FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` WHERE `co_righe_documenti`.`subtotale` != 0 AND `dir` ='.prepare($dir).' AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end).' AND `co_righe_documenti`.`id_articolo`='.prepare($id_articolo).' AND `zz_segments`.`autofatture`=0';
 
         $prezzo_medio = $database->fetchOne('SELECT (SUM(subtotale) - SUM(sconto)) / SUM(qta) AS prezzo '.$from)['prezzo'];
 

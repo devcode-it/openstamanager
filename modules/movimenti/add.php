@@ -42,7 +42,7 @@ if (setting('Attiva scorciatoie da tastiera')) {
 
     <div class="row">
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0} ]}
+            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "id_articolo", "ajax-source": "articoli", "value": "", "required": 1, "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0} ]}
         </div>
 
         <div class="col-md-2">
@@ -124,7 +124,7 @@ echo '
         $("#articolo-missing").addClass("hidden");
         let barcode = $("#barcode");
 
-        if ( barcode.val() == "" && $("#idarticolo").val() == null && key === 13 ){
+        if ( barcode.val() == "" && $("#id_articolo").val() == null && key === 13 ){
             Swal.fire("'.tr('Inserisci barcode o seleziona un articolo').'", "", "warning");
         }
         else if (key === 13) {
@@ -173,7 +173,7 @@ echo '
         });
 
         // Listener per auto-submit quando viene selezionato un articolo da barcode
-        $("#idarticolo").on("change", function () {
+        $("#id_articolo").on("change", function () {
             if (window.barcodeAutoSubmit === true) {
                 window.barcodeAutoSubmit = false;
                 // Aspetta un momento per assicurarsi che i dati siano disponibili
@@ -210,7 +210,7 @@ echo '
 
     function ricercaBarcode(barcode) {
         // Ricerca via ajax del barcode negli articoli
-        let options = $("#idarticolo").data("select-options");
+        let options = $("#id_articolo").data("select-options");
         $.get(globals.rootdir + "/ajax_select.php", {
             op: "articoli",
             search: barcode,
@@ -227,7 +227,7 @@ echo '
                     // Imposta un flag per indicare che stiamo facendo un carico automatico da barcode
                     window.barcodeAutoSubmit = true;
 
-                    $("#idarticolo").selectSetNew(record.id, record.text, record);
+                    $("#id_articolo").selectSetNew(record.id, record.text, record);
                     let qta = record.qta-parseFloat($("#qta").val());';
 
 if (!setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita')) {
@@ -268,7 +268,7 @@ echo '
 
         await salvaForm("#add-form", {}, button);
 
-        let articolo = $("#idarticolo").selectData();
+        let articolo = $("#id_articolo").selectData();
 
         if (!articolo) {
             return;
@@ -324,7 +324,7 @@ echo '
         $("#causale").trigger("change");
 
         if( input("barcode").get() !== "" ){
-            $("#idarticolo").selectReset();
+            $("#id_articolo").selectReset();
             input("barcode").set("");
             $("#barcode").focus();
         }
@@ -403,14 +403,14 @@ echo '
         updateSelectOption("id_sede_partenza", $(this).val());
         session_set("superselect,id_sede_partenza", $(this).val(), 0);
 
-        $("#idarticolo").selectReset();
+        $("#id_articolo").selectReset();
     });
 
     $("#id_sede_destinazione").change(function(){
         updateSelectOption("id_sede_destinazione", $(this).val());
         session_set("superselect,id_sede_destinazione", $(this).val(), 0);
 
-        $("#idarticolo").selectReset();
+        $("#id_articolo").selectReset();
     });
 
 </script>';

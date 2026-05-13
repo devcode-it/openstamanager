@@ -25,7 +25,7 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'addprovvigione':
         $dbo->insert('co_provvigioni', [
-            'idarticolo' => $id_parent,
+            'id_articolo' => $id_parent,
             'id_agente' => post('id_agente'),
             'provvigione' => post('provvigione'),
             'tipo_provvigione' => post('tipo_provvigione'),

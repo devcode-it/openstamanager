@@ -37,7 +37,7 @@ echo '
     <div class="card-header with-border">
         <h3 class="card-title">';
 if ($source->isArticolo()) {
-    $articolo_riga = Articolo::find($source->idarticolo);
+    $articolo_riga = Articolo::find($source->id_articolo);
     echo $articolo_riga->codice.' - '.$source->descrizione;
 } else {
     echo nl2br((string) $source->descrizione);

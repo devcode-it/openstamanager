@@ -172,7 +172,7 @@ class Articolo extends Model
             // Registrazione della movimentazione
             // I valori in $array hanno priorità (es. idutente passato dall'API)
             database()->insert('mg_movimenti', array_merge([
-                'idarticolo' => $this->id,
+                'id_articolo' => $this->id,
                 'qta' => $qta,
                 'movimento' => $descrizone,
                 'data' => $data,
@@ -320,7 +320,7 @@ class Articolo extends Model
 
     public function articoli()
     {
-        return $this->hasMany(ArticoloIntervento::class, 'idarticolo');
+        return $this->hasMany(ArticoloIntervento::class, 'id_articolo');
     }
 
     public function combinazione()
@@ -340,7 +340,7 @@ class Articolo extends Model
      */
     public function movimenti()
     {
-        return $this->hasMany(Movimento::class, 'idarticolo');
+        return $this->hasMany(Movimento::class, 'id_articolo');
     }
 
     /**
@@ -416,7 +416,7 @@ class Articolo extends Model
 
     public function barcodes()
     {
-        return $this->hasMany(Barcode::class, 'idarticolo');
+        return $this->hasMany(Barcode::class, 'id_articolo');
     }
 
     public static function getTranslatedFields()
@@ -543,7 +543,7 @@ class Articolo extends Model
 
     public function getBarcodesAttribute()
     {
-        $barcode = database()->table('mg_articoli_barcode')->where('idarticolo', $this->id)->pluck('barcode');
+        $barcode = database()->table('mg_articoli_barcode')->where('id_articolo', $this->id)->pluck('barcode');
 
         return $barcode;
     }

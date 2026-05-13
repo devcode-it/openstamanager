@@ -254,7 +254,7 @@ foreach ($elenchi as $elenco) {
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_'.$componente->id.'", "disabled": "'.(empty($articolo->abilita_serial) ? '1' : '0').'", "value": "'.$componente->serial.'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $componente->id_articolo]).' ]}
+                                                {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial", "id": "serial_'.$componente->id.'", "disabled": "'.(empty($articolo->abilita_serial) ? '1' : '0').'", "value": "'.$componente->serial.'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['id_articolo' => $componente->id_articolo]).' ]}
                                             </div>
                                         </div>
                                         <div class="row">

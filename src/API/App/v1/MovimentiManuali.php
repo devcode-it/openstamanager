@@ -78,7 +78,7 @@ class MovimentiManuali extends AppResource
         // Query per recuperare il dettaglio del movimento
         $query = 'SELECT
             `mg_movimenti`.`id`,
-            `mg_movimenti`.`idarticolo` AS id_articolo,
+            `mg_movimenti`.`id_articolo` AS id_articolo,
             `mg_movimenti`.`qta`,
             `mg_movimenti`.`movimento` AS descrizione,
             `mg_movimenti`.`data`,
@@ -87,7 +87,7 @@ class MovimentiManuali extends AppResource
             `mg_movimenti`.`manuale`
         FROM
             `mg_movimenti`
-            LEFT JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo` = `mg_articoli`.`id`
+            LEFT JOIN `mg_articoli` ON `mg_movimenti`.`id_articolo` = `mg_articoli`.`id`
             LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
             `mg_movimenti`.`id` = '.prepare($id).'

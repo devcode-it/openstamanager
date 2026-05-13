@@ -123,7 +123,7 @@ switch (post('op')) {
 
                             // Aggiornamento seriali dalla riga dell'ordine
                             if ($copia->isArticolo()) {
-                                $articolo = ArticoloOriginale::find($copia->idarticolo);
+                                $articolo = ArticoloOriginale::find($copia->id_articolo);
                                 $copia->id_conto = !empty($articolo->id_conto_vendita) ? $articolo->id_conto_vendita : $id_conto;
                                 $copia->serials = $riga->serials;
                             }

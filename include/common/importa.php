@@ -353,8 +353,8 @@ $id_sede_partenza = $id_sede_partenza ?: 0;
 
 if ($abilita_controllo_disponibilita) {
     foreach ($righe as $riga) {
-        if ($riga->isArticolo() && !empty($riga->idarticolo)) {
-            $id_articolo = $riga->idarticolo;
+        if ($riga->isArticolo() && !empty($riga->id_articolo)) {
+            $id_articolo = $riga->id_articolo;
             if (!isset($disponibilita_articoli[$id_articolo])) {
                 $articolo = $riga->articolo;
 
@@ -370,7 +370,7 @@ if ($abilita_controllo_disponibilita) {
                     INNER JOIN or_ordini ON or_righe_ordini.idordine = or_ordini.id
                     INNER JOIN or_tipiordine ON or_ordini.idtipoordine = or_tipiordine.id
                     INNER JOIN or_statiordine ON or_ordini.id_stato = or_statiordine.id
-                    WHERE or_righe_ordini.idarticolo = '.prepare($id_articolo).'
+                    WHERE or_righe_ordini.id_articolo = '.prepare($id_articolo).'
                     AND or_tipiordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1
                     AND or_statiordine.impegnato = 1
@@ -447,7 +447,7 @@ foreach ($righe as $i => $riga) {
     $qta_disponibile_originale = null;
     $qta_da_evadere = $qta_rimanente;
     if ($abilita_controllo_disponibilita && $riga->isArticolo() && !$riga['is_descrizione'] && !$is_renewal) {
-        $id_articolo = $riga->idarticolo;
+        $id_articolo = $riga->id_articolo;
         $info_disponibilita = $disponibilita_articoli[$id_articolo] ?? null;
 
         if ($info_disponibilita && !$info_disponibilita['servizio']) {
@@ -473,7 +473,7 @@ foreach ($righe as $i => $riga) {
                         <input class="check '.($block_input ? 'disabled' : '').'" type="checkbox" '.$attr.' id="checked_'.$i.'" name="evadere['.$riga['id'].']" value="on" onclick="ricalcolaTotaleRiga('.$i.');" />
                     </td>
                     <td style="vertical-align:middle">
-                        <span class="hidden" id="id_articolo_'.$i.'">'.$riga['idarticolo'].'</span>
+                        <span class="hidden" id="id_articolo_'.$i.'">'.$riga['id_articolo'].'</span>
                         <input type="hidden" class="righe" name="righe" value="'.$i.'"/>
                         <input type="hidden" id="prezzo_unitario_'.$i.'" name="subtot['.$riga['id'].']" value="'.($dir == 'entrata' ? $riga['prezzo_unitario'] : $riga['costo_unitario']).'" />
                         <input type="hidden" id="sconto_unitario_'.$i.'" name="sconto['.$riga['id'].']" value="'.$riga['sconto_unitario'].'" />
@@ -484,7 +484,7 @@ foreach ($righe as $i => $riga) {
     echo '&nbsp;'.nl2br($descrizione);
 
     if ($riga->isArticolo()) {
-        $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->idarticolo)
+        $dettaglio_fornitore = DettaglioFornitore::where('id_articolo', $riga->id_articolo)
             ->where('id_fornitore', $documento->id_anagrafica)
             ->first();
 
@@ -720,7 +720,7 @@ echo '
 <script>$(document).ready(init)</script>';
 
 // Individuazione scorte (usa la disponibilità calcolata per sede se disponibile)
-$articoli = $documento->articoli->groupBy('idarticolo');
+$articoli = $documento->articoli->groupBy('id_articolo');
 $scorte = [];
 foreach ($articoli as $elenco) {
     $articolo = $elenco->first()->articolo;

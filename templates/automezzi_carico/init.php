@@ -45,7 +45,7 @@ $query = '
         `zz_groups_lang`.`title` as gruppo
     FROM 
         `mg_movimenti`
-        INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id`
+        INNER JOIN `mg_articoli` ON `mg_movimenti`.`id_articolo`=`mg_articoli`.`id`
         INNER JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
         INNER JOIN `zz_users` ON `mg_movimenti`.`idutente`=`zz_users`.`id`
         INNER JOIN `zz_groups` ON `zz_users`.`idgruppo`=`zz_groups`.`id`

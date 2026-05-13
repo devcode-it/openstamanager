@@ -865,7 +865,7 @@ SELECT
     |select|
 FROM
     `mg_movimenti`
-	INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`idarticolo`
+	INNER JOIN `mg_articoli` ON `mg_articoli`.id = `mg_movimenti`.`id_articolo`
     LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.|lang|)
 	LEFT JOIN `an_sedi` ON `mg_movimenti`.`id_sede` = `an_sedi`.`id`
     LEFT JOIN `zz_modules` ON `zz_modules`.`name` = 'Articoli'
@@ -904,8 +904,8 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
     LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
     LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.|lang|)
-    LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `idarticolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `id_stato` IN(SELECT `id` FROM `or_statiordine` WHERE `is_bloccato` = 0) GROUP BY `idarticolo`) ordini ON `ordini`.`idarticolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT `idarticolo`, `id_sede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `id_sede` = |giacenze_sedi_id_sede| GROUP BY `idarticolo`, `id_sede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`idarticolo`
+    LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id` WHERE `id_stato` IN(SELECT `id` FROM `or_statiordine` WHERE `is_bloccato` = 0) GROUP BY `id_articolo`) ordini ON `ordini`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT `id_articolo`, `id_sede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `id_sede` = |giacenze_sedi_id_sede| GROUP BY `id_articolo`, `id_sede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`id_articolo`
     LEFT JOIN `zz_categorie` AS categoria ON `categoria`.`id`= `mg_articoli`.`id_categoria`
     LEFT JOIN `zz_categorie_lang` AS categoria_lang ON (`categoria_lang`.`id_record` = `categoria`.`id` AND `categoria_lang`.|lang|)
     LEFT JOIN `zz_categorie` AS sottocategoria ON `sottocategoria`.`id`=`mg_articoli`.`id_sottocategoria`
@@ -985,7 +985,7 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Mese di chiusura, Giorno di riprogrammazione", "query": "SELECT id, IF(mese=\'01\', \'Gennaio\', IF(mese=\'02\', \'Febbraio\',IF(mese=\'03\', \'Marzo\',IF(mese=\'04\', \'Aprile\',IF(mese=\'05\', \'Maggio\', IF(mese=\'06\', \'Giugno\', IF(mese=\'07\', \'Luglio\',IF(mese=\'08\', \'Agosto\',IF(mese=\'09\', \'Settembre\', IF(mese=\'10\', \'Ottobre\', IF(mese=\'11\', \'Novembre\',\'Dicembre\'))))))))))) AS `Mese di chiusura`, giorno_fisso AS `Giorno di riprogrammazione` FROM an_pagamenti_anagrafiche WHERE 1=1 AND id_anagrafica=|id_parent| GROUP BY id HAVING 2=2 ORDER BY an_pagamenti_anagrafiche.mese ASC"} ]}' WHERE `name` = "Regole pagamenti";
 
-UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.id_agente=an_anagrafiche.id WHERE co_provvigioni.idarticolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
+UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.id_agente=an_anagrafiche.id WHERE co_provvigioni.id_articolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
 
 -- Modifica colonne an_anagrafiche
 ALTER TABLE `an_anagrafiche` CHANGE `id_pagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
@@ -1124,3 +1124,4 @@ ALTER TABLE `co_preventivi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idimpianti` `id_impianti` VARCHAR(255) NOT NULL;
 ALTER TABLE `co_promemoria` CHANGE `idtecnici` `id_tecnici` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+ALTER TABLE `co_provvigioni` CHANGE `idarticolo` `id_articolo` INT NOT NULL;

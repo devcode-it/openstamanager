@@ -520,7 +520,7 @@ switch ($op) {
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
         } else {
-            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $originale = ArticoloOriginale::find(post('id_articolo'));
             $articolo = Articolo::build($fattura, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
@@ -767,7 +767,7 @@ switch ($op) {
 
                 // Dati specifici per articoli
                 if ($riga->isArticolo()) {
-                    $riga_array['idarticolo'] = $riga->idarticolo;
+                    $riga_array['id_articolo'] = $riga->id_articolo;
                     $riga_array['codice'] = $riga->codice;
                     $riga_array['costo_unitario'] = $riga->costo_unitario;
                 }
@@ -794,9 +794,9 @@ switch ($op) {
                 $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
                 // Determino il tipo di riga da creare
-                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
+                if ($class_name == 'Articolo' && !empty($riga_data['id_articolo'])) {
                     // Verifico che l'articolo esista
-                    $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
+                    $articolo_originale = ArticoloOriginale::find($riga_data['id_articolo']);
                     if ($articolo_originale) {
                         $riga = Articolo::build($fattura, $articolo_originale);
                         $riga->costo_unitario = $riga_data['costo_unitario'];
@@ -971,7 +971,7 @@ switch ($op) {
         foreach ($righe as $riga) {
             if (post('evadere')[$riga->id] == 'on') {
                 $qta = post('qta_da_evadere')[$riga->id];
-                $articolo = ArticoloOriginale::find($riga->idarticolo);
+                $articolo = ArticoloOriginale::find($riga->id_articolo);
 
                 $copia = $riga->copiaIn($fattura, $qta);
 
@@ -1216,7 +1216,7 @@ switch ($op) {
         $save_inline_barcode = true;
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('idarticolo');
+            $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('id_articolo');
             if (empty($id_articolo)) {
                 $id_articolo = $dbo->table('mg_articoli')
                     ->where('deleted_at', null)
@@ -1387,7 +1387,7 @@ switch ($op) {
             $prezzo_unitario = 0;
             $sconto = 0;
             if ($riga->isArticolo()) {
-                $id_articolo = $riga->idarticolo;
+                $id_articolo = $riga->id_articolo;
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $fattura->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);

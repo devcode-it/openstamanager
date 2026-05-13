@@ -171,7 +171,7 @@ switch (post('op')) {
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
         } else {
-            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $originale = ArticoloOriginale::find(post('id_articolo'));
             $articolo = Articolo::build($ordine, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
@@ -410,7 +410,7 @@ switch (post('op')) {
 
                 // Dati specifici per articoli
                 if ($riga->isArticolo()) {
-                    $riga_array['idarticolo'] = $riga->idarticolo;
+                    $riga_array['id_articolo'] = $riga->id_articolo;
                     $riga_array['codice'] = $riga->codice;
                     $riga_array['costo_unitario'] = $riga->costo_unitario;
                 }
@@ -435,9 +435,9 @@ switch (post('op')) {
                 $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
                 // Determino il tipo di riga da creare
-                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
+                if ($class_name == 'Articolo' && !empty($riga_data['id_articolo'])) {
                     // Verifico che l'articolo esista
-                    $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
+                    $articolo_originale = ArticoloOriginale::find($riga_data['id_articolo']);
                     if ($articolo_originale) {
                         $riga = Articolo::build($ordine, $articolo_originale);
                         $riga->costo_unitario = $riga_data['costo_unitario'];
@@ -632,9 +632,9 @@ switch (post('op')) {
 
                     $articolo = $copia->articolo;
 
-                    $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();
+                    $fornitore = DettaglioPrezzo::dettagli($riga->id_articolo, $anagrafica->id, $dir, $qta)->first();
                     if (empty($fornitore)) {
-                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
+                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->id_articolo, $anagrafica->id, $dir)->first();
                     }
 
                     // Calcolo del prezzo di acquisto per articoli
@@ -723,9 +723,9 @@ switch (post('op')) {
 
                     $articolo = $copia->articolo;
 
-                    $fornitore = DettaglioPrezzo::dettagli($riga->idarticolo, $anagrafica->id, $dir, $qta)->first();
+                    $fornitore = DettaglioPrezzo::dettagli($riga->id_articolo, $anagrafica->id, $dir, $qta)->first();
                     if (empty($fornitore)) {
-                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->idarticolo, $anagrafica->id, $dir)->first();
+                        $fornitore = DettaglioPrezzo::dettaglioPredefinito($riga->id_articolo, $anagrafica->id, $dir)->first();
                     }
 
                     // Calcolo del prezzo di acquisto per articoli
@@ -773,7 +773,7 @@ switch (post('op')) {
 
         if (!empty($barcode)) {
             $barcode_articolo = Barcode::where('barcode', $barcode)->first();
-            $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
+            $id_articolo = $barcode_articolo ? $barcode_articolo->id_articolo : null;
 
             if (empty($id_articolo)) {
                 $id_articolo = ArticoloOriginale::where('deleted_at', null)
@@ -925,7 +925,7 @@ switch (post('op')) {
             $prezzo_unitario = 0;
             $sconto = 0;
             if ($riga->isArticolo()) {
-                $id_articolo = $riga->idarticolo;
+                $id_articolo = $riga->id_articolo;
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ordine->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);

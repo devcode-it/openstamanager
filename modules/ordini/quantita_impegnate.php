@@ -23,7 +23,7 @@ use Modules\Ordini\Ordine;
 include_once __DIR__.'/../../core.php';
 
 $ordine = Ordine::find($id_record);
-$articoli = $ordine->articoli->groupBy('idarticolo');
+$articoli = $ordine->articoli->groupBy('id_articolo');
 
 if ($articoli->isEmpty()) {
     echo '
@@ -64,9 +64,9 @@ foreach ($articoli as $elenco) {
             `or_statiordine_lang`.`title` = 'Bozza'
             AND `dir` = 'entrata'
             AND `confermato` = 1
-            AND `idarticolo`=".prepare($articolo->id).'
+            AND `id_articolo`=".prepare($articolo->id).'
         GROUP BY 
-            `idarticolo`')['qta'];
+            `id_articolo`')['qta'];
     $qta_impegnata = floatval($qta_impegnata);
 
     $class = $qta_impegnata + $qta > $articolo->qta ? 'danger' : 'success';

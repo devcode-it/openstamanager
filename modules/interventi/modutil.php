@@ -225,7 +225,7 @@ if (!function_exists('aggiungi_intervento_in_fattura')) {
             // Aggiornamento seriali dalla riga dell'ordine
             if ($copia->isArticolo()) {
                 $copia->serials = $riga->serials;
-                $articolo = ArticoloOriginale::find($copia->idarticolo);
+                $articolo = ArticoloOriginale::find($copia->id_articolo);
                 $copia->id_conto = ($articolo->id_conto_vendita ?: $id_conto);
             }
 

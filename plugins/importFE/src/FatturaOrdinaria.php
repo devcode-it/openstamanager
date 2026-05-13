@@ -307,7 +307,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 // Se abbiamo identificato un barcode, lo salviamo nella tabella mg_articoli_barcode
                 if (!empty($barcode)) {
                     database()->insert('mg_articoli_barcode', [
-                        'idarticolo' => $articolo->id,
+                        'id_articolo' => $articolo->id,
                         'barcode' => $barcode,
                     ]);
                 }

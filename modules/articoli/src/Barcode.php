@@ -32,14 +32,14 @@ class Barcode extends Model
     protected $table = 'mg_articoli_barcode';
 
     protected $fillable = [
-        'idarticolo',
+        'id_articolo',
         'barcode',
     ];
 
-    public static function build($idarticolo = null, $barcode = null)
+    public static function build($id_articolo = null, $barcode = null)
     {
         $model = new static();
-        $model->idarticolo = $idarticolo;
+        $model->id_articolo = $id_articolo;
         $model->barcode = $barcode;
         $model->save();
 
@@ -48,7 +48,7 @@ class Barcode extends Model
 
     public function articolo()
     {
-        return $this->belongsTo(Articolo::class, 'idarticolo');
+        return $this->belongsTo(Articolo::class, 'id_articolo');
     }
 
     public function getModuleAttribute()

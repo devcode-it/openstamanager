@@ -111,7 +111,7 @@ class RigheInterventi extends AppResource
             'ordine' => $riga->order,
 
             // Caratteristiche della riga
-            'id_articolo' => $riga->idarticolo,
+            'id_articolo' => $riga->id_articolo,
             'is_articolo' => intval($riga->isArticolo()),
             'is_riga' => intval($riga->isRiga()),
             'is_descrizione' => intval($riga->isDescrizione()),
@@ -186,7 +186,7 @@ class RigheInterventi extends AppResource
     {
         // Individuazione delle caratteristiche del record
         $data = database()->fetchOne('SELECT id_intervento AS id_intervento,
-           IF(idarticolo IS NULL OR idarticolo = 0, 0, 1) AS is_articolo,
+           IF(id_articolo IS NULL OR id_articolo = 0, 0, 1) AS is_articolo,
            is_descrizione,
            is_sconto
         FROM in_righe_interventi WHERE in_righe_interventi.id = '.prepare($id));

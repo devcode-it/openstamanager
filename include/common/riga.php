@@ -21,7 +21,7 @@
 use Models\Module;
 use Modules\Articoli\Articolo;
 
-$articolo = Articolo::find($result['idarticolo']);
+$articolo = Articolo::find($result['id_articolo']);
 $width = $options['dir'] == 'uscita' && $articolo->fattore_um_secondaria ? 3 : 4;
 
 // Descrizione
@@ -58,7 +58,7 @@ if ($options['dir'] == 'uscita' && $articolo->fattore_um_secondaria) {
         
         <script>
             input("fattore_um_secondaria").on("change", function() {
-                let articolo = input("idarticolo").getData();
+                let articolo = input("id_articolo").getData();
                 let qta = input(this).get() / articolo.fattore_um_secondaria;
 
                 if (input("qta").get() != qta) {
@@ -66,7 +66,7 @@ if ($options['dir'] == 'uscita' && $articolo->fattore_um_secondaria) {
                 }
             });
             input("qta").on("change", function() {
-                let articolo = input("idarticolo").getData();
+                let articolo = input("id_articolo").getData();
                 let fattore_um_secondaria = input(this).get() * articolo.fattore_um_secondaria;
 
                 if (input("fattore_um_secondaria").get() != fattore_um_secondaria) {
@@ -129,8 +129,8 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
             ricarico = isNaN(ricarico) || !isFinite(ricarico) ? 0: ricarico; // Fix per ricarico NaN
 
-            if ($("#idarticolo").val()) {
-                mediaponderata = parseFloat($("#idarticolo").selectData().media_ponderata);
+            if ($("#id_articolo").val()) {
+                mediaponderata = parseFloat($("#id_articolo").selectData().media_ponderata);
             }
 
             div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-13px;\" >\

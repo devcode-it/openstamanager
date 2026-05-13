@@ -439,7 +439,7 @@ switch (filter('op')) {
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`idarticolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['idarticolo'];
+                    $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`id_articolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['id_articolo'];
                 }
 
                 if (!empty($id_articolo)) {
@@ -454,7 +454,7 @@ switch (filter('op')) {
                     `dt_righe_ddt`.`id`,
                     `dt_righe_ddt`.`idddt` AS id_documento,
                     `dt_righe_ddt`.`is_descrizione`,
-                    `dt_righe_ddt`.`idarticolo`,
+                    `dt_righe_ddt`.`id_articolo`,
                     `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
                     CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
                 FROM
@@ -472,7 +472,7 @@ switch (filter('op')) {
                 // Ricerca di righe DDT con stesso Articolo
                 if (!empty($id_articolo)) {
                     $query_articolo = replace($query, [
-                        '|where|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
+                        '|where|' => '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo),
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -496,7 +496,7 @@ switch (filter('op')) {
                     `or_righe_ordini`.`id`,
                     `or_righe_ordini`.`idordine` AS id_documento,
                     `or_righe_ordini`.`is_descrizione`,
-                    `or_righe_ordini`.`idarticolo`,
+                    `or_righe_ordini`.`id_articolo`,
                     `or_righe_ordini`.`is_sconto`,
                     'ordine' AS ref,
                     CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
@@ -514,7 +514,7 @@ switch (filter('op')) {
                 // Ricerca di righe Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
                     $query_articolo = replace($query, [
-                        '|where|' => '`or_righe_ordini`.`idarticolo` = '.prepare($id_articolo),
+                        '|where|' => '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo),
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -541,7 +541,7 @@ switch (filter('op')) {
                         `dt_righe_ddt`.`id`,
                         `dt_righe_ddt`.`idddt` AS id_documento,
                         `dt_righe_ddt`.`is_descrizione`,
-                        `dt_righe_ddt`.`idarticolo`,
+                        `dt_righe_ddt`.`id_articolo`,
                         `dt_righe_ddt`.`is_sconto`,
                         'ddt' AS ref,
                         CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
@@ -562,7 +562,7 @@ switch (filter('op')) {
                         `or_righe_ordini`.`id`,
                         `or_righe_ordini`.`idordine` AS id_documento,
                         `or_righe_ordini`.`is_descrizione`,
-                        `or_righe_ordini`.`idarticolo`,
+                        `or_righe_ordini`.`id_articolo`,
                         `or_righe_ordini`.`is_sconto`,
                         'ordine' AS ref,
                         CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `id_stato`)  , ']') AS opzione
@@ -582,8 +582,8 @@ switch (filter('op')) {
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
                     $query_articolo = replace($query, [
-                        '|where_ddt|' => '`dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo),
-                        '|where_ordini|' => '`or_righe_ordini`.`idarticolo` = '.prepare($id_articolo),
+                        '|where_ddt|' => '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo),
+                        '|where_ordini|' => '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo),
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -616,7 +616,7 @@ switch (filter('op')) {
 
                 // Individuazione della classe di gestione per la riga
                 $namespace = $collegamento['ref'] == 'ddt' ? 'Modules\\DDT\\Components\\' : 'Modules\\Ordini\\Components\\';
-                if (!empty($collegamento['idarticolo'])) {
+                if (!empty($collegamento['id_articolo'])) {
                     $type = 'Articolo';
                 } elseif (!empty($collegamento['is_sconto'])) {
                     $type = 'Sconto';
@@ -631,7 +631,7 @@ switch (filter('op')) {
                 $riga_origine = $riga->getOriginalComponent();
 
                 $desc_conto = '';
-                if (!empty($riga->idarticolo)) {
+                if (!empty($riga->id_articolo)) {
                     $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->id_conto_acquisto))['descrizione'];
                 }
 
@@ -653,7 +653,7 @@ switch (filter('op')) {
                         'prezzo_unitario' => $riga->prezzo_unitario ?: $riga_origine->prezzo_unitario,
                         'id_iva' => $riga->id_iva,
                         'iva_percentuale' => $riga->aliquota->percentuale,
-                        'id_articolo' => $riga->idarticolo,
+                        'id_articolo' => $riga->id_articolo,
                         'desc_articolo' => (!empty($riga->articolo)) ? str_replace(' ', '_', $riga->articolo->codice.' - '.$riga->articolo->getTranslation('title')) : '',
                         'id_conto' => $riga->articolo->id_conto_acquisto,
                         'desc_conto' => str_replace(' ', '_', $desc_conto ?: ''),

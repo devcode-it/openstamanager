@@ -110,13 +110,13 @@ switch ($resource) {
                 LEFT JOIN `co_pianodeiconti2` AS conto_vendita_categoria ON `conto_vendita_sottocategoria`.`id_piano_dei_conti2`=`conto_vendita_categoria`.`id`
             LEFT JOIN `co_pianodeiconti3` AS conto_acquisto_sottocategoria ON `conto_acquisto_sottocategoria`.`id`=`mg_articoli`.`id_conto_acquisto`
                 LEFT JOIN `co_pianodeiconti2` AS conto_acquisto_categoria ON `conto_acquisto_sottocategoria`.`id_piano_dei_conti2`=`conto_acquisto_categoria`.`id`
-            LEFT JOIN (SELECT `co_righe_documenti`.`idarticolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`idarticolo`) AS righe
+            LEFT JOIN (SELECT `co_righe_documenti`.`id_articolo` AS id, (SUM((`co_righe_documenti`.`prezzo_unitario`-`co_righe_documenti`.`sconto_unitario`)*`co_righe_documenti`.`qta`)/SUM(`co_righe_documenti`.`qta`)) AS media_ponderata FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` LEFT JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_tipidocumento`.`dir`='uscita' GROUP BY `co_righe_documenti`.`id_articolo`) AS righe
             ON `righe`.`id`=`mg_articoli`.`id`
             LEFT JOIN `co_iva` AS iva_articolo ON `iva_articolo`.`id` = `mg_articoli`.`id_iva_vendita`
             LEFT JOIN `co_iva_lang` AS iva_articolo_lang on (`iva_articolo`.`id` = `iva_articolo_lang`.`id_record` AND `iva_articolo_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
             LEFT JOIN `co_iva` AS `iva_predefinita` ON `iva_predefinita`.`id` = '.$iva_predefinita.'
             LEFT JOIN `co_iva_lang` AS iva_predefinita_lang on (`iva_predefinita`.`id` = `iva_predefinita_lang`.`id_record` AND `iva_predefinita_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-            LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.idarticolo = mg_articoli.id';
+            LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.id_articolo = mg_articoli.id';
 
         if ($usare_iva_anagrafica) {
             $query .= '
@@ -126,7 +126,7 @@ switch ($resource) {
 
         if ($id_agente) {
             $query .= '
-            LEFT JOIN `co_provvigioni` ON `co_provvigioni`.`idarticolo` = `mg_articoli`.`id` AND `co_provvigioni`.`id_agente`='.prepare($id_agente);
+            LEFT JOIN `co_provvigioni` ON `co_provvigioni`.`id_articolo` = `mg_articoli`.`id` AND `co_provvigioni`.`id_agente`='.prepare($id_agente);
         }
 
         if ($dir == 'uscita') {
@@ -142,7 +142,7 @@ switch ($resource) {
         // Se c'è una sede settata, carico tutti gli articoli presenti in quella sede
         if (!$sedi_non_impostate) {
             $query .= '
-            LEFT JOIN (SELECT `idarticolo`, `id_sede` FROM `mg_movimenti` GROUP BY `idarticolo`, `id_sede`) movimenti ON `movimenti`.`idarticolo`=`mg_articoli`.`id`
+            LEFT JOIN (SELECT `id_articolo`, `id_sede` FROM `mg_movimenti` GROUP BY `id_articolo`, `id_sede`) movimenti ON `movimenti`.`id_articolo`=`mg_articoli`.`id`
             LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `movimenti`.`id_sede`';
         }
 
@@ -211,10 +211,10 @@ switch ($resource) {
             // Per documenti di acquisto (dir=uscita): usa id_sede_destinazione
             // Per documenti di vendita (dir=entrata): usa id_sede_partenza
             if ($superselect['dir'] == 'uscita') {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_destinazione']))['qta'];
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_destinazione']))['qta'];
                 $qta_da_usare = $qta_sede;
             } else {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`idarticolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_partenza']))['qta'];
+                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_partenza']))['qta'];
                 $qta_da_usare = $qta_sede;
             }
 
@@ -310,7 +310,7 @@ switch ($resource) {
             `mg_fornitore_articolo`.`id` AS id_dettaglio_fornitore
         FROM `mg_articoli`
             LEFT JOIN `mg_fornitore_articolo` ON `mg_fornitore_articolo`.`id_articolo` = `mg_articoli`.`id` AND `mg_fornitore_articolo`.`deleted_at` IS NULL AND `mg_fornitore_articolo`.`id_fornitore` = '.prepare($id_anagrafica).'
-            LEFT JOIN `mg_articoli_barcode` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`idarticolo`
+            LEFT JOIN `mg_articoli_barcode` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`id_articolo`
         |where|';
 
         $where[] = '`mg_articoli`.`attivo` = 1';
@@ -377,7 +377,7 @@ switch ($resource) {
             $filter[] = '`seriali_disponibili`.`serial`='.prepare($element);
         }
 
-        $where[] = '`seriali_disponibili`.`id_articolo`='.prepare($superselect['idarticolo']);
+        $where[] = '`seriali_disponibili`.`id_articolo`='.prepare($superselect['id_articolo']);
 
         if (!empty($filter)) {
             $where[] = '(`seriali_disponibili`.`ultimo_dir`=\'uscita\' OR ('.implode(' OR ', $filter).'))';

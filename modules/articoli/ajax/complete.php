@@ -23,7 +23,7 @@ include_once __DIR__.'/../../../core.php';
 use Models\Module;
 use Modules\Anagrafiche\Anagrafica;
 
-$idarticolo = get('idarticolo');
+$id_articolo = get('id_articolo');
 $limit = get('limit');
 
 switch ($resource) {
@@ -34,7 +34,7 @@ switch ($resource) {
         $ids = ['""'];
 
         echo '<small>';
-        if (!empty($idarticolo)) {
+        if (!empty($id_articolo)) {
             // Ultime 5 vendite al cliente
             $documenti = $dbo->fetchArray('
                 SELECT 
@@ -51,7 +51,7 @@ switch ($resource) {
                     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
                 WHERE 
-                    `idarticolo`='.prepare($idarticolo).' AND `co_tipidocumento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
+                    `id_articolo`='.prepare($id_articolo).' AND `co_tipidocumento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
             UNION
                 SELECT 
                     `idddt` AS id, 
@@ -67,7 +67,7 @@ switch ($resource) {
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
                     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 WHERE
-                    `idarticolo`='.prepare($idarticolo).' AND
+                    `id_articolo`='.prepare($id_articolo).' AND
                     `dt_tipiddt`.`dir`="entrata" AND 
                     `id_anagrafica`='.prepare($id_anagrafica).'
             ORDER BY 
@@ -115,7 +115,7 @@ switch ($resource) {
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
                 LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `idarticolo` = '.prepare($idarticolo).' AND `dir` = "entrata"
+                `id_articolo` = '.prepare($id_articolo).' AND `dir` = "entrata"
         UNION
             SELECT
                 `idddt` AS id,
@@ -132,7 +132,7 @@ switch ($resource) {
                 INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `idarticolo` = '.prepare($idarticolo).' AND `dir` = "entrata"
+                `id_articolo` = '.prepare($id_articolo).' AND `dir` = "entrata"
         ORDER BY
             data_documento
         DESC LIMIT 0,20');
@@ -181,7 +181,7 @@ switch ($resource) {
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
                 LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `idarticolo` = '.prepare($idarticolo).' AND `dir` = "uscita"
+                `id_articolo` = '.prepare($id_articolo).' AND `dir` = "uscita"
         UNION
             SELECT
                 `idddt` AS id,
@@ -198,7 +198,7 @@ switch ($resource) {
                 INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
-                `idarticolo` = '.prepare($idarticolo).' AND `dir` = "uscita"
+                `id_articolo` = '.prepare($id_articolo).' AND `dir` = "uscita"
         ORDER BY
             data_documento
         DESC LIMIT 0,20');
@@ -315,7 +315,7 @@ switch ($resource) {
         }
 
         // Ultimo prezzo al cliente
-        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `idarticolo`='.prepare($id_articolo).' AND `id_anagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
+        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `id_articolo`='.prepare($id_articolo).' AND `id_anagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
 
         $results = array_merge($prezzi, $listini, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
 

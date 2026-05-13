@@ -95,7 +95,7 @@ foreach ($righe as $riga) {
     // Descrizione
     $descrizione = nl2br((string) $riga->descrizione);
     if ($riga->isArticolo()) {
-        $descrizione = Modules::link('Articoli', $riga->idarticolo, $riga->codice.' - '.$descrizione);
+        $descrizione = Modules::link('Articoli', $riga->id_articolo, $riga->codice.' - '.$descrizione);
     }
 
     echo '
@@ -194,7 +194,7 @@ foreach ($righe as $riga) {
         if ($riga->isArticolo()) {
             $id_anagrafica = $contratto->id_anagrafica;
             $dir = 'entrata';
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $contratto->id_sede_destinazione);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->id_articolo, $riga, $contratto->id_sede_destinazione);
         }
 
         if ($riga->isSconto()) {
@@ -248,9 +248,9 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="btn-group">';
-    if (hasArticoliFiglio($riga->idarticolo)) {
+    if (hasArticoliFiglio($riga->id_articolo)) {
         echo '
-                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->id_articolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
     }

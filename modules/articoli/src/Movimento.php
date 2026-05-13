@@ -97,7 +97,7 @@ class Movimento extends Model
 
     public function articolo()
     {
-        return $this->belongsTo(Articolo::class, 'idarticolo');
+        return $this->belongsTo(Articolo::class, 'id_articolo');
     }
 
     /**
@@ -107,7 +107,7 @@ class Movimento extends Model
      */
     public function movimentiRelativi()
     {
-        return $this->hasMany(Movimento::class, 'idarticolo', 'idarticolo')
+        return $this->hasMany(Movimento::class, 'id_articolo', 'id_articolo')
             ->where('reference_type', $this->reference_type)
             ->where('reference_id', $this->reference_id);
     }

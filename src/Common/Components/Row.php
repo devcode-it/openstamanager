@@ -67,7 +67,7 @@ abstract class Row extends Accounting
 
         $table = static::getTableName();
         static::addGlobalScope('not_articles', function (Builder $builder) use ($table) {
-            $builder->whereNull($table.'.idarticolo')->orWhere($table.'.idarticolo', '=', 0);
+            $builder->whereNull($table.'.id_articolo')->orWhere($table.'.id_articolo', '=', 0);
         });
 
         static::addGlobalScope('not_discounts', function (Builder $builder) use ($table) {

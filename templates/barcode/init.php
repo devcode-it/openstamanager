@@ -28,13 +28,13 @@ if (!empty($_SESSION['superselect']['barcode_ddt_righe'])) {
     unset($_SESSION['superselect']['barcode_ddt_righe']);
 } elseif (!empty($_SESSION['superselect']['id_articolo_barcode'])) {
     $articoli = Articolo::whereIn('id', $_SESSION['superselect']['id_articolo_barcode'])->get();
-    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('idarticolo', $_SESSION['superselect']['id_articolo_barcode'])->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->whereIn('id_articolo', $_SESSION['superselect']['id_articolo_barcode'])->get();
     unset($_SESSION['superselect']['id_articolo_barcode']);
 } elseif (!empty(get('idbarcode'))) {
     $barcodes = $dbo->table('mg_articoli_barcode')->where('id', get('idbarcode'))->get();
 } else {
     $articoli = Articolo::where('id', '=', $id_record)->get();
-    $barcodes = $dbo->table('mg_articoli_barcode')->where('idarticolo', $id_record)->get();
+    $barcodes = $dbo->table('mg_articoli_barcode')->where('id_articolo', $id_record)->get();
 }
 
 // Inizializza $records come array vuoto

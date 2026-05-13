@@ -168,7 +168,7 @@ switch (filter('op')) {
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
         } else {
-            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $originale = ArticoloOriginale::find(post('id_articolo'));
             $articolo = Articolo::build($ddt, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
@@ -356,7 +356,7 @@ switch (filter('op')) {
                 if ($copia->isArticolo()) {
                     if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
                         // TODO: estrarre il listino corrispondente se presente
-                        $originale = ArticoloOriginale::find($riga->idarticolo);
+                        $originale = ArticoloOriginale::find($riga->id_articolo);
 
                         $prezzo = ($tipo == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto);
                         if ($dir == 'entrata') {
@@ -460,7 +460,7 @@ switch (filter('op')) {
                     'id_iva' => $riga->id_iva, 'id_conto' => $riga->id_conto, 'note' => $riga->note,
                 ];
                 if ($riga->isArticolo()) {
-                    $riga_array['idarticolo'] = $riga->idarticolo;
+                    $riga_array['id_articolo'] = $riga->id_articolo;
                     $riga_array['codice'] = $riga->codice;
                     $riga_array['costo_unitario'] = $riga->costo_unitario;
                 }
@@ -476,8 +476,8 @@ switch (filter('op')) {
             foreach ($righe_data as $riga_data) {
                 $type = $riga_data['type'];
                 $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
-                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
-                    $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
+                if ($class_name == 'Articolo' && !empty($riga_data['id_articolo'])) {
+                    $articolo_originale = ArticoloOriginale::find($riga_data['id_articolo']);
                     if ($articolo_originale) {
                         $riga = Articolo::build($ddt, $articolo_originale);
                         $riga->costo_unitario = $riga_data['costo_unitario'];
@@ -662,12 +662,12 @@ switch (filter('op')) {
 
             // Verifica che sia una riga articolo e che abbia una quantità > 0
             if ($riga && $riga->isArticolo() && $riga->qta > 0) {
-                $articolo_originale = ArticoloOriginale::find($riga->idarticolo);
+                $articolo_originale = ArticoloOriginale::find($riga->id_articolo);
 
                 if ($articolo_originale) {
                     // Cerca i barcode dell'articolo
                     $barcodes = $dbo->table('mg_articoli_barcode')
-                        ->where('idarticolo', $riga->idarticolo)
+                        ->where('id_articolo', $riga->id_articolo)
                         ->get();
 
                     // Aggiungi ogni barcode per il numero di volte pari alla quantità
@@ -702,7 +702,7 @@ switch (filter('op')) {
 
         if (!empty($barcode)) {
             $barcode_articolo = Barcode::where('barcode', $barcode)->first();
-            $id_articolo = $barcode_articolo ? $barcode_articolo->idarticolo : null;
+            $id_articolo = $barcode_articolo ? $barcode_articolo->id_articolo : null;
 
             if (empty($id_articolo)) {
                 $id_articolo = ArticoloOriginale::where('deleted_at', null)
@@ -726,7 +726,7 @@ switch (filter('op')) {
                 if (setting('Raggruppa gli articoli con stesso barcode nei DDT')) {
                     $articolo = Articolo::where('idddt', $ddt->id)
                         ->where('barcode', $barcode)
-                        ->where('idarticolo', $originale->id)
+                        ->where('id_articolo', $originale->id)
                         ->first();
                 }
 
@@ -861,7 +861,7 @@ switch (filter('op')) {
             $prezzo_unitario = 0;
             $sconto = 0;
             if ($riga->isArticolo()) {
-                $id_articolo = $riga->idarticolo;
+                $id_articolo = $riga->id_articolo;
                 $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $ddt->id_sede_destinazione);
                 if (!$prezzo_consigliato['prezzo_unitario']) {
                     $prezzo_consigliato = getPrezzoConsigliato(setting('Azienda predefinita'), $dir, $id_articolo, $riga);

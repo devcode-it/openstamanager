@@ -126,7 +126,7 @@ switch (post('op')) {
         $barcode = ($barcode ?: post('barcode'));
         if (!empty($barcode)) {
             $dbo->insert('mg_articoli_barcode', [
-                'idarticolo' => $id_record,
+                'id_articolo' => $id_record,
                 'barcode' => $barcode,
             ]);
         }
@@ -372,12 +372,12 @@ switch (post('op')) {
         $idmovimento = post('idmovimento');
 
         // Lettura qtà movimento
-        $rs = $dbo->fetchArray('SELECT idarticolo, qta FROM mg_movimenti WHERE id='.prepare($idmovimento));
+        $rs = $dbo->fetchArray('SELECT id_articolo, qta FROM mg_movimenti WHERE id='.prepare($idmovimento));
         $qta = $rs[0]['qta'];
-        $idarticolo = $rs[0]['idarticolo'];
+        $id_articolo = $rs[0]['id_articolo'];
 
         // Aggiorno la quantità dell'articolo
-        $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-'.$qta.' WHERE `id`='.prepare($idarticolo));
+        $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-'.$qta.' WHERE `id`='.prepare($id_articolo));
 
         if ($dbo->delete('mg_movimenti', ['id' => $idmovimento])) {
             flash()->info(tr('Movimento rimosso!'));
@@ -391,7 +391,7 @@ switch (post('op')) {
         break;
 
     case 'add-movimento':
-        $articolo = Articolo::find(post('idarticolo'));
+        $articolo = Articolo::find(post('id_articolo'));
         $tipo_movimento = post('tipo_movimento');
         $descrizione = post('movimento');
         $data = post('data');

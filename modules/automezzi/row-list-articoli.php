@@ -6,7 +6,7 @@ include_once __DIR__.'/../../core.php';
 $rs2 = $dbo->fetchArray('SELECT 
         `mg_movimenti`.`id_sede` AS id, 
         `mg_articoli`.`codice` AS codice, 
-        `idarticolo`, 
+        `id_articolo`, 
         SUM(`mg_movimenti`.`qta`) AS qta_automezzo, 
         `mg_articoli`.`qta` AS qta_magazzino, 
         `mg_articoli_lang`.`title` AS descrizione, 
@@ -14,12 +14,12 @@ $rs2 = $dbo->fetchArray('SELECT
         (SELECT `percentuale` FROM `co_iva` LEFT JOIN `co_iva_lang` ON ( `co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_iva`.`id`=`mg_articoli`.`id_iva_vendita`) AS prciva_vendita 
     FROM 
         `mg_movimenti` 
-        INNER JOIN `mg_articoli` ON `mg_movimenti`.`idarticolo`=`mg_articoli`.`id` 
+        INNER JOIN `mg_articoli` ON `mg_movimenti`.`id_articolo`=`mg_articoli`.`id` 
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE 
         `mg_movimenti`.`id_sede`='.prepare($id_record).' 
     GROUP BY 
-        `idarticolo`
+        `id_articolo`
     HAVING 
         `qta_automezzo`>0 
     ORDER BY 
@@ -42,7 +42,7 @@ if (!empty($rs2)) {
         // Articolo
         echo '
             <td class="text-left">
-                '.Modules::link('Articoli', $r['idarticolo'], $r['codice'].' - '.$r['descrizione']).'
+                '.Modules::link('Articoli', $r['id_articolo'], $r['codice'].' - '.$r['descrizione']).'
             </td>';
 
         // Quantità
@@ -65,10 +65,10 @@ if (!empty($rs2)) {
         // Pulsanti
         echo '
             <td class="text-center">
-                <a class="btn btn-warning btn-xs" data-href="'.$structure->fileurl('add_articolo.php').'?idautomezzo='.$id_record.'&idarticolo='.$r['idarticolo'].'" data-widget="modal" data-title="'.tr('Aggiungi articoli').'">
+                <a class="btn btn-warning btn-xs" data-href="'.$structure->fileurl('add_articolo.php').'?idautomezzo='.$id_record.'&id_articolo='.$r['id_articolo'].'" data-widget="modal" data-title="'.tr('Aggiungi articoli').'">
                     <i class="fa fa-edit"></i>
                 </a>
-                <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="moverow" data-idautomezzotecnico="'.$r['id'].'", data-idarticolo="'.$r['idarticolo'].'" data-msg="'.tr("Rimuovere articolo dell'automezzo?").'">
+                <a class="btn btn-danger btn-xs ask" data-backto="record-edit" data-op="moverow" data-idautomezzotecnico="'.$r['id'].'", data-id_articolo="'.$r['id_articolo'].'" data-msg="'.tr("Rimuovere articolo dell'automezzo?").'">
                     <i class="fa fa-trash"></i>
                 </a>
             </td>

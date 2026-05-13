@@ -54,7 +54,7 @@ switch ($name) {
         if ($disponibile) {
             $disponibile = $dbo->table('mg_articoli_barcode')
                 ->where('barcode', $value)
-                ->where('idarticolo', '<>', $id_record)
+                ->where('id_articolo', '<>', $id_record)
                 ->count() == 0;
         }
 

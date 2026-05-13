@@ -122,8 +122,8 @@ switch ($operazione) {
                         }
                         $prezzo_unitario = setting('Utilizza prezzi di vendita comprensivi di IVA') ? (($r->subtotale + $r->iva) / ($r->qta ?: 1)) : ($r->subtotale / ($r->qta ?: 1));
 
-                        if (!empty($r->idarticolo)) {
-                            $articolo = ArticoloOriginale::find($r->idarticolo);
+                        if (!empty($r->id_articolo)) {
+                            $articolo = ArticoloOriginale::find($r->id_articolo);
                             $riga = Articolo::build($contratto, $articolo);
                             $riga->original_id = $r->id;
                         } else {

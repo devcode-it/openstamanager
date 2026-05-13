@@ -80,7 +80,7 @@ foreach ($righe as $riga) {
     echo '
                 </td>
                 <td>';
-    echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
+    echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['id_articolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
         if (!empty($mancanti)) {
@@ -170,7 +170,7 @@ foreach ($righe as $riga) {
         if ($riga->isArticolo()) {
             $id_anagrafica = $intervento->id_anagrafica;
             $dir = 'entrata';
-            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->idarticolo, $riga, $intervento->id_sede_destinazione);
+            $show_notifica = getPrezzoConsigliato($id_anagrafica, $dir, $riga->id_articolo, $riga, $intervento->id_sede_destinazione);
         }
 
         if ($riga->isSconto()) {
@@ -223,9 +223,9 @@ foreach ($righe as $riga) {
     echo '
                 <td class="text-center">
                     <div class="input-group-btn">';
-    if (hasArticoliFiglio($riga->idarticolo)) {
+    if (hasArticoliFiglio($riga->id_articolo)) {
         echo '
-                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->idarticolo.')">
+                        <a class="btn btn-xs btn-info" title="'.tr('Distinta base').'" onclick="viewDistinta('.$riga->id_articolo.')">
                             <i class="fa fa-eye"></i>
                         </a>';
     }

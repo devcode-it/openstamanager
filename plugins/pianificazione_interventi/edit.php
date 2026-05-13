@@ -124,7 +124,7 @@ if (!$elenco_promemoria->isEmpty()) {
         $righe = $promemoria->getRighe();
         foreach ($righe as $riga) {
             $info_righe .= tr('_QTA_ _UM_ x _DESC_', [
-                '_DESC_' => ($riga->isArticolo() ? Modules::link('Articoli', $riga['idarticolo'], $riga['descrizione']) : $riga['descrizione']),
+                '_DESC_' => ($riga->isArticolo() ? Modules::link('Articoli', $riga['id_articolo'], $riga['descrizione']) : $riga['descrizione']),
                 '_QTA_' => Translator::numberToLocale($riga['qta']),
                 '_UM_' => $riga['um'],
             ]).'<br>';

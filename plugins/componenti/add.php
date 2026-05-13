@@ -68,7 +68,7 @@ echo '
                     if (response.abilita_serial) {
                         $("#row_serial").show();
                         $("#serial_componente").enableSelect2();
-                        $("#serial_componente").select2("data", {idarticolo: id_articolo});
+                        $("#serial_componente").select2("data", {id_articolo: id_articolo});
                     } else {
                         $("#row_serial").hide();
                         $("#serial_componente").val("").change();

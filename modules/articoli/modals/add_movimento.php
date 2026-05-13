@@ -43,7 +43,7 @@ foreach ($rs_spostamento as $row) {
 
     <div class="row">
         <div class="col-md-4">
-            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "value": "<?php echo get('id_articolo'); ?>", "required": 1, "readonly": 1,  "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
+            {["type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "id_articolo", "ajax-source": "articoli", "value": "<?php echo get('id_articolo'); ?>", "required": 1, "readonly": 1,  "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
         </div>
 
         <div class="col-md-2">
@@ -193,7 +193,7 @@ echo '
         let valid = await salvaForm(button, "#add-form");
 
         if (valid) {
-            let articolo = $("#idarticolo").selectData();
+            let articolo = $("#id_articolo").selectData();
 
             let prezzo_acquisto = parseFloat(articolo.prezzo_acquisto);
             let prezzo_vendita = parseFloat(articolo.prezzo_vendita);

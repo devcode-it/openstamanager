@@ -103,7 +103,7 @@ if ($modulo == 'veb') {
 
 $idriga = get('idriga') ?: get('riga_id');
 
-$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS idarticolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`title`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`idarticolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
+$rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS id_articolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`title`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`id_articolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
 
 echo '
 <h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
@@ -112,7 +112,7 @@ echo '
     <input type="hidden" name="op" value="add_serial">
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="idriga" value="'.$idriga.'">
-    <input type="hidden" name="idarticolo" value="'.$rs[0]['idarticolo'].'">
+    <input type="hidden" name="id_articolo" value="'.$rs[0]['id_articolo'].'">
     <input type="hidden" name="dir" value="'.$dir.'">';
 
 $info = $dbo->fetchArray('SELECT * FROM mg_prodotti WHERE serial IS NOT NULL AND '.$riga.'='.prepare($idriga));
@@ -151,7 +151,7 @@ if ($dir == 'entrata') {
         echo '
     <div class="row">
         <div class="col-md-12">
-            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['idarticolo' => $rs[0]['idarticolo']]).', "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
+            {[ "type": "select", "label": "'.tr('Serial').'", "name": "serial[]", "multiple": 1, "value": "'.implode(',', $serials).'", "ajax-source": "serial-articolo", "select-options": '.json_encode(['id_articolo' => $rs[0]['id_articolo']]).', "extra": "data-maximum=\"'.intval($rs[0]['qta']).'\"" ]}
         </div>
     </div>';
     }
@@ -231,7 +231,7 @@ if ($dir == 'entrata') {
         if ($is_rientrabile) {
             echo '
             <div class="col-md-6">
-                {[ "type": "select", "name": "select_serial_'.$i.'", "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['idarticolo']).' AND mg_prodotti.dir=\'entrata\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)", "onchange": "aggiornaSerial('.$i.');"'.(!empty($res) ? ', "readonly": 1' : '').' ]}
+                {[ "type": "select", "name": "select_serial_'.$i.'", "value": "'.implode(',', $serials).'", "values": "query=SELECT serial AS id, serial AS descrizione FROM mg_prodotti WHERE id_articolo = '.prepare($rs[0]['id_articolo']).' AND mg_prodotti.dir=\'entrata\' AND id=(SELECT MAX(id) FROM mg_prodotti AS prodotti WHERE prodotti.id_articolo=mg_prodotti.id_articolo AND prodotti.serial=mg_prodotti.serial)", "onchange": "aggiornaSerial('.$i.');"'.(!empty($res) ? ', "readonly": 1' : '').' ]}
             </div>';
         }
 
@@ -269,7 +269,7 @@ if ($dir == 'entrata') {
                     id_record: globals.id_record,
                     serial: value,
                     is_rientrabile: "'.$is_rientrabile.'",
-                    id_articolo: input("idarticolo").get(),
+                    id_articolo: input("id_articolo").get(),
                     op: "controlla_serial"
                 },
                 success: function(data){
@@ -301,7 +301,7 @@ if ($dir == 'entrata') {
                 dataType: "json",
                 data: {
                     id_module: "'.$id_module_articoli.'",
-                    id_record: "'.$rs[0]['idarticolo'].'",
+                    id_record: "'.$rs[0]['id_articolo'].'",
                     serial_start: input("serial_start").get(),
                     serial_end: input("serial_end").get(),
                     check: 1,
@@ -325,7 +325,7 @@ echo '
     <!-- PULSANTI -->
 	<div class="row">
         <div class="col-md-2">
-            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-card-widget="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path_osm().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['idarticolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
+            <button type="button" class="btn btn-info '.($dir == 'uscita' ? 'hidden' : '').'" data-card-widget="modal" data-title="'.tr('Aggiungi serial').'" data-href="'.base_path_osm().'/modules/articoli/plugins/articoli.lotti.php?id_module='.$id_module_articoli.'&id_record='.$rs[0]['id_articolo'].'&modal=1"><i class="fa fa-magic"></i> '.tr('Crea').'</button>
         </div>
 
 		<div class="col-md-10 text-right">

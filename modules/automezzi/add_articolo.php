@@ -4,12 +4,12 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $idautomezzo = get('idautomezzo');
-$idarticolo = get('idarticolo');
+$id_articolo = get('id_articolo');
 $op = 'addrow';
 $qta = 1;
 
-if (!empty($idarticolo) && !empty($idautomezzo)) {
-    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.idarticolo='.prepare($idarticolo).' AND mg_movimenti.id_sede='.prepare($idautomezzo))['qta'];
+if (!empty($id_articolo) && !empty($idautomezzo)) {
+    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.id_articolo='.prepare($id_articolo).' AND mg_movimenti.id_sede='.prepare($idautomezzo))['qta'];
     $op = 'editrow';
 }
 
@@ -25,7 +25,7 @@ echo '
 // Seleziona articolo
 echo '
     <div class="col-md-8">
-        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "idarticolo", "required": 1, "value": "'.$idarticolo.'", "ajax-source": "articoli", "select-options": '.json_encode(['id_sede_partenza' => 0]).' ]}
+        {[ "type": "select", "label": "'.tr('Articolo').'", "name": "id_articolo", "required": 1, "value": "'.$id_articolo.'", "ajax-source": "articoli", "select-options": '.json_encode(['id_sede_partenza' => 0]).' ]}
     </div>';
 
 // Quantità

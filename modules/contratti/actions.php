@@ -189,7 +189,7 @@ switch (post('op')) {
         if (post('idriga') != null) {
             $articolo = Articolo::find(post('idriga'));
         } else {
-            $originale = ArticoloOriginale::find(post('idarticolo'));
+            $originale = ArticoloOriginale::find(post('id_articolo'));
             $articolo = Articolo::build($contratto, $originale);
             $articolo->id_dettaglio_fornitore = post('id_dettaglio_fornitore') ?: null;
         }
@@ -367,7 +367,7 @@ switch (post('op')) {
                 ];
 
                 if ($riga->isArticolo()) {
-                    $riga_array['idarticolo'] = $riga->idarticolo;
+                    $riga_array['id_articolo'] = $riga->id_articolo;
                     $riga_array['codice'] = $riga->codice;
                     $riga_array['costo_unitario'] = $riga->costo_unitario;
                 }
@@ -391,8 +391,8 @@ switch (post('op')) {
                 $type = $riga_data['type'];
                 $class_name = substr((string) $type, strrpos((string) $type, '\\') + 1);
 
-                if ($class_name == 'Articolo' && !empty($riga_data['idarticolo'])) {
-                    $articolo_originale = ArticoloOriginale::find($riga_data['idarticolo']);
+                if ($class_name == 'Articolo' && !empty($riga_data['id_articolo'])) {
+                    $articolo_originale = ArticoloOriginale::find($riga_data['id_articolo']);
                     if ($articolo_originale) {
                         $riga = Articolo::build($contratto, $articolo_originale);
                         $riga->costo_unitario = $riga_data['costo_unitario'];
@@ -844,7 +844,7 @@ switch (post('op')) {
         $dir = 'entrata';
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'idarticolo', ['barcode' => $barcode])['idarticolo'];
+            $id_articolo = $dbo->selectOne('mg_articoli_barcode', 'id_articolo', ['barcode' => $barcode])['id_articolo'];
             if (empty($id_articolo)) {
                 $id_articolo = $dbo->selectOne('mg_articoli', 'id', ['deleted_at' => null, 'attivo' => 1, 'barcode' => '', 'codice' => $barcode])['id'];
                 $save_inline_barcode = false;
@@ -976,7 +976,7 @@ switch (post('op')) {
             $prezzo_unitario = 0;
             $sconto = 0;
             if ($riga->isArticolo()) {
-                $id_articolo = $riga->idarticolo;
+                $id_articolo = $riga->id_articolo;
 
                 if ($update_prezzo_vendita) {
                     $prezzo_consigliato = getPrezzoConsigliato($id_anagrafica, $dir, $id_articolo, $riga, $contratto->id_sede_destinazione);

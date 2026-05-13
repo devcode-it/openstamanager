@@ -24,7 +24,7 @@ use Modules\Articoli\Articolo;
 
 switch (post('op')) {
     case 'add':
-        $articolo = Articolo::find(post('idarticolo'));
+        $articolo = Articolo::find(post('id_articolo'));
         $tipo_movimento = post('tipo_movimento');
         $descrizione = post('movimento');
         $data = post('data');

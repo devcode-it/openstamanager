@@ -897,7 +897,7 @@ class DocumentiCollegati
             `co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_articolo).'
+        WHERE `co_righe_documenti`.`id_articolo` = '.prepare($id_articolo).'
         GROUP BY `co_documenti`.`id`
         ORDER BY `co_documenti`.`data` DESC';
 
@@ -928,7 +928,7 @@ class DocumentiCollegati
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo).'
+        WHERE `dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo).'
         GROUP BY `dt_ddt`.`id`
         ORDER BY `dt_ddt`.`data` DESC';
 
@@ -954,7 +954,7 @@ class DocumentiCollegati
             `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
             `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_articolo).'
+        WHERE `co_righe_preventivi`.`id_articolo` = '.prepare($id_articolo).'
         GROUP BY `co_preventivi`.`id`
         ORDER BY `co_preventivi`.`data_bozza` DESC';
 
@@ -1498,7 +1498,7 @@ class DocumentiCollegati
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-        WHERE `co_righe_documenti`.`idarticolo` = '.prepare($id_articolo);
+        WHERE `co_righe_documenti`.`id_articolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_fatture);
         $total += (int) $result['total'];
@@ -1507,7 +1507,7 @@ class DocumentiCollegati
         $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
         FROM `dt_ddt`
         INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
-        WHERE `dt_righe_ddt`.`idarticolo` = '.prepare($id_articolo);
+        WHERE `dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_ddt);
         $total += (int) $result['total'];
@@ -1516,7 +1516,7 @@ class DocumentiCollegati
         $query_preventivi = 'SELECT COUNT(DISTINCT `co_preventivi`.`id`) AS total
         FROM `co_preventivi`
         INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`idpreventivo`
-        WHERE `co_righe_preventivi`.`idarticolo` = '.prepare($id_articolo);
+        WHERE `co_righe_preventivi`.`id_articolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_preventivi);
         $total += (int) $result['total'];

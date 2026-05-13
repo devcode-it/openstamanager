@@ -576,9 +576,9 @@ if (!function_exists('verifica_numero_fattura')) {
                         }
 
                         if ($riga['is_descrizione'] == 0) {
-                            if (empty($riga_base[$intervento->id_tipo_intervento]['riga']) && empty($riga->idarticolo)) {
+                            if (empty($riga_base[$intervento->id_tipo_intervento]['riga']) && empty($riga->id_articolo)) {
                                 $riga_base[$intervento->id_tipo_intervento]['riga'] = $riga;
-                            } elseif (empty($riga->idarticolo)) {
+                            } elseif (empty($riga->id_articolo)) {
                                 $riga_base[$intervento->id_tipo_intervento]['riga']['descrizione'] .= "\n".$riga->descrizione;
                                 $riga_base[$intervento->id_tipo_intervento]['riga']['qta'] += $riga->qta;
                             } else {

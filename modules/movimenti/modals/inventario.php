@@ -41,7 +41,7 @@ include_once __DIR__.'/../../../core.php';
         </div>
 
         <div class="col-md-5">
-            {[ "type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "idarticolo", "ajax-source": "articoli", "id": "articolo-inventario", "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
+            {[ "type": "select", "label": "<?php echo tr('Articolo'); ?>", "name": "id_articolo", "ajax-source": "articoli", "id": "articolo-inventario", "select-options": {"permetti_movimento_a_zero": 1, "id_anagrafica": <?php echo setting('Azienda predefinita'); ?>, "id_sede_partenza": 0, "id_sede_destinazione": 0 } ]}
         </div>
 
         <div class="col-md-2" style="margin-top: 25px">

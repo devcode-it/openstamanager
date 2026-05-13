@@ -159,10 +159,10 @@ switch ($op) {
         // Carica i campi da compilare del componente
     case 'load_componente':
         $filename = post('filename');
-        $idarticolo = post('idarticolo');
+        $id_articolo = post('id_articolo');
 
-        // Se è stato specificato un idarticolo, carico il file .ini dal campo `contenuto` di quell'idarticolo
-        $rs = $dbo->fetchArray('SELECT `contenuto`, `componente_filename` FROM `mg_articoli` WHERE `id`='.prepare($idarticolo));
+        // Se è stato specificato un id_articolo, carico il file .ini dal campo `contenuto` di quell'id_articolo
+        $rs = $dbo->fetchArray('SELECT `contenuto`, `componente_filename` FROM `mg_articoli` WHERE `id`='.prepare($id_articolo));
 
         // Se i campi da caricare sono del componente già salvato leggo dal campo `contenuto`...
         if ($rs[0]['componente_filename'] == $filename) {

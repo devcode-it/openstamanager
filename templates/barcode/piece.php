@@ -35,7 +35,7 @@ echo '<style>
 </style>';
 
 $barcode = $record->barcode;
-$articolo = Articolo::find($record->idarticolo);
+$articolo = Articolo::find($record->id_articolo);
 
 echo '
 <div class="barcode-cell">

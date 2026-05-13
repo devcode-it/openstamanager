@@ -38,7 +38,7 @@ if (!empty($rs_viaggi)) {
         }
 
         // Recupero i rifornimenti per questo viaggio
-        $q_rifornimenti = 'SELECT * FROM an_automezzi_rifornimenti WHERE idviaggio='.prepare($viaggio['id']).' ORDER BY data ASC';
+        $q_rifornimenti = 'SELECT * FROM an_automezzi_rifornimenti WHERE id_viaggio='.prepare($viaggio['id']).' ORDER BY data ASC';
         $rifornimenti = $dbo->fetchArray($q_rifornimenti);
 
         echo '
@@ -85,10 +85,10 @@ if (!empty($rs_viaggi)) {
         echo '
             </td>
             <td class="text-center">
-                <button class="btn btn-sm btn-primary" data-href="'.$module->fileurl('modals/manage_rifornimento.php').'?idviaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Aggiungi rifornimento').'" data-toggle="tooltip" title="'.tr('Aggiungi rifornimento').'" '.$disabled.'>
+                <button class="btn btn-sm btn-primary" data-href="'.$module->fileurl('modals/manage_rifornimento.php').'?id_viaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Aggiungi rifornimento').'" data-toggle="tooltip" title="'.tr('Aggiungi rifornimento').'" '.$disabled.'>
                     <i class="fa fa-plus"></i> <i class="fa fa-tint"></i>
                 </button>
-                <button class="btn btn-warning btn-sm" data-href="'.$module->fileurl('modals/manage_viaggio.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idviaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Modifica viaggio').'" '.$disabled.'>
+                <button class="btn btn-warning btn-sm" data-href="'.$module->fileurl('modals/manage_viaggio.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_viaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Modifica viaggio').'" '.$disabled.'>
                     <i class="fa fa-edit"></i>
                 </button>
                 <button class="btn btn-danger btn-sm ask" data-backto="record-edit" data-op="delviaggio" data-id="'.$viaggio['id'].'" data-msg="'.tr('Rimuovere il viaggio dal registro?').'" '.$disabled.'>
@@ -96,7 +96,7 @@ if (!empty($rs_viaggi)) {
                 </button>
             </td>
             <td class="text-center">
-                <button class="btn btn-sm '.$btn_firma_class.'" data-href="'.$module->fileurl('modals/firma_viaggio.php').'?id_record='.$id_record.'&idviaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Firma viaggio').'" data-toggle="tooltip" title="'.$btn_firma_title.'" '.$firma_disabled.'>
+                <button class="btn btn-sm '.$btn_firma_class.'" data-href="'.$module->fileurl('modals/firma_viaggio.php').'?id_record='.$id_record.'&id_viaggio='.$viaggio['id'].'" data-card-widget="modal" data-title="'.tr('Firma viaggio').'" data-toggle="tooltip" title="'.$btn_firma_title.'" '.$firma_disabled.'>
                     <i class="fa '.$btn_firma_icon.'"></i> <i class="fa fa-pencil"></i>
                 </button>
             </td>

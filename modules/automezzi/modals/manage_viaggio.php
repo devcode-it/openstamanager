@@ -2,12 +2,12 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$idviaggio = get('idviaggio');
+$id_viaggio = get('id_viaggio');
 $idautomezzo = get('id_record');
 
-// Se è presente idviaggio, recupero i dati per la modifica
-if (!empty($idviaggio)) {
-    $viaggio = $dbo->fetchOne('SELECT * FROM an_automezzi_viaggi WHERE id='.prepare($idviaggio));
+// Se è presente id_viaggio, recupero i dati per la modifica
+if (!empty($id_viaggio)) {
+    $viaggio = $dbo->fetchOne('SELECT * FROM an_automezzi_viaggi WHERE id='.prepare($id_viaggio));
     $op = 'editviaggio';
     $button_icon = 'fa-edit';
     $button_text = tr('Modifica');
@@ -37,9 +37,9 @@ echo '
     <input type="hidden" name="id_module" value="'.$id_module.'">
     <input type="hidden" name="id_record" value="'.$id_record.'">';
 
-if (!empty($idviaggio)) {
+if (!empty($id_viaggio)) {
     echo '
-    <input type="hidden" name="idviaggio" value="'.$idviaggio.'">';
+    <input type="hidden" name="id_viaggio" value="'.$id_viaggio.'">';
 }
 
 echo '

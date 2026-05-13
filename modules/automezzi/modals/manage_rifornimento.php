@@ -3,7 +3,7 @@
 include_once __DIR__.'/../../../core.php';
 
 $idrifornimento = get('idrifornimento');
-$idviaggio = get('idviaggio');
+$id_viaggio = get('id_viaggio');
 
 // Se è presente idrifornimento, recupero i dati per la modifica
 if (!empty($idrifornimento)) {
@@ -14,7 +14,7 @@ if (!empty($idrifornimento)) {
 } else {
     // Valori di default per nuovo rifornimento
     $rifornimento = [
-        'idviaggio' => $idviaggio,
+        'id_viaggio' => $id_viaggio,
         'data' => '-now-',
         'luogo' => '',
         'id_carburante' => '',
@@ -44,7 +44,7 @@ if (!empty($idrifornimento)) {
     <input type="hidden" name="idrifornimento" value="'.$idrifornimento.'">';
 } else {
     echo '
-    <input type="hidden" name="idviaggio" value="'.$idviaggio.'">';
+    <input type="hidden" name="id_viaggio" value="'.$id_viaggio.'">';
 }
 
 echo '

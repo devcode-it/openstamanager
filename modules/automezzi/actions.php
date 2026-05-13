@@ -138,7 +138,7 @@ switch (post('op')) {
 
         // Modifica viaggio
     case 'editviaggio':
-        $idviaggio = post('idviaggio');
+        $id_viaggio = post('id_viaggio');
         $idtecnico = post('idtecnico');
         $data_inizio = post('data_inizio');
         $data_fine = post('data_fine') ?: null;
@@ -156,7 +156,7 @@ switch (post('op')) {
             'km_fine' => $km_fine,
             'destinazione' => $destinazione,
             'motivazione' => $motivazione,
-        ], ['id' => $idviaggio]);
+        ], ['id' => $id_viaggio]);
 
         flash()->info(tr('Viaggio aggiornato!'));
 
@@ -164,9 +164,9 @@ switch (post('op')) {
 
         // Eliminazione viaggio
     case 'delviaggio':
-        $idviaggio = post('id');
+        $id_viaggio = post('id');
 
-        if ($dbo->delete('an_automezzi_viaggi', ['id' => $idviaggio])) {
+        if ($dbo->delete('an_automezzi_viaggi', ['id' => $id_viaggio])) {
             flash()->info(tr('Viaggio rimosso dal registro!'));
         }
 
@@ -174,7 +174,7 @@ switch (post('op')) {
 
         // Aggiunta rifornimento
     case 'addrifornimento':
-        $idviaggio = post('idviaggio');
+        $id_viaggio = post('id_viaggio');
         $data = post('data');
         $luogo = post('luogo');
         $id_carburante = post('id_carburante');
@@ -186,7 +186,7 @@ switch (post('op')) {
 
         // Inserisco il rifornimento
         $dbo->insert('an_automezzi_rifornimenti', [
-            'idviaggio' => $idviaggio,
+            'id_viaggio' => $id_viaggio,
             'data' => $data,
             'luogo' => $luogo,
             'id_carburante' => $id_carburante,
@@ -241,7 +241,7 @@ switch (post('op')) {
 
         // Firma viaggio
     case 'firma_viaggio':
-        $idviaggio = post('idviaggio');
+        $id_viaggio = post('id_viaggio');
         $firma_base64 = post('firma_base64');
 
         if (empty($firma_base64)) {
@@ -271,7 +271,7 @@ switch (post('op')) {
                     'category' => 'Firme',
                     'id_module' => $id_module,
                     'id_record' => $id_record,
-                    'key' => 'signature_viaggio:'.$idviaggio,
+                    'key' => 'signature_viaggio:'.$id_viaggio,
                 ]);
 
                 if (empty($upload)) {
@@ -282,7 +282,7 @@ switch (post('op')) {
                     $dbo->update('an_automezzi_viaggi', [
                         'firma_data' => date('Y-m-d H:i:s'),
                         'firma_nome' => post('firma_nome'),
-                    ], ['id' => $idviaggio]);
+                    ], ['id' => $id_viaggio]);
                 }
             } else {
                 flash()->error(tr('Errore durante il salvataggio della firma.').'<br>'.tr('La firma risulta vuota.'));

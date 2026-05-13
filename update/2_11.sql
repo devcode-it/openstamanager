@@ -1028,3 +1028,4 @@ ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `id_tipo_interven
 
 ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `id_tipo_intervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
 ALTER TABLE `an_automezzi_danni` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;

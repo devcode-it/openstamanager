@@ -5,10 +5,10 @@ include_once __DIR__.'/../../../core.php';
 use Models\Module;
 
 $idautomezzo = get('id_record');
-$idviaggio = get('idviaggio');
+$id_viaggio = get('id_viaggio');
 
 // Recupero i dati del viaggio
-$viaggio = $dbo->fetchOne('SELECT * FROM an_automezzi_viaggi WHERE id='.prepare($idviaggio));
+$viaggio = $dbo->fetchOne('SELECT * FROM an_automezzi_viaggi WHERE id='.prepare($id_viaggio));
 
 if (empty($viaggio)) {
     echo '<p>'.tr('Viaggio non trovato').'</p>';
@@ -78,7 +78,7 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_module" value="<?php echo $id_module; ?>">
     <input type="hidden" name="id_record" value="<?php echo $idautomezzo; ?>">
-    <input type="hidden" name="idviaggio" value="<?php echo $idviaggio; ?>">
+    <input type="hidden" name="id_viaggio" value="<?php echo $id_viaggio; ?>">
 
     <div class="row">
         <div class="col-md-12">

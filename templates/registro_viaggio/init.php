@@ -56,7 +56,7 @@ foreach ($records as $viaggio) {
         FROM an_automezzi_rifornimenti r
         LEFT JOIN an_automezzi_tipi_carburante tc ON r.id_carburante = tc.id
         LEFT JOIN an_automezzi_gestori g ON r.id_gestore = g.id
-        WHERE r.idviaggio = '.prepare($viaggio['id']).'
+        WHERE r.id_viaggio = '.prepare($viaggio['id']).'
         ORDER BY r.data ASC
     ');
     $rifornimenti_per_viaggio[$viaggio['id']] = $rifornimenti;

@@ -1265,7 +1265,7 @@ switch ($op) {
                     }
                     $id_iva = ($fattura->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $fattura->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    $id_iva = ($fattura->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
+                    $id_iva = ($fattura->anagrafica->id_iva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
                 $id_anagrafica = $fattura->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

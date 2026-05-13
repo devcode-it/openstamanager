@@ -812,7 +812,7 @@ switch (post('op')) {
                 }
                 $id_iva = ($ordine->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ordine->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
             } else {
-                $id_iva = ($ordine->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
+                $id_iva = ($ordine->anagrafica->id_iva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
             }
             $id_anagrafica = $ordine->id_anagrafica;
             $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

@@ -362,7 +362,7 @@ switch (filter('op')) {
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
                         } else {
-                            $id_iva = ($ddt->anagrafica->idiva_acquisti ?: setting('Iva predefinita'));
+                            $id_iva = ($ddt->anagrafica->id_iva_acquisti ?: setting('Iva predefinita'));
                         }
 
                         $copia->setPrezzoUnitario($prezzo, $id_iva);
@@ -750,7 +750,7 @@ switch (filter('op')) {
                     }
                     $id_iva = ($ddt->anagrafica->id_iva_vendite && (!$originale->idiva_vendita || $aliquota_articolo != 0) ? $ddt->anagrafica->id_iva_vendite : $originale->idiva_vendita) ?: setting('Iva predefinita');
                 } else {
-                    $id_iva = ($ddt->anagrafica->idiva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
+                    $id_iva = ($ddt->anagrafica->id_iva_acquisti ?: ($originale->idiva_vendita ?: setting('Iva predefinita')));
                 }
                 $id_anagrafica = $ddt->id_anagrafica;
                 $prezzi_ivati = setting('Utilizza prezzi di vendita comprensivi di IVA');

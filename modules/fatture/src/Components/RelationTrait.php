@@ -120,7 +120,7 @@ trait RelationTrait
      */
     public function setIdRivalsaINPSAttribute($value)
     {
-        $this->attributes['idrivalsainps'] = $value;
+        $this->attributes['id_rivalsa_inps'] = $value;
         $this->load('rivalsa');
     }
 
@@ -147,7 +147,7 @@ trait RelationTrait
 
     public function rivalsa()
     {
-        return $this->belongsTo(RivalsaINPS::class, 'idrivalsainps');
+        return $this->belongsTo(RivalsaINPS::class, 'id_rivalsa_inps');
     }
 
     public function ritenuta()

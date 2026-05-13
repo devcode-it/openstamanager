@@ -1078,4 +1078,5 @@ ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idtipodocumento` `id_tipo_documento` TINYINT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
-ALTER TABLE `co_documenti` CHANGE `id_conto` `id_conto` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;

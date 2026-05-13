@@ -283,7 +283,7 @@ if ($show_sconto) {
  * Rivalsa INPS | Totale (+ Rivalsa INPS)
  */
 if ($has_rivalsa) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione FROM co_rivalse WHERE id IN (SELECT idrivalsainps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idrivalsainps!=0)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale, descrizione FROM co_rivalse WHERE id IN (SELECT id_rivalsa_inps FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_rivalsa_inps!=0)');
 
     foreach ($rs2 as $rs) {
         $descrizione .= '<p class="text-muted small-bold">'.$rs['descrizione'].'</p>';

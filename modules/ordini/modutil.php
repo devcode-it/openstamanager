@@ -128,12 +128,12 @@ if (!function_exists('get_ivaindetraibile_ordine')) {
  * Ricalcola i costi aggiuntivi in ordine (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idordine				int		ID del ordine
- * $idrivalsainps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
+ * $id_rivalsa_inps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
  * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
 if (!function_exists('ricalcola_costiagg_ordine')) {
-    function ricalcola_costiagg_ordine($idordine, $idrivalsainps = '', $idritenutaacconto = '', $bolli = '')
+    function ricalcola_costiagg_ordine($idordine, $id_rivalsa_inps = '', $idritenutaacconto = '', $bolli = '')
     {
         global $dir;
 
@@ -148,21 +148,21 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
 
             // Leggo gli id dei costi aggiuntivi
             if ($dir == 'uscita') {
-                $query2 = 'SELECT idrivalsainps, idritenutaacconto, bollo FROM or_ordini WHERE id='.prepare($idordine);
+                $query2 = 'SELECT id_rivalsa_inps, idritenutaacconto, bollo FROM or_ordini WHERE id='.prepare($idordine);
                 $rs2 = $dbo->fetchArray($query2);
-                $idrivalsainps = $rs2[0]['idrivalsainps'];
+                $id_rivalsa_inps = $rs2[0]['id_rivalsa_inps'];
                 $idritenutaacconto = $rs2[0]['idritenutaacconto'];
                 $bollo = $rs2[0]['bollo'];
             }
 
             // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
             if ($dir == 'entrata') {
-                if (!empty($idrivalsainps)) {
-                    $idrivalsainps = setting('Cassa previdenziale predefinita');
+                if (!empty($id_rivalsa_inps)) {
+                    $id_rivalsa_inps = setting('Cassa previdenziale predefinita');
                 }
             }
 
-            $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($idrivalsainps);
+            $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
             $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 

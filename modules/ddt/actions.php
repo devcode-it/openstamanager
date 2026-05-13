@@ -71,7 +71,7 @@ switch (filter('op')) {
             $id_anagrafica = post('id_anagrafica');
 
             if ($dir == 'uscita') {
-                $idrivalsainps = post('id_rivalsa_inps');
+                $id_rivalsa_inps = post('id_rivalsa_inps');
                 $idritenutaacconto = post('id_ritenuta_acconto');
                 $bollo = post('bollo');
 
@@ -80,7 +80,7 @@ switch (filter('op')) {
                     $ddt->numero = $numero;
                 }
             } else {
-                $idrivalsainps = 0;
+                $id_rivalsa_inps = 0;
                 $idritenutaacconto = 0;
                 $bollo = 0;
             }
@@ -104,7 +104,7 @@ switch (filter('op')) {
             $ddt->data_ora_trasporto = post('data_ora_trasporto') ?: null;
             $ddt->id_porto = post('id_porto') ?: null;
             $ddt->id_aspetto_beni = post('id_aspetto_beni') ?: null;
-            $ddt->idrivalsainps = $idrivalsainps ?: null;
+            $ddt->id_rivalsa_inps = $id_rivalsa_inps ?: null;
             $ddt->idritenutaacconto = $idritenutaacconto ?: null;
 
             $ddt->n_colli = post('n_colli');
@@ -138,7 +138,7 @@ switch (filter('op')) {
                 }
             } else {
                 if ($stato->name != 'Pagato') {
-                    ricalcola_costiagg_ddt($id_record, $idrivalsainps, $idritenutaacconto, $bollo);
+                    ricalcola_costiagg_ddt($id_record, $id_rivalsa_inps, $idritenutaacconto, $bollo);
                 }
             }
 

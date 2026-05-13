@@ -954,8 +954,8 @@ class FatturaElettronica implements \Stringable
                 $totale_ritenuta_acconto += $riga['ritenutaacconto'];
             }
 
-            if (!empty($riga['idrivalsainps']) and empty($riga['is_descrizione'])) {
-                $id_rivalsainps = $riga['idrivalsainps'];
+            if (!empty($riga['id_rivalsa_inps']) and empty($riga['is_descrizione'])) {
+                $id_rivalsainps = $riga['id_rivalsa_inps'];
                 $totale_rivalsainps += $riga['rivalsainps'];
                 $aliquota_iva_rivalsainps = $riga['idiva'];
             }

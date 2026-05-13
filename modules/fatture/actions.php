@@ -171,7 +171,7 @@ switch ($op) {
         if ($dir == 'uscita') {
             $fattura->numero = post('numero');
             $fattura->numero_esterno = post('numero_esterno');
-            $fattura->idrivalsainps = post('id_rivalsa_inps') ?: null;
+            $fattura->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
             $fattura->idritenutaacconto = post('id_ritenuta_acconto') ?: null;
         }
 

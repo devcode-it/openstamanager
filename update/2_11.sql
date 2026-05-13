@@ -991,3 +991,4 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idsede_fatturazione ` `idsede_fatturazione ` INT NULL DEFAULT NULL;

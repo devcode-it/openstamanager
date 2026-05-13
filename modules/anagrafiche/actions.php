@@ -63,7 +63,7 @@ switch (post('op')) {
         $anagrafica->sesso = post('sesso');
         $anagrafica->capitale_sociale = post('capitale_sociale') ?: null;
         $anagrafica->pec = post('pec');
-        $anagrafica->idsede_fatturazione = post('idsede_fatturazione');
+        $anagrafica->id_sede_fatturazione = post('idsede_fatturazione');
         $anagrafica->note = post('note');
         $anagrafica->codiceri = post('codiceri');
         $anagrafica->codicerea = strtoupper(post('codicerea')) ?: null;

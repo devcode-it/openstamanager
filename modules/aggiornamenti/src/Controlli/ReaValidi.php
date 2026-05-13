@@ -81,7 +81,7 @@ class ReaValidi extends Controllo
         foreach ($anagrafiche_interessate as $anagrafica) {
             /*$tipi = explode(',', $anagrafica['tipi_anagrafica']);
             $cliente = in_array('Cliente', $tipi) && empty($anagrafica['id_conto_cliente']);
-            $fornitore = in_array('Fornitore', $tipi) && empty($anagrafica['idconto_fornitore']);*/
+            $fornitore = in_array('Fornitore', $tipi) && empty($anagrafica['id_conto_fornitore']);*/
 
             $this->addResult([
                 'id' => $anagrafica['id'],

@@ -154,8 +154,8 @@ class Scadenze
                 $dir = $fattura->tipo->dir;
 
                 // Recupero conto anagrafica
-                $id_conto_anagrafica = database()->selectOne('an_anagrafiche', $dir == 'entrata' ? 'id_conto_cliente' : 'idconto_fornitore', ['id_anagrafica' => $id_anagrafica]);
-                $id_conto_anagrafica = $id_conto_anagrafica[$dir == 'entrata' ? 'id_conto_cliente' : 'idconto_fornitore'];
+                $id_conto_anagrafica = database()->selectOne('an_anagrafiche', $dir == 'entrata' ? 'id_conto_cliente' : 'id_conto_fornitore', ['id_anagrafica' => $id_anagrafica]);
+                $id_conto_anagrafica = $id_conto_anagrafica[$dir == 'entrata' ? 'id_conto_cliente' : 'id_conto_fornitore'];
 
                 // Recupero conto contropartita
                 $id_conto_contropartita = $dir == 'entrata' ? $pagamento->idconto_vendite : $pagamento->idconto_acquisti;

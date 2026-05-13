@@ -70,7 +70,7 @@ if ($is_cliente && empty($record['id_conto_cliente'])) {
     $problemi_anagrafica[] = '<div class="row" style="margin-bottom:5px;"><div class="col-md-3">'.tr('Piano dei conti mancante per il cliente').'</div><button type="button" class="btn btn-xs btn-success" onclick="risolviConto(\'cliente\')"><i class="fa fa-cog"></i> '.tr('Risolvi').'</button></div>';
 }
 
-if ($is_fornitore && empty($record['idconto_fornitore'])) {
+if ($is_fornitore && empty($record['id_conto_fornitore'])) {
     $problemi_anagrafica[] = '<div class="row"><div class="col-md-3">'.tr('Piano dei conti mancante per il fornitore').'</div><button type="button" class="btn btn-xs btn-success" onclick="risolviConto(\'fornitore\')"><i class="fa fa-cog"></i> '.tr('Risolvi').'</button></div>';
 }
 
@@ -662,7 +662,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>';
 
     // Collegamento con il conto
-    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['idconto_fornitore']));
+    $conto = $dbo->fetchOne('SELECT co_pianodeiconti3.id, co_pianodeiconti2.numero as numero, co_pianodeiconti3.numero as numero_conto, co_pianodeiconti3.descrizione AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($record['id_conto_fornitore']));
 
     echo '
                                 <div class="col-md-6">

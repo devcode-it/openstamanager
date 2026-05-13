@@ -1009,3 +1009,4 @@ ALTER TABLE `an_anagrafiche` CHANGE `diciturafissafattura` `dicitura_fissa_fattu
 ALTER TABLE `an_anagrafiche` CHANGE `idconto_cliente` `id_conto_cliente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_vendite` `id_banca_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `id_banca_acquisti` INT NULL DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idconto_fornitore` `id_conto_fornitore` INT NOT NULL;

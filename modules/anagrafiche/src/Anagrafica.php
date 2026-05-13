@@ -128,17 +128,17 @@ class Anagrafica extends Model
     public static function fixFornitore(Anagrafica $anagrafica)
     {
         // Creo il relativo conto nel partitario se non esiste
-        if (empty($anagrafica->idconto_fornitore)) {
-            $id_conto = self::creaConto($anagrafica, 'idconto_fornitore');
+        if (empty($anagrafica->id_conto_fornitore)) {
+            $id_conto = self::creaConto($anagrafica, 'id_conto_fornitore');
 
             // Collegamento conto
-            $anagrafica->idconto_fornitore = $id_conto;
+            $anagrafica->id_conto_fornitore = $id_conto;
             $anagrafica->save();
         } else {
-            $conto = $anagrafica->idconto_fornitore;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['idconto_fornitore']);
+            $conto = $anagrafica->id_conto_fornitore;
+            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_fornitore']);
             if (!$is_esistente) {
-                $anagrafica->idconto_fornitore = null;
+                $anagrafica->id_conto_fornitore = null;
                 $anagrafica->save();
                 Anagrafica::fixFornitore($anagrafica);
             }
@@ -524,7 +524,7 @@ class Anagrafica extends Model
         }
 
         if ($this->isTipo('Fornitore')) {
-            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->idconto_fornitore]);
+            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_fornitore]);
         }
     }
 

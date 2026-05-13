@@ -30,10 +30,10 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
         LEFT OUTER JOIN (
             SELECT id,
                 id_conto_cliente,
-                idconto_fornitore,
+                id_conto_fornitore,
                 deleted_at
             FROM an_anagrafiche
-        ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.id_conto_cliente, anagrafica.idconto_fornitore)
+        ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.id_conto_cliente, anagrafica.id_conto_fornitore)
         LEFT OUTER JOIN (
             SELECT COUNT(idconto) AS numero_movimenti,
             idconto,

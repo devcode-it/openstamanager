@@ -123,7 +123,7 @@ switch (post('op')) {
                 foreach ($conti_livello3 as $conto3) {
                     // Scollego il conto dalle anagrafiche
                     $dbo->query('UPDATE an_anagrafiche SET id_conto_cliente = NULL WHERE id_conto_cliente = '.prepare($conto3['id']));
-                    $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($conto3['id']));
+                    $dbo->query('UPDATE an_anagrafiche SET id_conto_fornitore = NULL WHERE id_conto_fornitore = '.prepare($conto3['id']));
                 }
 
                 // Elimino tutti i conti di livello 3 collegati
@@ -148,7 +148,7 @@ switch (post('op')) {
             if ($idconto != '' and empty($movimenti)) {
                 // Se elimino il conto lo scollego anche da eventuali anagrafiche (cliente e fornitore)
                 $dbo->query('UPDATE an_anagrafiche SET id_conto_cliente = NULL WHERE id_conto_cliente = '.prepare($idconto));
-                $dbo->query('UPDATE an_anagrafiche SET idconto_fornitore = NULL WHERE idconto_fornitore = '.prepare($idconto));
+                $dbo->query('UPDATE an_anagrafiche SET id_conto_fornitore = NULL WHERE id_conto_fornitore = '.prepare($idconto));
 
                 $query = 'DELETE FROM co_pianodeiconti3 WHERE id='.prepare($idconto);
 

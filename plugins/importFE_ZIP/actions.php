@@ -370,7 +370,7 @@ switch (filter('op')) {
             $movimento1->setTotale($fattura->totale, 0);
             $movimento1->save();
 
-            $movimento2 = Movimento::build($mastrino, $fattura->anagrafica->idconto_fornitore);
+            $movimento2 = Movimento::build($mastrino, $fattura->anagrafica->id_conto_fornitore);
             $movimento2->setTotale(0, $fattura->totale);
             $movimento2->save();
 

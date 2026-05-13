@@ -100,7 +100,7 @@ class Movimenti
          */
         $anagrafica = $this->fattura->anagrafica;
 
-        $id_conto = $is_acquisto || $is_autofattura ? $anagrafica->idconto_fornitore : $anagrafica->id_conto_cliente;
+        $id_conto = $is_acquisto || $is_autofattura ? $anagrafica->id_conto_fornitore : $anagrafica->id_conto_cliente;
         if (empty($id_conto)) {
             $id_conto = $is_acquisto || $is_autofattura ? setting('Conto per Riepilogativo fornitori') : setting('Conto per Riepilogativo clienti');
         }

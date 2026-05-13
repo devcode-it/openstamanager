@@ -69,10 +69,10 @@ class PianoContiRagioneSociale extends Controllo
             `an_anagrafiche`.`ragione_sociale`,
             `co_pianodeiconti3`.`descrizione` as nome_conto,
             `id_conto_cliente`,
-            `idconto_fornitore`
+            `id_conto_fornitore`
         FROM
             `an_anagrafiche`
-            INNER JOIN `co_pianodeiconti3` ON (`an_anagrafiche`.`id_conto_cliente` = `co_pianodeiconti3`.`id` OR `an_anagrafiche`.`idconto_fornitore` = `co_pianodeiconti3`.`id`)
+            INNER JOIN `co_pianodeiconti3` ON (`an_anagrafiche`.`id_conto_cliente` = `co_pianodeiconti3`.`id` OR `an_anagrafiche`.`id_conto_fornitore` = `co_pianodeiconti3`.`id`)
         WHERE
             `deleted_at` IS NULL
         GROUP BY `id`, `co_pianodeiconti3`.`descrizione`');
@@ -101,8 +101,8 @@ class PianoContiRagioneSociale extends Controllo
         if (!empty($anagrafica->id_conto_cliente)) {
             $conti_da_verificare[] = $anagrafica->id_conto_cliente;
         }
-        if (!empty($anagrafica->idconto_fornitore)) {
-            $conti_da_verificare[] = $anagrafica->idconto_fornitore;
+        if (!empty($anagrafica->id_conto_fornitore)) {
+            $conti_da_verificare[] = $anagrafica->id_conto_fornitore;
         }
 
         // Gestione conto cliente
@@ -111,8 +111,8 @@ class PianoContiRagioneSociale extends Controllo
         }
 
         // Gestione conto fornitore
-        if (!empty($anagrafica->idconto_fornitore)) {
-            $this->gestisciConto($anagrafica, 'idconto_fornitore');
+        if (!empty($anagrafica->id_conto_fornitore)) {
+            $this->gestisciConto($anagrafica, 'id_conto_fornitore');
         }
 
         // Elimina i conti vuoti rimasti
@@ -140,8 +140,8 @@ class PianoContiRagioneSociale extends Controllo
             if (!empty($anagrafica->id_conto_cliente)) {
                 $conti_da_verificare[] = $anagrafica->id_conto_cliente;
             }
-            if (!empty($anagrafica->idconto_fornitore)) {
-                $conti_da_verificare[] = $anagrafica->idconto_fornitore;
+            if (!empty($anagrafica->id_conto_fornitore)) {
+                $conti_da_verificare[] = $anagrafica->id_conto_fornitore;
             }
         }
 
@@ -156,8 +156,8 @@ class PianoContiRagioneSociale extends Controllo
             }
 
             // Gestione conto fornitore
-            if (!empty($anagrafica->idconto_fornitore)) {
-                $this->gestisciConto($anagrafica, 'idconto_fornitore');
+            if (!empty($anagrafica->id_conto_fornitore)) {
+                $this->gestisciConto($anagrafica, 'id_conto_fornitore');
             }
 
             $results[$record['id']] = true;
@@ -176,7 +176,7 @@ class PianoContiRagioneSociale extends Controllo
      * Gestisce la risoluzione del conto per un'anagrafica specifica.
      *
      * @param Anagrafica $anagrafica
-     * @param string     $campo_conto ('id_conto_cliente' o 'idconto_fornitore')
+     * @param string     $campo_conto ('id_conto_cliente' o 'id_conto_fornitore')
      */
     private function gestisciConto($anagrafica, $campo_conto)
     {
@@ -185,7 +185,7 @@ class PianoContiRagioneSociale extends Controllo
 
         // Conta quante anagrafiche sono collegate a questo conto
         $anagrafiche_collegate_cliente = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE id_conto_cliente = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
-        $anagrafiche_collegate_fornitore = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE idconto_fornitore = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
+        $anagrafiche_collegate_fornitore = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE id_conto_fornitore = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
         $totale_anagrafiche_collegate = $anagrafiche_collegate_cliente + $anagrafiche_collegate_fornitore;
 
         if ($totale_anagrafiche_collegate == 1) {
@@ -296,7 +296,7 @@ class PianoContiRagioneSociale extends Controllo
 
         // Verifica se ci sono ancora anagrafiche collegate a questo conto
         $anagrafiche_collegate_cliente = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE id_conto_cliente = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
-        $anagrafiche_collegate_fornitore = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE idconto_fornitore = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
+        $anagrafiche_collegate_fornitore = $database->fetchOne('SELECT COUNT(*) as count FROM an_anagrafiche WHERE id_conto_fornitore = '.prepare($id_conto).' AND deleted_at IS NULL')['count'];
         $totale_anagrafiche_collegate = $anagrafiche_collegate_cliente + $anagrafiche_collegate_fornitore;
 
         // Verifica se ci sono movimenti contabili collegati a questo conto

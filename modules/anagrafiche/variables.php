@@ -28,8 +28,8 @@ if ($anagrafica->id_conto_cliente != '') {
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 // Fornitore
-elseif ($anagrafica->idconto_fornitore != '') {
-    $conto = $anagrafica->idconto_fornitore;
+elseif ($anagrafica->id_conto_fornitore != '') {
+    $conto = $anagrafica->id_conto_fornitore;
     $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 

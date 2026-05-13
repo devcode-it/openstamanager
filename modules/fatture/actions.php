@@ -172,7 +172,7 @@ switch ($op) {
             $fattura->numero = post('numero');
             $fattura->numero_esterno = post('numero_esterno');
             $fattura->id_rivalsa_inps = post('id_rivalsa_inps') ?: null;
-            $fattura->idritenutaacconto = post('id_ritenuta_acconto') ?: null;
+            $fattura->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
         }
 
         // Operazioni sul bollo

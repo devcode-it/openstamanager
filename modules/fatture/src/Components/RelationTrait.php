@@ -131,7 +131,7 @@ trait RelationTrait
      */
     public function setIdRitenutaAccontoAttribute($value)
     {
-        $this->attributes['idritenutaacconto'] = $value;
+        $this->attributes['id_ritenuta_acconto'] = $value;
         $this->load('ritenuta');
     }
 
@@ -152,7 +152,7 @@ trait RelationTrait
 
     public function ritenuta()
     {
-        return $this->belongsTo(RitenutaAcconto::class, 'idritenutaacconto');
+        return $this->belongsTo(RitenutaAcconto::class, 'id_ritenuta_acconto');
     }
 
     /**

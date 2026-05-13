@@ -71,11 +71,11 @@ switch (post('op')) {
 
             if ($dir == 'uscita') {
                 $id_rivalsa_inps = post('id_rivalsa_inps');
-                $idritenutaacconto = post('id_ritenuta_acconto');
+                $id_ritenuta_acconto = post('id_ritenuta_acconto');
                 $bollo = post('bollo');
             } else {
                 $id_rivalsa_inps = 0;
-                $idritenutaacconto = 0;
+                $id_ritenuta_acconto = 0;
                 $bollo = 0;
             }
 
@@ -98,7 +98,7 @@ switch (post('op')) {
             $ordine->id_sede_destinazione = post('id_sede_destinazione');
             $ordine->id_conto = post('id_conto');
             $ordine->id_rivalsa_inps = $id_rivalsa_inps ?: null;
-            $ordine->idritenutaacconto = $idritenutaacconto ?: null;
+            $ordine->id_ritenuta_acconto = $id_ritenuta_acconto ?: null;
 
             $ordine->bollo = 0;
             $ordine->rivalsainps = 0;
@@ -157,7 +157,7 @@ switch (post('op')) {
                     }
                 } else {
                     if ($stato->name != 'Evaso') {
-                        ricalcola_costiagg_ordine($id_record, $id_rivalsa_inps, $idritenutaacconto, $bollo);
+                        ricalcola_costiagg_ordine($id_record, $id_rivalsa_inps, $id_ritenuta_acconto, $bollo);
                     }
                 }
 

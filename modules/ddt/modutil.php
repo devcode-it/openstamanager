@@ -127,11 +127,11 @@ if (!function_exists('get_ivaindetraibile_ddt')) {
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
  * $idddt				int		ID del ddt
  * $id_rivalsa_inps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
- * $idritenutaacconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
+ * $id_ritenuta_acconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
 if (!function_exists('ricalcola_costiagg_ddt')) {
-    function ricalcola_costiagg_ddt($idddt, $id_rivalsa_inps = '', $idritenutaacconto = '', $bolli = '')
+    function ricalcola_costiagg_ddt($idddt, $id_rivalsa_inps = '', $id_ritenuta_acconto = '', $bolli = '')
     {
         global $dir;
 
@@ -146,10 +146,10 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             // Leggo gli id dei costi aggiuntivi
             if ($dir == 'uscita') {
-                $query2 = 'SELECT id_rivalsa_inps, idritenutaacconto, bollo FROM dt_ddt WHERE id='.prepare($idddt);
+                $query2 = 'SELECT id_rivalsa_inps, id_ritenuta_acconto, bollo FROM dt_ddt WHERE id='.prepare($idddt);
                 $rs2 = $dbo->fetchArray($query2);
                 $id_rivalsa_inps = $rs2[0]['id_rivalsa_inps'];
-                $idritenutaacconto = $rs2[0]['idritenutaacconto'];
+                $id_ritenuta_acconto = $rs2[0]['id_ritenuta_acconto'];
                 $bollo = $rs2[0]['bollo'];
             }
 
@@ -174,13 +174,13 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
             $totale_ddt = get_totale_ddt($idddt);
 
             // Leggo la ritenuta d'acconto se c'è (per i Ddt in uscita lo leggo dalle impostazioni)
-            if (!empty($idritenutaacconto)) {
+            if (!empty($id_ritenuta_acconto)) {
                 if ($dir == 'entrata') {
-                    $idritenutaacconto = setting("Ritenuta d'acconto predefinita");
+                    $id_ritenuta_acconto = setting("Ritenuta d'acconto predefinita");
                 }
             }
 
-            $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($idritenutaacconto);
+            $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
             $rs = $dbo->fetchArray($query);
             $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
             $netto_a_pagare = $totale_ddt - $ritenutaacconto;

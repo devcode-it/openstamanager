@@ -26,7 +26,7 @@ if ($module->name != 'Fatture di acquisto' && $module->name != 'Fatture di vendi
 // Percentuale rivalsa e Percentuale ritenuta d'acconto
 if ($options['action'] == 'edit') {
     $id_rivalsa_inps = $result['id_rivalsa_inps'];
-    $id_ritenuta_acconto = $result['idritenutaacconto'];
+    $id_ritenuta_acconto = $result['id_ritenuta_acconto'];
     $calcolo_ritenuta_acconto = $result['calcolo_ritenuta_acconto'];
 } elseif ($options['action'] == 'add') {
     // Fattura di acquisto

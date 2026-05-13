@@ -949,8 +949,8 @@ class FatturaElettronica implements \Stringable
         $totale_rivalsainps = 0;
 
         foreach ($righe as $riga) {
-            if (!empty($riga['idritenutaacconto']) and empty($riga['is_descrizione'])) {
-                $id_ritenuta_acconto = $riga['idritenutaacconto'];
+            if (!empty($riga['id_ritenuta_acconto']) and empty($riga['is_descrizione'])) {
+                $id_ritenuta_acconto = $riga['id_ritenuta_acconto'];
                 $totale_ritenuta_acconto += $riga['ritenutaacconto'];
             }
 
@@ -1497,7 +1497,7 @@ class FatturaElettronica implements \Stringable
 
                 $dettaglio['AliquotaIVA'] = $percentuale;
 
-                if (!empty($riga['idritenutaacconto']) && empty($riga['is_descrizione'])) {
+                if (!empty($riga['id_ritenuta_acconto']) && empty($riga['is_descrizione'])) {
                     $dettaglio['Ritenuta'] = 'SI';
                 }
 
@@ -1520,7 +1520,7 @@ class FatturaElettronica implements \Stringable
                     ];
                 }
 
-                $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['idritenutaacconto']));
+                $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['id_ritenuta_acconto']));
                 if (!empty($rs_ritenuta['percentuale_imponibile'])) {
                     $dettaglio[]['AltriDatiGestionali'] = [
                         'TipoDato' => 'IMPON-RACC',

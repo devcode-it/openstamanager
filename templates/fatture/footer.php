@@ -353,7 +353,7 @@ echo '
  * Ritenuta | Totale (+ Rivalsa INPS - Ritenuta)
  */
 if ($has_ritenuta) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT idritenutaacconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND idritenutaacconto!=0 LIMIT 0,1)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;

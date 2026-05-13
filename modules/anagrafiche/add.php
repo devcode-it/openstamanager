@@ -24,11 +24,11 @@ include_once __DIR__.'/../../core.php';
 
 $id_nazione_italia = Nazione::where('name', 'Italia')->first()->id ?? null;
 
-if ($idtipoanagrafica) {
-    $tipo = Tipo::where('name', $idtipoanagrafica)->first();
+if ($id_tipo_anagrafica) {
+    $tipo = Tipo::where('name', $id_tipo_anagrafica)->first();
 } else {
     $tipo = Tipo::where('name', get('tipoanagrafica'))->first() ?: get('tipoanagrafica');
-    $idtipoanagrafica = $tipo->id;
+    $id_tipo_anagrafica = $tipo->id;
 }
 
 $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
@@ -44,7 +44,7 @@ echo '
 		</div>
 
 		<div class="col-md-6">
-			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "idtipoanagrafica[]", "id": "idtipoanagrafica_add", "multiple": "1", "required": 1, "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`idtipoanagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`idtipoanagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`t`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `x`.`id_anagrafica` WHERE `an_tipianagrafiche`.`id` = '.prepare($id_tipo_azienda).' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "'.($idtipoanagrafica ?? null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
+			{[ "type": "select", "label": "'.tr('Tipo di anagrafica').'", "name": "id_tipo_anagrafica[]", "id": "id_tipo_anagrafica_add", "multiple": "1", "required": 1, "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id` NOT IN (SELECT DISTINCT(`x`.`id_tipo_anagrafica`) FROM `an_tipianagrafiche_anagrafiche` x INNER JOIN `an_tipianagrafiche` t ON `x`.`id_tipo_anagrafica` = `t`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`t`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `x`.`id_anagrafica` WHERE `an_tipianagrafiche`.`id` = '.prepare($id_tipo_azienda).' AND `deleted_at` IS NULL) ORDER BY `title`", "value": "'.($id_tipo_anagrafica ?? null).'", "readonly": '.(!empty(get('readonly_tipo')) ? 1 : 0).' ]}
 		</div>
 	</div>
 

@@ -33,7 +33,7 @@ $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
 $has_azienda = $dbo->fetchNum('SELECT `an_anagrafiche`.`id` FROM `an_anagrafiche`
     LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`
+    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
 WHERE `an_tipianagrafiche`.`id` = '.$id_tipo_azienda.' AND `an_anagrafiche`.`deleted_at` IS NULL') != 0;
 $has_user = $dbo->fetchNum('SELECT `id` FROM `zz_users`') != 0;
@@ -178,7 +178,7 @@ if (!$has_azienda) {
 
                 <div class="card-body" id="bs-popup" style="padding: 20px;">';
 
-    $idtipoanagrafica = Tipo::where('name', 'Azienda')->first()->id;
+    $id_tipo_anagrafica = Tipo::where('name', 'Azienda')->first()->id;
     $readonly_tipo = true;
 
     ob_start();

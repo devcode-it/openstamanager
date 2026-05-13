@@ -17,7 +17,7 @@ echo '
 // Tecnico
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "id_tecnico", "required": 1, "values": "query=SELECT `an_anagrafiche`.`id` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE (`title`=\'Tecnico\') AND `deleted_at` IS NULL ORDER BY `ragione_sociale`", "value": "'.$id_tecnico.'" ]}
+            {[ "type": "select", "label": "'.tr('Tecnico').'", "name": "id_tecnico", "required": 1, "values": "query=SELECT `an_anagrafiche`.`id` AS id, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN (`an_tipianagrafiche_anagrafiche` INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipianagrafiche`.`id` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE (`title`=\'Tecnico\') AND `deleted_at` IS NULL ORDER BY `ragione_sociale`", "value": "'.$id_tecnico.'" ]}
         </div>';
 
 // Data di partenza

@@ -367,7 +367,7 @@ class Anagrafica extends Model
 
     public function tipi()
     {
-        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'id_anagrafica', 'idtipoanagrafica', 'id', 'id');
+        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'id_anagrafica', 'id_tipo_anagrafica', 'id', 'id');
     }
 
     public function sedi()

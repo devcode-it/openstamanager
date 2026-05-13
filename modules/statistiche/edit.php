@@ -852,7 +852,7 @@ $(document).ready(function() {
 // Interventi per tecnico
 $tecnici = $dbo->table('an_anagrafiche')
     ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche_lang.id_record', '=', 'an_tipianagrafiche.id')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
@@ -1011,7 +1011,7 @@ $dataset = '';
 
 $nuovi_clienti = $dbo->table('an_anagrafiche')
     ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
@@ -1028,7 +1028,7 @@ $nuovi_clienti = $dbo->table('an_anagrafiche')
 
 $nuovi_fornitori = $dbo->table('an_anagrafiche')
     ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
@@ -1048,7 +1048,7 @@ $clienti_acquisiti = $dbo->table('an_anagrafiche')
     ->join('co_documenti', 'an_anagrafiche.id', '=', 'co_documenti.id_anagrafica')
     ->join('co_tipidocumento', 'co_documenti.idtipodocumento', '=', 'co_tipidocumento.id')
     ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.idtipoanagrafica', '=', 'an_tipianagrafiche.id')
+    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
     ->leftJoin('an_tipianagrafiche_lang', function ($join) {
         $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
             ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);

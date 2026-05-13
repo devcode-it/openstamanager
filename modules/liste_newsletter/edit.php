@@ -214,7 +214,7 @@ function generaQuery() {
     var tipologia = $("#tipologia").val();
 
 
-    var query = "SELECT an_anagrafiche.id AS id, 'Modules\\\\Anagrafiche\\\\Anagrafica' AS tipo_lista FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.idtipoanagrafica=an_tipianagrafiche.id WHERE deleted_at IS NULL AND email!=''";
+    var query = "SELECT an_anagrafiche.id AS id, 'Modules\\\\Anagrafiche\\\\Anagrafica' AS tipo_lista FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id WHERE deleted_at IS NULL AND email!=''";
 
     if(tipologia) {
         query += " AND an_tipianagrafiche.id="+tipologia;

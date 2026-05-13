@@ -44,7 +44,7 @@ class Tipo extends Model
 
     public function anagrafiche()
     {
-        return $this->hasMany(Anagrafica::class, 'idtipoanagrafica');
+        return $this->hasMany(Anagrafica::class, 'id_tipo_anagrafica');
     }
 
     public function getModuleAttribute()

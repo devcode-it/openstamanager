@@ -32,7 +32,7 @@ switch ($resource) {
             // Query per ottenere i tipi di anagrafica
             $query = 'SELECT `an_tipianagrafiche_lang`.`title` 
                      FROM `an_tipianagrafiche_anagrafiche` 
-                     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+                     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
                      LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                      WHERE `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = '.prepare($id_anagrafica);
 

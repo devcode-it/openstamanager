@@ -100,7 +100,7 @@ switch (post('op')) {
         $anagrafica->id_ritenuta_acconto_vendite = post('id_ritenuta_acconto_vendite') ?: null;
         $anagrafica->split_payment = post('split_payment');
         $anagrafica->id_listino = post('id_listino') ?: null;
-        $anagrafica->tipologie = (array) post('idtipoanagrafica');
+        $anagrafica->tipologie = (array) post('id_tipo_anagrafica');
 
         $anagrafica->codice_fiscale = strtoupper(post('codice_fiscale'));
         $anagrafica->partita_iva = strtoupper(post('p_iva'));
@@ -194,17 +194,17 @@ switch (post('op')) {
         break;
 
     case 'add':
-        $idtipoanagrafica = (array) post('idtipoanagrafica');
+        $id_tipo_anagrafica = (array) post('id_tipo_anagrafica');
         $ragione_sociale = post('ragione_sociale');
 
-        $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $idtipoanagrafica);
+        $anagrafica = Anagrafica::build($ragione_sociale, post('nome'), post('cognome'), $id_tipo_anagrafica);
         $id_record = $anagrafica->id;
 
         // Se ad aggiungere un cliente è un agente, lo imposto come agente di quel cliente
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
         if (!empty($user['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {
@@ -214,7 +214,7 @@ switch (post('op')) {
             }
         }
 
-        $id_agente = ($agente_is_logged && in_array($id_cliente, $idtipoanagrafica)) ? $user['id_anagrafica'] : 0;
+        $id_agente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['id_anagrafica'] : 0;
 
         $anagrafica->indirizzo = post('indirizzo');
         $anagrafica->citta = post('citta');

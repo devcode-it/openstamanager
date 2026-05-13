@@ -67,7 +67,7 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
 
             $joins[] = [
                 'an_tipianagrafiche',
-                'an_tipianagrafiche_anagrafiche.idtipoanagrafica',
+                'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica',
                 'an_tipianagrafiche.id',
             ];
 

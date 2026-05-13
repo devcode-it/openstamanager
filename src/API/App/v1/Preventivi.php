@@ -57,7 +57,7 @@ class Preventivi extends AppResource implements RetrieveInterface
             INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`idstato`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_preventivi`.`id_anagrafica`
             INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` = `an_tipianagrafiche`.`id`
+            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
             INNER JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.")
         WHERE 
             `an_tipianagrafiche_lang`.`title` = 'Cliente' AND `co_statipreventivi`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";

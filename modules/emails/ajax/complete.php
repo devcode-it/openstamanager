@@ -58,7 +58,7 @@ switch ($resource) {
                 an_anagrafiche.ragione_sociale
             FROM an_anagrafiche
             INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
+            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
             INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
             WHERE an_anagrafiche.email != '' $where
             ORDER BY ragione_sociale
@@ -74,7 +74,7 @@ switch ($resource) {
                 FROM $table
                 INNER JOIN an_anagrafiche ON an_anagrafiche.id = $table.id_anagrafica
                 INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
-                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.idtipoanagrafica
+                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
                 INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
                 WHERE $table.$email_column != '' $where
                 ORDER BY ragione_sociale

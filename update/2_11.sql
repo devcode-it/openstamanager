@@ -994,6 +994,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DE
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_acquisti` `id_iva_acquisti` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idsede_fatturazione` `id_sede_fatturazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `piva` `p_iva` VARCHAR(16) NOT NULL;
+ALTER TABLE `an_sedi` CHANGE `piva` `p_iva` VARCHAR(15) NOT NULL COMMENT 'P.Iva';
 
 UPDATE an_anagrafiche SET indirizzo = CONCAT_WS(' ', indirizzo, indirizzo2) WHERE indirizzo2 IS NOT NULL AND TRIM(indirizzo2) <> '';
 UPDATE an_sedi SET indirizzo = CONCAT_WS(' ', indirizzo, indirizzo2) WHERE indirizzo2 IS NOT NULL AND TRIM(indirizzo2) <> '';
@@ -1023,7 +1024,10 @@ ALTER TABLE `an_anagrafiche_agenti` CHANGE `idagente` `id_agente` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` DROP `agentemaster`;
+
 ALTER TABLE `an_anagrafiche` CHANGE `idzona` `id_zona` INT NOT NULL;
+ALTER TABLE `an_sedi` CHANGE `idzona` `id_zona` INT NOT NULL;
+
 ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `id_tipo_intervento_default` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `id_tipo_intervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
 
@@ -1037,3 +1041,4 @@ ALTER TABLE `an_automezzi_viaggi` CHANGE `idtecnico` `id_tecnico` INT NOT NULL;
 ALTER TABLE `an_referenti` CHANGE `idmansione` `id_mansione` INT NOT NULL;
 
 ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMENT 'Nome sede';
+ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idtipoanagrafica` `id_tipo_anagrafica` INT NOT NULL;

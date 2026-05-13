@@ -193,11 +193,11 @@ switch (filter('op')) {
         // Aggiorno la tipologia di anagrafica fornitore
         $anagrafica = $database->fetchOne('SELECT `id_anagrafica` FROM `co_documenti` WHERE `co_documenti`.`id`='.prepare($id_fattura));
         $id_tipo = Tipo::where('name', 'Fornitore')->first()->id;
-        $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `idtipoanagrafica`='.prepare($id_tipo).' AND `id_anagrafica`='.prepare($anagrafica['id_anagrafica']));
+        $rs_t = $database->fetchOne('SELECT * FROM `an_tipianagrafiche_anagrafiche` WHERE `id_tipo_anagrafica`='.prepare($id_tipo).' AND `id_anagrafica`='.prepare($anagrafica['id_anagrafica']));
 
         // Se non trovo corrispondenza aggiungo all'anagrafica la tipologia fornitore
         if (empty($rs_t)) {
-            $database->query("INSERT INTO `an_tipianagrafiche_anagrafiche` (`idtipoanagrafica`, `id_anagrafica`) VALUES ($id_tipo, ".prepare($anagrafica['id_anagrafica']).')');
+            $database->query("INSERT INTO `an_tipianagrafiche_anagrafiche` (`id_tipo_anagrafica`, `id_anagrafica`) VALUES ($id_tipo, ".prepare($anagrafica['id_anagrafica']).')');
         }
 
         // Processo il file ricevuto

@@ -458,7 +458,7 @@ class CSV extends CSVImporter
             }
 
             // Verifica se il tecnico ha il tipo "Tecnico"
-            $tipo = $database->fetchOne('SELECT `idtipoanagrafica` FROM `an_tipianagrafiche_anagrafiche` WHERE `id_anagrafica` = '.prepare($anagrafica_t->id));
+            $tipo = $database->fetchOne('SELECT `id_tipo_anagrafica` FROM `an_tipianagrafiche_anagrafiche` WHERE `id_anagrafica` = '.prepare($anagrafica_t->id));
             $tecnico_tipo = TipoAnagrafica::where('name', 'Tecnico')->first();
 
             if ($tipo == $tecnico_tipo->id) {

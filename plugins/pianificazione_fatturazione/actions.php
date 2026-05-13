@@ -136,7 +136,7 @@ switch ($operazione) {
                         $riga->setSconto($r->tipo_sconto == 'PRC' ? $r->sconto_percentuale : $r->sconto_unitario, $r->tipo_sconto);
                         $riga->qta = $qta_riga;
                         $riga->setProvvigione($r->provvigione_percentuale ?: $r->provvigione_unitaria, $r->tipo_provvigione);
-                        $riga->idpianificazione = $pianificazioni[$rata];
+                        $riga->id_pianificazione = $pianificazioni[$rata];
 
                         $riga->save();
 
@@ -158,7 +158,7 @@ switch ($operazione) {
 
     case 'reset':
         $dbo->delete('co_fatturazione_contratti', ['id_contratto' => $id_record]);
-        $dbo->query('UPDATE `co_righe_contratti` SET `idpianificazione`=NULL WHERE `idpianificazione` IS NOT NULL AND `id_contratto`='.prepare($id_record));
+        $dbo->query('UPDATE `co_righe_contratti` SET `id_pianificazione`=NULL WHERE `id_pianificazione` IS NOT NULL AND `id_contratto`='.prepare($id_record));
         flash()->info(tr('Pianificazione rimossa'));
 
         break;

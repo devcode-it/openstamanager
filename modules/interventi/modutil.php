@@ -365,7 +365,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
         }
 
         // Viaggi raggruppati per costo
-        $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_km_unitario'].'|'.$item['scontokm_unitario'].'|'.$item['tipo_scontokm']);
+        $viaggi = $sessioni->where('prezzo_km_unitario', '>', 0)->groupBy(fn ($item, $key) => $item['prezzo_km_unitario'].'|'.$item['sconto_km_unitario'].'|'.$item['tipo_sconto_km']);
         foreach ($viaggi as $gruppo) {
             $date = [];
             $qta_trasferta = $gruppo->sum('km');
@@ -405,7 +405,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
 
             $riga->prezzo_unitario = $viaggio->prezzo_km_unitario;
             $riga->costo_unitario = $sessione->prezzo_km_unitario_tecnico;
-            $riga->setSconto($viaggio->scontokm_unitario, $viaggio->tipo_scontokm);
+            $riga->setSconto($viaggio->sconto_km_unitario, $viaggio->tipo_sconto_km);
 
             // Riferimento al documento di origine
             $riga->original_document_type = $intervento::class;

@@ -95,8 +95,8 @@ class SessioniInterventi extends AppResource
             tipo_sconto AS tipo_sconto_orario,
 
             prezzo_km_unitario AS prezzo_chilometrico,
-            IF(tipo_scontokm = 'UNT', scontokm_unitario, scontokm_unitario * prezzo_km_unitario / 100) AS sconto_chilometrico,
-            IF(tipo_scontokm = 'PRC', scontokm_unitario, 0) AS sconto_chilometrico_percentuale,
+            IF(tipo_sconto_km = 'UNT', sconto_km_unitario, sconto_km_unitario * prezzo_km_unitario / 100) AS sconto_chilometrico,
+            IF(tipo_sconto_km = 'PRC', sconto_km_unitario, 0) AS sconto_chilometrico_percentuale,
             tipo_sconto AS tipo_sconto_chilometrico,
 
             prezzo_dirittochiamata AS prezzo_diritto_chiamata
@@ -177,8 +177,8 @@ class SessioniInterventi extends AppResource
         $sessione->tipo_sconto = $data['tipo_sconto_orario'];
 
         // Sconto chilometrico
-        $sessione->scontokm_unitario = $data['sconto_chilometrico_percentuale'] ?: $data['sconto_chilometrico'];
-        $sessione->tipo_scontokm = $data['tipo_sconto_chilometrico'];
+        $sessione->sconto_km_unitario = $data['sconto_chilometrico_percentuale'] ?: $data['sconto_chilometrico'];
+        $sessione->tipo_sconto_km = $data['tipo_sconto_chilometrico'];
 
         return [];
     }

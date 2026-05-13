@@ -369,7 +369,7 @@ switch (post('op')) {
                     }
 
                     $sessione_obj->tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
-                    $sessione_obj->tipo_scontokm = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+                    $sessione_obj->tipo_sconto_km = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
 
                     $sessione_obj->save();
                     $sessione_obj->setTipo($tipo_sessione_id, true);
@@ -1236,8 +1236,8 @@ switch (post('op')) {
         $sessione->tipo_sconto = post('tipo_sconto');
 
         // Sconto chilometrico
-        $sessione->scontokm_unitario = post('sconto_km');
-        $sessione->tipo_scontokm = post('tipo_sconto_km');
+        $sessione->sconto_km_unitario = post('sconto_km');
+        $sessione->tipo_sconto_km = post('tipo_sconto_km');
 
         // Note
         $sessione->note = post('note');
@@ -1265,8 +1265,8 @@ switch (post('op')) {
 
         $sessione->sconto_unitario = post('sconto_unitario');
         $sessione->tipo_sconto = post('tipo_sconto');
-        $sessione->scontokm_unitario = post('scontokm_unitario');
-        $sessione->tipo_scontokm = post('tipo_sconto_km');
+        $sessione->sconto_km_unitario = post('sconto_km_unitario');
+        $sessione->tipo_sconto_km = post('tipo_sconto_km');
         $sessione->save();
 
         // Trigger aggiornamento intervento

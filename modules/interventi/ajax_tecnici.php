@@ -36,14 +36,14 @@ $is_bloccato = $rss[0]['flag_completato'];
 $query = 'SELECT
         `in_interventi_tecnici`.*,
         (`in_interventi_tecnici`.`prezzo_ore_unitario` * `in_interventi_tecnici`.`ore` - `in_interventi_tecnici`.`sconto`) AS prezzo_ore_consuntivo,
-        (`in_interventi_tecnici`.`prezzo_km_unitario` * `in_interventi_tecnici`.`km` - `in_interventi_tecnici`.`scontokm`) AS prezzo_km_consuntivo,
+        (`in_interventi_tecnici`.`prezzo_km_unitario` * `in_interventi_tecnici`.`km` - `in_interventi_tecnici`.`sconto_km`) AS prezzo_km_consuntivo,
         (`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico` * `in_interventi_tecnici`.`ore`) AS prezzo_ore_consuntivo_tecnico,
         (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo_tecnico,
         `an_anagrafiche`.`ragione_sociale`,
         `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
         `in_tipiintervento`.`deleted_at` AS tipo_deleted_at,
         `in_tipiintervento_lang`.`title` AS descrizione_tipo,
-        `in_interventi_tecnici`.`tipo_scontokm` AS tipo_sconto_km,
+        `in_interventi_tecnici`.`tipo_sconto_km` AS tipo_sconto_km,
         `user`.`id` AS id_user
     FROM
         `in_interventi_tecnici` 
@@ -105,7 +105,7 @@ if (!empty($sessioni)) {
 
         // Lettura costi unitari salvati al momento dell'intervento
         $sconto = $sessione['sconto'];
-        $scontokm = $sessione['scontokm'];
+        $sconto_km = $sessione['sconto_km'];
 
         $costo_ore_unitario = $sessione['prezzo_ore_unitario'];
         $costo_km_unitario = $sessione['prezzo_km_unitario'];
@@ -206,7 +206,7 @@ if (!empty($sessioni)) {
                     </tr>
                     <tr>
                         <th>'.tr('Scontato').':</th>
-                        <td class="text-right">'.Translator::numberToLocale($costo_km_consuntivo - $scontokm).'</td>
+                        <td class="text-right">'.Translator::numberToLocale($costo_km_consuntivo - $sconto_km).'</td>
                     </tr>
                     </table>
                 </div>
@@ -225,7 +225,7 @@ if (!empty($sessioni)) {
         if ($show_costi) {
             echo '
             <td style="border-right:1px solid #aaa;">
-                {[ "type": "number", "name": "scontokm_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['scontokm_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto_km'] ?: $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
+                {[ "type": "number", "name": "sconto_km_unitario_'.$sessione['id'].'", "value": "'.Translator::numberToLocale($sessione['sconto_km_unitario']).'", "onchange": "aggiornaSessioneInline($(this).closest(\'tr\').data(\'id\'))", "icon-after": "choice|untprc|'.($sessione['tipo_sconto_km'] ?: $tipo_sconto).'", "disabled": "'.$block_edit.'" ]}
             </td>';
         }
 
@@ -489,8 +489,8 @@ function aggiornaSessioneInline(id) {
     var km = $("#sessione_km_" + id_sessione).val();
     var sconto_unitario = $("#sconto_unitario_" + id_sessione).val();
     var tipo_sconto = $("[id^=tipo_sconto_unitario_" + id_sessione + "]").val()
-    var scontokm_unitario = $("#scontokm_unitario_" + id_sessione).val();
-    var tipo_sconto_km =$("[id^=tipo_scontokm_unitario_" + id_sessione + "]").val()
+    var sconto_km_unitario = $("#sconto_km_unitario_" + id_sessione).val();
+    var tipo_sconto_km =$("[id^=tipo_sconto_km_unitario_" + id_sessione + "]").val()
 
     $.ajax({
         url: globals.rootdir + "/actions.php",
@@ -506,7 +506,7 @@ function aggiornaSessioneInline(id) {
             km: km,
             sconto_unitario: sconto_unitario,
             tipo_sconto: tipo_sconto,
-            scontokm_unitario: scontokm_unitario,
+            sconto_km_unitario: sconto_km_unitario,
             tipo_sconto_km: tipo_sconto_km,
         },
         success: function(response) {

@@ -86,7 +86,7 @@ class Sessione extends Model
 
         $model->km = empty($km) ? 0 : $km;
         $model->tipo_sconto = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
-        $model->tipo_scontokm = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
+        $model->tipo_sconto_km = (setting('Tipo di sconto predefinito') == '%' ? 'PRC' : 'UNT');
 
         $model->save();
 
@@ -170,7 +170,7 @@ class Sessione extends Model
         $this->attributes['prezzo_km_consuntivo_tecnico'] = $this->costo_viaggio;
 
         $this->attributes['sconto'] = $this->sconto_totale_manodopera;
-        $this->attributes['scontokm'] = $this->sconto_totale_viaggio;
+        $this->attributes['sconto_km'] = $this->sconto_totale_viaggio;
 
         return parent::save($options);
     }
@@ -334,10 +334,10 @@ class Sessione extends Model
     public function getScontoTotaleViaggioAttribute()
     {
         return calcola_sconto([
-            'sconto' => $this->scontokm_unitario,
+            'sconto' => $this->sconto_km_unitario,
             'prezzo' => $this->prezzo_chilometrico,
             'qta' => $this->km,
-            'tipo' => $this->tipo_scontokm,
+            'tipo' => $this->tipo_sconto_km,
         ]);
     }
 

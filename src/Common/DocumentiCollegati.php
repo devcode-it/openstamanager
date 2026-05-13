@@ -470,7 +470,7 @@ class DocumentiCollegati
         )
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` AND
-            `co_righe_documenti`.`idcontratto` = '.prepare($id_contratto).'
+            `co_righe_documenti`.`id_contratto` = '.prepare($id_contratto).'
         )
         GROUP BY `co_documenti`.`id`
         ORDER BY `co_documenti`.`data` DESC';
@@ -510,7 +510,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_contratti` ON (
             `co_righe_contratti`.`original_document_id` = `co_preventivi`.`id` AND
             `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
-            `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
+            `co_righe_contratti`.`id_contratto` = '.prepare($id_contratto).'
         )
         INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
@@ -655,7 +655,7 @@ class DocumentiCollegati
             \'Contratti\' AS modulo,
             `co_staticontratti_lang`.`title` AS stato_documento
         FROM `co_contratti`
-        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`
+        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`
         LEFT JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
         LEFT JOIN `co_staticontratti_lang` ON (
             `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
@@ -1297,7 +1297,7 @@ class DocumentiCollegati
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`iddocumento` = `co_documenti`.`id` AND
-            `co_righe_documenti`.`idcontratto` = '.prepare($id_contratto).'
+            `co_righe_documenti`.`id_contratto` = '.prepare($id_contratto).'
         )';
 
         $result = $dbo->fetchOne($query_fatture);
@@ -1317,7 +1317,7 @@ class DocumentiCollegati
         INNER JOIN `co_righe_contratti` ON (
             `co_righe_contratti`.`original_document_id` = `co_preventivi`.`id` AND
             `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
-            `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
+            `co_righe_contratti`.`id_contratto` = '.prepare($id_contratto).'
         )';
 
         $result = $dbo->fetchOne($query_preventivi);
@@ -1381,7 +1381,7 @@ class DocumentiCollegati
         // Conta i contratti collegati
         $query_contratti = 'SELECT COUNT(DISTINCT `co_contratti`.`id`) AS total
         FROM `co_contratti`
-        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti`.`id`
+        INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`
         WHERE `co_righe_contratti`.`original_document_id` = '.prepare($id_preventivo).'
         AND `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'';
 
@@ -1709,7 +1709,7 @@ class DocumentiCollegati
                 break;
             case 'contratto':
                 $tabella_righe = 'co_righe_contratti';
-                $campo_id_documento = 'idcontratto';
+                $campo_id_documento = 'id_contratto';
                 break;
             default:
                 return $documenti_precedenti;
@@ -1827,7 +1827,7 @@ class DocumentiCollegati
             'dt_righe_ddt' => ['idddt', 'ddt'],
             'in_righe_interventi' => ['idintervento', 'intervento'],
             'co_righe_preventivi' => ['idpreventivo', 'preventivo'],
-            'co_righe_contratti' => ['idcontratto', 'contratto'],
+            'co_righe_contratti' => ['id_contratto', 'contratto'],
         ];
 
         foreach ($tabelle_righe as $tabella => $info) {

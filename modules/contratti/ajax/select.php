@@ -32,9 +32,9 @@ switch ($resource) {
         $query = 'SELECT
                 `co_contratti`.`id` AS id,
                 CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_staticontratti`.`id` = `id_stato`) , "]") AS descrizione,
-                (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS totale,
-                (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS sconto,
-                (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `idcontratto`=`co_contratti`.`id`) AS n_righe,
+                (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS totale,
+                (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS sconto,
+                (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS n_righe,
                 `co_contratti`.`id_tipo_intervento`,
                 `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
                 `in_tipiintervento`.`tempo_standard` AS tempo_standard
@@ -160,7 +160,7 @@ switch ($resource) {
                     INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento`
                     LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
-                    `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_record).'
+                    `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_record).'
                     AND `co_contratti_tipiintervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipiintervento_lang`.`title`';

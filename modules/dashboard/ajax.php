@@ -481,7 +481,7 @@ switch (filter('op')) {
 
         $query = "(SELECT
             `co_promemoria`.`id` AS id,
-            `idcontratto` AS idcontratto,
+            `id_contratto` AS id_contratto,
             `richiesta` AS richiesta,
             `co_contratti`.`nome` AS nome_contratto,
             `co_contratti`.`numero` AS numero_contratto,
@@ -497,7 +497,7 @@ switch (filter('op')) {
             '' AS colore
         FROM
             `co_promemoria`
-            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
+            INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
@@ -507,7 +507,7 @@ switch (filter('op')) {
         UNION
         (SELECT
             `in_interventi`.`id` AS id,
-            `in_interventi`.`id_contratto` AS idcontratto,
+            `in_interventi`.`id_contratto` AS id_contratto,
             `in_interventi`.`richiesta` AS richiesta,
             '' AS nome_contratto,
             '' AS numero_contratto,
@@ -568,11 +568,11 @@ switch (filter('op')) {
                         $id_riferimento = $sessione['id'];
                     } else {
                         $modulo_riferimento = 'Contratti';
-                        $id_riferimento = $sessione['idcontratto'];
+                        $id_riferimento = $sessione['id_contratto'];
                     }
 
                     echo '
-                    <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-idcontratto="'.$sessione['idcontratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'class="btn btn-'.$class.' btn-xs pull-right"')).'
+                    <div id="id-'.$sessione['id'].'" class="fc-event fc-event-'.$class.'" data-id="'.$sessione['id'].'" data-id_contratto="'.$sessione['id_contratto'].'" data-ref="'.$sessione['ref'].'" data-id_tecnico="'.$sessione['id_tecnico'].'">'.($sessione['ref'] == 'intervento' ? Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-wrench"></i>', null, 'class="btn btn-'.$class.' btn-xs pull-right"') : Modules::link($modulo_riferimento, $id_riferimento, '<i class="fa fa-file-text-o"></i>', null, 'class="btn btn-'.$class.' btn-xs pull-right"')).'
                         <b>'.$sessione['ragione_sociale'].'</b>
                         <br>'.dateFormat($sessione['data_richiesta']).' ('.$sessione['tipo_intervento'].')
                         '.(!empty($sessione['richiesta']) ? '<div class="request-wrapper"><span class="request-text">'.(strlen(strip_tags((string) $sessione['richiesta'])) > 200 ? substr(strip_tags((string) $sessione['richiesta']), 0, 200).'...' : strip_tags((string) $sessione['richiesta'])).'</span><span class="request-full">'.strip_tags((string) $sessione['richiesta']).'</span><a href="#" class="request-toggle">'.tr('Mostra tutto').'</a></div>' : '').'

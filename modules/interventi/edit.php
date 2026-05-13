@@ -108,14 +108,14 @@ $idpreventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idinterv
 
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "id_contratto", "value": "'.$record['id_contratto'].'", "ajax-source": "contratti", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'", "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$record['id_anagrafica'].'" ]}
 
-                            <input type="hidden" name="idcontratto_riga" value="'.$idcontratto_riga.'">
+                            <input type="hidden" name="id_contratto_riga" value="'.$id_contratto_riga.'">
                         </div>
 
                         <div class="col-md-6">';
 
-$idcontratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
+$id_contratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE idintervento='.prepare($id_record))['id'];
 
 if (!empty($record['idordine'])) {
     echo '
@@ -162,7 +162,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento", "value": "$id_tipo_intervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idcontratto' => $record['id_contratto']]); ?> ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento", "value": "$id_tipo_intervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['id_anagrafica' => $record['id_anagrafica'], 'id_contratto' => $record['id_contratto']]); ?> ]}
                 </div>
                 <div class="col-md-3">
 <?php
@@ -245,8 +245,8 @@ echo '
     </div>';
 
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
-if (!empty($record['idcontratto'])) {
-    $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['idcontratto']));
+if (!empty($record['id_contratto'])) {
+    $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['id_contratto']));
     $record['id_documento_fe'] = $contratto['id_documento_fe'];
     $record['codice_cup'] = $contratto['codice_cup'];
     $record['codice_cig'] = $contratto['codice_cig'];
@@ -270,19 +270,19 @@ if (!empty($record['idcontratto'])) {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['id_contratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Identificatore Documento'); ?>", "name": "id_documento_fe", "required": 0, "help": "<?php echo tr('<span>Obbligatorio per valorizzare CIG/CUP. &Egrave; possible inserire: </span><ul><li>N. determina</li><li>RDO</li><li>Ordine MEPA</li></ul>'); ?>", "value": "<?php echo $record['id_documento_fe']; ?>", "maxlength": 20, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['id_contratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Numero Riga'); ?>", "name": "num_item", "required": 0, "value": "<?php echo $record['num_item']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['id_contratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CIG'); ?>", "name": "codice_cig", "required": 0, "value": "<?php echo $record['codice_cig']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
 
                     <div class="col-md-3">
-                        {[ "type": "<?php echo !empty($record['idcontratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
+                        {[ "type": "<?php echo !empty($record['id_contratto']) ? 'span' : 'text'; ?>", "label": "<?php echo tr('Codice CUP'); ?>", "name": "codice_cup", "required": 0, "value": "<?php echo $record['codice_cup']; ?>", "maxlength": 15, "readonly": "<?php echo $record['flag_completato']; ?>", "extra": "" ]}
                     </div>
                 </div>
             </div>
@@ -340,7 +340,7 @@ if (!$block_edit) {
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
     // Lettura contratti accettati, in attesa di conferma o in lavorazione
-    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `idcontratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`idcontratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
+    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_staticontratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `id_contratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`id_contratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
     $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
 
     // Lettura ddt (entrata o uscita)
@@ -589,7 +589,7 @@ echo '
 
     var anagrafica = input("id_anagrafica");
     var sede = input("id_sede_destinazione");
-    var contratto = input("idcontratto");
+    var contratto = input("id_contratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
     var cliente_finale = input("id_cliente_finale");
@@ -686,11 +686,11 @@ echo '
             preventivo.getElement().selectReset();
             ordine.getElement().selectReset();
 
-            $("input[name=idcontratto_riga]").val("");
+            $("input[name=id_contratto_riga]").val("");
             
             // Aggiorna le opzioni del tipo di intervento in base al contratto selezionato
-            updateSelectOption("idcontratto", $(this).val());
-            session_set("superselect,idcontratto", $(this).val(), 0);
+            updateSelectOption("id_contratto", $(this).val());
+            session_set("superselect,id_contratto", $(this).val(), 0);
             
             // Precompila il tipo di intervento con quello del contratto
             if ($(this).selectData().id_tipo_intervento) {
@@ -699,8 +699,8 @@ echo '
             }
         } else {
             // Se il contratto viene deselezionato, rimuovi il filtro
-            updateSelectOption("idcontratto", "");
-            session_set("superselect,idcontratto", "", 0);
+            updateSelectOption("id_contratto", "");
+            session_set("superselect,id_contratto", "", 0);
         }
 	});
 

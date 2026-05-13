@@ -54,8 +54,8 @@ if ($user['gruppo'] == 'Tecnici' && !empty($user['id_anagrafica'])) {
 
 // Gestione dell'impostazione dei Contratti
 $id_intervento = filter('id_intervento');
-$id_contratto = filter('idcontratto');
-$id_promemoria_contratto = filter('idcontratto_riga');
+$id_contratto = filter('id_contratto');
+$id_promemoria_contratto = filter('id_contratto_riga');
 $id_ordine = null;
 
 if (empty($id_anagrafica)) {
@@ -73,7 +73,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $id_zona = $contratto['id_zona'];
 
     // Informazioni del Promemoria
-    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`id_tipo_intervento`) AS tempo_standard FROM `co_promemoria` WHERE `idcontratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
+    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`id_tipo_intervento`) AS tempo_standard FROM `co_promemoria` WHERE `id_contratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
     $id_tipo = $promemoria['id_tipo_intervento'];
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
@@ -90,14 +90,14 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
     // Caricamento degli impianti a Contratto se non definiti in Promemoria
     if (empty($impianti_collegati)) {
-        $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto = '.prepare($id_contratto));
+        $rs = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($id_contratto));
         $impianti_collegati = implode(',', array_column($rs, 'idimpianto'));
     }
 }
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS idcontratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];
@@ -108,7 +108,7 @@ elseif (!empty($id_intervento)) {
     $id_sede = $intervento['id_sede_destinazione'];
     $id_anagrafica = $intervento['id_anagrafica'];
     $id_cliente_finale = $intervento['id_cliente_finale'];
-    $id_contratto = $intervento['idcontratto'];
+    $id_contratto = $intervento['id_contratto'];
     $id_preventivo = $intervento['idpreventivo'];
     $id_zona = $intervento['id_zona'] ?: $id_zona;
 
@@ -150,7 +150,7 @@ echo '
     <input type="hidden" name="id_zona" id="id_zona_hidden" value="'.$id_zona.'">';
 
 if (!empty($id_promemoria_contratto)) {
-    echo '<input type="hidden" name="idcontratto_riga" value="'.$id_promemoria_contratto.'">';
+    echo '<input type="hidden" name="id_contratto_riga" value="'.$id_promemoria_contratto.'">';
 }
 
 if (!empty($id_intervento)) {
@@ -182,11 +182,11 @@ echo '
 
     <div class="row">
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "idcontratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Contratto').'", "name": "id_contratto", "value": "'.$id_contratto.'", "ajax-source": "contratti", "readonly": "'.(empty($id_contratto) ? 0 : 1).'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).', "icon-after": "add|'.Module::where('name', 'Contratti')->first()->id.'|pianificabile=1&id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "id_sede_destinazione": '.($id_sede ?: '0').', "idcontratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
+            {[ "type": "select", "label": "'.tr('Impianto').'", "multiple": 1, "name": "idimpianti[]", "value": "'.$impianti_collegati.'", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": '.($id_anagrafica ?: '""').', "id_sede_destinazione": '.($id_sede ?: '0').', "id_contratto": '.($id_contratto ?: '""').'}, "icon-after": "add|'.Module::where('name', 'Impianti')->first()->id.'|id_anagrafica='.$id_anagrafica.'" ]}
         </div>
 
         <div class="col-md-4">
@@ -214,7 +214,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'id_contratto' => $id_contratto]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -349,7 +349,7 @@ echo '
                         <h5 class="text-primary border-bottom pb-2 mb-4"><i class="fa fa-clock-o"></i> '.tr('Sessioni di lavoro').'</h5>
                         <div class="row">
                             <div class="col-md-4">
-                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtiposessione", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).', "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
+                                {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtiposessione", "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'id_contratto' => $id_contratto]).', "help": "'.tr('Seleziona il tipo di attività per calcolare automaticamente la durata prevista').'." ]}
                             </div>
 
                             <div class="col-md-2">
@@ -442,7 +442,7 @@ if (!empty($id_intervento)) {
     $(document).ready(function() {
        input("id_sede_destinazione").disable();
        input("idpreventivo").disable();
-       input("idcontratto").disable();
+       input("id_contratto").disable();
        input("idordine").disable();
        input("id_referente").disable();
        input("componenti").disable();
@@ -471,7 +471,7 @@ echo '
 <script type="text/javascript">
     var anagrafica = input("id_anagrafica");
     var sede = input("id_sede_destinazione");
-    var contratto = input("idcontratto");
+    var contratto = input("id_contratto");
     var preventivo = input("idpreventivo");
     var ordine = input("idordine");
     var referente = input("id_referente");
@@ -500,7 +500,7 @@ echo '
 
         let data = anagrafica.getData();
         if (data && contratto.get() === "") {
-            input("idcontratto").getElement().selectSetNew(data.id_contratto, data.descrizione_contratto);
+            input("id_contratto").getElement().selectSetNew(data.id_contratto, data.descrizione_contratto);
         }
 
 		// Quando modifico orario inizio, allineo anche l\'orario fine
@@ -521,7 +521,7 @@ echo '
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
 		// TODO: da gestire via ajax
-        if($("input[name=idcontratto_riga]").val()) {
+        if($("input[name=id_contratto_riga]").val()) {
             $("#modals > div button.close").on("click", function() {
                 location.reload();
             });
@@ -594,7 +594,7 @@ echo '
 
             // Impostazione del contratto predefinito da anagrafica
             if(data.id_contratto) {
-                input("idcontratto").getElement()
+                input("id_contratto").getElement()
                     .selectSetNew(data.id_contratto, data.descrizione_contratto);
             }
 
@@ -655,7 +655,7 @@ echo '
             plus_impianto.attr("onclick", plus_impianto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
         }
 
-        plus_contratto = $(".modal #idcontratto").parent().find(".btn");
+        plus_contratto = $(".modal #id_contratto").parent().find(".btn");
 
         if (plus_contratto.length == 1) {
             plus_contratto.attr("onclick", plus_contratto.attr("onclick").replace(/id_anagrafica=null/, "id_anagrafica=").replace(/id_anagrafica=[0-9]*/, "id_anagrafica=" + value));
@@ -719,11 +719,11 @@ echo '
             preventivo.getElement().selectReset();
             ordine.getElement().selectReset();
 
-            $("input[name=idcontratto_riga]").val("");
+            $("input[name=id_contratto_riga]").val("");
 
             // Aggiorna le opzioni del tipo di intervento in base al contratto selezionato
-            updateSelectOption("idcontratto", contratto.get());
-            session_set("superselect,idcontratto",contratto.get(), 0);
+            updateSelectOption("id_contratto", contratto.get());
+            session_set("superselect,id_contratto",contratto.get(), 0);
             
             // Precompila il tipo di intervento con quello del contratto
             if ($(this).selectData().id_tipo_intervento) {
@@ -737,8 +737,8 @@ echo '
             }
         } else {
             // Se il contratto viene deselezionato, rimuovi il filtro
-            updateSelectOption("idcontratto", "");
-            session_set("superselect,idcontratto", "", 0);
+            updateSelectOption("id_contratto", "");
+            session_set("superselect,id_contratto", "", 0);
         }
 	});
 
@@ -867,7 +867,7 @@ echo '
             $("#modals > div").modal("hide");
             parent.window.location.reload();
             //TODO: da gestire via ajax
-            //$("#elenco_interventi > tbody").load(globals.rootdir + "/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&idcontratto='.$id_contratto.'");
+            //$("#elenco_interventi > tbody").load(globals.rootdir + "/modules/contratti/plugins/contratti.pianificazioneinterventi.php?op=get_interventi_pianificati&id_contratto='.$id_contratto.'");
         }
     }
 

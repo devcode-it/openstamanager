@@ -252,7 +252,7 @@ $query_da_programmare = 'SELECT
             `data_richiesta` AS data
         FROM
             `co_promemoria`
-            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
+            INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
             LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
@@ -299,7 +299,7 @@ if (!empty($risultati_da_programmare)) {
             `co_promemoria`.`id`
         FROM
             `co_promemoria`
-            INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto`=`co_contratti`.`id`
+            INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto`=`co_contratti`.`id`
         WHERE
             `id_stato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1)
             AND `idintervento` IS NULL
@@ -618,11 +618,11 @@ globals.dashboard = {
                 let ref = info.draggedEl.dataset.ref;
                 let name;
                 if (ref === "promemoria") {
-                    name = "idcontratto_riga";
+                    name = "id_contratto_riga";
                 } else {
                     name = "id_intervento";
                 }
-                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&idcontratto=" + info.draggedEl.dataset.idcontratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
+                openModal(globals.dashboard.drop.title, globals.dashboard.drop.url + "&data=" + data + "&orario_inizio=" + ora_dal + "&orario_fine=" + ora_al + "&ref=dashboard&id_contratto=" + info.draggedEl.dataset.id_contratto + "&" + name + "=" + info.draggedEl.dataset.id + "&id_tecnico=" + info.draggedEl.dataset.id_tecnico);
 
                 // Ricaricamento dei dati alla chiusura del modal
                 $("#modals > div").on("hidden.bs.modal", function () {

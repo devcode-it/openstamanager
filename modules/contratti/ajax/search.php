@@ -39,7 +39,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_contratti LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `idcontratto`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_contratti GROUP BY `idcontratto`) righe ON `righe`.`idcontratto`=`co_contratti`.`id` WHERE 1=0 ';
+$query .= ' FROM co_contratti LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_contratto`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_contratti GROUP BY `id_contratto`) righe ON `righe`.`id_contratto`=`co_contratti`.`id` WHERE 1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -50,7 +50,7 @@ $query .= ' OR co_contratti.id_anagrafica IN (SELECT id FROM an_anagrafiche WHER
 
 // Ricerca anche negli articoli associati al contratto
 $query .= ' OR co_contratti.id IN (
-    SELECT DISTINCT co_righe_contratti.idcontratto
+    SELECT DISTINCT co_righe_contratti.id_contratto
     FROM co_righe_contratti
     LEFT JOIN mg_articoli ON co_righe_contratti.idarticolo = mg_articoli.id
     LEFT JOIN mg_articoli_lang ON (mg_articoli.id = mg_articoli_lang.id_record AND mg_articoli_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).')
@@ -98,7 +98,7 @@ foreach ($rs as $r) {
     }
 
     // Recupero solo gli articoli che corrispondono al termine di ricerca con quantità e valori
-    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `co_righe_contratti`.`qta`, `co_righe_contratti`.`prezzo_unitario`, `co_righe_contratti`.`sconto`, `co_righe_contratti`.`subtotale` FROM co_righe_contratti LEFT JOIN `mg_articoli` ON `co_righe_contratti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_contratti`.`idcontratto` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE '.prepare('%'.$term.'%').' OR `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
+    $articoli_query = 'SELECT CONCAT(COALESCE(`mg_articoli`.`codice`, ""), IF(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli_lang`.`title` IS NOT NULL, " - ", ""), COALESCE(`mg_articoli_lang`.`title`, "")) AS articolo, `co_righe_contratti`.`qta`, `co_righe_contratti`.`prezzo_unitario`, `co_righe_contratti`.`sconto`, `co_righe_contratti`.`subtotale` FROM co_righe_contratti LEFT JOIN `mg_articoli` ON `co_righe_contratti`.`idarticolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_righe_contratti`.`id_contratto` = '.prepare($r['id']).' AND `mg_articoli`.`id` IS NOT NULL AND (CONCAT(COALESCE(`mg_articoli`.`codice`, ""), " - ", COALESCE(`mg_articoli_lang`.`title`, "")) LIKE '.prepare('%'.$term.'%').' OR `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
     $articoli_rs = $dbo->fetchArray($articoli_query);
 
     $articoli = [];

@@ -494,7 +494,7 @@ function update_table(currentMonth, currentYear) {
                 // Aggiorna template
                 var $row = $template.find("tr").clone();
                 $row.addClass(rowClass);
-                $row.find(".seleziona input").attr("data-contrattoId", value.idContratto);
+                $row.find(".seleziona input").attr("data-contrattoId", value.id_contratto);
                 $row.find(".seleziona input").attr("data-pianificazioneId", value.idPianificazione);
 
                 // Icona di stato e data
@@ -510,7 +510,7 @@ function update_table(currentMonth, currentYear) {
                 $row.find(".importo small").html(value.importo);
 
                 // Pulsante azione
-                $row.find(".azione button").attr("onclick","crea_fattura(" + value.idContratto + ", " + value.idPianificazione + ")");
+                $row.find(".azione button").attr("onclick","crea_fattura(" + value.id_contratto + ", " + value.idPianificazione + ")");
 
                 $tbody.append($row);
             });

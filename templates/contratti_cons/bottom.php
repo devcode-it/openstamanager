@@ -27,7 +27,7 @@ $budget = get_imponibile_contratto($id_record);
 $somma_totale_imponibile = get_totale_interventi_contratto($id_record);
 $rapporto = floatval($budget) - floatval($somma_totale_imponibile) - $documento->provvigione;
 
-$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND idcontratto = ".prepare($id_record));
+$rs = $dbo->fetchArray("SELECT SUM(qta) AS totale_ore FROM `co_righe_contratti` WHERE um='ore' AND id_contratto = ".prepare($id_record));
 $totale_ore = $rs[0]['totale_ore'];
 $totale_ore_impiegate = $records->sum('ore_totali_da_conteggiare');
 

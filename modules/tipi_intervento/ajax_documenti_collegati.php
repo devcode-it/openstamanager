@@ -25,7 +25,7 @@ try {
     UNION
     SELECT `co_preventivi`.`id_tipo_intervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`id_tipo_intervento` = '.prepare($id_record).'
     UNION
-    SELECT `co_promemoria`.`id_tipo_intervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`id_tipo_intervento` = '.prepare($id_record).'
+    SELECT `co_promemoria`.`id_tipo_intervento`, id_contratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.id_contratto=co_contratti.id WHERE `co_promemoria`.`id_tipo_intervento` = '.prepare($id_record).'
     ORDER BY `id_tipo_intervento`';
 
     $elementi = $dbo->fetchArray($query);

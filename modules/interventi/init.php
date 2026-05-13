@@ -35,7 +35,7 @@ if (!empty($id_record)) {
         IF((`in_interventi`.`id_sede_destinazione` = 0), `an_anagrafiche`.`id_zona`, `an_sedi`.`id_zona`) AS id_zona,
         `in_interventi`.`id_anagrafica` as id_anagrafica,
         `in_interventi`.`id_preventivo` as idpreventivo,
-        `in_interventi`.`id_contratto` as idcontratto,
+        `in_interventi`.`id_contratto` as id_contratto,
         `in_interventi`.`id_ordine` as idordine
     FROM 
         `in_interventi`

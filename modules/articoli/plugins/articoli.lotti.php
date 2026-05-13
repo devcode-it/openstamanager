@@ -371,10 +371,10 @@ if (empty(get('modal'))) {
                     $module = 'Contratti';
 
                     // Ricerca vendite su contratti
-                    $query = 'SELECT *, "Contratto" AS tipo_documento, ( SELECT data_bozza FROM co_contratti WHERE id=idcontratto ) AS data, ( SELECT numero FROM co_contratti WHERE id=idcontratto ) AS numero FROM co_righe_contratti WHERE co_righe_contratti.id='.prepare($vendita['id_riga_contratto']);
+                    $query = 'SELECT *, "Contratto" AS tipo_documento, ( SELECT data_bozza FROM co_contratti WHERE id=id_contratto ) AS data, ( SELECT numero FROM co_contratti WHERE id=id_contratto ) AS numero FROM co_righe_contratti WHERE co_righe_contratti.id='.prepare($vendita['id_riga_contratto']);
                     $data = $dbo->fetchArray($query);
 
-                    $id = $data[0]['idcontratto'];
+                    $id = $data[0]['id_contratto'];
                 }
 
                 // Inserito su vendita banco

@@ -35,12 +35,12 @@ if (!empty($id_documento)) {
     FROM `co_contratti_tipiintervento`
     INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`id_tipo_intervento` = `in_tipiintervento`.`id`
     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti_tipiintervento`.`idcontratto`
+    LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
         AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
-    LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`idcontratto`
+    LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
         AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
-    WHERE `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_documento).'
+    WHERE `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_documento).'
     GROUP BY `co_contratti_tipiintervento`.`id_tipo_intervento`, `in_tipiintervento_lang`.`title`');
 
     $options = [

@@ -36,7 +36,7 @@ $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['id_anagrafica'];
 
 // Impianti del contratto
-$impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `idcontratto` = :id', [
+$impianti = $dbo->fetchArray('SELECT `idimpianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `id_contratto` = :id', [
     ':id' => $id_parent,
 ]);
 $id_impianti = explode(',', (string) $impianti[0]['idimpianti']);
@@ -121,7 +121,7 @@ echo '
 			   </div>
 
 				<div class="col-md-6">
-                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.idcontratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
+                    {[ "type": "select", "multiple": "1", "label": "'.tr('Impianti a contratto').'", "name": "idimpianti[]", "help": "'.tr('Impianti della sede selezionata per il Contratto').'", "values": "query=SELECT my_impianti.id AS id, my_impianti.nome AS descrizione FROM my_impianti_contratti INNER JOIN my_impianti ON my_impianti_contratti.idimpianto = my_impianti.id  WHERE my_impianti_contratti.id_contratto = '.$id_parent.' ORDER BY descrizione", "value": "'.implode(',', $id_impianti).'", "readonly": '.intval($block_edit).' ]}
 				</div>
 			</div>
 

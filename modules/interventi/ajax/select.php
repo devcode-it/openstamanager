@@ -25,19 +25,19 @@ use Modules\Interventi\Intervento;
 switch ($resource) {
     case 'tipiintervento':
         // Verifica se è presente un contratto collegato
-        $id_contratto = $superselect['idcontratto'] ?? null;
+        $id_contratto = $superselect['id_contratto'] ?? null;
         $id_intervento = $superselect['id_intervento'] ?? null;
 
         if (!empty($id_contratto)) {
             // Verifica se il contratto ha righe con tipi di intervento specificati
-            $righe_contratto = $dbo->fetchOne('SELECT COUNT(*) AS count FROM `co_righe_contratti` WHERE `idcontratto` = '.prepare($id_contratto).' AND `id_tipointervento` IS NOT NULL');
+            $righe_contratto = $dbo->fetchOne('SELECT COUNT(*) AS count FROM `co_righe_contratti` WHERE `id_contratto` = '.prepare($id_contratto).' AND `id_tipointervento` IS NOT NULL');
 
             if ($righe_contratto['count'] > 0) {
                 // Se il contratto ha righe con tipi di intervento: mostra SOLO tipi presenti nelle righe del contratto
                 $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($id_contratto).'
+                    INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`id_contratto` = '.prepare($id_contratto).'
                     |where|
                     ORDER BY `title`';
             } else {
@@ -45,7 +45,7 @@ switch ($resource) {
                 $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto).' AND `co_contratti_tipiintervento`.`is_abilitato` = 1
+                    INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_contratto).' AND `co_contratti_tipiintervento`.`is_abilitato` = 1
                     |where|
                     ORDER BY `title`';
             }
@@ -160,15 +160,15 @@ switch ($resource) {
                     COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe_sedi`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                    LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                    INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`id_contratto` = '.prepare($intervento->id_contratto).'
+                    LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($intervento->id_contratto).'
                     LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`id_sede` = '.prepare($intervento->id_sede_destinazione).'
                     LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`id_tecnico` = '.prepare($id_tecnico).'
                     |where|
                     ORDER BY `title`';
 
                 // Filtro: mostra SOLO tipi presenti nelle righe del contratto
-                $where[] = '`co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto);
+                $where[] = '`co_righe_contratti`.`id_contratto` = '.prepare($intervento->id_contratto);
             } else {
                 $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
                     COALESCE(`in_tariffe_sedi`.`costo_ore`, `in_tariffe`.`costo_ore`) AS prezzo_ore_unitario,
@@ -195,14 +195,14 @@ switch ($resource) {
                 COALESCE(`co_contratti_tipiintervento`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
                 FROM `in_tipiintervento`
                 LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`id_contratto` = '.prepare($intervento->id_contratto).'
+                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($intervento->id_contratto).'
                 LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`id_tecnico` = '.prepare($id_tecnico).'
                 |where|
                 ORDER BY `title`';
 
             // Filtro: mostra SOLO tipi presenti nelle righe del contratto
-            $where[] = '`co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto);
+            $where[] = '`co_righe_contratti`.`id_contratto` = '.prepare($intervento->id_contratto);
         } else {
             // Altrimenti usa solo tariffe tecnico
             $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,

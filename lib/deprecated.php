@@ -307,11 +307,11 @@ function doc_references($info, $dir, $ignore = [])
     }
 
     // Contratto
-    elseif (!empty($info['idcontratto'])) {
-        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($info['idcontratto']));
+    elseif (!empty($info['id_contratto'])) {
+        $data = $dbo->fetchArray('SELECT numero, data_bozza AS data FROM co_contratti WHERE id='.prepare($info['id_contratto']));
 
         $module = 'Contratti';
-        $id = $info['idcontratto'];
+        $id = $info['id_contratto'];
 
         $document = tr('Contratto');
     }

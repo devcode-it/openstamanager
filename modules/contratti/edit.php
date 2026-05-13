@@ -140,7 +140,7 @@ echo '
                 </div>
 
                 <div class="col-md-6">
-					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": <?php echo $record['id_anagrafica'] ?: '""'; ?>, "id_sede_destinazione": "", "idcontratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['id_anagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
+					{[ "type": "select", "multiple": "1", "label": "<?php echo tr('Impianti'); ?>", "name": "matricolaimpianto[]", "ajax-source": "impianti-cliente", "select-options": {"id_anagrafica": <?php echo $record['id_anagrafica'] ?: '""'; ?>, "id_sede_destinazione": "", "id_contratto": ""}, "value": "$idimpianti$", "icon-after": "add|<?php echo Module::where('name', 'Impianti')->first()->id; ?>|<?php echo 'id_anagrafica='.$record['id_anagrafica']; ?>||<?php echo (empty($block_edit)) ? '' : 'disabled'; ?>" ]}
 				</div>
 
                 <div class="col-md-2">

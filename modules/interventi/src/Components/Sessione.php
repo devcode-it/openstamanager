@@ -479,7 +479,7 @@ class Sessione extends Model
         // Costi unitari del contratto
         $id_contratto = $this->intervento->id_contratto;
         if (!empty($id_contratto)) {
-            $tariffa_contratto = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($id_contratto).' AND id_tipo_intervento = '.prepare($id_tipo));
+            $tariffa_contratto = $database->fetchOne('SELECT costo_ore, costo_km, costo_dirittochiamata FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare($id_contratto).' AND id_tipo_intervento = '.prepare($id_tipo));
 
             if (!empty($tariffa_contratto)) {
                 $result = array_merge($result, $tariffa_contratto);

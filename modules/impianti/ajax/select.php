@@ -55,9 +55,9 @@ switch ($resource) {
          */
     case 'impianti-cliente':
         $query = 'SELECT my_impianti.id, CONCAT(my_impianti.matricola, " - ", my_impianti.nome) AS descrizione, my_impianti.id_anagrafica, an_anagrafiche.ragione_sociale, my_impianti.id_sede, IFNULL(an_sedi.nome_sede, "Sede legale") AS nome_sede, IFNULL(my_statiimpianti.is_abilitato,1) AS is_abilitato FROM my_impianti LEFT JOIN an_anagrafiche ON my_impianti.id_anagrafica=an_anagrafiche.id LEFT JOIN an_sedi ON my_impianti.id_sede=an_sedi.id LEFT JOIN my_statiimpianti ON my_impianti.id_stato=my_statiimpianti.id';
-        if (!empty($superselect['idcontratto'])) {
+        if (!empty($superselect['id_contratto'])) {
             $query .= ' INNER JOIN my_impianti_contratti ON my_impianti.id=my_impianti_contratti.idimpianto';
-            $where[] = 'my_impianti_contratti.idcontratto='.prepare($superselect['idcontratto']);
+            $where[] = 'my_impianti_contratti.id_contratto='.prepare($superselect['id_contratto']);
         }
         $query .= ' |where| ORDER BY id_sede';
 

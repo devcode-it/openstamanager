@@ -73,7 +73,7 @@ class Pianificazione extends Document
 
     public function contratto()
     {
-        return $this->belongsTo(Contratto::class, 'idcontratto');
+        return $this->belongsTo(Contratto::class, 'id_contratto');
     }
 
     public function fattura()

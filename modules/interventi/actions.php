@@ -48,11 +48,11 @@ $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
 
 switch (post('op')) {
     case 'update':
-        $id_promemoria = post('idcontratto_riga');
+        $id_promemoria = post('id_contratto_riga');
         $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
 
         // Rimozione del collegamento al promemoria
-        if (!empty($id_promemoria) && $intervento->id_contratto != $idcontratto) {
+        if (!empty($id_promemoria) && $intervento->id_contratto != $id_contratto) {
             $dbo->update('co_promemoria', ['idintervento' => null], ['idintervento' => $id_record]);
         }
 
@@ -74,7 +74,7 @@ switch (post('op')) {
         $intervento->id_sede_partenza = post('id_sede_partenza');
         $intervento->id_sede_destinazione = post('id_sede_destinazione');
         $intervento->id_preventivo = post('idpreventivo') ?: null;
-        $intervento->id_contratto = post('idcontratto') ?: null;
+        $intervento->id_contratto = post('id_contratto') ?: null;
         $intervento->id_ordine = post('idordine') ?: null;
         $intervento->id_pagamento = post('id_pagamento');
 
@@ -237,8 +237,8 @@ switch (post('op')) {
 
             // Informazioni di base
             $idpreventivo = post('idpreventivo');
-            $idcontratto = post('idcontratto');
-            $id_promemoria = post('idcontratto_riga');
+            $id_contratto = post('id_contratto');
+            $id_promemoria = post('id_contratto_riga');
             $id_tipo_intervento = post('id_tipo_intervento');
             $id_sede_partenza = post('id_sede_partenza');
             $id_sede_destinazione = post('id_sede_destinazione') ?: 0;
@@ -248,7 +248,7 @@ switch (post('op')) {
             }
 
             $intervento->id_preventivo = $idpreventivo ?: null;
-            $intervento->id_contratto = $idcontratto ?: null;
+            $intervento->id_contratto = $id_contratto ?: null;
             $intervento->id_ordine = post('idordine') ?: null;
             $intervento->id_referente = post('id_referente') ?: null;
             $intervento->richiesta = post('richiesta');
@@ -317,16 +317,16 @@ switch (post('op')) {
             $intervento->id_stato = $id_stato;
             $intervento->save();
 
-            $idcontratto = $dbo->fetchOne('SELECT idcontratto FROM co_promemoria WHERE idintervento = :id', [
+            $id_contratto = $dbo->fetchOne('SELECT id_contratto FROM co_promemoria WHERE idintervento = :id', [
                 ':id' => $id_record,
-            ])['idcontratto'];
+            ])['id_contratto'];
         }
 
         // Collegamenti tecnici/interventi
         if (!empty(post('orario_inizio')) && !empty(post('orario_fine'))) {
             $id_tecnico = post('id_tecnico');
             if (!empty($id_tecnico)) {
-                add_tecnico($id_record, $id_tecnico, post('orario_inizio'), post('orario_fine'), $idcontratto);
+                add_tecnico($id_record, $id_tecnico, post('orario_inizio'), post('orario_fine'), $id_contratto);
 
                 OperationLog::setInfo('id_module', $id_module);
                 OperationLog::setInfo('id_plugin', $id_plugin);
@@ -1144,17 +1144,17 @@ switch (post('op')) {
     case 'add_sessione':
         $id_tecnico = post('id_tecnico');
 
-        $idcontratto = $intervento['id_contratto'];
+        $id_contratto = $intervento['id_contratto'];
 
         $inizio = post('orario_inizio') ?: date('Y-m-d H:\0\0');
         $fine = post('orario_fine') ?: null;
 
-        add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
+        add_tecnico($id_record, $id_tecnico, $inizio, $fine, $id_contratto);
         break;
 
         // OPERAZIONI PER AGGIUNTA SESSIONi DI LAVORO MULTIPLE
     case 'add_sessioni':
-        $idcontratto = $intervento['id_contratto'];
+        $id_contratto = $intervento['id_contratto'];
         $orario_inizio = post('orario_inizio');
         $orario_fine = post('orario_fine');
         $data_inizio = post('data_inizio');
@@ -1173,7 +1173,7 @@ switch (post('op')) {
                 $fine = $data.' '.$orario_fine;
 
                 foreach ($id_tecnici as $id_tecnico) {
-                    add_tecnico($id_record, $id_tecnico, $inizio, $fine, $idcontratto);
+                    add_tecnico($id_record, $id_tecnico, $inizio, $fine, $id_contratto);
                 }
             }
         }

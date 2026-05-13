@@ -105,7 +105,7 @@ class Contratto extends Document
     public function fixTipiSessioni()
     {
         // Ottieni i tipi di intervento già associati al contratto
-        $presenti = database()->fetchArray('SELECT id_tipo_intervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+        $presenti = database()->fetchArray('SELECT id_tipo_intervento FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare($this->id));
         $id_presenti = array_column($presenti, 'id_tipo_intervento');
 
         // Recupera i tipi di intervento abilitati per l'anagrafica del contratto
@@ -128,7 +128,7 @@ class Contratto extends Document
             $is_abilitato = in_array($tipo->id, $id_tipi_abilitati) ? 1 : 0;
 
             $database->insert('co_contratti_tipiintervento', [
-                'idcontratto' => $this->id,
+                'id_contratto' => $this->id,
                 'id_tipo_intervento' => $tipo->id,
                 'costo_ore' => $tipo->costo_orario,
                 'costo_km' => $tipo->costo_km,
@@ -183,22 +183,22 @@ class Contratto extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idcontratto');
+        return $this->hasMany(Components\Articolo::class, 'id_contratto');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idcontratto');
+        return $this->hasMany(Components\Riga::class, 'id_contratto');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'idcontratto');
+        return $this->hasMany(Components\Sconto::class, 'id_contratto');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idcontratto');
+        return $this->hasMany(Components\Descrizione::class, 'id_contratto');
     }
 
     public function interventi()
@@ -208,12 +208,12 @@ class Contratto extends Document
 
     public function promemoria()
     {
-        return $this->hasMany(Promemoria::class, 'idcontratto');
+        return $this->hasMany(Promemoria::class, 'id_contratto');
     }
 
     public function pianificazioni()
     {
-        return $this->hasMany(Pianificazione::class, 'idcontratto');
+        return $this->hasMany(Pianificazione::class, 'id_contratto');
     }
 
     public function fixBudget()

@@ -74,7 +74,7 @@ switch (post('op')) {
             if ($budget != '') {
                 $budget = post('budget');
             } else {
-                $q = "SELECT (SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY idcontratto HAVING idcontratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
+                $q = "SELECT (SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY id_contratto HAVING id_contratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
                 $rs = $dbo->fetchArray($q);
                 $budget = $rs[0]['budget'];
             }
@@ -123,7 +123,7 @@ switch (post('op')) {
             $contratto->save();
 
             // Verifico impianti presenti
-            $matricole_presenti_array = $dbo->select('my_impianti_contratti', 'idimpianto', [], ['idcontratto' => $id_record]);
+            $matricole_presenti_array = $dbo->select('my_impianti_contratti', 'idimpianto', [], ['id_contratto' => $id_record]);
             $matricole_presenti = [];
             foreach ($matricole_presenti_array as $matricola) {
                 $matricole_presenti[] = $matricola['idimpianto'];
@@ -139,7 +139,7 @@ switch (post('op')) {
 
             // Aggiornamento impianti
             $dbo->sync('my_impianti_contratti', [
-                'idcontratto' => $id_record,
+                'id_contratto' => $id_record,
             ], [
                 'idimpianto' => $matricole,
             ]);
@@ -151,7 +151,7 @@ switch (post('op')) {
                     'costo_km' => post('costo_km')[$id_tipo],
                     'costo_dirittochiamata' => post('costo_dirittochiamata')[$id_tipo],
                 ], [
-                    'idcontratto' => $id_record,
+                    'id_contratto' => $id_record,
                     'id_tipo_intervento' => $id_tipo,
                 ]);
             }
@@ -441,11 +441,11 @@ switch (post('op')) {
 
         // Scollegamento intervento da contratto
     case 'unlink':
-        if (!empty(get('idcontratto')) && !empty(get('idintervento'))) {
-            $idcontratto = get('idcontratto');
+        if (!empty(get('id_contratto')) && !empty(get('idintervento'))) {
+            $id_contratto = get('id_contratto');
             $idintervento = get('idintervento');
 
-            $dbo->delete('co_promemoria', ['idcontratto' => $idcontratto, 'idintervento' => $idintervento]);
+            $dbo->delete('co_promemoria', ['id_contratto' => $id_contratto, 'idintervento' => $idintervento]);
 
             flash()->info(tr('Intervento _NUM_ rimosso!', [
                 '_NUM_' => $idintervento,
@@ -479,7 +479,7 @@ switch (post('op')) {
                 LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN co_righe_documenti ON `co_righe_documenti`.`iddocumento` = `co_documenti`.`id`
             WHERE
-                `co_righe_documenti`.`idcontratto` = '.prepare($id_record).'
+                `co_righe_documenti`.`id_contratto` = '.prepare($id_record).'
         UNION
             SELECT
                 `in_interventi`.`codice` AS `codice`,
@@ -500,9 +500,9 @@ switch (post('op')) {
             try {
                 $contratto->delete();
 
-                $dbo->delete('co_promemoria', ['idcontratto' => $id_record]);
-                $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $id_record]);
-                $dbo->delete('my_impianti_contratti', ['idcontratto' => $id_record]);
+                $dbo->delete('co_promemoria', ['id_contratto' => $id_record]);
+                $dbo->delete('co_contratti_tipiintervento', ['id_contratto' => $id_record]);
+                $dbo->delete('my_impianti_contratti', ['id_contratto' => $id_record]);
 
                 flash()->info(tr('Contratto eliminato!'));
             } catch (InvalidArgumentException) {
@@ -514,7 +514,7 @@ switch (post('op')) {
 
     case 'toggle_tipo_attivita':
         // Recupera lo stato attuale
-        $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipiintervento` WHERE `idcontratto` = '.prepare($id_record).' AND `id_tipo_intervento` = '.prepare(post('id_tipo_intervento')));
+        $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipiintervento` WHERE `id_contratto` = '.prepare($id_record).' AND `id_tipo_intervento` = '.prepare(post('id_tipo_intervento')));
 
         if ($current) {
             // Inverti lo stato
@@ -522,7 +522,7 @@ switch (post('op')) {
             $dbo->update('co_contratti_tipiintervento', [
                 'is_abilitato' => $nuovo_stato,
             ], [
-                'idcontratto' => $id_record,
+                'id_contratto' => $id_record,
                 'id_tipo_intervento' => post('id_tipo_intervento'),
             ]);
 
@@ -540,7 +540,7 @@ switch (post('op')) {
         break;
 
     case 'import':
-        $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare(post('idcontratto')).' AND id_tipo_intervento='.prepare(post('id_tipo_intervento')));
+        $rs = $dbo->fetchArray('SELECT * FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare(post('id_contratto')).' AND id_tipo_intervento='.prepare(post('id_tipo_intervento')));
 
         // Se la riga in_tipiintervento esiste, la aggiorno...
         if (!empty($rs)) {
@@ -551,7 +551,7 @@ switch (post('op')) {
                 .' `costo_ore_tecnico`=(SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
                 .' `costo_km_tecnico`=(SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), '
                 .' `costo_dirittochiamata_tecnico`=(SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') '
-                .' WHERE `idcontratto`='.prepare(post('idcontratto')).' AND `id_tipo_intervento`='.prepare(post('id_tipo_intervento')));
+                .' WHERE `id_contratto`='.prepare(post('id_contratto')).' AND `id_tipo_intervento`='.prepare(post('id_tipo_intervento')));
 
             if ($result) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));
@@ -562,7 +562,7 @@ switch (post('op')) {
 
         // ...altrimenti la creo
         else {
-            if ($dbo->query('INSERT INTO `co_contratti_tipiintervento`(idcontratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare(post('idcontratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
+            if ($dbo->query('INSERT INTO `co_contratti_tipiintervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico ) VALUES( '.prepare(post('id_contratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipiintervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));
             } else {
                 flash()->error(tr("Errore durante l'importazione tariffe!"));
@@ -656,19 +656,19 @@ switch (post('op')) {
             $id_record = $contratto->id;
 
             // Copia i tipi di intervento dal contratto precedente
-            $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $id_record]);
-            $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($documento->id));
+            $dbo->delete('co_contratti_tipiintervento', ['id_contratto' => $id_record]);
+            $dbo->query('INSERT INTO co_contratti_tipiintervento(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato) SELECT '.prepare($id_record).', id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico, is_abilitato FROM co_contratti_tipiintervento AS z WHERE id_contratto='.prepare($documento->id));
 
             // Copia gli impianti dal contratto precedente
-            $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE idcontratto='.prepare($documento->id));
-            $dbo->sync('my_impianti_contratti', ['idcontratto' => $id_record], ['idimpianto' => array_column($impianti, 'idimpianto')]);
+            $impianti = $dbo->fetchArray('SELECT idimpianto FROM my_impianti_contratti WHERE id_contratto='.prepare($documento->id));
+            $dbo->sync('my_impianti_contratti', ['id_contratto' => $id_record], ['idimpianto' => array_column($impianti, 'idimpianto')]);
 
             // Replicazione dei promemoria
-            $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE idcontratto='.prepare($documento->id));
+            $promemoria = $dbo->fetchArray('SELECT * FROM co_promemoria WHERE id_contratto='.prepare($documento->id));
             $giorni = $documento->data_conclusione->diffInDays($documento->data_accettazione);
             foreach ($promemoria as $p) {
                 $dbo->insert('co_promemoria', [
-                    'idcontratto' => $id_record,
+                    'id_contratto' => $id_record,
                     'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
                     'id_tipo_intervento' => $p['id_tipo_intervento'],
                     'richiesta' => $p['richiesta'],
@@ -770,12 +770,12 @@ switch (post('op')) {
             FROM `co_contratti_tipiintervento`
             INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-            LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`idcontratto` = `co_contratti_tipiintervento`.`idcontratto`
+            LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
                 AND `co_righe_contratti`.`id_tipointervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
-            LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`idcontratto`
+            LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipiintervento`.`id_contratto`
             LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`idintervento` = `in_interventi`.`id`
                 AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipiintervento`.`id_tipo_intervento`
-            WHERE `co_contratti_tipiintervento`.`idcontratto` = '.prepare($documento->id).'
+            WHERE `co_contratti_tipiintervento`.`id_contratto` = '.prepare($documento->id).'
                 AND `co_contratti_tipiintervento`.`id_tipo_intervento` IN ('.implode(',', $tipi_attivita_list).')
             GROUP BY `co_contratti_tipiintervento`.`id_tipo_intervento`, `in_tipiintervento_lang`.`title`');
 

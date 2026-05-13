@@ -208,7 +208,7 @@ function getDestinationComponents($riga)
 
     // Ottimizzazione: usa eager loading per evitare il problema N+1
     $contratti = Contratto::whereIn('id', function ($query) use ($riga) {
-        $query->select('idcontratto')
+        $query->select('id_contratto')
             ->from('co_righe_contratti')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class);
@@ -217,7 +217,7 @@ function getDestinationComponents($riga)
         $riga_contratto = database()->table('co_righe_contratti')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class)
-            ->where('idcontratto', $contratto->id)
+            ->where('id_contratto', $contratto->id)
             ->first();
         $documents['documento'][] = $contratto;
         $documents['qta'][] = $riga_contratto->qta;

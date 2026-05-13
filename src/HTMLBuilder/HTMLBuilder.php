@@ -32,7 +32,7 @@ namespace HTMLBuilder;
  * {[ "type": "span", "value": "$testo$" ]}
  *
  * Campo select automatizzatp:
- * {[ "type": "select", "required": 1, "values": "query=SELECT id, descrizione FROM co_contratti WHERE id_anagrafica=$id_anagrafica$", "value": "$idcontratto$" ]}
+ * {[ "type": "select", "required": 1, "values": "query=SELECT id, descrizione FROM co_contratti WHERE id_anagrafica=$id_anagrafica$", "value": "$id_contratto$" ]}
  *
  * La sostituzione dei parametri compresi tra $$ viene effettuata attraverso il parametro $records.
  *

@@ -26,9 +26,9 @@ class TariffeContratti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `idcontratto`) AS id
+        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id
         FROM `co_contratti_tipiintervento`
-            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
+            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`id_contratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
@@ -55,10 +55,10 @@ class TariffeContratti extends AppResource
         $id_contratti = array_keys($contratti);
 
         $query = 'SELECT
-            CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `idcontratto`) AS id,
+            CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id,
             `co_contratti_tipiintervento`.`updated_at`
         FROM `co_contratti_tipiintervento`
-            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
+            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`id_contratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map(prepare(...), $id_contratti)).')';
 
@@ -79,15 +79,15 @@ class TariffeContratti extends AppResource
         $id_contratto = $pieces[1];
 
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT CONCAT(`id_tipo_intervento`, "-", `idcontratto`) AS id,
+        $query = 'SELECT CONCAT(`id_tipo_intervento`, "-", `id_contratto`) AS id,
             NULL AS id_tecnico,
             `id_tipo_intervento` AS id_tipo_intervento,
-            `idcontratto` AS id_contratto,
+            `id_contratto` AS id_contratto,
             `costo_ore` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
             `costo_dirittochiamata` AS prezzo_diritto_chiamata
         FROM `co_contratti_tipiintervento`
-        WHERE `co_contratti_tipiintervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto);
+        WHERE `co_contratti_tipiintervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_contratto);
 
         $record = database()->fetchOne($query);
 

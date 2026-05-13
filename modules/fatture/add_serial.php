@@ -70,7 +70,7 @@ $data = [
     ],
     'con' => [
         'table' => 'co_righe_contratti',
-        'id' => 'idcontratto',
+        'id' => 'id_contratto',
     ],
 ];
 

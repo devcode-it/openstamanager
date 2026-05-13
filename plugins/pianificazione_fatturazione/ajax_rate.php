@@ -52,7 +52,7 @@ switch ($action) {
 
             $ret[] = [
                 'idPianificazione' => $pianificazione->id,
-                'idContratto' => $pianificazione->idcontratto,
+                'id_contratto' => $pianificazione->id_contratto,
                 'dataScadenza' => dateFormat($pianificazione->data_scadenza),
                 'dataScadenzaRaw' => $pianificazione->data_scadenza,
                 'contratto' => reference($contratto),

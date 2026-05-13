@@ -194,7 +194,7 @@ if (!function_exists('aggiungi_movimento')) {
 
         // Ottimizzazione: usa il modello Eloquent invece di query SQL diretta
         $totale_bolli = $is_nota ? -$fattura->bollo : $fattura->bollo;
-        $totale_ritenutaacconto = $is_nota ? -$fattura->ritenutaacconto : $fattura->ritenutaacconto;
+        $totale_ritenuta_acconto = $is_nota ? -$fattura->ritenuta_acconto : $fattura->ritenuta_acconto;
         $totale_ritenutacontributi = $is_nota ? -$fattura->totale_ritenuta_contributi : $fattura->totale_ritenuta_contributi;
         $totale_rivalsa_inps = $is_nota ? -$fattura->rivalsa_inps : $fattura->rivalsa_inps;
         $data_documento = $fattura->data;
@@ -235,7 +235,7 @@ if (!function_exists('aggiungi_movimento')) {
             $segno_mov3_iva = 1;
 
             $segno_mov4_inps = 1;
-            $segno_mov5_ritenutaacconto = -1;
+            $segno_mov5_ritenuta_acconto = -1;
 
             // Lettura conto fornitore
             $query = 'SELECT id_conto_fornitore FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -251,7 +251,7 @@ if (!function_exists('aggiungi_movimento')) {
             $segno_mov3_iva = -1;
 
             $segno_mov4_inps = -1;
-            $segno_mov5_ritenutaacconto = 1;
+            $segno_mov5_ritenuta_acconto = 1;
 
             // Lettura conto cliente
             $query = 'SELECT id_conto_cliente FROM an_anagrafiche INNER JOIN co_documenti ON an_anagrafiche.id=co_documenti.id_anagrafica WHERE co_documenti.id='.prepare($iddocumento);
@@ -403,8 +403,8 @@ if (!function_exists('aggiungi_movimento')) {
 
         // 5) Aggiungo la ritenuta d'acconto se c'è
         // Lettura id conto ritenuta e la storno subito
-        if ($totale_ritenutaacconto != 0) {
-            $id_conto_ritenutaacconto = setting("Conto per Erario c/ritenute d'acconto");
+        if ($totale_ritenuta_acconto != 0) {
+            $id_conto_ritenuta_acconto = setting("Conto per Erario c/ritenute d'acconto");
 
             // DARE nel conto ritenuta
             $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
@@ -414,8 +414,8 @@ if (!function_exists('aggiungi_movimento')) {
                 ':iddocumento' => $iddocumento,
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
-                ':id_conto' => $id_conto_ritenutaacconto,
-                ':totale' => $totale_ritenutaacconto * $segno_mov5_ritenutaacconto,
+                ':id_conto' => $id_conto_ritenuta_acconto,
+                ':totale' => $totale_ritenuta_acconto * $segno_mov5_ritenuta_acconto,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);
@@ -429,7 +429,7 @@ if (!function_exists('aggiungi_movimento')) {
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
                 ':id_conto' => $id_conto_controparte,
-                ':totale' => ($totale_ritenutaacconto * $segno_mov5_ritenutaacconto) * -1,
+                ':totale' => ($totale_ritenuta_acconto * $segno_mov5_ritenuta_acconto) * -1,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);
@@ -449,7 +449,7 @@ if (!function_exists('aggiungi_movimento')) {
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
                 ':id_conto' => $id_conto_ritenutaenasarco,
-                ':totale' => $totale_ritenutacontributi * $segno_mov5_ritenutaacconto,
+                ':totale' => $totale_ritenutacontributi * $segno_mov5_ritenuta_acconto,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);
@@ -463,7 +463,7 @@ if (!function_exists('aggiungi_movimento')) {
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
                 ':id_conto' => $id_conto_controparte,
-                ':totale' => ($totale_ritenutacontributi * $segno_mov5_ritenutaacconto) * -1,
+                ':totale' => ($totale_ritenutacontributi * $segno_mov5_ritenuta_acconto) * -1,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);

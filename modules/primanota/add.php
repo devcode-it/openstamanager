@@ -216,7 +216,7 @@ foreach ($id_documenti as $id_documento) {
         // Riga controparte
         foreach ($scadenze as $scadenza) {
             // Predisposizione conto
-            if ($scadenza['tipo'] == 'ritenutaacconto') {
+            if ($scadenza['tipo'] == 'ritenuta_acconto') {
                 $id_conto_controparte = setting("Conto per Erario c/ritenute d'acconto");
             } else {
                 $conto_field = 'id_conto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');

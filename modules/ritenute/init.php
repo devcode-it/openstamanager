@@ -21,5 +21,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT *, (SELECT COUNT(id_ritenuta_acconto) FROM co_righe_documenti WHERE co_righe_documenti.id_ritenuta_acconto = '.prepare($id_record).') AS doc_associati FROM `co_ritenutaacconto` WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT *, (SELECT COUNT(id_ritenuta_acconto) FROM co_righe_documenti WHERE co_righe_documenti.id_ritenuta_acconto = '.prepare($id_record).') AS doc_associati FROM `co_ritenuta_acconto` WHERE id='.prepare($id_record));
 }

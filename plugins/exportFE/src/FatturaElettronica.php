@@ -951,7 +951,7 @@ class FatturaElettronica implements \Stringable
         foreach ($righe as $riga) {
             if (!empty($riga['id_ritenuta_acconto']) and empty($riga['is_descrizione'])) {
                 $id_ritenuta_acconto = $riga['id_ritenuta_acconto'];
-                $totale_ritenuta_acconto += $riga['ritenutaacconto'];
+                $totale_ritenuta_acconto += $riga['ritenuta_acconto'];
             }
 
             if (!empty($riga['id_rivalsa_inps']) and empty($riga['is_descrizione'])) {
@@ -962,7 +962,7 @@ class FatturaElettronica implements \Stringable
         }
 
         if (!empty($id_ritenuta_acconto)) {
-            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenutaacconto WHERE id = '.prepare($id_ritenuta_acconto))['percentuale'];
+            $percentuale = database()->fetchOne('SELECT percentuale FROM co_ritenuta_acconto WHERE id = '.prepare($id_ritenuta_acconto))['percentuale'];
             // Con la nuova versione in vigore dal 01/01/2021, questo nodo diventa ripetibile.
             $result[]['DatiRitenuta'] = [
                 'TipoRitenuta' => ($azienda['p_iva'] != $azienda['codice_fiscale'] & $azienda['tipo'] != 'Ente pubblico') ? 'RT01' : 'RT02',
@@ -1520,7 +1520,7 @@ class FatturaElettronica implements \Stringable
                     ];
                 }
 
-                $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenutaacconto WHERE id='.prepare($riga['id_ritenuta_acconto']));
+                $rs_ritenuta = $database->fetchOne('SELECT percentuale_imponibile FROM co_ritenuta_acconto WHERE id='.prepare($riga['id_ritenuta_acconto']));
                 if (!empty($rs_ritenuta['percentuale_imponibile'])) {
                     $dettaglio[]['AltriDatiGestionali'] = [
                         'TipoDato' => 'IMPON-RACC',

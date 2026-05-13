@@ -69,7 +69,7 @@ WHERE
     `co_documenti`.`id`='.prepare($id_record));
 
 $record['rivalsa_inps'] = floatval($record['rivalsa_inps']);
-$record['ritenutaacconto'] = floatval($record['ritenutaacconto']);
+$record['ritenuta_acconto'] = floatval($record['ritenuta_acconto']);
 $record['bollo'] = floatval($record['bollo']);
 
 $nome_banca = $banca->nome;

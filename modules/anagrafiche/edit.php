@@ -559,7 +559,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
+                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_vendite", "values": "query=SELECT id, descrizione FROM co_ritenuta_acconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_vendite$" ]}
                                 </div>
 
                                 <div class="col-md-6">
@@ -652,7 +652,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 </div>
 
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenutaacconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$" ]}
+                                    {[ "type": "select", "label": "'.tr("Ritenuta d'acconto predefinita").'", "name": "id_ritenuta_acconto_acquisti", "values": "query=SELECT id, descrizione FROM co_ritenuta_acconto ORDER BY descrizione ASC", "value": "$id_ritenuta_acconto_acquisti$" ]}
                                 </div>
                             </div>
 

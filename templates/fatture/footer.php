@@ -55,7 +55,7 @@ $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
 $width = round(100 / ($show_sconto ? 5 : 3), 2);
 
 $has_rivalsa = !empty($rivalsa);
-$has_ritenuta = !empty($record['ritenutaacconto']) || !empty($documento->totale_ritenuta_contributi);
+$has_ritenuta = !empty($record['ritenuta_acconto']) || !empty($documento->totale_ritenuta_contributi);
 $has_split_payment = !empty($record['split_payment']);
 $sconto_finale = $documento->sconto_finale_percentuale ? $documento->totale * $documento->sconto_finale_percentuale / 100 : $documento->sconto_finale;
 $has_sconto_finale = !empty($sconto_finale);
@@ -77,7 +77,7 @@ $etichette = [
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenutaacconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -353,7 +353,7 @@ echo '
  * Ritenuta | Totale (+ Rivalsa INPS - Ritenuta)
  */
 if ($has_ritenuta) {
-    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenutaacconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
+    $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE iddocumento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
     $first_colspan = 3;
     $second_colspan = 2;

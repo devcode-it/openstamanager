@@ -161,7 +161,7 @@ switch ($op) {
         $fattura->volume_manuale = post('volume_manuale');
 
         $fattura->rivalsa_inps = 0;
-        $fattura->ritenutaacconto = 0;
+        $fattura->ritenuta_acconto = 0;
         $fattura->iva_rivalsa_inps = 0;
         $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
 

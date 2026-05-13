@@ -58,7 +58,7 @@ echo '
 // Ritenuta d'acconto
 echo '
     <div class="col-md-4">
-        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenutaacconto" ]}
+        {[ "type": "select", "label": "'.tr("Ritenuta d'acconto").'", "name": "id_ritenuta_acconto", "value": "'.$id_ritenuta_acconto.'", "values": "query=SELECT * FROM co_ritenuta_acconto" ]}
     </div>';
 
 // Calcola ritenuta d'acconto su

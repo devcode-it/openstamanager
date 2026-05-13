@@ -79,7 +79,7 @@ class Scadenze
             $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenutaacconto');
+            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenuta_acconto');
         }
     }
 

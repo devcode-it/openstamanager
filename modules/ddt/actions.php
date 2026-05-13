@@ -114,7 +114,7 @@ switch (filter('op')) {
             $ddt->volume_manuale = post('volume_manuale');
             $ddt->bollo = 0;
             $ddt->rivalsa_inps = 0;
-            $ddt->ritenutaacconto = 0;
+            $ddt->ritenuta_acconto = 0;
 
             $ddt->id_documento_fe = post('id_documento_fe');
             $ddt->codice_cup = post('codice_cup');

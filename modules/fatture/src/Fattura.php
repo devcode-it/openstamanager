@@ -344,7 +344,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getRitenutaAccontoAttribute()
+    public function getritenuta_accontoAttribute()
     {
         return $this->getRigheContabili()->sum('ritenuta_acconto');
     }
@@ -588,8 +588,8 @@ class Fattura extends Document
             : null;
         $is_fiscale = $this->isFiscale();
 
-        // Rimozione duplicato: ritenutaacconto assegnato due volte
-        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
+        // Rimozione duplicato: ritenuta_acconto assegnato due volte
+        $this->attributes['ritenuta_acconto'] = $this->ritenuta_acconto;
         $this->attributes['iva_rivalsa_inps'] = $this->iva_rivalsa_inps;
         $this->attributes['rivalsa_inps'] = $this->rivalsa_inps;
 

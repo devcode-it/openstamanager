@@ -27,13 +27,13 @@ switch (filter('op')) {
         $percentuale_imponibile = filter('percentuale_imponibile');
 
         if (isset($descrizione) && isset($percentuale) && isset($percentuale_imponibile)) {
-            $query = 'SELECT * FROM `co_ritenutaacconto` WHERE `descrizione` = :descrizione AND `id` != :id_record';
+            $query = 'SELECT * FROM `co_ritenuta_acconto` WHERE `descrizione` = :descrizione AND `id` != :id_record';
             $params = [
                 ':descrizione' => $descrizione,
                 ':id_record' => $id_record,
             ];
             if ($dbo->fetchNum($query, $params) == 0) {
-                $query = 'UPDATE `co_ritenutaacconto` SET `descrizione` = :descrizione, `percentuale` = :percentuale, `percentuale_imponibile` = :percentuale_imponibile WHERE `id` = :id_record';
+                $query = 'UPDATE `co_ritenuta_acconto` SET `descrizione` = :descrizione, `percentuale` = :percentuale, `percentuale_imponibile` = :percentuale_imponibile WHERE `id` = :id_record';
                 $params = [
                     ':descrizione' => $descrizione,
                     ':percentuale' => $percentuale,
@@ -59,12 +59,12 @@ switch (filter('op')) {
         $percentuale_imponibile = filter('percentuale_imponibile');
 
         if (isset($descrizione) && isset($percentuale) && isset($percentuale_imponibile)) {
-            $query = 'SELECT * FROM `co_ritenutaacconto` WHERE `descrizione` = :descrizione';
+            $query = 'SELECT * FROM `co_ritenuta_acconto` WHERE `descrizione` = :descrizione';
             $params = [
                 ':descrizione' => $descrizione,
             ];
             if ($dbo->fetchNum($query, $params) == 0) {
-                $query = 'INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES (:descrizione, :percentuale, :percentuale_imponibile)';
+                $query = 'INSERT INTO `co_ritenuta_acconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES (:descrizione, :percentuale, :percentuale_imponibile)';
                 $params = [
                     ':descrizione' => $descrizione,
                     ':percentuale' => $percentuale,
@@ -89,7 +89,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
-            $dbo->delete('co_ritenutaacconto', ['id' => $id_record]);
+            $dbo->delete('co_ritenuta_acconto', ['id' => $id_record]);
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => "ritenuta d'acconto",

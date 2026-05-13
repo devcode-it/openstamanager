@@ -781,7 +781,7 @@ class FatturaOrdinaria extends FatturaElettronica
             $percentuale_importo = round($totale_previsto / ($totale ?: 1) * 100, 2);
             $percentuale_importo = min($percentuale_importo, 100); // Nota: Fix per la percentuale che superava il 100% nel caso di importi con Rivalsa compresa
 
-            $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+            $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenuta_acconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
 
             if (empty($ritenuta_acconto)) {
                 $descrizione = tr('Ritenuta _PRC_% sul _TOT_%', [
@@ -789,8 +789,8 @@ class FatturaOrdinaria extends FatturaElettronica
                     '_TOT_' => numberFormat($percentuale_importo),
                 ]);
 
-                $database->query('INSERT INTO `co_ritenutaacconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
-                $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenutaacconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
+                $database->query('INSERT INTO `co_ritenuta_acconto` (`descrizione`, `percentuale`, `percentuale_imponibile`) VALUES ('.prepare($descrizione).', '.prepare($percentuale).', '.prepare($percentuale_importo).')');
+                $ritenuta_acconto = $database->fetchOne('SELECT * FROM `co_ritenuta_acconto` WHERE `percentuale` = '.prepare($percentuale).' AND `percentuale_imponibile` = '.prepare($percentuale_importo));
             }
 
             $id_ritenuta_acconto = $ritenuta_acconto['id'];

@@ -180,10 +180,10 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 }
             }
 
-            $query = 'SELECT percentuale FROM co_ritenutaacconto WHERE id='.prepare($id_ritenuta_acconto);
+            $query = 'SELECT percentuale FROM co_ritenuta_acconto WHERE id='.prepare($id_ritenuta_acconto);
             $rs = $dbo->fetchArray($query);
-            $ritenutaacconto = $totale_ddt / 100 * $rs[0]['percentuale'];
-            $netto_a_pagare = $totale_ddt - $ritenutaacconto;
+            $ritenuta_acconto = $totale_ddt / 100 * $rs[0]['percentuale'];
+            $netto_a_pagare = $totale_ddt - $ritenuta_acconto;
 
             // Leggo la marca da bollo se c'è e se il netto a pagare supera la soglia
             $bolli = str_replace(',', '.', $bolli);
@@ -201,9 +201,9 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 $marca_da_bollo = 0.00;
             }
 
-            $dbo->query('UPDATE dt_ddt SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($idddt));
+            $dbo->query('UPDATE dt_ddt SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($idddt));
         } else {
-            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($idddt));
+            $dbo->query("UPDATE dt_ddt SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($idddt));
         }
     }
 }

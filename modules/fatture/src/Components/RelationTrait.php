@@ -22,7 +22,7 @@ namespace Modules\Fatture\Components;
 
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Fatture\Fattura;
-use Modules\Ritenute\RitenutaAcconto;
+use Modules\Ritenute\ritenuta_acconto;
 use Modules\Rivalse\rivalsa_inps;
 
 trait RelationTrait
@@ -85,7 +85,7 @@ trait RelationTrait
         return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
     }
 
-    public function getRitenutaAccontoAttribute()
+    public function getritenuta_accontoAttribute()
     {
         $result = $this->totale_imponibile;
 
@@ -129,7 +129,7 @@ trait RelationTrait
      *
      * @param int $value
      */
-    public function setIdRitenutaAccontoAttribute($value)
+    public function setIdritenuta_accontoAttribute($value)
     {
         $this->attributes['id_ritenuta_acconto'] = $value;
         $this->load('ritenuta');
@@ -152,7 +152,7 @@ trait RelationTrait
 
     public function ritenuta()
     {
-        return $this->belongsTo(RitenutaAcconto::class, 'id_ritenuta_acconto');
+        return $this->belongsTo(ritenuta_acconto::class, 'id_ritenuta_acconto');
     }
 
     /**
@@ -162,7 +162,7 @@ trait RelationTrait
      */
     public function save(array $options = [])
     {
-        $this->fixRitenutaAcconto();
+        $this->fixritenuta_acconto();
         $this->fixrivalsa_inps();
 
         return parent::save($options);
@@ -243,9 +243,9 @@ trait RelationTrait
     /**
      * Effettua i conti per la Ritenuta d'Acconto, basandosi sul valore del campo calcolo_ritenuta_acconto.
      */
-    protected function fixRitenutaAcconto()
+    protected function fixritenuta_acconto()
     {
-        $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
+        $this->attributes['ritenuta_acconto'] = $this->ritenuta_acconto;
     }
 
     protected static function boot($bypass = false)

@@ -26,7 +26,7 @@ class TariffeContratti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`idtipointervento`, "-", `idcontratto`) AS id
+        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `idcontratto`) AS id
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`idstato`
@@ -55,7 +55,7 @@ class TariffeContratti extends AppResource
         $id_contratti = array_keys($contratti);
 
         $query = 'SELECT
-            CONCAT(`co_contratti_tipiintervento`.`idtipointervento`, "-", `idcontratto`) AS id,
+            CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `idcontratto`) AS id,
             `co_contratti_tipiintervento`.`updated_at`
         FROM `co_contratti_tipiintervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`idcontratto`
@@ -79,15 +79,15 @@ class TariffeContratti extends AppResource
         $id_contratto = $pieces[1];
 
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT CONCAT(`idtipointervento`, "-", `idcontratto`) AS id,
+        $query = 'SELECT CONCAT(`id_tipo_intervento`, "-", `idcontratto`) AS id,
             NULL AS id_tecnico,
-            `idtipointervento` AS id_tipo_intervento,
+            `id_tipo_intervento` AS id_tipo_intervento,
             `idcontratto` AS id_contratto,
             `costo_ore` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
             `costo_dirittochiamata` AS prezzo_diritto_chiamata
         FROM `co_contratti_tipiintervento`
-        WHERE `co_contratti_tipiintervento`.`idtipointervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto);
+        WHERE `co_contratti_tipiintervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto);
 
         $record = database()->fetchOne($query);
 

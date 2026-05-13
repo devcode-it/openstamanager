@@ -163,10 +163,10 @@ function salvaTariffeSede($id_sede, $id_parent)
     $tipi_interventi = $dbo->fetchArray('SELECT id FROM in_tipiintervento WHERE deleted_at IS NULL');
 
     // Recupera le tariffe esistenti per questa sede
-    $tariffe_esistenti = $dbo->fetchArray('SELECT id, idtipointervento FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede));
+    $tariffe_esistenti = $dbo->fetchArray('SELECT id, id_tipo_intervento FROM in_tariffe_sedi WHERE idsede = '.prepare($id_sede));
     $tariffe_map = [];
     foreach ($tariffe_esistenti as $tariffa) {
-        $tariffe_map[$tariffa['idtipointervento']] = $tariffa['id'];
+        $tariffe_map[$tariffa['id_tipo_intervento']] = $tariffa['id'];
     }
 
     // Salva le tariffe
@@ -187,7 +187,7 @@ function salvaTariffeSede($id_sede, $id_parent)
             } else {
                 $dbo->insert('in_tariffe_sedi', [
                     'idsede' => $id_sede,
-                    'idtipointervento' => $id_tipo,
+                    'id_tipo_intervento' => $id_tipo,
                     'costo_ore' => $costo_ore[$id_tipo],
                     'costo_km' => $costo_km[$id_tipo],
                     'costo_dirittochiamata' => $costo_dirittochiamata[$id_tipo],

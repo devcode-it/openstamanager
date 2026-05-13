@@ -93,7 +93,7 @@ switch (filter('op')) {
             )
             AND `idtecnico` IN('.implode(',', $tecnici).')
             AND `in_interventi`.`idstatointervento` IN('.implode(',', $stati).')
-            AND `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', $tipi).')
+            AND `in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', $tipi).')
             '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
         HAVING
             `id_zona` IN ('.implode(',', $zone).')';
@@ -264,7 +264,7 @@ switch (filter('op')) {
 
         if ($allDay == 'false') {
             // Lettura dati sessione tecnica specifica
-            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=idtecnico) AS colore, in_interventi_tecnici.idtipointervento AS idtipointervento_sessione, in_tipiintervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.idtipointervento=in_tipiintervento.id LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+            $query = 'SELECT in_interventi_tecnici.idintervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, idtecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=idtecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=idtecnico) AS colore, in_interventi_tecnici.id_tipo_intervento AS id_tipo_intervento_sessione, in_tipiintervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.idintervento=in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento=in_tipiintervento.id LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
             $rs_sessione = $dbo->fetchArray($query);
 
             if (!empty($rs_sessione)) {
@@ -281,7 +281,7 @@ switch (filter('op')) {
                         `an_anagrafiche`.`note` AS note_anagrafica,
                         `in_statiintervento`.`id` AS parent_idstato,
                         `in_statiintervento_lang`.`title` AS stato,
-                        `in_interventi`.`idtipointervento` AS parent_idtipo,
+                        `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`idimpianto` WHERE `my_impianti_interventi`.`idintervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`idintervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
@@ -289,7 +289,7 @@ switch (filter('op')) {
                         `in_interventi`
                         INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento`=`in_statiintervento`.`id`
                         LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento`=`in_tipiintervento`.`id`
+                        INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipiintervento`.`id`
                         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`idintervento`
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
@@ -500,7 +500,7 @@ switch (filter('op')) {
             INNER JOIN `co_contratti` ON `co_promemoria`.`idcontratto` = `co_contratti`.`id`
             INNER JOIN `co_staticontratti` ON `co_contratti`.`idstato` = `co_staticontratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
-            INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`id`
+            INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
         WHERE
             `idintervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
@@ -523,7 +523,7 @@ switch (filter('op')) {
             `tecnico`.`colore`
         FROM
             `in_interventi`
-            INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`id`
+            INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`';
 

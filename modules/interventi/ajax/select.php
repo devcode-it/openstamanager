@@ -45,7 +45,7 @@ switch ($resource) {
                 $query = 'SELECT `in_tipiintervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipiintervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto).' AND `co_contratti_tipiintervento`.`is_abilitato` = 1
+                    INNER JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($id_contratto).' AND `co_contratti_tipiintervento`.`is_abilitato` = 1
                     |where|
                     ORDER BY `title`';
             }
@@ -74,9 +74,9 @@ switch ($resource) {
         if (!empty($superselect['idtipiintervento'])) {
             $where[] = '`in_tipiintervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
         } elseif (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 
@@ -96,7 +96,7 @@ switch ($resource) {
                 // Ottengo le tipologie associate al tipo intervento
                 $tipologie_tipo_intervento = $dbo->fetchArray('SELECT `tipo`
                     FROM `in_tipiintervento_tipologie`
-                    WHERE `idtipointervento` = '.prepare($r['id']));
+                    WHERE `id_tipo_intervento` = '.prepare($r['id']));
 
                 $tipologie_tipo_intervento = array_column($tipologie_tipo_intervento, 'tipo');
                 if (!empty($tipologie_tipo_intervento)) {
@@ -111,7 +111,7 @@ switch ($resource) {
             // Controllo se il tipo intervento è compatibile con il gruppo utente
             $gruppi_tipo_intervento = $dbo->fetchArray('SELECT `id_gruppo`
                 FROM `in_tipiintervento_groups`
-                WHERE `idtipointervento` = '.prepare($r['id']));
+                WHERE `id_tipo_intervento` = '.prepare($r['id']));
 
             $gruppi_tipo_intervento = array_column($gruppi_tipo_intervento, 'id_gruppo');
             if (!empty($gruppi_tipo_intervento)) {
@@ -161,9 +161,9 @@ switch ($resource) {
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                     INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                    LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`idtipointervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
-                    LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                    LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                    LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
 
@@ -176,8 +176,8 @@ switch ($resource) {
                     COALESCE(`in_tariffe_sedi`.`costo_dirittochiamata`, `in_tariffe`.`costo_dirittochiamata`) AS prezzo_dirittochiamata
                     FROM `in_tipiintervento`
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`idtipointervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
-                    LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                    LEFT JOIN `in_tariffe_sedi` ON `in_tipiintervento`.`id` = `in_tariffe_sedi`.`id_tipo_intervento` AND `in_tariffe_sedi`.`idsede` = '.prepare($intervento->idsede_destinazione).'
+                    LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                     |where|
                     ORDER BY `title`';
 
@@ -196,8 +196,8 @@ switch ($resource) {
                 FROM `in_tipiintervento`
                 LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `co_righe_contratti` ON `in_tipiintervento`.`id` = `co_righe_contratti`.`id_tipointervento` AND `co_righe_contratti`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`idtipointervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
-                LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                LEFT JOIN `co_contratti_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento` AND `co_contratti_tipiintervento`.`idcontratto` = '.prepare($intervento->id_contratto).'
+                LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                 |where|
                 ORDER BY `title`';
 
@@ -211,7 +211,7 @@ switch ($resource) {
                 `in_tariffe`.`costo_dirittochiamata` AS prezzo_dirittochiamata
                 FROM `in_tipiintervento`
                 LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
+                INNER JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($idtecnico).'
                 |where|
                 ORDER BY `title`';
 
@@ -227,9 +227,9 @@ switch ($resource) {
         }
 
         if (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 

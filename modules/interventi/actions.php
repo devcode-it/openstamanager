@@ -68,7 +68,7 @@ switch (post('op')) {
         $intervento->id_cliente_finale = post('id_cliente_finale') ?: null;
         $intervento->idreferente = post('idreferente');
         $intervento->id_agente = post('id_agente');
-        $intervento->idtipointervento = post('idtipointervento');
+        $intervento->id_tipo_intervento = post('id_tipo_intervento');
 
         $intervento->idstatointervento = post('idstatointervento');
         $intervento->idsede_partenza = post('idsede_partenza');
@@ -220,14 +220,14 @@ switch (post('op')) {
     case 'add':
         if (post('id_intervento') == null) {
             $id_anagrafica = post('id_anagrafica');
-            $idtipointervento = post('idtipointervento');
+            $id_tipo_intervento = post('id_tipo_intervento');
             $idstatointervento = post('id');
             $data_richiesta = post('data_richiesta');
             $data_scadenza = post('data_scadenza') ?: null;
             $id_segment = post('id_segment');
 
             $anagrafica = Anagrafica::find($id_anagrafica);
-            $tipo = TipoSessione::find($idtipointervento);
+            $tipo = TipoSessione::find($id_tipo_intervento);
             $stato = Stato::find($idstatointervento);
 
             $intervento = Intervento::build($anagrafica, $tipo, $stato, $data_richiesta, $id_segment);
@@ -239,7 +239,7 @@ switch (post('op')) {
             $idpreventivo = post('idpreventivo');
             $idcontratto = post('idcontratto');
             $id_promemoria = post('idcontratto_riga');
-            $idtipointervento = post('idtipointervento');
+            $id_tipo_intervento = post('id_tipo_intervento');
             $idsede_partenza = post('idsede_partenza');
             $idsede_destinazione = post('idsede_destinazione') ?: 0;
 
@@ -350,7 +350,7 @@ switch (post('op')) {
                     $sessione_obj->anagrafica()->associate($anagrafica);
 
                     // Usa il tipo attività specificato per questa sessione, o quello dell'intervento come fallback
-                    $tipo_sessione_id = !empty($sessione['idtiposessione']) ? $sessione['idtiposessione'] : $idtipointervento;
+                    $tipo_sessione_id = !empty($sessione['idtiposessione']) ? $sessione['idtiposessione'] : $id_tipo_intervento;
                     $tipo_sessione = TipoSessione::find($tipo_sessione_id);
                     $sessione_obj->tipo()->associate($tipo_sessione);
 
@@ -1223,7 +1223,7 @@ switch (post('op')) {
             $sessione->setTecnico($id_tecnico);
         }
 
-        $id_tipo = post('idtipointerventot');
+        $id_tipo = post('id_tipo_interventot');
         $sessione->setTipo($id_tipo);
 
         // Prezzi

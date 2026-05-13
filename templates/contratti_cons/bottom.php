@@ -95,7 +95,7 @@ if ($pricing || !empty($totale_ore)) {
 
         foreach ($records as $intervento) {
             $sessioni = $intervento->sessioni()
-                ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.idtipointervento', 'in_tipiintervento.id')
+                ->leftJoin('in_tipiintervento', 'in_interventi_tecnici.id_tipo_intervento', 'in_tipiintervento.id')
                 ->where('non_conteggiare', 0)
                 ->get();
 

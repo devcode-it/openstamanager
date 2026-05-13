@@ -32,8 +32,8 @@ switch ($resource) {
                     `co_preventivi`.`id` AS id,
                     `an_anagrafiche`.`id`,
                     CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_statipreventivi_lang`.`title` , "]") AS descrizione,
-                    `co_preventivi`.`idtipointervento`,
-                    `in_tipiintervento_lang`.`title` AS idtipointervento_descrizione,
+                    `co_preventivi`.`id_tipo_intervento`,
+                    `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
                     `in_tipiintervento`.`tempo_standard` AS tempo_standard,
                     (SELECT SUM(subtotale) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS totale,
                     (SELECT SUM(sconto) FROM co_righe_preventivi WHERE idpreventivo=co_preventivi.id GROUP BY idpreventivo) AS sconto
@@ -42,7 +42,7 @@ switch ($resource) {
                     INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica`=`an_anagrafiche`.`id`
                     INNER JOIN `co_statipreventivi` ON `co_preventivi`.`idstato`=`co_statipreventivi`.`id`
                     LEFT JOIN `co_statipreventivi_lang` ON (`co_preventivi`.`idstato`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
-                    INNER JOIN `in_tipiintervento` ON (`co_preventivi`.`idtipointervento`=`in_tipiintervento`.`id`)
+                    INNER JOIN `in_tipiintervento` ON (`co_preventivi`.`id_tipo_intervento`=`in_tipiintervento`.`id`)
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                 |where|
                 ORDER BY

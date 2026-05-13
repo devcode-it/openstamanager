@@ -48,13 +48,13 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`title` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`idtipointervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
+$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`title` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`id_tipo_intervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');
 $id_sede = $record['idsede'];
 $tempo_standard = $record['tempo_standard'];
-$idtipointervento = $record['idtipointervento'];
+$id_tipo_intervento = $record['id_tipo_intervento'];
 
 if (!empty($id_sede)) {
     $id_impianti = explode(',', trim((string) $record['idimpianti']));
@@ -103,7 +103,7 @@ echo '
 				</div>
 
 				<div class="col-md-4">
-					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "idtipointervento", "required": 1, "id": "idtipointervento_", "value": "'.$record['idtipointervento'].'", "readonly": '.intval($block_edit).', "ajax-source": "tipiintervento", "value": "'.$idtipointervento.'"  ]}
+					 {[ "type": "select", "label": "'.tr('Tipo intervento').'", "name": "id_tipo_intervento", "required": 1, "id": "id_tipo_intervento_", "value": "'.$record['id_tipo_intervento'].'", "readonly": '.intval($block_edit).', "ajax-source": "tipiintervento", "value": "'.$id_tipo_intervento.'"  ]}
 				</div>
 
                 <div class="col-md-4">
@@ -272,12 +272,12 @@ echo '
 <script>
     $(document).ready(function() {
 
-        if ($("#idtipointervento_").val()==null){
+        if ($("#id_tipo_intervento_").val()==null){
             $("#add_form .card-primary .card-primary").hide();
             $("#modals > div .btn-primary").hide();
         };
 
-        $("#idtipointervento_").change(function(){
+        $("#id_tipo_intervento_").change(function(){
             if (($(this).val()!="")){
                 $("#add_form .card-primary .card-primary").show();
                 $("#modals > div .btn-primary").show();

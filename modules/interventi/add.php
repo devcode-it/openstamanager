@@ -73,8 +73,8 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $id_zona = $contratto['id_zona'];
 
     // Informazioni del Promemoria
-    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`idtipointervento`) AS tempo_standard FROM `co_promemoria` WHERE `idcontratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
-    $id_tipo = $promemoria['idtipointervento'];
+    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `co_promemoria`.`id_tipo_intervento`) AS tempo_standard FROM `co_promemoria` WHERE `idcontratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
+    $id_tipo = $promemoria['id_tipo_intervento'];
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
     $descrizione = $promemoria['descrizione'];
@@ -97,9 +97,9 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS idcontratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`idtipointervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `idcontratto` FROM `co_promemoria` WHERE `idintervento` = `in_interventi`.`id` LIMIT 0,1) AS idcontratto, `in_interventi`.`id_preventivo` as idpreventivo, (SELECT `tempo_standard` FROM `in_tipiintervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
-    $id_tipo = $intervento['idtipointervento'];
+    $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];
     $data_richiesta = $intervento['data_richiesta'];
     $data_scadenza = $intervento['data_scadenza'];
@@ -214,7 +214,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "idtipointervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "value": "'.$id_tipo.'", "ajax-source": "tipiintervento", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica, 'idcontratto' => $id_contratto]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -448,7 +448,7 @@ if (!empty($id_intervento)) {
        input("componenti").disable();
        input("id_anagrafica").disable();
        input("id_cliente_finale").disable();
-       input("idtipointervento").disable();
+       input("id_tipo_intervento").disable();
        input("idstatointervento").disable();
        input("data_richiesta").disable();
     });
@@ -462,7 +462,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
     $(document).ready(function() {
        input("id_anagrafica").disable();
        input("id_cliente_finale").disable();
-       input("idtipointervento").disable();
+       input("id_tipo_intervento").disable();
     });
 </script>';
 }
@@ -589,8 +589,8 @@ echo '
 			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 
             // Impostazione del tipo intervento da anagrafica
-            input("idtipointervento").getElement()
-                .selectSetNew(data.idtipointervento, data.idtipointervento_descrizione);
+            input("id_tipo_intervento").getElement()
+                .selectSetNew(data.id_tipo_intervento, data.id_tipo_intervento_descrizione);
 
             // Impostazione del contratto predefinito da anagrafica
             if(data.id_contratto) {
@@ -708,8 +708,8 @@ echo '
             contratto.getElement().selectReset();
             ordine.getElement().selectReset();
 
-            input("idtipointervento").getElement()
-                .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            input("id_tipo_intervento").getElement()
+                .selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
         }
 	});
 
@@ -726,14 +726,14 @@ echo '
             session_set("superselect,idcontratto",contratto.get(), 0);
             
             // Precompila il tipo di intervento con quello del contratto
-            if ($(this).selectData().idtipointervento) {
-                input("idtipointervento").getElement()
-                    .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            if ($(this).selectData().id_tipo_intervento) {
+                input("id_tipo_intervento").getElement()
+                    .selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
             }
             // Aggiorna anche il tipo attività delle sessioni
-            if ($(this).selectData().idtipointervento) {
+            if ($(this).selectData().id_tipo_intervento) {
                 input("idtiposessione").getElement()
-                    .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+                    .selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
             }
         } else {
             // Se il contratto viene deselezionato, rimuovi il filtro
@@ -919,7 +919,7 @@ echo '
         let sessioneHtml = `
             <div class="row mt-3" id="sessione-${sessioneCounter}">
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "sessioni[${sessioneCounter}][idtipointervento]", "ajax-source": "tipiintervento", "extra": "onchange=\\"calcolaOrarioFineSessione(${sessioneCounter})\\"" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "sessioni[${sessioneCounter}][id_tipo_intervento]", "ajax-source": "tipiintervento", "extra": "onchange=\\"calcolaOrarioFineSessione(${sessioneCounter})\\"" ]}
                 </div>
                 <div class="col-md-2">
                     {[ "type": "timestamp", "label": "'.tr('Inizio attività').'", "name": "sessioni[${sessioneCounter}][orario_inizio]", "value": "", "class": "text-center", "extra": "onchange=\\"calcolaOrarioFineSessione(${sessioneCounter})\\"" ]}
@@ -946,7 +946,7 @@ echo '
         // Aggiungi gli eventi specifici per il calcolo automatico e sistema lo styling
         setTimeout(function() {
             let sessioneSelector = `#sessione-${sessioneCounter}`;
-            let tipoSelect = $(`${sessioneSelector} select[name="sessioni[${sessioneCounter}][idtipointervento]"]`);
+            let tipoSelect = $(`${sessioneSelector} select[name="sessioni[${sessioneCounter}][id_tipo_intervento]"]`);
             let inizioInput = $(`${sessioneSelector} input[name="sessioni[${sessioneCounter}][orario_inizio]"]`);
 
             // Imposta il valore dell\'orario di inizio dopo l\'inizializzazione
@@ -982,7 +982,7 @@ echo '
     }
 
     function calcolaOrarioFineSessione(sessioneId) {
-        let tipoSelect = $(`select[name="sessioni[${sessioneId}][idtipointervento]"]`);
+        let tipoSelect = $(`select[name="sessioni[${sessioneId}][id_tipo_intervento]"]`);
         let inizioInput = $(`input[name="sessioni[${sessioneId}][orario_inizio]"]`);
         let fineInput = $(`input[name="sessioni[${sessioneId}][orario_fine]"]`);
 

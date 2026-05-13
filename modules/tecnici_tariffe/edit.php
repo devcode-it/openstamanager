@@ -102,7 +102,7 @@ foreach ($tipi_interventi as $tipo_intervento) {
             </td>
 
             <td>
-                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="import" data-idtipointervento="'.$tipo_intervento['id'].'" data-msg="'.tr('Vuoi importare la tariffa standard?').'" data-button="'.tr('Importa').'" data-class="btn btn-lg btn-info">
+                <a class="btn btn-warning ask" data-backto="record-edit" data-method="post" data-op="import" data-id_tipo_intervento="'.$tipo_intervento['id'].'" data-msg="'.tr('Vuoi importare la tariffa standard?').'" data-button="'.tr('Importa').'" data-class="btn btn-lg btn-info">
                     <i class="fa fa-download"></i>
                 </a>
             </td>

@@ -42,7 +42,7 @@ $tariffe_sedi = [];
 if ($is_cliente) {
     $tariffe_db = $dbo->fetchArray('SELECT * FROM in_tariffe_sedi WHERE idsede = '.prepare($id_record));
     foreach ($tariffe_db as $tariffa) {
-        $tariffe_sedi[$tariffa['idtipointervento']] = $tariffa;
+        $tariffe_sedi[$tariffa['id_tipo_intervento']] = $tariffa;
     }
 }
 

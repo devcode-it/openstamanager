@@ -162,7 +162,7 @@ $sede_azienda = $anagrafica_azienda->sedeLegale;
                     {[ "type": "timestamp", "label": "<?php echo tr('Data/ora scadenza'); ?>", "name": "data_scadenza", "required": 0, "value": "$data_scadenza$", "readonly": "<?php echo $record['flag_completato']; ?>" ]}
                 </div>
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idcontratto' => $record['id_contratto']]); ?> ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività'); ?>", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento", "value": "$id_tipo_intervento$", "readonly": "<?php echo $record['flag_completato']; ?>", "select-options": <?php echo json_encode(['id_anagrafica' => $record['id_anagrafica'], 'idcontratto' => $record['id_contratto']]); ?> ]}
                 </div>
                 <div class="col-md-3">
 <?php
@@ -627,9 +627,9 @@ echo '
 			// session_set("superselect,id_zona", $(this).selectData().id_zona, 0);
 
             // Impostazione del tipo intervento da anagrafica
-            if (data.idtipointervento) {
-                input("idtipointervento").getElement()
-                    .selectSet(data.idtipointervento);
+            if (data.id_tipo_intervento) {
+                input("id_tipo_intervento").getElement()
+                    .selectSet(data.id_tipo_intervento);
             }
 		}
     });
@@ -673,9 +673,9 @@ echo '
 
              // Impostazione del tipo intervento da preventivo
             var data = $(this).selectData()
-            if (data.idtipointervento) {
-                input("idtipointervento").getElement()
-                    .selectSet(data.idtipointervento);
+            if (data.id_tipo_intervento) {
+                input("id_tipo_intervento").getElement()
+                    .selectSet(data.id_tipo_intervento);
             }
         }
 	});
@@ -693,9 +693,9 @@ echo '
             session_set("superselect,idcontratto", $(this).val(), 0);
             
             // Precompila il tipo di intervento con quello del contratto
-            if ($(this).selectData().idtipointervento) {
-                input("idtipointervento").getElement()
-                    .selectSetNew($(this).selectData().idtipointervento, $(this).selectData().idtipointervento_descrizione);
+            if ($(this).selectData().id_tipo_intervento) {
+                input("id_tipo_intervento").getElement()
+                    .selectSetNew($(this).selectData().id_tipo_intervento, $(this).selectData().id_tipo_intervento_descrizione);
             }
         } else {
             // Se il contratto viene deselezionato, rimuovi il filtro

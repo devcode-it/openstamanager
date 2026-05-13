@@ -19,14 +19,14 @@ if (empty($id_record) || !is_numeric($id_record)) {
 
 try {
     // Query per recuperare i documenti collegati (senza duplicare le sessioni di intervento)
-    $query = 'SELECT `in_interventi`.`idtipointervento`, id, codice AS numero, data_richiesta AS data, "Attività" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`idtipointervento` = '.prepare($id_record).'
+    $query = 'SELECT `in_interventi`.`id_tipo_intervento`, id, codice AS numero, data_richiesta AS data, "Attività" AS tipo_documento FROM `in_interventi` WHERE `in_interventi`.`id_tipo_intervento` = '.prepare($id_record).'
     UNION
-    SELECT `an_anagrafiche`.`id_tipo_intervento_default` AS `idtipointervento`, id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_tipo_intervento_default` = '.prepare($id_record).'
+    SELECT `an_anagrafiche`.`id_tipo_intervento_default` AS `id_tipo_intervento`, id, codice, "0000-00-00" AS data, "Anagrafica" AS tipo_documento FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id_tipo_intervento_default` = '.prepare($id_record).'
     UNION
-    SELECT `co_preventivi`.`idtipointervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`idtipointervento` = '.prepare($id_record).'
+    SELECT `co_preventivi`.`id_tipo_intervento`, id, numero, data_bozza AS data, "Preventivo" AS tipo_documento FROM `co_preventivi` WHERE `co_preventivi`.`id_tipo_intervento` = '.prepare($id_record).'
     UNION
-    SELECT `co_promemoria`.`idtipointervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`idtipointervento` = '.prepare($id_record).'
-    ORDER BY `idtipointervento`';
+    SELECT `co_promemoria`.`id_tipo_intervento`, idcontratto AS id, numero, data_richiesta AS data, "Promemoria contratto" AS tipo_documento FROM `co_promemoria` LEFT JOIN co_contratti ON co_promemoria.idcontratto=co_contratti.id WHERE `co_promemoria`.`id_tipo_intervento` = '.prepare($id_record).'
+    ORDER BY `id_tipo_intervento`';
 
     $elementi = $dbo->fetchArray($query);
 } catch (Exception $e) {

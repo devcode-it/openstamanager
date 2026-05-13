@@ -174,7 +174,7 @@ switch (post('op')) {
 
                 // Correzioni dei prezzi per gli interventi
                 $dbo->delete('co_contratti_tipiintervento', ['idcontratto' => $new_idcontratto]);
-                $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', idtipointervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($contratto->id));
+                $dbo->query('INSERT INTO co_contratti_tipiintervento(idcontratto, id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico) SELECT '.prepare($new_idcontratto).', id_tipo_intervento, costo_ore, costo_km, costo_dirittochiamata, costo_ore_tecnico, costo_km_tecnico, costo_dirittochiamata_tecnico FROM co_contratti_tipiintervento AS z WHERE idcontratto='.prepare($contratto->id));
                 $new_contratto->save();
 
                 // Replico le righe del contratto
@@ -198,7 +198,7 @@ switch (post('op')) {
                     $dbo->insert('co_promemoria', [
                         'idcontratto' => $new_idcontratto,
                         'data_richiesta' => date('Y-m-d', strtotime($p['data_richiesta'].' +'.$giorni.' day')),
-                        'idtipointervento' => $p['idtipointervento'],
+                        'id_tipo_intervento' => $p['id_tipo_intervento'],
                         'richiesta' => $p['richiesta'],
                         'idimpianti' => $p['idimpianti'],
                     ]);

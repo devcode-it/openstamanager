@@ -72,7 +72,7 @@ class CSV extends CSVImporter
                 'label' => 'Partita IVA Cliente',
             ],
             [
-                'field' => 'idtipointervento',
+                'field' => 'id_tipo_intervento',
                 'label' => 'Tipo attività',
             ],
             [
@@ -266,7 +266,7 @@ class CSV extends CSVImporter
      */
     protected function trovaTipoIntervento($record)
     {
-        return TipoSessione::find($record['idtipointervento']) ?: TipoSessione::where('codice', 'GEN')->first();
+        return TipoSessione::find($record['id_tipo_intervento']) ?: TipoSessione::where('codice', 'GEN')->first();
     }
 
     /**

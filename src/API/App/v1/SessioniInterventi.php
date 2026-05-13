@@ -84,7 +84,7 @@ class SessioniInterventi extends AppResource
         $query = "SELECT id,
             idintervento AS id_intervento,
             idtecnico AS id_tecnico,
-            idtipointervento AS id_tipo_intervento,
+            id_tipo_intervento AS id_tipo_intervento,
             orario_inizio,
             orario_fine,
             km,

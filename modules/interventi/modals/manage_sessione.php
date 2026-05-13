@@ -47,7 +47,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "idtipointerventot", "value": "'.$sessione['idtipointervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['idtecnico' => $sessione['idtecnico'], 'id_intervento' => $id_record]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['idtecnico' => $sessione['idtecnico'], 'id_intervento' => $id_record]).' ]}
         </div>
     </div>';
 
@@ -125,7 +125,7 @@ $(document).ready(function () {
             $("#orario_fine").data("DateTimePicker").date(e.date);
         }
 
-        let data = $("#idtipointerventot").selectData();
+        let data = $("#id_tipo_interventot").selectData();
         if (data && data.tempo_standard > 0) {
             let orario_inizio = e.date;
             if (orario_inizio) {
@@ -151,15 +151,15 @@ $(document).ready(function () {
         }
 
         // Aggiorno le select-options per ricaricare i tipi di intervento del nuovo tecnico
-        $("#idtipointerventot").setSelectOption("idtecnico", idtecnico);
-        $("#idtipointerventot").setSelectOption("id_intervento", globals.id_record);
+        $("#id_tipo_interventot").setSelectOption("idtecnico", idtecnico);
+        $("#id_tipo_interventot").setSelectOption("id_intervento", globals.id_record);
 
         // Resetto e ricarico il select dei tipi di intervento
-        $("#idtipointerventot").selectReset();
+        $("#id_tipo_interventot").selectReset();
     });
 
     // Quando cambio il tipo di intervento, aggiorno i prezzi
-    $("#idtipointerventot").change(function() {
+    $("#id_tipo_interventot").change(function() {
         var data = $(this).selectData();
 
         if (data) {

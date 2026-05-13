@@ -154,7 +154,7 @@ echo '
 
             <div class="row">
 				<div class="col-md-4">
-					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "idtipointervento", "required": 1, "ajax-source": "tipiintervento", "value": "$idtipointervento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo di attività'); ?>", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento", "value": "$id_tipo_intervento$" ]}
 				</div>
                 <div class="col-md-4">
                     {[ "type": "number", "label": "<?php echo 'Sconto in fattura'; ?>", "name": "sconto_finale", "value": "<?php echo $preventivo->sconto_finale_percentuale ?: $preventivo->sconto_finale; ?>", "icon-after": "choice|untprc|<?php echo empty($preventivo->sconto_finale) ? 'PRC' : 'UNT'; ?>", "help": "<?php echo tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento'); ?>." ]}

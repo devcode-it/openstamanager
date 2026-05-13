@@ -647,7 +647,7 @@ $tipi = $dbo->table('in_tipiintervento')
         $join->on('in_tipiintervento.id', '=', 'in_tipiintervento_lang.id_record')
             ->where('in_tipiintervento_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->select('*', 'in_tipiintervento.id as idtipointervento')
+    ->select('*', 'in_tipiintervento.id as id_tipo_intervento')
     ->get()
     ->toArray();
 
@@ -655,7 +655,7 @@ $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->table('in_interventi')
         ->leftJoin($dbo->raw('(SELECT `in_interventi_tecnici`.`idintervento`, MAX(`orario_fine`) AS orario_fine FROM `in_interventi_tecnici` GROUP BY `idintervento`) sessioni'), 'in_interventi.id', '=', 'sessioni.idintervento')
-        ->where('in_interventi.idtipointervento', $tipo->idtipointervento)
+        ->where('in_interventi.id_tipo_intervento', $tipo->id_tipo_intervento)
         ->whereBetween('sessioni.orario_fine', [$start, $end])
         ->select($dbo->raw('COUNT(`in_interventi`.`id`) AS result, YEAR(`sessioni`.`orario_fine`) AS `year`, MONTH(`sessioni`.`orario_fine`) AS `month`'))
         ->groupBy($dbo->raw('YEAR(`sessioni`.`orario_fine`)'), $dbo->raw('MONTH(`sessioni`.`orario_fine`)'))
@@ -752,7 +752,7 @@ $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->table('in_interventi')
         ->join('in_interventi_tecnici', 'in_interventi.id', '=', 'in_interventi_tecnici.idintervento')
-        ->where('in_interventi.idtipointervento', $tipo->idtipointervento)
+        ->where('in_interventi.id_tipo_intervento', $tipo->id_tipo_intervento)
         ->whereBetween('in_interventi.data_richiesta', [$start, $end])
         ->whereBetween('in_interventi_tecnici.orario_fine', [$start, $end])
         ->select($dbo->raw('ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month'))
@@ -869,7 +869,7 @@ $tecnici = $dbo->table('an_anagrafiche')
 
 $dataset = '';
 $where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect']['idtipiintervento'] != '[]') ?
-    '`in_interventi_tecnici`.`idtipointervento` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')' :
+    '`in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', (array) json_decode((string) $_SESSION['superselect']['idtipiintervento'])).')' :
     '1=1';
 
 foreach ($tecnici as $tecnico) {

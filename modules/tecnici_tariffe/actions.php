@@ -38,7 +38,7 @@ switch (post('op')) {
 
             // Aggiorno il record
             $dbo->update('in_tariffe', $values, [
-                'idtipointervento' => $id_tipo_intervento,
+                'id_tipo_intervento' => $id_tipo_intervento,
                 'idtecnico' => $id_record,
             ]);
         }
@@ -48,7 +48,7 @@ switch (post('op')) {
         break;
 
     case 'import':
-        $id_tipo_intervento = post('idtipointervento');
+        $id_tipo_intervento = post('id_tipo_intervento');
 
         $importi = Tipo::find($id_tipo_intervento);
 
@@ -69,7 +69,7 @@ switch (post('op')) {
 
         // Aggiorno il record
         $dbo->update('in_tariffe', $values, [
-            'idtipointervento' => $id_tipo_intervento,
+            'id_tipo_intervento' => $id_tipo_intervento,
             'idtecnico' => $id_record,
         ]);
 

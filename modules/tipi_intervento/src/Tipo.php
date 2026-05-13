@@ -92,12 +92,12 @@ class Tipo extends Model
 
     public function preventivi()
     {
-        return $this->hasMany(Preventivo::class, 'idtipointervento');
+        return $this->hasMany(Preventivo::class, 'id_tipo_intervento');
     }
 
     public function interventi()
     {
-        return $this->hasMany(Intervento::class, 'idtipointervento');
+        return $this->hasMany(Intervento::class, 'id_tipo_intervento');
     }
 
     public function getModuleAttribute()

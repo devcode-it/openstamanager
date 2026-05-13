@@ -36,7 +36,7 @@ class TipiIntervento extends AppResource
 
         $query = 'SELECT DISTINCT `in_tipiintervento`.`id`, `in_tipiintervento`.`updated_at`
                   FROM `in_tipiintervento`
-                  LEFT JOIN `in_tipiintervento_groups` ON `in_tipiintervento_groups`.`idtipointervento` = `in_tipiintervento`.`id`';
+                  LEFT JOIN `in_tipiintervento_groups` ON `in_tipiintervento_groups`.`id_tipo_intervento` = `in_tipiintervento`.`id`';
         $where = [];
 
         // Filtro per data
@@ -78,7 +78,7 @@ class TipiIntervento extends AppResource
         $record = $database->fetchOne($query);
 
         // Recupero i tipi anagrafiche collegati al tipo intervento
-        $tipi_anagrafiche = $database->fetchArray('SELECT `tipo` FROM `in_tipiintervento_tipologie` WHERE `idtipointervento` = '.prepare($id));
+        $tipi_anagrafiche = $database->fetchArray('SELECT `tipo` FROM `in_tipiintervento_tipologie` WHERE `id_tipo_intervento` = '.prepare($id));
 
         // Costruisce un array con indici numerici sequenziali per garantire la serializzazione come array JSON
         $tipi = [];

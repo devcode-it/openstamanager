@@ -36,13 +36,13 @@ switch (post('op')) {
     case 'add':
         $id_anagrafica = post('id_anagrafica');
         $nome = post('nome');
-        $idtipointervento = post('idtipointervento');
+        $id_tipo_intervento = post('id_tipo_intervento');
         $data_bozza = post('data_bozza');
         $idsede_destinazione = post('idsede_destinazione');
         $id_segment = post('id_segment');
 
         $anagrafica = Anagrafica::find($id_anagrafica);
-        $tipo = TipoSessione::find($idtipointervento);
+        $tipo = TipoSessione::find($id_tipo_intervento);
 
         $preventivo = Preventivo::build($anagrafica, $tipo, $nome, $data_bozza, $idsede_destinazione, $id_segment);
 
@@ -98,7 +98,7 @@ switch (post('op')) {
             $preventivo->num_item = post('num_item');
             $preventivo->codice_cig = post('codice_cig');
             $preventivo->codice_cup = post('codice_cup');
-            $preventivo->idtipointervento = post('idtipointervento');
+            $preventivo->id_tipo_intervento = post('id_tipo_intervento');
             $preventivo->idiva = post('idiva');
             $preventivo->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 

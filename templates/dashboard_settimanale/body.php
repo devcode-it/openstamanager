@@ -82,7 +82,7 @@ $query = "SELECT
         ".$where.'
         `idtecnico` IN('.implode(',', array_map(prepare(...), $tecnici)).') AND
         `in_interventi`.`idstatointervento` IN('.implode(',', array_map(prepare(...), $stati)).') AND
-        `in_interventi_tecnici`.`idtipointervento` IN('.implode(',', array_map(prepare(...), $tipi)).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
+        `in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', array_map(prepare(...), $tipi)).') '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
     GROUP BY 
         `in_interventi`.`id`, `data`
     ORDER BY 

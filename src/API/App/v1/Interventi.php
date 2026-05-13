@@ -270,7 +270,7 @@ class Interventi extends AppResource
             id_anagrafica AS id_cliente,
             id_contratto,
             id_preventivo,
-            idtipointervento AS id_tipo_intervento,
+            id_tipo_intervento AS id_tipo_intervento,
             idstatointervento AS id_stato_intervento,
             idpagamento AS id_pagamento,
             informazioniaggiuntive AS informazioni_aggiuntive,

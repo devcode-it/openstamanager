@@ -120,7 +120,7 @@ if (!function_exists('add_tecnico')) {
         }
 
         // Inserisco le righe aggiuntive previste dal tipo di intervento
-        $righe_aggiuntive = database()->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($sessione->idtipointervento));
+        $righe_aggiuntive = database()->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipointervento='.prepare($sessione->id_tipo_intervento));
 
         foreach ($righe_aggiuntive as $riga_aggiuntiva) {
             $riga = RigaIntervento::build($intervento);

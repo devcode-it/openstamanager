@@ -567,22 +567,22 @@ if (!function_exists('verifica_numero_fattura')) {
 
                     if (!empty($intervento)) {
                         if ($riga['is_descrizione'] == 1) {
-                            if (empty($riga_base[$intervento->idtipointervento]['descrizione'])) {
-                                $riga_base[$intervento->idtipointervento]['descrizione'] = $riga;
+                            if (empty($riga_base[$intervento->id_tipo_intervento]['descrizione'])) {
+                                $riga_base[$intervento->id_tipo_intervento]['descrizione'] = $riga;
                             } else {
-                                $riga_base[$intervento->idtipointervento]['descrizione']['descrizione'] .= "\n".$riga->descrizione;
-                                $riga_base[$intervento->idtipointervento]['descrizione']['qta'] += $riga->qta;
+                                $riga_base[$intervento->id_tipo_intervento]['descrizione']['descrizione'] .= "\n".$riga->descrizione;
+                                $riga_base[$intervento->id_tipo_intervento]['descrizione']['qta'] += $riga->qta;
                             }
                         }
 
                         if ($riga['is_descrizione'] == 0) {
-                            if (empty($riga_base[$intervento->idtipointervento]['riga']) && empty($riga->idarticolo)) {
-                                $riga_base[$intervento->idtipointervento]['riga'] = $riga;
+                            if (empty($riga_base[$intervento->id_tipo_intervento]['riga']) && empty($riga->idarticolo)) {
+                                $riga_base[$intervento->id_tipo_intervento]['riga'] = $riga;
                             } elseif (empty($riga->idarticolo)) {
-                                $riga_base[$intervento->idtipointervento]['riga']['descrizione'] .= "\n".$riga->descrizione;
-                                $riga_base[$intervento->idtipointervento]['riga']['qta'] += $riga->qta;
+                                $riga_base[$intervento->id_tipo_intervento]['riga']['descrizione'] .= "\n".$riga->descrizione;
+                                $riga_base[$intervento->id_tipo_intervento]['riga']['qta'] += $riga->qta;
                             } else {
-                                $riga_base[$intervento->idtipointervento]['articoli'][] = $riga;
+                                $riga_base[$intervento->id_tipo_intervento]['articoli'][] = $riga;
                             }
                         }
                     } else {

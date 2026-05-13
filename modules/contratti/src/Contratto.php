@@ -105,12 +105,12 @@ class Contratto extends Document
     public function fixTipiSessioni()
     {
         // Ottieni i tipi di intervento già associati al contratto
-        $presenti = database()->fetchArray('SELECT idtipointervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
-        $id_presenti = array_column($presenti, 'idtipointervento');
+        $presenti = database()->fetchArray('SELECT id_tipo_intervento FROM co_contratti_tipiintervento WHERE idcontratto = '.prepare($this->id));
+        $id_presenti = array_column($presenti, 'id_tipo_intervento');
 
         // Recupera i tipi di intervento abilitati per l'anagrafica del contratto
-        $tipi_abilitati_anagrafica = database()->fetchArray('SELECT idtipointervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($this->id_anagrafica));
-        $id_tipi_abilitati = array_column($tipi_abilitati_anagrafica, 'idtipointervento');
+        $tipi_abilitati_anagrafica = database()->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($this->id_anagrafica));
+        $id_tipi_abilitati = array_column($tipi_abilitati_anagrafica, 'id_tipo_intervento');
 
         // Aggiunta associazioni costi unitari al contratto per i tipi non presenti
         $tipi = TipoSessione::whereNull('deleted_at')
@@ -129,7 +129,7 @@ class Contratto extends Document
 
             $database->insert('co_contratti_tipiintervento', [
                 'idcontratto' => $this->id,
-                'idtipointervento' => $tipo->id,
+                'id_tipo_intervento' => $tipo->id,
                 'costo_ore' => $tipo->costo_orario,
                 'costo_km' => $tipo->costo_km,
                 'costo_dirittochiamata' => $tipo->costo_diritto_chiamata,

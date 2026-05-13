@@ -58,12 +58,12 @@ switch (post('op')) {
                 'costo_km_tecnico' => $fascia_km_tecnico[$key],
                 'costo_diritto_chiamata_tecnico' => $fascia_diritto_chiamata_tecnico[$key],
             ], [
-                'idfasciaoraria' => $key, 'idtipointervento' => $id_record,
+                'idfasciaoraria' => $key, 'id_tipo_intervento' => $id_record,
             ]);
         }
 
         $dbo->delete('in_tipiintervento_tipologie', [
-            'idtipointervento' => $id_record,
+            'id_tipo_intervento' => $id_record,
         ]);
         $tipi = (array) post('tipi');
         foreach ($tipi as $tipo) {
@@ -71,13 +71,13 @@ switch (post('op')) {
                 continue;
             }
             $dbo->insert('in_tipiintervento_tipologie', [
-                'idtipointervento' => $id_record,
+                'id_tipo_intervento' => $id_record,
                 'tipo' => $tipo,
             ]);
         }
 
         $dbo->delete('in_tipiintervento_groups', [
-            'idtipointervento' => $id_record,
+            'id_tipo_intervento' => $id_record,
         ]);
         $gruppi = (array) post('gruppi');
         foreach ($gruppi as $id_gruppo) {
@@ -85,7 +85,7 @@ switch (post('op')) {
                 continue;
             }
             $dbo->insert('in_tipiintervento_groups', [
-                'idtipointervento' => $id_record,
+                'id_tipo_intervento' => $id_record,
                 'id_gruppo' => $id_gruppo,
             ]);
         }
@@ -120,7 +120,7 @@ switch (post('op')) {
         foreach ($fasce_orarie as $fascia_oraria) {
             $dbo->insert('in_fasceorarie_tipiintervento', [
                 'idfasciaoraria' => $fascia_oraria['id'],
-                'idtipointervento' => $tipo->id,
+                'id_tipo_intervento' => $tipo->id,
                 'costo_orario' => post('costo_orario'),
                 'costo_km' => post('costo_km'),
                 'costo_diritto_chiamata' => post('costo_diritto_chiamata'),
@@ -136,12 +136,12 @@ switch (post('op')) {
 
     case 'delete':
         // Elimino le tariffe collegate ai vari tecnici
-        $dbo->delete('in_tariffe', ['idtipointervento' => $id_record]);
+        $dbo->delete('in_tariffe', ['id_tipo_intervento' => $id_record]);
 
         // Elimino le tariffe collegate ai contratti
-        $dbo->delete('co_contratti_tipiintervento', ['idtipointervento' => $id_record]);
+        $dbo->delete('co_contratti_tipiintervento', ['id_tipo_intervento' => $id_record]);
 
-        $dbo->delete('in_fasceorarie_tipiintervento', ['idtipointervento' => $id_record]);
+        $dbo->delete('in_fasceorarie_tipiintervento', ['id_tipo_intervento' => $id_record]);
 
         $query = 'UPDATE `in_tipiintervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
         $dbo->query($query);
@@ -161,7 +161,7 @@ switch (post('op')) {
         ];
 
         $dbo->update('in_tariffe', $values, [
-            'idtipointervento' => $id_record,
+            'id_tipo_intervento' => $id_record,
         ]);
 
         break;

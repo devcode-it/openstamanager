@@ -154,7 +154,7 @@ echo '
                 </div>
 
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "idtipointervento", "ajax-source": "tipiintervento_abilitati", "select-options": {"id_record": <?php echo $id_record; ?>}, "value": "<?php echo empty($record['idtipointervento']) || $record['idtipointervento'] == 0 ? '' : $record['idtipointervento']; ?>" ]}
+                    {[ "type": "select", "label": "<?php echo tr('Tipo attività predefinita'); ?>", "name": "id_tipo_intervento", "ajax-source": "tipiintervento_abilitati", "select-options": {"id_record": <?php echo $id_record; ?>}, "value": "<?php echo empty($record['id_tipo_intervento']) || $record['id_tipo_intervento'] == 0 ? '' : $record['id_tipo_intervento']; ?>" ]}
                 </div>
 
                 <div class="col-md-3">
@@ -444,7 +444,7 @@ $(document).ready(function() {
 /**
  * Funzione per abilitare/disabilitare un tipo di attività nel contratto
  */
-function toggleTipoAttivita(idTipoIntervento, button) {
+function toggleTipoAttivita(id_tipo_intervento, button) {
     $.ajax({
         url: globals.rootdir + "/modules/contratti/actions.php",
         type: "POST",
@@ -452,7 +452,7 @@ function toggleTipoAttivita(idTipoIntervento, button) {
             id_module: globals.id_module,
             id_record: globals.id_record,
             op: "toggle_tipo_attivita",
-            idtipointervento: idTipoIntervento
+            id_tipo_intervento: id_tipo_intervento
         },
         success: function(data) {
             var response = JSON.parse(data);
@@ -480,7 +480,7 @@ function toggleTipoAttivita(idTipoIntervento, button) {
 /**
  * Funzione per aggiungere una riga precompilata con "ore di" + tipo di intervento
  */
-function aggiungiRigaOre(idTipoIntervento, titoloTipo) {
+function aggiungiRigaOre(id_tipo_intervento, titoloTipo) {
     // Recupera il costo orario del tipo di intervento dal contratto
     $.ajax({
         url: globals.rootdir + "/modules/contratti/ajax.php",
@@ -488,14 +488,14 @@ function aggiungiRigaOre(idTipoIntervento, titoloTipo) {
         data: {
             op: "get_costo_ore",
             id_record: globals.id_record,
-            idtipointervento: idTipoIntervento
+            id_tipo_intervento: id_tipo_intervento
         },
         success: function(data) {
             var response = JSON.parse(data);
             var costoOre = response.costo_ore || 0;
 
             // Apri il modal per aggiungere una riga
-            var options = "is_riga=1&descrizione=" + encodeURIComponent("'.tr('Ore di').' " + titoloTipo) + "&prezzo_unitario=" + costoOre + "&id_tipointervento=" + idTipoIntervento + "&um=" + encodeURIComponent("'.tr('Ore').'");
+            var options = "is_riga=1&descrizione=" + encodeURIComponent("'.tr('Ore di').' " + titoloTipo) + "&prezzo_unitario=" + costoOre + "&id_tipointervento=" + id_tipo_intervento + "&um=" + encodeURIComponent("'.tr('Ore').'");
             openModal("'.tr('Aggiungi riga').'", globals.rootdir + "/modules/contratti/row-add.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&" + options);
         },
         error: function() {

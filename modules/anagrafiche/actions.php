@@ -110,9 +110,9 @@ switch (post('op')) {
         // Aggiorno i tipi attività utilizzabili
         $idtipiintervento = (array) post('idtipiintervento');
         $dbo->query('DELETE FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($id_record));
-        foreach ($idtipiintervento as $idtipointervento) {
-            if (!empty($idtipointervento) && $idtipointervento != '-1') {
-                $dbo->query('INSERT INTO an_anagrafiche_tipiintervento(idtipointervento, id_anagrafica) VALUES('.prepare($idtipointervento).', '.prepare($id_record).')');
+        foreach ($idtipiintervento as $id_tipo_intervento) {
+            if (!empty($id_tipo_intervento) && $id_tipo_intervento != '-1') {
+                $dbo->query('INSERT INTO an_anagrafiche_tipiintervento(id_tipo_intervento, id_anagrafica) VALUES('.prepare($id_tipo_intervento).', '.prepare($id_record).')');
             }
         }
 

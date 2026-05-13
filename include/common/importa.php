@@ -657,8 +657,8 @@ if (!empty($options['tipi_attivita'])) {
             echo '
                 <tr data-local_id="'.$i.'">
                     <td style="vertical-align:middle">
-                        <input class="check" type="checkbox" checked id="checked_ore_'.$i.'" name="evadere_ore['.$tipo['idtipointervento'].']" value="on" onclick="ricalcolaTotaleOre();" />
-                        <input type="hidden" class="tipi_attivita" name="tipi_attivita[]" value="'.$tipo['idtipointervento'].'"/>
+                        <input class="check" type="checkbox" checked id="checked_ore_'.$i.'" name="evadere_ore['.$tipo['id_tipo_intervento'].']" value="on" onclick="ricalcolaTotaleOre();" />
+                        <input type="hidden" class="tipi_attivita" name="tipi_attivita[]" value="'.$tipo['id_tipo_intervento'].'"/>
                     </td>
                     <td style="vertical-align:middle">'.$tipo['descrizione'].'</td>
                     <td class="text-center" style="vertical-align:middle">'.numberFormat($tipo['ore_totali'], 2).'</td>
@@ -666,7 +666,7 @@ if (!empty($options['tipi_attivita'])) {
                     <td class="text-center '.($ore_residue > 0 ? '' : 'text-warning').'" style="vertical-align:middle">'.numberFormat($ore_residue, 2).'</td>
                     <td class="text-center" style="vertical-align:middle; padding: 0;">
                         <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 8px;">
-                            {[ "type": "number", "name": "qta_da_evadere_ore['.$tipo['idtipointervento'].']", "id": "qta_ore_'.$i.'", "required": 1, "value": "'.$ore_residue.'", "decimals": "2", "min-value": "0", "extra": "onkeyup=\"ricalcolaTotaleOre();\"" ]}
+                            {[ "type": "number", "name": "qta_da_evadere_ore['.$tipo['id_tipo_intervento'].']", "id": "qta_ore_'.$i.'", "required": 1, "value": "'.$ore_residue.'", "decimals": "2", "min-value": "0", "extra": "onkeyup=\"ricalcolaTotaleOre();\"" ]}
                         </div>
                     </td>
                 </tr>';

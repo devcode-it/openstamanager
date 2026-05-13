@@ -37,7 +37,7 @@ $operazione = filter('op');
 switch ($operazione) {
     case 'add-promemoria':
         $contratto = Contratto::find($id_parent);
-        $tipo = TipoSessione::find(filter('idtipointervento'));
+        $tipo = TipoSessione::find(filter('id_tipo_intervento'));
 
         $promemoria = Promemoria::build($contratto, $tipo, filter('data_richiesta'));
         echo $promemoria->id;
@@ -47,7 +47,7 @@ switch ($operazione) {
     case 'edit-promemoria':
         $dbo->update('co_promemoria', [
             'data_richiesta' => post('data_richiesta'),
-            'idtipointervento' => post('idtipointervento'),
+            'id_tipo_intervento' => post('id_tipo_intervento'),
             'richiesta' => post('richiesta'),
             'idimpianti' => implode(',', post('idimpianti') ?: []),
             'idsede' => post('idsede_c') ?: 0,
@@ -101,7 +101,7 @@ switch ($operazione) {
 
             // Promemoria del contratto raggruppati per data
             $promemoria_contratto = $contratto->promemoria()
-                ->where('idtipointervento', $promemoria_originale->tipo->id)
+                ->where('id_tipo_intervento', $promemoria_originale->tipo->id)
                 ->get()
                 ->groupBy(fn ($item) => $item->data_richiesta->toDateString());
 

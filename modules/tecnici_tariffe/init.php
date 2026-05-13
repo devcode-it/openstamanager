@@ -27,11 +27,11 @@ if (!empty($id_record)) {
             `in_tariffe`.*,
             `in_tipiintervento_lang`.`title`,
             `in_tipiintervento`.`id`, 
-            `in_tariffe`.`idtipointervento` AS esiste 
+            `in_tariffe`.`id_tipo_intervento` AS esiste 
         FROM 
             `in_tipiintervento` 
             LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-            LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`idtipointervento` AND `in_tariffe`.`idtecnico` = '.prepare($id_record).' 
+            LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`idtecnico` = '.prepare($id_record).' 
         WHERE 
             `in_tipiintervento`.`deleted_at` IS NULL 
         ORDER BY 

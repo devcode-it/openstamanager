@@ -23,7 +23,7 @@ namespace Modules\Rivalse;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class RivalsaINPS extends Model
+class rivalsa_inps extends Model
 {
     use SimpleModelTrait;
 

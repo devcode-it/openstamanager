@@ -162,14 +162,14 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
-            $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
+            $rivalsa_inps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
             // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
             $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
-            $iva_rivalsainps = $rivalsainps / 100 * $qi;
+            $iva_rivalsa_inps = $rivalsa_inps / 100 * $qi;
 
             // Aggiorno la rivalsa inps
-            $dbo->query('UPDATE dt_ddt SET rivalsainps='.prepare($rivalsainps).', iva_rivalsainps='.prepare($iva_rivalsainps).' WHERE id='.prepare($idddt));
+            $dbo->query('UPDATE dt_ddt SET rivalsa_inps='.prepare($rivalsa_inps).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($idddt));
 
             $totale_ddt = get_totale_ddt($idddt);
 
@@ -203,7 +203,7 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
 
             $dbo->query('UPDATE dt_ddt SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($idddt));
         } else {
-            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsainps='0', iva_rivalsainps='0' WHERE id=".prepare($idddt));
+            $dbo->query("UPDATE dt_ddt SET ritenutaacconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($idddt));
         }
     }
 }

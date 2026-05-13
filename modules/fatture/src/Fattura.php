@@ -303,7 +303,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getRivalsaINPSAttribute()
+    public function getrivalsa_inpsAttribute()
     {
         return $this->calcola('rivalsa_inps');
     }
@@ -334,7 +334,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getIvaRivalsaINPSAttribute()
+    public function getIvarivalsa_inpsAttribute()
     {
         return $this->calcola('iva_rivalsa_inps');
     }
@@ -590,8 +590,8 @@ class Fattura extends Document
 
         // Rimozione duplicato: ritenutaacconto assegnato due volte
         $this->attributes['ritenutaacconto'] = $this->ritenuta_acconto;
-        $this->attributes['iva_rivalsainps'] = $this->iva_rivalsa_inps;
-        $this->attributes['rivalsainps'] = $this->rivalsa_inps;
+        $this->attributes['iva_rivalsa_inps'] = $this->iva_rivalsa_inps;
+        $this->attributes['rivalsa_inps'] = $this->rivalsa_inps;
 
         parent::save($options);
 

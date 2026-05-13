@@ -23,7 +23,7 @@ namespace Modules\Fatture\Components;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Fatture\Fattura;
 use Modules\Ritenute\RitenutaAcconto;
-use Modules\Rivalse\RivalsaINPS;
+use Modules\Rivalse\rivalsa_inps;
 
 trait RelationTrait
 {
@@ -66,7 +66,7 @@ trait RelationTrait
     }
 
     /**
-     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
+     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsa_inps) dell'elemento.
      *
      * @return float
      */
@@ -75,12 +75,12 @@ trait RelationTrait
         return $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
-    public function getRivalsaINPSAttribute()
+    public function getrivalsa_inpsAttribute()
     {
         return $this->totale_imponibile / 100 * $this->rivalsa->percentuale;
     }
 
-    public function getIvaRivalsaINPSAttribute()
+    public function getIvarivalsa_inpsAttribute()
     {
         return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
     }
@@ -90,7 +90,7 @@ trait RelationTrait
         $result = $this->totale_imponibile;
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
-            $result += $this->rivalsainps;
+            $result += $this->rivalsa_inps;
         }
 
         $ritenuta = $this->ritenuta;
@@ -118,7 +118,7 @@ trait RelationTrait
      *
      * @param int $value
      */
-    public function setIdRivalsaINPSAttribute($value)
+    public function setIdrivalsa_inpsAttribute($value)
     {
         $this->attributes['id_rivalsa_inps'] = $value;
         $this->load('rivalsa');
@@ -147,7 +147,7 @@ trait RelationTrait
 
     public function rivalsa()
     {
-        return $this->belongsTo(RivalsaINPS::class, 'id_rivalsa_inps');
+        return $this->belongsTo(rivalsa_inps::class, 'id_rivalsa_inps');
     }
 
     public function ritenuta()
@@ -163,7 +163,7 @@ trait RelationTrait
     public function save(array $options = [])
     {
         $this->fixRitenutaAcconto();
-        $this->fixRivalsaINPS();
+        $this->fixrivalsa_inps();
 
         return parent::save($options);
     }
@@ -235,9 +235,9 @@ trait RelationTrait
     /**
      * Effettua i conti per la Rivalsa INPS.
      */
-    protected function fixRivalsaINPS()
+    protected function fixrivalsa_inps()
     {
-        $this->attributes['rivalsainps'] = $this->rivalsa_inps;
+        $this->attributes['rivalsa_inps'] = $this->rivalsa_inps;
     }
 
     /**

@@ -30,8 +30,8 @@ $raggruppamenti = $dbo->fetchArray('
     SELECT 
         `data_competenza`, 
         DATE_FORMAT(`data_competenza`, \'%m-%Y\') AS periodo,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
-        SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsainps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS imponibile
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
+        SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsa_inps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS imponibile
     FROM 
         `co_iva`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

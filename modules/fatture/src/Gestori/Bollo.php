@@ -79,7 +79,7 @@ class Bollo
         }
 
         // Verifico se la fattura ha righe con rivalsa applicata, esclusa la marca da bollo
-        $rivalsa = ($this->fattura->rivalsainps > 0 && $this->fattura->rivalsainps != (setting('Importo marca da bollo') * $cassa_pred['percentuale'] / 100)) ? 1 : 0;
+        $rivalsa = ($this->fattura->rivalsa_inps > 0 && $this->fattura->rivalsa_inps != (setting('Importo marca da bollo') * $cassa_pred['percentuale'] / 100)) ? 1 : 0;
 
         // Rimozione riga bollo se nullo
         if (empty($addebita_bollo) || empty($marca_da_bollo)) {

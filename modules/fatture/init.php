@@ -54,7 +54,7 @@ if (!empty($id_record)) {
         `co_tipidocumento`.`id` AS `id_tipo_documento`,
         `zz_segments`.`is_fiscale` AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenutaacconto` WHERE `id`=`id_ritenuta_acconto`) AS ritenutaacconto_desc,
-        (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`id_rivalsa_inps`) AS rivalsainps_desc,
+        (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`id_rivalsa_inps`) AS rivalsa_inps_desc,
         `dt_causalet_lang`.`title` AS causale_desc
     FROM `co_documenti`
         INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`

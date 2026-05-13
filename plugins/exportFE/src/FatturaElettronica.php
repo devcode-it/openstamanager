@@ -945,8 +945,8 @@ class FatturaElettronica implements \Stringable
         $totale_ritenuta_contributi = $documento->totale_ritenuta_contributi;
 
         // Rivalsa
-        $id_rivalsainps = null;
-        $totale_rivalsainps = 0;
+        $id_rivalsa_inps = null;
+        $totale_rivalsa_inps = 0;
 
         foreach ($righe as $riga) {
             if (!empty($riga['id_ritenuta_acconto']) and empty($riga['is_descrizione'])) {
@@ -955,9 +955,9 @@ class FatturaElettronica implements \Stringable
             }
 
             if (!empty($riga['id_rivalsa_inps']) and empty($riga['is_descrizione'])) {
-                $id_rivalsainps = $riga['id_rivalsa_inps'];
-                $totale_rivalsainps += $riga['rivalsainps'];
-                $aliquota_iva_rivalsainps = $riga['idiva'];
+                $id_rivalsa_inps = $riga['id_rivalsa_inps'];
+                $totale_rivalsa_inps += $riga['rivalsa_inps'];
+                $aliquota_iva_rivalsa_inps = $riga['idiva'];
             }
         }
 
@@ -994,14 +994,14 @@ class FatturaElettronica implements \Stringable
         }
 
         // Cassa Previdenziale (Rivalsa) (2.1.1.7)
-        if (!empty($id_rivalsainps)) {
-            $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsainps));
-            $percentuale = database()->fetchOne('SELECT `percentuale` FROM `co_rivalse` WHERE `id` = '.prepare($id_rivalsainps))['percentuale'];
+        if (!empty($id_rivalsa_inps)) {
+            $iva = database()->fetchOne('SELECT `percentuale`, `codice_natura_fe` FROM `co_iva` WHERE `id` = '.prepare($aliquota_iva_rivalsa_inps));
+            $percentuale = database()->fetchOne('SELECT `percentuale` FROM `co_rivalse` WHERE `id` = '.prepare($id_rivalsa_inps))['percentuale'];
 
             $dati_cassa = [
                 'TipoCassa' => setting('Tipo Cassa Previdenziale'),
                 'AlCassa' => $percentuale,
-                'ImportoContributoCassa' => $totale_rivalsainps,
+                'ImportoContributoCassa' => $totale_rivalsa_inps,
                 'ImponibileCassa' => $documento->imponibile - $documento->sconto,
                 'AliquotaIVA' => $iva['percentuale'],
             ];

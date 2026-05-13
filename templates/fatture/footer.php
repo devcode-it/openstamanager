@@ -34,7 +34,7 @@ foreach ($righe as $riga) {
 
 $rivalsa = 0;
 foreach ($righe as $riga) {
-    $rivalsa += floatval($riga->rivalsainps);
+    $rivalsa += floatval($riga->rivalsa_inps);
 }
 $imponibile = $totale_scontato + $sconto - $rivalsa;
 $totale_imponibile = $totale_scontato;

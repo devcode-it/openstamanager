@@ -67,10 +67,10 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `co_iva_lang`.`title` as descrizione,
         `co_documenti`.`id` AS id,
         IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`+`iva`+`co_righe_documenti`.`rivalsainps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_iva`
@@ -135,10 +135,10 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `co_documenti`.`id` AS id,
         `co_documenti`.`split_payment`,
         IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`+`iva`+`co_righe_documenti`.`rivalsainps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsainps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
         `an_anagrafiche`.`ragione_sociale`
 FROM
     `co_iva`

@@ -113,7 +113,7 @@ switch (filter('op')) {
             $ddt->peso_manuale = post('peso_manuale');
             $ddt->volume_manuale = post('volume_manuale');
             $ddt->bollo = 0;
-            $ddt->rivalsainps = 0;
+            $ddt->rivalsa_inps = 0;
             $ddt->ritenutaacconto = 0;
 
             $ddt->id_documento_fe = post('id_documento_fe');

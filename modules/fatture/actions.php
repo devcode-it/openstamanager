@@ -160,9 +160,9 @@ switch ($op) {
         $fattura->peso_manuale = post('peso_manuale');
         $fattura->volume_manuale = post('volume_manuale');
 
-        $fattura->rivalsainps = 0;
+        $fattura->rivalsa_inps = 0;
         $fattura->ritenutaacconto = 0;
-        $fattura->iva_rivalsainps = 0;
+        $fattura->iva_rivalsa_inps = 0;
         $fattura->id_ritenuta_contributi = post('id_ritenuta_contributi') ?: null;
 
         $fattura->codice_stato_fe = post('codice_stato_fe') ?: null;

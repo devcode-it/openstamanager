@@ -101,7 +101,7 @@ switch (post('op')) {
             $ordine->id_ritenuta_acconto = $id_ritenuta_acconto ?: null;
 
             $ordine->bollo = 0;
-            $ordine->rivalsainps = 0;
+            $ordine->rivalsa_inps = 0;
             $ordine->ritenutaacconto = 0;
 
             $ordine->numero_cliente = post('numero_cliente');

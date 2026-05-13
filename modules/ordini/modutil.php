@@ -164,10 +164,10 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
 
             $query = 'SELECT percentuale FROM co_rivalse WHERE id='.prepare($id_rivalsa_inps);
             $rs = $dbo->fetchArray($query);
-            $rivalsainps = $totale_imponibile / 100 * $rs[0]['percentuale'];
+            $rivalsa_inps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
             // Aggiorno la rivalsa inps
-            $dbo->query('UPDATE or_ordini SET rivalsainps='.prepare($rivalsainps).' WHERE id='.prepare($idordine));
+            $dbo->query('UPDATE or_ordini SET rivalsa_inps='.prepare($rivalsa_inps).' WHERE id='.prepare($idordine));
 
             // Leggo la ritenuta d'acconto se c'è
             $totale_ordine = get_totale_ordine($idordine);
@@ -202,11 +202,11 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
 
             // Leggo l'iva predefinita per calcolare l'iva aggiuntiva sulla rivalsa inps
             $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
-            $iva_rivalsainps = $rivalsainps / 100 * $qi;
+            $iva_rivalsa_inps = $rivalsa_inps / 100 * $qi;
 
-            $dbo->query('UPDATE or_ordini SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).', iva_rivalsainps='.prepare($iva_rivalsainps).' WHERE id='.prepare($idordine));
+            $dbo->query('UPDATE or_ordini SET ritenutaacconto='.prepare($ritenutaacconto).', bollo='.prepare($marca_da_bollo).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($idordine));
         } else {
-            $dbo->query("UPDATE or_ordini SET ritenutaacconto='0', bollo='0', rivalsainps='0' WHERE id=".prepare($idordine));
+            $dbo->query("UPDATE or_ordini SET ritenutaacconto='0', bollo='0', rivalsa_inps='0' WHERE id=".prepare($idordine));
         }
     }
 }

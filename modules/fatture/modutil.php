@@ -196,7 +196,7 @@ if (!function_exists('aggiungi_movimento')) {
         $totale_bolli = $is_nota ? -$fattura->bollo : $fattura->bollo;
         $totale_ritenutaacconto = $is_nota ? -$fattura->ritenutaacconto : $fattura->ritenutaacconto;
         $totale_ritenutacontributi = $is_nota ? -$fattura->totale_ritenuta_contributi : $fattura->totale_ritenuta_contributi;
-        $totale_rivalsainps = $is_nota ? -$fattura->rivalsainps : $fattura->rivalsainps;
+        $totale_rivalsa_inps = $is_nota ? -$fattura->rivalsa_inps : $fattura->rivalsa_inps;
         $data_documento = $fattura->data;
         $split_payment = $fattura->split_payment;
 
@@ -207,14 +207,14 @@ if (!function_exists('aggiungi_movimento')) {
         $imponibile_fattura = get_imponibile_fattura($iddocumento);
 
         // Calcolo l'iva della rivalsa inps
-        $iva_rivalsainps = 0;
+        $iva_rivalsa_inps = 0;
 
-        $rsr = $dbo->fetchArray('SELECT `idiva`, `rivalsainps` FROM `co_righe_documenti` WHERE `iddocumento`='.prepare($iddocumento));
+        $rsr = $dbo->fetchArray('SELECT `idiva`, `rivalsa_inps` FROM `co_righe_documenti` WHERE `iddocumento`='.prepare($iddocumento));
 
         for ($r = 0; $r < sizeof($rsr); ++$r) {
             $qi = Aliquota::find(prepare($rsr[$r]['idiva']))->percentuale;
             $rsi = $dbo->fetchArray($qi);
-            $iva_rivalsainps += $rsr[$r]['rivalsainps'] / 100 * $rsi[0]['percentuale'];
+            $iva_rivalsa_inps += $rsr[$r]['rivalsa_inps'] / 100 * $rsi[0]['percentuale'];
         }
 
         // Lettura iva indetraibile fattura
@@ -225,7 +225,7 @@ if (!function_exists('aggiungi_movimento')) {
         // Lettura iva delle righe in fattura
         $query = 'SELECT `iva` FROM `co_righe_documenti` WHERE `iddocumento`='.prepare($iddocumento);
         $rs = $dbo->fetchArray($query);
-        $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsainps - $iva_indetraibile_fattura;
+        $iva_fattura = sum(array_column($rs, 'iva'), null) + $iva_rivalsa_inps - $iva_indetraibile_fattura;
         $iva_fattura = $is_nota ? -$iva_fattura : $iva_fattura;
 
         // Imposto i segni + e - in base se la fattura è di acquisto o vendita
@@ -384,7 +384,7 @@ if (!function_exists('aggiungi_movimento')) {
 
         // 4) Aggiungo la rivalsa INPS se c'è
         // Lettura id conto inps
-        if ($totale_rivalsainps != 0) {
+        if ($totale_rivalsa_inps != 0) {
             $id_conto_inps = setting('Conto per Erario c/INPS');
 
             $query2 = 'INSERT INTO co_movimenti(idmastrino, data,  iddocumento, id_anagrafica, descrizione, id_conto, totale, primanota) VALUES(:idmastrino, :data, :iddocumento, :id_anagrafica, :descrizione, :id_conto, :totale, :primanota)';
@@ -395,7 +395,7 @@ if (!function_exists('aggiungi_movimento')) {
                 ':id_anagrafica' => '',
                 ':descrizione' => $descrizione.' del '.date('d/m/Y', strtotime((string) $data)).' ('.$ragione_sociale.')',
                 ':id_conto' => $id_conto_inps,
-                ':totale' => $totale_rivalsainps * $segno_mov4_inps,
+                ':totale' => $totale_rivalsa_inps * $segno_mov4_inps,
                 ':primanota' => $primanota,
             ];
             $dbo->query($query2, $params);

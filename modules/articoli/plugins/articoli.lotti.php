@@ -208,14 +208,14 @@ if (empty(get('modal'))) {
                             `dt_ddt`.`numero_esterno` AS numero_esterno
                         FROM
                             `dt_righe_ddt`
-                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
-                    $id = $data[0]['idddt'];
+                    $id = $data[0]['id_ddt'];
                 }
 
                 // Inserito su ordini
@@ -319,14 +319,14 @@ if (empty(get('modal'))) {
                             `dt_ddt`.`data`
                         FROM
                             `dt_righe_ddt`
-                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt`=`dt_ddt`.`id`
+                            INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt`=`dt_ddt`.`id`
                             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt`=`dt_tipiddt`.`id`
                             LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
 
-                    $id = $data[0]['idddt'];
+                    $id = $data[0]['id_ddt'];
                 }
 
                 // Inserito su ordini

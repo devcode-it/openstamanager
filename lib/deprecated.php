@@ -277,11 +277,11 @@ function doc_references($info, $dir, $ignore = [])
     $id = null;
 
     // DDT
-    if (!empty($info['idddt'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($info['idddt']));
+    if (!empty($info['id_ddt'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM dt_ddt WHERE id=".prepare($info['id_ddt']));
 
         $module = ($dir == 'entrata') ? 'Ddt in uscita' : 'Ddt in entrata';
-        $id = $info['idddt'];
+        $id = $info['id_ddt'];
 
         $document = tr('Ddt');
     }

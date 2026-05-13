@@ -38,7 +38,7 @@ if (!empty($id_record)) {
 
     $record = $dbo->fetchOne('SELECT
         `dt_ddt`.*,
-        `dt_ddt`.`id` AS idddt,
+        `dt_ddt`.`id` AS id_ddt,
         `dt_statiddt_lang`.`title` AS `stato`,
         `dt_statiddt`.`is_bloccato` AS `flag_completato`,
         `dt_tipiddt_lang`.`title` AS `descrizione_tipodoc`,

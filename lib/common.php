@@ -240,7 +240,7 @@ function getDestinationComponents($riga)
     }
 
     $ddts = DDT::whereIn('id', function ($query) use ($riga) {
-        $query->select('idddt')
+        $query->select('id_ddt')
             ->from('dt_righe_ddt')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class);
@@ -249,7 +249,7 @@ function getDestinationComponents($riga)
         $riga_ddt = database()->table('dt_righe_ddt')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class)
-            ->where('idddt', $ddt->id)
+            ->where('id_ddt', $ddt->id)
             ->first();
         $documents['documento'][] = $ddt;
         $documents['qta'][] = $riga_ddt->qta;

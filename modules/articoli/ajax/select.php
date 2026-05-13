@@ -356,7 +356,7 @@ switch ($resource) {
             LEFT JOIN `co_righe_documenti` ON `mg_prodotti`.`id_riga_documento` = `co_righe_documenti`.`id`
             LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             LEFT JOIN `dt_righe_ddt` ON `mg_prodotti`.`id_riga_ddt` = `dt_righe_ddt`.`id`
-            LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
             LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
         WHERE `mg_prodotti`.`serial` IS NOT NULL';

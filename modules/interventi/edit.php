@@ -352,7 +352,7 @@ if (!$block_edit) {
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
-            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `dt_statiddt_lang`.`title` IN ("Evaso", "Parzialmente evaso", "Parzialmente fatturato")

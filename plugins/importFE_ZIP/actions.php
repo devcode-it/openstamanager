@@ -685,14 +685,14 @@ switch (filter('op')) {
                 $ddt = $dati_ddt[$numero_linea];
                 $query = "SELECT
                     `dt_righe_ddt`.`id`,
-                    `dt_righe_ddt`.`idddt` AS id_documento,
+                    `dt_righe_ddt`.`id_ddt` AS id_documento,
                     `dt_righe_ddt`.`is_descrizione`,
                     `dt_righe_ddt`.`id_articolo`,
                     `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
                     CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
                 FROM
                     `dt_righe_ddt`
-                    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                     INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
                     LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
                 WHERE
@@ -772,7 +772,7 @@ switch (filter('op')) {
                 $match_documento_da_fe = false;
                 $query = "SELECT
                         `dt_righe_ddt`.`id`,
-                        `dt_righe_ddt`.`idddt` AS id_documento,
+                        `dt_righe_ddt`.`id_ddt` AS id_documento,
                         `dt_righe_ddt`.`is_descrizione`,
                         `dt_righe_ddt`.`id_articolo`,
                         `dt_righe_ddt`.`is_sconto`,
@@ -780,7 +780,7 @@ switch (filter('op')) {
                         CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
                     FROM
                         `dt_righe_ddt`
-                        INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                        INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                         INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
                         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`

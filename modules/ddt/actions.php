@@ -598,7 +598,7 @@ switch (filter('op')) {
             $copia_riga->setDocument($copia);
 
             // Aggiornamento riferimenti
-            $copia_riga->idddt = $copia->id;
+            $copia_riga->id_ddt = $copia->id;
             $copia_riga->original_id = null;
             $copia_riga->original_type = null;
 
@@ -724,7 +724,7 @@ switch (filter('op')) {
                 echo json_encode($response);
             } else {
                 if (setting('Raggruppa gli articoli con stesso barcode nei DDT')) {
-                    $articolo = Articolo::where('idddt', $ddt->id)
+                    $articolo = Articolo::where('id_ddt', $ddt->id)
                         ->where('barcode', $barcode)
                         ->where('id_articolo', $originale->id)
                         ->first();

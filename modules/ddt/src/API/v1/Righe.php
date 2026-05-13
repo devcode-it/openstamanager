@@ -38,13 +38,13 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $select = [
             'dt_righe_ddt.id',
             'dt_righe_ddt.id_articolo AS id_articolo',
-            'dt_righe_ddt.idddt AS id_ddt',
+            'dt_righe_ddt.id_ddt AS id_ddt',
             'dt_righe_ddt.descrizione',
             'dt_righe_ddt.qta',
             'dt_righe_ddt.created_at as data',
         ];
 
-        $where = [['dt_righe_ddt.idddt', '=', $request['id_ddt']]];
+        $where = [['dt_righe_ddt.id_ddt', '=', $request['id_ddt']]];
 
         return [
             'table' => $table,
@@ -91,7 +91,7 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
 
         return [
-            'id' => $riga->idddt,
+            'id' => $riga->id_ddt,
             'module' => $module,
             'op' => 'manage_riga',
         ];
@@ -131,11 +131,11 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga->um = $data['um'] ?: null;
         $riga->save();
 
-        $ddt = DDT::find($riga->idddt);
+        $ddt = DDT::find($riga->id_ddt);
         $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
 
         return [
-            'id' => $riga->idddt,
+            'id' => $riga->id_ddt,
             'module' => $module,
             'op' => 'manage_riga',
         ];
@@ -147,14 +147,14 @@ class Righe extends Resource implements RetrieveInterface, CreateInterface
         $riga = Articolo::find($data['id_riga']) ?: Riga::find($data['id_riga']);
         $riga = $riga ?: Descrizione::find($data['id_riga']);
 
-        $ddt = DDT::find($riga->idddt);
+        $ddt = DDT::find($riga->id_ddt);
         $module = ($ddt->idtipoddt == 1 ? 'Ddt di vendita' : 'Ddt di acquisto');
         $riga->delete();
 
-        ricalcola_costiagg_ddt($riga->idddt);
+        ricalcola_costiagg_ddt($riga->id_ddt);
 
         return [
-            'id' => $riga->idddt,
+            'id' => $riga->id_ddt,
             'module' => $module,
             'op' => 'delete_riga',
         ];

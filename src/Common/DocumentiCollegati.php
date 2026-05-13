@@ -603,7 +603,7 @@ class DocumentiCollegati
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_statiddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
-        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
         LEFT JOIN `dt_tipiddt_lang` ON (
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
@@ -727,7 +727,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
@@ -826,7 +826,7 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_righe_documenti`.`idddt` = '.prepare($id_ddt).'
+        WHERE `co_righe_documenti`.`id_ddt` = '.prepare($id_ddt).'
         GROUP BY `co_documenti`.`id`
         ORDER BY `co_documenti`.`data` DESC';
 
@@ -922,7 +922,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
         LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
@@ -1360,7 +1360,7 @@ class DocumentiCollegati
         // Conta i DDT collegati
         $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
         FROM `dt_ddt`
-        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE `dt_righe_ddt`.`original_document_id` = '.prepare($id_preventivo).'
         AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'';
 
@@ -1416,7 +1416,7 @@ class DocumentiCollegati
         // Conta i DDT collegati
         $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
         FROM `dt_ddt`
-        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+        INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE `dt_righe_ddt`.`id_ordine` = '.prepare($id_ordine);
 
         $result = $dbo->fetchOne($query_ddt);
@@ -1463,7 +1463,7 @@ class DocumentiCollegati
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
-        WHERE `co_righe_documenti`.`idddt` = '.prepare($id_ddt);
+        WHERE `co_righe_documenti`.`id_ddt` = '.prepare($id_ddt);
 
         $result = $dbo->fetchOne($query_fatture);
         $total += (int) $result['total'];
@@ -1506,7 +1506,7 @@ class DocumentiCollegati
         // Conta i DDT collegati
         $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
         FROM `dt_ddt`
-        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+        INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
         WHERE `dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo);
 
         $result = $dbo->fetchOne($query_ddt);
@@ -1697,7 +1697,7 @@ class DocumentiCollegati
                 break;
             case 'ddt':
                 $tabella_righe = 'dt_righe_ddt';
-                $campo_id_documento = 'idddt';
+                $campo_id_documento = 'id_ddt';
                 break;
             case 'intervento':
                 $tabella_righe = 'in_righe_interventi';
@@ -1824,7 +1824,7 @@ class DocumentiCollegati
         $tabelle_righe = [
             'co_righe_documenti' => ['id_documento', 'fattura_vendita', 'fattura_acquisto'],
             'or_righe_ordini' => ['id_ordine', 'ordine'],
-            'dt_righe_ddt' => ['idddt', 'ddt'],
+            'dt_righe_ddt' => ['id_ddt', 'ddt'],
             'in_righe_interventi' => ['id_intervento', 'intervento'],
             'co_righe_preventivi' => ['idpreventivo', 'preventivo'],
             'co_righe_contratti' => ['id_contratto', 'contratto'],

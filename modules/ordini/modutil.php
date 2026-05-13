@@ -230,7 +230,7 @@ if (!function_exists('get_stato_ordine')) {
         $qta_fattura = $rs_fattura[0]['qta'];
 
         // Righe dell'ordine in fattura passando da ddt
-        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine).')');
+        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE id_ddt IN(SELECT DISTINCT id_ddt FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine).')');
         $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
 
         if ($qta_ddt == 0) {

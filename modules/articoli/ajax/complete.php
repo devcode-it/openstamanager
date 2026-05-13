@@ -54,17 +54,17 @@ switch ($resource) {
                     `id_articolo`='.prepare($id_articolo).' AND `co_tipidocumento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
             UNION
                 SELECT 
-                    `idddt` AS id, 
+                    `id_ddt` AS id, 
                     "Ddt" AS tipo, 
                     "Ddt in uscita" AS modulo, 
                     (`subtotale`-`sconto`)/`qta` AS costo_unitario, 
-                    (SELECT `numero` FROM `dt_ddt` WHERE `id`=`idddt`) AS n_documento, 
-                    (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`idddt`) AS n2_documento, 
-                    (SELECT `data` FROM `dt_ddt` WHERE `id`=`idddt`) AS data_documento,
+                    (SELECT `numero` FROM `dt_ddt` WHERE `id`=`id_ddt`) AS n_documento, 
+                    (SELECT `numero_esterno` FROM `dt_ddt` WHERE `id`=`id_ddt`) AS n2_documento, 
+                    (SELECT `data` FROM `dt_ddt` WHERE `id`=`id_ddt`) AS data_documento,
                     `dt_ddt`.`id_anagrafica` AS id_anagrafica
                 FROM 
                     `dt_righe_ddt`
-                    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                    INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                     INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 WHERE
                     `id_articolo`='.prepare($id_articolo).' AND
@@ -118,7 +118,7 @@ switch ($resource) {
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "entrata"
         UNION
             SELECT
-                `idddt` AS id,
+                `id_ddt` AS id,
                 `dt_tipiddt_lang`.`title` AS tipo,
                 "Ddt in uscita" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
@@ -128,7 +128,7 @@ switch ($resource) {
                 `dt_ddt`.`id_anagrafica` AS id_anagrafica
             FROM
                 `dt_righe_ddt`
-                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                 INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
@@ -184,7 +184,7 @@ switch ($resource) {
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "uscita"
         UNION
             SELECT
-                `idddt` AS id,
+                `id_ddt` AS id,
                 `dt_tipiddt_lang`.`title` AS tipo,
                 "Ddt in entrata" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
@@ -194,7 +194,7 @@ switch ($resource) {
                 `dt_ddt`.`id_anagrafica` AS id_anagrafica
             FROM
                 `dt_righe_ddt`
-                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`idddt`
+                INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                 INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`idtipoddt`
                 LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE

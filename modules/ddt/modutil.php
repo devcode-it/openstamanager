@@ -125,28 +125,28 @@ if (!function_exists('get_ivaindetraibile_ddt')) {
 /*
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
- * $idddt				int		ID del ddt
+ * $id_ddt				int		ID del ddt
  * $id_rivalsa_inps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
  * $id_ritenuta_acconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
 if (!function_exists('ricalcola_costiagg_ddt')) {
-    function ricalcola_costiagg_ddt($idddt, $id_rivalsa_inps = '', $id_ritenuta_acconto = '', $bolli = '')
+    function ricalcola_costiagg_ddt($id_ddt, $id_rivalsa_inps = '', $id_ritenuta_acconto = '', $bolli = '')
     {
         global $dir;
 
         $dbo = database();
 
         // Se ci sono righe nel ddt faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-        $query = 'SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE idddt='.prepare($idddt);
+        $query = 'SELECT COUNT(id) AS righe FROM dt_righe_ddt WHERE id_ddt='.prepare($id_ddt);
         $rs = $dbo->fetchArray($query);
         if ($rs[0]['righe'] > 0) {
-            $totale_imponibile = get_imponibile_ddt($idddt);
-            $totale_ddt = get_totale_ddt($idddt);
+            $totale_imponibile = get_imponibile_ddt($id_ddt);
+            $totale_ddt = get_totale_ddt($id_ddt);
 
             // Leggo gli id dei costi aggiuntivi
             if ($dir == 'uscita') {
-                $query2 = 'SELECT id_rivalsa_inps, id_ritenuta_acconto, bollo FROM dt_ddt WHERE id='.prepare($idddt);
+                $query2 = 'SELECT id_rivalsa_inps, id_ritenuta_acconto, bollo FROM dt_ddt WHERE id='.prepare($id_ddt);
                 $rs2 = $dbo->fetchArray($query2);
                 $id_rivalsa_inps = $rs2[0]['id_rivalsa_inps'];
                 $id_ritenuta_acconto = $rs2[0]['id_ritenuta_acconto'];
@@ -169,9 +169,9 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
             $iva_rivalsa_inps = $rivalsa_inps / 100 * $qi;
 
             // Aggiorno la rivalsa inps
-            $dbo->query('UPDATE dt_ddt SET rivalsa_inps='.prepare($rivalsa_inps).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($idddt));
+            $dbo->query('UPDATE dt_ddt SET rivalsa_inps='.prepare($rivalsa_inps).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($id_ddt));
 
-            $totale_ddt = get_totale_ddt($idddt);
+            $totale_ddt = get_totale_ddt($id_ddt);
 
             // Leggo la ritenuta d'acconto se c'è (per i Ddt in uscita lo leggo dalle impostazioni)
             if (!empty($id_ritenuta_acconto)) {
@@ -201,9 +201,9 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
                 $marca_da_bollo = 0.00;
             }
 
-            $dbo->query('UPDATE dt_ddt SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($idddt));
+            $dbo->query('UPDATE dt_ddt SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($id_ddt));
         } else {
-            $dbo->query("UPDATE dt_ddt SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($idddt));
+            $dbo->query("UPDATE dt_ddt SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($id_ddt));
         }
     }
 }
@@ -212,11 +212,11 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
  * Restituisce lo stato del ddt in base alle righe.
  */
 if (!function_exists('get_stato_ddt')) {
-    function get_stato_ddt($idddt)
+    function get_stato_ddt($id_ddt)
     {
         $dbo = database();
 
-        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY idddt HAVING idddt='.prepare($idddt));
+        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY id_ddt HAVING id_ddt='.prepare($id_ddt));
 
         if ($rs[0]['qta'] == 0) {
             return 'Bozza';

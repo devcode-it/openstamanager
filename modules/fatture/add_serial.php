@@ -54,7 +54,7 @@ $data = [
     ],
     'ddt' => [
         'table' => 'dt_righe_ddt',
-        'id' => 'idddt',
+        'id' => 'id_ddt',
     ],
     'ord' => [
         'table' => 'or_righe_ordini',

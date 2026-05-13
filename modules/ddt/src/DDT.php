@@ -188,22 +188,22 @@ class DDT extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idddt');
+        return $this->hasMany(Components\Articolo::class, 'id_ddt');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idddt');
+        return $this->hasMany(Components\Riga::class, 'id_ddt');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'idddt');
+        return $this->hasMany(Components\Sconto::class, 'id_ddt');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idddt');
+        return $this->hasMany(Components\Descrizione::class, 'id_ddt');
     }
 
     /**
@@ -455,7 +455,7 @@ class DDT extends Document
     {
         return database()->table('co_righe_documenti')
             ->selectRaw('SUM(qta) as qta_fatturata')
-            ->where('idddt', $this->id)
+            ->where('id_ddt', $this->id)
             ->value('qta_fatturata') ?? 0;
     }
 
@@ -467,7 +467,7 @@ class DDT extends Document
     protected function hasFattureCollegate()
     {
         return database()->table('co_righe_documenti')
-            ->where('idddt', $this->id)
+            ->where('id_ddt', $this->id)
             ->exists();
     }
 }

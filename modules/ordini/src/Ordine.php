@@ -287,7 +287,7 @@ class Ordine extends Document
 
         if ($documento instanceof DDT) {
             $fatture_ddt = database()->table('co_righe_documenti')
-                ->where('idddt', $documento->id)
+                ->where('id_ddt', $documento->id)
                 ->join('co_documenti', 'co_righe_documenti.id_documento', '=', 'co_documenti.id')
                 ->count();
 

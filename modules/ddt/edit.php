@@ -181,7 +181,7 @@ echo '
 <?php
 
 // Conteggio numero articoli ddt in uscita
-$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`id_articolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`idddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
+$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `dt_righe_ddt` ON `mg_articoli`.`id`=`dt_righe_ddt`.`id_articolo`) INNER JOIN `dt_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`id_ddt`) WHERE `dt_ddt`.`id`='.prepare($id_record));
 $id_modulo_anagrafiche = Module::where('name', 'Anagrafiche')->first()->id;
 $id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;
 if ($dir == 'entrata') {
@@ -415,7 +415,7 @@ if (!$block_edit) {
             INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`idtipoddt` = `dt_tipiddt`.`id`
-            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
+            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE
             `title` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND
             `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND

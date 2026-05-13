@@ -46,7 +46,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
     foreach ($liv3_patrimoniale as $liv3_p) {
         if ($liv3_p['totale'] > 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
+            if ($liv2_p['id'] == $liv3_p['id_piano_dei_conti2'] && $liv3_p['totale'] != 0) {
                 $totale_attivita += $liv3_p['totale'];
                 $totale_livello3 += $liv3_p['totale'];
                 $livello3 .= '
@@ -135,7 +135,7 @@ foreach ($liv2_patrimoniale as $liv2_p) {
     foreach ($liv3_patrimoniale as $liv3_p) {
         if ($liv3_p['totale'] < 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_p['id'] == $liv3_p['idpianodeiconti2'] && $liv3_p['totale'] != 0) {
+            if ($liv2_p['id'] == $liv3_p['id_piano_dei_conti2'] && $liv3_p['totale'] != 0) {
                 $totale_passivita += $liv3_p['totale'];
                 $totale_livello3 += $liv3_p['totale'];
                 $livello3 .= '
@@ -231,12 +231,12 @@ foreach ($liv2_economico as $liv2_e) {
     $totale_livello3 = 0;
     $totale_reddito_livello3 = 0;
     foreach ($liv3_economico as $liv3_e) {
-        if ($liv2_e['id'] == $liv3_e['idpianodeiconti2']) {
+        if ($liv2_e['id'] == $liv3_e['id_piano_dei_conti2']) {
             $utile_perdita_reddito += $liv3_e['totale_reddito'];
         }
         if ($liv3_e['totale'] >= 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
+            if ($liv2_e['id'] == $liv3_e['id_piano_dei_conti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
                 $totale_costi += $liv3_e['totale'];
                 $totale_livello3 += $liv3_e['totale'];
                 $totale_costi_reddito += $liv3_e['totale_reddito'];
@@ -311,7 +311,7 @@ foreach ($liv2_economico as $liv2_e) {
     foreach ($liv3_economico as $liv3_e) {
         if ($liv3_e['totale'] <= 0) {
             // Visualizzo solo i conti di livello 3 relativi al conto di livello 2
-            if ($liv2_e['id'] == $liv3_e['idpianodeiconti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
+            if ($liv2_e['id'] == $liv3_e['id_piano_dei_conti2'] && ($liv3_e['totale'] != 0 || $liv3_e['totale_reddito'] != 0)) {
                 $totale_ricavi += $liv3_e['totale'];
                 $totale_livello3 += $liv3_e['totale'];
                 $totale_ricavi_reddito += $liv3_e['totale_reddito'];

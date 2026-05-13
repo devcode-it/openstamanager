@@ -81,7 +81,7 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
                  data_fine_competenza <= '.prepare($_SESSION['period_end']).')
             ) GROUP BY id_conto
         ) movimenti ON co_pianodeiconti3.id=movimenti.id_conto
-    WHERE `idpianodeiconti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
+    WHERE `id_piano_dei_conti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
 
 $terzo_livello = $dbo->fetchArray($query3);
 

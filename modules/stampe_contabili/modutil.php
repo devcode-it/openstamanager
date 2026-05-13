@@ -50,7 +50,7 @@ function verificaSbilanciLibroGiornale($date_start, $date_end)
                 SUM(co_movimenti.totale) AS totale_raggruppato
             FROM co_movimenti
             INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
-            INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id
+            INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id
             WHERE co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
             GROUP BY co_movimenti.id_mastrino, co_movimenti.id_conto
         ) AS movimenti_raggruppati

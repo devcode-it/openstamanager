@@ -43,11 +43,11 @@ switch (post('op')) {
                 }
             } else {
                 // Controllo che non sia stato usato un numero non valido del conto
-                $query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND idpianodeiconti2='.prepare($id_conto);
+                $query = 'SELECT id_piano_dei_conti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND id_piano_dei_conti2='.prepare($id_conto);
                 $rs = $dbo->fetchArray($query);
 
                 if (sizeof($rs) == 0) {
-                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, idpianodeiconti2, dir, percentuale_deducibile) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($id_conto).'), '.$percentuale.')';
+                    $query = 'INSERT INTO co_pianodeiconti3(numero, descrizione, id_piano_dei_conti2, dir, percentuale_deducibile) VALUES('.prepare($numero).', '.prepare($descrizione).', '.prepare($id_conto).', (SELECT dir FROM co_pianodeiconti2 WHERE id='.prepare($id_conto).'), '.$percentuale.')';
                 }
             }
 
@@ -87,7 +87,7 @@ switch (post('op')) {
 
             $update_query = 'UPDATE co_pianodeiconti2 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', dir='.prepare($dir).' WHERE id='.prepare($id_conto);
         } else {
-            $duplicate_query = 'SELECT idpianodeiconti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND idpianodeiconti2='.prepare($idpianodeiconti);
+            $duplicate_query = 'SELECT id_piano_dei_conti2, numero FROM co_pianodeiconti3 WHERE numero='.prepare($numero).' AND NOT id='.prepare($id_conto).' AND id_piano_dei_conti2='.prepare($idpianodeiconti);
 
             $update_query = 'UPDATE co_pianodeiconti3 SET numero='.prepare($numero).', descrizione='.prepare($descrizione).', percentuale_deducibile='.prepare($percentuale).' WHERE id='.prepare($id_conto);
         }
@@ -114,11 +114,11 @@ switch (post('op')) {
         if ($lvl == 2) {
             // Eliminazione conto di livello 2 (co_pianodeiconti2)
             // Controllo che non esistano movimenti associati ai conti di livello 3 collegati
-            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto = co_pianodeiconti3.id WHERE co_pianodeiconti3.idpianodeiconti2 = '.prepare($id_conto));
+            $movimenti = $dbo->fetchNum('SELECT co_movimenti.id FROM co_movimenti INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto = co_pianodeiconti3.id WHERE co_pianodeiconti3.id_piano_dei_conti2 = '.prepare($id_conto));
 
             if ($id_conto != '' and empty($movimenti)) {
                 // Prima elimino tutti i conti di livello 3 collegati
-                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($id_conto));
+                $conti_livello3 = $dbo->fetchArray('SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2 = '.prepare($id_conto));
 
                 foreach ($conti_livello3 as $conto3) {
                     // Scollego il conto dalle anagrafiche
@@ -127,7 +127,7 @@ switch (post('op')) {
                 }
 
                 // Elimino tutti i conti di livello 3 collegati
-                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE idpianodeiconti2 = '.prepare($id_conto));
+                $dbo->query('DELETE FROM co_pianodeiconti3 WHERE id_piano_dei_conti2 = '.prepare($id_conto));
 
                 // Infine elimino il conto di livello 2
                 $query = 'DELETE FROM co_pianodeiconti2 WHERE id='.prepare($id_conto);
@@ -174,7 +174,7 @@ switch (post('op')) {
         $data_fine = $_SESSION['period_start'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data < '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Apertura conto'), $_SESSION['period_start'], 0, true);
 
@@ -229,7 +229,7 @@ switch (post('op')) {
         $data_fine = $_SESSION['period_end'];
 
         // Lettura di tutti i conti dello stato patrimoniale con saldo != 0
-        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
+        $conti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, SUM(co_movimenti.totale) AS totale FROM ((co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id) INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) INNER JOIN co_movimenti ON co_pianodeiconti3.id=co_movimenti.id_conto WHERE co_pianodeiconti1.descrizione="Patrimoniale" AND data >= '.prepare($data_inizio).' AND data <= '.prepare($data_fine).' AND co_pianodeiconti3.id!='.prepare($id_conto_chiusura).' AND is_chiusura=0 GROUP BY co_pianodeiconti3.id HAVING totale != 0');
 
         $mastrino = Mastrino::build(tr('Chiusura conto'), $_SESSION['period_end'], 0, true);
 
@@ -291,13 +291,13 @@ switch (post('op')) {
         $id_conti3 = 0;
 
         if (!empty($text)) {
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
-            $id_conti2 = array_column($id_conti, 'idpianodeiconti2');
+            $id_conti = $dbo->fetchArray('SELECT id AS id_piano_dei_conti2 FROM co_pianodeiconti2 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
+            $id_conti2 = array_column($id_conti, 'id_piano_dei_conti2');
 
-            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, idpianodeiconti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
+            $id_conti = $dbo->fetchArray('SELECT id AS idpianodeiconti3, id_piano_dei_conti2 FROM co_pianodeiconti3 WHERE descrizione LIKE '.prepare('%'.$text.'%').' OR numero LIKE '.prepare('%'.$text.'%'));
 
             $id_conti3 = array_column($id_conti, 'idpianodeiconti3');
-            $id_conti2_3 = array_column($id_conti, 'idpianodeiconti2');
+            $id_conti2_3 = array_column($id_conti, 'id_piano_dei_conti2');
         }
 
         echo json_encode(['conti2' => $id_conti2, 'conti3' => $id_conti3, 'conti2_3' => $id_conti2_3]);

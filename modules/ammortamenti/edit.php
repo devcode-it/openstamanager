@@ -88,7 +88,7 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Conto per ammortamento'); ?>", "name": "id_conto", "required": 1, "values": "query=SELECT co_pianodeiconti3.id, CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' - ', co_pianodeiconti3.descrizione) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.idpianodeiconti2=co_pianodeiconti2.id WHERE idpianodeiconti2=<?php echo prepare(setting('Conto predefinito per gli ammortamenti')); ?>", "value": "<?php echo $righe_ammortamento[0]['id_conto']; ?>", "disabled": "<?php echo $readonly > 0 ? 1 : 0; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto per ammortamento'); ?>", "name": "id_conto", "required": 1, "values": "query=SELECT co_pianodeiconti3.id, CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' - ', co_pianodeiconti3.descrizione) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE id_piano_dei_conti2=<?php echo prepare(setting('Conto predefinito per gli ammortamenti')); ?>", "value": "<?php echo $righe_ammortamento[0]['id_conto']; ?>", "disabled": "<?php echo $readonly > 0 ? 1 : 0; ?>" ]}
 				</div>
 
 				<div class="col-md-6" style="margin-top: 25px">

@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 $id_conto = get('id');
 
 // Informazioni sul conto
-$query = 'SELECT *, idpianodeiconti2 AS idpianodeiconti FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
+$query = 'SELECT *, id_piano_dei_conti2 AS idpianodeiconti FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
 $conto = $dbo->fetchOne($query);
 
 echo '

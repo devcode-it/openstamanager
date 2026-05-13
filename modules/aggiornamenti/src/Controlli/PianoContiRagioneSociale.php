@@ -222,7 +222,7 @@ class PianoContiRagioneSociale extends Controllo
 
         // Calcola il prossimo numero per il nuovo conto
         $numero = $database->table('co_pianodeiconti3')
-            ->where('idpianodeiconti2', '=', $categoria_conto_id)
+            ->where('id_piano_dei_conti2', '=', $categoria_conto_id)
             ->selectRaw('MAX(CAST(numero AS UNSIGNED)) AS max_numero')
             ->first();
         $new_numero = $numero->max_numero + 1;
@@ -233,7 +233,7 @@ class PianoContiRagioneSociale extends Controllo
             ->insertGetId([
                 'numero' => $new_numero,
                 'descrizione' => $anagrafica->ragione_sociale,
-                'idpianodeiconti2' => $categoria_conto_id,
+                'id_piano_dei_conti2' => $categoria_conto_id,
             ]);
 
         // Aggiorna l'anagrafica con il nuovo conto

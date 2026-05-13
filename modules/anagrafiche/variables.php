@@ -25,12 +25,12 @@ $anagrafica = Anagrafica::find($id_record);
 // cliente
 if ($anagrafica->id_conto_cliente != '') {
     $conto = $anagrafica->id_conto_cliente;
-    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
+    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.id_piano_dei_conti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 // Fornitore
 elseif ($anagrafica->id_conto_fornitore != '') {
     $conto = $anagrafica->id_conto_fornitore;
-    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.idpianodeiconti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
+    $conto_descrizione = $dbo->fetchOne('SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.id_piano_dei_conti2), ".", numero, " ", descrizione) AS descrizione FROM co_pianodeiconti3 WHERE id='.prepare($conto))['descrizione'];
 }
 
 // Variabili da sostituire

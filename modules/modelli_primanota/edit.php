@@ -80,12 +80,12 @@ $id_mastrino = $record['id_mastrino'];
 $query2 = 'SELECT * FROM co_pianodeiconti2';
 $conti2 = $dbo->fetchArray($query2);
 for ($x = 0; $x < sizeof($conti2); ++$x) {
-    $query3 = 'SELECT * FROM co_pianodeiconti3 WHERE idpianodeiconti2='.prepare($conti2[$x]['id']);
+    $query3 = 'SELECT * FROM co_pianodeiconti3 WHERE id_piano_dei_conti2='.prepare($conti2[$x]['id']);
     $rs3 = $dbo->fetchArray($query3);
     for ($y = 0; $y < sizeof($rs3); ++$y) {
         // Creo un array con le descrizioni dei conti di livello 3 che ha come indice l'id del livello2 e del livello3
-        $conti3[$rs3[$y]['idpianodeiconti2']][$y]['id'] = $rs3[$y]['id'];
-        $conti3[$rs3[$y]['idpianodeiconti2']][$y]['descrizione'] = $conti2[$x]['numero'].'.'.$rs3[$y]['numero'].' '.$rs3[$y]['descrizione'];
+        $conti3[$rs3[$y]['id_piano_dei_conti2']][$y]['id'] = $rs3[$y]['id'];
+        $conti3[$rs3[$y]['id_piano_dei_conti2']][$y]['descrizione'] = $conti2[$x]['numero'].'.'.$rs3[$y]['numero'].' '.$rs3[$y]['descrizione'];
     }
 }
 

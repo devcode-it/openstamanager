@@ -197,18 +197,18 @@ class CSV extends CSVImporter
      * Trova il conto di terzo livello in base al numero e al conto2.
      *
      * @param string $codice_conto3    Codice del conto di terzo livello
-     * @param int    $idpianodeiconti2 ID del conto di secondo livello
+     * @param int    $id_piano_dei_conti2 ID del conto di secondo livello
      * @param object $database         Connessione al database
      *
      * @return array|null
      */
-    protected function trovaConto3($codice_conto3, $idpianodeiconti2, $database)
+    protected function trovaConto3($codice_conto3, $id_piano_dei_conti2, $database)
     {
-        if (empty($codice_conto3) || empty($idpianodeiconti2)) {
+        if (empty($codice_conto3) || empty($id_piano_dei_conti2)) {
             return null;
         }
 
-        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND idpianodeiconti2='.prepare($idpianodeiconti2));
+        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND id_piano_dei_conti2='.prepare($id_piano_dei_conti2));
 
         return !empty($result) ? $result : null;
     }
@@ -241,7 +241,7 @@ class CSV extends CSVImporter
                 $database->insert('co_pianodeiconti3', [
                     'numero' => $parti_conto['codice_conto3'],
                     'descrizione' => $record['descrizione'],
-                    'idpianodeiconti2' => $conto2['id'],
+                    'id_piano_dei_conti2' => $conto2['id'],
                     'dir' => $record['dir'],
                 ]);
             }

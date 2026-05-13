@@ -479,7 +479,7 @@ class Anagrafica extends Model
 
         // Query di base
         $table = $database->table('co_pianodeiconti3')
-            ->where('idpianodeiconti2', '=', $categoria_conto_id);
+            ->where('id_piano_dei_conti2', '=', $categoria_conto_id);
 
         // Verifica su un possibile conto esistente ma non collegato
         if (!empty($anagrafica->ragione_sociale)) {
@@ -509,7 +509,7 @@ class Anagrafica extends Model
             ->insertGetId([
                 'numero' => $new_numero,
                 'descrizione' => $anagrafica->ragione_sociale ?: 'N.D.',
-                'idpianodeiconti2' => $categoria_conto_id,
+                'id_piano_dei_conti2' => $categoria_conto_id,
             ]);
 
         return $id_conto;

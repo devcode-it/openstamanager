@@ -58,7 +58,7 @@ $data = [
     ],
     'ord' => [
         'table' => 'or_righe_ordini',
-        'id' => 'idordine',
+        'id' => 'id_ordine',
     ],
     'int' => [
         'table' => 'in_righe_interventi',

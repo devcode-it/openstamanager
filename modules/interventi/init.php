@@ -36,7 +36,7 @@ if (!empty($id_record)) {
         `in_interventi`.`id_anagrafica` as id_anagrafica,
         `in_interventi`.`id_preventivo` as idpreventivo,
         `in_interventi`.`id_contratto` as id_contratto,
-        `in_interventi`.`id_ordine` as idordine
+        `in_interventi`.`id_ordine` as id_ordine
     FROM 
         `in_interventi`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`

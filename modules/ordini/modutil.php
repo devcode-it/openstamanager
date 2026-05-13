@@ -61,9 +61,9 @@ if (!function_exists('get_new_numerosecondarioordine')) {
  */
 
 if (!function_exists('get_imponibile_ordine')) {
-    function get_imponibile_ordine($idordine)
+    function get_imponibile_ordine($id_ordine)
     {
-        $ordine = Ordine::find($idordine);
+        $ordine = Ordine::find($id_ordine);
 
         return $ordine->imponibile;
     }
@@ -75,9 +75,9 @@ if (!function_exists('get_imponibile_ordine')) {
  * @deprecated 2.4.5
  */
 if (!function_exists('get_totale_ordine')) {
-    function get_totale_ordine($idordine)
+    function get_totale_ordine($id_ordine)
     {
-        $ordine = Ordine::find($idordine);
+        $ordine = Ordine::find($id_ordine);
 
         return $ordine->totale;
     }
@@ -90,9 +90,9 @@ if (!function_exists('get_totale_ordine')) {
  */
 
 if (!function_exists('get_netto_ordine')) {
-    function get_netto_ordine($idordine)
+    function get_netto_ordine($id_ordine)
     {
-        $ordine = Ordine::find($idordine);
+        $ordine = Ordine::find($id_ordine);
 
         return $ordine->netto;
     }
@@ -103,9 +103,9 @@ if (!function_exists('get_netto_ordine')) {
  * @deprecated 2.4.5
  */
 if (!function_exists('get_ivadetraibile_ordine')) {
-    function get_ivadetraibile_ordine($idordine)
+    function get_ivadetraibile_ordine($id_ordine)
     {
-        $ordine = Ordine::find($idordine);
+        $ordine = Ordine::find($id_ordine);
 
         return $ordine->iva_detraibile;
     }
@@ -117,9 +117,9 @@ if (!function_exists('get_ivadetraibile_ordine')) {
  * @deprecated 2.4.5
  */
 if (!function_exists('get_ivaindetraibile_ordine')) {
-    function get_ivaindetraibile_ordine($idordine)
+    function get_ivaindetraibile_ordine($id_ordine)
     {
-        $ordine = Ordine::find($idordine);
+        $ordine = Ordine::find($id_ordine);
 
         return $ordine->iva_indetraibile;
     }
@@ -127,28 +127,28 @@ if (!function_exists('get_ivaindetraibile_ordine')) {
 /*
  * Ricalcola i costi aggiuntivi in ordine (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
- * $idordine				int		ID del ordine
+ * $id_ordine				int		ID del ordine
  * $id_rivalsa_inps		int		ID della rivalsa inps da applicare. Se omesso viene utilizzata quella impostata di default
  * $id_ritenuta_acconto	int		ID della ritenuta d'acconto da applicare. Se omesso viene utilizzata quella impostata di default
  * $bolli				float	Costi aggiuntivi delle marche da bollo. Se omesso verrà usata la cifra predefinita.
  */
 if (!function_exists('ricalcola_costiagg_ordine')) {
-    function ricalcola_costiagg_ordine($idordine, $id_rivalsa_inps = '', $id_ritenuta_acconto = '', $bolli = '')
+    function ricalcola_costiagg_ordine($id_ordine, $id_rivalsa_inps = '', $id_ritenuta_acconto = '', $bolli = '')
     {
         global $dir;
 
         $dbo = database();
 
         // Se ci sono righe nel ordine faccio i conteggi, altrimenti azzero gli sconti e le spese aggiuntive (inps, ritenuta, marche da bollo)
-        $query = 'SELECT COUNT(id) AS righe FROM or_righe_ordini WHERE idordine='.prepare($idordine);
+        $query = 'SELECT COUNT(id) AS righe FROM or_righe_ordini WHERE id_ordine='.prepare($id_ordine);
         $rs = $dbo->fetchArray($query);
         if ($rs[0]['righe'] > 0) {
-            $totale_imponibile = get_imponibile_ordine($idordine);
-            $totale_ordine = get_totale_ordine($idordine);
+            $totale_imponibile = get_imponibile_ordine($id_ordine);
+            $totale_ordine = get_totale_ordine($id_ordine);
 
             // Leggo gli id dei costi aggiuntivi
             if ($dir == 'uscita') {
-                $query2 = 'SELECT id_rivalsa_inps, id_ritenuta_acconto, bollo FROM or_ordini WHERE id='.prepare($idordine);
+                $query2 = 'SELECT id_rivalsa_inps, id_ritenuta_acconto, bollo FROM or_ordini WHERE id='.prepare($id_ordine);
                 $rs2 = $dbo->fetchArray($query2);
                 $id_rivalsa_inps = $rs2[0]['id_rivalsa_inps'];
                 $id_ritenuta_acconto = $rs2[0]['id_ritenuta_acconto'];
@@ -167,10 +167,10 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
             $rivalsa_inps = $totale_imponibile / 100 * $rs[0]['percentuale'];
 
             // Aggiorno la rivalsa inps
-            $dbo->query('UPDATE or_ordini SET rivalsa_inps='.prepare($rivalsa_inps).' WHERE id='.prepare($idordine));
+            $dbo->query('UPDATE or_ordini SET rivalsa_inps='.prepare($rivalsa_inps).' WHERE id='.prepare($id_ordine));
 
             // Leggo la ritenuta d'acconto se c'è
-            $totale_ordine = get_totale_ordine($idordine);
+            $totale_ordine = get_totale_ordine($id_ordine);
 
             // Leggo la rivalsa inps se c'è (per i ordine di vendita lo leggo dalle impostazioni)
             if (!empty($id_ritenuta_acconto)) {
@@ -204,9 +204,9 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
             $qi = Aliquota::find(setting('Iva predefinita'))->percentuale;
             $iva_rivalsa_inps = $rivalsa_inps / 100 * $qi;
 
-            $dbo->query('UPDATE or_ordini SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($idordine));
+            $dbo->query('UPDATE or_ordini SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).', iva_rivalsa_inps='.prepare($iva_rivalsa_inps).' WHERE id='.prepare($id_ordine));
         } else {
-            $dbo->query("UPDATE or_ordini SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0' WHERE id=".prepare($idordine));
+            $dbo->query("UPDATE or_ordini SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0' WHERE id=".prepare($id_ordine));
         }
     }
 }
@@ -214,23 +214,23 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
  * Restituisce lo stato dell'ordine in base alle righe.
  */
 if (!function_exists('get_stato_ordine')) {
-    function get_stato_ordine($idordine)
+    function get_stato_ordine($id_ordine)
     {
         $dbo = database();
 
-        $rs_ordine = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE idordine='.prepare($idordine));
+        $rs_ordine = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE id_ordine='.prepare($id_ordine));
         $qta_ordine = $rs_ordine[0]['qta'];
 
         // Righe dell'ordine in ddt
-        $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE idordine='.prepare($idordine));
+        $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine));
         $qta_ddt = $rs_ddt[0]['qta'];
 
         // Righe dell'ordine in fattura
-        $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idordine='.prepare($idordine));
+        $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE id_ordine='.prepare($id_ordine));
         $qta_fattura = $rs_fattura[0]['qta'];
 
         // Righe dell'ordine in fattura passando da ddt
-        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE idordine='.prepare($idordine).')');
+        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE idddt IN(SELECT DISTINCT idddt FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine).')');
         $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
 
         if ($qta_ddt == 0) {
@@ -263,9 +263,9 @@ if (!function_exists('get_stato_ordine')) {
 }
 
 if (!function_exists('get_totale_interventi_ordine')) {
-    function get_totale_interventi_ordine($idordine)
+    function get_totale_interventi_ordine($id_ordine)
     {
-        $interventi = Intervento::where('id_ordine', $idordine)->get();
+        $interventi = Intervento::where('id_ordine', $id_ordine)->get();
         $array_interventi = $interventi->toArray();
 
         $totale = sum(array_column($array_interventi, 'totale_imponibile'));

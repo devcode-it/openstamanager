@@ -639,7 +639,7 @@ switch (filter('op')) {
             $new_riga->setDocument($new);
 
             $new_riga->qta_evasa = 0;
-            $new_riga->idordine = 0;
+            $new_riga->id_ordine = 0;
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);

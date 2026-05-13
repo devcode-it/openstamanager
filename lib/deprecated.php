@@ -287,11 +287,11 @@ function doc_references($info, $dir, $ignore = [])
     }
 
     // Ordine
-    elseif (!empty($info['idordine'])) {
-        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($info['idordine']));
+    elseif (!empty($info['id_ordine'])) {
+        $data = $dbo->fetchArray("SELECT IF(numero_esterno != '', numero_esterno, numero) AS numero, data FROM or_ordini WHERE id=".prepare($info['id_ordine']));
 
         $module = ($dir == 'entrata') ? 'Ordini cliente' : 'Ordini fornitore';
-        $id = $info['idordine'];
+        $id = $info['id_ordine'];
 
         $document = tr('Ordine');
     }

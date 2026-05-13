@@ -114,22 +114,22 @@ class Ordine extends Document
 
     public function articoli()
     {
-        return $this->hasMany(Components\Articolo::class, 'idordine');
+        return $this->hasMany(Components\Articolo::class, 'id_ordine');
     }
 
     public function righe()
     {
-        return $this->hasMany(Components\Riga::class, 'idordine');
+        return $this->hasMany(Components\Riga::class, 'id_ordine');
     }
 
     public function sconti()
     {
-        return $this->hasMany(Components\Sconto::class, 'idordine');
+        return $this->hasMany(Components\Sconto::class, 'id_ordine');
     }
 
     public function descrizioni()
     {
-        return $this->hasMany(Components\Descrizione::class, 'idordine');
+        return $this->hasMany(Components\Descrizione::class, 'id_ordine');
     }
 
     public function interventi()

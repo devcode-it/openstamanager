@@ -136,7 +136,7 @@ switch (post('op')) {
                 UNION
 
                 SELECT `or_ordini`.`id` FROM `or_ordini`
-                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+                INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
                 WHERE `or_righe_ordini`.`id_articolo` = '.prepare($id).'
 
                 UNION

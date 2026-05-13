@@ -272,7 +272,7 @@ function getDestinationComponents($riga)
     }
 
     $ordini = Ordine::whereIn('id', function ($query) use ($riga) {
-        $query->select('idordine')
+        $query->select('id_ordine')
             ->from('or_righe_ordini')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class);
@@ -281,7 +281,7 @@ function getDestinationComponents($riga)
         $riga_ordine = database()->table('or_righe_ordini')
             ->where('original_id', $riga->id)
             ->where('original_type', $riga::class)
-            ->where('idordine', $ordine->id)
+            ->where('id_ordine', $ordine->id)
             ->first();
         $documents['documento'][] = $ordine;
         $documents['qta'][] = $riga_ordine->qta;

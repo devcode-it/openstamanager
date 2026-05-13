@@ -29,7 +29,7 @@ if (!empty($id_record)) {
             `or_ordini`.*,
             `or_ordini`.`note`,
             `or_ordini`.`id_pagamento`,
-            `or_ordini`.`id` AS idordine,
+            `or_ordini`.`id` AS id_ordine,
             `or_ordini`.`id_agente` AS id_agente,
             `or_ordini`.`id_stato` AS id_stato,
             `or_statiordine_lang`.`title` AS stato,

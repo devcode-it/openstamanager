@@ -220,8 +220,8 @@ switch (post('op')) {
         $copia_righe = post('righe');
         $copia_allegati = post('allegati');
 
-        foreach ($id_records as $idordine) {
-            $ordine = Ordine::find($idordine);
+        foreach ($id_records as $id_ordine) {
+            $ordine = Ordine::find($id_ordine);
             $new = $ordine->replicate();
             $new->numero = Ordine::getNextNumero($data, $ordine->tipo->dir, $ordine->id_segment);
             $new->numero_esterno = Ordine::getNextNumeroSecondario($data, $ordine->tipo->dir, $ordine->id_segment);

@@ -727,14 +727,14 @@ switch (filter('op')) {
                 $ordine = $dati_ordini[$numero_linea];
                 $query = "SELECT
                     `or_righe_ordini`.`id`,
-                    `or_righe_ordini`.`idordine` AS id_documento,
+                    `or_righe_ordini`.`id_ordine` AS id_documento,
                     `or_righe_ordini`.`is_descrizione`,
                     `or_righe_ordini`.`id_articolo`,
                     `or_righe_ordini`.`is_sconto`,
                     'ordine' AS ref,
                     CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
                 FROM `or_righe_ordini`
-                    INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+                    INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
                     INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
                     LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
                 WHERE
@@ -793,7 +793,7 @@ switch (filter('op')) {
                 UNION
                     SELECT
                         `or_righe_ordini`.`id`,
-                        `or_righe_ordini`.`idordine` AS id_documento,
+                        `or_righe_ordini`.`id_ordine` AS id_documento,
                         `or_righe_ordini`.`is_descrizione`,
                         `or_righe_ordini`.`id_articolo`,
                         `or_righe_ordini`.`is_sconto`,
@@ -801,7 +801,7 @@ switch (filter('op')) {
                         CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `id_stato`)  , ']') AS opzione
                     FROM
                         `or_righe_ordini`
-                        INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+                        INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
                         INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
                         LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine` = `or_tipiordine`.`id`

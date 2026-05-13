@@ -75,7 +75,7 @@ switch (post('op')) {
         $intervento->id_sede_destinazione = post('id_sede_destinazione');
         $intervento->id_preventivo = post('idpreventivo') ?: null;
         $intervento->id_contratto = post('id_contratto') ?: null;
-        $intervento->id_ordine = post('idordine') ?: null;
+        $intervento->id_ordine = post('id_ordine') ?: null;
         $intervento->id_pagamento = post('id_pagamento');
 
         $intervento->id_documento_fe = post('id_documento_fe');
@@ -249,7 +249,7 @@ switch (post('op')) {
 
             $intervento->id_preventivo = $idpreventivo ?: null;
             $intervento->id_contratto = $id_contratto ?: null;
-            $intervento->id_ordine = post('idordine') ?: null;
+            $intervento->id_ordine = post('id_ordine') ?: null;
             $intervento->id_referente = post('id_referente') ?: null;
             $intervento->richiesta = post('richiesta');
             $intervento->descrizione = post('descrizione');

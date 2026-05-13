@@ -200,7 +200,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
+            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "id_ordine", "ajax-source": "ordini-cliente", "value": "'.$id_ordine.'", "select-options": '.json_encode(['id_anagrafica' => $id_anagrafica]).' ]}
         </div>
 
         <div class="col-md-4">
@@ -443,7 +443,7 @@ if (!empty($id_intervento)) {
        input("id_sede_destinazione").disable();
        input("idpreventivo").disable();
        input("id_contratto").disable();
-       input("idordine").disable();
+       input("id_ordine").disable();
        input("id_referente").disable();
        input("componenti").disable();
        input("id_anagrafica").disable();
@@ -473,7 +473,7 @@ echo '
     var sede = input("id_sede_destinazione");
     var contratto = input("id_contratto");
     var preventivo = input("idpreventivo");
-    var ordine = input("idordine");
+    var ordine = input("id_ordine");
     var referente = input("id_referente");
     var cliente_finale = input("id_cliente_finale");
     var autoload_mappa = false;

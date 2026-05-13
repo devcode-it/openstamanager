@@ -114,7 +114,7 @@ foreach ($righe as $riga) {
     foreach ($riferimenti as $key => $riferimento) {
         if (in_array($riga->id, $riferimento)) {
             if ($riga->id === $riferimento[0]) {
-                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->idordine));
+                $riga_ordine = $database->fetchOne('SELECT numero_cliente, data_cliente FROM or_ordini WHERE id = '.prepare($riga->id_ordine));
                 if (!empty($riga_ordine['numero_cliente']) && !empty($riga_ordine['data_cliente'])) {
                     $text = $text.'<b>Ordine n. '.$riga_ordine['numero_cliente'].' del '.Translator::dateToLocale($riga_ordine['data_cliente']).'</b><br>';
                 }

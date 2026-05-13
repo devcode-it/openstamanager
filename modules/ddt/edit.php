@@ -395,7 +395,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `or_ordini`
-            INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`idordine`
+            INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
             INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipoordine`=`or_tipiordine`.`id`
             LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')

@@ -358,7 +358,7 @@ switch ($resource) {
             LEFT JOIN `dt_righe_ddt` ON `mg_prodotti`.`id_riga_ddt` = `dt_righe_ddt`.`id`
             LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
-            LEFT JOIN `or_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+            LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
         WHERE `mg_prodotti`.`serial` IS NOT NULL';
 
         $query = 'SELECT `seriali_disponibili`.`serial` AS id, `seriali_disponibili`.`serial` AS descrizione

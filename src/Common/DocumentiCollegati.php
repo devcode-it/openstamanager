@@ -576,7 +576,7 @@ class DocumentiCollegati
             IF(`or_tipiordine`.`dir` = \'entrata\', \'Ordini cliente\', \'Ordini fornitore\') AS modulo,
             `or_statiordine_lang`.`title` AS stato_documento
         FROM `or_ordini`
-        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
         INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         LEFT JOIN `or_tipiordine_lang` ON (
             `or_tipiordine_lang`.`id_record` = `or_tipiordine`.`id` AND
@@ -705,7 +705,7 @@ class DocumentiCollegati
             `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND
             `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `co_righe_documenti`.`idordine` = '.prepare($id_ordine).'
+        WHERE `co_righe_documenti`.`id_ordine` = '.prepare($id_ordine).'
         GROUP BY `co_documenti`.`id`
         ORDER BY `co_documenti`.`data` DESC';
 
@@ -733,7 +733,7 @@ class DocumentiCollegati
             `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        WHERE `dt_righe_ddt`.`idordine` = '.prepare($id_ordine).'
+        WHERE `dt_righe_ddt`.`id_ordine` = '.prepare($id_ordine).'
         GROUP BY `dt_ddt`.`id`
         ORDER BY `dt_ddt`.`data` DESC';
 
@@ -775,7 +775,7 @@ class DocumentiCollegati
             \'Preventivi\' AS modulo,
             `co_statipreventivi_lang`.`title` AS stato_documento
         FROM `co_preventivi`
-        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = '.prepare($id_ordine).'
+        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = '.prepare($id_ordine).'
         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
         LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
         LEFT JOIN `co_statipreventivi_lang` ON (
@@ -1351,7 +1351,7 @@ class DocumentiCollegati
         // Conta gli ordini collegati
         $query_ordini = 'SELECT COUNT(DISTINCT `or_ordini`.`id`) AS total
         FROM `or_ordini`
-        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
         WHERE `or_righe_ordini`.`idpreventivo` = '.prepare($id_preventivo);
 
         $result = $dbo->fetchOne($query_ordini);
@@ -1408,7 +1408,7 @@ class DocumentiCollegati
         $query_fatture = 'SELECT COUNT(DISTINCT `co_documenti`.`id`) AS total
         FROM `co_documenti`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
-        WHERE `co_righe_documenti`.`idordine` = '.prepare($id_ordine);
+        WHERE `co_righe_documenti`.`id_ordine` = '.prepare($id_ordine);
 
         $result = $dbo->fetchOne($query_fatture);
         $total += (int) $result['total'];
@@ -1417,7 +1417,7 @@ class DocumentiCollegati
         $query_ddt = 'SELECT COUNT(DISTINCT `dt_ddt`.`id`) AS total
         FROM `dt_ddt`
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`idddt` = `dt_ddt`.`id`
-        WHERE `dt_righe_ddt`.`idordine` = '.prepare($id_ordine);
+        WHERE `dt_righe_ddt`.`id_ordine` = '.prepare($id_ordine);
 
         $result = $dbo->fetchOne($query_ddt);
         $total += (int) $result['total'];
@@ -1436,7 +1436,7 @@ class DocumentiCollegati
         // Conta i preventivi collegati
         $query_preventivi = 'SELECT COUNT(DISTINCT `co_preventivi`.`id`) AS total
         FROM `co_preventivi`
-        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = '.prepare($id_ordine).'
+        INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = '.prepare($id_ordine).'
         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`idpreventivo` = `co_preventivi`.`id`
         WHERE `or_righe_ordini`.`idpreventivo` = `co_preventivi`.`id`';
 
@@ -1693,7 +1693,7 @@ class DocumentiCollegati
                 break;
             case 'ordine':
                 $tabella_righe = 'or_righe_ordini';
-                $campo_id_documento = 'idordine';
+                $campo_id_documento = 'id_ordine';
                 break;
             case 'ddt':
                 $tabella_righe = 'dt_righe_ddt';
@@ -1823,7 +1823,7 @@ class DocumentiCollegati
         // Cerca nelle tabelle delle righe di tutti i tipi di documento
         $tabelle_righe = [
             'co_righe_documenti' => ['id_documento', 'fattura_vendita', 'fattura_acquisto'],
-            'or_righe_ordini' => ['idordine', 'ordine'],
+            'or_righe_ordini' => ['id_ordine', 'ordine'],
             'dt_righe_ddt' => ['idddt', 'ddt'],
             'in_righe_interventi' => ['id_intervento', 'intervento'],
             'co_righe_preventivi' => ['idpreventivo', 'preventivo'],

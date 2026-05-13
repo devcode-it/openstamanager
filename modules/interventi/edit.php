@@ -117,13 +117,13 @@ echo '
 
 $id_contratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
 
-if (!empty($record['idordine'])) {
+if (!empty($record['id_ordine'])) {
     echo '
-                        '.Modules::link('Ordini cliente', $record['idordine'], null, null, 'class="pull-right"');
+                        '.Modules::link('Ordini cliente', $record['id_ordine'], null, null, 'class="pull-right"');
 }
 echo '
 
-                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "idordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
+                            {[ "type": "select", "label": "'.tr('Ordine').'", "name": "id_ordine", "value": "'.$record['id_ordine'].'", "ajax-source": "ordini-cliente", "select-options": '.json_encode(['id_anagrafica' => $record['id_anagrafica']]).', "readonly": "'.$record['flag_completato'].'" ]}
                         </div>
                     </div>
                 </div>
@@ -366,7 +366,7 @@ if (!$block_edit) {
         FROM
             `or_ordini`
             INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-            INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`idordine` = `or_ordini`.`id`
+            INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`idtipoordine`
         WHERE
             ((`or_tipiordine`.`dir` = "entrata" AND `id_anagrafica`='.prepare($record['id_anagrafica']).') || `or_tipiordine`.`dir` = "uscita")
@@ -591,7 +591,7 @@ echo '
     var sede = input("id_sede_destinazione");
     var contratto = input("id_contratto");
     var preventivo = input("idpreventivo");
-    var ordine = input("idordine");
+    var ordine = input("id_ordine");
     var cliente_finale = input("id_cliente_finale");
     var referente = input("id_referente");
     var sede_partenza = input("id_sede_partenza");

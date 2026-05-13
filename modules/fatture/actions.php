@@ -396,7 +396,7 @@ switch ($op) {
             $new_riga->id_contratto = 0;
             $new_riga->id_intervento = null;
             $new_riga->idddt = 0;
-            $new_riga->idordine = 0;
+            $new_riga->id_ordine = 0;
 
             if ($new_riga->isArticolo()) {
                 $new_riga->movimenta($new_riga->qta);

@@ -46,7 +46,7 @@ if (!empty($id_record)) {
         `co_documenti`.`id_agente` AS id_agente_fattura,
         `co_documenti`.`note`,
         `co_documenti`.`note_aggiuntive`,
-        `co_documenti`.`idpagamento`,
+        `co_documenti`.`id_pagamento`,
         `co_documenti`.`id` AS iddocumento,
 		`co_documenti`.`split_payment` AS split_payment,
         `co_statidocumento_lang`.`title` AS `stato`,
@@ -62,7 +62,7 @@ if (!empty($id_record)) {
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id`
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`idtipodocumento`=`co_tipidocumento`.`id`
         LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        LEFT JOIN `co_pagamenti` ON `co_documenti`.`idpagamento`=`co_pagamenti`.`id`
+        LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `dt_causalet` ON `co_documenti`.`idcausalet`=`dt_causalet`.`id`
         LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

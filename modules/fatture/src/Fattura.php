@@ -156,13 +156,13 @@ class Fattura extends Document
         $model->id_banca_controparte = $banca_controparte?->id;
 
         // Tipo di pagamento dall'anagrafica controparte
-        $id_pagamento = $anagrafica['idpagamento_'.$conto];
+        $id_pagamento = $anagrafica['id_pagamento_'.$conto];
 
         if (empty($id_pagamento)) {
             $id_pagamento = setting('Tipo di pagamento predefinito');
         }
 
-        $model->idpagamento = $id_pagamento;
+        $model->id_pagamento = $id_pagamento;
 
         // Banca predefinita per l'azienda, con ricerca della banca impostata per il pagamento
         $id_banca_azienda = null;
@@ -396,7 +396,7 @@ class Fattura extends Document
 
     public function pagamento()
     {
-        return $this->belongsTo(Pagamento::class, 'idpagamento');
+        return $this->belongsTo(Pagamento::class, 'id_pagamento');
     }
 
     public function dichiarazione()

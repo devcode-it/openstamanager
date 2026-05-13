@@ -94,7 +94,7 @@ echo '
 
 
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "idpagamento", "required": 0, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                            {[ "type": "select", "label": "'.tr('Pagamento').'", "name": "id_pagamento", "required": 0, "ajax-source": "pagamenti", "value": "$id_pagamento$" ]}
                         </div>
 
                         <div class="col-md-6">';

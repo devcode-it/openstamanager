@@ -337,9 +337,9 @@ Based on the handlers defined in `src/HTMLBuilder/HTMLBuilder.php`:
 {[ "type": "text", "name": "ragione_sociale", "label": "Business Name", "value": "$ragione_sociale$" ]}
 
 // Select dropdown
-{[ "type": "select", "label": "Payment", "name": "idpagamento",
+{[ "type": "select", "label": "Payment", "name": "id_pagamento",
    "values": "query=SELECT id, title AS descrizione FROM co_pagamenti ORDER BY title",
-   "value": "$idpagamento$" ]}
+   "value": "$id_pagamento$" ]}
 
 // Checkbox
 {[ "type": "checkbox", "label": "Active", "name": "active", "value": "$active$" ]}

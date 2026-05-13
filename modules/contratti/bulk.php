@@ -272,7 +272,7 @@ switch (post('op')) {
         foreach ($id_records as $id) {
             $contratto = Contratto::find($id);
 
-            $contratto->idpagamento = post('idpagamento');
+            $contratto->id_pagamento = post('id_pagamento');
             $contratto->save();
 
             ++$n_contratti;
@@ -331,7 +331,7 @@ $operations['change_payment'] = [
     'text' => '<span><i class="fa fa-refresh"></i> '.tr('Cambia metodo di pagamento'),
     'data' => [
         'title' => tr('Vuoi davvero aggiornare il metodo di pagamento di questi contratti?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Metodo di pagamento').'", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti" ]}',
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Metodo di pagamento').'", "name": "id_pagamento", "required": 1, "ajax-source": "pagamenti" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

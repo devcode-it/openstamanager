@@ -66,7 +66,7 @@ switch (filter('op')) {
     case 'update':
         if (!empty($id_record)) {
             $id_statoddt = post('id_statoddt');
-            $idpagamento = post('idpagamento');
+            $id_pagamento = post('id_pagamento');
             $numero_esterno = post('numero_esterno');
             $id_anagrafica = post('id_anagrafica');
 
@@ -91,7 +91,7 @@ switch (filter('op')) {
             $ddt->note_aggiuntive = post('note_aggiuntive');
 
             $ddt->id_statoddt = $id_statoddt;
-            $ddt->idpagamento = $idpagamento;
+            $ddt->id_pagamento = $id_pagamento;
             $ddt->idconto = post('idconto');
             $ddt->id_anagrafica = $id_anagrafica;
             $ddt->id_referentee = post(id_referentete');
@@ -307,7 +307,7 @@ switch (filter('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ddt = DDT::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
-            $ddt->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
+            $ddt->id_pagamento = $documento->id_pagamento ?: setting('Tipo di pagamento predefinito');
 
             $ddt->id_documento_fe = $documento->id_documento_fe;
             $ddt->codice_cup = $documento->codice_cup;
@@ -579,7 +579,7 @@ switch (filter('op')) {
         $copia->idcausalet = $ddt->idcausalet;
         $copia->idspedizione = $ddt->idspedizione;
         $copia->n_colli = $ddt->n_colli;
-        $copia->idpagamento = $ddt->idpagamento ?: setting('Tipo di pagamento predefinito');
+        $copia->id_pagamento = $ddt->id_pagamento ?: setting('Tipo di pagamento predefinito');
         $copia->idporto = $ddt->idporto;
         $copia->idvettore = $ddt->idvettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;

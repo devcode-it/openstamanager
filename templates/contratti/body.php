@@ -377,7 +377,7 @@ if ($options['no-iva']) {
 }
 
 // CONDIZIONI GENERALI DI FORNITURA
-$pagamento = Pagamento::find($documento['idpagamento']);
+$pagamento = Pagamento::find($documento['id_pagamento']);
 
 echo '
 <table class="table table-striped">

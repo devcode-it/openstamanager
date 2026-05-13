@@ -1669,7 +1669,7 @@ class FatturaElettronica implements \Stringable
 
         $database = database();
 
-        $co_pagamenti = Pagamento::find($documento['idpagamento']);
+        $co_pagamenti = Pagamento::find($documento['id_pagamento']);
 
         /**
          * TP01 - A Rate

@@ -139,7 +139,7 @@ switch ($op) {
         $fattura->id_anagrafica = post('id_anagrafica');
         $fattura->id_agente = post('id_agente') ?: null;
         $fattura->id_referente = post('id_referente') ?: null;
-        $fattura->idpagamento = post('idpagamento') ?: null;
+        $fattura->id_pagamento = post('id_pagamento') ?: null;
         $fattura->id_banca_azienda = post('id_banca_azienda') ?: null;
         $fattura->id_banca_controparte = post('id_banca_controparte') ?: null;
         $fattura->idcausalet = post('idcausalet') ?: null;
@@ -899,10 +899,10 @@ switch ($op) {
 
             $fattura = Fattura::build($documento->anagrafica, $tipo, post('data'), post('id_segment'));
 
-            if (!empty($documento->idpagamento) && $documento->idpagamento != 0) {
-                $fattura->idpagamento = $documento->idpagamento;
+            if (!empty($documento->id_pagamento) && $documento->id_pagamento != 0) {
+                $fattura->id_pagamento = $documento->id_pagamento;
             } else {
-                $fattura->idpagamento = setting('Tipo di pagamento predefinito');
+                $fattura->id_pagamento = setting('Tipo di pagamento predefinito');
             }
 
             $fattura->id_sede_partenza = $id_sede_partenza ?: null;
@@ -1032,7 +1032,7 @@ switch ($op) {
         $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $nota->ref_documento = $fattura->id;
         $nota->idconto = $fattura->idconto;
-        $nota->idpagamento = $fattura->idpagamento;
+        $nota->id_pagamento = $fattura->id_pagamento;
         $nota->id_banca_azienda = $fattura->id_banca_azienda;
         $nota->id_banca_controparte = $fattura->id_banca_controparte;
         $nota->id_sede_partenza = $fattura->id_sede_partenza;
@@ -1127,7 +1127,7 @@ switch ($op) {
 
         $autofattura = Fattura::build($anagrafica, $tipo, $data, $id_segment);
         $autofattura->idconto = $fattura->idconto;
-        $autofattura->idpagamento = $fattura->idpagamento;
+        $autofattura->id_pagamento = $fattura->id_pagamento;
         $autofattura->is_fattura_conto_terzi = 1;
         $autofattura->ref_documento = $fattura->id;
         $autofattura->save();
@@ -1563,7 +1563,7 @@ if (get('op') == 'nota_addebito') {
     $nota = Fattura::build($anagrafica, $tipo, $data, $id_segment);
     $nota->ref_documento = $fattura->id;
     $nota->idconto = $fattura->idconto;
-    $nota->idpagamento = $fattura->idpagamento;
+    $nota->id_pagamento = $fattura->id_pagamento;
     $nota->id_banca_azienda = $fattura->id_banca_azienda;
     $nota->id_banca_controparte = $fattura->id_banca_controparte;
     $nota->id_sede_partenza = $fattura->id_sede_partenza;

@@ -182,7 +182,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-3">
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "id_pagamento", "required": 1, "ajax-source": "pagamenti", "value": "$id_pagamento$" ]}
 				</div>
 
                 <div class="col-md-3">
@@ -571,13 +571,13 @@ $("#id_anagrafica").change(function() {
     session_set("superselect,id_anagrafica", $(this).val(), 0);
 
 	$("#id_sede").selectReset();
-    $("#idpagamento").selectReset();
+    $("#id_pagamento").selectReset();
 
     let data = $(this).selectData();
 	if (data) {
         // Impostazione del tipo di pagamento da anagrafica
         if (data.id_pagamento) {
-            input("idpagamento").getElement()
+            input("id_pagamento").getElement()
                 .selectSetNew(data.id_pagamento, data.desc_pagamento);
         }
     }

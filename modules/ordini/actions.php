@@ -65,7 +65,7 @@ switch (post('op')) {
     case 'update':
         if (!empty($id_record)) {
             $id_stato = post('id_stato');
-            $idpagamento = post('idpagamento');
+            $id_pagamento = post('id_pagamento');
             $totale_imponibile = get_imponibile_ordine($id_record);
             $totale_ordine = get_totale_ordine($id_record);
 
@@ -90,7 +90,7 @@ switch (post('op')) {
 
             $ordine->id_agente = post('id_agente');
             $ordine->id_stato = $id_stato;
-            $ordine->idpagamento = $idpagamento;
+            $ordine->id_pagamento = $id_pagamento;
             $ordine->idspedizione = post('idspedizione') ?: null;
             $ordine->idporto = post('idporto') ?: null;
             $ordine->idvettore = post('idvettore') ?: null;
@@ -545,7 +545,7 @@ switch (post('op')) {
             $tipo = Tipo::where('dir', $documento->direzione)->first();
 
             $ordine = Ordine::build($documento->anagrafica, $tipo, $documento->nome, post('data'), post('id_segment'));
-            $ordine->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
+            $ordine->id_pagamento = $documento->id_pagamento ?: setting('Tipo di pagamento predefinito');
             $ordine->id_sede_partenza = $id_sede_partenza;
             $ordine->id_sede_destinazione = $id_sede_destinazione;
 

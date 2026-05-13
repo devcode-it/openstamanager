@@ -209,7 +209,7 @@ class CSV extends CSVImporter
                     'ID Pagamento',
                     'id_pagamento',
                     'id_pagamento_vendite',
-                    'idpagamento',
+                    'id_pagamento',
                 ],
             ],
             [

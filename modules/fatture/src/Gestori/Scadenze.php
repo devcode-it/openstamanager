@@ -74,7 +74,7 @@ class Scadenze
             $ultima_scadenza = $this->fattura->scadenze()->orderBy('scadenza', 'desc')->first();
             $scadenza = $ultima_scadenza->scadenza->copy()->startOfMonth()->addMonth();
             $scadenza->setDate($scadenza->year, $scadenza->month, 15);
-            $id_pagamento = $this->fattura->idpagamento;
+            $id_pagamento = $this->fattura->id_pagamento;
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
@@ -192,7 +192,7 @@ class Scadenze
             $rate = isset($rate[0]) ? $rate : [$rate];
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
-            $id_pagamento = $this->fattura->idpagamento;
+            $id_pagamento = $this->fattura->id_pagamento;
 
             foreach ($rate as $rata) {
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
@@ -217,13 +217,13 @@ class Scadenze
         $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
-        $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->idpagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->id_anagrafica);
+        $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->id_pagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->id_anagrafica);
         $direzione = $this->fattura->tipo->dir;
 
         foreach ($rate as $rata) {
             $scadenza = $rata['scadenza'];
             $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
-            $id_pagamento = $this->fattura->idpagamento;
+            $id_pagamento = $this->fattura->id_pagamento;
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
 

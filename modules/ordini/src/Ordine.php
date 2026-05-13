@@ -63,7 +63,7 @@ class Ordine extends Document
         $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
 
         // Tipo di pagamento e banca predefinite dall'anagrafica
-        $id_pagamento = $anagrafica['idpagamento_'.$conto] ?: setting('Tipo di pagamento predefinito');
+        $id_pagamento = $anagrafica['id_pagamento_'.$conto] ?: setting('Tipo di pagamento predefinito');
 
         $model->anagrafica()->associate($anagrafica);
         $model->tipo()->associate($tipo_documento);
@@ -72,7 +72,7 @@ class Ordine extends Document
         $model->id_agente = $anagrafica->id_agente;
         $model->nome = $nome;
         $model->data = $data;
-        $model->idpagamento = $id_pagamento;
+        $model->id_pagamento = $id_pagamento;
 
         $model->numero = static::getNextNumero($data, $direzione, $id_segment);
         $model->numero_esterno = static::getNextNumeroSecondario($data, $direzione, $id_segment);

@@ -150,7 +150,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$", "link": "module:Pagamenti", "required": 1 ]}
+                    {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "id_pagamento", "ajax-source": "pagamenti", "value": "$id_pagamento$", "link": "module:Pagamenti", "required": 1 ]}
                 </div>
 
                 <div class="col-md-3">
@@ -514,13 +514,13 @@ $("#id_anagrafica_c").change(function() {
 
     $("#id_sede_destinazione").selectReset();
     $("#matricolaimpianto").selectReset();
-    $("#idpagamento").selectReset();
+    $("#id_pagamento").selectReset();
 
     let data = $(this).selectData();
     if (data) {
         // Impostazione del tipo di pagamento da anagrafica
         if (data.id_pagamento) {
-            input("idpagamento").getElement()
+            input("id_pagamento").getElement()
                 .selectSetNew(data.id_pagamento, data.desc_pagamento);
         }
     }

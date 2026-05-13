@@ -110,7 +110,7 @@ class Preventivo extends Document
             $model->idiva = $id_iva;
         }
         if (!empty($id_pagamento)) {
-            $model->idpagamento = $id_pagamento;
+            $model->id_pagamento = $id_pagamento;
         }
 
         // Banca predefinita per l'anagrafica controparte (cliente)
@@ -205,7 +205,7 @@ class Preventivo extends Document
 
     public function pagamento()
     {
-        return $this->belongsTo(\Modules\Pagamenti\Pagamento::class, 'idpagamento');
+        return $this->belongsTo(\Modules\Pagamenti\Pagamento::class, 'id_pagamento');
     }
 
     public function articoli()

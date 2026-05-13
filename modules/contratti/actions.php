@@ -85,7 +85,7 @@ switch (post('op')) {
             $contratto->id_stato = post('id_stato');
             $contratto->nome = post('nome');
             $contratto->id_agente = post('id_agente');
-            $contratto->idpagamento = post('idpagamento');
+            $contratto->id_pagamento = post('id_pagamento');
             $contratto->numero = post('numero');
             $contratto->budget = $budget;
             $contratto->id_referente = post('id_referente');
@@ -596,7 +596,7 @@ switch (post('op')) {
         if (post('create_document') == 'on' && !$is_renewal) {
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
-            $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
+            $contratto->id_pagamento = $documento->id_pagamento ?: setting('Tipo di pagamento predefinito');
             $contratto->id_sede_partenza = $id_sede_partenza;
             $contratto->id_sede_destinazione = $id_sede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');
@@ -618,7 +618,7 @@ switch (post('op')) {
             // Creazione del nuovo contratto per il rinnovo
             $contratto = Contratto::build($documento->anagrafica, $documento->nome, post('id_segment'));
 
-            $contratto->idpagamento = $documento->idpagamento ?: setting('Tipo di pagamento predefinito');
+            $contratto->id_pagamento = $documento->id_pagamento ?: setting('Tipo di pagamento predefinito');
             $contratto->id_sede_partenza = $id_sede_partenza;
             $contratto->id_sede_destinazione = $id_sede_destinazione;
             $contratto->rinnovabile = setting('Crea contratto rinnovabile di default');

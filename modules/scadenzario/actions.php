@@ -106,7 +106,7 @@ switch (post('op')) {
             }
 
             $totale_pagato = sum($totale_pagato, $pagato);
-            $id_pagamento = post('id_pagamento')[$id] ?: $documento->idpagamento;
+            $id_pagamento = post('id_pagamento')[$id] ?: $documento->id_pagamento;
             $id_banca_azienda = post('id_banca_azienda')[$id] ?: $documento->id_banca_azienda;
             $id_banca_controparte = post('id_banca_controparte')[$id] ?: $documento->id_banca_controparte;
 

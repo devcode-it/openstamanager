@@ -92,7 +92,7 @@ class Contratto extends Document
         }
 
         if (!empty($id_pagamento)) {
-            $model->idpagamento = $id_pagamento;
+            $model->id_pagamento = $id_pagamento;
         }
         $model->condizioni_fornitura = setting('Condizioni generali di fornitura contratti');
 

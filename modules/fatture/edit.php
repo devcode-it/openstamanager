@@ -427,13 +427,13 @@ if ($dir == 'entrata') {
 
 				<div class="col-md-3">
 					<?php
-                    $pagamento = Pagamento::find($record['idpagamento'])->first();
+                    $pagamento = Pagamento::find($record['id_pagamento'])->first();
 if ($dir == 'entrata' && ($pagamento->isRiba() || $pagamento->isSepa()) && empty($record['id_banca_controparte'])) {
     $show_riba_warning = 1;
 }
 ?>
 					<span id="riba-warning" class="badge badge-warning pull-right"<?php echo $show_riba_warning ? '' : ' style="display: none;"'; ?>><?php echo tr('Nessuna banca di addebito selezionata'); ?></span>
-					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "required": 1, "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+					{[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "id_pagamento", "required": 1, "ajax-source": "pagamenti", "value": "$id_pagamento$" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -1047,14 +1047,14 @@ echo '
 
         $("#id_referente").selectReset();
         $("#id_dichiarazione_intento").selectReset();
-        $("#idpagamento").selectReset();
+        $("#id_pagamento").selectReset();
         $("#id_banca_azienda").selectReset();
 
         let data = $(this).selectData();
         if (data) {
             // Impostazione del tipo di pagamento da anagrafica
             if (data.id_pagamento) {
-                input("idpagamento").getElement()
+                input("id_pagamento").getElement()
                     .selectSetNew(data.id_pagamento, data.desc_pagamento, {"id_banca_vendite": data.id_banca_vendite, "id_banca_acquisti": data.id_banca_acquisti, "descrizione_banca_vendite": data.descrizione_banca_vendite, "descrizione_banca_acquisti": data.descrizione_banca_acquisti});
             }
         }';
@@ -1068,7 +1068,7 @@ if ($dir == 'entrata') {
 echo '
 	});
 
-    $("#idpagamento").change(function() {
+    $("#id_pagamento").change(function() {
         checkRibaWarning();
     });
 
@@ -1078,7 +1078,7 @@ echo '
 
     function checkRibaWarning() {
         if ('.($dir == 'entrata' ? 'true' : 'false').') {
-            let pagamentoData = $("#idpagamento").selectData();
+            let pagamentoData = $("#id_pagamento").selectData();
             let bancaControparte = $("#id_banca_controparte").val();
             let ribaSddCodes = ["MP12", "MP19", "MP20", "MP21"];
 

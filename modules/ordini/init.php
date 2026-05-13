@@ -28,7 +28,7 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT
             `or_ordini`.*,
             `or_ordini`.`note`,
-            `or_ordini`.`idpagamento`,
+            `or_ordini`.`id_pagamento`,
             `or_ordini`.`id` AS idordine,
             `or_ordini`.`id_agente` AS id_agente,
             `or_ordini`.`id_stato` AS id_stato,

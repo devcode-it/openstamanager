@@ -33,7 +33,7 @@ $id_cliente = $documento['id_anagrafica'];
 $id_sede = $record['id_sede_partenza'];
 $id_azienda = setting('Azienda predefinita');
 
-$pagamento = Pagamento::find($documento['idpagamento']);
+$pagamento = Pagamento::find($documento['id_pagamento']);
 $causale = $dbo->fetchOne('SELECT `dt_causalet`.*, `dt_causalet_lang`.`title` as descrizione FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id` = '.prepare($documento['idcausalet']));
 $porto = $dbo->fetchOne('SELECT `dt_porto`.*, `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['idporto']));
 $aspetto_beni = $dbo->fetchOne('SELECT `dt_aspettobeni`.*, `dt_aspettobeni_lang`.`title` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['idaspettobeni']));

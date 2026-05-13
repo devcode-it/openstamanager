@@ -76,7 +76,7 @@ switch (post('op')) {
         $intervento->id_preventivo = post('idpreventivo') ?: null;
         $intervento->id_contratto = post('idcontratto') ?: null;
         $intervento->id_ordine = post('idordine') ?: null;
-        $intervento->idpagamento = post('idpagamento');
+        $intervento->id_pagamento = post('id_pagamento');
 
         $intervento->id_documento_fe = post('id_documento_fe');
         $intervento->num_item = post('num_item');
@@ -872,10 +872,10 @@ switch (post('op')) {
             $intervento->id_sede_partenza = $id_sede_partenza;
             $intervento->id_sede_destinazione = $id_sede_destinazione;
 
-            if (!empty($documento->idpagamento)) {
-                $intervento->idpagamento = $documento->idpagamento;
+            if (!empty($documento->id_pagamento)) {
+                $intervento->id_pagamento = $documento->id_pagamento;
             } else {
-                $intervento->idpagamento = setting('Tipo di pagamento predefinito');
+                $intervento->id_pagamento = setting('Tipo di pagamento predefinito');
             }
 
             $intervento->id_documento_fe = $documento->id_documento_fe;

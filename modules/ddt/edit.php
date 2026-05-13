@@ -207,7 +207,7 @@ if ($dir == 'entrata') {
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "idpagamento", "ajax-source": "pagamenti", "value": "$idpagamento$" ]}
+                            {[ "type": "select", "label": "<?php echo tr('Pagamento'); ?>", "name": "id_pagamentoo", "ajax-source": "pagamenti", "value": "id_pagamentoto$" ]}
                         </div>
                         <div class="col-md-2">
                             {[ "type": "number", "label": "Sconto in fattura", "name": "sconto_finale", "value": "'.($ddt->sconto_finale_percentuale ?: $ddt->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($ddt->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul netto a pagare del documento').'." ]}
@@ -595,13 +595,13 @@ $("#id_anagrafica").change(function() {
     session_set("superselect,id_anagrafica", $(this).val(), 0);
 
     $("#id_sede_'.($dir == 'uscita' ? 'partenza' : 'destinazione').'").selectReset();
-    $("#idpagamento").selectReset();
+    $("#id_pagamentoo").selectReset();
 
     let data = $(this).selectData();
 	if (data) {
         // Impostazione del tipo di pagamento da anagrafica
         if (data.id_pagamento) {
-            input("idpagamento").getElement()
+            input("id_pagamentoo").getElement()
                 .selectSetNew(data.id_pagamento, data.desc_pagamento);
         }
     }

@@ -40,7 +40,7 @@ $r = $dbo->fetchOne('SELECT
         (SELECT GROUP_CONCAT(CONCAT("<li>",DATE_FORMAT(IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`),"%d/%m/%Y")," - ",FORMAT(`da_pagare`,2),"€ - ",`descrizione`,"</li>") SEPARATOR "<br>") FROM `co_scadenzario` LEFT JOIN (SELECT `id`, `ref_documento` FROM `co_documenti`)as nota ON `co_scadenzario`.`iddocumento` = `nota`.`ref_documento` WHERE `iddocumento`!=0 AND `nota`.`id` IS NULL AND `da_pagare`>`pagato` AND `id_anagrafica`=`co_documenti`.`id_anagrafica`'.$filtro_scadenze_selezionate.' AND IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL '.prepare($giorni_promemoria).' DAY),"%Y-%m-%d") ORDER BY IF(`co_scadenzario`.`data_concordata`, `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`)) AS scadenze_fatture_promemoria
     FROM `co_scadenzario`
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_scadenzario`.`iddocumento`
-        LEFT JOIN `co_pagamenti` ON `co_pagamenti`.`id` = `co_documenti`.`idpagamento`
+        LEFT JOIN `co_pagamenti` ON `co_pagamenti`.`id` = `co_documenti`.`id_pagamento`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `em_accounts` ON `em_accounts`.`id` = '.prepare($template['id_account']).'
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` 

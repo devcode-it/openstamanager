@@ -748,7 +748,7 @@ FROM
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` AS `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`id`
+    LEFT JOIN `an_anagrafiche` AS `vettori` ON `dt_ddt`.`id_vettore` = `vettori`.`id`
     LEFT JOIN `an_sedi` AS `sedi` ON `dt_ddt`.`id_sede_partenza` = `sedi`.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`id_sede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN (SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt`
@@ -778,7 +778,7 @@ FROM
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`idvettore` = `vettori`.`id`
+    LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`id_vettore` = `vettori`.`id`
     LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`id_sede_partenza` = sedi.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`id_sede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN(SELECT `idddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `idddt`) AS righe ON `dt_ddt`.`id` = `righe`.`idddt` 
@@ -1074,3 +1074,4 @@ ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idporto` `id_porto` INT NOT NULL;
 ALTER TABLE `co_documenti` CHANGE `idaspettobeni` `id_aspetto_beni` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;

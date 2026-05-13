@@ -93,7 +93,7 @@ switch (post('op')) {
             $ordine->id_pagamento = $id_pagamento;
             $ordine->id_spedizione = post('id_spedizione') ?: null;
             $ordine->id_porto = post('id_porto') ?: null;
-            $ordine->idvettore = post('idvettore') ?: null;
+            $ordine->id_vettore = post('id_vettore') ?: null;
             $ordine->id_sede_partenza = post('id_sede_partenza');
             $ordine->id_sede_destinazione = post('id_sede_destinazione');
             $ordine->idconto = post('idconto');

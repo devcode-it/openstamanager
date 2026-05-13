@@ -100,7 +100,7 @@ switch (filter('op')) {
             $ddt->id_causale_t = post('id_causale_t') ?: null;
             $ddt->id_sede_partenza = post('id_sede_partenza');
             $ddt->id_sede_destinazione = post('id_sede_destinazione');
-            $ddt->idvettore = post('idvettore') ?: null;
+            $ddt->id_vettore = post('id_vettore') ?: null;
             $ddt->data_ora_trasporto = post('data_ora_trasporto') ?: null;
             $ddt->id_porto = post('id_porto') ?: null;
             $ddt->id_aspetto_beni = post('id_aspetto_beni') ?: null;
@@ -323,7 +323,7 @@ switch (filter('op')) {
             if (filter('op') == 'add_ordine') {
                 $ddt->id_spedizione = $documento->id_spedizione;
                 $ddt->id_porto = $documento->id_porto;
-                $ddt->idvettore = $documento->idvettore;
+                $ddt->id_vettore = $documento->id_vettore;
             }
 
             $ddt->save();
@@ -581,7 +581,7 @@ switch (filter('op')) {
         $copia->n_colli = $ddt->n_colli;
         $copia->id_pagamento = $ddt->id_pagamento ?: setting('Tipo di pagamento predefinito');
         $copia->id_porto = $ddt->id_porto;
-        $copia->idvettore = $ddt->idvettore;
+        $copia->id_vettore = $ddt->id_vettore;
         $copia->data_ora_trasporto = $ddt->data_ora_trasporto;
         $copia->id_sede_partenza = $ddt->id_sede_partenza;
         $copia->id_sede_destinazione = $ddt->id_sede_destinazione;

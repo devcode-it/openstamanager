@@ -39,7 +39,7 @@ $porto = $dbo->fetchOne('SELECT `dt_porto`.*, `dt_porto_lang`.`title` as descriz
 $aspetto_beni = $dbo->fetchOne('SELECT `dt_aspettobeni`.*, `dt_aspettobeni_lang`.`title` as descrizione FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id` = '.prepare($documento['id_aspetto_beni']));
 $spedizione = $dbo->fetchOne('SELECT `dt_spedizione`.*, `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['id_spedizione']));
 
-$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['idvettore']));
+$vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['id_vettore']));
 
 $tipo_doc = $documento->tipo->getTranslation('title');
 if ($tipo_doc != 'Ddt in entrata' && $tipo_doc != 'Ddt in uscita') {

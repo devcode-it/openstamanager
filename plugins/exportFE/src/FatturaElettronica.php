@@ -587,7 +587,7 @@ class FatturaElettronica implements \Stringable
         }
 
         // Campi obbligatori per l'anagrafica di tipo Vettore
-        $id_vettore = $fattura['idvettore'];
+        $id_vettore = $fattura['id_vettore'];
         if (!empty($id_vettore)) {
             $data = Anagrafica::find($id_vettore);
             $fields = [
@@ -1094,8 +1094,8 @@ class FatturaElettronica implements \Stringable
 
         // Se imposto il vettore deve essere indicata anche la p.iva nella sua anagrafica
         if ($documento->tipo->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
-            if ($documento['idvettore']) {
-                $vettore = Anagrafica::find($documento['idvettore']);
+            if ($documento['id_vettore']) {
+                $vettore = Anagrafica::find($documento['id_vettore']);
                 $result['DatiAnagraficiVettore'] = static::getDatiAnagrafici($vettore);
             }
 

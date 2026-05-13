@@ -297,7 +297,7 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                 <span class="badge badge-danger">'.tr('Id mandato mancante').'</span>';
             }
 
-            if (!$banca_azienda->creditor_id) {
+            if (!$banca_azienda->id_creditor) {
                 echo '
                 <span class="badge badge-danger">'.tr('Id creditore mancante').'</span>';
             }

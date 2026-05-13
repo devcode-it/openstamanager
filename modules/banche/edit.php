@@ -70,7 +70,7 @@ $endpoint = setting('Endpoint ibanapi.com');
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "text", "label": "<?php echo tr('ID Creditore SEPA'); ?>", "name": "creditor_id", "class": "alphanumeric-mask", "value": "$creditor_id$", "help": "<?php echo tr("Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti alla procedura Allineamento Elettronico Archivio per le quali non risulta reperibile in CF/p_iva viene generato un codice identificativo non significativo (NOTPROVIDEDXXXXXXXXXXXX)."); ?>" ]}
+                    {[ "type": "text", "label": "<?php echo tr('ID Creditore SEPA'); ?>", "name": "id_creditor", "class": "alphanumeric-mask", "value": "$id_creditor$", "help": "<?php echo tr("Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti alla procedura Allineamento Elettronico Archivio per le quali non risulta reperibile in CF/p_iva viene generato un codice identificativo non significativo (NOTPROVIDEDXXXXXXXXXXXX)."); ?>" ]}
                 </div>
 
                 <div class="col-md-6">

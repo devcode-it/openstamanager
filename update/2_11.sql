@@ -1044,3 +1044,4 @@ ALTER TABLE `an_sedi` CHANGE `nomesede` `nome_sede` VARCHAR(255) NOT NULL COMMEN
 ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idtipoanagrafica` `id_tipo_anagrafica` INT NOT NULL;
 
 ALTER TABLE `co_banche` CHANGE `id_pianodeiconti3` `id_piano_dei_conti3` INT NULL DEFAULT NULL;
+ALTER TABLE `co_banche` CHANGE `creditor_id` `id_creditor` VARCHAR(255) NULL DEFAULT NULL;

@@ -168,7 +168,7 @@ class Gestore
         $totale = ($scadenza->da_pagare - $scadenza->pagato);
 
         $is_credito_diretto = (($direzione == 'uscita') || (empty($documento) && $importo < 0 && $ctgypurp != 'SALA')) && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']);
-        $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->creditor_id); // Mandato SEPA disponibile
+        $is_debito_diretto = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP09', 'MP10', 'MP11', 'MP19', 'MP20', 'MP21']) && !empty($this->banca_azienda->id_creditor); // Mandato SEPA disponibile
         $is_riba = $direzione == 'entrata' && in_array($pagamento->codice_modalita_pagamento_fe, ['MP12']) && !empty($this->banca_azienda->codice_sia);
         $is_bonifico = (in_array($pagamento->codice_modalita_pagamento_fe, ['MP05']) && !empty($this->banca_azienda->codice_sia)) || (empty($documento));
 
@@ -354,7 +354,7 @@ class Gestore
             'creditorAccountIBAN' => $this->banca_azienda->iban,
             'creditorAgentBIC' => $this->banca_azienda->bic,
             'seqType' => PaymentInformation::S_ONEOFF,
-            'creditorId' => $this->banca_azienda->creditor_id,
+            'creditorId' => $this->banca_azienda->id_creditor,
             'localInstrumentCode' => 'CORE', // default. optional.
         ]);
 
@@ -382,7 +382,7 @@ class Gestore
             $paymentInformation
                 ->setCreditorName($this->azienda->ragione_sociale)
                 ->setCreditorIBAN($this->banca_azienda->iban)
-                ->setCreditorId($this->banca_azienda->creditor_id)
+                ->setCreditorId($this->banca_azienda->id_creditor)
                 ->setPaymentInformationIdentification($date_key)
                 ->setRequestedExecutionDate($date_key)
                 ->setLocalMethod($method)

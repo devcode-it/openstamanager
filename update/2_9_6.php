@@ -1,6 +1,5 @@
 <?php
 
-use Models\Module;
 use Modules\Aggiornamenti\Controlli\TabelleLanguage;
 
 $controllo = new TabelleLanguage();
@@ -9,7 +8,8 @@ $controllo->solveGlobal();
 
 // Migrazione immagini da mg_articoli a zz_files
 $database = database();
-$id_module = Module::where('name', 'Articoli')->first()->id;
+$module = $database->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Articoli']);
+$id_module = $module['id'] ?? null;
 
 if (!empty($id_module)) {
     $articoli = $database->fetchArray('SELECT `id`, `immagine` FROM `mg_articoli` WHERE `immagine` IS NOT NULL');
@@ -45,7 +45,8 @@ if (!empty($id_module)) {
 }
 
 // Migrazione firme da in_interventi a zz_files
-$id_module = Module::where('name', 'Interventi')->first()->id;
+$module = $database->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Interventi']);
+$id_module = $module['id'] ?? null;
 
 if (!empty($id_module)) {
     $interventi = $database->fetchArray('SELECT `id`, `firma_file`, `firma_nome`, `firma_data` FROM `in_interventi` WHERE `firma_file` IS NOT NULL');
@@ -81,7 +82,8 @@ if (!empty($id_module)) {
 }
 
 // Migrazione immagini da my_impianti a zz_files
-$id_module = Module::where('name', 'Impianti')->first()->id;
+$module = $database->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Impianti']);
+$id_module = $module['id'] ?? null;
 
 if (!empty($id_module)) {
     $impianti = $database->fetchArray('SELECT `id`, `immagine` FROM `my_impianti` WHERE `immagine` IS NOT NULL');

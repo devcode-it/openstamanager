@@ -2,6 +2,8 @@
 
 include __DIR__.'/../config.inc.php';
 
+$dbo = database();
+
 // Spostamento backup
 $directory = 'backup/';
 $files = glob($directory.'*.{zip}', GLOB_BRACE) ?: [];
@@ -38,13 +40,13 @@ foreach ($files as $key => $value) {
 
 delete($files);
 
-$module = Models\Module::where('name', 'Fatture di acquisto')->first();
+$module = $dbo->fetchOne('SELECT * FROM zz_modules WHERE name = ?', ['Fatture di acquisto']);
 $directory = 'files/fatture/vendite/';
 $files = glob($directory.'*.{xml,pdf}', GLOB_BRACE) ?: [];
-$new_folder = 'files/'.$module->attachments_directory.'/';
+$new_folder = 'files/'.$module['attachments_directory'].'/';
 directory($new_folder);
 
-$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id) ?: [];
+$attachments = $dbo->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = ?', [$module['id']]) ?: [];
 $attachments_filenames = !empty($attachments) ? array_column($attachments, 'filename') : [];
 
 foreach ($files as $file) {
@@ -55,13 +57,13 @@ foreach ($files as $file) {
     }
 }
 
-$module = Models\Module::where('name', 'Fatture di vendita')->first();
+$module = $dbo->fetchOne('SELECT * FROM zz_modules WHERE name = ?', ['Fatture di vendita']);
 $directory = 'files/fatture/';
 $files = glob($directory.'*.{xml,pdf}', GLOB_BRACE) ?: [];
-$new_folder = 'files/'.$module->attachments_directory.'/';
+$new_folder = 'files/'.$module['attachments_directory'].'/';
 directory($new_folder);
 
-$attachments = database()->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = '.$module->id) ?: [];
+$attachments = $dbo->fetchArray('SELECT `filename` FROM `zz_files` WHERE `id_module` = ?', [$module['id']]) ?: [];
 $attachments_filenames = !empty($attachments) ? array_column($attachments, 'filename') : [];
 
 foreach ($files as $file) {

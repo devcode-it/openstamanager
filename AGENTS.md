@@ -37,6 +37,34 @@ This document provides a comprehensive overview of OpenSTAManager's architecture
   - **Never** add new columns, tables, or schema changes
   - **Never** introduce new features
 
+#### PHP Migration Files - Critical Rules
+
+> ⚠️ **NEVER use Eloquent models or other classes in `update/*.php` migration scripts**
+
+**Why?**
+- Migration scripts are designed to work with the database schema at a specific version
+- Classes (Models, etc.) may change between versions, breaking old migration scripts
+- Eloquent models load relationships that may reference columns/tables that don't exist yet
+- Using classes creates dependencies that can cause installation failures
+
+**What to use instead:**
+- Always use raw database queries via `database()->fetchArray()`, `database()->fetchOne()`, `database()->query()`, `database()->insert()`, `database()->update()`
+- Helper functions from `lib/helpers.php` are safe to use (e.g., `prepare()`, `setting()`)
+- Do NOT use Eloquent: `Model::all()`, `Model::where()->first()`, `Model::find()`
+- Do NOT use relationships that trigger lazy loading
+
+**Example:**
+```php
+// ❌ WRONG - Uses Eloquent, will fail if model changes
+$module = Models\Module::where('name', 'Fatture di vendita')->first();
+$files = $module->files()->get();
+
+// ✅ CORRECT - Raw database queries, always works
+$dbo = database();
+$module = $dbo->fetchOne('SELECT * FROM zz_modules WHERE name = ?', ['Fatture di vendita']);
+$files = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module = ?', [$module['id']]);
+```
+
 ### Fundamental Rules
 
 > - **2.11.0** (MINOR.0) contains FEATURES + FIXES

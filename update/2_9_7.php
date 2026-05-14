@@ -1,10 +1,9 @@
 <?php
 
-use Models\Module;
-
 // Migrazione immagini da zz_marche a zz_files
 $database = database();
-$id_module = Module::where('name', 'Marche')->first()->id;
+$module = $database->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Marche']);
+$id_module = $module['id'] ?? null;
 
 if (!empty($id_module)) {
     $marche = $database->fetchArray('SELECT `id`, `immagine` FROM `zz_marche` WHERE `immagine` IS NOT NULL AND `immagine` != ""');
@@ -41,7 +40,8 @@ if (!empty($id_module)) {
 }
 
 // Migrazione firme da in_interventi a zz_files
-$id_module = Module::where('name', 'Interventi')->first()->id;
+$module = $database->fetchOne('SELECT id FROM zz_modules WHERE name = ?', ['Interventi']);
+$id_module = $module['id'] ?? null;
 
 if (!empty($id_module)) {
     // Recupera tutti i file di firma con key nel formato signature_nome_data

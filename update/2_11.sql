@@ -1277,6 +1277,7 @@ ALTER TABLE `or_ordini` CHANGE `idtipoordine` `id_tipo_ordine` TINYINT NOT NULL;
 
 ALTER TABLE `zz_group_module` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
 ALTER TABLE `zz_permissions` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
+ALTER TABLE `zz_users` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
 
 ALTER TABLE `zz_group_module` CHANGE `idmodule` `id_module` INT NOT NULL;
 ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;

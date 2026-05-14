@@ -1046,6 +1046,7 @@ ALTER TABLE `co_promemoria` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `in_tariffe_sedi` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `mg_movimenti` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `my_impianti` CHANGE `idsede` `id_sede` INT NOT NULL;
+ALTER TABLE `zz_user_sedi` CHANGE `idsede` `id_sede` INT NOT NULL;
 
 ALTER TABLE `an_automezzi_rifornimenti` CHANGE `idviaggio` `id_viaggio` INT NOT NULL;
 
@@ -1273,5 +1274,11 @@ ALTER TABLE `mg_movimenti` CHANGE `idutente` `id_utente` INT NULL DEFAULT NULL;
 ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `id_sostituto` INT NULL DEFAULT NULL;
 
 ALTER TABLE `or_ordini` CHANGE `idtipoordine` `id_tipo_ordine` TINYINT NOT NULL;
+
 ALTER TABLE `zz_group_module` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
+ALTER TABLE `zz_permissions` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
+
 ALTER TABLE `zz_group_module` CHANGE `idmodule` `id_module` INT NOT NULL;
+ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;
+ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
+ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;

@@ -325,6 +325,12 @@ class FatturaElettronica
 
         $info = $this->getAnagrafe($type);
 
+        $info['codice_nazione'] = $this->getHeader()['CedentePrestatore']['DatiAnagrafici']['IdFiscaleIVA']['IdPaese'];
+
+        if (!empty($info['codice_nazione']) && $info['codice_nazione'] == 'IT') {
+            $info['sede']['nazione'] = 'IT';
+        }
+
         $anagrafica = Anagrafica::build($info['ragione_sociale'], $info['nome'], $info['cognome'], [
             TipoAnagrafica::where('name', $type)->first()->id,
         ]);

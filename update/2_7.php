@@ -11,8 +11,6 @@ foreach ($modules as $module) {
         $title = $module['name'];
     }
 
-    $dbo->query('INSERT INTO zz_modules_lang (id_record, id_lang, title) VALUES (?, 2, ?) ON DUPLICATE KEY UPDATE title = ?', [$module['id'], $title, $title]);
-
     $metaTitle = match ($module['name']) {
         'Fatture di vendita' => 'Fattura di vendita {numero} - {ragione_sociale}',
         'Fatture di acquisto' => 'Fattura di acquisto {numero} - {ragione_sociale}',
@@ -28,6 +26,15 @@ foreach ($modules as $module) {
         default => $title,
     };
 
-    $dbo->query('INSERT INTO zz_modules_lang (id_record, id_lang, meta_title) VALUES (?, 1, ?) ON DUPLICATE KEY UPDATE meta_title = ?', [$module['id'], $metaTitle, $metaTitle]);
-    $dbo->query('INSERT INTO zz_modules_lang (id_record, id_lang, meta_title) VALUES (?, 2, ?) ON DUPLICATE KEY UPDATE meta_title = ?', [$module['id'], $metaTitle, $metaTitle]);
+    $record1 = $dbo->fetchOne('SELECT id FROM zz_modules_lang WHERE id_record = ? AND id_lang = 1', [$module['id']]);
+    if (!$record1) {
+        $dbo->query('INSERT INTO zz_modules_lang (id_record, id_lang, title) VALUES (?, 1, ?)', [$module['id'], $title]);
+    }
+
+    $record2 = $dbo->fetchOne('SELECT id FROM zz_modules_lang WHERE id_record = ? AND id_lang = 2', [$module['id']]);
+    if (!$record2) {
+        $dbo->query('INSERT INTO zz_modules_lang (id_record, id_lang, title) VALUES (?, 2, ?)', [$module['id'], $title]);
+    }
+
+    $dbo->query('UPDATE zz_modules_lang SET meta_title = ? WHERE id_record = ? AND id_lang IN (1, 2)', [$metaTitle, $module['id']]);
 }

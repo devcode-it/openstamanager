@@ -46,7 +46,7 @@ class TipiIntervento extends AppResource
 
         // Filtro per gruppo utente: sincronizza solo i tipi intervento che hanno il gruppo utente dell'utente loggato
         // oppure che non hanno nessun gruppo utente associato
-        $id_gruppo = $user['idgruppo'];
+        $id_gruppo = $user['id_gruppo'];
         $where[] = '(`in_tipiintervento_groups`.`id_gruppo` = '.prepare($id_gruppo).' OR `in_tipiintervento_groups`.`id_gruppo` IS NULL)';
 
         if (!empty($where)) {

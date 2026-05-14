@@ -160,7 +160,7 @@ class AuthOSM extends Util\Singleton
 
             if (!empty($user['enabled'])) {
                 $this->identifyUser($user['id']);
-                $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $user['id'])->first();
+                $gruppo = Group::join('zz_users', 'zz_users.id_gruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $user['id'])->first();
                 $module = $gruppo->id_module_start;
                 $module = $this->getFirstModule($module);
 
@@ -376,7 +376,7 @@ class AuthOSM extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `idgruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `id_gruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();
@@ -703,7 +703,7 @@ class AuthOSM extends Util\Singleton
             }
 
             // Verifica permessi modulo per utenti normali
-            $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
+            $gruppo = Group::join('zz_users', 'zz_users.id_gruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
             $module = $gruppo->id_module_start;
             $module = $this->getFirstModule($module);
 
@@ -838,7 +838,7 @@ class AuthOSM extends Util\Singleton
 
             // Verifica permessi modulo (solo se l'utente non è admin)
             if (!$this->isAdmin()) {
-                $gruppo = Group::join('zz_users', 'zz_users.idgruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
+                $gruppo = Group::join('zz_users', 'zz_users.id_gruppo', '=', 'zz_groups.id')->where('zz_users.id', '=', $utente->id)->first();
                 $module = $gruppo->id_module_start;
                 $module = $this->getFirstModule($module);
 
@@ -1009,7 +1009,7 @@ class AuthOSM extends Util\Singleton
         $database = database();
 
         try {
-            $results = $database->fetchArray('SELECT `id`, `id_anagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`idgruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
+            $results = $database->fetchArray('SELECT `id`, `id_anagrafica`, `username`, `session_token`, (SELECT `title` FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON `zz_groups`.`id`=`zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' WHERE `zz_groups`.`id` = `zz_users`.`id_gruppo`) AS gruppo FROM `zz_users` WHERE `id` = :user_id AND `enabled` = 1 LIMIT 1', [
                 ':user_id' => $user_id,
             ]);
 
@@ -1105,7 +1105,7 @@ class AuthOSM extends Util\Singleton
             'is_admin' => false,
             'enabled' => true,
             'id_anagrafica' => 0,
-            'idgruppo' => 0,
+            'id_gruppo' => 0,
         ];
 
         // Salva le informazioni del token nella classe

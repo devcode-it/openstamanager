@@ -99,7 +99,7 @@ if (post('action') == 'init') {
             'username' => post('admin_username'),
             'password' => AuthOSM::hashPassword(post('admin_password')),
             'email' => post('admin_email'),
-            'idgruppo' => $admin['id'],
+            'id_gruppo' => $admin['id'],
             'id_anagrafica' => $id_record ?? 0,
             'enabled' => 1,
         ]);

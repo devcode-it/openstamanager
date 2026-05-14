@@ -138,8 +138,8 @@ switch ($resource) {
 
         $where[] = '`zz_modules`.`enabled`=1';
 
-        if (isset($superselect['idgruppo']) && $superselect['idgruppo'] != 1) {
-            $where[] = '`zz_permissions`.`idgruppo`='.prepare($superselect['idgruppo']);
+        if (isset($superselect['id_gruppo']) && $superselect['id_gruppo'] != 1) {
+            $where[] = '`zz_permissions`.`id_gruppo`='.prepare($superselect['id_gruppo']);
         }
 
         foreach ($elements as $element) {

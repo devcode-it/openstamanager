@@ -24,7 +24,7 @@ if (!function_exists('renderChecklist')) {
         global $structure;
 
         $user = auth_osm()->getUser();
-        $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || $user->idgruppo == 1) : true;
+        $enabled = $check->assignedUsers ? ($check->assignedUsers->pluck('id')->search($user->id) !== false || $user->id_gruppo == 1) : true;
 
         $margin = ($level * 20);
 

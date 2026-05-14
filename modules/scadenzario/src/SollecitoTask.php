@@ -58,7 +58,7 @@ class SollecitoTask extends Manager
             $template_2 = setting('Template email secondo sollecito');
             $template_3 = setting('Template email terzo sollecito');
             $template_notifica = setting('Template email mancato pagamento dopo i solleciti');
-            $id_user = database()->selectOne('zz_users', 'id', ['idgruppo' => 1, 'enabled' => 1])['id'];
+            $id_user = database()->selectOne('zz_users', 'id', ['id_gruppo' => 1, 'enabled' => 1])['id'];
             $user = User::find($id_user);
 
             // Invio promemoria

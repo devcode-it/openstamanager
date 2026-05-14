@@ -90,7 +90,7 @@ foreach ($fields as $key => $field) {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_group_view` WHERE `id_vista` = '.prepare($field->id).') OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
+                                    {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi['.$key.'][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_group_view` WHERE `id_vista` = '.prepare($field->id).') OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
     $results = $dbo->fetchArray('SELECT GROUP_CONCAT(DISTINCT `id_gruppo` SEPARATOR \',\') AS gruppi FROM `zz_group_view` WHERE `id_vista`='.prepare($field->id));
 
     echo $results[0]['gruppi'].'"';
@@ -243,11 +243,11 @@ echo '
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
+                            {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
 
 // Ottieni tutti gli ID dei gruppi che hanno accesso al modulo
-$groups_with_access = $dbo->fetchArray('SELECT DISTINCT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')');
-$group_ids = array_column($groups_with_access, 'idgruppo');
+$groups_with_access = $dbo->fetchArray('SELECT DISTINCT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')');
+$group_ids = array_column($groups_with_access, 'id_gruppo');
 
 // Assicurati che il gruppo Amministratori (ID 1) sia incluso
 $id_gruppo_admin = 1; // ID del gruppo Amministratori

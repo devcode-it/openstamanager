@@ -1005,7 +1005,7 @@ class DocumentiCollegati
 
         // Recupera gli utenti collegati
         $query_utenti = 'SELECT
-            `zz_users`.`idgruppo` AS id,
+            `zz_users`.`id_gruppo` AS id,
             `zz_users`.`created_at` AS data,
             `zz_users`.`username` AS numero,
             0 AS `numero_esterno`,

@@ -43,7 +43,7 @@ switch (filter('op')) {
 
             if ($id_module_start) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
-                $dbo->query('INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($id_module_start).', \'r\')');
+                $dbo->query('INSERT IGNORE INTO zz_permissions(id_gruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($id_module_start).', \'r\')');
 
                 // Sincronizza i permessi delle viste e dei segmenti per il modulo di partenza
                 $group->syncModulePermissions($id_module_start, 'r');
@@ -103,8 +103,8 @@ switch (filter('op')) {
 
             // Gruppo
             $id_azienda = setting('Azienda predefinita');
-            $id_gruppo = filter('idgruppo');
-            $utente->idgruppo = $id_gruppo;
+            $id_gruppo = filter('id_gruppo');
+            $utente->id_gruppo = $id_gruppo;
 
             $utente->save();
 
@@ -223,9 +223,9 @@ switch (filter('op')) {
         if ($rs[0]['editable'] == 1) {
             $group = Group::find($id_record);
             $group->delete();
-            User::where('idgruppo', $id_record)->delete();
-            UserTokens::whereIn('id_utente', User::where('idgruppo', $id_record)->pluck('id'))->delete();
-            $dbo->delete('zz_permissions', ['idgruppo' => $id_record]);
+            User::where('id_gruppo', $id_record)->delete();
+            UserTokens::whereIn('id_utente', User::where('id_gruppo', $id_record)->pluck('id'))->delete();
+            $dbo->delete('zz_permissions', ['id_gruppo' => $id_record]);
             flash()->info(tr('Gruppo e relativi utenti eliminati!'));
         } else {
             flash()->error(tr('Questo gruppo non si può eliminare!'));
@@ -245,7 +245,7 @@ switch (filter('op')) {
             $permessi['Articoli'] = 'rw';
 
             // Rimuovi tutti i permessi esistenti
-            $dbo->delete('zz_permissions', ['idgruppo' => $id_record]);
+            $dbo->delete('zz_permissions', ['id_gruppo' => $id_record]);
 
             // Ottieni il gruppo per la sincronizzazione
             $group = Group::find($id_record);
@@ -254,7 +254,7 @@ switch (filter('op')) {
                 $module_id = Module::where('name', $module_name)->first()->id;
 
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
-                $dbo->query('INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($module_id).', '.prepare($permesso).')');
+                $dbo->query('INSERT IGNORE INTO zz_permissions(id_gruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($module_id).', '.prepare($permesso).')');
 
                 // Sincronizza i permessi delle viste e dei segmenti per ogni modulo
                 $group->syncModulePermissions($module_id, $permesso);
@@ -272,15 +272,15 @@ switch (filter('op')) {
 
         // Verifico che ci sia il permesso per questo gruppo
         if ($permessi != '-') {
-            $rs = $dbo->fetchArray('SELECT * FROM zz_permissions WHERE idgruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo));
+            $rs = $dbo->fetchArray('SELECT * FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo));
             if (empty($rs)) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
-                $query = 'INSERT IGNORE INTO zz_permissions(idgruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
+                $query = 'INSERT IGNORE INTO zz_permissions(id_gruppo, idmodule, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
             } else {
                 $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs[0]['id']);
             }
         } else {
-            $query = 'DELETE FROM zz_permissions WHERE idgruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo);
+            $query = 'DELETE FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND idmodule='.prepare($idmodulo);
         }
 
         $dbo->query($query);

@@ -51,7 +51,7 @@ $utenti = $dbo->fetchArray('
         LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
         LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
-        `zz_users`.`idgruppo` = '.prepare($record['id']).'
+        `zz_users`.`id_gruppo` = '.prepare($record['id']).'
         AND `zz_users`.`deleted_at` IS NULL
     GROUP BY
         `zz_users`.`id`');
@@ -75,7 +75,7 @@ echo '
                 <div class="col-md-4">
                     <div class="form-group">
                         <label><i class="fa fa-home mr-1"></i> '.tr('Modulo iniziale').'</label>
-                        {["type":"select", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['idgruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
+                        {["type":"select", "name":"id_module_start", "ajax-source":"moduli_gruppo", "select-options": '.json_encode(['id_gruppo' => $group->id]).', "placeholder":"'.tr('Modulo iniziale').'", "value":"'.($group->id_module_start ?: 0).'" ]}
                     </div>
                 </div>
                 <div class="col-md-4">

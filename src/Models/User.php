@@ -251,7 +251,7 @@ class User extends Model implements Authenticatable
 
     public function group()
     {
-        return $this->belongsTo(Group::class, 'idgruppo');
+        return $this->belongsTo(Group::class, 'id_gruppo');
     }
 
     public function logs()

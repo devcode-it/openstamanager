@@ -52,7 +52,7 @@ if (!empty($records)) {
              AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
              WHERE `zz_groups`.`id` = 1
              OR `zz_groups`.`id` IN (
-                 SELECT DISTINCT `idgruppo` FROM `zz_permissions`
+                 SELECT DISTINCT `id_gruppo` FROM `zz_permissions`
                  WHERE `permessi` IN ('r', 'rw')
                  AND `idmodule` IN (
                      SELECT DISTINCT `id_module` FROM `zz_segments`

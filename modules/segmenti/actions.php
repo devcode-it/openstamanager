@@ -104,17 +104,17 @@ switch (post('op')) {
         ]);
 
         // Aggiunta permessi segmento solo per i gruppi che hanno accesso al modulo
-        $gruppi_con_accesso = $dbo->fetchArray('SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
+        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
 
         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
         $id_gruppo_admin = 1; // ID del gruppo Amministratori
-        $gruppi_ids = array_column($gruppi_con_accesso, 'idgruppo');
+        $gruppi_ids = array_column($gruppi_con_accesso, 'id_gruppo');
         if (!in_array($id_gruppo_admin, $gruppi_ids)) {
-            $gruppi_con_accesso[] = ['idgruppo' => $id_gruppo_admin];
+            $gruppi_con_accesso[] = ['id_gruppo' => $id_gruppo_admin];
         }
 
         // Usa sync per evitare duplicati e sincronizzare correttamente i permessi
-        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => array_column($gruppi_con_accesso, 'idgruppo')]);
+        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => array_column($gruppi_con_accesso, 'id_gruppo')]);
 
         flash()->info(tr('Nuovo segmento aggiunto'));
 

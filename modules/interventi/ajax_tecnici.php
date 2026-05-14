@@ -72,7 +72,7 @@ if (!empty($sessioni)) {
         <tr><th>';
 
             if ($sessione['id_user']) {
-                $user = User::where('id_anagrafica', $sessione['id_tecnico'])->orderByRaw('CASE WHEN idgruppo = 2 THEN -1 ELSE idgruppo END')->first();
+                $user = User::where('id_anagrafica', $sessione['id_tecnico'])->orderByRaw('CASE WHEN id_gruppo = 2 THEN -1 ELSE id_gruppo END')->first();
                 echo '
                 <img class="attachment-img tip" src="'.$user->photo.'" title="'.$user->nome_completo.'">';
             } else {

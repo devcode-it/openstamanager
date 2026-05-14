@@ -27,7 +27,7 @@ if (!function_exists('menuSelection')) {
         ++$depth;
 
         // Permessi impostati per il gruppo
-        $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE idgruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
+        $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE id_gruppo = '.prepare($group_id).' AND idmodule = '.prepare($element['id']));
 
         $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
 

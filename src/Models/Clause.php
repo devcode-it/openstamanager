@@ -46,7 +46,7 @@ class Clause extends Model
 
     public function groups()
     {
-        return $this->hasMany(Group::class, 'idgruppo');
+        return $this->hasMany(Group::class, 'id_gruppo');
     }
 
     public function module()

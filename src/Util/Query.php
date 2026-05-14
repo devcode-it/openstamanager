@@ -782,7 +782,7 @@ class Query
             `zz_views` 
             LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).') 
             LEFT JOIN `zz_group_view` ON `zz_views`.`id` = `zz_group_view`.`id_vista`
-            LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_view`.`id_gruppo`
+            LEFT JOIN `zz_users` ON `zz_users`.`id_gruppo` = `zz_group_view`.`id_gruppo`
         WHERE 
             `id_module`='.prepare($element['id']).' AND
             `zz_users`.`id` = '.prepare($user['id']).'

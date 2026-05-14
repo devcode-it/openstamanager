@@ -150,7 +150,7 @@ class Modules
             FROM 
                 `zz_group_module` 
                 LEFT JOIN `zz_group_module_lang` ON (`zz_group_module`.`id` = `zz_group_module_lang`.`id_record` AND `zz_group_module_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-                LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_module`.`idgruppo`
+                LEFT JOIN `zz_users` ON `zz_users`.`id_gruppo` = `zz_group_module`.`id_gruppo`
             WHERE 
                 `zz_users`.`id` = '.prepare($user['id']).' 
                 AND 
@@ -203,7 +203,7 @@ class Modules
         if (!isset(self::$segments[$module])) {
             $database = database();
 
-            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->idgruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
+            self::$segments[$module] = $database->fetchArray('SELECT `zz_segments`.*, `zz_segments_lang`.`title` FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` WHERE `id_gruppo` = '.prepare($user->id_gruppo).' AND `id_module` = '.prepare($module).' ORDER BY `predefined` DESC, `zz_segments`.`id` ASC');
         }
 
         return (array) self::$segments[$module];

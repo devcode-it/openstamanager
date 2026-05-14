@@ -127,7 +127,7 @@ switch (filter('op')) {
             ];
 
             // Recupera il gruppo associato al filtro
-            $group_info = $dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($clause->idgruppo));
+            $group_info = $dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($clause->id_gruppo));
             if (!empty($group_info)) {
                 $clause_data['group'] = $group_info[0]['nome'];
             }
@@ -367,7 +367,7 @@ switch (filter('op')) {
 
                     $clause_array = [
                         'name' => $clause_data['name'],
-                        'idgruppo' => $group_id,
+                        'id_gruppo' => $group_id,
                         'idmodule' => $module_id,
                         'clause' => $clause_data['clause'],
                         'position' => $clause_data['position'],
@@ -463,25 +463,25 @@ switch (filter('op')) {
                     // Se è una nuova vista, aggiungi automaticamente tutti i gruppi che hanno accesso al modulo
                     if (empty(post('gruppi')[$c])) {
                         // Ottieni tutti i gruppi che hanno accesso al modulo (permessi 'r' o 'rw')
-                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `idgruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
+                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
 
                         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
                         $id_gruppo_admin = 1; // ID del gruppo Amministratori
-                        $gruppi_ids = array_column($gruppi_con_accesso, 'idgruppo');
+                        $gruppi_ids = array_column($gruppi_con_accesso, 'id_gruppo');
                         if (!in_array($id_gruppo_admin, $gruppi_ids)) {
-                            $gruppi_con_accesso[] = ['idgruppo' => $id_gruppo_admin];
+                            $gruppi_con_accesso[] = ['id_gruppo' => $id_gruppo_admin];
                         }
 
                         // Aggiungi i permessi per tutti i gruppi con accesso
                         foreach ($gruppi_con_accesso as $gruppo) {
                             $dbo->insert('zz_group_view', [
                                 'id_vista' => $id,
-                                'id_gruppo' => $gruppo['idgruppo'],
+                                'id_gruppo' => $gruppo['id_gruppo'],
                             ]);
                         }
 
                         // Aggiorna l'array dei gruppi per la sincronizzazione successiva
-                        $_POST['gruppi'][$c] = array_column($gruppi_con_accesso, 'idgruppo');
+                        $_POST['gruppi'][$c] = array_column($gruppi_con_accesso, 'id_gruppo');
                     }
                 }
 
@@ -517,7 +517,7 @@ switch (filter('op')) {
             if (check_query($query)) {
                 $array = [
                     'name' => post('name')[$c],
-                    'idgruppo' => post('gruppo')[$c],
+                    'id_gruppo' => post('gruppo')[$c],
                     'idmodule' => $id_record,
                     'clause' => $query,
                     'position' => !empty(post('position')[$c]) ? 'HVN' : 'WHR',

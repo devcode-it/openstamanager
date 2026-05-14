@@ -49,12 +49,12 @@ class Group extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'idgruppo');
+        return $this->hasMany(User::class, 'id_gruppo');
     }
 
     public function modules()
     {
-        return $this->belongsToMany(Module::class, 'zz_permissions', 'idgruppo', 'idmodule')->withPivot('permessi');
+        return $this->belongsToMany(Module::class, 'zz_permissions', 'id_gruppo', 'idmodule')->withPivot('permessi');
     }
 
     public function views()

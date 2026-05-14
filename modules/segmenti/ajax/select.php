@@ -37,7 +37,7 @@ switch ($resource) {
             $query = 'SELECT `zz_segments`.`id`, CONCAT(`zz_segments_lang`.`title`, " ", IF(`zz_segments`.`is_sezionale` = 1, "(Sezionale)", "(Segmento)")) AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `zz_group_segment` ON `zz_segments`.`id` = `zz_group_segment`.`id_segment` |where| ORDER BY `title` ASC';
 
             $where[] = '`zz_segments`.`id_module` = '.prepare($id_module);
-            $where[] = '`zz_group_segment`.`id_gruppo` = '.prepare($user->idgruppo);
+            $where[] = '`zz_group_segment`.`id_gruppo` = '.prepare($user->id_gruppo);
 
             if ($is_fiscale) {
                 $where[] = '`zz_segments`.`is_fiscale` = '.prepare($is_fiscale);

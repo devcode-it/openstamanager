@@ -43,7 +43,7 @@ if (empty($_GET['visualizza_allegati'])) {
         </div>';
 } else {
     // Controllo i permessi dei modulo per la visualizzazione degli allegati
-    $rs = $dbo->table('zz_permissions')->where('idgruppo', $user->idgruppo)->get();
+    $rs = $dbo->table('zz_permissions')->where('id_gruppo', $user->id_gruppo)->get();
     $permessi = [];
     $documenti[] = 0;
 

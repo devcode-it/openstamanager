@@ -144,7 +144,7 @@ class Module extends Model
             `zz_views` 
             LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') 
             LEFT JOIN `zz_group_view` ON `zz_views`.`id` = `zz_group_view`.`id_vista`
-            LEFT JOIN `zz_users` ON `zz_users`.`idgruppo` = `zz_group_view`.`id_gruppo`
+            LEFT JOIN `zz_users` ON `zz_users`.`id_gruppo` = `zz_group_view`.`id_gruppo`
         WHERE 
             `id_module`='.$this->id.' AND
             `zz_users`.`id` = '.$user->id.'
@@ -203,7 +203,7 @@ class Module extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'idgruppo')->withPivot('permessi');
+        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'id_gruppo')->withPivot('permessi');
     }
 
     public function clauses()

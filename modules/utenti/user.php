@@ -47,7 +47,7 @@ if (!empty($id_record)) {
 if (!empty(filter('id_anagrafica'))) {
     $utente['id_anagrafica'] = filter('id_anagrafica');
 } else {
-    $current_idgruppo = !empty($id_record) ? Group::find($id_record)->id : null;
+    $current_id_gruppo = !empty($id_record) ? Group::find($id_record)->id : null;
 }
 
 // Lettura sedi dell'utente già impostate
@@ -103,7 +103,7 @@ echo '
 		<div class="col-md-9">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "idgruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['idgruppo']) ? $utente['idgruppo'] : $current_idgruppo).'", "readonly": "'.(($utente['id'] == '1') || (!empty($id_record) && empty($utente['id'])) ? 1 : 0).'" ]}
+					{[ "type": "select", "label": "'.tr('Gruppo di appartenenza').'", "name": "id_gruppo", "required": 1, "ajax-source": "gruppi", "value": "'.(!empty($utente['id_gruppo']) ? $utente['id_gruppo'] : $current_id_gruppo).'", "readonly": "'.(($utente['id'] == '1') || (!empty($id_record) && empty($utente['id'])) ? 1 : 0).'" ]}
 				</div>
 
 				<div class="col-md-6">

@@ -168,12 +168,12 @@ ALTER TABLE `my_impianti`
     ADD CONSTRAINT `fk_my_impianti_stato` FOREIGN KEY (`id_stato`) REFERENCES `my_statiimpianti` (`id`) ON UPDATE CASCADE ON DELETE SET NULL;
 
 -- Aggiunta conti per Iva Extra Intra UE e Reverse charge
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000040', 'Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000050', 'Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000060', 'Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000070', 'Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000080', 'Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `id_piano_dei_conti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000090', 'Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000040', 'Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000050', 'Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000060', 'Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000070', 'Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000080', 'Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000090', 'Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL, NULL, NULL);
@@ -989,8 +989,8 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.id_agente=an_anagrafiche.id WHERE co_provvigioni.id_articolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
 
 -- Modifica colonne an_anagrafiche
-ALTER TABLE `an_anagrafiche` CHANGE `id_pagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
-ALTER TABLE `an_anagrafiche` CHANGE `id_pagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_vendite` `id_pagamento_vendite` INT NULL DEFAULT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idpagamento_acquisti` `id_pagamento_acquisti` INT NULL DEFAULT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idiva_vendite` `id_iva_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `mg_articoli` CHANGE `idiva_vendita` `id_iva_vendita` INT NULL DEFAULT NULL;
@@ -1011,10 +1011,10 @@ ALTER TABLE `an_anagrafiche` CHANGE `codicerea` `codice_rea` VARCHAR(23) NULL DE
 ALTER TABLE `an_anagrafiche` CHANGE `appoggiobancario` `appoggio_bancario` VARCHAR(255) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `codiceiban` `codice_iban` VARCHAR(40) NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `diciturafissafattura` `dicitura_fissa_fattura` VARCHAR(255) NOT NULL;
-ALTER TABLE `an_anagrafiche` CHANGE `id_conto_cliente` `id_conto_cliente` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idconto_cliente` `id_conto_cliente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_vendite` `id_banca_vendite` INT NULL DEFAULT NULL;
 ALTER TABLE `an_anagrafiche` CHANGE `idbanca_acquisti` `id_banca_acquisti` INT NULL DEFAULT NULL;
-ALTER TABLE `an_anagrafiche` CHANGE `id_conto_fornitore` `id_conto_fornitore` INT NOT NULL;
+ALTER TABLE `an_anagrafiche` CHANGE `idconto_fornitore` `id_conto_fornitore` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_contratti` CHANGE `idagente` `id_agente` INT NOT NULL;
@@ -1026,6 +1026,7 @@ ALTER TABLE `or_ordini` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_provvigioni` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `an_anagrafiche_agenti` CHANGE `idagente` `id_agente` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idagente` `id_agente` INT NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `idagente` `id_agente` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idrelazione` `id_relazione` INT NOT NULL;
 ALTER TABLE `an_anagrafiche` DROP `agentemaster`;
@@ -1095,8 +1096,9 @@ ALTER TABLE `co_preventivi` CHANGE `idpagamento` `id_pagamento` INT NULL DEFAULT
 ALTER TABLE `co_documenti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 
-ALTER TABLE `co_contratti` CHANGE `id_contratto_prev` `id_contratto_prev` INT NOT NULL;
+ALTER TABLE `co_contratti` CHANGE `idcontratto_prev` `id_contratto_prev` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;
 ALTER TABLE `co_preventivi` CHANGE `informazioniaggiuntive` `informazioni_aggiuntive` TEXT NULL DEFAULT NULL;
@@ -1137,41 +1139,50 @@ ALTER TABLE `dt_ddt` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idspedizione` `id_spedizione` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idspedizione` `id_spedizione` TINYINT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idspedizione` `id_spedizione` TINYINT NULL DEFAULT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idporto` `id_porto` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idporto` `id_porto` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idporto` `id_porto` TINYINT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idporto` `id_porto` TINYINT NULL DEFAULT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idaspettobeni` `id_aspetto_beni` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idaspettobeni` `id_aspetto_beni` TINYINT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idvettore` `id_vettore` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idvettore` `id_vettore` INT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idvettore` `id_vettore` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_movimenti_modelli` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idconto` `id_conto` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idconto` `id_conto` INT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idconto` `id_conto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NULL DEFAULT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idrivalsainps` `id_rivalsa_inps` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `rivalsainps` `rivalsa_inps` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `iva_rivalsainps` `iva_rivalsa_inps` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NULL DEFAULT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `idritenutaacconto` `id_ritenuta_acconto` INT NOT NULL;
 
 ALTER TABLE `co_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
+ALTER TABLE `or_ordini` CHANGE `ritenutaacconto` `ritenuta_acconto` DECIMAL(15,6) NOT NULL;
 
 ALTER TABLE `co_fatturazione_contratti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
 ALTER TABLE `co_movimenti` CHANGE `iddocumento` `id_documento` INT NOT NULL;
@@ -1205,6 +1216,7 @@ ALTER TABLE `dt_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `in_righe_interventi` CHANGE `idiva` `id_iva` INT NOT NULL;
 ALTER TABLE `in_righe_tipiinterventi` CHANGE `idiva` `id_iva` INT NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `idiva` `id_iva` INT NOT NULL;
 
 ALTER TABLE `co_promemoria` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `id_intervento` INT NULL DEFAULT NULL;
@@ -1232,11 +1244,13 @@ ALTER TABLE `dt_righe_ddt` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NU
 ALTER TABLE `in_righe_interventi` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 ALTER TABLE `mg_articoli_barcode` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
 ALTER TABLE `mg_movimenti` CHANGE `idarticolo` `id_articolo` INT NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `idarticolo` `id_articolo` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_contratti` CHANGE `idpianificazione` `id_pianificazione` INT NULL DEFAULT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idordine` `id_ordine` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idordine` `id_ordine` INT NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `idordine` `id_ordine` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` CHANGE `idddt` `id_ddt` INT NOT NULL;
@@ -1244,6 +1258,7 @@ ALTER TABLE `mg_movimenti` CHANGE `idddt` `id_ddt` INT NOT NULL;
 
 ALTER TABLE `co_righe_documenti` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 ALTER TABLE `co_righe_preventivi` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
+ALTER TABLE `or_righe_ordini` CHANGE `idpreventivo` `id_preventivo` INT NOT NULL;
 
 ALTER TABLE `do_documenti` CHANGE `idcategoria` `id_categoria` INT NOT NULL;
 
@@ -1258,3 +1273,4 @@ ALTER TABLE `mg_movimenti` CHANGE `idutente` `id_utente` INT NULL DEFAULT NULL;
 ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `id_sostituto` INT NULL DEFAULT NULL;
 
 ALTER TABLE `or_ordini` CHANGE `idtipoordine` `id_tipo_ordine` TINYINT NOT NULL;
+ALTER TABLE `zz_group_module` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;

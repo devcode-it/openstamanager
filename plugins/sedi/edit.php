@@ -189,7 +189,7 @@ if (!empty($record['gaddress']) || (!empty($record['lat']) && !empty($record['ln
 
 // Permetto eliminazione tipo sede solo se non è utilizzata da nessun'altra parte nel gestionale
 $elementi = $dbo->fetchArray('SELECT 
-			`zz_users`.`idgruppo` AS `id`, 
+			`zz_users`.`id_gruppo` AS `id`, 
 			"Utente" AS tipo, 
 			NULL AS dir 
 		FROM 

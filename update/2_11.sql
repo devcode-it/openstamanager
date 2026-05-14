@@ -261,37 +261,6 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, LAST_INSERT_ID(), 'Validità'),
 (2, LAST_INSERT_ID(), 'Validity');
 
--- Allineamento query Fatture di vendita
-UPDATE `zz_modules` SET `options` = 'SELECT
-    |select|
-FROM
-    `co_documenti`
-    LEFT JOIN (SELECT SUM(`totale`) AS `totale`, `id_documento`, `data`, GROUP_CONCAT(DISTINCT DATE_FORMAT(`data`, "%d/%m/%Y") SEPARATOR ", ") AS `data_rate` FROM `co_movimenti` WHERE `totale` > 0 AND `prima_nota` = 1 GROUP BY `id_documento`) AS `prima_nota` ON `prima_nota`.`id_documento` = `co_documenti`.`id`
-    LEFT JOIN (SELECT `ultimo_movimento`.`id_documento`, IF(`ultimo_movimento`.`is_insoluto` = 1, DATE_FORMAT(`ultimo_movimento`.`data`, "%d/%m/%Y"), NULL) AS `data_insoluto` FROM `co_movimenti` AS `ultimo_movimento` INNER JOIN (SELECT `id_documento`, MAX(`id`) AS `id` FROM `co_movimenti` WHERE `prima_nota` = 1 GROUP BY `id_documento`) AS `ultimo_movimento_idx` ON `ultimo_movimento_idx`.`id` = `ultimo_movimento`.`id`) AS `ultimo_movimento` ON `ultimo_movimento`.`id_documento` = `co_documenti`.`id`
-    LEFT JOIN `an_anagrafiche` ON `co_documenti`.`idanagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
-    LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`id_iva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
-    LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`co_banche`.`nome`, \' - \', `co_banche`.`iban`) AS `descrizione` FROM `co_banche` GROUP BY `co_banche`.`id`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
-    LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
-    LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento`.`codice` = `fe_stati_documento_lang`.`id_record` AND `fe_stati_documento_lang`.|lang|)
-    LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
-    LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS `emails`, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Fatture di vendita\') AND `zz_operations`.`op` = \'send-email\' GROUP BY `em_emails`.`id_record`) AS `email` ON `email`.`id_record` = `co_documenti`.`id`
-    LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND co_pagamenti_lang.|lang|)
-    LEFT JOIN (SELECT `numero_esterno`, `id_segment`, `id_tipo_documento`, `data` FROM `co_documenti` WHERE `co_documenti`.`id_tipo_documento` IN (SELECT `id` FROM `co_tipidocumento` WHERE `dir` = \'entrata\') AND `numero_esterno` != \'\' |date_period(`co_documenti`.`data`)| GROUP BY `id_segment`, `numero_esterno`, `id_tipo_documento` HAVING COUNT(`numero_esterno`) > 1) AS dup ON `co_documenti`.`numero_esterno` = `dup`.`numero_esterno` AND `dup`.`id_segment` = `co_documenti`.`id_segment` AND `dup`.`id_tipo_documento` = `co_documenti`.`id_tipo_documento`
-WHERE
-    1=1
-    AND `dir` = \'entrata\'
-    |segment(`co_documenti`.`id_segment`)|
-    |date_period(`co_documenti`.`data`)|
-HAVING
-    2=2
-ORDER BY
-    `co_documenti`.`data` DESC, CAST(`co_documenti`.`numero_esterno` AS UNSIGNED) DESC' WHERE `zz_modules`.`name` = 'Fatture di vendita';
-
 -- Aggiunta vista Data insoluto in Fatture di vendita
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), 'Data insoluto', '`ultimo_movimento`.`data_insoluto`', 17, 0);
@@ -397,14 +366,14 @@ UPDATE `zz_plugins_lang` SET `title` = 'Contabilizzazione' WHERE `title` = 'Regi
 UPDATE `zz_plugins_lang` SET `title` = 'Accounting' WHERE `title` = 'Registrations';
 
 -- Riorganizzazione plugins Fatture di vendita
-UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Riorganizzazione plugins Fatture di acquisto
-UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
-UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
-UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 
 -- Rinomino impostazione Data inizio controlli su stati FE in Data inizio controlli Fatture di vendita
 UPDATE `zz_settings` SET `nome` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings`.`nome` = 'Data inizio controlli su stati FE';
@@ -447,39 +416,6 @@ ALTER TABLE `dt_ddt` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `my_impianti` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
-
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `an_anagrafiche`
-    LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`idrelazione` = `an_relazioni`.`id`
-    LEFT JOIN `an_relazioni_lang` ON (`an_relazioni_lang`.`id_record` = `an_relazioni`.`id` AND `an_relazioni_lang`.|lang|)
-    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.|lang|)
-    LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome_sede` SEPARATOR ', ') AS nomi FROM `an_sedi` GROUP BY `id_anagrafica`) AS sedi ON `an_anagrafiche`.`id` = `sedi`.`id_anagrafica`
-    LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome` SEPARATOR ', ') AS nomi FROM `an_referenti` GROUP BY `id_anagrafica`) AS referenti ON `an_anagrafiche`.`id` = `referenti`.`id_anagrafica`
-    LEFT JOIN (
-        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
-        FROM `co_pagamenti`
-        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    ) AS pagvendita ON `an_anagrafiche`.`id_pagamento_vendite` = `pagvendita`.`id`
-    LEFT JOIN (
-        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
-        FROM `co_pagamenti`
-        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    ) AS pagacquisto ON `an_anagrafiche`.`id_pagamento_acquisti` = `pagacquisto`.`id`
-    LEFT JOIN `an_zone` ON `an_anagrafiche`.`id_zona` = `an_zone`.`id`
-WHERE
-    1=1
-    AND `an_anagrafiche`.`deleted_at` IS NULL
-GROUP BY
-    `an_anagrafiche`.`id`, `pagvendita`.`nome`, `pagacquisto`.`nome`
-HAVING
-    2=2
-ORDER BY
-    `ragione_sociale`" WHERE `name` = "Anagrafiche";
 
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = '`an_anagrafiche`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
@@ -1285,11 +1221,11 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM 
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Tutte le anagrafiche";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT id_intervento FROM in_interventi_tecnici) AND id_stato_intervento IN (SELECT id FROM in_statiintervento WHERE is_bloccato = 0)' WHERE `zz_widgets`.`name` = "Attività da pianificare";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT id_intervento FROM in_interventi_tecnici) AND id_stato IN (SELECT id FROM in_statiintervento WHERE is_bloccato = 0)' WHERE `zz_widgets`.`name` = "Attività da pianificare";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.id_stato_intervento = (SELECT in_statiintervento.id FROM in_statiintervento WHERE in_statiintervento.codice=\'TODO\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = "Attività nello stato da programmare";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.id_stato = (SELECT in_statiintervento.id FROM in_statiintervento WHERE in_statiintervento.codice=\'TODO\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = "Attività nello stato da programmare";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.id_stato_intervento = (SELECT in_statiintervento.id FROM in_statiintervento WHERE in_statiintervento.codice=\'WIP\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = "Attività confermate";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.id_stato = (SELECT in_statiintervento.id FROM in_statiintervento WHERE in_statiintervento.codice=\'WIP\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = "Attività confermate";
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE id_stato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile=1) AND default_revision=1' WHERE `zz_widgets`.`name` = "Preventivi da fatturare";
 
@@ -1312,3 +1248,38 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Mese di chiusura, Giorno di riprogrammazione", "query": "SELECT id, IF(mese=\'01\', \'Gennaio\', IF(mese=\'02\', \'Febbraio\',IF(mese=\'03\', \'Marzo\',IF(mese=\'04\', \'Aprile\',IF(mese=\'05\', \'Maggio\', IF(mese=\'06\', \'Giugno\', IF(mese=\'07\', \'Luglio\',IF(mese=\'08\', \'Agosto\',IF(mese=\'09\', \'Settembre\', IF(mese=\'10\', \'Ottobre\', IF(mese=\'11\', \'Novembre\',\'Dicembre\'))))))))))) AS `Mese di chiusura`, giorno_fisso AS `Giorno di riprogrammazione` FROM an_pagamenti_anagrafiche WHERE 1=1 AND id_anagrafica=|id_parent| GROUP BY id HAVING 2=2 ORDER BY an_pagamenti_anagrafiche.mese ASC"} ]}' WHERE `name` = "Regole pagamenti";
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.id_agente=an_anagrafiche.id WHERE co_provvigioni.id_articolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
+
+-- Allineamento moduli
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `an_anagrafiche`
+    LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`id_relazione` = `an_relazioni`.`id`
+    LEFT JOIN `an_relazioni_lang` ON (`an_relazioni_lang`.`id_record` = `an_relazioni`.`id` AND `an_relazioni_lang`.|lang|)
+    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
+    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.|lang|)
+    LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome_sede` SEPARATOR ', ') AS nomi FROM `an_sedi` GROUP BY `id_anagrafica`) AS sedi ON `an_anagrafiche`.`id` = `sedi`.`id_anagrafica`
+    LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome` SEPARATOR ', ') AS nomi FROM `an_referenti` GROUP BY `id_anagrafica`) AS referenti ON `an_anagrafiche`.`id` = `referenti`.`id_anagrafica`
+    LEFT JOIN (
+        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
+        FROM `co_pagamenti`
+        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
+    ) AS pagvendita ON `an_anagrafiche`.`id_pagamento_vendite` = `pagvendita`.`id`
+    LEFT JOIN (
+        SELECT `co_pagamenti`.`id`, `co_pagamenti_lang`.`title` AS `nome`
+        FROM `co_pagamenti`
+        LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
+    ) AS pagacquisto ON `an_anagrafiche`.`id_pagamento_acquisti` = `pagacquisto`.`id`
+    LEFT JOIN `an_zone` ON `an_anagrafiche`.`id_zona` = `an_zone`.`id`
+WHERE
+    1=1
+    AND `an_anagrafiche`.`deleted_at` IS NULL
+GROUP BY
+    `an_anagrafiche`.`id`, `pagvendita`.`nome`, `pagacquisto`.`nome`
+HAVING
+    2=2
+ORDER BY
+    `ragione_sociale`" WHERE `name` = "Anagrafiche";
+UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');

@@ -272,21 +272,21 @@ function renderElencoModuli($elenco, $depth = 0)
     foreach ($elenco as $record) {
         $record_bloccato = in_array($record['name'], $moduli_sempre_attivi);
 
-        $is_plugin = !empty($record['idmodule_to']);
+        $is_plugin = !empty($record['id_module_to']);
         $nome_tipo = string_lowercase($is_plugin ? tr('Plugin') : tr('Modulo'));
 
         // Render per sotto-moduli
         $sotto_moduli = renderElencoModuli($record['all_children'], $depth + 1);
 
         $elenco_plugin = null;
-        if (empty($record['idmodule_to'])) {
+        if (empty($record['id_module_to'])) {
             $plugins = database()->table('zz_plugins')
                 ->selectRaw('zz_plugins.*, zz_plugins_lang.title as title')
                 ->join('zz_plugins_lang', function ($join) {
                     $join->on('zz_plugins.id', '=', 'zz_plugins_lang.id_record')
                         ->where('zz_plugins_lang.id_lang', '=', Models\Locale::getDefault()->id);
                 })
-                ->where('idmodule_to', '=', $record['id'])
+                ->where('id_module_to', '=', $record['id'])
                 ->get()->map(fn ($i) => (array) $i)->toArray();
 
             $elenco_plugin = renderElencoModuli($plugins, $depth + 1);

@@ -49,7 +49,7 @@ function start_datatables( $elements ) {
 
         // Controlla che la tabella non sia già inizializzata
         if (!$.fn.DataTable.isDataTable('#' + $this.attr('id'))) {
-            const id_module = $this.data('idmodule');
+            const id_module = $this.data('id_module');
             const id_plugin = $this.data('idplugin');
             const id_parent = $this.data('idparent');
 
@@ -331,7 +331,7 @@ function initComplete(settings) {
                 }
 
                 // Impostazione delle sessioni per le ricerche del modulo e del campo specificati
-                const module_id = $this.data('idmodule') + "-" + $this.data('idplugin');
+                const module_id = $this.data('id_module') + "-" + $this.data('idplugin');
                 const field = $(this).parent().attr('id').replace('th_', '');
                 const value = $(this).val();
                 if (e.keyCode == 13 || $(this).val() == '') {
@@ -462,7 +462,7 @@ function getTable(selector) {
     return {
         table: table,
 
-        id_module: table.data('idmodule'),
+        id_module: table.data('id_module'),
         id_plugin: table.data('idplugin'),
 
         initDatatable: function () {

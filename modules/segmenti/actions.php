@@ -104,7 +104,7 @@ switch (post('op')) {
         ]);
 
         // Aggiunta permessi segmento solo per i gruppi che hanno accesso al modulo
-        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
+        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
 
         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
         $id_gruppo_admin = 1; // ID del gruppo Amministratori

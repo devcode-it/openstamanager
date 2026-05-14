@@ -51,18 +51,18 @@ class PluginDuplicati extends Controllo
     {
         // 1. Controllo duplicati nel campo 'name' della tabella zz_plugins
         $duplicati_name = database()->fetchArray('
-            SELECT `idmodule_to`, `name`, COUNT(*) as `count`
+            SELECT `id_module_to`, `name`, COUNT(*) as `count`
             FROM `zz_plugins`
             WHERE `name` IS NOT NULL AND `name` != ""
-            GROUP BY `idmodule_to`, `name`
+            GROUP BY `id_module_to`, `name`
             HAVING COUNT(*) > 1
         ');
 
         foreach ($duplicati_name as $plugin) {
-            $modulo = Module::find($plugin['idmodule_to']);
+            $modulo = Module::find($plugin['id_module_to']);
 
             $this->addResult([
-                'id' => 'name_'.$plugin['idmodule_to'].'_'.$plugin['name'],
+                'id' => 'name_'.$plugin['id_module_to'].'_'.$plugin['name'],
                 'nome' => $modulo->getTranslation('title').': '.$plugin['name'].' (name)',
                 'descrizione' => tr('Il plugin _NAME_ del modulo _MODULE_ esiste _COUNT_ volte nella tabella zz_plugins (campo name)', [
                     '_NAME_' => $plugin['name'],
@@ -74,25 +74,25 @@ class PluginDuplicati extends Controllo
 
         // 2. Controllo plugin diversi con stesso title nello stesso modulo e lingua
         $duplicati_title_diversi = database()->fetchArray('
-            SELECT `zz_plugins`.`idmodule_to`, `zz_plugins_lang`.`title`, `zz_plugins_lang`.`id_lang`,
+            SELECT `zz_plugins`.`id_module_to`, `zz_plugins_lang`.`title`, `zz_plugins_lang`.`id_lang`,
                    COUNT(DISTINCT `zz_plugins_lang`.`id_record`) as `count_plugin`,
                    GROUP_CONCAT(DISTINCT `zz_plugins`.`name`) as `nomi_plugin`
             FROM `zz_plugins_lang`
             INNER JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_plugins_lang`.`id_record`
             WHERE `zz_plugins_lang`.`title` IS NOT NULL AND `zz_plugins_lang`.`title` != ""
-            GROUP BY `zz_plugins`.`idmodule_to`, `zz_plugins_lang`.`title`, `zz_plugins_lang`.`id_lang`
+            GROUP BY `zz_plugins`.`id_module_to`, `zz_plugins_lang`.`title`, `zz_plugins_lang`.`id_lang`
             HAVING COUNT(DISTINCT `zz_plugins_lang`.`id_record`) > 1
         ');
 
         foreach ($duplicati_title_diversi as $plugin) {
-            $modulo = Module::find($plugin['idmodule_to']);
+            $modulo = Module::find($plugin['id_module_to']);
             $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($plugin['id_lang']));
 
             // Estrai solo la parte principale del nome della lingua (es. "English" da "English (English)")
             $nome_lingua = explode(' (', (string) $lingua['name'])[0];
 
             $this->addResult([
-                'id' => 'title_diversi_'.$plugin['idmodule_to'].'_'.$plugin['id_lang'].'_'.md5((string) $plugin['title']),
+                'id' => 'title_diversi_'.$plugin['id_module_to'].'_'.$plugin['id_lang'].'_'.md5((string) $plugin['title']),
                 'nome' => $modulo->getTranslation('title').': '.$plugin['title'].' ('.$nome_lingua.')',
                 'descrizione' => tr('Il titolo "_TITLE_" del modulo _MODULE_ è usato da _COUNT_ plugin diversi (_PLUGINS_) nella lingua _LANG_', [
                     '_TITLE_' => $plugin['title'],
@@ -106,7 +106,7 @@ class PluginDuplicati extends Controllo
 
         // 3. Controllo record duplicati in zz_plugins_lang con stesso id_record e id_lang
         $duplicati_record_lang = database()->fetchArray('
-            SELECT `zz_plugins`.`idmodule_to`, `zz_plugins_lang`.`id_record`, `zz_plugins_lang`.`id_lang`, COUNT(*) as `count`
+            SELECT `zz_plugins`.`id_module_to`, `zz_plugins_lang`.`id_record`, `zz_plugins_lang`.`id_lang`, COUNT(*) as `count`
             FROM `zz_plugins_lang`
             INNER JOIN `zz_plugins` ON `zz_plugins`.`id` = `zz_plugins_lang`.`id_record`
             GROUP BY `zz_plugins_lang`.`id_record`, `zz_plugins_lang`.`id_lang`
@@ -114,7 +114,7 @@ class PluginDuplicati extends Controllo
         ');
 
         foreach ($duplicati_record_lang as $plugin) {
-            $modulo = Module::find($plugin['idmodule_to']);
+            $modulo = Module::find($plugin['id_module_to']);
             $lingua = database()->fetchOne('SELECT `name` FROM `zz_langs` WHERE `id` = '.prepare($plugin['id_lang']));
             $plugin_record = database()->fetchOne('SELECT `name` FROM `zz_plugins` WHERE `id` = '.prepare($plugin['id_record']));
 
@@ -151,18 +151,18 @@ class PluginDuplicati extends Controllo
         // Estrai il tipo di duplicato dal record ID
         if (str_starts_with((string) $record_id, 'name_')) {
             // Duplicato nel campo 'name' della tabella zz_plugins
-            // Record ID è nel formato: name_<idmodule_to>_<name>
+            // Record ID è nel formato: name_<id_module_to>_<name>
             preg_match('/^name_(\d+)_(.+)$/', (string) $record_id, $matches);
             if (!empty($matches)) {
-                $idmodule_to = $matches[1];
+                $id_module_to = $matches[1];
                 $name = $matches[2];
 
-                // Trova tutti i plugin con questo idmodule_to e name, ordinate per ID DESC
+                // Trova tutti i plugin con questo id_module_to e name, ordinate per ID DESC
                 // Mantieni il primo (più recente) ed elimina gli altri
                 $plugins = $database->fetchArray('
                     SELECT `id`
                     FROM `zz_plugins`
-                    WHERE `idmodule_to` = '.prepare($idmodule_to).' AND `name` = '.prepare($name).'
+                    WHERE `id_module_to` = '.prepare($id_module_to).' AND `name` = '.prepare($name).'
                     ORDER BY `id` DESC
                 ');
 
@@ -208,22 +208,22 @@ class PluginDuplicati extends Controllo
         try {
             // 1. Risolvi duplicati nel campo 'name' della tabella zz_plugins
             $duplicati_name = $database->fetchArray('
-                SELECT `id`, `idmodule_to`, `name`
+                SELECT `id`, `id_module_to`, `name`
                 FROM `zz_plugins`
                 WHERE `name` IS NOT NULL AND `name` != ""
-                AND (`idmodule_to`, `name`) IN (
-                    SELECT `idmodule_to`, `name`
+                AND (`id_module_to`, `name`) IN (
+                    SELECT `id_module_to`, `name`
                     FROM `zz_plugins`
                     WHERE `name` IS NOT NULL AND `name` != ""
-                    GROUP BY `idmodule_to`, `name`
+                    GROUP BY `id_module_to`, `name`
                     HAVING COUNT(*) > 1
                 )
-                ORDER BY `idmodule_to`, `name`, `id` DESC
+                ORDER BY `id_module_to`, `name`, `id` DESC
             ');
 
             $grouped_name = [];
             foreach ($duplicati_name as $record) {
-                $key = $record['idmodule_to'].'_'.$record['name'];
+                $key = $record['id_module_to'].'_'.$record['name'];
                 $grouped_name[$key][] = $record;
             }
 

@@ -114,7 +114,7 @@ switch (filter('op')) {
         }
 
         // Recupera i filtri del modulo
-        $clauses = Clause::where('idmodule', $id_record)->get();
+        $clauses = Clause::where('id_module', $id_record)->get();
         $module_data['clauses'] = [];
 
         foreach ($clauses as $clause) {
@@ -344,10 +344,10 @@ switch (filter('op')) {
             // Gestisci i filtri
             if (isset($module_data['clauses'])) {
                 // Elimina tutti i filtri esistenti per il modulo
-                $existing_clauses = $dbo->fetchArray('SELECT `id` FROM `zz_group_module` WHERE `idmodule` = '.prepare($module_id));
+                $existing_clauses = $dbo->fetchArray('SELECT `id` FROM `zz_group_module` WHERE `id_module` = '.prepare($module_id));
 
                 // Elimina tutti i filtri
-                $dbo->delete('zz_group_module', ['idmodule' => $module_id]);
+                $dbo->delete('zz_group_module', ['id_module' => $module_id]);
 
                 // Crea tutti i nuovi filtri dal file JSON
                 foreach ($module_data['clauses'] as $clause_data) {
@@ -368,7 +368,7 @@ switch (filter('op')) {
                     $clause_array = [
                         'name' => $clause_data['name'],
                         'id_gruppo' => $group_id,
-                        'idmodule' => $module_id,
+                        'id_module' => $module_id,
                         'clause' => $clause_data['clause'],
                         'position' => $clause_data['position'],
                         'enabled' => $clause_data['enabled'],
@@ -463,7 +463,7 @@ switch (filter('op')) {
                     // Se è una nuova vista, aggiungi automaticamente tutti i gruppi che hanno accesso al modulo
                     if (empty(post('gruppi')[$c])) {
                         // Ottieni tutti i gruppi che hanno accesso al modulo (permessi 'r' o 'rw')
-                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `idmodule` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
+                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
 
                         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
                         $id_gruppo_admin = 1; // ID del gruppo Amministratori
@@ -518,7 +518,7 @@ switch (filter('op')) {
                 $array = [
                     'name' => post('name')[$c],
                     'id_gruppo' => post('gruppo')[$c],
-                    'idmodule' => $id_record,
+                    'id_module' => $id_record,
                     'clause' => $query,
                     'position' => !empty(post('position')[$c]) ? 'HVN' : 'WHR',
                 ];

@@ -183,7 +183,7 @@ class Module extends Model
 
     public function plugins()
     {
-        return $this->hasMany(Plugin::class, 'idmodule_to');
+        return $this->hasMany(Plugin::class, 'id_module_to');
     }
 
     public function prints()
@@ -203,12 +203,12 @@ class Module extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'zz_permissions', 'idmodule', 'id_gruppo')->withPivot('permessi');
+        return $this->belongsToMany(Group::class, 'zz_permissions', 'id_module', 'id_gruppo')->withPivot('permessi');
     }
 
     public function clauses()
     {
-        return $this->hasMany(Clause::class, 'idmodule');
+        return $this->hasMany(Clause::class, 'id_module');
     }
 
     /* Gerarchia */

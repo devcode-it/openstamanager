@@ -51,7 +51,7 @@ class Clause extends Model
 
     public function module()
     {
-        return $this->belongsTo(Module::class, 'idmodule');
+        return $this->belongsTo(Module::class, 'id_module');
     }
 
     public function getModuleAttribute()

@@ -104,7 +104,7 @@ if (!empty($type) && $type != 'menu' && $type != 'custom') {
 
     $table_id = 'main_'.random_int(0, 99);
     echo '
-    <table data-idmodule="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="table main-records table-hover table-striped '.(!empty($id_plugin) ? '-plugins' : '').'">
+    <table data-id_module="'.$id_module.'" data-idplugin="'.$id_plugin.'" data-idparent="'.$id_record.'" data-selected="'.implode(';', $selezione).'" id="'.$table_id.'" width="100%" class="table main-records table-hover table-striped '.(!empty($id_plugin) ? '-plugins' : '').'">
             <thead>
                 <tr>
                     <th id="th_selector"></th>';

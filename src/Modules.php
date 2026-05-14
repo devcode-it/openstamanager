@@ -156,7 +156,7 @@ class Modules
                 AND 
                 `zz_group_module`.`enabled` = 1
                 AND
-                `zz_group_module`.`idmodule` = '.prepare($module['id']));
+                `zz_group_module`.`id_module` = '.prepare($module['id']));
 
             foreach ($results as $result) {
                 if (!empty($result['clause'])) {

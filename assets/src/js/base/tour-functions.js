@@ -5,7 +5,7 @@
 
 /**
  * Salva un tour come completato nel database
- * @param {string} idModule ID del modulo
+ * @param {string} id_module ID del modulo
  * @returns {Promise<boolean>} Promise che restituisce true se successo, false altrimenti
  */
 function parseTourAjaxResponse(response) {
@@ -155,9 +155,9 @@ function isIntroTourStep(step, index) {
     return step.element === document.body || step.element === document.documentElement || step.element === 'body' || step.element === 'html';
 }
 
-function getTourModuleKey(idModule) {
-    if (idModule !== undefined && idModule !== null && idModule !== '') {
-        return String(idModule);
+function getTourModuleKey(id_module) {
+    if (id_module !== undefined && id_module !== null && id_module !== '') {
+        return String(id_module);
     }
 
     if (typeof globals !== 'undefined' && globals && globals.id_module !== undefined && globals.id_module !== null && globals.id_module !== '') {
@@ -167,16 +167,16 @@ function getTourModuleKey(idModule) {
     return 'global';
 }
 
-function registerActiveTourDriver(idModule, getTourDriver) {
+function registerActiveTourDriver(id_module, getTourDriver) {
     if (typeof getTourDriver !== 'function') {
         return;
     }
 
-    activeTourDrivers[getTourModuleKey(idModule)] = getTourDriver;
+    activeTourDrivers[getTourModuleKey(id_module)] = getTourDriver;
 }
 
-function getActiveTourDriver(idModule) {
-    const getter = activeTourDrivers[getTourModuleKey(idModule)];
+function getActiveTourDriver(id_module) {
+    const getter = activeTourDrivers[getTourModuleKey(id_module)];
 
     if (typeof getter === 'function') {
         return getter();
@@ -185,8 +185,8 @@ function getActiveTourDriver(idModule) {
     return null;
 }
 
-function getResolvedTourModuleId(idModule) {
-    const key = getTourModuleKey(idModule);
+function getResolvedTourModuleId(id_module) {
+    const key = getTourModuleKey(id_module);
 
     return key === 'global' ? null : key;
 }
@@ -212,8 +212,8 @@ function bindTourExitHandler() {
         event.preventDefault();
         event.stopPropagation();
 
-        const idModule = exitButton.getAttribute('data-tour-module-id');
-        const resolvedModuleId = getResolvedTourModuleId(idModule);
+        const id_module = exitButton.getAttribute('data-tour-module-id');
+        const resolvedModuleId = getResolvedTourModuleId(id_module);
         const tourDriver = getActiveTourDriver(resolvedModuleId);
 
         completeTourAndCloseDB(tourDriver, resolvedModuleId);
@@ -222,15 +222,15 @@ function bindTourExitHandler() {
     isTourExitHandlerBound = true;
 }
 
-function saveTourCompletedDB(idModule) {
-    const moduleKey = getTourModuleKey(idModule);
+function saveTourCompletedDB(id_module) {
+    const moduleKey = getTourModuleKey(id_module);
     const existingRequest = tourCompletionRequests[moduleKey];
 
     if (existingRequest) {
         return existingRequest;
     }
 
-    const resolvedModuleId = getResolvedTourModuleId(idModule);
+    const resolvedModuleId = getResolvedTourModuleId(id_module);
     if (!resolvedModuleId) {
         return Promise.resolve(false);
     }
@@ -271,13 +271,13 @@ function saveTourCompletedDB(idModule) {
 
 /**
  * Verifica se un tour è stato completato
- * @param {string} idModule ID del modulo
+ * @param {string} id_module ID del modulo
  * @returns {Promise<boolean>} Promise che restituisce true se completato, false altrimenti
  */
-function isTourCompletedDB(idModule) {
+function isTourCompletedDB(id_module) {
     return new Promise(function(resolve) {
         $.ajax({
-            url: globals.rootdir + '/ajax.php?op=is_tour_completed&id_module=' + idModule,
+            url: globals.rootdir + '/ajax.php?op=is_tour_completed&id_module=' + id_module,
             type: 'GET',
             dataType: 'text',
             success: function(response) {
@@ -302,8 +302,8 @@ function injectTourExitButton(popover, getTourDriver, getModuleId) {
         return;
     }
 
-    const idModule = typeof getModuleId === 'function' ? getModuleId() : null;
-    const resolvedModuleId = getResolvedTourModuleId(idModule);
+    const id_module = typeof getModuleId === 'function' ? getModuleId() : null;
+    const resolvedModuleId = getResolvedTourModuleId(id_module);
 
     registerActiveTourDriver(resolvedModuleId, getTourDriver);
     bindTourExitHandler();
@@ -359,13 +359,13 @@ function addExitButtonsToTourSteps(steps, getTourDriver, getModuleId) {
 /**
  * Completa il tour e salva lo stato nel database
  * @param {Object} tourDriver Istanza del tour (Driver.js)
- * @param {string} idModule ID del modulo
+ * @param {string} id_module ID del modulo
  * @returns {Promise<void>}
  */
-function completeTourAndCloseDB(tourDriver, idModule) {
+function completeTourAndCloseDB(tourDriver, id_module) {
     if (tourDriver) {
         tourDriver.destroy();
     }
 
-    return saveTourCompletedDB(idModule);
+    return saveTourCompletedDB(id_module);
 }

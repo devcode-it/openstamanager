@@ -134,7 +134,7 @@ switch ($resource) {
         break;
 
     case 'moduli_gruppo':
-        $query = 'SELECT `zz_modules`.`id`, `zz_modules_lang`.`title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id`=`zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' LEFT JOIN `zz_permissions` ON `zz_permissions`.`idmodule`=`zz_modules`.`id` |where| GROUP BY `zz_modules`.`id` ORDER BY `title`';
+        $query = 'SELECT `zz_modules`.`id`, `zz_modules_lang`.`title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON `zz_modules`.`id`=`zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).' LEFT JOIN `zz_permissions` ON `zz_permissions`.`id_module`=`zz_modules`.`id` |where| GROUP BY `zz_modules`.`id` ORDER BY `title`';
 
         $where[] = '`zz_modules`.`enabled`=1';
 

@@ -488,7 +488,7 @@ class Upload extends Model
         $id_module = $data['id_module'] ?? null;
         if (!empty($data['id_plugin'])) {
             $plugin = Plugin::find($data['id_plugin']);
-            $id_module = $plugin ? $plugin->idmodule_to : null;
+            $id_module = $plugin ? $plugin->id_module_to : null;
         }
 
         if (!$id_module) {
@@ -547,7 +547,7 @@ class Upload extends Model
         $id_module = $data['id_module'] ?? null;
         if (!empty($data['id_plugin'])) {
             $plugin = Plugin::find($data['id_plugin']);
-            $id_module = $plugin ? $plugin->idmodule_to : null;
+            $id_module = $plugin ? $plugin->id_module_to : null;
         }
 
         if (!$id_module) {

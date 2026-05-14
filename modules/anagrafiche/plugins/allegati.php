@@ -48,7 +48,7 @@ if (empty($_GET['visualizza_allegati'])) {
     $documenti[] = 0;
 
     foreach ($rs as $r) {
-        $permessi[] = $r->idmodule;
+        $permessi[] = $r->id_module;
     }
 
     if ($anagrafica->uploads()->first()) {

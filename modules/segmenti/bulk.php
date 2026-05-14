@@ -54,7 +54,7 @@ if (!empty($records)) {
              OR `zz_groups`.`id` IN (
                  SELECT DISTINCT `id_gruppo` FROM `zz_permissions`
                  WHERE `permessi` IN ('r', 'rw')
-                 AND `idmodule` IN (
+                 AND `id_module` IN (
                      SELECT DISTINCT `id_module` FROM `zz_segments`
                      WHERE `id` IN (".$records_list.')
                  )

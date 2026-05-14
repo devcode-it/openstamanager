@@ -28,7 +28,7 @@ echo '
     <div class="data">';
 
 $num = 0;
-$additionals = Clause::where('idmodule', $record['id'])->get();
+$additionals = Clause::where('id_module', $record['id'])->get();
 
 if (!empty($additionals)) {
     foreach ($additionals as $num => $additional) {

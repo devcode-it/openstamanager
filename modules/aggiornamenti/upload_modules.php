@@ -128,8 +128,8 @@ function prepareInsertData($type, $info)
         ]),
         'plugin' => array_merge($baseData, [
             'default' => 0,
-            'idmodule_from' => Module::where('name', $info['module_from'] ?? '')->first()?->id,
-            'idmodule_to' => Module::where('name', $info['module_to'] ?? '')->first()?->id,
+            'id_module_from' => Module::where('name', $info['module_from'] ?? '')->first()?->id,
+            'id_module_to' => Module::where('name', $info['module_to'] ?? '')->first()?->id,
             'position' => $info['position'] ?? '',
         ]),
         'template' => array_merge($baseData, [
@@ -184,12 +184,12 @@ function insertComponent($type, $info, $table, $dbo)
     }
 
     // Validazione per i plugin: i moduli devono esistere
-    if ($type === 'plugin' && (empty($insertData['idmodule_from']) || empty($insertData['idmodule_to']))) {
+    if ($type === 'plugin' && (empty($insertData['id_module_from']) || empty($insertData['id_module_to']))) {
         $missing = [];
-        if (empty($insertData['idmodule_from'])) {
+        if (empty($insertData['id_module_from'])) {
             $missing[] = $info['module_from'] ?? 'sconosciuto';
         }
-        if (empty($insertData['idmodule_to'])) {
+        if (empty($insertData['id_module_to'])) {
             $missing[] = $info['module_to'] ?? 'sconosciuto';
         }
         flash()->error(tr('Errore: i moduli "_MODULES_" non sono installati. Installare prima i moduli richiesti.', [

@@ -94,7 +94,7 @@ echo '
 	</div>';
 
 // Plugins
-$plugins = Plugin::where('idmodule_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
+$plugins = Plugin::where('id_module_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
 
 $module_record = $record;
 foreach ($plugins as $plugin) {

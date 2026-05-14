@@ -397,14 +397,14 @@ UPDATE `zz_plugins_lang` SET `title` = 'Contabilizzazione' WHERE `title` = 'Regi
 UPDATE `zz_plugins_lang` SET `title` = 'Accounting' WHERE `title` = 'Registrations';
 
 -- Riorganizzazione plugins Fatture di vendita
-UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
-UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 -- Riorganizzazione plugins Fatture di acquisto
-UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
-UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
-UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `idmodule_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '1' WHERE `zz_plugins`.`name` = 'Fatturazione Elettronica' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '2' WHERE `zz_plugins`.`name` = 'Contabilizzazione' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_plugins` SET `order` = '3' WHERE `zz_plugins`.`name` = 'Movimenti contabili' AND `id_module_from` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 
 -- Rinomino impostazione Data inizio controlli su stati FE in Data inizio controlli Fatture di vendita
 UPDATE `zz_settings` SET `nome` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings`.`nome` = 'Data inizio controlli su stati FE';
@@ -874,7 +874,7 @@ FROM
 	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
 	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
 	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
-    LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins_lang`.`id_record` = `zz_plugins`.`id` AND `zz_plugins_lang`.|lang|) INNER JOIN `zz_modules` ON `zz_plugins`.`idmodule_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules`.`name` = 'Articoli' AND `zz_plugins`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
+    LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins_lang`.`id_record` = `zz_plugins`.`id` AND `zz_plugins_lang`.|lang|) INNER JOIN `zz_modules` ON `zz_plugins`.`id_module_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules`.`name` = 'Articoli' AND `zz_plugins`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
 WHERE
     1=1 AND `mg_articoli`.`deleted_at` IS NULL
 GROUP BY 
@@ -1274,3 +1274,4 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `id_sostituto` INT NUL
 
 ALTER TABLE `or_ordini` CHANGE `idtipoordine` `id_tipo_ordine` TINYINT NOT NULL;
 ALTER TABLE `zz_group_module` CHANGE `idgruppo` `id_gruppo` INT NOT NULL;
+ALTER TABLE `zz_group_module` CHANGE `idmodule` `id_module` INT NOT NULL;

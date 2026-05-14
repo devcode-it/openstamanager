@@ -54,7 +54,7 @@ class Group extends Model
 
     public function modules()
     {
-        return $this->belongsToMany(Module::class, 'zz_permissions', 'id_gruppo', 'idmodule')->withPivot('permessi');
+        return $this->belongsToMany(Module::class, 'zz_permissions', 'id_gruppo', 'id_module')->withPivot('permessi');
     }
 
     public function views()

@@ -376,7 +376,7 @@ class AuthOSM extends Util\Singleton
             if (!$this->isAdmin()) {
                 $group = $this->getUser()['gruppo'];
 
-                $query .= ' AND `id` IN (SELECT `idmodule` FROM `zz_permissions` WHERE `id_gruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
+                $query .= ' AND `id` IN (SELECT `id_module` FROM `zz_permissions` WHERE `id_gruppo` = '.Group::where('nome', $group)->first()->id." AND `permessi` IN ('r', 'rw'))";
             }
 
             $database = database();

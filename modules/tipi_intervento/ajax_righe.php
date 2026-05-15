@@ -6,7 +6,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
     include_once __DIR__.'/../../core.php';
 }
 
-$righe = $dbo->fetchArray('SELECT * FROM in_righe_tipiinterventi WHERE id_tipo_intervento='.prepare($id_record));
+$righe = $dbo->fetchArray('SELECT * FROM in_righe_tipi_interventi WHERE id_tipo_intervento='.prepare($id_record));
 
 echo '
     <table class="table table-striped table-sm table-hover table-bordered">

@@ -176,7 +176,7 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $subtotale = $qta * $prezzo_vendita;
 
-        $query = 'INSERT INTO in_righe_tipiinterventi(id_tipo_intervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, id_iva) VALUES ('.prepare($id_tipo_intervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($id_iva).')';
+        $query = 'INSERT INTO in_righe_tipi_interventi(id_tipo_intervento, prezzo_acquisto, prezzo_vendita, descrizione, qta, um, subtotale, id_iva) VALUES ('.prepare($id_tipo_intervento).', '.prepare($prezzo_acquisto).', '.prepare($prezzo_vendita).', '.prepare($descrizione).', '.prepare($qta).', '.prepare($um).', '.prepare($subtotale).', '.prepare($id_iva).')';
         $dbo->query($query);
 
         flash()->info(tr('Riga aggiunta!'));
@@ -194,7 +194,7 @@ switch (post('op')) {
         $prezzo_vendita = post('prezzo_vendita');
         $subtotale = $qta * $prezzo_vendita;
 
-        $query = 'UPDATE in_righe_tipiinterventi SET'.
+        $query = 'UPDATE in_righe_tipi_interventi SET'.
             ' descrizione='.prepare($descrizione).','.
             ' qta='.prepare($qta).','.
             ' id_iva='.prepare($id_iva).','.
@@ -212,7 +212,7 @@ switch (post('op')) {
 
     case 'delriga':
         $idriga = post('idriga');
-        $dbo->delete('in_righe_tipiinterventi', ['id' => $idriga]);
+        $dbo->delete('in_righe_tipi_interventi', ['id' => $idriga]);
 
         flash()->info(tr('Riga eliminata!'));
 

@@ -43,7 +43,7 @@ if (empty($idriga)) {
     $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
 
     // carico record da modificare
-    $q = 'SELECT * FROM in_righe_tipiinterventi WHERE id='.prepare($idriga);
+    $q = 'SELECT * FROM in_righe_tipi_interventi WHERE id='.prepare($idriga);
     $rsr = $dbo->fetchArray($q);
 
     $descrizione = $rsr[0]['descrizione'];

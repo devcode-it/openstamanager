@@ -127,7 +127,7 @@ return [
     'in_interventi_tecnici',
     'in_interventi_tecnici_assegnati',
     'in_righe_interventi',
-    'in_righe_tipiinterventi',
+    'in_righe_tipi_interventi',
     'in_statiintervento',
     'in_statiintervento_lang',
     'in_tags',

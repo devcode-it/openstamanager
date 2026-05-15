@@ -17,7 +17,6 @@ ALTER TABLE `or_ordini` ADD `nome` VARCHAR(100) NOT NULL;
 ALTER TABLE `co_iva` ADD `enabled` BOOLEAN NOT NULL DEFAULT TRUE AFTER `default`;
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Iva'), 'id', 'id', 1, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Iva'), 'Attivo', 'IF(`enabled`=1, \'SI\', \'NO\')', 10, 1);
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES

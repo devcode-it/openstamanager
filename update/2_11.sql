@@ -1451,3 +1451,19 @@ UPDATE `zz_views` SET `query` = "IF( mg_movimenti.id_sede=0, 'Sede legale', an_s
 UPDATE `zz_views` SET `query` = "mg_movimenti.id_articolo" WHERE `zz_views`.`name` = "_link_record_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');
 
 UPDATE `zz_views` SET `query` = "IFNULL(an_sedi.nome,an_sedi.nome_sede)" WHERE `zz_views`.`name` = "Nome" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi');
+
+-- Allineamento impostazioni
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM `co_ritenuta_acconto` ORDER BY descrizione ASC" WHERE `nome` = "Ritenuta d'acconto predefinita";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id,descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Cassa e banche')" WHERE `nome` = "Conto aziendale predefinito";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per la marca da bollo";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per le spese d'incasso";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `id_tipo_anagrafica` FROM `an_tipianagrafiche` WHERE `name` = 'Fornitore') AND `deleted_at` IS NULL" WHERE `nome` = "Terzo intermediario";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` WHERE `name` = 'Azienda') AND `deleted_at` IS NULL" WHERE `nome` = "Azienda predefinita";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, nome_sede AS descrizione FROM an_sedi WHERE id_anagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')" WHERE `nome` = "Magazzino cespiti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i crediti clienti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i debiti fornitori";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per i cespiti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per gli ammortamenti";
+UPDATE `zz_settings` SET `tipo` = "" WHERE `nome` = "";
+
+-- Allineamento segmenti

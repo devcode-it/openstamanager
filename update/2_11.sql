@@ -423,7 +423,7 @@ UPDATE `zz_views` SET `query` = '`in_interventi`.`id_anagrafica`' WHERE `zz_view
 UPDATE `zz_views` SET `query` = '`my_impianti`.`id_anagrafica`' WHERE `zz_views`.`name` = "idanagrafica" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
 UPDATE `zz_views` SET `query` = '`an_anagrafiche`.`id`' WHERE `zz_views`.`name` = "idanagrafica" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 UPDATE `zz_views` SET `query` = '`co_preventivi`.`id_anagrafica`' WHERE `zz_views`.`name` = "idanagrafica" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
-UPDATE `zz_views` SET `query` = '`an_anagrafiche.`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tecnici e tariffe');
+UPDATE `zz_views` SET `query` = '`an_anagrafiche`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tecnici e tariffe');
 
 
 -- Allineamento moduli
@@ -591,27 +591,6 @@ HAVING
     2=2
 ORDER BY 
     `scadenza` ASC" WHERE `name` = "Scadenzario";
-
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_scadenzario`
-    LEFT JOIN `co_documenti` ON `co_scadenzario`.`id_documento` = `co_documenti`.`id`
-    LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN `an_anagrafiche` ON `co_scadenzario`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
-    LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.|lang|)
-    LEFT JOIN (SELECT COUNT(id_email) as emails, zz_operations.id_record FROM zz_operations WHERE id_module IN(SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_operations`.`op` = 'send-email' GROUP BY zz_operations.id_record) AS `email` ON `email`.`id_record` = `co_scadenzario`.`id`
-WHERE 
-    1=1 AND (`co_statidocumento`.`id` IS NULL OR `co_statidocumento`.`name` IN ('Emessa', 'Parzialmente pagato', 'Pagato')) 
-HAVING
-    2=2
-ORDER BY 
-    `scadenza` ASC" WHERE `name` = "Articoli";
 
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -1213,7 +1192,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELEC
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE id_contratto IN( SELECT id FROM co_contratti WHERE co_contratti.id_stato IN (SELECT id FROM co_staticontratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.id_documento=0' WHERE `zz_widgets`.`name` = "Rate contrattuali";
 
-UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) * IF(`co_tipidocumento`.`reversed`, -1, 1))), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM `co_righe_documenti` INNER JOIN co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato_documento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|) WHERE `co_statidocumento_lang`.`title`!='Bozza' AND `co_tipidocumento`.`dir`='entrata' |segment(`co_documenti`.`id_segment`)| AND `data` >= '|period_start|' AND `data` <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Fatturato";
+UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) * IF(`co_tipidocumento`.`reversed`, -1, 1))), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato_documento` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|) WHERE `co_statidocumento_lang`.`title`!='Bozza' AND `co_tipidocumento`.`dir`='entrata' |segment(`co_documenti`.`id_segment`)| AND `data` >= '|period_start|' AND `data` <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Fatturato";
 
 UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM( (co_righe_documenti.subtotale - co_righe_documenti.sconto) * IF(co_tipidocumento.reversed, -1, 1) ) ), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.id_documento = co_documenti.id INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento = co_tipidocumento.id WHERE co_tipidocumento.dir='uscita' |segment(`co_documenti`.`id_segment`)| AND data >= '|period_start|' AND data <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Acquisti";
 
@@ -1253,6 +1232,8 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Agente, Provvigione", "query": "SELECT co_provvigioni.id, an_anagrafiche.ragione_sociale AS `Agente`, CONCAT(FORMAT(co_provvigioni.provvigione,2), \' \', IF(co_provvigioni.tipo_provvigione=\'UNT\', \'€\', \'%\')) AS `Provvigione` FROM co_provvigioni LEFT JOIN an_anagrafiche ON co_provvigioni.id_agente=an_anagrafiche.id WHERE co_provvigioni.id_articolo=|id_parent| HAVING 2=2 ORDER BY co_provvigioni.id DESC"} ]}' WHERE `name` = "Provvigioni";
 
+UPDATE `zz_plugins` SET `options` = '{ "main_query": [{"type": "table", "fields": "Barcode", "query": "SELECT mg_articoli_barcode.id, mg_articoli_barcode.barcode AS Barcode FROM mg_articoli_barcode WHERE 1=1 AND mg_articoli_barcode.id_articolo=|id_parent| HAVING 2=2 ORDER BY barcode ASC"}]}' WHERE `name` = "Barcode";
+
 -- Allineamento moduli
 UPDATE `zz_modules` SET `options` = "
 SELECT
@@ -1288,5 +1269,75 @@ ORDER BY
     `ragione_sociale`" WHERE `name` = "Anagrafiche";
 UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
 
+-- Allineamento viste moduli
 UPDATE `zz_views` SET `query` = "IF(in_interventi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = 'IFNULL(SUM(in_interventi_tecnici.prezzo_ore_unitario*in_interventi_tecnici.ore-in_interventi_tecnici.sconto + in_interventi_tecnici.prezzo_km_unitario*in_interventi_tecnici.km-in_interventi_tecnici.sconto_km + in_interventi_tecnici.prezzo_diritto_chiamata), 0) + IFNULL(ricavo_righe, 0)' WHERE `zz_views`.`name` = "Ricavi" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `mg_articoli`
+    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
+    LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
+    LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN `zz_categorie` ON `mg_articoli`.`id_categoria` = `zz_categorie`.`id`
+    LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
+    LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`
+    LEFT JOIN `zz_categorie_lang` AS `sottocategorie_lang` ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.|lang|)
+    LEFT JOIN (SELECT `co_iva`.`percentuale` AS `perc`, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id` = `zz_settings`.`valore`) AS iva ON `iva`.`nome` = 'Iva predefinita'
+    LEFT JOIN `mg_scorte_sedi` ON `mg_scorte_sedi`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT CASE WHEN MIN(`differenza`) < 0 THEN -1 WHEN MAX(`threshold_qta`) > 0 THEN 1 ELSE 0 END AS `stato_giacenza`, `id_articolo` FROM (SELECT SUM(`mg_movimenti`.`qta`) - COALESCE(`mg_scorte_sedi`.`threshold_qta`, 0) AS `differenza`, COALESCE(`mg_scorte_sedi`.`threshold_qta`, 0) AS `threshold_qta`, `mg_movimenti`.`id_articolo` FROM `mg_movimenti` LEFT JOIN `mg_scorte_sedi` ON (`mg_scorte_sedi`.`id_sede` = `mg_movimenti`.`id_sede` AND `mg_scorte_sedi`.`id_articolo` = `mg_movimenti`.`id_articolo`) GROUP BY `mg_movimenti`.`id_articolo`, `mg_movimenti`.`id_sede`) AS `subquery` GROUP BY `id_articolo`) AS `giacenze` ON `giacenze`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT CASE WHEN COUNT(`mg_articoli_barcode`.`barcode`) <= 2 THEN GROUP_CONCAT(`mg_articoli_barcode`.`barcode` SEPARATOR '<br />') ELSE CONCAT((SELECT GROUP_CONCAT(`b1`.`barcode` SEPARATOR '<br />') FROM (SELECT `barcode` FROM `mg_articoli_barcode` `b2` WHERE `b2`.`id_articolo` = `mg_articoli_barcode`.`id_articolo` ORDER BY `b2`.`barcode` ASC) `b1`)) END AS `lista`, `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli` LEFT JOIN `mg_articoli_barcode` ON `mg_articoli_barcode`.`id_articolo` = `mg_articoli`.`id` GROUP BY `mg_articoli`.`id`) AS `barcode` ON `barcode`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN `zz_marche` as marca ON `marca`.`id` = `mg_articoli`.`id_marca`
+    LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `mg_articoli`.`id_modello`
+WHERE
+    1=1 AND `mg_articoli`.`deleted_at` IS NULL
+HAVING
+    2=2
+ORDER BY
+    `mg_articoli_lang`.`title`" WHERE `name` = "Articoli";
+        
+UPDATE `zz_modules` SET `options` = 'SELECT
+    |select|
+FROM
+    `zz_groups`
+    LEFT JOIN (SELECT `zz_users`.`id_gruppo`, COUNT(`zz_users`.`id`) AS num FROM `zz_users` GROUP BY `id_gruppo`) AS utenti ON `zz_groups`.`id` = `utenti`.`id_gruppo`
+    LEFT JOIN (SELECT `zz_users`.`id_gruppo`, COUNT(`zz_users`.`id`) AS num FROM `zz_users` WHERE `zz_users`.`enabled` = 1 GROUP BY `id_gruppo`) AS utenti_abilitati ON `zz_groups`.`id` = `utenti_abilitati`.`id_gruppo`
+    LEFT JOIN (SELECT `zz_users`.`id_gruppo`, COUNT(`zz_tokens`.`id`) AS num FROM `zz_users` INNER JOIN `zz_tokens` ON `zz_users`.`id` = `zz_tokens`.`id_utente` WHERE `zz_tokens`.`enabled` = 1 GROUP BY `id_gruppo`) AS api_abilitate ON `zz_groups`.`id` = `api_abilitate`.`id_gruppo`
+    LEFT JOIN (SELECT `zz_modules_lang`.`title`, `zz_modules`.`id` FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)) AS `module` ON `module`.`id` = `zz_groups`.`id_module_start`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY
+    `id`, `nome` ASC' WHERE `zz_modules`.`name` = 'Utenti e permessi';
+
+
+-- Allineamento viste
+UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsa_inps` - `co_documenti`.`ritenuta_acconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "Netto a pagare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '`prima_nota`.`totale`' WHERE `zz_views`.`name` = "Prima nota" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+
+UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps` + `co_documenti`.`iva_rivalsa_inps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + IF(co_documenti.split_payment=0, righe.iva, 0) + `co_documenti`.`rivalsa_inps` + `co_documenti`.`iva_rivalsa_inps` - `co_documenti`.`ritenuta_acconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi`!=0, ((`righe`.`totale_imponibile`*`co_ritenuta_contributi`.`percentuale_imponibile`/100)/100*`co_ritenuta_contributi`.`percentuale`), 0)) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Netto a pagare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+
+UPDATE `zz_views` SET `query` = 'co_movimenti.id_mastrino' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
+
+UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.id_mastrino' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
+
+UPDATE `zz_views` SET `query` = '`marca`.`name`' WHERE `zz_views`.`name` = "Marche" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
+UPDATE `zz_views` SET `query` = "IF(`dt_ddt`.`id_sede_destinazione`=0, 'Sede legale',CONCAT_WS(' - ', sedi_destinazione.nome_sede,sedi_destinazione.citta))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+UPDATE `zz_views` SET `query` = 'IF(dt_ddt.id_sede_partenza=0, "Sede legale",CONCAT_WS(" - ", sedi.nome_sede,sedi.citta))' WHERE `zz_views`.`name` = "Sede partenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+
+UPDATE `zz_views` SET `query` = "IF(`dt_ddt`.`id_sede_destinazione`=0, 'Sede legale',CONCAT_WS(' - ', sedi_destinazione.nome_sede,sedi_destinazione.citta))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+UPDATE `zz_views` SET `query` = 'IF(`dt_ddt`.`id_sede_partenza`=0, "Sede legale",CONCAT_WS(" - ", sedi.nome_sede,sedi.citta))' WHERE `zz_views`.`name` = "Sede partenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+
+UPDATE `zz_views` SET `query` = "IF(co_preventivi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
+
+UPDATE `zz_views` SET `query` = "IF(my_impianti.id_sede > 0, sede.info, CONCAT('', IF (clienti.telefono!='',CONCAT(clienti.telefono,'<br>'),''), IF(clienti.cellulare!='', CONCAT(clienti.cellulare,'<br>'),''),IF(clienti.citta!='',clienti.citta,''),IF(clienti.indirizzo!='',CONCAT(' - ',clienti.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
+
+UPDATE `zz_views` SET `query` = "IF( mg_movimenti.id_sede=0, 'Sede legale', an_sedi.nome_sede )" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');

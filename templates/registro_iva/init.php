@@ -159,7 +159,7 @@ ORDER BY
 $records = $dbo->fetchArray($query);
 
 if (empty(get('notdefinitiva'))) {
-    $page = $dbo->fetchOne('SELECT `first_page` FROM `co_stampecontabili` WHERE `dir`='.prepare(filter('dir')).' AND  `date_start`='.prepare(filter('date_start')).' AND `date_end`='.prepare(filter('date_end')))['first_page'];
+    $page = $dbo->fetchOne('SELECT `first_page` FROM `co_stampe_contabili` WHERE `dir`='.prepare(filter('dir')).' AND  `date_start`='.prepare(filter('date_start')).' AND `date_end`='.prepare(filter('date_end')))['first_page'];
 }
 
 // Sostituzioni specifiche

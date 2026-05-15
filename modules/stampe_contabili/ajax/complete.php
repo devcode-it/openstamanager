@@ -47,7 +47,7 @@ switch ($resource) {
         }
 
         $where_clause = implode(' AND ', $where_conditions);
-        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampecontabili WHERE '.$where_clause)['id'];
+        $stampa_definitiva = $dbo->fetchOne('SELECT id FROM co_stampe_contabili WHERE '.$where_clause)['id'];
 
         echo json_encode($stampa_definitiva ?: 0);
 

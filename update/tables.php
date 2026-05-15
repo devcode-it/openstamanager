@@ -61,7 +61,7 @@ return [
     'co_ritenuta_contributi',
     'co_rivalse',
     'co_scadenzario',
-    'co_stampecontabili',
+    'co_stampe_contabili',
     'co_staticontratti',
     'co_staticontratti_lang',
     'co_statidocumento',

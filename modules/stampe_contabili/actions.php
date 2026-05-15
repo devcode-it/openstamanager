@@ -47,7 +47,7 @@ switch (filter('op')) {
         }
 
         $where_clause = implode(' AND ', $where_conditions);
-        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampecontabili WHERE '.$where_clause)['last_page'] + 1;
+        $first_page = $dbo->fetchOne('SELECT MAX(last_page) AS last_page FROM co_stampe_contabili WHERE '.$where_clause)['last_page'] + 1;
 
         $print = Prints::render($id_print, null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
         $pages = count($print['pages']);
@@ -79,7 +79,7 @@ switch (filter('op')) {
             }
         }
 
-        $result = $dbo->table('co_stampecontabili')->insertGetId($insert_data);
+        $result = $dbo->table('co_stampe_contabili')->insertGetId($insert_data);
 
         $print = Prints::render($id_print, null, null, true, true, ['reset' => $first_page - 1, 'suppress' => 0]);
 

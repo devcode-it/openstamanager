@@ -175,7 +175,7 @@ if (!empty($dir)) {
 }
 
 $where_clause = implode(' AND ', $where_conditions);
-$elementi = $dbo->fetchArray('SELECT * FROM co_stampecontabili WHERE '.$where_clause);
+$elementi = $dbo->fetchArray('SELECT * FROM co_stampe_contabili WHERE '.$where_clause);
 echo '
 <div class="card card-info card-outline mt-3 collapsed-card">
     <div class="card-header">

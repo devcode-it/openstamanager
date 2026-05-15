@@ -130,7 +130,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
-                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
             GROUP BY
                 `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
             HAVING
@@ -198,7 +198,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
-                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN(SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN(SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
             GROUP BY
                 `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
             HAVING
@@ -254,7 +254,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -281,7 +281,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -310,7 +310,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 1 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 1 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -338,7 +338,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `co_iva`.`indetraibile` != 100
+            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_documenti`.`split_payment` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata")) AND `co_iva`.`indetraibile` != 100
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -366,7 +366,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `co_iva`.`indetraibile` != 0
+            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata")) AND `co_iva`.`indetraibile` != 0
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -394,7 +394,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -440,7 +440,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
-                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
             GROUP BY
                 `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
             HAVING
@@ -502,7 +502,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
                 INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
             WHERE
-                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+                `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
             GROUP BY
                 `cod_iva`, `aliquota`, `descrizione`, `co_documenti`.`id`
             HAVING
@@ -556,7 +556,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -583,7 +583,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "entrata" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -612,7 +612,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -639,7 +639,7 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
             INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))
+            `co_tipidocumento`.`dir` = "uscita" AND `co_righe_documenti`.`is_descrizione` = 0 AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))
         GROUP BY
             `co_iva`.`id`, `co_documenti`.`id`
         HAVING

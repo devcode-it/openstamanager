@@ -174,7 +174,7 @@ switch ($operazione) {
         $tipo = Tipo::find(post('id_tipo_documento'));
 
         if (!empty($accodare)) {
-            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id` WHERE `co_statidocumento`.`name` = \'Bozza\' AND `id_anagrafica` = '.prepare($contratto->id_anagrafica));
+            $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id` WHERE `co_stati_documento`.`name` = \'Bozza\' AND `id_anagrafica` = '.prepare($contratto->id_anagrafica));
 
             $id_documento = $documento['id'];
         }
@@ -232,7 +232,7 @@ switch ($operazione) {
             $contratto = $pianificazione->contratto;
             if (!empty($accodare)) {
                 $documento = $dbo->fetchOne(
-                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id` WHERE `co_statidocumento`.`name` = \'Bozza\' AND `id_anagrafica` = '.prepare($contratto->id_anagrafica)
+                    'SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id` WHERE `co_stati_documento`.`name` = \'Bozza\' AND `id_anagrafica` = '.prepare($contratto->id_anagrafica)
                 );
 
                 $id_documento = $documento['id'];

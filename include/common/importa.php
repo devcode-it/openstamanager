@@ -134,7 +134,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
         $id_emessa = StatoFattura::where('name', 'Emessa')->first()->id;
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statidocumento`.`id` as id, `co_statidocumento_lang`.`title` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_statidocumento`.`id` IN ('.$id_bozza.', '.$id_emessa.')", "value": "'.$stato_predefinito.'"]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `co_stati_documento`.`id` as id, `co_stati_documento_lang`.`title` as descrizione FROM `co_stati_documento` LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_stati_documento`.`id` IN ('.$id_bozza.', '.$id_emessa.')", "value": "'.$stato_predefinito.'"]}
             </div>
 
             <div class="col-md-4">

@@ -249,7 +249,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record`=`co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang`='.prepare(Locale::getDefault()->id).') INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato`=`co_stati_documento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         $failed = [];
         $added = 0;
@@ -328,7 +328,7 @@ switch (post('op')) {
         }
 
         // Selezione delle fatture da esportare
-        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato`=`co_statidocumento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
+        $fatture = $dbo->fetchArray('SELECT `co_documenti`.`id`, `numero_esterno`, `data`, `ragione_sociale`, `co_tipidocumento_lang`.`title`, `co_tipidocumento`.`dir` FROM `co_documenti` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato`=`co_stati_documento`.`id` WHERE `co_documenti`.`id` IN('.implode(',', array_map(prepare(...), $id_records)).')');
 
         $failed = [];
         $added = 0;
@@ -565,12 +565,12 @@ switch (post('op')) {
                 MAX(`data`) AS datamax
             FROM
                 `co_documenti`
-                INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-                LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_documenti`.`id_stato` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
+                INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+                LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_documenti`.`id_stato` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
                 INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment`
             WHERE
-                `co_statidocumento_lang`.`title` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
+                `co_stati_documento_lang`.`title` = "Emessa" AND `co_tipidocumento`.`dir`="entrata" AND `co_documenti`.`id_segment`='.$fattura->id_segment);
 
             if ((setting('Data emissione fattura automatica') == 1) && ($dir == 'entrata') && Carbon::parse($data)->lessThan(Carbon::parse($data_fattura_precedente['datamax'])) && (!empty($data_fattura_precedente['datamax']))) {
                 $fattura->data = $data_fattura_precedente['datamax'];

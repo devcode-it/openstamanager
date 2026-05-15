@@ -500,8 +500,8 @@ FROM
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND co_tipidocumento_lang.|lang|)
     LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM((`subtotale` - `sconto` + `rivalsa_inps`) * `co_iva`.`percentuale` / 100) AS `iva` FROM `co_righe_documenti` LEFT JOIN `co_iva` ON `co_iva`.`id` = `co_righe_documenti`.`id_iva` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`co_banche`.`nome`, ' - ', `co_banche`.`iban`) AS `descrizione` FROM `co_banche` GROUP BY `co_banche`.`id`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
+    LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`.|lang|)
     LEFT JOIN `fe_stati_documento` ON `co_documenti`.`codice_stato_fe` = `fe_stati_documento`.`codice`
     LEFT JOIN `fe_stati_documento_lang` ON (`fe_stati_documento`.`codice` = `fe_stati_documento_lang`.`id_record` AND `fe_stati_documento_lang`.|lang|)
     LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
@@ -527,8 +527,8 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.|lang|)
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|)
+    LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`.|lang|)
     LEFT JOIN `co_ritenuta_contributi` ON `co_documenti`.`id_ritenuta_contributi` = `co_ritenuta_contributi`.`id`
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|)
@@ -581,11 +581,11 @@ FROM
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.|lang|)
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.|lang|)
+    LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.|lang|)
     LEFT JOIN (SELECT COUNT(id_email) as emails, zz_operations.id_record FROM zz_operations WHERE id_module IN(SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `zz_operations`.`op` = 'send-email' GROUP BY zz_operations.id_record) AS `email` ON `email`.`id_record` = `co_scadenzario`.`id`
 WHERE 
-    1=1 AND (`co_statidocumento`.`id` IS NULL OR `co_statidocumento`.`name` IN ('Emessa', 'Parzialmente pagato', 'Pagato')) 
+    1=1 AND (`co_stati_documento`.`id` IS NULL OR `co_stati_documento`.`name` IN ('Emessa', 'Parzialmente pagato', 'Pagato')) 
 HAVING
     2=2
 ORDER BY 
@@ -1178,6 +1178,9 @@ RENAME TABLE `openstamanager`.`co_pianodeiconti2` TO `openstamanager`.`co_piano_
 RENAME TABLE `openstamanager`.`co_pianodeiconti3` TO `openstamanager`.`co_piano_dei_conti3`;
 RENAME TABLE `openstamanager`.`co_stampecontabili` TO `openstamanager`.`co_stampe_contabili`;
 RENAME TABLE `openstamanager`.`co_staticontratti` TO `openstamanager`.`co_stati_contratti`;
+RENAME TABLE `openstamanager`.`co_staticontratti_lang` TO `openstamanager`.`co_stati_contratti_lang`;
+RENAME TABLE `openstamanager`.`co_statidocumento` TO `openstamanager`.`co_stati_documento`;
+RENAME TABLE `openstamanager`.`co_statidocumento_lang` TO `openstamanager`.`co_stati_documento_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1200,7 +1203,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELEC
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_fatturazione_contratti WHERE id_contratto IN( SELECT id FROM co_contratti WHERE co_contratti.id_stato IN (SELECT id FROM co_stati_contratti WHERE is_fatturabile = 1)) AND co_fatturazione_contratti.id_documento=0' WHERE `zz_widgets`.`name` = "Rate contrattuali";
 
-UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) * IF(`co_tipidocumento`.`reversed`, -1, 1))), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`.|lang|) WHERE `co_statidocumento_lang`.`title`!='Bozza' AND `co_tipidocumento`.`dir`='entrata' |segment(`co_documenti`.`id_segment`)| AND `data` >= '|period_start|' AND `data` <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Fatturato";
+UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`) * IF(`co_tipidocumento`.`reversed`, -1, 1))), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM `co_righe_documenti` INNER JOIN `co_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id` LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`.|lang|) WHERE `co_stati_documento_lang`.`title`!='Bozza' AND `co_tipidocumento`.`dir`='entrata' |segment(`co_documenti`.`id_segment`)| AND `data` >= '|period_start|' AND `data` <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Fatturato";
 
 UPDATE `zz_widgets` SET `query` = "SELECT CONCAT_WS(' ', REPLACE(REPLACE(REPLACE(FORMAT(( SELECT SUM( (co_righe_documenti.subtotale - co_righe_documenti.sconto) * IF(co_tipidocumento.reversed, -1, 1) ) ), 2), ',', '#'), '.', ','), '#', '.'), '&euro;') AS dato FROM co_righe_documenti INNER JOIN co_documenti ON co_righe_documenti.id_documento = co_documenti.id INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento = co_tipidocumento.id WHERE co_tipidocumento.dir='uscita' |segment(`co_documenti`.`id_segment`)| AND data >= '|period_start|' AND data <= '|period_end|' AND 1=1" WHERE `zz_widgets`.`name` = "Acquisti";
 
@@ -1391,9 +1394,9 @@ UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
     `co_documenti`
-    INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
+    INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
     INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`. |lang|)
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`. |lang|)
     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
     INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
     LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`. |lang|)
@@ -1405,15 +1408,15 @@ FROM
             INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
-            INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
+            INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         WHERE
             `co_tipidocumento`.`dir` = 'entrata'
-            AND (`co_statidocumento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
+            AND (`co_stati_documento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
     ) AS `totali_generali` ON 1=1
 WHERE
     1=1
     AND `co_tipidocumento`.`dir` = 'entrata'
-    AND (`co_statidocumento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
+    AND (`co_stati_documento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
 GROUP BY
     `co_righe_documenti`.`id_articolo`, `mg_articoli_lang`.`title`
 HAVING

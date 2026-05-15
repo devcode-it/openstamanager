@@ -35,8 +35,8 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
     LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `id_documento`) AS righe ON `co_documenti`.`id` = `righe`.`id_documento`
-    LEFT JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`id_anagrafica` = `co_documenti`.`id_agente`
     LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
 WHERE
@@ -60,14 +60,14 @@ if (!empty(get('date_end'))) {
     $date_end = get('date_end');
 }
 
-$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', $module_query);
+$module_query = str_replace('1=1', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` = "Pagato")', $module_query);
 
 if (get('is_emessa') == 'true' && get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Emessa", "Parzialmente pagato"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` IN ("Pagato", "Emessa", "Parzialmente pagato"))', $module_query);
 } elseif (get('is_emessa') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Emessa"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` IN ("Pagato", "Emessa"))', $module_query);
 } elseif (get('is_parz_pagata') == 'true') {
-    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_statidocumento_lang` WHERE `title` IN ("Pagato", "Parzialmente pagato"))', $module_query);
+    $module_query = str_replace('1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` = "Pagato")', '1=1 AND `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` IN ("Pagato", "Parzialmente pagato"))', $module_query);
 }
 
 $module_query = str_replace('1=1', '1=1 AND `co_documenti`.`id_agente`='.prepare($id_record), $module_query);

@@ -270,16 +270,16 @@ if ($righe_vuote) {
 </div>';
 }
 
-$query = 'SELECT `co_statidocumento`.*, `co_statidocumento`.`id` AS id, `colore` AS _bgcolor_, `co_statidocumento_lang`.`title` as descrizione FROM `co_statidocumento` LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')';
+$query = 'SELECT `co_stati_documento`.*, `co_stati_documento`.`id` AS id, `colore` AS _bgcolor_, `co_stati_documento_lang`.`title` as descrizione FROM `co_stati_documento` LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')';
 if (empty($record['is_fiscale'])) {
-    $query .= " WHERE `co_statidocumento`.`id` = $id_stato_bozza";
+    $query .= " WHERE `co_stati_documento`.`id` = $id_stato_bozza";
 
     $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` WHERE `zz_plugins`.`name`="Fatturazione Elettronica" AND `id_module_to` = '.prepare($id_module));
     echo '<script>  $("li.btn-default.nav-item:has(#link-tab_'.$plugin[0]['id'].')").addClass("disabled"); </script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($fattura->stato->id == $id_stato_bozza) {
-    $query .= ' WHERE `co_statidocumento`.`id` IN ('.$id_stato_emessa.', '.$id_stato_bozza.')';
+    $query .= ' WHERE `co_stati_documento`.`id` IN ('.$id_stato_emessa.', '.$id_stato_bozza.')';
 }
 
 $query .= ' ORDER BY `title`';

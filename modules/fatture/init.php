@@ -49,7 +49,7 @@ if (!empty($id_record)) {
         `co_documenti`.`id_pagamento`,
         `co_documenti`.`id` AS id_documento,
 		`co_documenti`.`split_payment` AS split_payment,
-        `co_statidocumento_lang`.`title` AS `stato`,
+        `co_stati_documento_lang`.`title` AS `stato`,
         `co_tipidocumento_lang`.`title` AS `descrizione_tipo`,
         `co_tipidocumento`.`id` AS `id_tipo_documento`,
         `zz_segments`.`is_fiscale` AS is_fiscale,
@@ -57,8 +57,8 @@ if (!empty($id_record)) {
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`id_rivalsa_inps`) AS rivalsa_inps_desc,
         `dt_causalet_lang`.`title` AS causale_desc
     FROM `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id`
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

@@ -236,15 +236,15 @@ $clienti = $dbo->fetchArray('SELECT
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='entrata'
-        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
@@ -256,13 +256,13 @@ $totale = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_tipidocumento`.`dir`='entrata'
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
@@ -333,8 +333,8 @@ $articoli = $dbo->fetchArray('SELECT
         `mg_articoli`.`um`
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
@@ -342,7 +342,7 @@ $articoli = $dbo->fetchArray('SELECT
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='entrata'
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
@@ -355,15 +355,15 @@ $totale = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='entrata'
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 
@@ -446,15 +446,15 @@ $fornitori = $dbo->fetchArray('SELECT
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='uscita'
-        AND `co_statidocumento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
@@ -466,13 +466,13 @@ $totale_fornitori = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_tipidocumento`.`dir`='uscita'
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
@@ -543,8 +543,8 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         `mg_articoli`.`um`
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
@@ -552,7 +552,7 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='uscita'
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
     GROUP BY
@@ -565,15 +565,15 @@ $totale_acquistati = $dbo->fetchArray('SELECT
         SUM(IF(`reversed`=1, - (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`))) AS totale
     FROM
         `co_documenti`
-        INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
-        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
+        INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
+        LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
         INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_tipidocumento`.`dir`='uscita'
-        AND `co_statidocumento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
+        AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 

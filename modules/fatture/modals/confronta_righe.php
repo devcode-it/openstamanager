@@ -86,10 +86,10 @@ $righe = $dbo->fetchArray(
                         `co_documenti`
                         LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
                         LEFT JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
-                        INNER JOIN `co_statidocumento` ON `co_documenti`.`id_stato` = `co_statidocumento`.`id`
-                        LEFT JOIN `co_statidocumento_lang` ON `co_statidocumento_lang`.`id_record` = `co_statidocumento`.`id` AND `co_statidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+                        INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+                        LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                     WHERE
-                        `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_statidocumento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
+                        `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_stati_documento_lang`.`title` IN ("Emessa", "Pagato", "Parzialmente pagato")
                     GROUP BY
                         `mg_articoli`.`id`, `co_righe_documenti`.`id`
                     ORDER BY

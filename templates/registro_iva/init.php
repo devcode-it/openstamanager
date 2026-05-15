@@ -80,7 +80,7 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
     WHERE
-        `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+        `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
     GROUP BY
         `co_iva`.`id`, `co_documenti`.`id`
         HAVING
@@ -148,7 +148,7 @@ FROM
     INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
 WHERE
-    `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_statidocumento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
+    `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
 GROUP BY
     `co_iva`.`id`, `co_documenti`.`id`
     HAVING

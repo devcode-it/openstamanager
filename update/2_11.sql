@@ -742,7 +742,7 @@ FROM
     LEFT JOIN `an_anagrafiche` AS `agente` ON `co_contratti`.`id_agente` = `agente`.`id`
     LEFT JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
     LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND |lang|)
-    LEFT JOIN (SELECT `id_contratto`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_contratti` GROUP BY `id_contratto`) AS righe ON `co_contratti`.`id` = `righe`.`id_contrattoo`
+    LEFT JOIN (SELECT `id_contratto`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_contratti` GROUP BY `id_contratto`) AS righe ON `co_contratti`.`id` = `righe`.`id_contratto`
     LEFT JOIN (WITH RigheAgg AS (SELECT id_intervento,SUM(prezzo_unitario * qta) AS sommacosti_per_intervento FROM in_righe_interventi GROUP BY id_intervento), TecniciAgg AS (SELECT id_intervento, SUM(prezzo_ore_consuntivo) AS sommasessioni_per_intervento FROM in_interventi_tecnici GROUP BY id_intervento) SELECT SUM(COALESCE(RigheAgg.sommacosti_per_intervento, 0)) AS sommacosti, SUM(COALESCE(TecniciAgg.sommasessioni_per_intervento, 0)) AS sommasessioni, i.id_contratto FROM in_interventi i LEFT JOIN RigheAgg ON RigheAgg.id_intervento = i.id LEFT JOIN TecniciAgg ON TecniciAgg.id_intervento = i.id GROUP BY i.id_contratto) AS spesacontratto ON spesacontratto.id_contratto = co_contratti.id
     LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(matricola, IF(nome != '', CONCAT(' - ', nome), '')) SEPARATOR '<br />') AS descrizione, my_impianti_contratti.id_contratto FROM my_impianti INNER JOIN my_impianti_contratti ON my_impianti.id = my_impianti_contratti.id_impianto GROUP BY my_impianti_contratti.id_contratto) AS impianti ON impianti.id_contratto = co_contratti.id
     LEFT JOIN (SELECT um, SUM(qta) AS somma, id_contratto FROM co_righe_contratti GROUP BY um, id_contratto) AS orecontratti ON orecontratti.um = 'ore' AND orecontratti.id_contratto = co_contratti.id
@@ -1172,6 +1172,7 @@ RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_riten
 RENAME TABLE `openstamanager`.`an_tipianagrafiche` TO `openstamanager`.`an_tipi_anagrafiche`;
 RENAME TABLE `openstamanager`.`an_tipianagrafiche_anagrafiche` TO `openstamanager`.`an_tipi_anagrafiche_anagrafiche`;
 RENAME TABLE `openstamanager`.`an_tipianagrafiche_lang` TO `openstamanager`.`an_tipi_anagrafiche_lang`;
+RENAME TABLE `openstamanager`.`co_contratti_tipiintervento` TO `openstamanager`.`co_contratti_tipi_intervento`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";

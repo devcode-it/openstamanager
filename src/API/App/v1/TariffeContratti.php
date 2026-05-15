@@ -26,9 +26,9 @@ class TariffeContratti extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        $query = 'SELECT CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id
-        FROM `co_contratti_tipiintervento`
-            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`id_contratto`
+        $query = 'SELECT CONCAT(`co_contratti_tipi_intervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id
+        FROM `co_contratti_tipi_intervento`
+            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipi_intervento`.`id_contratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
@@ -55,16 +55,16 @@ class TariffeContratti extends AppResource
         $id_contratti = array_keys($contratti);
 
         $query = 'SELECT
-            CONCAT(`co_contratti_tipiintervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id,
-            `co_contratti_tipiintervento`.`updated_at`
-        FROM `co_contratti_tipiintervento`
-            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipiintervento`.`id_contratto`
+            CONCAT(`co_contratti_tipi_intervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id,
+            `co_contratti_tipi_intervento`.`updated_at`
+        FROM `co_contratti_tipi_intervento`
+            INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipi_intervento`.`id_contratto`
             INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
         WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map(prepare(...), $id_contratti)).')';
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' AND `co_contratti_tipiintervento`.`updated_at` > '.prepare($last_sync_at);
+            $query .= ' AND `co_contratti_tipi_intervento`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -86,8 +86,8 @@ class TariffeContratti extends AppResource
             `costo_ore` AS prezzo_orario,
             `costo_km` AS prezzo_chilometrico,
             `costo_diritto_chiamata` AS prezzo_diritto_chiamata
-        FROM `co_contratti_tipiintervento`
-        WHERE `co_contratti_tipiintervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_contratto);
+        FROM `co_contratti_tipi_intervento`
+        WHERE `co_contratti_tipi_intervento`.`id_tipo_intervento` = '.prepare($id_tipo_intervento).' AND `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_contratto);
 
         $record = database()->fetchOne($query);
 

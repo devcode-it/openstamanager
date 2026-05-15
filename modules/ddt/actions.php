@@ -94,7 +94,7 @@ switch (filter('op')) {
             $ddt->id_pagamento = $id_pagamento;
             $ddt->id_conto = post('id_conto');
             $ddt->id_anagrafica = $id_anagrafica;
-            $ddt->id_referentee = post('id_referente');
+            $ddt->id_referente = post('id_referente');
             $ddt->id_agente = post('id_agente');
             $ddt->id_spedizione = post('id_spedizione') ?: null;
             $ddt->id_causale_t = post('id_causale_t') ?: null;
@@ -317,7 +317,7 @@ switch (filter('op')) {
             $ddt->id_sede_destinazione = $id_sede_destinazione;
 
             $ddt->id_causale_t = post('id_causale_trasporto');
-            $ddt->id_referentee = $documento->id_referente;
+            $ddt->id_referente = $documento->id_referente;
             $ddt->id_agente = $documento->id_agente;
 
             if (filter('op') == 'add_ordine') {

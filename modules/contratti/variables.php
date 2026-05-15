@@ -30,7 +30,7 @@ $r = $dbo->fetchOne('
     FROM 
         `co_contratti`
         INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica`=`an_anagrafiche`.`id`
-        LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`co_contratti`.`id_referentee`
+        LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`co_contratti`.`id_referente`
     WHERE 
         `co_contratti`.`id`='.prepare($id_record));
 

@@ -34,7 +34,7 @@ return [
     'co_categorie_contratti',
     'co_categorie_contratti_lang',
     'co_contratti',
-    'co_contratti_tipiintervento',
+    'co_contratti_tipi_intervento',
     'co_dichiarazioni_intento',
     'co_documenti',
     'co_fatturazione_contratti',

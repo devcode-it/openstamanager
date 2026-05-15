@@ -156,12 +156,12 @@ switch ($resource) {
                     `in_tipiintervento`.`id` AS id,
                     `in_tipiintervento_lang`.`title` AS descrizione
                 FROM
-                    `co_contratti_tipiintervento`
-                    INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipiintervento`.`id_tipo_intervento`
+                    `co_contratti_tipi_intervento`
+                    INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
                     LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
-                    `co_contratti_tipiintervento`.`id_contratto` = '.prepare($id_record).'
-                    AND `co_contratti_tipiintervento`.`is_abilitato` = 1
+                    `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).'
+                    AND `co_contratti_tipi_intervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipiintervento_lang`.`title`';
 

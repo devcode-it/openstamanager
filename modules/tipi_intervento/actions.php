@@ -139,7 +139,7 @@ switch (post('op')) {
         $dbo->delete('in_tariffe', ['id_tipo_intervento' => $id_record]);
 
         // Elimino le tariffe collegate ai contratti
-        $dbo->delete('co_contratti_tipiintervento', ['id_tipo_intervento' => $id_record]);
+        $dbo->delete('co_contratti_tipi_intervento', ['id_tipo_intervento' => $id_record]);
 
         $dbo->delete('in_fasceorarie_tipiintervento', ['id_tipo_intervento' => $id_record]);
 

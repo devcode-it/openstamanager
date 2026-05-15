@@ -105,7 +105,7 @@ class Contratto extends Document
     public function fixTipiSessioni()
     {
         // Ottieni i tipi di intervento già associati al contratto
-        $presenti = database()->fetchArray('SELECT id_tipo_intervento FROM co_contratti_tipiintervento WHERE id_contratto = '.prepare($this->id));
+        $presenti = database()->fetchArray('SELECT id_tipo_intervento FROM co_contratti_tipi_intervento WHERE id_contratto = '.prepare($this->id));
         $id_presenti = array_column($presenti, 'id_tipo_intervento');
 
         // Recupera i tipi di intervento abilitati per l'anagrafica del contratto
@@ -127,7 +127,7 @@ class Contratto extends Document
             // Verifica se il tipo di intervento è abilitato per l'anagrafica
             $is_abilitato = in_array($tipo->id, $id_tipi_abilitati) ? 1 : 0;
 
-            $database->insert('co_contratti_tipiintervento', [
+            $database->insert('co_contratti_tipi_intervento', [
                 'id_contratto' => $this->id,
                 'id_tipo_intervento' => $tipo->id,
                 'costo_ore' => $tipo->costo_orario,

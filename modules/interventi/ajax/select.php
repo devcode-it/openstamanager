@@ -74,9 +74,9 @@ switch ($resource) {
         if (!empty($superselect['idtipiintervento'])) {
             $where[] = '`in_tipiintervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
         } elseif (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 
@@ -227,9 +227,9 @@ switch ($resource) {
         }
 
         if (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+                $filter[] = '`in_tipiintervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
             }
         }
 

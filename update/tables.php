@@ -3,7 +3,7 @@
 return [
     'an_anagrafiche',
     'an_anagrafiche_agenti',
-    'an_anagrafiche_tipiintervento',
+    'an_anagrafiche_tipi_intervento',
     'an_assicurazione_crediti',
     'an_automezzi_danni',
     'an_automezzi_gestori',
@@ -57,7 +57,7 @@ return [
     'co_righe_promemoria',
     'co_righe_documenti',
     'co_righe_preventivi',
-    'co_ritenutaacconto',
+    'co_ritenuta_acconto',
     'co_ritenuta_contributi',
     'co_rivalse',
     'co_scadenzario',

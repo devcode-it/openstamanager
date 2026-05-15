@@ -109,7 +109,7 @@ class Contratto extends Document
         $id_presenti = array_column($presenti, 'id_tipo_intervento');
 
         // Recupera i tipi di intervento abilitati per l'anagrafica del contratto
-        $tipi_abilitati_anagrafica = database()->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($this->id_anagrafica));
+        $tipi_abilitati_anagrafica = database()->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($this->id_anagrafica));
         $id_tipi_abilitati = array_column($tipi_abilitati_anagrafica, 'id_tipo_intervento');
 
         // Aggiunta associazioni costi unitari al contratto per i tipi non presenti

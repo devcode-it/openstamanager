@@ -587,7 +587,7 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">';
-    $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipiintervento WHERE id_anagrafica='.prepare($id_record));
+    $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($id_record));
     $idtipiintervento = ['-1'];
     for ($i = 0; $i < count($rs); ++$i) {
         array_push($idtipiintervento, $rs[$i]['id_tipo_intervento']);

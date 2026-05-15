@@ -61,12 +61,12 @@ INSERT INTO `zz_api_resources` (`version`, `type`, `resource`, `class`, `enabled
 ('app-v1', 'retrieve', 'articoli-automezzo-cleanup', 'API\\App\\v1\\ArticoliAutomezzo', 1),
 ('app-v1', 'retrieve', 'articolo-automezzo', 'API\\App\\v1\\ArticoliAutomezzo', 1);
 
-CREATE TABLE `an_anagrafiche_tipiintervento` (
+CREATE TABLE `an_anagrafiche_tipi_intervento` (
   `idanagrafica` int NOT NULL,
   `idtipointervento` varchar(25) NOT NULL
 );
 
-ALTER TABLE `an_anagrafiche_tipiintervento`
+ALTER TABLE `an_anagrafiche_tipi_intervento`
   ADD PRIMARY KEY (`idanagrafica`,`idtipointervento`);
 
 -- Aggiunta impostazione per l'applicazione del diritto di chiamata
@@ -405,7 +405,7 @@ ALTER TABLE `an_anagrafiche` CHANGE `idanagrafica` `id` INT NOT NULL AUTO_INCREM
 ALTER TABLE `an_referenti` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `an_tipianagrafiche_anagrafiche` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `zz_users` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
-ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
+ALTER TABLE `an_anagrafiche_tipi_intervento` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `an_anagrafiche_agenti` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `an_sedi` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
 ALTER TABLE `an_pagamenti_anagrafiche` CHANGE `idanagrafica` `id_anagrafica` INT NOT NULL;
@@ -940,7 +940,7 @@ ALTER TABLE `an_sedi` CHANGE `idzona` `id_zona` INT NOT NULL;
 ALTER TABLE `co_fatturazione_contratti` CHANGE `idzona` `id_zona` INT NOT NULL;
 
 ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `id_tipo_intervento_default` INT NULL DEFAULT NULL;
-ALTER TABLE `an_anagrafiche_tipiintervento` CHANGE `idtipointervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
+ALTER TABLE `an_anagrafiche_tipi_intervento` CHANGE `idtipointervento` `id_tipo_intervento` VARCHAR(25) NOT NULL;
 
 ALTER TABLE `an_automezzi_danni` CHANGE `idsede` `id_sede` INT NOT NULL;
 ALTER TABLE `an_automezzi_scadenze` CHANGE `idsede` `id_sede` INT NOT NULL;
@@ -1283,3 +1283,5 @@ HAVING
 ORDER BY
     `ragione_sociale`" WHERE `name` = "Anagrafiche";
 UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_ritenuta_acconto`;

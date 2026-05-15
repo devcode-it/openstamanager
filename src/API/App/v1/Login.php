@@ -54,12 +54,12 @@ class Login extends Resource implements CreateInterface
                     `zz_groups_lang`.`title` AS gruppo
                 FROM `zz_users`
                     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
-                    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-                    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
-                    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+                    INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+                    INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
+                    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche_lang`.`id_record` = `an_tipi_anagrafiche`.`id` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
                     INNER JOIN `zz_groups` ON `zz_users`.`id_gruppo`=`zz_groups`.`id`
                     LEFT JOIN `zz_groups_lang` ON (`zz_groups_lang`.`id_record` = `zz_groups`.`id` AND `zz_groups_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).")
-                WHERE `an_tipianagrafiche_lang`.`title` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id", [
+                WHERE `an_tipi_anagrafiche_lang`.`title` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL AND `zz_users`.`id` = :id", [
                     ':id' => $user['id'],
                 ]);
             }

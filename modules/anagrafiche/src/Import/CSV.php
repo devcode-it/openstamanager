@@ -401,10 +401,10 @@ class CSV extends CSVImporter
 
             // Creo il tipo anagrafica se non esiste
             if (empty($id_tipo)) {
-                $database->query('INSERT INTO `an_tipianagrafiche` (`id`, `default`) VALUES (NULL, 1)');
+                $database->query('INSERT INTO `an_tipi_anagrafiche` (`id`, `default`) VALUES (NULL, 1)');
                 $id_tipo = $database->lastInsertedID();
 
-                $database->insert('an_tipianagrafiche_lang', [
+                $database->insert('an_tipi_anagrafiche_lang', [
                     'id_lang' => $this->locale_id,
                     'id_record' => $id_tipo,
                     'name' => $tipo,

@@ -34,14 +34,14 @@ if (!empty($id_record)) {
 
     $record = $dbo->fetchOne('SELECT 
         `an_anagrafiche`.*,
-        GROUP_CONCAT(`an_tipianagrafiche`.`id`) AS idtipianagrafica,
+        GROUP_CONCAT(`an_tipi_anagrafiche`.`id`) AS idtipianagrafica,
         GROUP_CONCAT(`an_anagrafiche_agenti`.`id_agente`) AS idagenti,
-        GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipianagrafica
+        GROUP_CONCAT(`an_tipi_anagrafiche_lang`.`title`) AS tipianagrafica
     FROM 
         `an_anagrafiche`
-        LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
-        LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-        LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+        LEFT JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`
+        LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `an_anagrafiche_agenti` ON `an_anagrafiche`.`id`=`an_anagrafiche_agenti`.`id_anagrafica`
     WHERE 
         `an_anagrafiche`.`id`='.prepare($id_record));

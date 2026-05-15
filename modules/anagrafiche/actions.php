@@ -204,7 +204,7 @@ switch (post('op')) {
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
         if (!empty($user['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
+            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
 
             for ($i = 0; $i < count($rs); ++$i) {
                 if ($rs[$i]['descrizione'] == 'Agente') {

@@ -30,11 +30,11 @@ switch ($resource) {
 
         if (!empty($id_anagrafica)) {
             // Query per ottenere i tipi di anagrafica
-            $query = 'SELECT `an_tipianagrafiche_lang`.`title` 
-                     FROM `an_tipianagrafiche_anagrafiche` 
-                     INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
-                     LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                     WHERE `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = '.prepare($id_anagrafica);
+            $query = 'SELECT `an_tipi_anagrafiche_lang`.`title` 
+                     FROM `an_tipi_anagrafiche_anagrafiche` 
+                     INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
+                     LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                     WHERE `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = '.prepare($id_anagrafica);
 
             $rs = $dbo->fetchArray($query);
 

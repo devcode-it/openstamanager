@@ -38,11 +38,11 @@ class Clienti extends AppResource
             `an_anagrafiche`.`updated_at`
         FROM 
             `an_anagrafiche`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
+            INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+            INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
+            LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`='.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
-            `an_tipianagrafiche_lang`.`title` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`id` IN(SELECT `in_interventi`.`id_anagrafica` FROM `in_interventi`))';
+            `an_tipi_anagrafiche_lang`.`title` = "Cliente" AND (`an_anagrafiche`.`deleted_at` IS NULL OR `an_anagrafiche`.`id` IN(SELECT `in_interventi`.`id_anagrafica` FROM `in_interventi`))';
 
         // Sincronizzazione limitata ai Clienti con Interventi di interesse per il Tecnico corrente
         $sincronizza_lavorati = setting('Sincronizza solo i Clienti per cui il Tecnico ha lavorato in passato');

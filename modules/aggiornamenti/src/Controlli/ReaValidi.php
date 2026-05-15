@@ -67,11 +67,11 @@ class ReaValidi extends Controllo
             `an_anagrafiche`.`id` AS id,
             `an_anagrafiche`.`codice_rea`,
             `an_anagrafiche`.`ragione_sociale`,
-            GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipi_anagrafica
+            GROUP_CONCAT(`an_tipi_anagrafiche_lang`.`title`) AS tipi_anagrafica
         FROM `an_anagrafiche`
-           INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-           INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.id = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-           LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+           INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+           INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche`.id = `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`
+           LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche_lang`.`id_record` = `an_tipi_anagrafiche`.`id` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
             `codice_rea` NOT REGEXP "([A-Za-z]{2})-([0-9]{1,20})" AND `codice_rea` != ""
         AND

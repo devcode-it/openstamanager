@@ -94,7 +94,7 @@ class Anagrafica extends Model
         $tipologia = TipoAnagrafica::where('name', $type)->first()->id;
 
         $anagrafiche = self::whereHas('tipi', function ($query) use ($tipologia) {
-            $query->where('an_tipianagrafiche.id', '=', $tipologia);
+            $query->where('an_tipi_anagrafiche.id', '=', $tipologia);
         });
 
         return $anagrafiche;
@@ -367,7 +367,7 @@ class Anagrafica extends Model
 
     public function tipi()
     {
-        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipianagrafiche_anagrafiche', 'id_anagrafica', 'id_tipo_anagrafica', 'id', 'id');
+        return $this->belongsToMany(TipoAnagrafica::class, 'an_tipi_anagrafiche_anagrafiche', 'id_anagrafica', 'id_tipo_anagrafica', 'id', 'id');
     }
 
     public function sedi()

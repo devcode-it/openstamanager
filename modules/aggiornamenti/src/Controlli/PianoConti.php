@@ -59,11 +59,11 @@ class PianoConti extends Controllo
             `an_anagrafiche`.`id_conto_cliente`,
             `an_anagrafiche`.`id_conto_fornitore`,
             `an_anagrafiche`.`ragione_sociale`,
-            GROUP_CONCAT(`an_tipianagrafiche_lang`.`title`) AS tipi_anagrafica
+            GROUP_CONCAT(`an_tipi_anagrafiche_lang`.`title`) AS tipi_anagrafica
         FROM `an_anagrafiche`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+            INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`
+            LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE
             (`id_conto_cliente` = 0 OR `id_conto_cliente` IS NULL OR `id_conto_fornitore` = 0 OR `id_conto_fornitore` IS NULL)
             AND

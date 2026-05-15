@@ -60,24 +60,24 @@ class Anagrafiche extends Resource implements RetrieveInterface, CreateInterface
             $type = 'Cliente';
 
             $joins[] = [
-                'an_tipianagrafiche_anagrafiche',
+                'an_tipi_anagrafiche_anagrafiche',
                 'an_anagrafiche.id',
-                'an_tipianagrafiche_anagrafiche.id_anagrafica',
+                'an_tipi_anagrafiche_anagrafiche.id_anagrafica',
             ];
 
             $joins[] = [
-                'an_tipianagrafiche',
-                'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica',
-                'an_tipianagrafiche.id',
+                'an_tipi_anagrafiche',
+                'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica',
+                'an_tipi_anagrafiche.id',
             ];
 
             $joins[] = [
-                'an_tipianagrafiche_lang',
-                'an_tipianagrafiche_lang.id_record',
-                'an_tipianagrafiche.id',
-                'an_tipianagrafiche_lang.id_lang',
+                'an_tipi_anagrafiche_lang',
+                'an_tipi_anagrafiche_lang.id_record',
+                'an_tipi_anagrafiche.id',
+                'an_tipi_anagrafiche_lang.id_lang',
                 \Models\Locale::getDefault()->id,
-                'an_tipianagrafiche_lang.title',
+                'an_tipi_anagrafiche_lang.title',
                 ''.$type.'',
             ];
         }

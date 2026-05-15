@@ -851,16 +851,16 @@ $(document).ready(function() {
 
 // Interventi per tecnico
 $tecnici = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
-    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
-        $join->on('an_tipianagrafiche_lang.id_record', '=', 'an_tipianagrafiche.id')
-            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    ->join('an_tipi_anagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipi_anagrafiche_anagrafiche.id_anagrafica')
+    ->join('an_tipi_anagrafiche', 'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipi_anagrafiche.id')
+    ->leftJoin('an_tipi_anagrafiche_lang', function ($join) {
+        $join->on('an_tipi_anagrafiche_lang.id_record', '=', 'an_tipi_anagrafiche.id')
+            ->where('an_tipi_anagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
     ->leftJoin('in_interventi_tecnici', 'in_interventi_tecnici.id_tecnico', '=', 'an_anagrafiche.id')
     ->join('in_interventi', 'in_interventi_tecnici.id_intervento', '=', 'in_interventi.id')
     ->whereNull('an_anagrafiche.deleted_at')
-    ->where('an_tipianagrafiche_lang.title', 'Tecnico')
+    ->where('an_tipi_anagrafiche_lang.title', 'Tecnico')
     ->select('an_anagrafiche.id as id', 'ragione_sociale', 'colore')
     ->groupBy('an_anagrafiche.id')
     ->orderBy('ragione_sociale')
@@ -1010,13 +1010,13 @@ $(document).ready(function() {
 $dataset = '';
 
 $nuovi_clienti = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
-    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
-        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
-            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    ->join('an_tipi_anagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipi_anagrafiche_anagrafiche.id_anagrafica')
+    ->join('an_tipi_anagrafiche', 'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipi_anagrafiche.id')
+    ->leftJoin('an_tipi_anagrafiche_lang', function ($join) {
+        $join->on('an_tipi_anagrafiche.id', '=', 'an_tipi_anagrafiche_lang.id_record')
+            ->where('an_tipi_anagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->where('an_tipianagrafiche_lang.title', 'Cliente')
+    ->where('an_tipi_anagrafiche_lang.title', 'Cliente')
     ->whereNull('deleted_at')
     ->whereBetween('an_anagrafiche.created_at', [$start, $end])
     ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
@@ -1027,13 +1027,13 @@ $nuovi_clienti = $dbo->table('an_anagrafiche')
     ->toArray();
 
 $nuovi_fornitori = $dbo->table('an_anagrafiche')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
-    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
-        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
-            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    ->join('an_tipi_anagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipi_anagrafiche_anagrafiche.id_anagrafica')
+    ->join('an_tipi_anagrafiche', 'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipi_anagrafiche.id')
+    ->leftJoin('an_tipi_anagrafiche_lang', function ($join) {
+        $join->on('an_tipi_anagrafiche.id', '=', 'an_tipi_anagrafiche_lang.id_record')
+            ->where('an_tipi_anagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->where('an_tipianagrafiche_lang.title', 'Fornitore')
+    ->where('an_tipi_anagrafiche_lang.title', 'Fornitore')
     ->whereNull('deleted_at')
     ->whereBetween('an_anagrafiche.created_at', [$start, $end])
     ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
@@ -1047,13 +1047,13 @@ $nuovi_fornitori = $dbo->table('an_anagrafiche')
 $clienti_acquisiti = $dbo->table('an_anagrafiche')
     ->join('co_documenti', 'an_anagrafiche.id', '=', 'co_documenti.id_anagrafica')
     ->join('co_tipidocumento', 'co_documenti.id_tipo_documento', '=', 'co_tipidocumento.id')
-    ->join('an_tipianagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipianagrafiche_anagrafiche.id_anagrafica')
-    ->join('an_tipianagrafiche', 'an_tipianagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipianagrafiche.id')
-    ->leftJoin('an_tipianagrafiche_lang', function ($join) {
-        $join->on('an_tipianagrafiche.id', '=', 'an_tipianagrafiche_lang.id_record')
-            ->where('an_tipianagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    ->join('an_tipi_anagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipi_anagrafiche_anagrafiche.id_anagrafica')
+    ->join('an_tipi_anagrafiche', 'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipi_anagrafiche.id')
+    ->leftJoin('an_tipi_anagrafiche_lang', function ($join) {
+        $join->on('an_tipi_anagrafiche.id', '=', 'an_tipi_anagrafiche_lang.id_record')
+            ->where('an_tipi_anagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->where('an_tipianagrafiche_lang.title', 'Cliente')
+    ->where('an_tipi_anagrafiche_lang.title', 'Cliente')
     ->where('co_tipidocumento.dir', 'entrata')
     ->whereBetween('an_anagrafiche.created_at', [$start, $end])
     ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))

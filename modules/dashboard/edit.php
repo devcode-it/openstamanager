@@ -37,13 +37,13 @@ $tecnici_disponibili = $dbo->fetchArray('SELECT
     `an_anagrafiche`.`id` AS id, `ragione_sociale`, `colore`
 FROM
     `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
-    INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+    INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+    INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id`
+    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id`
     INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`
 WHERE
-    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipianagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
+    `an_anagrafiche`.`deleted_at` IS NULL AND `an_tipi_anagrafiche`.`id`='.$id_tipo_tecnico.' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false).'
 GROUP BY
     `an_anagrafiche`.`id`
 ORDER BY

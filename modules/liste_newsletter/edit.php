@@ -57,7 +57,7 @@ echo '
 
                     <div class="row">
                         <div class="col-md-2">
-                            {[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipologia", "required": 0, "values": "query=SELECT `an_tipianagrafiche`.`id`, `title` as descrizione FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "help": "Seleziona una tipologia per generare la query dinamica che estrae tutte le anagrafiche di quella tipologia" ]}
+                            {[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipologia", "required": 0, "values": "query=SELECT `an_tipi_anagrafiche`.`id`, `title` as descrizione FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title`", "help": "Seleziona una tipologia per generare la query dinamica che estrae tutte le anagrafiche di quella tipologia" ]}
                         </div>
 
                         <div class="col-md-2">
@@ -214,10 +214,10 @@ function generaQuery() {
     var tipologia = $("#tipologia").val();
 
 
-    var query = "SELECT an_anagrafiche.id AS id, 'Modules\\\\Anagrafiche\\\\Anagrafica' AS tipo_lista FROM an_anagrafiche INNER JOIN an_tipianagrafiche_anagrafiche ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id WHERE deleted_at IS NULL AND email!=''";
+    var query = "SELECT an_anagrafiche.id AS id, 'Modules\\\\Anagrafiche\\\\Anagrafica' AS tipo_lista FROM an_anagrafiche INNER JOIN an_tipi_anagrafiche_anagrafiche ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id WHERE deleted_at IS NULL AND email!=''";
 
     if(tipologia) {
-        query += " AND an_tipianagrafiche.id="+tipologia;
+        query += " AND an_tipi_anagrafiche.id="+tipologia;
     }
 
     $('#query').val(query);

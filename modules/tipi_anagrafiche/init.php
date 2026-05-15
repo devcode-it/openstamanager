@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Anagrafiche\Tipo;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipianagrafiche`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_tipi_anagrafiche`.`id`='.prepare($id_record));
 
     $tipo = Tipo::find($id_record);
 }

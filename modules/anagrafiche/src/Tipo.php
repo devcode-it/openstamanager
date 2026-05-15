@@ -28,7 +28,7 @@ class Tipo extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    protected $table = 'an_tipianagrafiche';
+    protected $table = 'an_tipi_anagrafiche';
 
     protected static $translated_fields = [
         'title',

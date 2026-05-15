@@ -65,7 +65,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->delete('an_tipianagrafiche', ['id' => $id_record]);
+        $dbo->delete('an_tipi_anagrafiche', ['id' => $id_record]);
 
         flash()->info(tr('Tipo di anagrafica eliminato!'));
 

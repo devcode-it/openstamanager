@@ -22,7 +22,7 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'anagrafiche_utenti':
-        $query = 'SELECT `an_anagrafiche`.`id` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica` |where| ORDER BY `optgroup` ASC';
+        $query = 'SELECT `an_anagrafiche`.`id` AS id, `an_anagrafiche`.`ragione_sociale` AS descrizione, `an_tipi_anagrafiche_lang`.`title` AS optgroup FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` |where| ORDER BY `optgroup` ASC';
 
         $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
 
@@ -67,13 +67,13 @@ switch ($resource) {
         break;
 
     case 'utenti':
-        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`id` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipianagrafiche_lang`.`title` AS optgroup
+        $query = "SELECT `zz_users`.`id` AS id, if(`an_anagrafiche`.`id` IS NOT NULL, CONCAT(`an_anagrafiche`.`ragione_sociale`, ' (', `zz_users`.`username`, ')'), `zz_users`.`username`) AS descrizione, `an_tipi_anagrafiche_lang`.`title` AS optgroup
         FROM
             `zz_users`
             LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica`
-            INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_anagrafica`
-            INNER JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-            LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id`=`an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang`=".prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+            INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`
+            LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang`=".prepare(Models\Locale::getDefault()->id).')
         |where|
         ORDER BY
             `optgroup` ASC';

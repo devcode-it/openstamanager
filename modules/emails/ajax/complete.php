@@ -36,7 +36,7 @@ switch ($resource) {
         };
 
         if ($tipo_anagrafica !== null) {
-            $where .= 'AND an_tipianagrafiche.name = '.$tipo_anagrafica;
+            $where .= 'AND an_tipi_anagrafiche.name = '.$tipo_anagrafica;
         }
 
         $results = [];
@@ -57,9 +57,9 @@ switch ($resource) {
                 an_anagrafiche.id,
                 an_anagrafiche.ragione_sociale
             FROM an_anagrafiche
-            INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
-            INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
-            INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
+            INNER JOIN an_tipi_anagrafiche_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
+            INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche.id = an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica
+            INNER JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_lang = 1 AND an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id)
             WHERE an_anagrafiche.email != '' $where
             ORDER BY ragione_sociale
         ";
@@ -73,9 +73,9 @@ switch ($resource) {
                     $table.$name_column AS ragione_sociale
                 FROM $table
                 INNER JOIN an_anagrafiche ON an_anagrafiche.id = $table.id_anagrafica
-                INNER JOIN an_tipianagrafiche_anagrafiche ON an_tipianagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
-                INNER JOIN an_tipianagrafiche ON an_tipianagrafiche.id = an_tipianagrafiche_anagrafiche.id_tipo_anagrafica
-                INNER JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_lang = 1 AND an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id)
+                INNER JOIN an_tipi_anagrafiche_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_anagrafica = an_anagrafiche.id
+                INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche.id = an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica
+                INNER JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_lang = 1 AND an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id)
                 WHERE $table.$email_column != '' $where
                 ORDER BY ragione_sociale
             ";

@@ -700,11 +700,11 @@ SELECT
     |select| 
 FROM 
     `an_anagrafiche`
-    INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_anagrafica`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipianagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND |lang|)
+    INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+    LEFT JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
+    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche_lang`.`id_record` = `an_tipi_anagrafiche`.`id` AND |lang|)
 WHERE 
-    1=1 AND `an_tipianagrafiche`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL
+    1=1 AND `an_tipi_anagrafiche`.`name` = 'Tecnico' AND `an_anagrafiche`.`deleted_at` IS NULL
 HAVING 
     2=2 
 ORDER BY 
@@ -1169,15 +1169,18 @@ ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;
 
 RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_ritenuta_acconto`;
+RENAME TABLE `openstamanager`.`an_tipianagrafiche` TO `openstamanager`.`an_tipi_anagrafiche`;
+RENAME TABLE `openstamanager`.`an_tipianagrafiche_anagrafiche` TO `openstamanager`.`an_tipi_anagrafiche_anagrafiche`;
+RENAME TABLE `openstamanager`.`an_tipianagrafiche_lang` TO `openstamanager`.`an_tipi_anagrafiche_lang`;
 
 -- Allineamento widgets
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Tecnico" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di tecnici";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Tecnico" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di tecnici";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Fornitore" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di fornitori";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Fornitore" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di fornitori";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Agente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di agenti";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Agente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di agenti";
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_promemoria WHERE id_contratto IN( SELECT id FROM co_contratti WHERE id_stato IN (SELECT id FROM co_staticontratti WHERE is_pianificabile = 1)) AND id_intervento IS NULL' WHERE `zz_widgets`.`name` = "Promemoria contratti da pianificare";
 
@@ -1199,9 +1202,9 @@ UPDATE `zz_widgets` SET `query` = 'SELECT \n CONCAT_WS(\' \', REPLACE(REPLACE(RE
 
 UPDATE `zz_widgets` SET `query` = 'SELECT CONCAT_WS(\' \', REPLACE(REPLACE(REPLACE(FORMAT((SELECT ABS(SUM(da_pagare-pagato))), 2), \',\', \'#\'), \'.\', \',\'),\'#\', \'.\'), \'&euro;\') AS dato FROM (co_scadenzario INNER JOIN co_documenti ON co_scadenzario.id_documento=co_documenti.id) INNER JOIN co_tipidocumento ON co_documenti.id_tipo_documento=co_tipidocumento.id WHERE co_tipidocumento.dir=\'uscita\' AND co_documenti.id_stato!=1 |segment(`co_documenti`.`id_segment`)| AND 1=1' WHERE `zz_widgets`.`name` = "Debiti verso fornitori";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Vettore" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di vettori";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Vettore" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di vettori";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Tutte le anagrafiche";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Tutte le anagrafiche";
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT id_intervento FROM in_interventi_tecnici) AND id_stato IN (SELECT id FROM in_statiintervento WHERE is_bloccato = 0)' WHERE `zz_widgets`.`name` = "Attività da pianificare";
 
@@ -1241,9 +1244,9 @@ FROM
     `an_anagrafiche`
     LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`id_relazione` = `an_relazioni`.`id`
     LEFT JOIN `an_relazioni_lang` ON (`an_relazioni_lang`.`id_record` = `an_relazioni`.`id` AND `an_relazioni_lang`.|lang|)
-    LEFT JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `an_tipianagrafiche` ON `an_tipianagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_tipo_anagrafica`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche_lang`.`id_record` = `an_tipianagrafiche`.`id` AND `an_tipianagrafiche_lang`.|lang|)
+    LEFT JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
+    LEFT JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`
+    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche_lang`.`id_record` = `an_tipi_anagrafiche`.`id` AND `an_tipi_anagrafiche_lang`.|lang|)
     LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome_sede` SEPARATOR ', ') AS nomi FROM `an_sedi` GROUP BY `id_anagrafica`) AS sedi ON `an_anagrafiche`.`id` = `sedi`.`id_anagrafica`
     LEFT JOIN (SELECT `id_anagrafica`, GROUP_CONCAT(`nome` SEPARATOR ', ') AS nomi FROM `an_referenti` GROUP BY `id_anagrafica`) AS referenti ON `an_anagrafiche`.`id` = `referenti`.`id_anagrafica`
     LEFT JOIN (
@@ -1424,6 +1427,11 @@ HAVING
     2=2" WHERE `zz_modules`.`name` = 'Ammortamenti';
 
 -- Allineamento viste
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(\' \',`an_tipi_anagrafiche_lang`.`title`)' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
+
+UPDATE `zz_views` SET `query` = '`an_tipi_anagrafiche`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di anagrafiche');
+UPDATE `zz_views` SET `query` = '`an_tipi_anagrafiche_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di anagrafiche');
+
 UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 UPDATE `zz_views` SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsa_inps` - `co_documenti`.`ritenuta_acconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipidocumento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "Netto a pagare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 UPDATE `zz_views` SET `query` = '`prima_nota`.`totale`' WHERE `zz_views`.`name` = "Prima nota" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
@@ -1460,8 +1468,8 @@ UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM `co_ritenut
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id,descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Cassa e banche')" WHERE `nome` = "Conto aziendale predefinito";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per la marca da bollo";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per le spese d'incasso";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `id_tipo_anagrafica` FROM `an_tipianagrafiche` WHERE `name` = 'Fornitore') AND `deleted_at` IS NULL" WHERE `nome` = "Terzo intermediario";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipianagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` WHERE `name` = 'Azienda') AND `deleted_at` IS NULL" WHERE `nome` = "Azienda predefinita";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `id_tipo_anagrafica` FROM `an_tipi_anagrafiche` WHERE `name` = 'Fornitore') AND `deleted_at` IS NULL" WHERE `nome` = "Terzo intermediario";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `an_tipi_anagrafiche`.`id` FROM `an_tipi_anagrafiche` WHERE `name` = 'Azienda') AND `deleted_at` IS NULL" WHERE `nome` = "Azienda predefinita";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, nome_sede AS descrizione FROM an_sedi WHERE id_anagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')" WHERE `nome` = "Magazzino cespiti";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i crediti clienti";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i debiti fornitori";

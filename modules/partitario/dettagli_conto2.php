@@ -21,19 +21,19 @@
 include_once __DIR__.'/../../core.php';
 
 $id_conto = get('id_conto');
-$conto_secondo = $dbo->selectOne('co_pianodeiconti2', '*', ['id' => $id_conto]);
-$conto_primo = $dbo->selectOne('co_pianodeiconti1', '*', ['id' => $conto_secondo['id_piano_dei_conti1']]);
+$conto_secondo = $dbo->selectOne('co_piano_dei_conti2', '*', ['id' => $id_conto]);
+$conto_primo = $dbo->selectOne('co_piano_dei_conti1', '*', ['id' => $conto_secondo['id_piano_dei_conti1']]);
 
 // Livello 3
-$query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.id, anagrafica.deleted_at
-    FROM `co_pianodeiconti3`
+$query3 = 'SELECT `co_piano_dei_conti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.id, anagrafica.deleted_at
+    FROM `co_piano_dei_conti3`
         LEFT OUTER JOIN (
             SELECT id,
                 id_conto_cliente,
                 id_conto_fornitore,
                 deleted_at
             FROM an_anagrafiche
-        ) AS anagrafica ON co_pianodeiconti3.id IN (anagrafica.id_conto_cliente, anagrafica.id_conto_fornitore)
+        ) AS anagrafica ON co_piano_dei_conti3.id IN (anagrafica.id_conto_cliente, anagrafica.id_conto_fornitore)
         LEFT OUTER JOIN (
             SELECT COUNT(id_conto) AS numero_movimenti,
             id_conto,
@@ -80,7 +80,7 @@ $query3 = 'SELECT `co_pianodeiconti3`.*, movimenti.numero_movimenti, movimenti.t
                  data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
                  data_fine_competenza <= '.prepare($_SESSION['period_end']).')
             ) GROUP BY id_conto
-        ) movimenti ON co_pianodeiconti3.id=movimenti.id_conto
+        ) movimenti ON co_piano_dei_conti3.id=movimenti.id_conto
     WHERE `id_piano_dei_conti2` = '.prepare($conto_secondo['id']).' ORDER BY numero ASC';
 
 $terzo_livello = $dbo->fetchArray($query3);

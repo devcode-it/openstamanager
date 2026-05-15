@@ -116,7 +116,7 @@ class Anagrafica extends Model
             $anagrafica->save();
         } else {
             $conto = $anagrafica->id_conto_cliente;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_cliente']);
+            $is_esistente = database()->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = '.$anagrafica['id_conto_cliente']);
             if (!$is_esistente) {
                 $anagrafica->id_conto_cliente = null;
                 $anagrafica->save();
@@ -136,7 +136,7 @@ class Anagrafica extends Model
             $anagrafica->save();
         } else {
             $conto = $anagrafica->id_conto_fornitore;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_fornitore']);
+            $is_esistente = database()->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = '.$anagrafica['id_conto_fornitore']);
             if (!$is_esistente) {
                 $anagrafica->id_conto_fornitore = null;
                 $anagrafica->save();
@@ -478,7 +478,7 @@ class Anagrafica extends Model
         $database = database();
 
         // Query di base
-        $table = $database->table('co_pianodeiconti3')
+        $table = $database->table('co_piano_dei_conti3')
             ->where('id_piano_dei_conti2', '=', $categoria_conto_id);
 
         // Verifica su un possibile conto esistente ma non collegato
@@ -505,7 +505,7 @@ class Anagrafica extends Model
         $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
         // Creazione del conto
-        $id_conto = $database->table('co_pianodeiconti3')
+        $id_conto = $database->table('co_piano_dei_conti3')
             ->insertGetId([
                 'numero' => $new_numero,
                 'descrizione' => $anagrafica->ragione_sociale ?: 'N.D.',
@@ -520,11 +520,11 @@ class Anagrafica extends Model
         $database = database();
 
         if ($this->isTipo('Cliente')) {
-            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_cliente]);
+            $database->update('co_piano_dei_conti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_cliente]);
         }
 
         if ($this->isTipo('Fornitore')) {
-            $database->update('co_pianodeiconti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_fornitore]);
+            $database->update('co_piano_dei_conti3', ['descrizione' => $this->ragione_sociale], ['id' => $this->id_conto_fornitore]);
         }
     }
 

@@ -27,7 +27,7 @@ if ($id_module == Module::where('name', 'Fatture di acquisto')->first()->id) {
 }
 $optionsConti = AJAX::select($conti, [], null, 0, 10000);
 
-$conti_cespiti = $dbo->fetchArray('SELECT co_pianodeiconti3.id, CONCAT(co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " - ", co_pianodeiconti3.descrizione) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE id_piano_dei_conti2='.prepare(setting('Conto predefinito per i cespiti')));
+$conti_cespiti = $dbo->fetchArray('SELECT co_piano_dei_conti3.id, CONCAT(co_piano_dei_conti2.numero, ".", co_piano_dei_conti3.numero, " - ", co_piano_dei_conti3.descrizione) AS descrizione FROM co_piano_dei_conti3 INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id WHERE id_piano_dei_conti2='.prepare(setting('Conto predefinito per i cespiti')));
 $optionsConti_cespiti['results'] = $conti_cespiti;
 
 echo '

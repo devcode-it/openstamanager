@@ -32,7 +32,7 @@ $anno_inizio = date('Y', strtotime((string) $documento['data_competenza']));
 $readonly = $anno_inizio == date('Y') ? 0 : 1;
 
 // Recupero conti patrimoniali
-$conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale") ORDER BY descrizione ASC');
+$conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione="Patrimoniale") ORDER BY descrizione ASC');
 
 ?><form action="" method="post" id="edit-form">
 	<input type="hidden" name="backto" value="record-edit">
@@ -88,7 +88,7 @@ $conti_patrimoniali = $dbo->fetchArray('SELECT id, descrizione FROM co_pianodeic
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Conto per ammortamento'); ?>", "name": "id_conto", "required": 1, "values": "query=SELECT co_pianodeiconti3.id, CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' - ', co_pianodeiconti3.descrizione) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE id_piano_dei_conti2=<?php echo prepare(setting('Conto predefinito per gli ammortamenti')); ?>", "value": "<?php echo $righe_ammortamento[0]['id_conto']; ?>", "disabled": "<?php echo $readonly > 0 ? 1 : 0; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Conto per ammortamento'); ?>", "name": "id_conto", "required": 1, "values": "query=SELECT co_piano_dei_conti3.id, CONCAT(co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero, ' - ', co_piano_dei_conti3.descrizione) AS descrizione FROM co_piano_dei_conti3 INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id WHERE id_piano_dei_conti2=<?php echo prepare(setting('Conto predefinito per gli ammortamenti')); ?>", "value": "<?php echo $righe_ammortamento[0]['id_conto']; ?>", "disabled": "<?php echo $readonly > 0 ? 1 : 0; ?>" ]}
 				</div>
 
 				<div class="col-md-6" style="margin-top: 25px">

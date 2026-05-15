@@ -49,8 +49,8 @@ function verificaSbilanciLibroGiornale($date_start, $date_end)
                 co_movimenti.id_conto,
                 SUM(co_movimenti.totale) AS totale_raggruppato
             FROM co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
-            INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id
+            INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id
+            INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id
             WHERE co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
             GROUP BY co_movimenti.id_mastrino, co_movimenti.id_conto
         ) AS movimenti_raggruppati
@@ -651,9 +651,9 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             SUM(totale) AS totale
         FROM
             co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
+            INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id
         WHERE
-            co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+            co_piano_dei_conti3.descrizione = "Erario c/to iva acconto"
             AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end));
 
     $acconto_iva_periodo_precedente = $dbo->fetchOne('
@@ -661,9 +661,9 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
             SUM(totale) AS totale
         FROM
             co_movimenti
-            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
+            INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id
         WHERE
-            co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+            co_piano_dei_conti3.descrizione = "Erario c/to iva acconto"
             AND co_movimenti.data >= '.prepare($periodo_precedente_start).' AND co_movimenti.data <= '.prepare($periodo_precedente_end));
 
     $acconto_iva_periodo_precedente_utilizzato = $dbo->fetchOne('
@@ -671,9 +671,9 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
                 -SUM(totale) AS totale
             FROM
                 co_movimenti
-                INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id
+                INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id
             WHERE
-                co_pianodeiconti3.descrizione = "Erario c/to iva acconto"
+                co_piano_dei_conti3.descrizione = "Erario c/to iva acconto"
                 AND co_movimenti.data >= '.prepare($date_start).' AND co_movimenti.data <= '.prepare($date_end).'
                 AND co_movimenti.totale < 0');
 

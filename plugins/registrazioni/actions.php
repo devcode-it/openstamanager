@@ -77,7 +77,7 @@ switch ($operazione) {
                 }
 
                 // Verifica che il conto esista nel database
-                $conto_exists = $dbo->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = ?', [$conto_selezionato]);
+                $conto_exists = $dbo->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = ?', [$conto_selezionato]);
                 if (!$conto_exists) {
                     $errori[] = tr('Riga _ID_: il conto selezionato non è valido', ['_ID_' => $id_riga]);
                     continue;

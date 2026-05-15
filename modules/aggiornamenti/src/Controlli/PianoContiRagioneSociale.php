@@ -67,15 +67,15 @@ class PianoContiRagioneSociale extends Controllo
         SELECT
             `an_anagrafiche`.`id` AS id,
             `an_anagrafiche`.`ragione_sociale`,
-            `co_pianodeiconti3`.`descrizione` as nome_conto,
+            `co_piano_dei_conti3`.`descrizione` as nome_conto,
             `id_conto_cliente`,
             `id_conto_fornitore`
         FROM
             `an_anagrafiche`
-            INNER JOIN `co_pianodeiconti3` ON (`an_anagrafiche`.`id_conto_cliente` = `co_pianodeiconti3`.`id` OR `an_anagrafiche`.`id_conto_fornitore` = `co_pianodeiconti3`.`id`)
+            INNER JOIN `co_piano_dei_conti3` ON (`an_anagrafiche`.`id_conto_cliente` = `co_piano_dei_conti3`.`id` OR `an_anagrafiche`.`id_conto_fornitore` = `co_piano_dei_conti3`.`id`)
         WHERE
             `deleted_at` IS NULL
-        GROUP BY `id`, `co_pianodeiconti3`.`descrizione`');
+        GROUP BY `id`, `co_piano_dei_conti3`.`descrizione`');
 
         foreach ($anagrafiche_interessate as $anagrafica) {
             if ($anagrafica['nome_conto'] != $anagrafica['ragione_sociale']) {
@@ -190,7 +190,7 @@ class PianoContiRagioneSociale extends Controllo
 
         if ($totale_anagrafiche_collegate == 1) {
             // Solo un'anagrafica collegata: aggiorna il nome del conto
-            $database->update('co_pianodeiconti3', [
+            $database->update('co_piano_dei_conti3', [
                 'descrizione' => $anagrafica->ragione_sociale,
             ], [
                 'id' => $id_conto,
@@ -221,7 +221,7 @@ class PianoContiRagioneSociale extends Controllo
         }
 
         // Calcola il prossimo numero per il nuovo conto
-        $numero = $database->table('co_pianodeiconti3')
+        $numero = $database->table('co_piano_dei_conti3')
             ->where('id_piano_dei_conti2', '=', $categoria_conto_id)
             ->selectRaw('MAX(CAST(numero AS UNSIGNED)) AS max_numero')
             ->first();
@@ -229,7 +229,7 @@ class PianoContiRagioneSociale extends Controllo
         $new_numero = str_pad($new_numero, 6, '0', STR_PAD_LEFT);
 
         // Crea il nuovo conto
-        $nuovo_id_conto = $database->table('co_pianodeiconti3')
+        $nuovo_id_conto = $database->table('co_piano_dei_conti3')
             ->insertGetId([
                 'numero' => $new_numero,
                 'descrizione' => $anagrafica->ragione_sociale,
@@ -304,7 +304,7 @@ class PianoContiRagioneSociale extends Controllo
 
         // Se non ci sono anagrafiche e movimenti collegati, elimina il conto
         if ($totale_anagrafiche_collegate == 0 && $movimenti_collegati == 0) {
-            $database->delete('co_pianodeiconti3', ['id' => $id_conto]);
+            $database->delete('co_piano_dei_conti3', ['id' => $id_conto]);
         }
     }
 }

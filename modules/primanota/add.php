@@ -80,7 +80,7 @@ foreach ($id_scadenze as $id_scadenza) {
     $scadenza['rata'] = abs($scadenza['rata']);
 
     $descrizione_conto = ($dir == 'entrata') ? 'Riepilogativo clienti' : 'Riepilogativo fornitori';
-    $conto = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare($descrizione_conto));
+    $conto = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE descrizione = '.prepare($descrizione_conto));
     $id_conto_controparte = $conto['id'];
 
     $righe_documento = [];
@@ -175,10 +175,10 @@ foreach ($id_documenti as $id_documento) {
         $conto_field = 'id_conto_'.($dir == 'entrata' ? 'cliente' : 'fornitore');
         $id_conto_controparte = $fattura->anagrafica[$conto_field];
 
-        $conto_banca_effetti = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare('Banca effetti all\'incasso'));
+        $conto_banca_effetti = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE descrizione = '.prepare('Banca effetti all\'incasso'));
         $id_conto_banca_effetti = $conto_banca_effetti['id'] ?? null;
 
-        $conto_spese = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE descrizione = '.prepare('Effetti insoluti'));
+        $conto_spese = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE descrizione = '.prepare('Effetti insoluti'));
         $id_conto_spese_insoluti = $conto_spese['id'] ?? null;
 
         $righe_documento[] = [

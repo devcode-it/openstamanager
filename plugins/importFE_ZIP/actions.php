@@ -472,7 +472,7 @@ switch (filter('op')) {
         // Ricerca del conto più utilizzato
         $conti = $righe->groupBy(fn ($item, $key) => $item->id_conto)->transform(fn ($item, $key) => $item->count());
         $id_conto = $conti->sort()->keys()->last();
-        $conto = $database->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id = '.prepare($id_conto));
+        $conto = $database->fetchOne('SELECT * FROM co_piano_dei_conti3 WHERE id = '.prepare($id_conto));
 
         // Ricerca dell'IVA più utilizzata secondo percentuali
         $iva = [];
@@ -865,7 +865,7 @@ switch (filter('op')) {
 
                 $desc_conto = '';
                 if (!empty($riga->id_articolo)) {
-                    $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_pianodeiconti2.numero, ".", co_pianodeiconti3.numero, " ", co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE co_pianodeiconti3.id = '.prepare($riga->articolo->id_conto_vendita))['descrizione'];
+                    $desc_conto = $dbo->fetchOne('SELECT CONCAT( co_piano_dei_conti2.numero, ".", co_piano_dei_conti3.numero, " ", co_piano_dei_conti3.descrizione ) AS descrizione FROM co_piano_dei_conti3 INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id WHERE co_piano_dei_conti3.id = '.prepare($riga->articolo->id_conto_vendita))['descrizione'];
                 }
 
                 // Compilazione dei dati

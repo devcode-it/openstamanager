@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 
 $id_conto = get('id_conto');
-$conto = $dbo->fetchOne('SELECT co_pianodeiconti2.numero AS numero2, co_pianodeiconti3.numero AS numero3, co_pianodeiconti3.descrizione FROM co_pianodeiconti3 LEFT JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2 = co_pianodeiconti2.id WHERE co_pianodeiconti3.id='.prepare($id_conto));
+$conto = $dbo->fetchOne('SELECT co_piano_dei_conti2.numero AS numero2, co_piano_dei_conti3.numero AS numero3, co_piano_dei_conti3.descrizione FROM co_piano_dei_conti3 LEFT JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2 = co_piano_dei_conti2.id WHERE co_piano_dei_conti3.id='.prepare($id_conto));
 
 // Calcolo totale conto da elenco movimenti di questo conto
 $query = 'SELECT 

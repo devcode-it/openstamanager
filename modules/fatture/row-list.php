@@ -98,7 +98,7 @@ foreach ($righe as $riga) {
             $id_documento_fe = $documento_originale['id_documento_fe'];
         }
 
-        $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_pianodeiconti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
+        $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_piano_dei_conti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
 
         $extra_riga = replace('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
             '_RIVALSA_' => $riga->rivalsa_inps ? '<br>'.tr('Cassa previdenziale').': '.moneyFormat(abs($riga->rivalsa_inps)) : null,

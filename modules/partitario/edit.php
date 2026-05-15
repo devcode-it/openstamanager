@@ -51,7 +51,7 @@ echo '
 </div>';
 
 // Livello 1
-$query1 = 'SELECT * FROM `co_pianodeiconti1` ORDER BY id DESC';
+$query1 = 'SELECT * FROM `co_piano_dei_conti1` ORDER BY id DESC';
 $primo_livello = $dbo->fetchArray($query1);
 foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
@@ -96,13 +96,13 @@ foreach ($primo_livello as $conto_primo) {
                 <tbody>';
 
     // Livello 2
-    $query2 = 'SELECT * FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
+    $query2 = 'SELECT * FROM `co_piano_dei_conti2` WHERE id_piano_dei_conti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
     $secondo_livello = $dbo->fetchArray($query2);
 
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
         if ($conto_primo['descrizione'] == 'Economico') {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
 
             // Calcolo del totale_reddito con gestione dei risconti
             $totale_reddito2 = $dbo->fetchOne('
@@ -122,9 +122,9 @@ foreach ($primo_livello as $conto_primo) {
                                 END
                             ) AS totale_reddito
                             FROM `co_movimenti` 
-                            INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id 
+                            INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id 
                             WHERE id_conto IN(
-                                SELECT id FROM co_pianodeiconti3 
+                                SELECT id FROM co_piano_dei_conti3 
                                 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).'
                             ) 
                             AND (
@@ -148,7 +148,7 @@ foreach ($primo_livello as $conto_primo) {
                             )
                         ')['totale_reddito'];
         } else {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
             $totale_reddito2 = 0;
         }
 

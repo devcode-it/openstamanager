@@ -24,7 +24,7 @@ switch ($resource) {
     case 'get_conti':
         $id_mastrino = get('id_mastrino');
         $conti = [];
-        $rs_conti = $dbo->fetchArray('SELECT *, (SELECT CONCAT ((SELECT numero FROM co_pianodeiconti2 WHERE id=co_pianodeiconti3.id_piano_dei_conti2), ".", numero, " ", descrizione) FROM co_pianodeiconti3 WHERE id=co_movimenti_modelli.id_conto) AS descrizione_conto FROM co_movimenti_modelli WHERE id_mastrino='.prepare($id_mastrino).' GROUP BY id ORDER BY id');
+        $rs_conti = $dbo->fetchArray('SELECT *, (SELECT CONCAT ((SELECT numero FROM co_piano_dei_conti2 WHERE id=co_piano_dei_conti3.id_piano_dei_conti2), ".", numero, " ", descrizione) FROM co_piano_dei_conti3 WHERE id=co_movimenti_modelli.id_conto) AS descrizione_conto FROM co_movimenti_modelli WHERE id_mastrino='.prepare($id_mastrino).' GROUP BY id ORDER BY id');
 
         for ($i = 0; $i < sizeof($rs_conti); ++$i) {
             $conti[$i] = $rs_conti[$i]['id_conto'].';'.$rs_conti[$i]['descrizione_conto'].';'.$rs_conti[$i]['totale'];

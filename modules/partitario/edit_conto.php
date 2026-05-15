@@ -25,9 +25,9 @@ $lvl = get('lvl');
 
 // Info conto
 if ($lvl == 2) {
-    $query = 'SELECT *, id_piano_dei_conti1 AS idpianodeiconti FROM co_pianodeiconti2 WHERE id='.prepare($id_conto);
+    $query = 'SELECT *, id_piano_dei_conti1 AS idpianodeiconti FROM co_piano_dei_conti2 WHERE id='.prepare($id_conto);
 } else {
-    $query = 'SELECT *, id_piano_dei_conti2 AS idpianodeiconti, (SELECT dir FROM co_pianodeiconti2 WHERE co_pianodeiconti2.id=co_pianodeiconti3.id_piano_dei_conti2) AS dir FROM co_pianodeiconti3 WHERE id='.prepare($id_conto);
+    $query = 'SELECT *, id_piano_dei_conti2 AS idpianodeiconti, (SELECT dir FROM co_piano_dei_conti2 WHERE co_piano_dei_conti2.id=co_piano_dei_conti3.id_piano_dei_conti2) AS dir FROM co_piano_dei_conti3 WHERE id='.prepare($id_conto);
 }
 
 $info = $dbo->fetchOne($query);
@@ -46,13 +46,13 @@ $conto_bloccato = [
 $conto_bloccato = in_array($info['descrizione'], $conto_bloccato);
 
 if (!$conto_bloccato && $lvl == 3) {
-    $parent_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id = '.prepare($info['id_piano_dei_conti2']);
+    $parent_query = 'SELECT descrizione FROM co_piano_dei_conti2 WHERE id = '.prepare($info['id_piano_dei_conti2']);
     $parent_info = $dbo->fetchOne($parent_query);
     $conto_bloccato = $parent_info && $parent_info['descrizione'] == 'Perdite e profitti';
 }
 
 if (!$conto_bloccato && $lvl == 3) {
-    $parent_query = 'SELECT descrizione FROM co_pianodeiconti2 WHERE id = '.prepare($info['id_piano_dei_conti2']);
+    $parent_query = 'SELECT descrizione FROM co_piano_dei_conti2 WHERE id = '.prepare($info['id_piano_dei_conti2']);
     $parent_info = $dbo->fetchOne($parent_query);
     $conto_bloccato = $parent_info && ($parent_info['descrizione'] == 'Conti transitori' || $parent_info['descrizione'] == 'Conti compensativi');
 }

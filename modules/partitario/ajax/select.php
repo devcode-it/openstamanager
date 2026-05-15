@@ -22,10 +22,10 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'conti':
-        $query = 'SELECT co_pianodeiconti2.* FROM co_pianodeiconti2 LEFT JOIN co_pianodeiconti3 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where| GROUP BY co_pianodeiconti2.id ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC';
+        $query = 'SELECT co_piano_dei_conti2.* FROM co_piano_dei_conti2 LEFT JOIN co_piano_dei_conti3 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where| GROUP BY co_piano_dei_conti2.id ORDER BY co_piano_dei_conti2.numero ASC, co_piano_dei_conti3.numero ASC';
 
         if ($search != '') {
-            $wh = 'WHERE (co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero ) LIKE ".prepare('%'.$search.'%').')';
+            $wh = 'WHERE (co_piano_dei_conti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero ) LIKE ".prepare('%'.$search.'%').')';
         } else {
             $wh = '';
         }
@@ -35,14 +35,14 @@ switch ($resource) {
         foreach ($rs as $r) {
             $results[] = ['text' => $r['numero'].' '.$r['descrizione'], 'children' => []];
 
-            $subquery = 'SELECT co_pianodeiconti3.* FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where|';
+            $subquery = 'SELECT co_piano_dei_conti3.* FROM co_piano_dei_conti3 INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where|';
 
             $where = [];
             $filter = [];
             $search_fields = [];
 
             foreach ($elements as $element) {
-                $filter[] = 'co_pianodeiconti3.id='.prepare($element);
+                $filter[] = 'co_piano_dei_conti3.id='.prepare($element);
             }
             if (!empty($filter)) {
                 $where[] = '('.implode(' OR ', $filter).')';
@@ -51,7 +51,7 @@ switch ($resource) {
             $where[] = 'id_piano_dei_conti2='.prepare($r['id']);
 
             if (!empty($search)) {
-                $search_fields[] = '(co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero) LIKE ".prepare('%'.$search.'%').')';
+                $search_fields[] = '(co_piano_dei_conti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT(co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero) LIKE ".prepare('%'.$search.'%').')';
             }
             if (!empty($search_fields)) {
                 $where[] = '('.implode(' OR ', $search_fields).')';
@@ -72,16 +72,16 @@ switch ($resource) {
         break;
 
     case 'conti-vendite':
-        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC";
+        $query = "SELECT co_piano_dei_conti3.id, CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero, ' ', co_piano_dei_conti3.descrizione ) AS descrizione FROM co_piano_dei_conti3 INNER JOIN (co_piano_dei_conti2 INNER JOIN co_piano_dei_conti1 ON co_piano_dei_conti2.id_piano_dei_conti1=co_piano_dei_conti1.id) ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where| ORDER BY co_piano_dei_conti2.numero ASC, co_piano_dei_conti3.numero ASC";
 
         foreach ($elements as $element) {
-            $filter[] = 'co_pianodeiconti3.id='.prepare($element);
+            $filter[] = 'co_piano_dei_conti3.id='.prepare($element);
         }
 
-        $where[] = "(co_pianodeiconti2.dir='entrata' OR co_pianodeiconti2.dir='entrata/uscita')";
+        $where[] = "(co_piano_dei_conti2.dir='entrata' OR co_piano_dei_conti2.dir='entrata/uscita')";
 
         if (!empty($search)) {
-            $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
+            $search_fields[] = "CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero, ' ', co_piano_dei_conti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
 
         $custom['link'] = '';
@@ -89,16 +89,16 @@ switch ($resource) {
         break;
 
     case 'conti-acquisti':
-        $query = "SELECT co_pianodeiconti3.id, CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) AS descrizione FROM co_pianodeiconti3 INNER JOIN (co_pianodeiconti2 INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id) ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where| ORDER BY co_pianodeiconti2.numero ASC, co_pianodeiconti3.numero ASC";
+        $query = "SELECT co_piano_dei_conti3.id, CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero, ' ', co_piano_dei_conti3.descrizione ) AS descrizione FROM co_piano_dei_conti3 INNER JOIN (co_piano_dei_conti2 INNER JOIN co_piano_dei_conti1 ON co_piano_dei_conti2.id_piano_dei_conti1=co_piano_dei_conti1.id) ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where| ORDER BY co_piano_dei_conti2.numero ASC, co_piano_dei_conti3.numero ASC";
 
         foreach ($elements as $element) {
-            $filter[] = 'co_pianodeiconti3.id='.prepare($element);
+            $filter[] = 'co_piano_dei_conti3.id='.prepare($element);
         }
 
-        $where[] = "(co_pianodeiconti2.dir='uscita' OR co_pianodeiconti2.dir='entrata/uscita')";
+        $where[] = "(co_piano_dei_conti2.dir='uscita' OR co_piano_dei_conti2.dir='entrata/uscita')";
 
         if (!empty($search)) {
-            $search_fields[] = "CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero, ' ', co_pianodeiconti3.descrizione ) LIKE ".prepare('%'.$search.'%');
+            $search_fields[] = "CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero, ' ', co_piano_dei_conti3.descrizione ) LIKE ".prepare('%'.$search.'%');
         }
 
         $custom['link'] = '';
@@ -106,10 +106,10 @@ switch ($resource) {
         break;
 
     case 'conti-modelliprima_nota':
-        $query = 'SELECT co_pianodeiconti2.* FROM co_pianodeiconti2 LEFT JOIN co_pianodeiconti3 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where| GROUP BY co_pianodeiconti2.id';
+        $query = 'SELECT co_piano_dei_conti2.* FROM co_piano_dei_conti2 LEFT JOIN co_piano_dei_conti3 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where| GROUP BY co_piano_dei_conti2.id';
 
         if ($search != '') {
-            $wh = 'WHERE (co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero ) LIKE ".prepare('%'.$search.'%').')';
+            $wh = 'WHERE (co_piano_dei_conti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT( co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero ) LIKE ".prepare('%'.$search.'%').')';
         } else {
             $wh = '';
         }
@@ -119,14 +119,14 @@ switch ($resource) {
         foreach ($rs as $r) {
             $results[] = ['text' => $r['numero'].' '.$r['descrizione'], 'children' => []];
 
-            $subquery = 'SELECT co_pianodeiconti3.* FROM co_pianodeiconti3 INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id |where|';
+            $subquery = 'SELECT co_piano_dei_conti3.* FROM co_piano_dei_conti3 INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id |where|';
 
             $where = [];
             $filter = [];
             $search_fields = [];
 
             foreach ($elements as $element) {
-                $filter[] = 'co_pianodeiconti3.id='.prepare($element);
+                $filter[] = 'co_piano_dei_conti3.id='.prepare($element);
             }
             if (!empty($filter)) {
                 $where[] = '('.implode(' OR ', $filter).')';
@@ -135,7 +135,7 @@ switch ($resource) {
             $where[] = 'id_piano_dei_conti2='.prepare($r['id']);
 
             if (!empty($search)) {
-                $search_fields[] = '(co_pianodeiconti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT(co_pianodeiconti2.numero, '.', co_pianodeiconti3.numero) LIKE ".prepare('%'.$search.'%').')';
+                $search_fields[] = '(co_piano_dei_conti3.descrizione LIKE '.prepare('%'.$search.'%')." OR CONCAT(co_piano_dei_conti2.numero, '.', co_piano_dei_conti3.numero) LIKE ".prepare('%'.$search.'%').')';
             }
             if (!empty($search_fields)) {
                 $where[] = '('.implode(' OR ', $search_fields).')';

@@ -25,21 +25,21 @@ $date_end = filter('date_end');
 
 $records = $dbo->fetchArray('SELECT 
     co_movimenti.*, 
-    co_pianodeiconti3.descrizione AS conto, 
-    co_pianodeiconti2.numero AS numero2, 
-    co_pianodeiconti3.numero, 
+    co_piano_dei_conti3.descrizione AS conto, 
+    co_piano_dei_conti2.numero AS numero2, 
+    co_piano_dei_conti3.numero, 
     SUM(co_movimenti.totale) AS totale 
 FROM 
     co_movimenti 
-    INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id 
-    INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id
-    INNER JOIN co_pianodeiconti1 ON co_pianodeiconti2.id_piano_dei_conti1=co_pianodeiconti1.id
+    INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id 
+    INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id
+    INNER JOIN co_piano_dei_conti1 ON co_piano_dei_conti2.id_piano_dei_conti1=co_piano_dei_conti1.id
 WHERE 
     co_movimenti.data>='.prepare($date_start).' 
     AND co_movimenti.data<='.prepare($date_end).' 
 GROUP BY 
     co_movimenti.id_mastrino, 
     co_movimenti.id_conto,
-    IF(co_pianodeiconti1.descrizione = \'Patrimoniale\', IF(co_movimenti.totale>0, 1, 0), 0)
+    IF(co_piano_dei_conti1.descrizione = \'Patrimoniale\', IF(co_movimenti.totale>0, 1, 0), 0)
 ORDER BY 
     co_movimenti.data, co_movimenti.id_mastrino');

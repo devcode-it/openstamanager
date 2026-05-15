@@ -77,10 +77,10 @@ $conti3 = []; // contenitore conti di terzo livello
 $id_mastrino = $record['id_mastrino'];
 
 // Salvo l'elenco conti in un array (per non fare il ciclo ad ogni riga)
-$query2 = 'SELECT * FROM co_pianodeiconti2';
+$query2 = 'SELECT * FROM co_piano_dei_conti2';
 $conti2 = $dbo->fetchArray($query2);
 for ($x = 0; $x < sizeof($conti2); ++$x) {
-    $query3 = 'SELECT * FROM co_pianodeiconti3 WHERE id_piano_dei_conti2='.prepare($conti2[$x]['id']);
+    $query3 = 'SELECT * FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conti2[$x]['id']);
     $rs3 = $dbo->fetchArray($query3);
     for ($y = 0; $y < sizeof($rs3); ++$y) {
         // Creo un array con le descrizioni dei conti di livello 3 che ha come indice l'id del livello2 e del livello3

@@ -27,9 +27,9 @@ $i = 0;
 $records = [];
 
 if (get('lev') == '3') {
-    $conto3 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti3 WHERE id='.prepare($id_record));
-    $conto2 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti2 WHERE id='.prepare($conto3['id_piano_dei_conti2']));
-    $conto1 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti1 WHERE id='.prepare($conto2['id_piano_dei_conti1']));
+    $conto3 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti3 WHERE id='.prepare($id_record));
+    $conto2 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti2 WHERE id='.prepare($conto3['id_piano_dei_conti2']));
+    $conto1 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti1 WHERE id='.prepare($conto2['id_piano_dei_conti1']));
 
     // Se il conto è di stato patrimoniale, devo raggruppare i movimenti anche per segno
     $group_by = $conto1['descrizione'] == 'Patrimoniale' ? ', IF(`totale`>0, 1, 0)' : '';
@@ -55,13 +55,13 @@ if (get('lev') == '3') {
         $data_saldo_iniziale = date('Y-m-d', strtotime($date_start.' -1 day'));
     }
 } elseif (get('lev') == '2') {
-    $records = $dbo->fetchArray('SELECT CONCAT(co_pianodeiconti3.numero, " ",co_pianodeiconti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2='.prepare($id_record).') AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0');
-    $conto2 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti2 WHERE id='.prepare($id_record));
-    $conto1 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti1 WHERE id='.prepare($conto2['id_piano_dei_conti1']));
+    $records = $dbo->fetchArray('SELECT CONCAT(co_piano_dei_conti3.numero, " ",co_piano_dei_conti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($id_record).') AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0');
+    $conto2 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti2 WHERE id='.prepare($id_record));
+    $conto1 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti1 WHERE id='.prepare($conto2['id_piano_dei_conti1']));
 } elseif (get('lev') == '1') {
-    $records = $dbo->fetchArray('SELECT CONCAT(co_pianodeiconti2.numero, " ", co_pianodeiconti2.descrizione) AS titolo, CONCAT(co_pianodeiconti3.numero, " ",co_pianodeiconti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_pianodeiconti2 WHERE id_piano_dei_conti1='.prepare($id_record).')) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0 ORDER BY co_pianodeiconti2.numero');
-    $conto1 = $dbo->fetchOne('SELECT * FROM co_pianodeiconti1 WHERE id='.prepare($id_record));
-    $utile_perdita = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Economico")))AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end));
-    $patrimoniale = $dbo->fetchArray('SELECT CONCAT(co_pianodeiconti2.numero, " ", co_pianodeiconti2.descrizione) AS titolo, CONCAT(co_pianodeiconti3.numero, " ",co_pianodeiconti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_pianodeiconti3 ON co_movimenti.id_conto=co_pianodeiconti3.id INNER JOIN co_pianodeiconti2 ON co_pianodeiconti3.id_piano_dei_conti2=co_pianodeiconti2.id WHERE id_conto IN(SELECT id FROM co_pianodeiconti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale"))) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0 ORDER BY co_pianodeiconti2.numero');
+    $records = $dbo->fetchArray('SELECT CONCAT(co_piano_dei_conti2.numero, " ", co_piano_dei_conti2.descrizione) AS titolo, CONCAT(co_piano_dei_conti3.numero, " ",co_piano_dei_conti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1='.prepare($id_record).')) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0 ORDER BY co_piano_dei_conti2.numero');
+    $conto1 = $dbo->fetchOne('SELECT * FROM co_piano_dei_conti1 WHERE id='.prepare($id_record));
+    $utile_perdita = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione="Economico")))AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end));
+    $patrimoniale = $dbo->fetchArray('SELECT CONCAT(co_piano_dei_conti2.numero, " ", co_piano_dei_conti2.descrizione) AS titolo, CONCAT(co_piano_dei_conti3.numero, " ",co_piano_dei_conti3.descrizione) AS descrizione, SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id INNER JOIN co_piano_dei_conti2 ON co_piano_dei_conti3.id_piano_dei_conti2=co_piano_dei_conti2.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2 IN(SELECT id FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione="Patrimoniale"))) AND co_movimenti.data>='.prepare($date_start).' AND co_movimenti.data<='.prepare($date_end).' GROUP BY id_conto HAVING totale!=0 ORDER BY co_piano_dei_conti2.numero');
 }
 $prev_titolo = '';

@@ -169,7 +169,7 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['id_piano_dei_conti1']).')');
+        $result = $database->fetchOne('SELECT id FROM co_piano_dei_conti1 WHERE LOWER(descrizione)=LOWER('.prepare($record['id_piano_dei_conti1']).')');
 
         return !empty($result) ? $result : null;
     }
@@ -188,7 +188,7 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti2 WHERE numero='.prepare($codice_conto2));
+        $result = $database->fetchOne('SELECT id FROM co_piano_dei_conti2 WHERE numero='.prepare($codice_conto2));
 
         return !empty($result) ? $result : null;
     }
@@ -208,7 +208,7 @@ class CSV extends CSVImporter
             return null;
         }
 
-        $result = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE numero='.prepare($codice_conto3).' AND id_piano_dei_conti2='.prepare($id_piano_dei_conti2));
+        $result = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE numero='.prepare($codice_conto3).' AND id_piano_dei_conti2='.prepare($id_piano_dei_conti2));
 
         return !empty($result) ? $result : null;
     }
@@ -226,7 +226,7 @@ class CSV extends CSVImporter
     {
         // Aggiungi conto di secondo livello se non esiste
         if (empty($conto2) && empty($parti_conto['codice_conto3'])) {
-            $database->insert('co_pianodeiconti2', [
+            $database->insert('co_piano_dei_conti2', [
                 'numero' => $parti_conto['codice_conto2'],
                 'descrizione' => $record['descrizione'],
                 'id_piano_dei_conti1' => $conto1['id'],
@@ -238,7 +238,7 @@ class CSV extends CSVImporter
             $conto3 = $this->trovaConto3($parti_conto['codice_conto3'], $conto2['id'], $database);
 
             if (empty($conto3)) {
-                $database->insert('co_pianodeiconti3', [
+                $database->insert('co_piano_dei_conti3', [
                     'numero' => $parti_conto['codice_conto3'],
                     'descrizione' => $record['descrizione'],
                     'id_piano_dei_conti2' => $conto2['id'],
@@ -260,7 +260,7 @@ class CSV extends CSVImporter
     {
         // Aggiorna conto di secondo livello
         if (!empty($conto2) && empty($parti_conto['codice_conto3'])) {
-            $database->update('co_pianodeiconti2', [
+            $database->update('co_piano_dei_conti2', [
                 'descrizione' => $record['descrizione'],
             ], [
                 'id' => $conto2['id'],
@@ -271,7 +271,7 @@ class CSV extends CSVImporter
             $conto3 = $this->trovaConto3($parti_conto['codice_conto3'], $conto2['id'], $database);
 
             if (!empty($conto3)) {
-                $database->update('co_pianodeiconti3', [
+                $database->update('co_piano_dei_conti3', [
                     'descrizione' => $record['descrizione'],
                 ], [
                     'id' => $conto3['id'],

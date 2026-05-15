@@ -533,7 +533,7 @@ FROM
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.|lang|)
     LEFT JOIN (SELECT `co_banche`.`id`, CONCAT(`nome`, ' - ', `iban`) AS `descrizione` FROM `co_banche`) AS `banche` ON `banche`.`id` = `co_documenti`.`id_banca_azienda`
-    LEFT JOIN (SELECT `id_documento`, GROUP_CONCAT(DISTINCT `co_pianodeiconti3`.`descrizione` SEPARATOR ', ') AS `descrizione` FROM `co_righe_documenti` INNER JOIN `co_pianodeiconti3` ON `co_pianodeiconti3`.`id` = `co_righe_documenti`.`id_conto` GROUP BY id_documento) AS `conti` ON `conti`.`id_documento` = `co_documenti`.`id`
+    LEFT JOIN (SELECT `id_documento`, GROUP_CONCAT(DISTINCT `co_piano_dei_conti3`.`descrizione` SEPARATOR ', ') AS `descrizione` FROM `co_righe_documenti` INNER JOIN `co_piano_dei_conti3` ON `co_piano_dei_conti3`.`id` = `co_righe_documenti`.`id_conto` GROUP BY id_documento) AS `conti` ON `conti`.`id_documento` = `co_documenti`.`id`
     LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `id_documento`) AS `righe` ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN (SELECT COUNT(`d`.`id`) AS `conteggio`, IF(`d`.`numero_esterno` = '', `d`.`numero`, `d`.`numero_esterno`) AS `numero_documento`, `d`.`id_anagrafica` AS `anagrafica`, `d`.`id_segment`, YEAR(`d`.`data`) AS `anno` FROM `co_documenti` AS `d`
     LEFT JOIN `co_tipidocumento` AS `d_tipo` ON `d`.`id_tipo_documento` = `d_tipo`.`id` WHERE 1=1 AND `d_tipo`.`dir` = 'uscita' AND('|period_start|' <= `d`.`data` AND '|period_end|' >= `d`.`data` OR '|period_start|' <= `d`.`data_competenza` AND '|period_end|' >= `d`.`data_competenza`) GROUP BY `d`.`id_segment`, `numero_documento`, `d`.`id_anagrafica`, YEAR(`d`.`data`)) AS `d` ON (`d`.`numero_documento` = IF(`co_documenti`.`numero_esterno` = '',`co_documenti`.`numero`,`co_documenti`.`numero_esterno`) AND `d`.`anagrafica` = `co_documenti`.`id_anagrafica` AND `d`.`id_segment` = `co_documenti`.`id_segment` AND `d`.`anno` = YEAR(`co_documenti`.`data`))
@@ -553,7 +553,7 @@ SELECT
     |select| 
 FROM
     `co_movimenti`
-    INNER JOIN `co_pianodeiconti3` ON `co_movimenti`.`id_conto` = `co_pianodeiconti3`.`id`
+    INNER JOIN `co_piano_dei_conti3` ON `co_movimenti`.`id_conto` = `co_piano_dei_conti3`.`id`
     LEFT JOIN `co_documenti` ON `co_documenti`.`id` = `co_movimenti`.`id_documento`
     LEFT JOIN `an_anagrafiche` ON `co_movimenti`.`id_anagrafica` = `an_anagrafiche`.`id`
 WHERE
@@ -1173,6 +1173,9 @@ RENAME TABLE `openstamanager`.`an_tipianagrafiche` TO `openstamanager`.`an_tipi_
 RENAME TABLE `openstamanager`.`an_tipianagrafiche_anagrafiche` TO `openstamanager`.`an_tipi_anagrafiche_anagrafiche`;
 RENAME TABLE `openstamanager`.`an_tipianagrafiche_lang` TO `openstamanager`.`an_tipi_anagrafiche_lang`;
 RENAME TABLE `openstamanager`.`co_contratti_tipiintervento` TO `openstamanager`.`co_contratti_tipi_intervento`;
+RENAME TABLE `openstamanager`.`co_pianodeiconti1` TO `openstamanager`.`co_piano_dei_conti1`;
+RENAME TABLE `openstamanager`.`co_pianodeiconti2` TO `openstamanager`.`co_piano_dei_conti2`;
+RENAME TABLE `openstamanager`.`co_pianodeiconti3` TO `openstamanager`.`co_piano_dei_conti3`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1466,16 +1469,16 @@ UPDATE `zz_views` SET `query` = "IFNULL(an_sedi.nome,an_sedi.nome_sede)" WHERE `
 
 -- Allineamento impostazioni
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM `co_ritenuta_acconto` ORDER BY descrizione ASC" WHERE `nome` = "Ritenuta d'acconto predefinita";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT id,descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Cassa e banche')" WHERE `nome` = "Conto aziendale predefinito";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per la marca da bollo";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_pianodeiconti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per le spese d'incasso";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id,descrizione FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_piano_dei_conti2 WHERE descrizione='Cassa e banche')" WHERE `nome` = "Conto aziendale predefinito";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_piano_dei_conti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per la marca da bollo";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2=(SELECT id FROM co_piano_dei_conti2 WHERE descrizione='Ricavi')" WHERE `nome` = "Conto predefinito per le spese d'incasso";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `id_tipo_anagrafica` FROM `an_tipi_anagrafiche` WHERE `name` = 'Fornitore') AND `deleted_at` IS NULL" WHERE `nome` = "Terzo intermediario";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `an_anagrafiche`.`id`, `ragione_sociale` AS descrizione FROM `an_anagrafiche` INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` WHERE `id_tipo_anagrafica` = (SELECT `an_tipi_anagrafiche`.`id` FROM `an_tipi_anagrafiche` WHERE `name` = 'Azienda') AND `deleted_at` IS NULL" WHERE `nome` = "Azienda predefinita";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, nome_sede AS descrizione FROM an_sedi WHERE id_anagrafica=(SELECT valore FROM zz_settings WHERE nome='Azienda predefinita')" WHERE `nome` = "Magazzino cespiti";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i crediti clienti";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i debiti fornitori";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per i cespiti";
-UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_pianodeiconti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per gli ammortamenti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_piano_dei_conti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i crediti clienti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_piano_dei_conti2` WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione='Patrimoniale') ORDER BY `descrizione` ASC" WHERE `nome` = "Conto di secondo livello per i debiti fornitori";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per i cespiti";
+UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM co_piano_dei_conti2 WHERE id_piano_dei_conti1=(SELECT id FROM co_piano_dei_conti1 WHERE descrizione='Patrimoniale')" WHERE `nome` = "Conto predefinito per gli ammortamenti";
 UPDATE `zz_settings` SET `tipo` = "" WHERE `nome` = "";
 
 -- Allineamento segmenti

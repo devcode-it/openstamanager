@@ -78,7 +78,7 @@ class PianoConti extends Controllo
             $descrizione = 0;
 
             if ($cliente || $fornitore) {
-                $is_esistente = $database->fetchOne('SELECT id FROM co_pianodeiconti3 WHERE id = '.$anagrafica['id_conto_cliente'].' OR id = '.$anagrafica['id_conto_fornitore']);
+                $is_esistente = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = '.$anagrafica['id_conto_cliente'].' OR id = '.$anagrafica['id_conto_fornitore']);
                 $descrizione = null;
 
                 if (($cliente && $fornitore) && (empty($anagrafica['id_conto_cliente']) || empty($anagrafica['id_conto_fornitore']) || !$is_esistente)) {

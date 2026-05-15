@@ -65,10 +65,10 @@ switch ($resource) {
                 FROM 
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                    INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+                    INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
                 WHERE
                     `id_articolo`='.prepare($id_articolo).' AND
-                    `dt_tipiddt`.`dir`="entrata" AND 
+                    `dt_tipi_ddt`.`dir`="entrata" AND 
                     `id_anagrafica`='.prepare($id_anagrafica).'
             ORDER BY 
                 `id` DESC LIMIT 0,5');
@@ -119,7 +119,7 @@ switch ($resource) {
         UNION
             SELECT
                 `id_ddt` AS id,
-                `dt_tipiddt_lang`.`title` AS tipo,
+                `dt_tipi_ddt_lang`.`title` AS tipo,
                 "Ddt in uscita" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
@@ -129,8 +129,8 @@ switch ($resource) {
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-                LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+                LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "entrata"
         ORDER BY
@@ -185,7 +185,7 @@ switch ($resource) {
         UNION
             SELECT
                 `id_ddt` AS id,
-                `dt_tipiddt_lang`.`title` AS tipo,
+                `dt_tipi_ddt_lang`.`title` AS tipo,
                 "Ddt in entrata" AS modulo,
                 (`subtotale` - `sconto`) / `qta` AS costo_unitario,
                 `dt_ddt`.`numero` AS n_documento,
@@ -195,8 +195,8 @@ switch ($resource) {
             FROM
                 `dt_righe_ddt`
                 INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-                LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+                LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "uscita"
         ORDER BY

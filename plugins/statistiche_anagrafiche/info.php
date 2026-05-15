@@ -85,7 +85,7 @@ if ($sessioni) {
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', function ($query) {
-        $query->where('dt_tipiddt.dir', '=', 'entrata');
+        $query->where('dt_tipi_ddt.dir', '=', 'entrata');
     })
     ->get();
 $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');

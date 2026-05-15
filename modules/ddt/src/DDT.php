@@ -304,7 +304,7 @@ class DDT extends Document
             'direction' => $direzione,
             'skip_direction' => 'entrata',
             'type_document_field' => 'id_tipo_ddt',
-            'type_document_table' => 'dt_tipiddt',
+            'type_document_table' => 'dt_tipi_ddt',
             'use_date_pattern' => true,
         ]);
     }
@@ -324,7 +324,7 @@ class DDT extends Document
             'direction' => $direzione,
             'skip_direction' => 'uscita',
             'type_document_field' => 'id_tipo_ddt',
-            'type_document_table' => 'dt_tipiddt',
+            'type_document_table' => 'dt_tipi_ddt',
             'use_date_pattern' => true,
         ]);
     }

@@ -550,13 +550,13 @@ switch (filter('op')) {
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
                         INNER JOIN `dt_stati_ddt` ON `dt_stati_ddt`.`id` = `dt_ddt`.`id_stato`
                         LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
-                        INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+                        INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
                     WHERE
                         `dt_ddt`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ddt| AND
                         `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
                         `dt_stati_ddt_lang`.`title` != 'Fatturato' AND
-                        `dt_tipiddt`.`dir` = 'uscita'
+                        `dt_tipi_ddt`.`dir` = 'uscita'
                 UNION
                     SELECT
                         `or_righe_ordini`.`id`,

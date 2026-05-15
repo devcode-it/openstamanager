@@ -847,12 +847,12 @@ if (!$block_edit) {
             INNER JOIN `dt_causale_t` ON `dt_causale_t`.`id` = `dt_ddt`.`id_causale_t`
             INNER JOIN `dt_stati_ddt` ON `dt_stati_ddt`.`id` = `dt_ddt`.`id_stato`
             LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+            LEFT JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `dt_stati_ddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
-            AND `dt_tipiddt`.`dir` = '.prepare($dir).'
+            AND `dt_tipi_ddt`.`dir` = '.prepare($dir).'
             AND `dt_causale_t`.`is_importabile` = 1
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];

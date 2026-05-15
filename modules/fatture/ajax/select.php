@@ -57,12 +57,12 @@ switch ($resource) {
             FROM `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
-                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+                INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
                 LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 
                 `id_anagrafica` = '.prepare($id_anagrafica)." AND
                 `dt_stati_ddt_lang`.`title` != 'Fatturato' AND
-                `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
+                `dt_tipi_ddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 
                 `dt_ddt`.`id`
@@ -135,11 +135,11 @@ switch ($resource) {
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
                 INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
                 LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+                INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)." AND
                 `dt_stati_lang`.`title` != 'Fatturato' AND
-                `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
+                `dt_tipi_ddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 
                 `dt_ddt`.`id`

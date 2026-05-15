@@ -273,8 +273,8 @@ class DocumentiCollegati
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
             `dt_ddt`.`data`,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `co_righe_documenti` ON (
@@ -282,10 +282,10 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
         LEFT JOIN `dt_stati_ddt_lang` ON (
@@ -376,8 +376,8 @@ class DocumentiCollegati
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
             `dt_ddt`.`data`,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `co_righe_documenti` ON (
@@ -385,10 +385,10 @@ class DocumentiCollegati
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
         LEFT JOIN `dt_stati_ddt_lang` ON (
@@ -599,15 +599,15 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
         LEFT JOIN `dt_stati_ddt_lang` ON (
@@ -718,14 +718,14 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
-        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
@@ -910,17 +910,17 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
             `dt_stati_ddt_lang`.`title` AS stato_documento,
             SUM(`dt_righe_ddt`.`qta`) AS qta_totale,
             ((SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`))*SUM(`dt_righe_ddt`.`qta`)) AS prezzo_totale,
             SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`) AS prezzo_unitario
         FROM `dt_ddt`
-        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
         LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
@@ -1052,14 +1052,14 @@ class DocumentiCollegati
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
             `dt_stati_ddt_lang`.`title` AS stato_documento,
-            `dt_tipiddt_lang`.`title` AS tipo_documento,
-            `dt_tipiddt`.`dir`,
+            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+            `dt_tipi_ddt`.`dir`,
             NULL AS `deleted_at`
         FROM `dt_ddt`
-        INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-        LEFT JOIN `dt_tipiddt_lang` ON (
-            `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND
-            `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
+        LEFT JOIN `dt_tipi_ddt_lang` ON (
+            `dt_tipi_ddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND
+            `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         LEFT JOIN dt_stati_ddt ON dt_ddt.id_stato=dt_stati_ddt.id
         LEFT JOIN `dt_stati_ddt_lang` ON (
@@ -1993,14 +1993,14 @@ class DocumentiCollegati
                 `'.$tabella.'`.`'.$campo_numero.'` AS numero,
                 `'.$tabella.'`.`numero_esterno`,
                 `'.$tabella.'`.`'.$campo_data.'` AS data,
-                `dt_tipiddt_lang`.`title` AS tipo_documento,
-                IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
+                `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+                IF(`dt_tipi_ddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
                 `dt_stati_ddt_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `dt_tipiddt` ON `'.$tabella.'`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-            LEFT JOIN `dt_tipiddt_lang` ON (
-                `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
-                `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+            INNER JOIN `dt_tipi_ddt` ON `'.$tabella.'`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
+            LEFT JOIN `dt_tipi_ddt_lang` ON (
+                `dt_tipi_ddt_lang`.`id_record` = `dt_tipi_ddt`.`id` AND
+                `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             INNER JOIN `dt_stati_ddt` ON `'.$tabella.'`.`id_stato` = `dt_stati_ddt`.`id`
             LEFT JOIN `dt_stati_ddt_lang` ON (

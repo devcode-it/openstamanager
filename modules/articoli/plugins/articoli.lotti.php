@@ -201,16 +201,16 @@ if (empty(get('modal'))) {
 
                     $query = 'SELECT
                             *,
-                            `dt_tipiddt_lang`.`title` AS tipo_documento,
-                            `dt_tipiddt`.`dir` AS `dir`,
+                            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+                            `dt_tipi_ddt`.`dir` AS `dir`,
                             `dt_ddt`.`numero` AS numero,
                             `dt_ddt`.`data` AS data,
                             `dt_ddt`.`numero_esterno` AS numero_esterno
                         FROM
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id` = `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                            INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
+                            LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt`.`id` = `dt_tipi_ddt_lang`.`id_record` AND `dt_tipi_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($acquisto['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);
@@ -312,16 +312,16 @@ if (empty(get('modal'))) {
 
                     $query = 'SELECT
                             *,
-                            `dt_tipiddt_lang`.`title` AS tipo_documento,
-                            `dt_tipiddt`.`dir`,
+                            `dt_tipi_ddt_lang`.`title` AS tipo_documento,
+                            `dt_tipi_ddt`.`dir`,
                             `dt_ddt`.`numero`,
                             `dt_ddt`.`numero_esterno`,
                             `dt_ddt`.`data`
                         FROM
                             `dt_righe_ddt`
                             INNER JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt`=`dt_ddt`.`id`
-                            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipiddt`.`id`
-                            LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record`=`dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+                            INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipi_ddt`.`id`
+                            LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt_lang`.`id_record`=`dt_tipi_ddt`.`id` AND `dt_tipi_ddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `dt_righe_ddt`.`id`='.prepare($vendita['id_riga_ddt']);
                     $data = $dbo->fetchArray($query);

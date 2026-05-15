@@ -414,11 +414,11 @@ if (!$block_edit) {
             `dt_ddt`
             INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
             LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+            INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE
             `title` IN("Evaso", "Parzialmente evaso", "Parzialmente fatturato") AND
-            `dt_tipiddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND
+            `dt_tipi_ddt`.`dir`="'.($dir == 'entrata' ? 'uscita' : 'entrata').'" AND
             (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0
         GROUP BY
             `dt_ddt`.`id`';

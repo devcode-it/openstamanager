@@ -61,7 +61,7 @@ $id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 		<!-- il campo id_tipo_ddt può essere anche rimosso -->
 		<div class="col-md-4 hide">
-			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "id_tipo_ddt", "required": 1, "values": "query=SELECT `dt_tipiddt`.`id`, `dt_tipiddt_lang`.`title` as descrizione FROM `dt_tipiddt` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`=`dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
+			{[ "type": "select", "label": "<?php echo tr('Tipo ddt'); ?>", "name": "id_tipo_ddt", "required": 1, "values": "query=SELECT `dt_tipi_ddt`.`id`, `dt_tipi_ddt_lang`.`title` as descrizione FROM `dt_tipi_ddt` LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt`.`id`=`dt_tipi_ddt_lang`.`id_record` AND `dt_tipi_ddt_lang`.`id_lang`= <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>'", "value": "<?php echo $id_tipoddt; ?>" ]}
 		</div>
 	</div>
 

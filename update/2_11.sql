@@ -644,7 +644,7 @@ SELECT
 FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
     LEFT JOIN `dt_causale_t` ON `dt_ddt`.`id_causale_t` = `dt_causale_t`.`id`
     LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
@@ -674,7 +674,7 @@ SELECT
 FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
+    LEFT JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
     LEFT JOIN `dt_causale_t` ON `dt_ddt`.`id_causale_t` = `dt_causale_t`.`id`
     LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
@@ -1191,6 +1191,8 @@ RENAME TABLE `openstamanager`.`dt_causalet` TO `openstamanager`.`dt_causale_t`;
 RENAME TABLE `openstamanager`.`dt_causalet_lang` TO `openstamanager`.`dt_causale_t_lang`;
 RENAME TABLE `openstamanager`.`dt_statiddt` TO `openstamanager`.`dt_stati_ddt`;
 RENAME TABLE `openstamanager`.`dt_statiddt_lang` TO `openstamanager`.`dt_stati_ddt_lang`;
+RENAME TABLE `openstamanager`.`dt_tipiddt` TO `openstamanager`.`dt_tipi_ddt`;
+RENAME TABLE `openstamanager`.`dt_tipiddt_lang` TO `openstamanager`.`dt_tipi_ddt_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1241,7 +1243,7 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [	{	"type": "table", "field
 
 UPDATE `zz_plugins` SET `options` = ' { "main_query": [ { "type": "table", "fields": "Nome, Indirizzo, Città, CAP, Provincia, Referente", "query": "SELECT an_sedi.id, an_sedi.nome_sede AS Nome, an_sedi.indirizzo AS Indirizzo, an_sedi.citta AS Città, an_sedi.cap AS CAP, an_sedi.provincia AS Provincia, GROUP_CONCAT(an_referenti.nome SEPARATOR \', \') AS Referente FROM an_sedi LEFT OUTER JOIN an_referenti ON id_sede = an_sedi.id WHERE 1=1 AND an_sedi.id_anagrafica=|id_parent| AND deleted_at IS NULL GROUP BY an_sedi.id HAVING 2=2 ORDER BY an_sedi.id DESC"} ]}' WHERE `name` = "Sedi aggiuntive";
 
-UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT `dt_ddt`.`id`, (CASE WHEN `dt_tipiddt`.`dir` = \'entrata\' THEN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in uscita\') ELSE (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in entrata\') END) AS _link_module_, `dt_ddt`.`id` AS _link_record_, IF(`dt_ddt`.`numero_esterno` = \'\', `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`) AS Numero, DATE_FORMAT(`dt_ddt`.`data`, \'%d/%m/%Y\') AS Data, `dt_righe_ddt`.`descrizione` AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(`dt_righe_ddt`.`qta`, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM `dt_ddt` LEFT JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`id_ddt` JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id` WHERE `dt_ddt`.`id_anagrafica`=|id_parent| ORDER BY `dt_ddt`.`id` DESC"} ]}' WHERE `name` = "Ddt del cliente";
+UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "fields": "Numero, Data, Descrizione, Qtà", "query": "SELECT `dt_ddt`.`id`, (CASE WHEN `dt_tipi_ddt`.`dir` = \'entrata\' THEN (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in uscita\') ELSE (SELECT `id` FROM `zz_modules` WHERE `name` = \'Ddt in entrata\') END) AS _link_module_, `dt_ddt`.`id` AS _link_record_, IF(`dt_ddt`.`numero_esterno` = \'\', `dt_ddt`.`numero`, `dt_ddt`.`numero_esterno`) AS Numero, DATE_FORMAT(`dt_ddt`.`data`, \'%d/%m/%Y\') AS Data, `dt_righe_ddt`.`descrizione` AS `Descrizione`, REPLACE(REPLACE(REPLACE(FORMAT(`dt_righe_ddt`.`qta`, 2), \',\', \'#\'), \'.\', \',\'), \'#\', \'.\') AS `Qtà` FROM `dt_ddt` LEFT JOIN `dt_righe_ddt` ON `dt_ddt`.`id`=`dt_righe_ddt`.`id_ddt` JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id` WHERE `dt_ddt`.`id_anagrafica`=|id_parent| ORDER BY `dt_ddt`.`id` DESC"} ]}' WHERE `name` = "Ddt del cliente";
 
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [	{	"type": "table", "fields": "Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine", "query": "SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,\'%d/%m/%Y\') AS \'Data inizio\', DATE_FORMAT(data_fine,\'%d/%m/%Y\') AS \'Data fine\', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC"}	]}' WHERE `name` = "Dichiarazioni d'Intento";
 

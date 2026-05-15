@@ -31,13 +31,13 @@ $fields = [
     'Righe' => 'righe.descrizione',
 ];
 
-$query = 'SELECT *, `dt_ddt`.`id`, `dt_tipiddt_lang`.`title` AS tipologia';
+$query = 'SELECT *, `dt_ddt`.`id`, `dt_tipi_ddt_lang`.`title` AS tipologia';
 
 foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipiddt`.`id` LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt`.`id`= `dt_tipiddt_lang`.`id_record` AND `dt_tipiddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_ddt`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM dt_righe_ddt GROUP BY `id_ddt`) righe ON `righe`.`id_ddt`=`dt_ddt`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
+$query .= ' FROM `dt_ddt` INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipi_ddt`.`id` LEFT JOIN `dt_tipi_ddt_lang` ON (`dt_tipi_ddt`.`id`= `dt_tipi_ddt_lang`.`id_record` AND `dt_tipi_ddt_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_ddt`, SUM(`qta`) AS "totale_quantita", SUM(`costo_unitario` * `qta`) AS "totale_acquisto", SUM(`prezzo_unitario` * `qta` - `sconto`) AS "totale_vendita" FROM dt_righe_ddt GROUP BY `id_ddt`) righe ON `righe`.`id_ddt`=`dt_ddt`.`id` WHERE `id_anagrafica` IN('.implode(',', $idanagrafiche).') ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');

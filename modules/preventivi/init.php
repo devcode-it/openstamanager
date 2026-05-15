@@ -26,16 +26,16 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT 
             `co_preventivi`.*,
             `an_anagrafiche`.`tipo` AS tipo_anagrafica,
-            `co_statipreventivi`.`is_fatturabile`,
-            `co_statipreventivi`.`is_pianificabile`,
-            `co_statipreventivi`.`is_bloccato`,
-            `co_statipreventivi`.`is_revisionabile`,
-            `co_statipreventivi_lang`.`title` AS stato
+            `co_stati_preventivi`.`is_fatturabile`,
+            `co_stati_preventivi`.`is_pianificabile`,
+            `co_stati_preventivi`.`is_bloccato`,
+            `co_stati_preventivi`.`is_revisionabile`,
+            `co_stati_preventivi_lang`.`title` AS stato
         FROM 
             `co_preventivi` 
             INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica`=`an_anagrafiche`.`id`
-            LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato`=`co_statipreventivi`.`id`
-            LEFT JOIN `co_statipreventivi_lang` ON (`co_preventivi`.`id_stato`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+            LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato`=`co_stati_preventivi`.`id`
+            LEFT JOIN `co_stati_preventivi_lang` ON (`co_preventivi`.`id_stato`=`co_stati_preventivi_lang`.`id_record` AND `co_stati_preventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
         WHERE 
             `co_preventivi`.`id`='.prepare($id_record));
 

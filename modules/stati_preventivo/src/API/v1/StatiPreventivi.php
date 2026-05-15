@@ -27,14 +27,14 @@ class StatiPreventivi extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $table = 'co_statipreventivi';
+        $table = 'co_stati_preventivi';
 
         $select = [
             '*',
         ];
 
         $joins = [
-            'co_statipreventivi_lang' => 'co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = '.\Models\Locale::getDefault()->id,
+            'co_stati_preventivi_lang' => 'co_stati_preventivi_lang.id_record = co_stati_preventivi.id AND co_stati_preventivi_lang.id_lang = '.\Models\Locale::getDefault()->id,
         ];
 
         $where = $request['where'];

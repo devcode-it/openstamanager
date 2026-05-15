@@ -45,7 +45,7 @@ if (count($preventivo->revisioni) > 1) {
 
     <div class="row">
         <div class="col-md-2 offset-md-10">
-            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT `co_statipreventivi`.`id`, `co_statipreventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_statipreventivi` LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) AND `co_statipreventivi`.`deleted_at` is NULL ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}
+            {[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "required": 1, "values": "query=SELECT `co_stati_preventivi`.`id`, `co_stati_preventivi_lang`.`title` AS descrizione, `colore` AS _bgcolor_ FROM `co_stati_preventivi` LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND `co_stati_preventivi_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) AND `co_stati_preventivi`.`deleted_at` is NULL ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}
         </div>
     </div>
     <?php echo '

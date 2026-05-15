@@ -31,11 +31,11 @@ class Preventivi extends AppResource implements RetrieveInterface
             DISTINCT(`co_preventivi`.`id`) AS id 
         FROM 
             `co_preventivi`
-            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
+            INNER JOIN `co_stati_preventivi` ON `co_stati_preventivi`.`id` = `co_preventivi`.`id_stato`
         WHERE 
-            `co_statipreventivi`.`is_pianificabile` = 0';
+            `co_stati_preventivi`.`is_pianificabile` = 0';
         if ($last_sync_at) {
-            $query .= ' AND (`co_preventivi`.`updated_at` > '.prepare($last_sync_at).' OR `co_statipreventivi`.`updated_at` > '.prepare($last_sync_at).')';
+            $query .= ' AND (`co_preventivi`.`updated_at` > '.prepare($last_sync_at).' OR `co_stati_preventivi`.`updated_at` > '.prepare($last_sync_at).')';
         }
         $records = database()->fetchArray($query);
 
@@ -54,13 +54,13 @@ class Preventivi extends AppResource implements RetrieveInterface
             `co_preventivi`.`updated_at` 
         FROM 
             `co_preventivi`
-            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
+            INNER JOIN `co_stati_preventivi` ON `co_stati_preventivi`.`id` = `co_preventivi`.`id_stato`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_preventivi`.`id_anagrafica`
             INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
             INNER JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.\Models\Locale::getDefault()->id.")
         WHERE 
-            `an_tipi_anagrafiche_lang`.`title` = 'Cliente' AND `co_statipreventivi`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
+            `an_tipi_anagrafiche_lang`.`title` = 'Cliente' AND `co_stati_preventivi`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -82,11 +82,11 @@ class Preventivi extends AppResource implements RetrieveInterface
             `co_preventivi`.`nome`,
             `co_preventivi`.`numero`,
             `co_preventivi`.`data_bozza`,
-            `co_statipreventivi_lang`.`title` AS stato
+            `co_stati_preventivi_lang`.`title` AS stato
         FROM 
             `co_preventivi`
-            INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.`id` = `co_preventivi`.`id_stato`
-            LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            INNER JOIN `co_stati_preventivi` ON `co_stati_preventivi`.`id` = `co_preventivi`.`id_stato`
+            LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND `co_stati_preventivi_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE 
             `co_preventivi`.`id` = '.prepare($id);
 

@@ -249,17 +249,17 @@ class DocumentiCollegati
             `co_preventivi`.`data_bozza` AS data,
             \'Preventivo\' AS tipo_documento,
             \'Preventivi\' AS modulo,
-            `co_statipreventivi_lang`.`title` AS stato_documento
+            `co_stati_preventivi_lang`.`title` AS stato_documento
         FROM `co_preventivi`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_preventivi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-        LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND 
-            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+        LEFT JOIN `co_stati_preventivi_lang` ON (
+            `co_stati_preventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND 
+            `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_preventivi`.`id`
         ORDER BY `co_preventivi`.`data_bozza` DESC';
@@ -505,17 +505,17 @@ class DocumentiCollegati
             `co_preventivi`.`data_bozza` AS data,
             \'Preventivo\' AS tipo_documento,
             \'Preventivi\' AS modulo,
-            `co_statipreventivi_lang`.`title` AS stato_documento
+            `co_stati_preventivi_lang`.`title` AS stato_documento
         FROM `co_preventivi`
         INNER JOIN `co_righe_contratti` ON (
             `co_righe_contratti`.`original_document_id` = `co_preventivi`.`id` AND
             `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\' AND
             `co_righe_contratti`.`id_contratto` = '.prepare($id_contratto).'
         )
-        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-        LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND
-            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+        LEFT JOIN `co_stati_preventivi_lang` ON (
+            `co_stati_preventivi_lang`.`id_record` = `co_preventivi`.`id_stato` AND
+            `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_preventivi`.`id`
         ORDER BY `co_preventivi`.`data_bozza` DESC';
@@ -773,14 +773,14 @@ class DocumentiCollegati
             NULL AS numero_esterno,
             \'Preventivo\' AS tipo_documento,
             \'Preventivi\' AS modulo,
-            `co_statipreventivi_lang`.`title` AS stato_documento
+            `co_stati_preventivi_lang`.`title` AS stato_documento
         FROM `co_preventivi`
         INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = '.prepare($id_ordine).'
         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
-        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-        LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
-            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+        LEFT JOIN `co_stati_preventivi_lang` ON (
+            `co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND
+            `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `or_righe_ordini`.`id_preventivo` = `co_preventivi`.`id`
         GROUP BY `co_preventivi`.`id`
@@ -943,16 +943,16 @@ class DocumentiCollegati
             0 AS numero_esterno,
             \'Preventivo\' AS tipo_documento,
             \'Preventivi\' AS modulo,
-            `co_statipreventivi_lang`.`title` AS stato_documento,
+            `co_stati_preventivi_lang`.`title` AS stato_documento,
             SUM(`co_righe_preventivi`.`qta`) AS qta_totale,
             ((SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`))*SUM(`co_righe_preventivi`.`qta`)) AS prezzo_totale,
             SUM(`co_righe_preventivi`.`prezzo_unitario`)-SUM(`co_righe_preventivi`.`sconto_unitario`) AS prezzo_unitario
         FROM `co_preventivi`
         INNER JOIN `co_righe_preventivi` ON `co_preventivi`.`id` = `co_righe_preventivi`.`id_preventivo`
-        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-        LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
-            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+        LEFT JOIN `co_stati_preventivi_lang` ON (
+            `co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND
+            `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_righe_preventivi`.`id_articolo` = '.prepare($id_articolo).'
         GROUP BY `co_preventivi`.`id`
@@ -1124,15 +1124,15 @@ class DocumentiCollegati
             `co_preventivi`.`data_bozza` AS data,
             `co_preventivi`.`numero`,
             0 AS numero_esterno,
-            `co_statipreventivi_lang`.`title` AS stato_documento,
+            `co_stati_preventivi_lang`.`title` AS stato_documento,
             "Preventivo" AS tipo_documento,
             0 AS dir,
             NULL AS `deleted_at`
         FROM `co_preventivi`
-        LEFT JOIN co_statipreventivi ON co_preventivi.id_stato=co_statipreventivi.id
-        LEFT JOIN `co_statipreventivi_lang` ON (
-            `co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND
-            `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN co_stati_preventivi ON co_preventivi.id_stato=co_stati_preventivi.id
+        LEFT JOIN `co_stati_preventivi_lang` ON (
+            `co_stati_preventivi`.`id` = `co_stati_preventivi_lang`.`id_record` AND
+            `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `default_revision` = 1';
 
@@ -1943,12 +1943,12 @@ class DocumentiCollegati
                 `'.$tabella.'`.`'.$campo_data.'` AS data,
                 \''.$info['tipo_doc'].'\' AS tipo_documento,
                 \''.$info['modulo'].'\' AS modulo,
-                `co_statipreventivi_lang`.`title` AS stato_documento
+                `co_stati_preventivi_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `co_statipreventivi` ON `'.$tabella.'`.`id_stato` = `co_statipreventivi`.`id`
-            LEFT JOIN `co_statipreventivi_lang` ON (
-                `co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND
-                `co_statipreventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+            INNER JOIN `co_stati_preventivi` ON `'.$tabella.'`.`id_stato` = `co_stati_preventivi`.`id`
+            LEFT JOIN `co_stati_preventivi_lang` ON (
+                `co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND
+                `co_stati_preventivi_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
         } elseif ($tipo == Modules\Contratti\Contratto::class) {

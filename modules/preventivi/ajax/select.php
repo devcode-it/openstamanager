@@ -31,7 +31,7 @@ switch ($resource) {
             $query = 'SELECT
                     `co_preventivi`.`id` AS id,
                     `an_anagrafiche`.`id`,
-                    CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_statipreventivi_lang`.`title` , "]") AS descrizione,
+                    CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_stati_preventivi_lang`.`title` , "]") AS descrizione,
                     `co_preventivi`.`id_tipo_intervento`,
                     `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
                     `in_tipiintervento`.`tempo_standard` AS tempo_standard,
@@ -40,8 +40,8 @@ switch ($resource) {
                 FROM
                     `co_preventivi`
                     INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica`=`an_anagrafiche`.`id`
-                    INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato`=`co_statipreventivi`.`id`
-                    LEFT JOIN `co_statipreventivi_lang` ON (`co_preventivi`.`id_stato`=`co_statipreventivi_lang`.`id_record` AND `co_statipreventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+                    INNER JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato`=`co_stati_preventivi`.`id`
+                    LEFT JOIN `co_stati_preventivi_lang` ON (`co_preventivi`.`id_stato`=`co_stati_preventivi_lang`.`id_record` AND `co_stati_preventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                     INNER JOIN `in_tipiintervento` ON (`co_preventivi`.`id_tipo_intervento`=`in_tipiintervento`.`id`)
                     LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                 |where|
@@ -67,7 +67,7 @@ switch ($resource) {
                 $search_fields[] = '`co_preventivi`.`nome` LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = '`co_preventivi`.`numero` LIKE '.prepare('%'.$search.'%');
                 $search_fields[] = '`co_preventivi`.`data_bozza` LIKE '.prepare('%'.$search.'%');
-                $search_fields[] = '`co_statipreventivi_lang`.`title` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`co_stati_preventivi_lang`.`title` LIKE '.prepare('%'.$search.'%');
             }
 
             $custom['link'] = 'module:Preventivi';

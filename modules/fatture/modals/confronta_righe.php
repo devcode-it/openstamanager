@@ -68,9 +68,9 @@ $righe = $dbo->fetchArray(
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`id_articolo`
                         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_articolo` = `mg_articoli`.`id`
-                        INNER JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
+                        INNER JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
                     WHERE
-                        `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_statipreventivi`.`id` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                        `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_righe_documenti`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_stati_preventivi`.`id` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY
                         `mg_articoli`.`id`, `co_righe_preventivi`.`id`
                     ORDER BY

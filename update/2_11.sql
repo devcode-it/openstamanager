@@ -468,8 +468,8 @@ SELECT
 FROM
     `co_preventivi`
     LEFT JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-    LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi`.`id` = `co_statipreventivi_lang`.`id_record` AND co_statipreventivi_lang.id_lang = |lang|)
+    LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+    LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi`.`id` = `co_stati_preventivi_lang`.`id_record` AND co_stati_preventivi_lang.id_lang = |lang|)
     LEFT JOIN (SELECT `id_preventivo`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `co_righe_preventivi` GROUP BY `id_preventivo`) AS righe ON `co_preventivi`.`id` = `righe`.`id_preventivo`
     LEFT JOIN (SELECT `an_anagrafiche`.`id`, `an_anagrafiche`.`ragione_sociale` AS nome FROM `an_anagrafiche`) AS agente ON `agente`.`id` = `co_preventivi`.`id_agente`
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `id_preventivo` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type` = 'Modules\\Preventivi\\Preventivo' GROUP BY `id_preventivo`, `original_document_id`) AS `fattura` ON `fattura`.`id_preventivo` = `co_preventivi`.`id`
@@ -1181,6 +1181,8 @@ RENAME TABLE `openstamanager`.`co_staticontratti` TO `openstamanager`.`co_stati_
 RENAME TABLE `openstamanager`.`co_staticontratti_lang` TO `openstamanager`.`co_stati_contratti_lang`;
 RENAME TABLE `openstamanager`.`co_statidocumento` TO `openstamanager`.`co_stati_documento`;
 RENAME TABLE `openstamanager`.`co_statidocumento_lang` TO `openstamanager`.`co_stati_documento_lang`;
+RENAME TABLE `openstamanager`.`co_statipreventivi` TO `openstamanager`.`co_stati_preventivi`;
+RENAME TABLE `openstamanager`.`co_statipreventivi_lang` TO `openstamanager`.`co_stati_preventivi_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1197,7 +1199,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_documenti.id) AS dato FROM co
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(DISTINCT mg_articoli.id) AS dato FROM `mg_articoli` INNER JOIN `mg_scorte_sedi` ON `mg_scorte_sedi`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT IFNULL(SUM(qta), 0) AS tot, id_articolo, id_sede FROM mg_movimenti GROUP BY id_articolo, id_sede) movimenti ON movimenti.id_sede = mg_scorte_sedi.id_sede AND movimenti.id_articolo = mg_articoli.id WHERE `mg_articoli`.`attivo` = 1 AND `mg_articoli`.`deleted_at` IS NULL AND `mg_scorte_sedi`.`threshold_qta` > 0 AND IFNULL(movimenti.tot, 0) < `mg_scorte_sedi`.`threshold_qta`' WHERE `zz_widgets`.`name` = "Articoli in esaurimento";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_preventivi.id) AS dato FROM co_preventivi INNER JOIN co_statipreventivi ON co_preventivi.id_stato = co_statipreventivi.id LEFT JOIN co_statipreventivi_lang ON (co_statipreventivi_lang.id_record = co_statipreventivi.id AND co_statipreventivi_lang.id_lang = (SELECT valore FROM zz_settings WHERE nome = "Lingua")) WHERE name ="In lavorazione" AND default_revision=1' WHERE `zz_widgets`.`name` = "Preventivi in lavorazione";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(co_preventivi.id) AS dato FROM co_preventivi INNER JOIN co_stati_preventivi ON co_preventivi.id_stato = co_stati_preventivi.id LEFT JOIN co_stati_preventivi_lang ON (co_stati_preventivi_lang.id_record = co_stati_preventivi.id AND co_stati_preventivi_lang.id_lang = (SELECT valore FROM zz_settings WHERE nome = "Lingua")) WHERE name ="In lavorazione" AND default_revision=1' WHERE `zz_widgets`.`name` = "Preventivi in lavorazione";
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(`dati`.`id`) AS dato FROM (SELECT `co_contratti`.`id`,((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`id_stato` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`, DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, `data_conclusione`, `ore_preavviso_rinnovo`, `giorni_preavviso_rinnovo`, (SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id` = `co_contratti`.`id_anagrafica`) AS ragione_sociale FROM `co_contratti` INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = "Lingua")) WHERE `rinnovabile` = 1 AND YEAR(`data_conclusione`) > 1970 AND `co_contratti`.`id` NOT IN (SELECT `id_contratto_prev` FROM `co_contratti` contratti) AND `co_stati_contratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza") HAVING (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) ORDER BY `giorni_rimanenti` ASC,`ore_rimanenti` ASC) dati' WHERE `zz_widgets`.`name` = "Contratti in scadenza";
 
@@ -1221,7 +1223,7 @@ UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi W
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE in_interventi.id_stato = (SELECT in_statiintervento.id FROM in_statiintervento WHERE in_statiintervento.codice=\'WIP\') ORDER BY in_interventi.data_richiesta ASC' WHERE `zz_widgets`.`name` = "Attività confermate";
 
-UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE id_stato IN (SELECT id FROM co_statipreventivi WHERE is_fatturabile=1) AND default_revision=1' WHERE `zz_widgets`.`name` = "Preventivi da fatturare";
+UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM co_preventivi WHERE id_stato IN (SELECT id FROM co_stati_preventivi WHERE is_fatturabile=1) AND default_revision=1' WHERE `zz_widgets`.`name` = "Preventivi da fatturare";
 
 
 -- Allineamento plugins

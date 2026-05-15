@@ -66,12 +66,12 @@ $righe = $dbo->fetchArray(
                     FROM
                         `co_preventivi`
                         INNER JOIN `co_righe_preventivi` ON `co_righe_preventivi`.`id_preventivo` = `co_preventivi`.`id`
-                        LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-                        LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                        LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+                        LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND `co_stati_preventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_preventivi`.`id_articolo`
                         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_articolo` = `mg_articoli`.`id`
                     WHERE
-                        `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `dt_righe_ddt`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_statipreventivi_lang`.`title` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
+                        `co_preventivi`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `dt_righe_ddt`.`id_articolo` = '.prepare($riga['id_articolo']).' AND `co_stati_preventivi_lang`.`title` NOT IN ("Bozza", "In attesa di conferma", "Rifiutato")
                     GROUP BY
                         `mg_articoli`.`id`, `co_righe_preventivi`.`id`
                     ORDER BY

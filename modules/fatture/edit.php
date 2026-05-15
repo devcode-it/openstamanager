@@ -825,9 +825,9 @@ if (!$block_edit) {
                 FROM
                     `co_preventivi`
                     LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.id_preventivo
-                    INNER JOIN `co_statipreventivi` ON `co_statipreventivi`.id = `co_preventivi`.id_stato
+                    INNER JOIN `co_stati_preventivi` ON `co_stati_preventivi`.id = `co_preventivi`.id_stato
                 WHERE
-                    `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_statipreventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
+                    `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_stati_preventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
             $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione

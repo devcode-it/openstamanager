@@ -134,16 +134,16 @@ switch (filter('op')) {
                 `co_preventivi`.`numero`,
                 `co_preventivi`.`data_accettazione`,
                 `co_preventivi`.`data_conclusione`,
-                `co_statipreventivi`.`is_pianificabile`,
-                `co_statipreventivi_lang`.`title` as stato,
-                `co_statipreventivi`.`is_bloccato`,
+                `co_stati_preventivi`.`is_pianificabile`,
+                `co_stati_preventivi_lang`.`title` as stato,
+                `co_stati_preventivi`.`is_bloccato`,
                 `an_anagrafiche`. `ragione_sociale` AS cliente,
                 IF(`have_attachments`.`cont`, 1, 0) AS have_attachments
             FROM `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
                 LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
-                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+                LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND `co_stati_preventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 (
                     (`co_preventivi`.`data_accettazione` >= '.prepare($start).' AND `co_preventivi`.`data_accettazione` <= '.prepare($end).')
@@ -155,7 +155,7 @@ switch (filter('op')) {
             foreach ($preventivi as $preventivo) {
                 if ($preventivo['is_pianificabile'] == 1 || $preventivo['stato'] = 'In attesa di conferma') {
                     if (!empty($preventivo['data_accettazione']) && $preventivo['data_accettazione'] != '0000-00-00') {
-                        $query.'AND `co_statipreventivi`.`is_pianificabile`=1';
+                        $query.'AND `co_stati_preventivi`.`is_pianificabile`=1';
                         $results[] = [
                             'id' => 'A_'.$modulo_preventivi->id.'_'.$preventivo['id'],
                             'id_intervento' => $preventivo['id'],
@@ -393,8 +393,8 @@ switch (filter('op')) {
                 `co_preventivi`
                 INNER JOIN `an_anagrafiche` ON `co_preventivi`.`id_anagrafica` = `an_anagrafiche`.`id`
                 LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_preventivi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `co_preventivi`.`id`
-                LEFT JOIN `co_statipreventivi` ON `co_preventivi`.`id_stato` = `co_statipreventivi`.`id`
-                LEFT JOIN `co_statipreventivi_lang` ON (`co_statipreventivi_lang`.`id_record` = `co_statipreventivi`.`id` AND `co_statipreventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `co_stati_preventivi` ON `co_preventivi`.`id_stato` = `co_stati_preventivi`.`id`
+                LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi_lang`.`id_record` = `co_stati_preventivi`.`id` AND `co_stati_preventivi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `co_preventivi`.`id`='.prepare($id_intervento);
 

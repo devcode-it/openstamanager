@@ -224,17 +224,17 @@ class DocumentiCollegati
             `in_interventi`.`data_richiesta`,
             \'Attività\' AS tipo_documento,
             \'Interventi\' AS modulo,
-            `in_statiintervento_lang`.`title` AS stato_documento
+            `in_stati_intervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `in_interventi`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND 
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento_lang`.`id_record` = `in_interventi`.`id_stato` AND 
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `in_interventi`.`id`
         ORDER BY `in_interventi`.`data_richiesta` DESC';
@@ -485,12 +485,12 @@ class DocumentiCollegati
             `in_interventi`.`data_richiesta`,
             \'Attività\' AS tipo_documento,
             \'Interventi\' AS modulo,
-            `in_statiintervento_lang`.`title` AS stato_documento
+            `in_stati_intervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_interventi`.`id_contratto` = '.prepare($id_contratto).'
         ORDER BY `in_interventi`.`data_richiesta` DESC';
@@ -629,13 +629,13 @@ class DocumentiCollegati
             NULL AS numero_esterno,
             \'Attività\' AS tipo_documento,
             \'Interventi\' AS modulo,
-            `in_statiintervento_lang`.`title` AS stato_documento
+            `in_stati_intervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_preventivo).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\')
@@ -748,13 +748,13 @@ class DocumentiCollegati
             NULL AS numero_esterno,
             \'Attività\' AS tipo_documento,
             \'Interventi\' AS modulo,
-            `in_statiintervento_lang`.`title` AS stato_documento
+            `in_stati_intervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE (`in_righe_interventi`.`original_document_id` = '.prepare($id_ordine).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\Ordini\\\\Ordine\')
@@ -841,13 +841,13 @@ class DocumentiCollegati
             NULL AS numero_esterno,
             \'Attività\' AS tipo_documento,
             \'Interventi\' AS modulo,
-            `in_statiintervento_lang`.`title` AS stato_documento
+            `in_stati_intervento_lang`.`title` AS stato_documento
         FROM `in_interventi`
         INNER JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
-        LEFT JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento_lang`.`id_record` = `in_interventi`.`id_stato` AND
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_righe_interventi`.`original_document_id` = '.prepare($id_ddt).'
         AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\'
@@ -1077,16 +1077,16 @@ class DocumentiCollegati
             `in_interventi`.`data_richiesta` AS data,
             `in_interventi`.`codice` AS numero,
             0 AS numero_esterno,
-            `in_statiintervento_lang`.`title` AS stato_documento,
+            `in_stati_intervento_lang`.`title` AS stato_documento,
             "Attività" AS tipo_documento,
             0 AS dir,
             in_interventi.deleted_at AS `deleted_at`
         FROM `in_interventi`
         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` = `in_interventi_tecnici`.`id_intervento`
-        LEFT JOIN in_statiintervento ON in_interventi.id_stato=in_statiintervento.id
-        LEFT JOIN `in_statiintervento_lang` ON (
-            `in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND
-            `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN in_stati_intervento ON in_interventi.id_stato=in_stati_intervento.id
+        LEFT JOIN `in_stati_intervento_lang` ON (
+            `in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND
+            `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `in_interventi`.`id` IN (
             SELECT `id_intervento`
@@ -1928,12 +1928,12 @@ class DocumentiCollegati
                 `'.$tabella.'`.`'.$campo_data.'` AS data,
                 \''.$info['tipo_doc'].'\' AS tipo_documento,
                 \''.$info['modulo'].'\' AS modulo,
-                `in_statiintervento_lang`.`title` AS stato_documento
+                `in_stati_intervento_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `in_statiintervento` ON `'.$tabella.'`.`id_stato` = `in_statiintervento`.`id`
-            LEFT JOIN `in_statiintervento_lang` ON (
-                `in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND
-                `in_statiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+            INNER JOIN `in_stati_intervento` ON `'.$tabella.'`.`id_stato` = `in_stati_intervento`.`id`
+            LEFT JOIN `in_stati_intervento_lang` ON (
+                `in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND
+                `in_stati_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
         } elseif ($tipo == Modules\Preventivi\Preventivo::class) {

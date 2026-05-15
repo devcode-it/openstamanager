@@ -24,7 +24,7 @@ $rs = $dbo->fetchArray('
 SELECT 
 	`co_contratti`.`id`,
     `co_contratti`.`id_sede_destinazione`,
-    ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`id_stato` IN (SELECT `in_statiintervento`.`id` FROM `in_statiintervento` WHERE `in_statiintervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
+    ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`id_stato` IN (SELECT `in_stati_intervento`.`id` FROM `in_stati_intervento` WHERE `in_stati_intervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
     `co_contratti`.`nome`, 
     DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, 
     `co_contratti`.`data_accettazione`,

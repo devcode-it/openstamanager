@@ -26,15 +26,15 @@ $r = $dbo->fetchOne('SELECT *,
         `in_interventi`.`codice` AS codice,
         (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `id_intervento`=`in_interventi`.`id`) AS data_fine,
         `in_tipiintervento_lang`.`title` AS tipo,
-        `in_statiintervento_lang`.`title` AS stato,
+        `in_stati_intervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
         `in_interventi`.`descrizione` AS descrizione,
         `an_sedi`.`nome_sede` AS sede,
         CONCAT(`an_sedi`.`indirizzo`, \' \', `an_sedi`.`cap`, \'  \', `an_sedi`.`citta`, \' (\', `an_sedi`.`provincia`, \')\') AS sede_indirizzo
     FROM `in_interventi`
         LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`id_sede_destinazione`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`
         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`

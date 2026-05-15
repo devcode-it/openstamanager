@@ -68,17 +68,17 @@ echo '
 
 $rs = $dbo->fetchArray('SELECT
         `in_interventi`.`id`,
-        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
+        CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_stati_intervento_lang`.`title` , "]") AS descrizione,
         CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
         CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
         IF(`id_cliente_finale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
     FROM
         `in_interventi` 
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
-        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
         (`in_interventi`.`id_anagrafica`='.prepare($id_anagrafica).' OR `in_interventi`.`id_cliente_finale`='.prepare($id_anagrafica).')
-        AND `in_statiintervento`.`is_fatturabile`=1
+        AND `in_stati_intervento`.`is_fatturabile`=1
         AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL)
         '.$where);
 foreach ($rs as $key => $value) {

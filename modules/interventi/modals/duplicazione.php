@@ -50,7 +50,7 @@ echo '
         </div>
 
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
         </div>
     </div>
 

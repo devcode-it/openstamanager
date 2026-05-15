@@ -218,7 +218,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
         </div>
     </div>
 
@@ -413,7 +413,7 @@ echo '
 
                             <div class="row mt-3">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "id_statoricorrenze", "values": "query=SELECT `in_statiintervento`.`id`,`in_statiintervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento`  LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
+                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "id_statoricorrenze", "values": "query=SELECT `in_stati_intervento`.`id`,`in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento`  LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}

@@ -26,7 +26,7 @@ include_once __DIR__.'/../../core.php';
 
 // Individuazione dati selezionabili
 // Stati interventi
-$stati_intervento = $dbo->fetchArray('SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
+$stati_intervento = $dbo->fetchArray('SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tipi intervento
 $tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
@@ -274,7 +274,7 @@ if (!empty($id_tecnico) && !empty($solo_promemoria_assegnati)) {
 $query_da_programmare .= '
         WHERE
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`) = 0 AND
-            `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)';
+            `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_stati_intervento` WHERE `is_bloccato` = 0)';
 $risultati_da_programmare = $dbo->fetchArray($query_da_programmare);
 
 if (!empty($risultati_da_programmare)) {
@@ -320,7 +320,7 @@ if (!empty($risultati_da_programmare)) {
     $query_mesi_precenti .= '
         WHERE
             (SELECT COUNT(*) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`) = 0
-            AND `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_statiintervento` WHERE `is_bloccato` = 0)
+            AND `in_interventi`.`id_stato` IN(SELECT `id` FROM `in_stati_intervento` WHERE `is_bloccato` = 0)
             AND DATE_ADD(IF(`in_interventi`.`data_scadenza` IS NULL, `in_interventi`.`data_richiesta`, `in_interventi`.`data_scadenza`), INTERVAL 1 DAY) <= NOW()';
     $numero_mesi_precenti = $dbo->fetchNum($query_mesi_precenti);
 

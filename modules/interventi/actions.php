@@ -160,7 +160,7 @@ switch (post('op')) {
         ]);
 
         // Notifica cambio stato intervento
-        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => post('id_stato')]);
+        $stato = $dbo->selectOne('in_stati_intervento', '*', ['id' => post('id_stato')]);
         if (!empty($stato['notifica']) && $stato['id'] != $record['id_stato']) {
             $template = Template::find($stato['id_email']);
 
@@ -202,7 +202,7 @@ switch (post('op')) {
 
         // Log del cambio stato dell'attività
         if ($stato['id'] != $record['id_stato']) {
-            $stato_precedente = $dbo->selectOne('in_statiintervento', '*', ['id' => $record['id_stato']]);
+            $stato_precedente = $dbo->selectOne('in_stati_intervento', '*', ['id' => $record['id_stato']]);
 
             OperationLog::setInfo('id_module', $id_module);
             OperationLog::setInfo('id_plugin', $id_plugin);
@@ -988,7 +988,7 @@ switch (post('op')) {
                     $intervento->save();
 
                     $id_stato = setting("Stato dell'attività dopo la firma");
-                    $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
+                    $stato = $dbo->selectOne('in_stati_intervento', '*', ['id' => $id_stato]);
                     if (!empty($stato)) {
                         $intervento->id_stato = $stato['id'];
                         $intervento->save();
@@ -1076,7 +1076,7 @@ switch (post('op')) {
                         $intervento->save();
 
                         $id_stato = setting("Stato dell'attività dopo la firma");
-                        $stato = $dbo->selectOne('in_statiintervento', '*', ['id' => $id_stato]);
+                        $stato = $dbo->selectOne('in_stati_intervento', '*', ['id' => $id_stato]);
                         if (!empty($stato)) {
                             $intervento->id_stato = $stato['id'];
                             $intervento->save();

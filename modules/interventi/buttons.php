@@ -67,9 +67,9 @@ if (!$is_anagrafica_deleted) {
     }
 
     $is_fatturabile = $dbo->fetchOne('SELECT
-        `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
+        `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
     WHERE
-        `in_interventi`.`id`='.prepare($id_record).' AND `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) 
+        `in_interventi`.`id`='.prepare($id_record).' AND `in_stati_intervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) 
         '.$where
     )['id'];
 

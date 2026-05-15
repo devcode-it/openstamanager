@@ -97,7 +97,7 @@ switch (post('op')) {
         $raggruppamento = post('raggruppamento');
 
         $where = '';
-        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_statiintervento_lang`.`title` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record`=`in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `in_statiintervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
+        $query = 'SELECT `in_interventi`.*, IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`data_richiesta`) AS data, `in_stati_intervento_lang`.`title` AS stato, `in_interventi`.`codice` AS codice_intervento FROM `in_interventi` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record`=`in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `in_stati_intervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) AND `in_interventi`.`id` IN ('.implode(',', $id_records).')';
 
         // Se non è attiva la relativa impostazione considero solo interventi non collegati a contratti, ordini o preventivi (default)
         if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
@@ -450,7 +450,7 @@ $operations['change_status'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
@@ -462,7 +462,7 @@ $operations['copy_bulk'] = [
     'data' => [
         'title' => tr('Vuoi davvero fare una copia degli interventi selezionati?'),
         'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data/ora richiesta').'", "name": "data_richiesta", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica sessioni').'", "name":"sessioni", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica impianti').'", "name":"impianti", "value":"" ]}

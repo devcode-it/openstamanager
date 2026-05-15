@@ -30,7 +30,7 @@ class Stato extends Model
     use SimpleModelTrait;
     use RecordTrait;
     use SoftDeletes;
-    protected $table = 'in_statiintervento';
+    protected $table = 'in_stati_intervento';
 
     protected static $translated_fields = [
         'title',

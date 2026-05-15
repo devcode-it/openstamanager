@@ -90,7 +90,7 @@ $query = "
         INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
         LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici`.`id_tecnico`=`tecnico`.`id`
-        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
     WHERE
         ".$where.'
         `id_tecnico` IN('.implode(',', array_map(prepare(...), $tecnici)).') AND

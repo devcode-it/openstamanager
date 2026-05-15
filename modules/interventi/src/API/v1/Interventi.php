@@ -42,20 +42,20 @@ class Interventi extends Resource implements RetrieveInterface, CreateInterface,
             'in_interventi.*',
             'MAX(in_interventi_tecnici.orario_fine) as data',
             'GROUP_CONCAT(DISTINCT b.ragione_sociale SEPARATOR \', \') AS tecnici',
-            'in_statiintervento_lang.title AS stato',
+            'in_stati_intervento_lang.title AS stato',
         ];
 
         $joins[] = [
-            'in_statiintervento',
+            'in_stati_intervento',
             'in_interventi.id_stato',
-            'in_statiintervento.id',
+            'in_stati_intervento.id',
         ];
 
         $joins[] = [
-            'in_statiintervento_lang',
-            'in_statiintervento_lang.id_record',
-            'in_statiintervento.id',
-            'in_statiintervento_lang.id_lang',
+            'in_stati_intervento_lang',
+            'in_stati_intervento_lang.id_record',
+            'in_stati_intervento.id',
+            'in_stati_intervento_lang.id_lang',
             \Models\Locale::getDefault()->id,
         ];
 

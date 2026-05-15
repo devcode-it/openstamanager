@@ -150,7 +150,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
     elseif ($final_module->name == 'Interventi') {
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_statiintervento`.`id`, `in_statiintervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_statiintervento` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `in_stati_intervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
             </div>
 
             <div class="col-md-4">
@@ -288,14 +288,14 @@ if (in_array($final_module->name, ['Fatture di vendita', 'Fatture di acquisto'])
 
         $rs = $dbo->fetchOne('SELECT
                 `in_interventi`.`id`,
-                CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_statiintervento_lang`.`title` , "]") AS descrizione,
+                CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\'), " [", `in_stati_intervento_lang`.`title` , "]") AS descrizione,
                 CONCAT(\'Attività numero \', `in_interventi`.`codice`, \' del \', DATE_FORMAT(IFNULL((SELECT MIN(`orario_inizio`) FROM `in_interventi_tecnici` WHERE `in_interventi_tecnici`.`id_intervento`=`in_interventi`.`id`), `in_interventi`.`data_richiesta`), \'%d/%m/%Y\')) AS info,
                 CONCAT(\'\n\', `in_interventi`.`descrizione`) AS descrizione_intervento,
                 IF(`id_cliente_finale`='.prepare($id_anagrafica).', \'Interventi conto terzi\', \'Interventi diretti\') AS `optgroup`
             FROM
                 `in_interventi`
-                INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
-                LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
+                LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `in_interventi`.`id` = '.prepare($documento->id));
         // Se l'impostazione "Descrizione personalizzata in fatturazione" è vuota, usa un valore di default

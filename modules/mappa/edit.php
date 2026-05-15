@@ -91,7 +91,7 @@ include_once __DIR__.'/../../core.php';
                     <div class="col-md-12">
                         <div class="stati-container">
                         <?php
-                            $rs_stati = $dbo->fetchArray('SELECT * FROM `in_statiintervento`LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
+                            $rs_stati = $dbo->fetchArray('SELECT * FROM `in_stati_intervento`LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')');
 
 foreach ($rs_stati as $stato) {
     ?>

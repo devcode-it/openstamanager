@@ -26,16 +26,16 @@ class StatiIntervento extends AppResource
 {
     public function getCleanupData($last_sync_at)
     {
-        return $this->getDeleted('in_statiintervento', 'id', $last_sync_at);
+        return $this->getDeleted('in_stati_intervento', 'id', $last_sync_at);
     }
 
     public function getModifiedRecords($last_sync_at)
     {
-        $query = 'SELECT `in_statiintervento`.`id`, `in_statiintervento`.`updated_at` FROM `in_statiintervento`';
+        $query = 'SELECT `in_stati_intervento`.`id`, `in_stati_intervento`.`updated_at` FROM `in_stati_intervento`';
 
         // Filtro per data
         if ($last_sync_at) {
-            $query .= ' WHERE `in_statiintervento`.`updated_at` > '.prepare($last_sync_at);
+            $query .= ' WHERE `in_stati_intervento`.`updated_at` > '.prepare($last_sync_at);
         }
 
         $records = database()->fetchArray($query);
@@ -46,14 +46,14 @@ class StatiIntervento extends AppResource
     public function retrieveRecord($id)
     {
         // Gestione della visualizzazione dei dettagli del record
-        $query = 'SELECT `in_statiintervento`.`id`,
-            `in_statiintervento`.`codice`,
-            `in_statiintervento_lang`.`title` AS `descrizione`,
-            `in_statiintervento`.`colore`,
-            `in_statiintervento`.`is_bloccato`
-        FROM `in_statiintervento`
-        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento`.`id` = `in_statiintervento_lang`.`id_record` AND `in_statiintervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
-        WHERE `in_statiintervento`.`id` = '.prepare($id);
+        $query = 'SELECT `in_stati_intervento`.`id`,
+            `in_stati_intervento`.`codice`,
+            `in_stati_intervento_lang`.`title` AS `descrizione`,
+            `in_stati_intervento`.`colore`,
+            `in_stati_intervento`.`is_bloccato`
+        FROM `in_stati_intervento`
+        LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+        WHERE `in_stati_intervento`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);
 

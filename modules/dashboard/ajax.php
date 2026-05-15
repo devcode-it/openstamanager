@@ -49,7 +49,7 @@ switch (filter('op')) {
             `in_interventi_tecnici`.`id`,
             `in_interventi_tecnici`.`id_intervento`,
             `in_interventi`.`codice`,
-            `in_statiintervento`.`colore`,
+            `in_stati_intervento`.`colore`,
             `in_interventi_tecnici`.`id_tecnico`,
             `in_interventi_tecnici`.`orario_inizio`,
             `in_interventi_tecnici`.`orario_fine`,
@@ -58,13 +58,13 @@ switch (filter('op')) {
             IF(`have_attachments`.`cont`, 1, 0) AS have_attachments,
             `an_anagrafiche`.`ragione_sociale` as cliente,
             `an_anagrafiche`.`id_zona` as id_zona,
-            `in_statiintervento`.`is_bloccato` AS is_bloccato
+            `in_stati_intervento`.`is_bloccato` AS is_bloccato
         FROM `in_interventi_tecnici`
             INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
             LEFT JOIN `an_anagrafiche` as tecnico ON `in_interventi_tecnici`.`id_tecnico` = `tecnico`.`id`
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
             LEFT JOIN (SELECT COUNT(id) as cont, id_record FROM `zz_files` WHERE `zz_files`.`id_module` = '.prepare($modulo_interventi->id).') as `have_attachments` ON `have_attachments`.`id_record` = `in_interventi`.`id`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
+            INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
         WHERE
             (
                 (
@@ -279,16 +279,16 @@ switch (filter('op')) {
                         *,
                         `in_interventi`.`codice`,
                         `an_anagrafiche`.`note` AS note_anagrafica,
-                        `in_statiintervento`.`id` AS parent_id_stato,
-                        `in_statiintervento_lang`.`title` AS stato,
+                        `in_stati_intervento`.`id` AS parent_id_stato,
+                        `in_stati_intervento_lang`.`title` AS stato,
                         `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`id_impianto` WHERE `my_impianti_interventi`.`id_intervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti,
                         `in_tipiintervento_lang`.`title` AS tipo,
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM
                         `in_interventi`
-                        INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id`
-                        LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
+                        LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipiintervento`.`id`
                         LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`id_intervento`
@@ -537,10 +537,10 @@ switch (filter('op')) {
         }
 
         $query .= 'LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
-            INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato` = `in_statiintervento`.`id`
+            INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
             LEFT JOIN `an_anagrafiche` AS tecnico ON `in_interventi_tecnici_assegnati`.`id_tecnico` = `tecnico`.`id`
         WHERE
-            `in_statiintervento`.`is_bloccato` = 0
+            `in_stati_intervento`.`is_bloccato` = 0
         GROUP BY
             `in_interventi`.`id`, `in_interventi_tecnici_assegnati`.`id_tecnico`
         HAVING

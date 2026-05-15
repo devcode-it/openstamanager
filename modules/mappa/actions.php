@@ -38,14 +38,14 @@ switch (get('op')) {
 
         // Filtri per stato
         $checks = explode(',', $checks);
-        $where[] = "`in_statiintervento_lang`.`title` IN ('".implode("','", $checks)."')";
+        $where[] = "`in_stati_intervento_lang`.`title` IN ('".implode("','", $checks)."')";
 
         $add_query = 'WHERE 1=1 AND '.implode(' AND ', $where);
 
         // Filtri per data
         $add_query .= ' |date_period(`orario_inizio`,`data_richiesta`)|';
 
-        $query = 'SELECT *, `in_statiintervento`.`colore` AS `colore_stato`, `in_interventi`.`id` AS id_intervento, `an_anagrafiche`.`lat` AS lat_anagrafica, `an_anagrafiche`.`lng` AS lng_anagrafica, `an_anagrafiche`.`indirizzo` AS indirizzo_anagrafica, `an_anagrafiche`.`cap` AS cap_anagrafica, `an_anagrafiche`.`citta` AS citta_anagrafica, `an_anagrafiche`.`provincia` AS provincia_anagrafica, `an_sedi`.`lat` AS lat_sede, `an_sedi`.`lng` AS lng_sede, `an_sedi`.`indirizzo` AS indirizzo_sede, `an_sedi`.`cap` AS cap_sede, `an_sedi`.`citta` AS citta_sede, `an_sedi`.`provincia` AS provincia_sede, `in_statiintervento_lang`.`title` AS stato FROM `in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id` LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione`=`an_sedi`.`id` INNER JOIN `in_statiintervento` ON `in_interventi`.`id_stato`=`in_statiintervento`.`id` LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` '.$add_query;
+        $query = 'SELECT *, `in_stati_intervento`.`colore` AS `colore_stato`, `in_interventi`.`id` AS id_intervento, `an_anagrafiche`.`lat` AS lat_anagrafica, `an_anagrafiche`.`lng` AS lng_anagrafica, `an_anagrafiche`.`indirizzo` AS indirizzo_anagrafica, `an_anagrafiche`.`cap` AS cap_anagrafica, `an_anagrafiche`.`citta` AS citta_anagrafica, `an_anagrafiche`.`provincia` AS provincia_anagrafica, `an_sedi`.`lat` AS lat_sede, `an_sedi`.`lng` AS lng_sede, `an_sedi`.`indirizzo` AS indirizzo_sede, `an_sedi`.`cap` AS cap_sede, `an_sedi`.`citta` AS citta_sede, `an_sedi`.`provincia` AS provincia_sede, `in_stati_intervento_lang`.`title` AS stato FROM `in_interventi` INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id` LEFT JOIN `an_sedi` ON `in_interventi`.`id_sede_destinazione`=`an_sedi`.`id` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` '.$add_query;
 
         $query = Query::replacePlaceholder($query);
         $query = Modules::replaceAdditionals(Module::where('name', 'Interventi')->first()->id, $query);

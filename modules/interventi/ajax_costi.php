@@ -29,7 +29,7 @@ $righe = $intervento->getRighe();
 $show_prezzi = auth_osm()->getUser()['gruppo'] != 'Tecnici' || (auth_osm()->getUser()['gruppo'] == 'Tecnici' && setting('Mostra i prezzi al tecnico'));
 
 if ($show_prezzi) {
-    $rss = $dbo->fetchArray('SELECT `in_statiintervento`.`is_bloccato` AS flag_completato FROM `in_statiintervento` INNER JOIN `in_interventi` ON `in_statiintervento`.`id`=`in_interventi`.`id_stato` WHERE `in_interventi`.`id`='.prepare($id_record));
+    $rss = $dbo->fetchArray('SELECT `in_stati_intervento`.`is_bloccato` AS flag_completato FROM `in_stati_intervento` INNER JOIN `in_interventi` ON `in_stati_intervento`.`id`=`in_interventi`.`id_stato` WHERE `in_interventi`.`id`='.prepare($id_record));
 
     if ($rss[0]['flag_completato']) {
         $readonly = 'readonly';

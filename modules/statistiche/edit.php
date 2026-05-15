@@ -875,10 +875,10 @@ $where = ($_SESSION['superselect']['idtipiintervento'] && $_SESSION['superselect
 foreach ($tecnici as $tecnico) {
     $sessioni = $dbo->table('in_interventi_tecnici')
         ->join('in_interventi', 'in_interventi_tecnici.id_intervento', '=', 'in_interventi.id')
-        ->leftJoin('in_statiintervento', 'in_interventi.id_stato', '=', 'in_statiintervento.id')
+        ->leftJoin('in_stati_intervento', 'in_interventi.id_stato', '=', 'in_stati_intervento.id')
         ->where('in_interventi_tecnici.id_tecnico', $tecnico->id)
         ->whereBetween('in_interventi_tecnici.orario_inizio', [$start, $end])
-        ->where('in_statiintervento.is_bloccato', 1)
+        ->where('in_stati_intervento.is_bloccato', 1)
         ->whereRaw($where)
         ->select($dbo->raw('SUM(`in_interventi_tecnici`.`ore`) AS result, CONCAT(CAST(SUM(`in_interventi_tecnici`.`ore`) AS char(20)),\' ore\') AS ore_lavorate, YEAR(`in_interventi_tecnici`.`orario_inizio`) AS year, MONTH(`in_interventi_tecnici`.`orario_inizio`) AS month'))
         ->groupBy($dbo->raw('YEAR(`in_interventi_tecnici`.`orario_inizio`)'), $dbo->raw('MONTH(`in_interventi_tecnici`.`orario_inizio`)'))

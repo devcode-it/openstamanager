@@ -70,7 +70,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('in_statiintervento');
+        $stato->delete('in_stati_intervento');
 
         flash()->info(tr('Stato attività eliminato.'));
 

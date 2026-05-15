@@ -27,7 +27,7 @@ class StatiInterventi extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $table = 'in_statiintervento';
+        $table = 'in_stati_intervento';
 
         $select = $request['select'];
         if (empty($select)) {
@@ -37,7 +37,7 @@ class StatiInterventi extends Resource implements RetrieveInterface
         }
 
         $joins[] = [
-            'in_statiintervento_lang' => 'in_statiintervento_lang.id_record = in_statiintervento.id AND in_statiintervento_lang.id_lang = '.\Models\Locale::getDefault()->id,
+            'in_stati_intervento_lang' => 'in_stati_intervento_lang.id_record = in_stati_intervento.id AND in_stati_intervento_lang.id_lang = '.\Models\Locale::getDefault()->id,
         ];
 
         $where = $request['where'];

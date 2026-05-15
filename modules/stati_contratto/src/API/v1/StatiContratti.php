@@ -27,14 +27,14 @@ class StatiContratti extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $table = 'co_staticontratti';
+        $table = 'co_stati_contratti';
 
         $select = [
             '*',
         ];
 
         $joins[] = [
-            'co_staticontratti_lang' => '`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.\Models\Locale::getDefault()->id,
+            'co_stati_contratti_lang' => '`co_stati_contratti_lang`.`id_record` = `co_stati_contratti`.`id` AND `co_stati_contratti_lang`.`id_lang` = '.\Models\Locale::getDefault()->id,
         ];
 
         $where = $request['where'];

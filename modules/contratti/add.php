@@ -24,7 +24,7 @@ use Modules\Contratti\Stato;
 
 $id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
-$stati = get('pianificabile') ? 'SELECT `co_staticontratti`.`id`, `title` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_pianificabile`=1' : 'SELECT `co_staticontratti`.`id`, `title` AS descrizione FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
+$stati = get('pianificabile') ? 'SELECT `co_stati_contratti`.`id`, `title` AS descrizione FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_pianificabile`=1' : 'SELECT `co_stati_contratti`.`id`, `title` AS descrizione FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')';
 
 $stato = Stato::where('name', 'Bozza')->first()->id;
 

@@ -28,18 +28,18 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT 
         `co_contratti`.*,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica,
-        `co_staticontratti`.`is_fatturabile` AS is_fatturabile,
-        `co_staticontratti`.`is_pianificabile` AS is_pianificabile,
-        `co_staticontratti`.`is_bloccato` AS is_bloccato,
-        `co_staticontratti_lang`.`title` AS stato,
+        `co_stati_contratti`.`is_fatturabile` AS is_fatturabile,
+        `co_stati_contratti`.`is_pianificabile` AS is_pianificabile,
+        `co_stati_contratti`.`is_bloccato` AS is_bloccato,
+        `co_stati_contratti_lang`.`title` AS stato,
         GROUP_CONCAT(`my_impianti_contratti`.`id_impianto`) AS id_impianti,
         `co_contratti`.`id_categoria` as id_categoria,
         `co_contratti`.`id_sottocategoria` as id_sottocategoria
     FROM 
         `co_contratti`
         INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
-        INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
-        LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
+        LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `my_impianti_contratti` ON `my_impianti_contratti`.`id_contratto` = `co_contratti`.`id`
     WHERE 
         `co_contratti`.`id`='.prepare($id_record));

@@ -696,7 +696,7 @@ switch (post('op')) {
             }
 
             // Aggiorna lo stato del contratto precedente a concluso
-            $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `id_stato`= (SELECT `co_staticontratti`.`id` FROM `co_staticontratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($documento->id));
+            $dbo->query('UPDATE `co_contratti` SET `rinnovabile`= 0, `id_stato`= (SELECT `co_stati_contratti`.`id` FROM `co_stati_contratti` WHERE `name` = \'Concluso\')  WHERE `co_contratti`.`id` = '.prepare($documento->id));
         }
 
         if (!empty($documento->sconto_finale)) {

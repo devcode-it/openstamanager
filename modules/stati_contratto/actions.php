@@ -70,7 +70,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('co_staticontratti');
+        $stato->delete('co_stati_contratti');
         flash()->info(tr('Questo stato dei contratti è stato correttamente eliminato.'));
 
         break;

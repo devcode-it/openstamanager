@@ -29,10 +29,10 @@ class TariffeContratti extends AppResource
         $query = 'SELECT CONCAT(`co_contratti_tipi_intervento`.`id_tipo_intervento`, "-", `id_contratto`) AS id
         FROM `co_contratti_tipi_intervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipi_intervento`.`id_contratto`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
-        WHERE `co_staticontratti`.`is_pianificabile` = 0';
+            INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+        WHERE `co_stati_contratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
-            $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_staticontratti`.`updated_at` > '.prepare($last_sync_at).')';
+            $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_stati_contratti`.`updated_at` > '.prepare($last_sync_at).')';
         }
         $records = database()->fetchArray($query);
 
@@ -59,8 +59,8 @@ class TariffeContratti extends AppResource
             `co_contratti_tipi_intervento`.`updated_at`
         FROM `co_contratti_tipi_intervento`
             INNER JOIN `co_contratti` ON `co_contratti`.`id` = `co_contratti_tipi_intervento`.`id_contratto`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
-        WHERE `co_staticontratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map(prepare(...), $id_contratti)).')';
+            INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+        WHERE `co_stati_contratti`.`is_pianificabile` = 1 AND `co_contratti`.`id` IN ('.implode(',', array_map(prepare(...), $id_contratti)).')';
 
         // Filtro per data
         if ($last_sync_at) {

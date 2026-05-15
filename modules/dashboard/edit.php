@@ -253,11 +253,11 @@ $query_da_programmare = 'SELECT
         FROM
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto` = `co_contratti`.`id`
-            INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
-            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
+            LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
         WHERE
-            `co_staticontratti`.`is_pianificabile` = 1 AND `id_intervento` IS NULL
+            `co_stati_contratti`.`is_pianificabile` = 1 AND `id_intervento` IS NULL
     UNION
         SELECT
             IF(`data_scadenza` IS NULL, `data_richiesta`, `data_scadenza`) AS data
@@ -301,7 +301,7 @@ if (!empty($risultati_da_programmare)) {
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto`=`co_contratti`.`id`
         WHERE
-            `id_stato` IN(SELECT `id` FROM `co_staticontratti` WHERE `is_pianificabile` = 1)
+            `id_stato` IN(SELECT `id` FROM `co_stati_contratti` WHERE `is_pianificabile` = 1)
             AND `id_intervento` IS NULL
             AND DATE_ADD(`co_promemoria`.`data_richiesta`, INTERVAL 1 DAY) <= NOW()
     UNION

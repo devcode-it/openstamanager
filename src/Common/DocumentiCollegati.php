@@ -336,17 +336,17 @@ class DocumentiCollegati
             `co_contratti`.`data_bozza` AS data,
             \'Contratto\' AS tipo_documento,
             \'Contratti\' AS modulo,
-            `co_staticontratti_lang`.`title` AS stato_documento
+            `co_stati_contratti_lang`.`title` AS stato_documento
         FROM `co_contratti`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `co_contratti`.`id` AND 
             `co_righe_documenti`.`original_document_type` = \'Modules\\\\Contratti\\\\Contratto\' AND
             `co_righe_documenti`.`id_documento` = '.prepare($id_fattura).'
         )
-        INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
-        LEFT JOIN `co_staticontratti_lang` ON (
-            `co_staticontratti_lang`.`id_record` = `co_contratti`.`id_stato` AND 
-            `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
+        LEFT JOIN `co_stati_contratti_lang` ON (
+            `co_stati_contratti_lang`.`id_record` = `co_contratti`.`id_stato` AND 
+            `co_stati_contratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `co_contratti`.`id`
         ORDER BY `co_contratti`.`data_bozza` DESC';
@@ -653,13 +653,13 @@ class DocumentiCollegati
             NULL AS numero_esterno,
             \'Contratto\' AS tipo_documento,
             \'Contratti\' AS modulo,
-            `co_staticontratti_lang`.`title` AS stato_documento
+            `co_stati_contratti_lang`.`title` AS stato_documento
         FROM `co_contratti`
         INNER JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`
-        LEFT JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
-        LEFT JOIN `co_staticontratti_lang` ON (
-            `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
-            `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
+        LEFT JOIN `co_stati_contratti_lang` ON (
+            `co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND
+            `co_stati_contratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_righe_contratti`.`original_document_id` = '.prepare($id_preventivo).'
         AND `co_righe_contratti`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
@@ -1103,15 +1103,15 @@ class DocumentiCollegati
             `co_contratti`.`data_bozza` AS data,
             `co_contratti`.`numero`,
             0 AS numero_esterno,
-            `co_staticontratti_lang`.`title` AS stato_documento,
+            `co_stati_contratti_lang`.`title` AS stato_documento,
             "Contratto" AS tipo_documento,
             0 AS dir,
             NULL AS `deleted_at`
         FROM `co_contratti`
-        LEFT JOIN co_staticontratti ON co_contratti.id_stato=co_staticontratti.id
-        LEFT JOIN `co_staticontratti_lang` ON (
-            `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND
-            `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN co_stati_contratti ON co_contratti.id_stato=co_stati_contratti.id
+        LEFT JOIN `co_stati_contratti_lang` ON (
+            `co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND
+            `co_stati_contratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `co_contratti`.`id_anagrafica` = '.prepare($id_anagrafica);
 
@@ -1958,12 +1958,12 @@ class DocumentiCollegati
                 `'.$tabella.'`.`'.$campo_data.'` AS data,
                 \''.$info['tipo_doc'].'\' AS tipo_documento,
                 \''.$info['modulo'].'\' AS modulo,
-                `co_staticontratti_lang`.`title` AS stato_documento
+                `co_stati_contratti_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
-            INNER JOIN `co_staticontratti` ON `'.$tabella.'`.`id_stato` = `co_staticontratti`.`id`
-            LEFT JOIN `co_staticontratti_lang` ON (
-                `co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND
-                `co_staticontratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+            INNER JOIN `co_stati_contratti` ON `'.$tabella.'`.`id_stato` = `co_stati_contratti`.`id`
+            LEFT JOIN `co_stati_contratti_lang` ON (
+                `co_stati_contratti_lang`.`id_record` = `co_stati_contratti`.`id` AND
+                `co_stati_contratti_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
         } elseif ($tipo == Modules\Ordini\Ordine::class) {

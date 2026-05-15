@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 
 if (!$is_anagrafica_deleted) {
     $is_fatturabile = $record['is_fatturabile'];
-    $stati_fatturabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_abilitati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1')['stati_abilitati'];
+    $stati_fatturabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_abilitati FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1')['stati_abilitati'];
 
     // Permetto di fatturare il contratto solo se contiene righe e si trova in uno stato fatturabile
     echo '
@@ -36,7 +36,7 @@ if (!$is_anagrafica_deleted) {
 
     $rinnova = !empty($record['data_accettazione']) && !empty($record['data_conclusione']) && $record['data_accettazione'] != '0000-00-00' && $record['data_conclusione'] != '0000-00-00' && $record['is_bloccato'] && $record['rinnovabile'];
 
-    $stati_bloccati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_bloccati FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_bloccato` = 1')['stati_bloccati'];
+    $stati_bloccati = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_bloccati FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_bloccato` = 1')['stati_bloccati'];
 
     echo '
     <div class="tip" data-widget="tooltip" title="'.tr('Il contratto è rinnovabile se sono definite le date di accettazione e conclusione e si trova in uno di questi stati: _STATE_LIST_', [

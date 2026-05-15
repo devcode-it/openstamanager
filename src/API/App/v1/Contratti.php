@@ -28,10 +28,10 @@ class Contratti extends AppResource implements RetrieveInterface
     public function getCleanupData($last_sync_at)
     {
         $query = 'SELECT DISTINCT(`co_contratti`.`id`) AS id FROM `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
-        WHERE `co_staticontratti`.`is_pianificabile` = 0';
+            INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+        WHERE `co_stati_contratti`.`is_pianificabile` = 0';
         if ($last_sync_at) {
-            $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_staticontratti`.`updated_at` > '.prepare($last_sync_at).')';
+            $query .= ' AND (`co_contratti`.`updated_at` > '.prepare($last_sync_at).' OR `co_stati_contratti`.`updated_at` > '.prepare($last_sync_at).')';
         }
         $records = database()->fetchArray($query);
 
@@ -50,13 +50,13 @@ class Contratti extends AppResource implements RetrieveInterface
             `co_contratti`.`updated_at`
         FROM 
             `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
+            INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
             INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
             INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` = `an_tipi_anagrafiche`.`id`
             LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche_lang`.`id_record` = `an_tipi_anagrafiche`.`id` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).")
         WHERE 
-            `an_tipi_anagrafiche_lang`.`title` = 'Cliente' AND `co_staticontratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
+            `an_tipi_anagrafiche_lang`.`title` = 'Cliente' AND `co_stati_contratti`.`is_pianificabile` = 1 AND `an_anagrafiche`.`deleted_at` IS NULL";
 
         // Filtro per data
         if ($last_sync_at) {
@@ -77,10 +77,10 @@ class Contratti extends AppResource implements RetrieveInterface
             `co_contratti`.`nome`,
             `co_contratti`.`numero`,
             `co_contratti`.`data_bozza`,
-            `co_staticontratti_lang`.`title` AS stato
+            `co_stati_contratti_lang`.`title` AS stato
         FROM `co_contratti`
-            INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato`
-            LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti_lang`.`id_record` = `co_staticontratti`.`id` AND `co_staticontratti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
+            INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+            LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti_lang`.`id_record` = `co_stati_contratti`.`id` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(\Models\Locale::getDefault()->id).')
         WHERE `co_contratti`.`id` = '.prepare($id);
 
         $record = database()->fetchOne($query);

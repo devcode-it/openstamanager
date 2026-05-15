@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\Contratti\Stato;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_staticontratti` LEFT JOIN `co_staticontratti_lang` ON `co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` WHERE `co_staticontratti`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON `co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` WHERE `co_stati_contratti`.`id`='.prepare($id_record));
 
     $stato = Stato::find($id_record);
 }

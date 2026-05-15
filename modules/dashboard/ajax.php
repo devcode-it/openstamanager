@@ -498,12 +498,12 @@ switch (filter('op')) {
         FROM
             `co_promemoria`
             INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto` = `co_contratti`.`id`
-            INNER JOIN `co_staticontratti` ON `co_contratti`.`id_stato` = `co_staticontratti`.`id`
+            INNER JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
             INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
             LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
         WHERE
-            `id_intervento` IS NULL AND `co_staticontratti`.`is_pianificabile` = 1)
+            `id_intervento` IS NULL AND `co_stati_contratti`.`is_pianificabile` = 1)
         UNION
         (SELECT
             `in_interventi`.`id` AS id,

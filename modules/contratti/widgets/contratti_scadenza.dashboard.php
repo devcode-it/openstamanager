@@ -38,8 +38,8 @@ SELECT
     `co_categorie_contratti_lang`.`title` AS `categoria`
 FROM 
 	`co_contratti` 
-    INNER JOIN `co_staticontratti` ON `co_staticontratti`.`id` = `co_contratti`.`id_stato` 
-    LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND `co_staticontratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato` 
+    LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_contratti`.`id_anagrafica`
     LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`id_agente`
     LEFT JOIN `co_categorie_contratti` ON `co_categorie_contratti`.`id` = `co_contratti`.`id_categoria`
@@ -47,7 +47,7 @@ FROM
 WHERE 
 	`rinnovabile` = 1 
     AND YEAR(`data_conclusione`) > 1970 
-    AND `co_contratti`.`id` NOT IN (SELECT `id_contratto_prev` FROM `co_contratti` contratti) AND `co_staticontratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza") 
+    AND `co_contratti`.`id` NOT IN (SELECT `id_contratto_prev` FROM `co_contratti` contratti) AND `co_stati_contratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza") 
 HAVING 
     (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) 
 ORDER BY 

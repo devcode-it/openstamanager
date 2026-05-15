@@ -50,18 +50,18 @@ switch ($resource) {
 
         $query_ddt = "SELECT 
                 `dt_ddt`.`id`,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS text,
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_stati_ddt_lang`.`title`, ']') AS text,
                 'DDT' AS optgroup,
                 'ddt' AS tipo,
                 'uscita' AS dir
             FROM `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-                INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
+                INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             WHERE 
                 `id_anagrafica` = '.prepare($id_anagrafica)." AND
-                `dt_statiddt_lang`.`title` != 'Fatturato' AND
+                `dt_stati_ddt_lang`.`title` != 'Fatturato' AND
                 `dt_tipiddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 
@@ -126,15 +126,15 @@ switch ($resource) {
 
         $query_ddt = "SELECT 
                 `dt_ddt`.`id`,
-                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS text,
+                CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_stati_ddt_lang`.`title`, ']') AS text,
                 'DDT' AS optgroup,
                 'ddt' AS tipo,
                 'entrata' AS dir
             FROM 
                 `dt_ddt`
                 INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-                INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-                LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+                LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)." AND

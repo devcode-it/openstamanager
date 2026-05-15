@@ -22,7 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Modules\DDT\Stato;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record`=`dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_statiddt`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `dt_stati_ddt` LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record`=`dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dt_stati_ddt`.`id`='.prepare($id_record));
 
     $stato = Stato::find($id_record);
 }

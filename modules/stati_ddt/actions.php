@@ -66,7 +66,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('dt_statiddt');
+        $stato->delete('dt_stati_ddt');
 
         flash()->info(tr('Stato DDT eliminato.'));
 

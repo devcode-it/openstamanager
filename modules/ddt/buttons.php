@@ -67,7 +67,7 @@ function completaTrasporto() {
 
 if (!$is_anagrafica_deleted) {
     // Informazioni sull'importabilità del DDT
-    $stati = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
+    $stati = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_stati_ddt` LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1');
 
     foreach ($stati as $stato) {
         $stati_importabili[] = $stato['descrizione'];

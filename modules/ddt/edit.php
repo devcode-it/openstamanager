@@ -107,14 +107,14 @@ if (setting('Cambia automaticamente stato ddt fatturati')) {
     $id_stato_bozza = Stato::where('name', 'Bozza')->first()->id;
     if ($ddt->stato->id == $id_stato_fatt || $ddt->stato->id == $id_stato_parz_fatt) {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "extra": "readonly", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_stati_ddt`.*, `dt_stati_ddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_stati_ddt` LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "extra": "readonly", "class": "unblockable" ]}';
     } else {
         echo '
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `dt_statiddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') WHERE `dt_statiddt`.`is_fatturabile` = 1 OR `dt_statiddt`.`id` = '.prepare($id_stato_bozza).' ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_stati_ddt`.*, `dt_stati_ddt_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `dt_stati_ddt` LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') WHERE `dt_stati_ddt`.`is_fatturabile` = 1 OR `dt_stati_ddt`.`id` = '.prepare($id_stato_bozza).' ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
     }
 } else {
     echo '
-        {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.*, `colore` AS _bgcolor_, `dt_statiddt_lang`.`title` as descrizione FROM `dt_statiddt` LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
+        {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_stati_ddt`.*, `colore` AS _bgcolor_, `dt_stati_ddt_lang`.`title` as descrizione FROM `dt_stati_ddt` LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang`= '.prepare(Locale::getDefault()->id).') ORDER BY `title`", "value": "$id_stato$", "class": "unblockable" ]}';
 }
 
 echo '
@@ -412,8 +412,8 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `dt_ddt`
-            INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-            LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
+            INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+            LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         WHERE

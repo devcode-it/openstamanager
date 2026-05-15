@@ -185,7 +185,7 @@ $operations['change_status'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi DDT?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti i DDT').'.<br>
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_statiddt`.`id`, `dt_statiddt_lang`.`title` as descrizione, `colore` as _bgcolor_ FROM dt_statiddt LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `dt_stati_ddt`.`id`, `dt_stati_ddt_lang`.`title` as descrizione, `colore` as _bgcolor_ FROM dt_stati_ddt LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

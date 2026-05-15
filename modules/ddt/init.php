@@ -39,13 +39,13 @@ if (!empty($id_record)) {
     $record = $dbo->fetchOne('SELECT
         `dt_ddt`.*,
         `dt_ddt`.`id` AS id_ddt,
-        `dt_statiddt_lang`.`title` AS `stato`,
-        `dt_statiddt`.`is_bloccato` AS `flag_completato`,
+        `dt_stati_ddt_lang`.`title` AS `stato`,
+        `dt_stati_ddt`.`is_bloccato` AS `flag_completato`,
         `dt_tipiddt_lang`.`title` AS `descrizione_tipodoc`,
         `an_anagrafiche`.`tipo` AS tipo_anagrafica
     FROM `dt_ddt`
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato`=`dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato`=`dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica`=`an_anagrafiche`.`id`
         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt`=`dt_tipiddt`.`id`
         LEFT JOIN `dt_tipiddt_lang` ON (`dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND `dt_tipiddt_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

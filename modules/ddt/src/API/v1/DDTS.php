@@ -37,23 +37,23 @@ class DDTS extends Resource implements RetrieveInterface, UpdateInterface, Creat
         $select = [
             'dt_ddt.*',
             'dt_ddt.data',
-            'dt_statiddt_lang.title AS stato',
+            'dt_stati_ddt_lang.title AS stato',
         ];
 
         $joins[] = [
-            'dt_statiddt',
-            'dt_statiddt.id',
+            'dt_stati_ddt',
+            'dt_stati_ddt.id',
             'dt_ddt.id_stato',
         ];
 
         $joins[] = [
-            'dt_statiddt_lang',
-            'dt_statiddt_lang.id_record',
-            'dt_statiddt.id',
+            'dt_stati_ddt_lang',
+            'dt_stati_ddt_lang.id_record',
+            'dt_stati_ddt.id',
         ];
 
         $where = [];
-        $where[] = ['dt_statiddt_lang.id_lang', '=', \Models\Locale::getDefault()->id];
+        $where[] = ['dt_stati_ddt_lang.id_lang', '=', \Models\Locale::getDefault()->id];
 
         $whereraw = [];
 

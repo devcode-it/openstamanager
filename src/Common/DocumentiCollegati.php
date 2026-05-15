@@ -275,7 +275,7 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-            `dt_statiddt_lang`.`title` AS stato_documento
+            `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
@@ -287,10 +287,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
         ORDER BY `dt_ddt`.`data` DESC';
@@ -378,7 +378,7 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-            `dt_statiddt_lang`.`title` AS stato_documento
+            `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `co_righe_documenti` ON (
             `co_righe_documenti`.`original_document_id` = `dt_ddt`.`id` AND 
@@ -390,10 +390,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        INNER JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
         ORDER BY `dt_ddt`.`data` DESC';
@@ -601,7 +601,7 @@ class DocumentiCollegati
             `dt_ddt`.`numero_esterno`,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-            `dt_statiddt_lang`.`title` AS stato_documento
+            `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
         INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
@@ -609,10 +609,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `dt_righe_ddt`.`original_document_id` = '.prepare($id_preventivo).'
         AND `dt_righe_ddt`.`original_document_type` = \'Modules\\\\Preventivi\\\\Preventivo\'
@@ -720,7 +720,7 @@ class DocumentiCollegati
             `dt_ddt`.`numero_esterno`,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-            `dt_statiddt_lang`.`title` AS stato_documento
+            `dt_stati_ddt_lang`.`title` AS stato_documento
         FROM `dt_ddt`
         INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
         LEFT JOIN `dt_tipiddt_lang` ON (
@@ -728,10 +728,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `dt_righe_ddt`.`id_ordine` = '.prepare($id_ordine).'
         GROUP BY `dt_ddt`.`id`
@@ -912,7 +912,7 @@ class DocumentiCollegati
             `dt_ddt`.`numero_esterno`,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-            `dt_statiddt_lang`.`title` AS stato_documento,
+            `dt_stati_ddt_lang`.`title` AS stato_documento,
             SUM(`dt_righe_ddt`.`qta`) AS qta_totale,
             ((SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`))*SUM(`dt_righe_ddt`.`qta`)) AS prezzo_totale,
             SUM(`dt_righe_ddt`.`prezzo_unitario`)-SUM(`dt_righe_ddt`.`sconto_unitario`) AS prezzo_unitario
@@ -923,10 +923,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN `dt_stati_ddt` ON `dt_ddt`.`id_stato` = `dt_stati_ddt`.`id`
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo).'
         GROUP BY `dt_ddt`.`id`
@@ -1051,7 +1051,7 @@ class DocumentiCollegati
             `dt_ddt`.`data`,
             `dt_ddt`.`numero`,
             `dt_ddt`.`numero_esterno`,
-            `dt_statiddt_lang`.`title` AS stato_documento,
+            `dt_stati_ddt_lang`.`title` AS stato_documento,
             `dt_tipiddt_lang`.`title` AS tipo_documento,
             `dt_tipiddt`.`dir`,
             NULL AS `deleted_at`
@@ -1061,10 +1061,10 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN dt_statiddt ON dt_ddt.id_stato=dt_statiddt.id
-        LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
-            `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+        LEFT JOIN dt_stati_ddt ON dt_ddt.id_stato=dt_stati_ddt.id
+        LEFT JOIN `dt_stati_ddt_lang` ON (
+            `dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND
+            `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         WHERE `dt_ddt`.`id_anagrafica` = '.prepare($id_anagrafica);
 
@@ -1995,17 +1995,17 @@ class DocumentiCollegati
                 `'.$tabella.'`.`'.$campo_data.'` AS data,
                 `dt_tipiddt_lang`.`title` AS tipo_documento,
                 IF(`dt_tipiddt`.`dir` = \'entrata\', \'Ddt in uscita\', \'Ddt in entrata\') AS modulo,
-                `dt_statiddt_lang`.`title` AS stato_documento
+                `dt_stati_ddt_lang`.`title` AS stato_documento
             FROM `'.$tabella.'`
             INNER JOIN `dt_tipiddt` ON `'.$tabella.'`.`id_tipo_ddt` = `dt_tipiddt`.`id`
             LEFT JOIN `dt_tipiddt_lang` ON (
                 `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
                 `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
-            INNER JOIN `dt_statiddt` ON `'.$tabella.'`.`id_stato` = `dt_statiddt`.`id`
-            LEFT JOIN `dt_statiddt_lang` ON (
-                `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
-                `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
+            INNER JOIN `dt_stati_ddt` ON `'.$tabella.'`.`id_stato` = `dt_stati_ddt`.`id`
+            LEFT JOIN `dt_stati_ddt_lang` ON (
+                `dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND
+                `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
             WHERE `'.$tabella.'`.`id` = '.prepare($id);
         } elseif ($tipo == Modules\Fatture\Fattura::class) {

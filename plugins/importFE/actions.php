@@ -456,12 +456,12 @@ switch (filter('op')) {
                     `dt_righe_ddt`.`is_descrizione`,
                     `dt_righe_ddt`.`id_articolo`,
                     `dt_righe_ddt`.`is_sconto`, 'ddt' AS ref,
-                    CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
+                    CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_stati_ddt_lang`.`title`, ']') AS opzione
                 FROM
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                    INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
-                    LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
+                    INNER JOIN `dt_stati_ddt` ON `dt_stati_ddt`.`id` = `dt_ddt`.`id_stato`
+                    LEFT JOIN `dt_stati_ddt_lang` ON `dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
                 WHERE
                     `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
                     YEAR(`dt_ddt`.`data`) = '.prepare($ddt['anno']).' AND
@@ -544,18 +544,18 @@ switch (filter('op')) {
                         `dt_righe_ddt`.`id_articolo`,
                         `dt_righe_ddt`.`is_sconto`,
                         'ddt' AS ref,
-                        CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_statiddt_lang`.`title`, ']') AS opzione
+                        CONCAT('DDT num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `dt_stati_ddt_lang`.`title`, ']') AS opzione
                     FROM
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                        INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
-                        LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
+                        INNER JOIN `dt_stati_ddt` ON `dt_stati_ddt`.`id` = `dt_ddt`.`id_stato`
+                        LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt_lang`.`id_record` = `dt_stati_ddt`.`id` AND `dt_stati_ddt_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
                     WHERE
                         `dt_ddt`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ddt| AND
                         `dt_righe_ddt`.`qta` > `dt_righe_ddt`.`qta_evasa` AND
-                        `dt_statiddt_lang`.`title` != 'Fatturato' AND
+                        `dt_stati_ddt_lang`.`title` != 'Fatturato' AND
                         `dt_tipiddt`.`dir` = 'uscita'
                 UNION
                     SELECT

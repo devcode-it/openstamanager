@@ -29,13 +29,13 @@ switch ($resource) {
         if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT
                 `or_ordini`.`id` AS id,
-                CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_statiordine_lang`.`title` , "]") AS descrizione
+                CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_stati_ordine_lang`.`title` , "]") AS descrizione
             FROM
                 `or_ordini`
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
                 INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
-                INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
+                LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             |where|
             ORDER BY
                 `or_ordini`.`id`';
@@ -52,8 +52,8 @@ switch ($resource) {
                 $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                     ? $superselect['stato']
                     : 'is_fatturabile';
-                $where[] = '`or_statiordine`.'.$stato.' = 1';
-                $where[] = '`or_statiordine`.`'.str_replace('`', '', $stato).'` = 1';
+                $where[] = '`or_stati_ordine`.'.$stato.' = 1';
+                $where[] = '`or_stati_ordine`.`'.str_replace('`', '', $stato).'` = 1';
             }
         }
 

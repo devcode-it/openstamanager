@@ -27,14 +27,14 @@ class StatiOrdini extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $table = 'or_statiordine';
+        $table = 'or_stati_ordine';
 
         $select = [
             '*',
         ];
 
         $joins = [
-            'or_statiordine_lang' => 'or_statiordine_lang.id_record = or_statiordine.id AND or_statiordine_lang.id_lang = '.\Models\Locale::getDefault()->id,
+            'or_stati_ordine_lang' => 'or_stati_ordine_lang.id_record = or_stati_ordine.id AND or_stati_ordine_lang.id_lang = '.\Models\Locale::getDefault()->id,
         ];
 
         $where = $request['where'];

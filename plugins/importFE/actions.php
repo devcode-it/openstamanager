@@ -499,11 +499,11 @@ switch (filter('op')) {
                     `or_righe_ordini`.`id_articolo`,
                     `or_righe_ordini`.`is_sconto`,
                     'ordine' AS ref,
-                    CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS opzione
+                    CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_stati_ordine_lang`.`title`  , ']') AS opzione
                 FROM `or_righe_ordini`
                     INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-                    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-                    LEFT JOIN `or_statiordine_lang` ON `or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
+                    INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
+                    LEFT JOIN `or_stati_ordine_lang` ON `or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).'
                 WHERE
                     `or_ordini`.`numero_esterno` = '.prepare($ordine['numero']).'
                     AND YEAR(`or_ordini`.`data`) = '.prepare($ordine['anno']).'
@@ -565,18 +565,18 @@ switch (filter('op')) {
                         `or_righe_ordini`.`id_articolo`,
                         `or_righe_ordini`.`is_sconto`,
                         'ordine' AS ref,
-                        CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_statiordine` WHERE `id` = `id_stato`)  , ']') AS opzione
+                        CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', (SELECT `descrizione` FROM `or_stati_ordine` WHERE `id` = `id_stato`)  , ']') AS opzione
                     FROM
                         `or_righe_ordini`
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-                        INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-                        LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
+                        INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
+                        LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).')
                         INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
                     WHERE
                         `or_ordini`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ordini| AND
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND
-                        `or_statiordine_lang`.`title` != 'Fatturato' AND
+                        `or_stati_ordine_lang`.`title` != 'Fatturato' AND
                         `or_tipiordine`.`dir` ='uscita'";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo

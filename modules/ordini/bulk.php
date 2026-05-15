@@ -328,7 +328,7 @@ $operations['change_status'] = [
     'data' => [
         'title' => tr('Vuoi davvero cambiare lo stato per questi ordini?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli ordini').'.<br>
-        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `title` as descrizione, `colore` as _bgcolor_ FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}',
+        <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_stati_ordine`.`id`, `title` as descrizione, `colore` as _bgcolor_ FROM `or_stati_ordine` LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,
@@ -340,7 +340,7 @@ $operations['copy_bulk'] = [
     'data' => [
         'title' => tr('Vuoi davvero fare una copia degli ordini selezionati?'),
         'msg' => '<br>{[ "type": "timestamp", "label": "'.tr('Data').'", "name": "data", "required": 0, "value": "-now-", "required":1 ]}
-            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record`=`or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
+            <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_stati_ordine`.`id`, `or_stati_ordine_lang`.`title` as descrizione FROM `or_stati_ordine` LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record`=`or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).') WHERE `title` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\')", "value": "1" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica righe').'", "name":"righe", "value":"" ]}
             <br>{[ "type":"checkbox", "label":"'.tr('Duplica allegati').'", "name":"allegati", "value":"" ]}
             <style>.swal2-popup{ width:600px !important; }</style>',
@@ -375,7 +375,7 @@ if ($module->name == 'Ordini cliente') {
                 'title' => tr('Unire gli ordini selezionati?'),
                 'msg' => tr('Gli ordini saranno processati solo se in uno dei seguenti stati: Bozza, In attesa di conferma, Accettato.<br>Tutti gli ordini processati verranno eliminati e verrà creato un nuovo ordine unificato per fornitore.').'
                 {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini.'", "select-options-escape": true ]}
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_statiordine`.`id`, `or_statiordine_lang`.`title` as descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `or_stati_ordine`.`id`, `or_stati_ordine_lang`.`title` as descrizione FROM `or_stati_ordine` LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') ORDER BY `title` ASC" ]}
                 {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1]}',
                 'button' => tr('Procedi'),
                 'class' => 'btn btn-lg btn-warning',

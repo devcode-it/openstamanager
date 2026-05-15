@@ -280,7 +280,7 @@ class DDT extends Document
             $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
 
             // Usa la colonna appropriata in base alla tabella disponibile
-            $stato = \Modules\Ordini\Stato::where(database()->tableExists('or_statiordine_lang') ? 'name' : 'descrizione', $descrizione)->first()->id;
+            $stato = \Modules\Ordini\Stato::where(database()->tableExists('or_stati_ordine_lang') ? 'name' : 'descrizione', $descrizione)->first()->id;
 
             $ordine->stato()->associate($stato);
             $ordine->save();

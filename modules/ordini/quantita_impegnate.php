@@ -57,11 +57,11 @@ foreach ($articoli as $elenco) {
         FROM 
             `or_righe_ordini`
             INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-            INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
+            INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
+            LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
             INNER JOIN `or_tipiordine` ON `or_tipiordine`.`id` = `or_ordini`.`id_tipo_ordine`
         WHERE 
-            `or_statiordine_lang`.`title` = 'Bozza'
+            `or_stati_ordine_lang`.`title` = 'Bozza'
             AND `dir` = 'entrata'
             AND `confermato` = 1
             AND `id_articolo`=".prepare($articolo->id).'

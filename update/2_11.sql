@@ -601,8 +601,8 @@ FROM
     LEFT JOIN `an_anagrafiche` AS agente ON `or_ordini`.`id_agente` = `agente`.`id`
     LEFT JOIN (SELECT `id_ordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `id_ordine`) AS righe ON `or_ordini`.`id` = `righe`.`id_ordine`
     LEFT JOIN (SELECT `id_ordine`, MIN(`data_evasione`) AS `data_evasione` FROM `or_righe_ordini` WHERE (`qta` - `qta_evasa`) > 0 GROUP BY `id_ordine`) AS `righe_da_evadere` ON `righe`.`id_ordine` = `righe_da_evadere`.`id_ordine`
-    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-    LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.|lang|)
+    INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
+    LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ', `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `id_ordine` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type` = 'ModulesOrdiniOrdine' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`id_ordine` = `or_ordini`.`id`
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'DDT ', `dt_ddt`.`numero_esterno` SEPARATOR ', ') AS `info`, `dt_righe_ddt`.`original_document_id` AS `id_ddt` FROM `dt_ddt` INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt` WHERE `original_document_type` = 'ModulesOrdiniOrdine' GROUP BY `original_document_id`) AS `ddt` ON `ddt`.`id_ddt` = `or_ordini`.`id`
     LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente') AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS email ON `email`.`id_record` = `or_ordini`.`id`
@@ -624,8 +624,8 @@ FROM
     INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN (SELECT `id_ordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `id_ordine`) AS righe ON `or_ordini`.`id` = `righe`.`id_ordine`
     LEFT JOIN (SELECT `id_ordine`, MIN(`data_evasione`) AS `data_evasione` FROM `or_righe_ordini` WHERE (`qta` - `qta_evasa`) > 0 GROUP BY `id_ordine`) AS `righe_da_evadere` ON `righe`.`id_ordine` = `righe_da_evadere`.`id_ordine`
-    INNER JOIN `or_statiordine` ON `or_statiordine`.`id` = `or_ordini`.`id_stato`
-    LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.|lang|)
+    INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
+    LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT co_documenti.numero_esterno SEPARATOR ', ') AS info, co_righe_documenti.original_document_id AS id_ordine FROM co_documenti INNER JOIN co_righe_documenti ON co_documenti.id = co_righe_documenti.id_documento WHERE original_document_type = 'Modules\\Ordini\\Ordine' GROUP BY id_ordine, original_document_id) AS fattura ON fattura.id_ordine = or_ordini.id
     LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore') AND `zz_operations`.`op` = 'send-email' GROUP BY `em_emails`.`id_record`) AS email ON `email`.`id_record` = `or_ordini`.`id`
 WHERE
@@ -805,7 +805,7 @@ FROM
     LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
     LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
     LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.|lang|)
-    LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` WHERE `id_stato` IN(SELECT `id` FROM `or_statiordine` WHERE `is_bloccato` = 0) GROUP BY `id_articolo`) ordini ON `ordini`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`qta` - `qta_evasa`) AS qta_impegnata, `id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` WHERE `id_stato` IN(SELECT `id` FROM `or_stati_ordine` WHERE `is_bloccato` = 0) GROUP BY `id_articolo`) ordini ON `ordini`.`id_articolo` = `mg_articoli`.`id`
     LEFT JOIN (SELECT `id_articolo`, `id_sede`, SUM(`qta`) AS `qta` FROM `mg_movimenti` WHERE `id_sede` = |giacenze_sedi_id_sede| GROUP BY `id_articolo`, `id_sede`) movimenti ON `mg_articoli`.`id` = `movimenti`.`id_articolo`
     LEFT JOIN `zz_categorie` AS categoria ON `categoria`.`id`= `mg_articoli`.`id_categoria`
     LEFT JOIN `zz_categorie_lang` AS categoria_lang ON (`categoria_lang`.`id_record` = `categoria`.`id` AND `categoria_lang`.|lang|)
@@ -1204,6 +1204,8 @@ RENAME TABLE `openstamanager`.`in_tipiintervento_groups` TO `openstamanager`.`in
 RENAME TABLE `openstamanager`.`in_tipiintervento_lang` TO `openstamanager`.`in_tipi_intervento_lang`;
 RENAME TABLE `openstamanager`.`in_tipiintervento_tipologie` TO `openstamanager`.`in_tipi_intervento_tipologie`;
 RENAME TABLE `openstamanager`.`mg_unitamisura` TO `openstamanager`.`mg_unita_misura`;
+RENAME TABLE `openstamanager`.`or_statiordine` TO `openstamanager`.`or_stati_ordine`;
+RENAME TABLE `openstamanager`.`or_statiordine_lang` TO `openstamanager`.`or_stati_ordine_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1315,8 +1317,8 @@ FROM
     LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
     LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_statiordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
     LEFT JOIN `zz_categorie` ON `mg_articoli`.`id_categoria` = `zz_categorie`.`id`
     LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
     LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`

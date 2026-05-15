@@ -26,15 +26,15 @@ switch ($resource) {
 
         $query_ordini = "SELECT 
                 `or_ordini`.`id`,
-                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`  , ']') AS text,
+                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' [', `or_stati_ordine_lang`.`title`  , ']') AS text,
                 'Ordini' AS optgroup,
                 'ordine' AS tipo,
                 'uscita' AS dir
             FROM 
                 `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
-                INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
+                LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
             WHERE 
                 `id_anagrafica` = '.prepare($id_anagrafica)."
@@ -105,14 +105,14 @@ switch ($resource) {
 
         $query_ordini = "SELECT 
                 `or_ordini`.`id`,
-                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', `or_statiordine_lang`.`title`, ']') AS text,
+                CONCAT('Ordine num. ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' del ', DATE_FORMAT(data, '%d/%m/%Y'), ' [', `or_stati_ordine_lang`.`title`, ']') AS text,
                 'Ordini' AS optgroup,
                 'ordine' AS tipo,
                 'entrata' AS dir
             FROM `or_ordini`
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
-                INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato` = `or_statiordine`.`id`
-                LEFT JOIN `or_statiordine_lang` ON (`or_statiordine_lang`.`id_record` = `or_statiordine`.`id` AND `or_statiordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
+                LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine` = `or_tipiordine`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)."

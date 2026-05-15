@@ -35,14 +35,14 @@ $query = 'SELECT
     FROM 
         `or_ordini`
         INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-        INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
+        INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato`=`or_stati_ordine`.`id`
         INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
     WHERE 
         `id_articolo` = '.prepare($articolo->id)."
         AND `or_tipiordine`.`dir`= '|dir|'
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1
-        AND `or_statiordine`.`impegnato` = 1
+        AND `or_stati_ordine`.`impegnato` = 1
     GROUP BY
         `or_ordini`.`id`
     HAVING 

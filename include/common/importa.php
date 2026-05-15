@@ -188,7 +188,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
 
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * ,`or_statiordine`.`id`, `or_statiordine_lang`.`title` AS descrizione FROM `or_statiordine` LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_statiordine`.`name` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito.'" ]}
+                {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT * ,`or_stati_ordine`.`id`, `or_stati_ordine_lang`.`title` AS descrizione FROM `or_stati_ordine` LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `or_stati_ordine`.`name` IN(\'Bozza\', \'Accettato\', \'In attesa di conferma\', \'Annullato\')", "value": "'.$stato_predefinito.'" ]}
             </div>';
     }
     echo '
@@ -369,11 +369,11 @@ if ($abilita_controllo_disponibilita) {
                     FROM or_righe_ordini
                     INNER JOIN or_ordini ON or_righe_ordini.id_ordine = or_ordini.id
                     INNER JOIN or_tipiordine ON or_ordini.id_tipo_ordine = or_tipiordine.id
-                    INNER JOIN or_statiordine ON or_ordini.id_stato = or_statiordine.id
+                    INNER JOIN or_stati_ordine ON or_ordini.id_stato = or_stati_ordine.id
                     WHERE or_righe_ordini.id_articolo = '.prepare($id_articolo).'
                     AND or_tipiordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1
-                    AND or_statiordine.impegnato = 1
+                    AND or_stati_ordine.impegnato = 1
                     AND or_ordini.id_sede_destinazione = '.prepare($id_sede_partenza);
 
                 // Se il documento di origine è un ordine cliente, escludiamolo dal calcolo

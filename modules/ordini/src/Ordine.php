@@ -156,7 +156,7 @@ class Ordine extends Document
         $parziale = $qta != $qta_evasa;
 
         $stato_attuale = $this->stato;
-        $use_translation = database()->isConnected() && database()->tableExists('or_statiordine_lang');
+        $use_translation = database()->isConnected() && database()->tableExists('or_stati_ordine_lang');
         $nome_stato = $use_translation
             ? $stato_attuale->getTranslation('title', \Models\Locale::getPredefined()->id)
             : $stato_attuale->descrizione;

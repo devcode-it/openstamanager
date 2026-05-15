@@ -396,12 +396,12 @@ if (!$block_edit) {
         FROM
             `or_ordini`
             INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-            INNER JOIN `or_statiordine` ON `or_ordini`.`id_stato`=`or_statiordine`.`id`
+            INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato`=`or_stati_ordine`.`id`
             INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
-            LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
+            LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).'
-            AND `or_statiordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
+            AND `or_stati_ordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
             AND `or_tipiordine`.`dir`='.prepare($dir).'
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         GROUP BY

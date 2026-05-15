@@ -39,7 +39,7 @@ if ($module->name == 'Ddt in uscita') {
     $tipo_anagrafica = tr('Fornitore');
     $label = tr('Mittente');
 }
-$id_causalet = $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined`=1')['id'];
+$id_causalet = $dbo->fetchOne('SELECT `id` FROM `dt_causale_t` WHERE `predefined`=1')['id'];
 $id_anagrafica = !empty(get('id_anagrafica')) ? get('id_anagrafica') : '';
 
 ?><form action="" method="post" id="add-form">

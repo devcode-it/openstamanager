@@ -73,7 +73,7 @@ if (!$is_anagrafica_deleted) {
         $stati_importabili[] = $stato['descrizione'];
     }
 
-    $causali = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
+    $causali = $database->fetchArray('SELECT `title` AS descrizione FROM `dt_causale_t` LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t`.`id` = `dt_causale_t_lang`.`id_record` AND `dt_causale_t_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_importabile` = 1');
 
     foreach ($causali as $causale) {
         $causali_importabili[] = $causale['descrizione'];

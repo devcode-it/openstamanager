@@ -645,8 +645,8 @@ FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
+    LEFT JOIN `dt_causale_t` ON `dt_ddt`.`id_causale_t` = `dt_causale_t`.`id`
+    LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` AS `vettori` ON `dt_ddt`.`id_vettore` = `vettori`.`id`
@@ -675,8 +675,8 @@ FROM
     `dt_ddt`
     LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_ddt`.`id_causale_t` = `dt_causalet`.`id`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
+    LEFT JOIN `dt_causale_t` ON `dt_ddt`.`id_causale_t` = `dt_causale_t`.`id`
+    LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.|lang|)
     LEFT JOIN `dt_spedizione` ON `dt_ddt`.`id_spedizione` = `dt_spedizione`.`id`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` `vettori` ON `dt_ddt`.`id_vettore` = `vettori`.`id`
@@ -1187,6 +1187,8 @@ RENAME TABLE `openstamanager`.`co_tipidocumento` TO `openstamanager`.`co_tipi_do
 RENAME TABLE `openstamanager`.`co_tipidocumento_lang` TO `openstamanager`.`co_tipi_documento_lang`;
 RENAME TABLE `openstamanager`.`dt_aspettobeni` TO `openstamanager`.`dt_aspetto_beni`;
 RENAME TABLE `openstamanager`.`dt_aspettobeni_lang` TO `openstamanager`.`dt_aspetto_beni_lang`;
+RENAME TABLE `openstamanager`.`dt_causalet` TO `openstamanager`.`dt_causale_t`;
+RENAME TABLE `openstamanager`.`dt_causalet_lang` TO `openstamanager`.`dt_causale_t_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";

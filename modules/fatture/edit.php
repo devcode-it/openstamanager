@@ -844,7 +844,7 @@ if (!$block_edit) {
             COUNT(*) AS tot
         FROM
             `dt_ddt`
-            INNER JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`id_causale_t`
+            INNER JOIN `dt_causale_t` ON `dt_causale_t`.`id` = `dt_ddt`.`id_causale_t`
             INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             LEFT JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
@@ -853,7 +853,7 @@ if (!$block_edit) {
             `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `dt_statiddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
             AND `dt_tipiddt`.`dir` = '.prepare($dir).'
-            AND `dt_causalet`.`is_importabile` = 1
+            AND `dt_causale_t`.`is_importabile` = 1
             AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
         $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
 

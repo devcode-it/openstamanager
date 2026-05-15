@@ -55,7 +55,7 @@ if (!empty($id_record)) {
         `zz_segments`.`is_fiscale` AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenuta_acconto` WHERE `id`=`id_ritenuta_acconto`) AS ritenuta_acconto_desc,
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`id_rivalsa_inps`) AS rivalsa_inps_desc,
-        `dt_causalet_lang`.`title` AS causale_desc
+        `dt_causale_t_lang`.`title` AS causale_desc
     FROM `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
@@ -64,8 +64,8 @@ if (!empty($id_record)) {
         LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        LEFT JOIN `dt_causalet` ON `co_documenti`.`id_causale_t`=`dt_causalet`.`id`
-        LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `dt_causale_t` ON `co_documenti`.`id_causale_t`=`dt_causale_t`.`id`
+        LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     WHERE
         `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));

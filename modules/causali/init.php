@@ -23,7 +23,7 @@ use Modules\DDT\Causale;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `dt_causalet` LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causalet`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `dt_causale_t` LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t`.`id` = `dt_causale_t_lang`.`id_record` AND `dt_causale_t_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_causale_t`.`id`='.prepare($id_record));
 
     $causale = Causale::find($id_record);
 }

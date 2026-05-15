@@ -76,9 +76,9 @@ switch (filter('op')) {
         $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_causale_t`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `id_causale_t`='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->delete('dt_causalet', ['id' => $id_record]);
+            $dbo->delete('dt_causale_t', ['id' => $id_record]);
         } else {
-            $dbo->update('dt_causalet', [
+            $dbo->update('dt_causale_t', [
                 'deleted_at' => date('Y-m-d H:i:s'),
             ], ['id' => $id_record]);
         }

@@ -54,7 +54,7 @@ if (!empty($id_record)) {
 
     if (!empty($record)) {
         $record['id_porto'] = $record['id_porto'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'];
-        $record['id_causale_t'] = $record['id_causale_t'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'];
+        $record['id_causale_t'] = $record['id_causale_t'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_causale_t` WHERE `predefined` = 1')['id'];
         $record['id_spedizione'] = $record['id_spedizione'] ?: $dbo->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'];
     }
 

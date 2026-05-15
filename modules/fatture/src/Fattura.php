@@ -204,7 +204,7 @@ class Fattura extends Document
         if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
             // Ottimizzazione: esegui una sola query per tutti i valori predefiniti
             $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'] ?? '';
-            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causalet` WHERE `predefined` = 1')['id'] ?? '';
+            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causale_t` WHERE `predefined` = 1')['id'] ?? '';
             $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
 
             $model->id_porto = $porto;

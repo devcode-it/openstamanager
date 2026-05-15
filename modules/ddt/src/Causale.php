@@ -28,7 +28,7 @@ class Causale extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    protected $table = 'dt_causalet';
+    protected $table = 'dt_causale_t';
 
     protected static $translated_fields = [
         'title',

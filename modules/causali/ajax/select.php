@@ -22,13 +22,13 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'causali':
-        $query = 'SELECT `dt_causalet`.`id`, `dt_causalet_lang`.`title` as descrizione FROM dt_causalet LEFT JOIN `dt_causalet_lang` ON (`dt_causalet`.`id` = `dt_causalet_lang`.`id_record` AND `dt_causalet_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
+        $query = 'SELECT `dt_causale_t`.`id`, `dt_causale_t_lang`.`title` as descrizione FROM dt_causale_t LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t`.`id` = `dt_causale_t_lang`.`id_record` AND `dt_causale_t_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = '`dt_causalet`.`id`='.prepare($element);
+            $filter[] = '`dt_causale_t`.`id`='.prepare($element);
         }
         if (empty($filter)) {
-            $where[] = '`dt_causalet`.`deleted_at` IS NULL';
+            $where[] = '`dt_causale_t`.`deleted_at` IS NULL';
         }
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');

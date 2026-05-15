@@ -36,7 +36,7 @@ $record = $dbo->fetchOne('SELECT
     `co_tipi_documento_lang`.`title` AS tipo_doc,
     `co_tipi_documento`.`dir` AS dir,
     `co_pagamenti_lang`.`title` AS pagamento,
-    `dt_causalet_lang`.`title` AS causalet,
+    `dt_causale_t_lang`.`title` AS causalet,
     `dt_porto_lang`.`title` AS porto,
     `dt_aspetto_beni_lang`.`title` AS aspettobeni,
     `dt_spedizione_lang`.`title` AS spedizione,
@@ -57,8 +57,8 @@ FROM
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`
     INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
-    LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `co_documenti`.`id_causale_t`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    LEFT JOIN `dt_causale_t` ON `dt_causale_t`.`id` = `co_documenti`.`id_causale_t`
+    LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_porto` ON `dt_porto`.`id` = `co_documenti`.`id_porto`
     LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_aspetto_beni` ON `dt_aspetto_beni`.`id` = `co_documenti`.`id_aspetto_beni`

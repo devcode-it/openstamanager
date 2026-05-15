@@ -22,13 +22,13 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'fasce_orarie':
-        $query = 'SELECT `in_fasceorarie`.`id`, `title` AS `descrizione` FROM `in_fasceorarie` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
+        $query = 'SELECT `in_fasce_orarie`.`id`, `title` AS `descrizione` FROM `in_fasce_orarie` LEFT JOIN `in_fasce_orarie_lang` ON (`in_fasce_orarie_lang`.`id_record` = `in_fasce_orarie`.`id` AND `in_fasce_orarie_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
 
         foreach ($elements as $element) {
-            $filter[] = '`in_fasceorarie`.`id`='.prepare($element);
+            $filter[] = '`in_fasce_orarie`.`id`='.prepare($element);
         }
         if (empty($filter)) {
-            $where[] = '`in_fasceorarie`.`deleted_at` IS NULL';
+            $where[] = '`in_fasce_orarie`.`deleted_at` IS NULL';
         }
 
         if (!empty($search)) {

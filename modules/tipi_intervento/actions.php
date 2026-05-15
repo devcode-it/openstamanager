@@ -50,7 +50,7 @@ switch (post('op')) {
         $fascia_diritto_chiamata_tecnico = (array) post('fascia_diritto_chiamata_tecnico');
 
         foreach ($fasce_ore as $key => $fascia_ore) {
-            $dbo->update('in_fasceorarie_tipiintervento', [
+            $dbo->update('in_fasce_orarie_tipi_intervento', [
                 'costo_orario' => $fascia_ore,
                 'costo_km' => $fascia_km[$key],
                 'costo_diritto_chiamata' => $fascia_diritto_chiamata[$key],
@@ -116,9 +116,9 @@ switch (post('op')) {
         // Fix per impostare i valori inziali a tutti i tecnici
         $tipo->fixTecnici();
 
-        $fasce_orarie = $dbo->select('in_fasceorarie', '*', [], ['deleted_at' => null]);
+        $fasce_orarie = $dbo->select('in_fasce_orarie', '*', [], ['deleted_at' => null]);
         foreach ($fasce_orarie as $fascia_oraria) {
-            $dbo->insert('in_fasceorarie_tipiintervento', [
+            $dbo->insert('in_fasce_orarie_tipi_intervento', [
                 'id_fascia_oraria' => $fascia_oraria['id'],
                 'id_tipo_intervento' => $tipo->id,
                 'costo_orario' => post('costo_orario'),
@@ -141,7 +141,7 @@ switch (post('op')) {
         // Elimino le tariffe collegate ai contratti
         $dbo->delete('co_contratti_tipi_intervento', ['id_tipo_intervento' => $id_record]);
 
-        $dbo->delete('in_fasceorarie_tipiintervento', ['id_tipo_intervento' => $id_record]);
+        $dbo->delete('in_fasce_orarie_tipi_intervento', ['id_tipo_intervento' => $id_record]);
 
         $query = 'UPDATE `in_tipiintervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
         $dbo->query($query);

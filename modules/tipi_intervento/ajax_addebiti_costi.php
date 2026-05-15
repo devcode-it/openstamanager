@@ -7,7 +7,7 @@ if (file_exists(__DIR__.'/../../../core.php')) {
 }
 
 // Fasce orarie per il tipo di attività
-$fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (`in_fasceorarie_lang`.`title`, ' (', DATE_FORMAT(`ora_inizio`, '%H:%i'), '-', DATE_FORMAT(`ora_fine`, '%H:%i'), ')') AS descrizione FROM `in_fasceorarie_tipiintervento` INNER JOIN `in_fasceorarie` ON `in_fasceorarie_tipiintervento`.`id_fascia_oraria` = `in_fasceorarie`.`id` LEFT JOIN `in_fasceorarie_lang` ON (`in_fasceorarie_lang`.`id_record` = `in_fasceorarie`.`id` AND `in_fasceorarie_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `id_tipo_intervento`='.prepare($id_record));
+$fasce_orarie = $dbo->fetchArray("SELECT *, CONCAT (`in_fasce_orarie_lang`.`title`, ' (', DATE_FORMAT(`ora_inizio`, '%H:%i'), '-', DATE_FORMAT(`ora_fine`, '%H:%i'), ')') AS descrizione FROM `in_fasce_orarie_tipi_intervento` INNER JOIN `in_fasce_orarie` ON `in_fasce_orarie_tipi_intervento`.`id_fascia_oraria` = `in_fasce_orarie`.`id` LEFT JOIN `in_fasce_orarie_lang` ON (`in_fasce_orarie_lang`.`id_record` = `in_fasce_orarie`.`id` AND `in_fasce_orarie_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `id_tipo_intervento`='.prepare($id_record));
 
 echo '
     <table class="table table-striped table-sm table-hover table-bordered">

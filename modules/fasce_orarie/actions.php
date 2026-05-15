@@ -34,7 +34,7 @@ switch (post('op')) {
             $fascia_oraria_new = FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($fascia_oraria_new)) {
                 if (!empty($is_predefined)) {
-                    $dbo->query('UPDATE `in_fasceorarie` SET `is_predefined` = 0');
+                    $dbo->query('UPDATE `in_fasce_orarie` SET `is_predefined` = 0');
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $fascia_oraria->name = $descrizione;
@@ -74,7 +74,7 @@ switch (post('op')) {
 
                 $tipi_intervento = $dbo->select('in_tipiintervento', '*');
                 foreach ($tipi_intervento as $tipo_intervento) {
-                    $dbo->insert('in_fasceorarie_tipiintervento', [
+                    $dbo->insert('in_fasce_orarie_tipi_intervento', [
                         'id_fascia_oraria' => $id_record,
                         'id_tipo_intervento' => $tipo_intervento['id'],
                         'costo_orario' => $tipo_intervento['costo_orario'],
@@ -103,11 +103,11 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->update('in_fasceorarie', [
+        $dbo->update('in_fasce_orarie', [
             'deleted_at' => date('Y-m-d H:i:s'),
         ], ['id' => $id_record, 'can_delete' => 1]);
 
-        $dbo->delete('in_fasceorarie_tipiintervento', ['id_fascia_oraria' => $id_record]);
+        $dbo->delete('in_fasce_orarie_tipi_intervento', ['id_fascia_oraria' => $id_record]);
 
         flash()->info(tr('_TYPE_ eliminata con successo.', [
             '_TYPE_' => 'Fascia oraria',

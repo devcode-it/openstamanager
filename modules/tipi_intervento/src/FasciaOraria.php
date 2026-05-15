@@ -28,7 +28,7 @@ class FasciaOraria extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    protected $table = 'in_fasceorarie';
+    protected $table = 'in_fasce_orarie';
 
     protected static $translated_fields = [
         'title',

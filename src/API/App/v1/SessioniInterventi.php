@@ -99,7 +99,7 @@ class SessioniInterventi extends AppResource
             IF(tipo_sconto_km = 'PRC', sconto_km_unitario, 0) AS sconto_chilometrico_percentuale,
             tipo_sconto AS tipo_sconto_chilometrico,
 
-            prezzo_dirittochiamata AS prezzo_diritto_chiamata
+            prezzo_diritto_chiamata AS prezzo_diritto_chiamata
         FROM in_interventi_tecnici
         WHERE in_interventi_tecnici.id = ".prepare($id);
 
@@ -170,7 +170,7 @@ class SessioniInterventi extends AppResource
         // Prezzi
         $sessione->prezzo_ore_unitario = $data['prezzo_orario'];
         $sessione->prezzo_km_unitario = $data['prezzo_chilometrico'];
-        $sessione->prezzo_dirittochiamata = $data['prezzo_diritto_chiamata'];
+        $sessione->prezzo_diritto_chiamata = $data['prezzo_diritto_chiamata'];
 
         // Sconto orario
         $sessione->sconto_unitario = $data['sconto_orario_percentuale'] ?: $data['sconto_orario'];

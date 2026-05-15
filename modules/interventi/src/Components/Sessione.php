@@ -107,25 +107,25 @@ class Sessione extends Model
             $tariffa = $this->getTariffa($id_tipo);
 
             // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
-            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_dirittochiamata != 0 OR prezzo_dirittochiamata_tecnico != 0) AND id != '.prepare($this->id).' AND id_intervento = '.prepare($this->intervento->id));
+            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_diritto_chiamata != 0 OR prezzo_diritto_chiamata_tecnico != 0) AND id != '.prepare($this->id).' AND id_intervento = '.prepare($this->intervento->id));
             if (!empty($sessioni) && setting('Applica diritto di chiamata una volta al giorno')) {
                 $tariffa['costo_diritto_chiamata_tecnico'] = 0;
                 $tariffa['costo_diritto_chiamata'] = 0;
 
                 // Fix se reset non attivo
-                $this->prezzo_dirittochiamata = $tariffa['costo_diritto_chiamata'];
+                $this->prezzo_diritto_chiamata = $tariffa['costo_diritto_chiamata'];
             }
 
             // Modifica dei costi
             $this->prezzo_ore_unitario_tecnico = $tariffa['costo_ore_tecnico'];
             $this->prezzo_km_unitario_tecnico = $tariffa['costo_km_tecnico'];
-            $this->prezzo_dirittochiamata_tecnico = $tariffa['costo_diritto_chiamata_tecnico'];
+            $this->prezzo_diritto_chiamata_tecnico = $tariffa['costo_diritto_chiamata_tecnico'];
 
             // Modifica dei prezzi
             if ($reset) {
                 $this->prezzo_ore_unitario = $tariffa['costo_ore'];
                 $this->prezzo_km_unitario = $tariffa['costo_km'];
-                $this->prezzo_dirittochiamata = $tariffa['costo_diritto_chiamata'];
+                $this->prezzo_diritto_chiamata = $tariffa['costo_diritto_chiamata'];
             }
         }
     }
@@ -216,7 +216,7 @@ class Sessione extends Model
      */
     public function getCostoDirittoChiamataAttribute()
     {
-        return $this->attributes['prezzo_dirittochiamata_tecnico'];
+        return $this->attributes['prezzo_diritto_chiamata_tecnico'];
     }
 
     /**
@@ -258,7 +258,7 @@ class Sessione extends Model
      */
     public function getPrezzoDirittoChiamataAttribute()
     {
-        return $this->attributes['prezzo_dirittochiamata'];
+        return $this->attributes['prezzo_diritto_chiamata'];
     }
 
     /**

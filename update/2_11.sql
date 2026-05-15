@@ -1039,6 +1039,8 @@ ALTER TABLE `in_tariffe_sedi` CHANGE `costo_dirittochiamata` `costo_diritto_chia
 ALTER TABLE `co_contratti_tipiintervento` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
 ALTER TABLE `in_tariffe` CHANGE `costo_dirittochiamata_tecnico` `costo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
 
+ALTER TABLE `in_interventi_tecnici` CHANGE `prezzo_dirittochiamata` `prezzo_diritto_chiamata` DECIMAL(15,6) NOT NULL;
+
 ALTER TABLE `co_documenti` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idcausalet` `id_causale_t` INT NOT NULL;
 
@@ -1188,6 +1190,8 @@ ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;
 
+RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_ritenuta_acconto`;
+
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipianagrafiche_anagrafiche INNER JOIN an_tipianagrafiche ON an_tipianagrafiche_anagrafiche.id_tipo_anagrafica=an_tipianagrafiche.id LEFT JOIN an_tipianagrafiche_lang ON (an_tipianagrafiche_lang.id_record = an_tipianagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipianagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
 
@@ -1284,4 +1288,8 @@ ORDER BY
     `ragione_sociale`" WHERE `name` = "Anagrafiche";
 UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
 
-RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_ritenuta_acconto`;
+UPDATE `zz_views` SET `query` = "IF(in_interventi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = 'IFNULL(SUM(in_interventi_tecnici.prezzo_ore_unitario*in_interventi_tecnici.ore-in_interventi_tecnici.sconto + in_interventi_tecnici.prezzo_km_unitario*in_interventi_tecnici.km-in_interventi_tecnici.sconto_km + in_interventi_tecnici.prezzo_diritto_chiamata), 0) + IFNULL(ricavo_righe, 0)' WHERE `zz_views`.`name` = "Ricavi" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = '' WHERE `zz_views`.`name` = "" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = '' WHERE `zz_views`.`name` = "" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = '' WHERE `zz_views`.`name` = "" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');

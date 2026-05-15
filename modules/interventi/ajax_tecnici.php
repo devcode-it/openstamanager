@@ -109,11 +109,11 @@ if (!empty($sessioni)) {
 
         $costo_ore_unitario = $sessione['prezzo_ore_unitario'];
         $costo_km_unitario = $sessione['prezzo_km_unitario'];
-        $costo_diritto_chiamata = $sessione['prezzo_dirittochiamata'];
+        $costo_diritto_chiamata = $sessione['prezzo_diritto_chiamata'];
 
         $costo_ore_unitario_tecnico = $sessione['prezzo_ore_unitario_tecnico'];
         $costo_km_unitario_tecnico = $sessione['prezzo_km_unitario_tecnico'];
-        $costo_diritto_chiamata_tecnico = $sessione['prezzo_dirittochiamata_tecnico'];
+        $costo_diritto_chiamata_tecnico = $sessione['prezzo_diritto_chiamata_tecnico'];
 
         $costo_km_consuntivo_tecnico = $sessione['prezzo_km_consuntivo_tecnico'];
         $costo_ore_consuntivo_tecnico = $sessione['prezzo_ore_consuntivo_tecnico'];

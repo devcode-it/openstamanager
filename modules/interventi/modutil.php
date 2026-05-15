@@ -354,7 +354,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             $riga->id_rivalsa_inps = $id_rivalsa_inps;
 
             $riga->prezzo_unitario = $diritto_chiamata->prezzo_diritto_chiamata;
-            $riga->costo_unitario = $sessione->prezzo_dirittochiamata_tecnico;
+            $riga->costo_unitario = $sessione->prezzo_diritto_chiamata_tecnico;
             $riga->qta = $gruppo->count();
 
             // Riferimento al documento di origine

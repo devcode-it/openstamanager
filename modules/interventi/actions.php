@@ -1229,7 +1229,7 @@ switch (post('op')) {
         // Prezzi
         $sessione->prezzo_ore_unitario = post('prezzo_ore_unitario');
         $sessione->prezzo_km_unitario = post('prezzo_km_unitario');
-        $sessione->prezzo_dirittochiamata = post('prezzo_dirittochiamata');
+        $sessione->prezzo_diritto_chiamata = post('prezzo_diritto_chiamata');
 
         // Sconto orario
         $sessione->sconto_unitario = post('sconto');
@@ -1293,7 +1293,7 @@ switch (post('op')) {
         $new_sessione->orario_inizio = $pausa_fine;
         $new_sessione->orario_fine = $orario_fine;
         $new_sessione->km = 0;
-        $new_sessione->prezzo_dirittochiamata = 0;
+        $new_sessione->prezzo_diritto_chiamata = 0;
         $new_sessione->save();
 
         // Trigger aggiornamento intervento

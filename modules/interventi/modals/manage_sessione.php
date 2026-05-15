@@ -29,7 +29,7 @@ if ($user['gruppo'] == 'Tecnici') {
     $show_prezzi = !empty($user['id_anagrafica']) && setting('Mostra i prezzi al tecnico');
 }
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_sconto_km AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_dirittochiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_sconto_km AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_diritto_chiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'edit_sessione';
 $button = '<i class="fa fa-edit"></i> '.tr('Modifica');
@@ -78,7 +78,7 @@ echo '
         </div>
 
         <div class="col-md-4 '.$class.'">
-            {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_dirittochiamata", "value": "'.$sessione['prezzo_dirittochiamata'].'" ]}
+            {[ "type": "number", "label": "'.tr('Addebito diritto ch.').'", "name": "prezzo_diritto_chiamata", "value": "'.$sessione['prezzo_diritto_chiamata'].'" ]}
         </div>
     </div>
 
@@ -165,7 +165,7 @@ $(document).ready(function () {
         if (data) {
             $("#prezzo_ore_unitario").val(data.prezzo_ore_unitario);
             $("#prezzo_km_unitario").val(data.prezzo_km_unitario);
-            $("#prezzo_dirittochiamata").val(data.prezzo_dirittochiamata);
+            $("#prezzo_diritto_chiamata").val(data.prezzo_diritto_chiamata);
 
             if (data.tempo_standard > 0) {
                 let orario_inizio = $("#orario_inizio").data("DateTimePicker").date();

@@ -48,7 +48,7 @@ class Pagamento extends Model
 
     public function fatture()
     {
-        return $this->hasMany(Fattura::class, 'id_pagamentoo');
+        return $this->hasMany(Fattura::class, 'id_pagamento');
     }
 
     public function rate()

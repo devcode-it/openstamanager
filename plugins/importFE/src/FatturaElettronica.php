@@ -418,7 +418,7 @@ class FatturaElettronica
 
         $fattura->progressivo_invio = $progressivo_invio;
         $fattura->numero_esterno = $numero_esterno;
-        $fattura->id_pagamentoo = $id_pagamento;
+        $fattura->id_pagamento = $id_pagamento;
         $fattura->is_ritenuta_pagata = $is_ritenuta_pagata;
 
         // Sede destinazione per movimentazione

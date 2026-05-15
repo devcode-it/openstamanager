@@ -88,9 +88,9 @@ class DDT extends Document
         $model->id_agente = $anagrafica->id_agente;
         $model->data = $data;
 
-        $id_pagamento = self::getid_pagamentoo($anagrafica, $direzione);
+        $id_pagamento = self::getid_pagamento($anagrafica, $direzione);
         if (!empty($id_pagamento)) {
-            $model->id_pagamentoo = $id_pagamento;
+            $model->id_pagamento = $id_pagamento;
         }
 
         if ($direzione == 'entrata') {
@@ -395,10 +395,10 @@ class DDT extends Document
      *
      * @return int|null
      */
-    protected static function getid_pagamentoo(Anagrafica $anagrafica, $direzione)
+    protected static function getid_pagamento(Anagrafica $anagrafica, $direzione)
     {
         $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
-        $id_pagamento = $anagrafica['id_pagamentoo_'.$conto];
+        $id_pagamento = $anagrafica['id_pagamento_'.$conto];
 
         // Se il ddt è un ddt cliente e non è stato associato un pagamento predefinito al cliente leggo il pagamento dalle impostazioni
         if ($direzione == 'entrata' && empty($id_pagamento)) {

@@ -55,7 +55,7 @@ class PagamentoAutomaticoTask extends Manager
                 `co_scadenzario`
                 INNER JOIN `co_documenti` ON `co_scadenzario`.`id_documento` = `co_documenti`.`id`
                 INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
-                INNER JOIN `co_pagamenti` ON `co_documenti`.`id_pagamentoo` = `co_pagamenti`.`id`
+                INNER JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento` = `co_pagamenti`.`id`
             WHERE 
                 `co_pagamenti`.`registra_pagamento_automatico` = 1
                 AND ABS(`co_scadenzario`.`pagato`) < ABS(`co_scadenzario`.`da_pagare`)

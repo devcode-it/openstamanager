@@ -38,7 +38,7 @@ $record = $dbo->fetchOne('SELECT
     `co_pagamenti_lang`.`title` AS pagamento,
     `dt_causalet_lang`.`title` AS causalet,
     `dt_porto_lang`.`title` AS porto,
-    `dt_aspettobeni_lang`.`title` AS aspettobeni,
+    `dt_aspetto_beni_lang`.`title` AS aspettobeni,
     `dt_spedizione_lang`.`title` AS spedizione,
     `vettore`.`ragione_sociale` AS vettore,
     `co_banche`.`id` AS id_banca,
@@ -61,8 +61,8 @@ FROM
     LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_porto` ON `dt_porto`.`id` = `co_documenti`.`id_porto`
     LEFT JOIN `dt_porto_lang` ON (`dt_porto_lang`.`id_record` = `dt_porto`.`id` AND `dt_porto_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    LEFT JOIN `dt_aspettobeni` ON `dt_aspettobeni`.`id` = `co_documenti`.`id_aspetto_beni`
-    LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni_lang`.`id_record` = `dt_aspettobeni`.`id` AND `dt_aspettobeni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    LEFT JOIN `dt_aspetto_beni` ON `dt_aspetto_beni`.`id` = `co_documenti`.`id_aspetto_beni`
+    LEFT JOIN `dt_aspetto_beni_lang` ON (`dt_aspetto_beni_lang`.`id_record` = `dt_aspetto_beni`.`id` AND `dt_aspetto_beni_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `dt_spedizione` ON `dt_spedizione`.`id` = `co_documenti`.`id_spedizione`
     LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione_lang`.`id_record` = `dt_spedizione`.`id` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
 WHERE 

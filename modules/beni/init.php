@@ -22,7 +22,7 @@ use Modules\DDT\AspettoBeni;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `dt_aspettobeni` LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni`.`id`=`dt_aspettobeni_lang`.`id_record` AND `dt_aspettobeni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspettobeni`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `dt_aspetto_beni` LEFT JOIN `dt_aspetto_beni_lang` ON (`dt_aspetto_beni`.`id`=`dt_aspetto_beni_lang`.`id_record` AND `dt_aspetto_beni_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_aspetto_beni`.`id`='.prepare($id_record));
 
     $aspetto = AspettoBeni::find($id_record);
 }

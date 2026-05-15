@@ -1185,6 +1185,8 @@ RENAME TABLE `openstamanager`.`co_statipreventivi` TO `openstamanager`.`co_stati
 RENAME TABLE `openstamanager`.`co_statipreventivi_lang` TO `openstamanager`.`co_stati_preventivi_lang`;
 RENAME TABLE `openstamanager`.`co_tipidocumento` TO `openstamanager`.`co_tipi_documento`;
 RENAME TABLE `openstamanager`.`co_tipidocumento_lang` TO `openstamanager`.`co_tipi_documento_lang`;
+RENAME TABLE `openstamanager`.`dt_aspettobeni` TO `openstamanager`.`dt_aspetto_beni`;
+RENAME TABLE `openstamanager`.`dt_aspettobeni_lang` TO `openstamanager`.`dt_aspetto_beni_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";

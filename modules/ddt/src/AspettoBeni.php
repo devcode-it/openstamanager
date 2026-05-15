@@ -28,7 +28,7 @@ class AspettoBeni extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    protected $table = 'dt_aspettobeni';
+    protected $table = 'dt_aspetto_beni';
 
     protected static $translated_fields = [
         'title',

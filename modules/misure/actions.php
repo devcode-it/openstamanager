@@ -25,8 +25,8 @@ switch (filter('op')) {
         $valore = filter('valore');
 
         if (isset($valore)) {
-            if ($dbo->fetchNum('SELECT * FROM `mg_unitamisura` WHERE `valore`='.prepare($valore).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `mg_unitamisura` SET `valore`='.prepare($valore).' WHERE `id`='.prepare($id_record));
+            if ($dbo->fetchNum('SELECT * FROM `mg_unita_misura` WHERE `valore`='.prepare($valore).' AND `id`!='.prepare($id_record)) == 0) {
+                $dbo->query('UPDATE `mg_unita_misura` SET `valore`='.prepare($valore).' WHERE `id`='.prepare($id_record));
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
@@ -43,8 +43,8 @@ switch (filter('op')) {
         $valore = filter('valore');
 
         if (isset($valore)) {
-            if ($dbo->fetchNum('SELECT * FROM `mg_unitamisura` WHERE `valore`='.prepare($valore)) == 0) {
-                $dbo->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($valore).')');
+            if ($dbo->fetchNum('SELECT * FROM `mg_unita_misura` WHERE `valore`='.prepare($valore)) == 0) {
+                $dbo->query('INSERT INTO `mg_unita_misura` (`valore`) VALUES ('.prepare($valore).')');
 
                 $id_record = $dbo->lastInsertedID();
 
@@ -75,7 +75,7 @@ switch (filter('op')) {
             UNION SELECT `id` FROM `co_righe_preventivi` WHERE `um`='.prepare($record['valore']));
 
         if ((!empty($id_record)) && empty($righe)) {
-            $dbo->delete('mg_unitamisura', ['id' => $id_record]);
+            $dbo->delete('mg_unita_misura', ['id' => $id_record]);
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'unità di misura',
             ]));

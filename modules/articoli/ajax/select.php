@@ -276,7 +276,7 @@ switch ($resource) {
         break;
 
     case 'misure':
-        $query = 'SELECT `valore` AS id, `valore` AS descrizione FROM `mg_unitamisura` |where| ORDER BY `valore`';
+        $query = 'SELECT `valore` AS id, `valore` AS descrizione FROM `mg_unita_misura` |where| ORDER BY `valore`';
 
         foreach ($elements as $element) {
             $filter[] = '`valore`='.prepare($element);

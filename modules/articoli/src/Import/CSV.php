@@ -740,9 +740,9 @@ class CSV extends CSVImporter
 
         try {
             $database = database();
-            $um = $database->fetchOne('SELECT id FROM `mg_unitamisura` WHERE `valore`='.prepare($record['um']));
+            $um = $database->fetchOne('SELECT id FROM `mg_unita_misura` WHERE `valore`='.prepare($record['um']));
             if (empty($um)) {
-                $result = $database->query('INSERT INTO `mg_unitamisura` (`valore`) VALUES ('.prepare($record['um']).')');
+                $result = $database->query('INSERT INTO `mg_unita_misura` (`valore`) VALUES ('.prepare($record['um']).')');
                 if (!$result) {
                     throw new \Exception('Impossibile creare l\'unità di misura');
                 }

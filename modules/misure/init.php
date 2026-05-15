@@ -21,5 +21,5 @@
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `mg_unitamisura` WHERE id='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT * FROM `mg_unita_misura` WHERE id='.prepare($id_record));
 }

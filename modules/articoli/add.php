@@ -30,7 +30,7 @@ $aliquota_predefinita = floatval(Aliquota::find($iva_predefinita)->percentuale);
 $um_predefinita = '';
 $id_um_predefinita = setting('Unità di misura predefinita');
 if (!empty($id_um_predefinita)) {
-    $um_predefinita = $database->fetchOne('SELECT valore FROM mg_unitamisura WHERE id = '.prepare($id_um_predefinita));
+    $um_predefinita = $database->fetchOne('SELECT valore FROM mg_unita_misura WHERE id = '.prepare($id_um_predefinita));
     $um_predefinita = $um_predefinita ? $um_predefinita['valore'] : '';
 }
 

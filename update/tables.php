@@ -156,7 +156,7 @@ return [
     'mg_prezzi_articoli',
     'mg_prodotti',
     'mg_scorte_sedi',
-    'mg_unitamisura',
+    'mg_unita_misura',
     'mg_valori_attributi',
     'my_componenti',
     'my_componenti_interventi',

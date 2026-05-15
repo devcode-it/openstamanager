@@ -125,6 +125,7 @@ $files = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module = ?', [$module
 - Module prefix: `an_` (Anagrafiche), `co_` (Contabilità), `in_` (Interventi), `mg_` (Warehouse), etc.
 - Core tables: `zz_` (settings, modules, plugins, hooks, groups, etc.)
 - Localized tables: suffix `_lang` (e.g., `zz_modules_lang`, `co_pagamenti_lang`)
+- **Multi-word tables**: Use underscore as separator (e.g., `an_anagrafiche`, `co_documenti`, `mg_articoli_varianti`)
 
 ### Field Naming Conventions
 

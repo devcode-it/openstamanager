@@ -94,8 +94,6 @@ CREATE TABLE IF NOT EXISTS `my_stati_impianti` (
     `icona`      VARCHAR(255) NOT NULL DEFAULT '',
     `colore`     VARCHAR(7)   NOT NULL DEFAULT '#ffffff',
     `can_delete` TINYINT(1)   NOT NULL DEFAULT 1,
-    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` DATETIME     NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -106,8 +104,6 @@ CREATE TABLE IF NOT EXISTS `my_stati_impianti_lang` (
     `id_lang`    INT(11)      NOT NULL,
     `id_record`  INT(11)      NOT NULL,
     `title`      VARCHAR(255) NOT NULL DEFAULT '',
-    `created_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `id_lang` (`id_lang`),
     KEY `id_record` (`id_record`)
@@ -167,19 +163,19 @@ ALTER TABLE `my_impianti`
     ADD CONSTRAINT `fk_my_impianti_stato` FOREIGN KEY (`id_stato`) REFERENCES `my_stati_impianti` (`id`) ON UPDATE CASCADE ON DELETE SET NULL;
 
 -- Aggiunta conti per Iva Extra Intra UE e Reverse charge
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000040', 'Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000050', 'Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000060', 'Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000070', 'Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000080', 'Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
-INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000090', 'Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000040', 'Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000050', 'Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '',  '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000060', 'Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000070', 'Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000080', 'Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', '100.00');
+INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `percentuale_deducibile`) VALUES (NULL, '000090', 'Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', '100.00');
 
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL, NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Intra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Intra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Reverse charge"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
-INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `created_at`, `updated_at`, `order`) VALUES (NULL, 'Conto per Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Reverse charge"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL, NULL, NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`,`order`) VALUES (NULL, 'Conto per Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Extra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Intra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Intra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti', NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Conto per Iva su vendite Intra UE', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Intra UE"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Conto per Iva su acquisti Reverse charge', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su acquisti Reverse charge"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL);
+INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Conto per Iva su vendite Reverse charge', (SELECT `id` FROM `co_pianodeiconti3` WHERE `descrizione`= "Iva su vendite Reverse charge"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei Conti',  NULL);
 
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT MAX(`id`)-5 FROM `zz_settings`), 'Conto per Iva su acquisti Extra UE', ''),

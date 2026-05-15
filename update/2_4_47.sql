@@ -30,16 +30,6 @@ CREATE TABLE `zz_files_print` ( `id` INT NOT NULL AUTO_INCREMENT , `id_print` IN
 -- Modifica vista inviato Scadenzario
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = 'IF(emails IS NOT NULL, \'SÌ\', \'NO\')' WHERE `zz_modules`.`name` = 'Scadenzario' AND `zz_views`.`name` = 'icon_title_Inviato';
 
--- Fix problemi integrità db per campi created_at e updated_at
-ALTER TABLE `in_righe_tipiinterventi` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `mg_listini` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `mg_listini_articoli` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `my_componenti` CHANGE `created_at` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `in_righe_tipiinterventi` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `mg_listini` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `mg_listini_articoli` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE `my_componenti` CHANGE `updated_at` `updated_at` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
-
 -- Aggiunta colonna Agente in vista Contratti
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `visible`, `default`) VALUES((SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti'), 'Agente', '`agente`.`ragione_sociale`', 15, 1, 0, 0, 0, 1);
 

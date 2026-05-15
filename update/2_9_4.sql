@@ -90,9 +90,6 @@ ALTER TABLE `co_preventivi` CHANGE `idpagamento` `idpagamento` INT NULL DEFAULT 
 UPDATE `co_preventivi` SET `idpagamento` = null WHERE `idpagamento` NOT IN (SELECT `id` FROM `co_pagamenti`);
 ALTER TABLE `co_preventivi` ADD CONSTRAINT `co_preventivi_ibfk_3` FOREIGN KEY (`idpagamento`) REFERENCES `co_pagamenti`(`id`) ON DELETE SET NULL;
 
--- Ordinamento vista Modelli prima nota
-UPDATE `zz_modules` SET `options` = 'SELECT |select| FROM `co_movimenti_modelli` WHERE 1=1 GROUP BY `idmastrino` HAVING 2=2 ORDER BY `co_movimenti_modelli`.`nome`' WHERE `zz_modules`.`name` = 'Modelli prima nota';
-
 -- Ordinamento vista IVA
 UPDATE `zz_modules` SET `options` = '\nSELECT\n |select|\nFROM\n `co_iva`\n LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND |lang|)\nWHERE\n 1=1 AND `deleted_at` IS NULL\nHAVING\n 2=2 \nORDER BY\n `co_iva_lang`.`title`' WHERE `zz_modules`.`name` = 'Iva';
 

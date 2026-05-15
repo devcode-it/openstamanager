@@ -771,9 +771,9 @@ FROM
 	LEFT JOIN `an_sedi` ON `mg_movimenti`.`id_sede` = `an_sedi`.`id`
     LEFT JOIN `zz_modules` ON `zz_modules`.`name` = 'Articoli'
 	LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.|lang|)
-	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
-	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
-	LEFT JOIN (SELECT `an_anagrafiche`.`id`, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `id`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`id` as id_anagrafica, `co_documenti`.`id`, `ragione_sociale` AS nomi FROM `co_documenti` LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `an_anagrafiche`.`id`, `co_documenti`.`id`) AS fattura ON `fattura`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`id` as id_anagrafica, `dt_ddt`.`id`, `ragione_sociale` AS nomi FROM `dt_ddt` LEFT JOIN `an_anagrafiche` ON `dt_ddt`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `an_anagrafiche`.`id`, `dt_ddt`.`id`) AS ddt ON `ddt`.`id`= `mg_movimenti`.`reference_id`
+	LEFT JOIN (SELECT `an_anagrafiche`.`id` as id_anagrafica, `in_interventi`.`id`, `ragione_sociale` AS nomi FROM `in_interventi` LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id` GROUP BY `an_anagrafiche`.`id`, `in_interventi`.`id`) AS intervento ON `intervento`.`id`= `mg_movimenti`.`reference_id`
     LEFT JOIN (SELECT CONCAT('tab_', `zz_plugins`.`id`) AS link FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins_lang`.`id_record` = `zz_plugins`.`id` AND `zz_plugins_lang`.|lang|) INNER JOIN `zz_modules` ON `zz_plugins`.`id_module_to` = `zz_modules`.`id` LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|) WHERE `zz_modules`.`name` = 'Articoli' AND `zz_plugins`.`name` = 'Movimenti') AS page ON `mg_movimenti`.`id` != ''
 WHERE
     1=1 AND `mg_articoli`.`deleted_at` IS NULL
@@ -1314,6 +1314,114 @@ HAVING
 ORDER BY
     `id`, `nome` ASC' WHERE `zz_modules`.`name` = 'Utenti e permessi';
 
+UPDATE `zz_modules` SET `options` = 'SELECT 
+    |select| 
+FROM 
+    `co_ritenuta_acconto` 
+WHERE 
+    1=1 
+HAVING 
+    2=2' WHERE `zz_modules`.`name` = 'Ritenute acconto';
+    
+UPDATE `zz_modules` SET `options` = 'SELECT 
+    |select| 
+FROM 
+    `co_movimenti_modelli` 
+WHERE 
+    1=1 
+GROUP BY 
+    `id_mastrino` 
+HAVING 
+    2=2 
+ORDER BY 
+    `co_movimenti_modelli`.`nome`' WHERE `zz_modules`.`name` = 'Modelli prima nota';
+
+UPDATE `zz_modules` SET `options` = 'SELECT
+    |select| 
+FROM 
+    `do_documenti`
+    INNER JOIN `do_categorie` ON `do_categorie`.`id` = `do_documenti`.`id_categoria`
+    LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.|lang|)
+    INNER JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_documenti`.`id_categoria`
+WHERE 
+    1=1 AND 
+    `deleted_at` IS NULL AND
+    `id_gruppo` = (SELECT `id_gruppo` FROM `zz_users` WHERE `zz_users`.`id` = |id_utente|) 
+HAVING 
+    2=2 
+ORDER BY 
+    `data` DESC' WHERE `zz_modules`.`name` = 'Gestione documentale';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+   `do_categorie`
+   LEFT JOIN `do_categorie_lang` ON (`do_categorie_lang`.`id_record` = `do_categorie`.`id` AND `do_categorie_lang`.|lang|)
+   INNER JOIN `do_permessi` ON `do_permessi`.`id_categoria` = `do_categorie`.`id`
+WHERE 
+    1=1 AND 
+    `deleted_at` IS NULL AND
+    `id_gruppo` = (SELECT `id_gruppo` FROM `zz_users` WHERE `id` = |id_utente|)
+HAVING
+    2=2" WHERE `zz_modules`.`name` = 'Categorie documenti';
+
+UPDATE `zz_modules` SET `options` = "SELECT 
+    |select| 
+FROM 
+    `co_righe_documenti` 
+    LEFT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` 
+    INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` 
+WHERE 
+    1=1 AND `is_cespite` = 1 
+GROUP BY 
+    co_righe_documenti.id 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Cespiti';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM
+    `co_documenti`
+    INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
+    INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND `co_statidocumento_lang`. |lang|)
+    INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
+    INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
+    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`. |lang|)
+    LEFT JOIN (
+        SELECT
+            SUM(IF(`co_tipidocumento`.`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) AS totale_qta_generale
+        FROM
+            `co_documenti`
+            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
+            INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
+            INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `co_righe_documenti`.`id_articolo`
+            INNER JOIN `co_statidocumento` ON `co_statidocumento`.`id` = `co_documenti`.`id_stato`
+        WHERE
+            `co_tipidocumento`.`dir` = 'entrata'
+            AND (`co_statidocumento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
+    ) AS `totali_generali` ON 1=1
+WHERE
+    1=1
+    AND `co_tipidocumento`.`dir` = 'entrata'
+    AND (`co_statidocumento`.`name` IN ('Pagato', 'Parzialmente pagato', 'Emessa'))
+GROUP BY
+    `co_righe_documenti`.`id_articolo`, `mg_articoli_lang`.`title`
+HAVING
+    2=2
+ORDER BY
+    SUM(IF(`co_tipidocumento`.`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) DESC" WHERE `zz_modules`.`name` = 'Statistiche vendita';
+
+UPDATE `zz_modules` SET `options` = "SELECT 
+    |select| 
+FROM 
+    `co_righe_documenti` 
+    RIGHT JOIN `co_righe_ammortamenti` ON `co_righe_ammortamenti`.`id_riga` = `co_righe_documenti`.`id` 
+    INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` 
+WHERE 
+    1=1 AND `is_cespite` = 1 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Ammortamenti';
 
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps`) * IF(co_tipidocumento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
@@ -1340,3 +1448,6 @@ UPDATE `zz_views` SET `query` = "IF(co_preventivi.id_sede_destinazione > 0, sede
 UPDATE `zz_views` SET `query` = "IF(my_impianti.id_sede > 0, sede.info, CONCAT('', IF (clienti.telefono!='',CONCAT(clienti.telefono,'<br>'),''), IF(clienti.cellulare!='', CONCAT(clienti.cellulare,'<br>'),''),IF(clienti.citta!='',clienti.citta,''),IF(clienti.indirizzo!='',CONCAT(' - ',clienti.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
 
 UPDATE `zz_views` SET `query` = "IF( mg_movimenti.id_sede=0, 'Sede legale', an_sedi.nome_sede )" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');
+UPDATE `zz_views` SET `query` = "mg_movimenti.id_articolo" WHERE `zz_views`.`name` = "_link_record_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');
+
+UPDATE `zz_views` SET `query` = "IFNULL(an_sedi.nome,an_sedi.nome_sede)" WHERE `zz_views`.`name` = "Nome" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi');

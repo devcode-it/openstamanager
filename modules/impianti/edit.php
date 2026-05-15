@@ -85,7 +85,7 @@ $img = !empty($impianto) ? $impianto->image : null;
 					</div>
 					<div class="col-md-3">
 						<?php echo Modules::link('Stati impianti', $record['id_stato'], null, null, 'class="pull-right"'); ?>
-						{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "value": "$id_stato$", "values": "query=SELECT `my_statiimpianti`.`id`, `my_statiimpianti_lang`.`title` AS descrizione, `my_statiimpianti`.`colore` AS _bgcolor_ FROM `my_statiimpianti` LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND `my_statiimpianti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `my_statiimpianti`.`deleted_at` IS NULL ORDER BY `my_statiimpianti_lang`.`title`", "icon-after": "add|<?php echo $id_modulo_stati_impianti; ?>" ]}
+						{[ "type": "select", "label": "<?php echo tr('Stato'); ?>", "name": "id_stato", "value": "$id_stato$", "values": "query=SELECT `my_stati_impianti`.`id`, `my_stati_impianti_lang`.`title` AS descrizione, `my_stati_impianti`.`colore` AS _bgcolor_ FROM `my_stati_impianti` LEFT JOIN `my_stati_impianti_lang` ON (`my_stati_impianti`.`id` = `my_stati_impianti_lang`.`id_record` AND `my_stati_impianti_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `my_stati_impianti`.`deleted_at` IS NULL ORDER BY `my_stati_impianti_lang`.`title`", "icon-after": "add|<?php echo $id_modulo_stati_impianti; ?>" ]}
 					</div>
 				</div>
 

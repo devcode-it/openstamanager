@@ -65,7 +65,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $stato->delete('my_statiimpianti');
+        $stato->delete('my_stati_impianti');
         flash()->info(tr('Stato impianto eliminato.'));
 
         break;

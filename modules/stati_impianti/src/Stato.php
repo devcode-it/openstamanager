@@ -31,7 +31,7 @@ class Stato extends Model
     use RecordTrait;
     use SoftDeletes;
 
-    protected $table = 'my_statiimpianti';
+    protected $table = 'my_stati_impianti';
 
     protected static $translated_fields = [
         'title',

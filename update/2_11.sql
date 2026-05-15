@@ -88,7 +88,7 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (2, (SELECT MAX(`id`) FROM `zz_views`), 'Payment dates');
 
 -- Creazione tabella stati impianti
-CREATE TABLE IF NOT EXISTS `my_statiimpianti` (
+CREATE TABLE IF NOT EXISTS `my_stati_impianti` (
     `id`         INT(11)      NOT NULL AUTO_INCREMENT,
     `name`       VARCHAR(255) NULL,
     `icona`      VARCHAR(255) NOT NULL DEFAULT '',
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `my_statiimpianti` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabella traduzioni stati impianti
-CREATE TABLE IF NOT EXISTS `my_statiimpianti_lang` (
+CREATE TABLE IF NOT EXISTS `my_stati_impianti_lang` (
     `id`         INT(11)      NOT NULL AUTO_INCREMENT,
     `id_lang`    INT(11)      NOT NULL,
     `id_record`  INT(11)      NOT NULL,
@@ -120,8 +120,8 @@ INSERT INTO `zz_modules` (`name`, `directory`, `attachments_directory`, `options
 SELECT
     |select|
 FROM
-    `my_statiimpianti`
-    LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND |lang|)
+    `my_stati_impianti`
+    LEFT JOIN `my_stati_impianti_lang` ON (`my_stati_impianti`.`id` = `my_stati_impianti_lang`.`id_record` AND |lang|)
 WHERE
     1=1 AND deleted_at IS NULL
 HAVING
@@ -135,10 +135,10 @@ INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VA
 
 -- Viste del modulo
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
-((SELECT MAX(`id`) FROM `zz_modules`), 'id',          '`my_statiimpianti`.`id`', 1, 0),
-((SELECT MAX(`id`) FROM `zz_modules`), 'Descrizione', '`my_statiimpianti_lang`.`title`',  2, 1),
-((SELECT MAX(`id`) FROM `zz_modules`), 'Icona',       '`my_statiimpianti`.`icona`',       3, 1),
-((SELECT MAX(`id`) FROM `zz_modules`), 'Colore',      '`my_statiimpianti`.`colore`',      4, 1);
+((SELECT MAX(`id`) FROM `zz_modules`), 'id',          '`my_stati_impianti`.`id`', 1, 0),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Descrizione', '`my_stati_impianti_lang`.`title`',  2, 1),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Icona',       '`my_stati_impianti`.`icona`',       3, 1),
+((SELECT MAX(`id`) FROM `zz_modules`), 'Colore',      '`my_stati_impianti`.`colore`',      4, 1);
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'id'), 'id'),
@@ -151,20 +151,20 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT MAX(`id`) FROM `zz_modules`) AND `name` = 'Colore'),      'Color');
 
 -- Inserimento stati predefiniti: Attivo (verde) e Disattivato (rosso)
-INSERT INTO `my_statiimpianti` (`name`, `icona`, `colore`) VALUES
+INSERT INTO `my_stati_impianti` (`name`, `icona`, `colore`) VALUES
 ('Attivo',      'fa fa-check-circle', '#28a745'),
 ('Disattivato', 'fa fa-times-circle', '#dc3545');
 
-INSERT INTO `my_statiimpianti_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Attivo'),      'Attivo'),
-(2, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Attivo'),      'Active'),
-(1, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Disattivato'), 'Disattivato'),
-(2, (SELECT `id` FROM `my_statiimpianti` WHERE `name` = 'Disattivato'), 'Disabled');
+INSERT INTO `my_stati_impianti_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `my_stati_impianti` WHERE `name` = 'Attivo'),      'Attivo'),
+(2, (SELECT `id` FROM `my_stati_impianti` WHERE `name` = 'Attivo'),      'Active'),
+(1, (SELECT `id` FROM `my_stati_impianti` WHERE `name` = 'Disattivato'), 'Disattivato'),
+(2, (SELECT `id` FROM `my_stati_impianti` WHERE `name` = 'Disattivato'), 'Disabled');
 
--- Aggiunta colonna id_stato in my_impianti (FK verso my_statiimpianti)
+-- Aggiunta colonna id_stato in my_impianti (FK verso my_stati_impianti)
 ALTER TABLE `my_impianti`
     ADD COLUMN `id_stato` INT(11) NULL DEFAULT NULL AFTER `id`,
-    ADD CONSTRAINT `fk_my_impianti_stato` FOREIGN KEY (`id_stato`) REFERENCES `my_statiimpianti` (`id`) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT `fk_my_impianti_stato` FOREIGN KEY (`id_stato`) REFERENCES `my_stati_impianti` (`id`) ON UPDATE CASCADE ON DELETE SET NULL;
 
 -- Aggiunta conti per Iva Extra Intra UE e Reverse charge
 INSERT INTO `co_pianodeiconti3` (`id`, `numero`, `descrizione`, `idpianodeiconti2`, `dir`, `created_at`, `updated_at`, `percentuale_deducibile`) VALUES (NULL, '000040', 'Iva su vendite Extra UE', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`= "Conti transitori"), '', NULL, NULL, '100.00');
@@ -221,9 +221,9 @@ UPDATE `zz_segments_lang` SET `title`='Purchases' WHERE `title` LIKE 'Standard p
 UPDATE `zz_segments` SET `name`='Acquisti' WHERE `name` LIKE 'Standard acquisti';
 
 -- Nuova colonna stato impianto
-ALTER TABLE `my_statiimpianti` ADD `is_abilitato` BOOLEAN NOT NULL DEFAULT TRUE AFTER `deleted_at`; 
+ALTER TABLE `my_stati_impianti` ADD `is_abilitato` BOOLEAN NOT NULL DEFAULT TRUE AFTER `deleted_at`; 
 
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Stato', '`my_statiimpianti_lang`.`title`', '13', '1', '0', '0', '0', '', '', '1', '0', '0', '0');
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Stato', '`my_stati_impianti_lang`.`title`', '13', '1', '0', '0', '0', '', '', '1', '0', '0', '0');
 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT MAX(`id`) FROM `zz_views`), 'Stato'),
@@ -231,8 +231,8 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 
 -- Segmenti impianti
 INSERT INTO `zz_segments` (`id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Disabilitati', '1=1 AND `my_statiimpianti`.`is_abilitato`=0', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Abilitati', '1=1 AND (`my_statiimpianti`.`is_abilitato`=1 OR `my_statiimpianti`.`is_abilitato` IS NULL)', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Disabilitati', '1=1 AND `my_stati_impianti`.`is_abilitato`=0', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Abilitati', '1=1 AND (`my_stati_impianti`.`is_abilitato`=1 OR `my_stati_impianti`.`is_abilitato` IS NULL)', 'WHR', '####', '', '', 0, 0, 0, 0, 0, 0, 0),
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti'), 'Tutti', '1=1', 'WHR', '####', '', '', 1, 0, 0, 0, 0, 0, 1);
 
 INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
@@ -724,8 +724,8 @@ FROM
     LEFT JOIN (SELECT an_sedi.id, CONCAT(an_sedi.nome_sede, '<br />',IF(an_sedi.telefono!='',CONCAT(an_sedi.telefono,'<br />'),''),IF(an_sedi.cellulare!='',CONCAT(an_sedi.cellulare,'<br />'),''),an_sedi.citta,IF(an_sedi.indirizzo!='',CONCAT(' - ',an_sedi.indirizzo),'')) AS info FROM an_sedi) AS sede ON sede.id = my_impianti.id_sede
     LEFT JOIN `zz_marche` as marca ON `marca`.`id` = `my_impianti`.`id_marca`
     LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `my_impianti`.`id_modello`
-    LEFT JOIN `my_statiimpianti` ON `my_impianti`.`id_stato`=`my_statiimpianti`.`id`
-    LEFT JOIN `my_statiimpianti_lang` ON (`my_statiimpianti`.`id` = `my_statiimpianti_lang`.`id_record` AND `my_statiimpianti_lang`.|lang|)
+    LEFT JOIN `my_stati_impianti` ON `my_impianti`.`id_stato`=`my_stati_impianti`.`id`
+    LEFT JOIN `my_stati_impianti_lang` ON (`my_stati_impianti`.`id` = `my_stati_impianti_lang`.`id_record` AND `my_stati_impianti_lang`.|lang|)
 WHERE
     1=1
 HAVING

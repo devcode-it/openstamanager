@@ -65,7 +65,7 @@ switch (filter('op')) {
 
     case 'update':
         if (!empty($id_record)) {
-            $id_statoddt = post('id_statoddt');
+            $id_stato = post('id_stato');
             $id_pagamento = post('id_pagamento');
             $numero_esterno = post('numero_esterno');
             $id_anagrafica = post('id_anagrafica');
@@ -90,7 +90,7 @@ switch (filter('op')) {
             $ddt->note = post('note');
             $ddt->note_aggiuntive = post('note_aggiuntive');
 
-            $ddt->id_statoddt = $id_statoddt;
+            $ddt->id_stato = $id_stato;
             $ddt->id_pagamento = $id_pagamento;
             $ddt->id_conto = post('id_conto');
             $ddt->id_anagrafica = $id_anagrafica;
@@ -124,7 +124,7 @@ switch (filter('op')) {
             $ddt->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
             // Assegna il numero progressivo se il DDT viene evaso
-            $stato = Stato::find($id_statoddt);
+            $stato = Stato::find($id_stato);
 
             if ($stato->name == 'Evaso' && $dir == 'entrata' && empty($ddt->numero_esterno)) {
                 $ddt->numero_esterno = DDT::getNextNumeroSecondario($ddt->data, $dir, $ddt->id_segment);
@@ -378,7 +378,7 @@ switch (filter('op')) {
 
         // Modifica finale dello stato
         if (post('create_document') == 'on') {
-            $ddt->id_statoddt = post('id_stato');
+            $ddt->id_stato = post('id_stato');
             $ddt->save();
         }
 

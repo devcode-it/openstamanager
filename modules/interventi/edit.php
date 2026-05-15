@@ -349,7 +349,7 @@ if (!$block_edit) {
         FROM
             `dt_ddt`
             LEFT JOIN `dt_causalet` ON `dt_causalet`.`id` = `dt_ddt`.`id_causale_t`
-            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
+            INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
             LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
             INNER JOIN `dt_tipiddt` ON `dt_tipiddt`.`id` = `dt_ddt`.`id_tipo_ddt`
             INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`

@@ -693,7 +693,7 @@ switch (filter('op')) {
                 FROM
                     `dt_righe_ddt`
                     INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                    INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
+                    INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
                     LEFT JOIN `dt_statiddt_lang` ON `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).'
                 WHERE
                     `dt_ddt`.`numero_esterno` = '.prepare($ddt['numero']).' AND
@@ -781,7 +781,7 @@ switch (filter('op')) {
                     FROM
                         `dt_righe_ddt`
                         INNER JOIN `dt_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-                        INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
+                        INNER JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
                         LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
                         INNER JOIN `dt_tipiddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipiddt`.`id`
                     WHERE

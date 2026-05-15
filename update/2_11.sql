@@ -675,7 +675,7 @@ FROM
     LEFT JOIN `an_sedi` AS `sedi` ON `dt_ddt`.`id_sede_partenza` = `sedi`.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione` ON `dt_ddt`.`id_sede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN (SELECT `id_ddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `id_ddt`) AS righe ON `dt_ddt`.`id` = `righe`.`id_ddt`
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
+    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
     LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ', `co_documenti`.`numero_esterno` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `id_ddt` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type` = 'Modules\\DDT\\DDT' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`id_ddt` = `dt_ddt`.`id`
     LEFT JOIN (SELECT COUNT(`em_emails`.`id`) AS emails, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita') AND `zz_operations`.`op` = 'send-email' GROUP BY `id_record`) AS `email` ON `email`.`id_record` = `dt_ddt`.`id`
@@ -705,7 +705,7 @@ FROM
     LEFT JOIN `an_sedi` AS sedi ON `dt_ddt`.`id_sede_partenza` = sedi.`id`
     LEFT JOIN `an_sedi` AS `sedi_destinazione`ON `dt_ddt`.`id_sede_destinazione` = `sedi_destinazione`.`id`
     LEFT JOIN(SELECT `id_ddt`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `dt_righe_ddt` GROUP BY `id_ddt`) AS righe ON `dt_ddt`.`id` = `righe`.`id_ddt` 
-    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_statoddt`
+    LEFT JOIN `dt_statiddt` ON `dt_statiddt`.`id` = `dt_ddt`.`id_stato`
     LEFT JOIN `dt_statiddt_lang` ON (`dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND `dt_statiddt_lang`.|lang|)
     LEFT JOIN (SELECT GROUP_CONCAT(DISTINCT 'Fattura ',`co_documenti`.`numero` SEPARATOR ', ') AS `info`, `co_righe_documenti`.`original_document_id` AS `id_ddt` FROM `co_documenti` INNER JOIN `co_righe_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` WHERE `original_document_type`='Modules\DDT\DDT' GROUP BY `original_document_id`) AS `fattura` ON `fattura`.`id_ddt` = `dt_ddt`.`id`
 WHERE

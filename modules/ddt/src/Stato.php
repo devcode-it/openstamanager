@@ -51,7 +51,7 @@ class Stato extends Model
 
     public function ddt()
     {
-        return $this->hasMany(DDT::class, 'id_statoddt');
+        return $this->hasMany(DDT::class, 'id_stato');
     }
 
     public function getModuleAttribute()

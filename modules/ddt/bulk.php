@@ -163,7 +163,7 @@ switch (post('op')) {
 
         foreach ($id_records as $id) {
             $ddt = DDT::find($id);
-            $ddt->id_statoddt = $id_stato;
+            $ddt->id_stato = $id_stato;
             $ddt->save();
 
             ++$n_ddt;

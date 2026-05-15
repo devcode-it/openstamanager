@@ -183,7 +183,7 @@ class DDT extends Document
 
     public function stato()
     {
-        return $this->belongsTo(Stato::class, 'id_statoddt');
+        return $this->belongsTo(Stato::class, 'id_stato');
     }
 
     public function articoli()

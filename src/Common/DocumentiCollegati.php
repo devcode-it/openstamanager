@@ -287,9 +287,9 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
+        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_statoddt` AND 
+            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
@@ -390,9 +390,9 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND 
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
+        INNER JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
-            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_statoddt` AND 
+            `dt_statiddt_lang`.`id_record` = `dt_ddt`.`id_stato` AND 
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         GROUP BY `dt_ddt`.`id`
@@ -609,7 +609,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -728,7 +728,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -923,7 +923,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
         INNER JOIN `dt_righe_ddt` ON `dt_ddt`.`id` = `dt_righe_ddt`.`id_ddt`
-        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_statoddt` = `dt_statiddt`.`id`
+        LEFT JOIN `dt_statiddt` ON `dt_ddt`.`id_stato` = `dt_statiddt`.`id`
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -1061,7 +1061,7 @@ class DocumentiCollegati
             `dt_tipiddt_lang`.`id_record` = `dt_ddt`.`id_tipo_ddt` AND
             `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
         )
-        LEFT JOIN dt_statiddt ON dt_ddt.id_statoddt=dt_statiddt.id
+        LEFT JOIN dt_statiddt ON dt_ddt.id_stato=dt_statiddt.id
         LEFT JOIN `dt_statiddt_lang` ON (
             `dt_statiddt`.`id` = `dt_statiddt_lang`.`id_record` AND
             `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
@@ -2002,7 +2002,7 @@ class DocumentiCollegati
                 `dt_tipiddt_lang`.`id_record` = `dt_tipiddt`.`id` AND
                 `dt_tipiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'
             )
-            INNER JOIN `dt_statiddt` ON `'.$tabella.'`.`id_statoddt` = `dt_statiddt`.`id`
+            INNER JOIN `dt_statiddt` ON `'.$tabella.'`.`id_stato` = `dt_statiddt`.`id`
             LEFT JOIN `dt_statiddt_lang` ON (
                 `dt_statiddt_lang`.`id_record` = `dt_statiddt`.`id` AND
                 `dt_statiddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).'

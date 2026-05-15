@@ -60,7 +60,7 @@ class Sync extends Resource implements RetrieveInterface, UpdateInterface
             in_interventi_tecnici 
         INNER JOIN 
             in_interventi ON in_interventi_tecnici.id_intervento=in_interventi.id
-        LEFT JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipiintervento`.`id`
+        LEFT JOIN `in_tipi_intervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
         WHERE 
             DATE(orario_inizio) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE() + INTERVAL 3 MONTH AND in_interventi.deleted_at IS NULL';
 

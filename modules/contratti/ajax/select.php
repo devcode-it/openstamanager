@@ -36,13 +36,13 @@ switch ($resource) {
                 (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS sconto,
                 (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS n_righe,
                 `co_contratti`.`id_tipo_intervento`,
-                `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
-                `in_tipiintervento`.`tempo_standard` AS tempo_standard
+                `in_tipi_intervento_lang`.`title` AS id_tipo_intervento_descrizione,
+                `in_tipi_intervento`.`tempo_standard` AS tempo_standard
             FROM
                 `co_contratti`
                 INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica`=`an_anagrafiche`.`id`
-                LEFT JOIN `in_tipiintervento` ON (`co_contratti`.`id_tipo_intervento`=`in_tipiintervento`.`id`)
-                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `in_tipi_intervento` ON (`co_contratti`.`id_tipo_intervento`=`in_tipi_intervento`.`id`)
+                LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id`=`in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
             |where|
             ORDER BY
                 `co_contratti`.`id`';
@@ -153,23 +153,23 @@ switch ($resource) {
         $id_record = $options['id_record'] ?? get('id_record') ?? $superselect['id_record'];
 
         $query = 'SELECT
-                    `in_tipiintervento`.`id` AS id,
-                    `in_tipiintervento_lang`.`title` AS descrizione
+                    `in_tipi_intervento`.`id` AS id,
+                    `in_tipi_intervento_lang`.`title` AS descrizione
                 FROM
                     `co_contratti_tipi_intervento`
-                    INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
-                    LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
+                    INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
+                    LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
                     `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).'
                     AND `co_contratti_tipi_intervento`.`is_abilitato` = 1
                 ORDER BY
-                    `in_tipiintervento_lang`.`title`';
+                    `in_tipi_intervento_lang`.`title`';
 
         $where = [];
         $custom = [];
 
         if (!empty($search)) {
-            $search_fields[] = '`in_tipiintervento_lang`.`title` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`in_tipi_intervento_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);

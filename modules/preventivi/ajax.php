@@ -23,6 +23,6 @@ include_once __DIR__.'/../../core.php';
 if (get('op') == 'get_costo_orario') {
     $id_tipo_intervento = get('id_tipo_intervento');
 
-    $rs = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare($id_tipo_intervento));
+    $rs = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipi_intervento` WHERE `id`='.prepare($id_tipo_intervento));
     echo $rs[0]['costo_orario'];
 }

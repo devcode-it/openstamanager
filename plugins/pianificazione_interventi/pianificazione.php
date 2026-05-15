@@ -48,7 +48,7 @@ if (count($id_impianti) == 1) {
 }
 
 // Informazioni del promemoria
-$record = $dbo->fetchOne('SELECT *, `in_tipiintervento_lang`.`title` AS tipointervento, `in_tipiintervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_promemoria`.`id_tipo_intervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
+$record = $dbo->fetchOne('SELECT *, `in_tipi_intervento_lang`.`title` AS tipointervento, `in_tipi_intervento`.`tempo_standard` FROM `co_promemoria` INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_promemoria`.`id_tipo_intervento` LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_promemoria`.`id` = :id', [
     ':id' => $id_record,
 ]);
 $data_richiesta = $record['data_richiesta'] ?: date('Y-m-d');

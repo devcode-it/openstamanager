@@ -29,7 +29,7 @@ include_once __DIR__.'/../../core.php';
 $stati_intervento = $dbo->fetchArray('SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tipi intervento
-$tipi_intervento = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title` AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
+$tipi_intervento = $dbo->fetchArray('SELECT `in_tipi_intervento`.`id`, `in_tipi_intervento_lang`.`title` AS descrizione FROM `in_tipi_intervento` LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title` ASC');
 
 // Tecnici disponibili
 $id_tipo_tecnico = Tipo::where('name', 'Tecnico')->first()->id;

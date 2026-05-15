@@ -33,7 +33,7 @@ switch ($resource) {
                 `is_bloccata`,
                 CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice` ) AS descrizione,
                 `id_tipo_intervento_default` AS id_tipo_intervento,
-                `in_tipiintervento_lang`.`title` AS id_tipo_intervento_descrizione,
+                `in_tipi_intervento_lang`.`title` AS id_tipo_intervento_descrizione,
                 `an_anagrafiche`.`id_zona`,
                 `contratto`.`id` AS id_contratto,
                 `contratto`.`descrizione` AS descrizione_contratto,
@@ -48,8 +48,8 @@ switch ($resource) {
                 INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
                 INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id`
                 LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                LEFT JOIN `in_tipiintervento` ON `an_anagrafiche`.`id_tipo_intervento_default`=`in_tipiintervento`.`id`
-                LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN `in_tipi_intervento` ON `an_anagrafiche`.`id_tipo_intervento_default`=`in_tipi_intervento`.`id`
+                LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id`=`in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 LEFT JOIN `an_relazioni` ON `an_anagrafiche`.`id_relazione`=`an_relazioni`.`id`
                 LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= '.prepare(Models\Locale::getDefault()->id).")
                 LEFT JOIN (SELECT `co_contratti`.`id`, `id_anagrafica`, CONCAT('Contratto ', `numero`, ' del ', DATE_FORMAT(`data_bozza`, '%d/%m/%Y'), ' - ', `co_contratti`.`nome`, ' [', `co_stati_contratti_lang`.`title` , ']') AS descrizione FROM `co_contratti` LEFT JOIN `co_stati_contratti` ON `co_contratti`.`id_stato`=`co_stati_contratti`.`id` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id`=`co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti`.`predefined`=1 AND `is_pianificabile`=1) AS contratto ON `an_anagrafiche`.`id`=`contratto`.`id_anagrafica`

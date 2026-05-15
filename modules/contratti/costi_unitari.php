@@ -26,7 +26,7 @@ $block_edit = $record['is_bloccato'];
 $idtipiintervento = ['-1'];
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento (tutti quelli abilitati)
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipi_intervento`.*, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km` AS `costo_km_standard`, `in_tipiintervento`.`costo_diritto_chiamata`, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `id_contratto`='.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 1 ORDER BY `in_tipiintervento_lang`.`title`');
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipi_intervento`.*, `in_tipi_intervento`.`costo_orario`, `in_tipi_intervento`.`costo_km` AS `costo_km_standard`, `in_tipi_intervento`.`costo_diritto_chiamata`, `in_tipi_intervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `id_contratto`='.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 1 ORDER BY `in_tipi_intervento_lang`.`title`');
 
 if (!empty($rs)) {
     echo '
@@ -87,7 +87,7 @@ echo '
 					<div class="hide">';
 
 // Loop fra i tipi di attività e i relativi costi del tipo intervento (quelli disabilitati)
-$rs = $dbo->fetchArray('SELECT `co_contratti_tipi_intervento`.*, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km` AS `costo_km_standard`, `in_tipiintervento`.`costo_diritto_chiamata`, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id`=`in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipi_intervento`.`id_tipo_intervento` NOT IN('.implode(',', array_map(prepare(...), $idtipiintervento)).') AND `id_contratto`='.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 0 ORDER BY `title`');
+$rs = $dbo->fetchArray('SELECT `co_contratti_tipi_intervento`.*, `in_tipi_intervento`.`costo_orario`, `in_tipi_intervento`.`costo_km` AS `costo_km_standard`, `in_tipi_intervento`.`costo_diritto_chiamata`, `in_tipi_intervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id`=`in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_contratti_tipi_intervento`.`id_tipo_intervento` NOT IN('.implode(',', array_map(prepare(...), $idtipiintervento)).') AND `id_contratto`='.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 0 ORDER BY `title`');
 
 if (!empty($rs)) {
     echo '

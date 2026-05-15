@@ -96,7 +96,7 @@ foreach ($raggruppamenti as $mese => $raggruppamento) {
                     '.$rs_tecnici[0]['tecnici'].'
                 </td>
 
-                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_tipiintervento`.`id`='.prepare($r['id_tipo_intervento']))['descrizione'].'</td>
+                <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_tipi_intervento` LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_tipi_intervento`.`id`='.prepare($r['id_tipo_intervento']))['descrizione'].'</td>
                 <td>'.$dbo->fetchOne("SELECT CONCAT_WS(' - ', `codice`,`title`) AS descrizione FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).') WHERE `in_stati_intervento`.`id`='.prepare($r['id_stato']))['descrizione'].'</td>
                 <td class="text-right">
                     <button type="button" class="btn btn-xs btn-default" onclick="toggleDettagli(this)">

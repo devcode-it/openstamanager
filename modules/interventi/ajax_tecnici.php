@@ -41,16 +41,16 @@ $query = 'SELECT
         (`in_interventi_tecnici`.`prezzo_km_unitario_tecnico` * `in_interventi_tecnici`.`km`) AS prezzo_km_consuntivo_tecnico,
         `an_anagrafiche`.`ragione_sociale`,
         `an_anagrafiche`.`deleted_at` AS anagrafica_deleted_at,
-        `in_tipiintervento`.`deleted_at` AS tipo_deleted_at,
-        `in_tipiintervento_lang`.`title` AS descrizione_tipo,
+        `in_tipi_intervento`.`deleted_at` AS tipo_deleted_at,
+        `in_tipi_intervento_lang`.`title` AS descrizione_tipo,
         `in_interventi_tecnici`.`tipo_sconto_km` AS tipo_sconto_km,
         `user`.`id` AS id_user
     FROM
         `in_interventi_tecnici` 
         INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`id_tecnico` = `an_anagrafiche`.`id`
         LEFT JOIN (SELECT `zz_users`.`id_anagrafica`, `zz_users`.`id` FROM `zz_users` GROUP BY `zz_users`.`id_anagrafica`) AS user ON `user`.`id_anagrafica` = `an_anagrafiche`.`id` 
-        INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipiintervento`.`id`
-        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `in_tipi_intervento` ON `in_interventi_tecnici`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
+        LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     WHERE
         `in_interventi_tecnici`.`id_intervento`='.prepare($id_record).'
     ORDER BY

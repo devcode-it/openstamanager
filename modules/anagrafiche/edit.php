@@ -597,11 +597,11 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     $where_clause = '';
     $tipi_utilizzabili_filtro = array_filter($idtipiintervento, fn ($val) => $val != '-1');
     if (!empty($tipi_utilizzabili_filtro)) {
-        $where_clause = 'WHERE in_tipiintervento.id IN ('.implode(',', array_map(intval(...), $tipi_utilizzabili_filtro)).')';
+        $where_clause = 'WHERE in_tipi_intervento.id IN ('.implode(',', array_map(intval(...), $tipi_utilizzabili_filtro)).')';
     }
 
     echo '
-                                    {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipiintervento.id, title as descrizione FROM in_tipiintervento LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode(',', $idtipiintervento).'" ]}
+                                    {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipi_intervento.id, title as descrizione FROM in_tipi_intervento LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode(',', $idtipiintervento).'" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "id_tipo_intervento_default", "ajax-source": "tipiintervento",  "select-options": '.json_encode(['idtipiintervento' => '']).', "value": "$id_tipo_intervento_default$" ]}

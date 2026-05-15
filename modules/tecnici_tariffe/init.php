@@ -25,15 +25,15 @@ if (!empty($id_record)) {
 
     $tipi_interventi = $dbo->fetchArray('SELECT 
             `in_tariffe`.*,
-            `in_tipiintervento_lang`.`title`,
-            `in_tipiintervento`.`id`, 
+            `in_tipi_intervento_lang`.`title`,
+            `in_tipi_intervento`.`id`, 
             `in_tariffe`.`id_tipo_intervento` AS esiste 
         FROM 
-            `in_tipiintervento` 
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-            LEFT JOIN `in_tariffe` ON `in_tipiintervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`id_tecnico` = '.prepare($id_record).' 
+            `in_tipi_intervento` 
+            LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+            LEFT JOIN `in_tariffe` ON `in_tipi_intervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`id_tecnico` = '.prepare($id_record).' 
         WHERE 
-            `in_tipiintervento`.`deleted_at` IS NULL 
+            `in_tipi_intervento`.`deleted_at` IS NULL 
         ORDER BY 
             `title`');
 }

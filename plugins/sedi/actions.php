@@ -160,7 +160,7 @@ function salvaTariffeSede($id_sede, $id_parent)
     }
 
     // Recupera i tipi di intervento
-    $tipi_interventi = $dbo->fetchArray('SELECT id FROM in_tipiintervento WHERE deleted_at IS NULL');
+    $tipi_interventi = $dbo->fetchArray('SELECT id FROM in_tipi_intervento WHERE deleted_at IS NULL');
 
     // Recupera le tariffe esistenti per questa sede
     $tariffe_esistenti = $dbo->fetchArray('SELECT id, id_tipo_intervento FROM in_tariffe_sedi WHERE id_sede = '.prepare($id_sede));

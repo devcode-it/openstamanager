@@ -642,12 +642,12 @@ echo '
 </div>';
 
 // Numero interventi per tipologia
-$tipi = $dbo->table('in_tipiintervento')
-    ->leftJoin('in_tipiintervento_lang', function ($join) {
-        $join->on('in_tipiintervento.id', '=', 'in_tipiintervento_lang.id_record')
-            ->where('in_tipiintervento_lang.id_lang', '=', Models\Locale::getDefault()->id);
+$tipi = $dbo->table('in_tipi_intervento')
+    ->leftJoin('in_tipi_intervento_lang', function ($join) {
+        $join->on('in_tipi_intervento.id', '=', 'in_tipi_intervento_lang.id_record')
+            ->where('in_tipi_intervento_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
-    ->select('*', 'in_tipiintervento.id as id_tipo_intervento')
+    ->select('*', 'in_tipi_intervento.id as id_tipo_intervento')
     ->get()
     ->toArray();
 

@@ -62,7 +62,7 @@ switch (post('op')) {
             ]);
         }
 
-        $dbo->delete('in_tipiintervento_tipologie', [
+        $dbo->delete('in_tipi_intervento_tipologie', [
             'id_tipo_intervento' => $id_record,
         ]);
         $tipi = (array) post('tipi');
@@ -70,13 +70,13 @@ switch (post('op')) {
             if (!$tipo) {
                 continue;
             }
-            $dbo->insert('in_tipiintervento_tipologie', [
+            $dbo->insert('in_tipi_intervento_tipologie', [
                 'id_tipo_intervento' => $id_record,
                 'tipo' => $tipo,
             ]);
         }
 
-        $dbo->delete('in_tipiintervento_groups', [
+        $dbo->delete('in_tipi_intervento_groups', [
             'id_tipo_intervento' => $id_record,
         ]);
         $gruppi = (array) post('gruppi');
@@ -84,7 +84,7 @@ switch (post('op')) {
             if (!$id_gruppo) {
                 continue;
             }
-            $dbo->insert('in_tipiintervento_groups', [
+            $dbo->insert('in_tipi_intervento_groups', [
                 'id_tipo_intervento' => $id_record,
                 'id_gruppo' => $id_gruppo,
             ]);
@@ -143,7 +143,7 @@ switch (post('op')) {
 
         $dbo->delete('in_fasce_orarie_tipi_intervento', ['id_tipo_intervento' => $id_record]);
 
-        $query = 'UPDATE `in_tipiintervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
+        $query = 'UPDATE `in_tipi_intervento` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record);
         $dbo->query($query);
 
         flash()->info(tr('Tipo di intervento eliminato!'));

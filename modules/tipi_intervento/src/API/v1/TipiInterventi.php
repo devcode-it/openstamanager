@@ -27,7 +27,7 @@ class TipiInterventi extends Resource implements RetrieveInterface
 {
     public function retrieve($request)
     {
-        $table = 'in_tipiintervento';
+        $table = 'in_tipi_intervento';
 
         $select = $request['select'];
         if (empty($select)) {
@@ -37,7 +37,7 @@ class TipiInterventi extends Resource implements RetrieveInterface
         }
 
         $joins = [
-            'in_tipiintervento_lang' => 'in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.\Models\Locale::getDefault()->id,
+            'in_tipi_intervento_lang' => 'in_tipi_intervento_lang.id_record = in_tipi_intervento.id AND in_tipi_intervento_lang.id_lang = '.\Models\Locale::getDefault()->id,
         ];
 
         return [

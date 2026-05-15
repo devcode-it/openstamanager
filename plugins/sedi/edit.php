@@ -31,10 +31,10 @@ $anagrafica = Anagrafica::find($id_parent);
 $is_cliente = $anagrafica->isTipo('Cliente');
 
 // Recupera i tipi di intervento
-$tipi_interventi = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title`, `in_tipiintervento`.`costo_orario`, `in_tipiintervento`.`costo_km`, `in_tipiintervento`.`costo_diritto_chiamata`
-FROM `in_tipiintervento` 
-LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-WHERE `in_tipiintervento`.`deleted_at` IS NULL 
+$tipi_interventi = $dbo->fetchArray('SELECT `in_tipi_intervento`.`id`, `in_tipi_intervento_lang`.`title`, `in_tipi_intervento`.`costo_orario`, `in_tipi_intervento`.`costo_km`, `in_tipi_intervento`.`costo_diritto_chiamata`
+FROM `in_tipi_intervento` 
+LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
+WHERE `in_tipi_intervento`.`deleted_at` IS NULL 
 ORDER BY `title`');
 
 // Recupera le tariffe esistenti per questa sede

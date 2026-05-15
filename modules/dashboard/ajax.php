@@ -264,7 +264,7 @@ switch (filter('op')) {
 
         if ($allDay == 'false') {
             // Lettura dati sessione tecnica specifica
-            $query = 'SELECT in_interventi_tecnici.id_intervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, id_tecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=id_tecnico) AS colore, in_interventi_tecnici.id_tipo_intervento AS id_tipo_intervento_sessione, in_tipiintervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.id_intervento=in_interventi.id LEFT JOIN in_tipiintervento ON in_interventi_tecnici.id_tipo_intervento=in_tipiintervento.id LEFT JOIN in_tipiintervento_lang ON (in_tipiintervento_lang.id_record = in_tipiintervento.id AND in_tipiintervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+            $query = 'SELECT in_interventi_tecnici.id_intervento, in_interventi.id, in_interventi_tecnici.id AS id_sessione, id_tecnico, orario_inizio, orario_fine, (SELECT ragione_sociale FROM an_anagrafiche WHERE id=id_tecnico) AS nome_tecnico, (SELECT colore FROM an_anagrafiche WHERE id=id_tecnico) AS colore, in_interventi_tecnici.id_tipo_intervento AS id_tipo_intervento_sessione, in_tipi_intervento_lang.title AS tipo_sessione FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi_tecnici.id_intervento=in_interventi.id LEFT JOIN in_tipi_intervento ON in_interventi_tecnici.id_tipo_intervento=in_tipi_intervento.id LEFT JOIN in_tipi_intervento_lang ON (in_tipi_intervento_lang.id_record = in_tipi_intervento.id AND in_tipi_intervento_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).') WHERE in_interventi_tecnici.id='.prepare($id_sessione).' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
             $rs_sessione = $dbo->fetchArray($query);
 
             if (!empty($rs_sessione)) {
@@ -283,14 +283,14 @@ switch (filter('op')) {
                         `in_stati_intervento_lang`.`title` AS stato,
                         `in_interventi`.`id_tipo_intervento` AS parent_idtipo,
                         (SELECT GROUP_CONCAT(CONCAT(`matricola`, " - ", `nome`) SEPARATOR ", ") FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id`=`my_impianti_interventi`.`id_impianto` WHERE `my_impianti_interventi`.`id_intervento`='.prepare($id_intervento).' GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti,
-                        `in_tipiintervento_lang`.`title` AS tipo,
+                        `in_tipi_intervento_lang`.`title` AS tipo,
                         (SELECT id_zona FROM an_anagrafiche WHERE id=in_interventi.id_anagrafica) AS id_zona
                     FROM
                         `in_interventi`
                         INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
                         LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-                        INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipiintervento`.`id`
-                        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                        INNER JOIN `in_tipi_intervento` ON `in_interventi`.`id_tipo_intervento`=`in_tipi_intervento`.`id`
+                        LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         LEFT JOIN `in_interventi_tecnici` ON `in_interventi`.`id` =`in_interventi_tecnici`.`id_intervento`
                         LEFT JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`
                     WHERE
@@ -491,7 +491,7 @@ switch (filter('op')) {
             IF(`co_promemoria`.`data_scadenza` IS NULL, '', `co_promemoria`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'promemoria' AS ref,
-            `in_tipiintervento_lang`.`title` AS tipo_intervento,
+            `in_tipi_intervento_lang`.`title` AS tipo_intervento,
             '' AS id_tecnico,
             '' AS ragione_sociale_tecnico,
             '' AS colore
@@ -500,8 +500,8 @@ switch (filter('op')) {
             INNER JOIN `co_contratti` ON `co_promemoria`.`id_contratto` = `co_contratti`.`id`
             INNER JOIN `co_stati_contratti` ON `co_contratti`.`id_stato` = `co_stati_contratti`.`id`
             INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica` = `an_anagrafiche`.`id`
-            INNER JOIN `in_tipiintervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
+            INNER JOIN `in_tipi_intervento` ON `co_promemoria`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
+            LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id)."
         WHERE
             `id_intervento` IS NULL AND `co_stati_contratti`.`is_pianificabile` = 1)
         UNION
@@ -517,14 +517,14 @@ switch (filter('op')) {
             IF(`in_interventi`.`data_scadenza` IS NULL, '', `in_interventi`.`data_scadenza`) AS data_scadenza,
             `an_anagrafiche`.`ragione_sociale` AS ragione_sociale,
             'intervento' AS ref,
-            `in_tipiintervento_lang`.`title` AS tipo_intervento,
+            `in_tipi_intervento_lang`.`title` AS tipo_intervento,
             `in_interventi_tecnici_assegnati`.`id_tecnico` AS id_tecnico,
             `tecnico`.`ragione_sociale` AS ragione_sociale_tecnico,
             `tecnico`.`colore`
         FROM
             `in_interventi`
-            INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`
-            LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `in_tipi_intervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
+            LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica`=`an_anagrafiche`.`id`';
 
         // Visualizzo solo promemoria del tecnico loggato

@@ -72,7 +72,7 @@ switch (post('op')) {
                 $fascia_oraria->ora_fine = $ora_fine;
                 $fascia_oraria->save();
 
-                $tipi_intervento = $dbo->select('in_tipiintervento', '*');
+                $tipi_intervento = $dbo->select('in_tipi_intervento', '*');
                 foreach ($tipi_intervento as $tipo_intervento) {
                     $dbo->insert('in_fasce_orarie_tipi_intervento', [
                         'id_fascia_oraria' => $id_record,

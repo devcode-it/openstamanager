@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 if (get('op') == 'get_costo_orario') {
     $id_tipo_intervento = get('id_tipo_intervento');
 
-    $rs = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare($id_tipo_intervento));
+    $rs = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipi_intervento` WHERE `id`='.prepare($id_tipo_intervento));
     echo $rs[0]['costo_orario'];
 }
 
@@ -40,7 +40,7 @@ if (get('op') == 'get_costo_ore') {
         ]);
     } else {
         // Se non esiste nel contratto, recupera il costo orario standard
-        $rs_standard = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipiintervento` WHERE `id`='.prepare($id_tipo_intervento));
+        $rs_standard = $dbo->fetchArray('SELECT `costo_orario` FROM `in_tipi_intervento` WHERE `id`='.prepare($id_tipo_intervento));
         echo json_encode([
             'costo_ore' => $rs_standard[0]['costo_orario'],
         ]);
@@ -51,7 +51,7 @@ if (get('op') == 'tipiintervento_abilitati') {
     $id_record = filter('id_record');
 
     // Recupera i tipi di attività abilitati per il contratto
-    $rs = $dbo->fetchArray('SELECT `in_tipiintervento`.`id`, `in_tipiintervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipiintervento` ON `in_tipiintervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipiintervento_lang` ON `in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 1 ORDER BY `in_tipiintervento_lang`.`title`');
+    $rs = $dbo->fetchArray('SELECT `in_tipi_intervento`.`id`, `in_tipi_intervento_lang`.`title` FROM `co_contratti_tipi_intervento` INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento` LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).' WHERE `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).' AND `co_contratti_tipi_intervento`.`is_abilitato` = 1 ORDER BY `in_tipi_intervento_lang`.`title`');
 
     echo json_encode($rs);
 }

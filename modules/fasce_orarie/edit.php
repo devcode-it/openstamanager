@@ -140,7 +140,7 @@ function aggiungiData() {
 
 <?php
 
-$elementi = $dbo->fetchArray('SELECT `in_tipiintervento`.`codice`, `in_tipiintervento_lang`.`title`, `in_tipiintervento`.`id` FROM `in_tipiintervento` LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_fasce_orarie_tipi_intervento` ON `in_tipiintervento`.`id`=`in_fasce_orarie_tipi_intervento`.`id_tipo_intervento` WHERE `in_fasce_orarie_tipi_intervento`.`id_fascia_oraria`='.prepare($id_record));
+$elementi = $dbo->fetchArray('SELECT `in_tipi_intervento`.`codice`, `in_tipi_intervento_lang`.`title`, `in_tipi_intervento`.`id` FROM `in_tipi_intervento` LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `in_fasce_orarie_tipi_intervento` ON `in_tipi_intervento`.`id`=`in_fasce_orarie_tipi_intervento`.`id_tipo_intervento` WHERE `in_fasce_orarie_tipi_intervento`.`id_fascia_oraria`='.prepare($id_record));
 
 if (!empty($elementi)) {
     echo '

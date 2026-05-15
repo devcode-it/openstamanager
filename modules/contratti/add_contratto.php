@@ -29,19 +29,19 @@ if (!empty($id_documento)) {
     // Calcolo delle ore residue per ogni tipo di attività
     $tipi_attivita = $dbo->fetchArray('SELECT
         `co_contratti_tipi_intervento`.`id_tipo_intervento`,
-        `in_tipiintervento_lang`.`title` AS descrizione,
+        `in_tipi_intervento_lang`.`title` AS descrizione,
         COALESCE(SUM(`co_righe_contratti`.`qta`), 0) AS ore_totali,
         COALESCE(SUM(`in_interventi_tecnici`.`ore`), 0) AS ore_utilizzate
     FROM `co_contratti_tipi_intervento`
-    INNER JOIN `in_tipiintervento` ON `co_contratti_tipi_intervento`.`id_tipo_intervento` = `in_tipiintervento`.`id`
-    LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento`.`id` = `in_tipiintervento_lang`.`id_record` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    INNER JOIN `in_tipi_intervento` ON `co_contratti_tipi_intervento`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
+    LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_righe_contratti` ON `co_righe_contratti`.`id_contratto` = `co_contratti_tipi_intervento`.`id_contratto`
         AND `co_righe_contratti`.`id_tipo_intervento` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
     LEFT JOIN `in_interventi` ON `in_interventi`.`id_contratto` = `co_contratti_tipi_intervento`.`id_contratto`
     LEFT JOIN `in_interventi_tecnici` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
         AND `in_interventi_tecnici`.`id_tipo_intervento` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
     WHERE `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_documento).'
-    GROUP BY `co_contratti_tipi_intervento`.`id_tipo_intervento`, `in_tipiintervento_lang`.`title`');
+    GROUP BY `co_contratti_tipi_intervento`.`id_tipo_intervento`, `in_tipi_intervento_lang`.`title`');
 
     $options = [
         'op' => 'add_documento',

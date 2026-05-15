@@ -92,7 +92,7 @@ class Intervento extends Document
     public function getOreTotaliDaConteggiareAttribute()
     {
         if (!isset($this->info['ore_totali_da_conteggiare'])) {
-            $sessioni = $this->sessioni()->leftJoin('in_tipiintervento', 'in_interventi_tecnici.id_tipo_intervento', 'in_tipiintervento.id')->where('non_conteggiare', 0);
+            $sessioni = $this->sessioni()->leftJoin('in_tipi_intervento', 'in_interventi_tecnici.id_tipo_intervento', 'in_tipi_intervento.id')->where('non_conteggiare', 0);
 
             $this->info['ore_totali_da_conteggiare'] = $sessioni->sum('ore');
         }

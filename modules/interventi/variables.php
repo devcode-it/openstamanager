@@ -25,7 +25,7 @@ $r = $dbo->fetchOne('SELECT *,
         `an_referenti`.`nome`,
         `in_interventi`.`codice` AS codice,
         (SELECT MAX(`orario_fine`) FROM `in_interventi_tecnici` WHERE `id_intervento`=`in_interventi`.`id`) AS data_fine,
-        `in_tipiintervento_lang`.`title` AS tipo,
+        `in_tipi_intervento_lang`.`title` AS tipo,
         `in_stati_intervento_lang`.`title` AS stato,
         `impianti`.`descrizione` AS impianti,
         `in_interventi`.`descrizione` AS descrizione,
@@ -35,8 +35,8 @@ $r = $dbo->fetchOne('SELECT *,
         LEFT JOIN `an_sedi` ON `an_sedi`.`id` = `in_interventi`.`id_sede_destinazione`
         INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
         LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-        INNER JOIN `in_tipiintervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipiintervento`.`id`
-        LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `in_tipi_intervento` ON `in_interventi`.`id_tipo_intervento` = `in_tipi_intervento`.`id`
+        LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `in_interventi`.`id_anagrafica` = `an_anagrafiche`.`id`
         LEFT JOIN `an_referenti` ON `an_referenti`.`id`=`in_interventi`.`id_referente`
         LEFT JOIN (SELECT GROUP_CONCAT(CONCAT(`matricola`, IF(`nome` != "", CONCAT(" - ", `nome`), "")) SEPARATOR "<br>") AS descrizione, `my_impianti_interventi`.`id_intervento` FROM `my_impianti` INNER JOIN `my_impianti_interventi` ON `my_impianti`.`id` = `my_impianti_interventi`.`id_impianto` GROUP BY `my_impianti_interventi`.`id_intervento`) AS impianti ON `impianti`.`id_intervento` = `in_interventi`.`id`

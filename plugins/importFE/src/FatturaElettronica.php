@@ -545,7 +545,7 @@ class FatturaElettronica
         $pagamento = Pagamento::where('codice_modalita_pagamento_fe', $codice_modalita_pagamento)->where('predefined', '1')->first();
 
         // Tipo del documento
-        $query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+        $query = "SELECT `co_tipi_documento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = ".prepare(Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
         $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
         $numero_tipo = database()->fetchNum($query_tipo);
         if (!empty($numero_tipo)) {
@@ -556,7 +556,7 @@ class FatturaElettronica
         // Sezionale
         $id_segment = null;
         if (!empty($id_tipo_documento)) {
-            $id_segment = database()->table('co_tipidocumento')->where('id', '=', $id_tipo_documento)->value('id_segment');
+            $id_segment = database()->table('co_tipi_documento')->where('id', '=', $id_tipo_documento)->value('id_segment');
         }
 
         $info = [

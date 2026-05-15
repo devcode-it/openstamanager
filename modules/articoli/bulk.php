@@ -311,7 +311,7 @@ switch (post('op')) {
             $articolo = Articolo::find($id);
 
             if ($articolo->prezzo_acquisto == 0 && empty($articolo->idfornitore)) {
-                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (`prezzo_unitario`-`sconto_unitario`) AS prezzo_acquisto FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_articolo`='.prepare($id).' AND `dir`="uscita" ORDER BY `co_documenti`.`data` DESC, `co_righe_documenti`.`id` DESC LIMIT 0,1')['prezzo_acquisto'];
+                $new_prezzo_acquisto = $dbo->fetchOne('SELECT (`prezzo_unitario`-`sconto_unitario`) AS prezzo_acquisto FROM `co_righe_documenti` LEFT JOIN `co_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id`=`co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_articolo`='.prepare($id).' AND `dir`="uscita" ORDER BY `co_documenti`.`data` DESC, `co_righe_documenti`.`id` DESC LIMIT 0,1')['prezzo_acquisto'];
 
                 $articolo->prezzo_acquisto = $new_prezzo_acquisto;
                 $articolo->save();

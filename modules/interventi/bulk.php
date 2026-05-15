@@ -38,7 +38,7 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-$id_tipo_documento = $dbo->selectOne('co_tipidocumento', ['id'], [
+$id_tipo_documento = $dbo->selectOne('co_tipi_documento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
@@ -158,7 +158,7 @@ switch (post('op')) {
             if (empty($id_documento)) {
                 if (!empty($accodare)) {
                     $where = $raggruppamento == 'sede' ? ' AND `id_sede_destinazione` = '.prepare($intervento['id_sede_destinazione']) : '';
-                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`  INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_stati_documento`.`name` = "Bozza"  AND `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_tipidocumento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
+                    $documento = $dbo->fetchOne('SELECT `co_documenti`.`id` FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`  INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento` INNER JOIN `zz_segments` ON `zz_segments`.`id` = `co_documenti`.`id_segment` WHERE `co_stati_documento`.`name` = "Bozza"  AND `co_documenti`.`id_anagrafica` = '.prepare($id_anagrafica).' AND `co_tipi_documento`.`id`='.prepare($tipo_documento['id']).' AND `co_documenti`.`id_segment` = '.prepare($id_segment).$where);
 
                     $id_documento = $documento['id'];
                     $id_documento_cliente[$id_anagrafica] = $id_documento;
@@ -496,7 +496,7 @@ $operations['create_invoice'] = [
         'msg' => '<small>Verranno fatturate solo le attività completate, <br>non collegate a contratti o preventivi.</small><br>
             <br>{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>
             {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_fatture, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}<br>
-            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}<br>
+            {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}<br>
             {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"", "value": "'.setting('Raggruppamento fatturazione massiva attività').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

@@ -210,10 +210,10 @@ $elementi = $dbo->fetchArray('SELECT
 		SELECT 
 			`co_documenti`.`id` AS `id`, 
 			"Fattura" AS tipo, 
-			`co_tipidocumento`.`dir` AS dir 
+			`co_tipi_documento`.`dir` AS dir 
 		FROM 
 			`co_documenti` 
-			INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` 
+			INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento` 
 		WHERE 
 			`co_documenti`.`id_sede_destinazione` = '.prepare($id_record).'
 	ORDER BY `id`');

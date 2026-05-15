@@ -56,11 +56,11 @@ if (get('is_riba') == 'true') {
 }
 
 if (get('is_cliente') == 'true') {
-    $module_query = str_replace('1=1', '1=1 AND `co_tipidocumento`.`dir`="entrata"', $module_query);
+    $module_query = str_replace('1=1', '1=1 AND `co_tipi_documento`.`dir`="entrata"', $module_query);
 }
 
 if (get('is_fornitore') == 'true') {
-    $module_query = str_replace('1=1', '1=1 AND `co_tipidocumento`.`dir`="uscita"', $module_query);
+    $module_query = str_replace('1=1', '1=1 AND `co_tipi_documento`.`dir`="uscita"', $module_query);
 }
 
 // Scelgo la query in base alla scadenza

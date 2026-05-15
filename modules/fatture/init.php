@@ -42,7 +42,7 @@ if (!empty($id_record)) {
 
     $record = $dbo->fetchOne('SELECT
         `co_documenti`.*,
-        `co_tipidocumento`.`reversed` AS is_reversed,
+        `co_tipi_documento`.`reversed` AS is_reversed,
         `co_documenti`.`id_agente` AS id_agente_fattura,
         `co_documenti`.`note`,
         `co_documenti`.`note_aggiuntive`,
@@ -50,8 +50,8 @@ if (!empty($id_record)) {
         `co_documenti`.`id` AS id_documento,
 		`co_documenti`.`split_payment` AS split_payment,
         `co_stati_documento_lang`.`title` AS `stato`,
-        `co_tipidocumento_lang`.`title` AS `descrizione_tipo`,
-        `co_tipidocumento`.`id` AS `id_tipo_documento`,
+        `co_tipi_documento_lang`.`title` AS `descrizione_tipo`,
+        `co_tipi_documento`.`id` AS `id_tipo_documento`,
         `zz_segments`.`is_fiscale` AS is_fiscale,
         (SELECT `descrizione` FROM `co_ritenuta_acconto` WHERE `id`=`id_ritenuta_acconto`) AS ritenuta_acconto_desc,
         (SELECT `descrizione` FROM `co_rivalse` WHERE `id`=`id_rivalsa_inps`) AS rivalsa_inps_desc,
@@ -60,18 +60,18 @@ if (!empty($id_record)) {
         INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id`
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
-        LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
+        LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id`
         LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `dt_causalet` ON `co_documenti`.`id_causale_t`=`dt_causalet`.`id`
         LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
+        `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
 
     // Note di credito collegate
-    $note_accredito = $dbo->fetchArray("SELECT `co_documenti`.`id`, IF(`numero_esterno` != '', `numero_esterno`, `numero`) AS numero, data FROM `co_documenti` JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` WHERE `reversed` = 1 AND `ref_documento`=".prepare($id_record));
+    $note_accredito = $dbo->fetchArray("SELECT `co_documenti`.`id`, IF(`numero_esterno` != '', `numero_esterno`, `numero`) AS numero, data FROM `co_documenti` JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id` WHERE `reversed` = 1 AND `ref_documento`=".prepare($id_record));
 
     // Blocco gestito dallo stato della Fattura Elettronica
     $stato_fe = StatoFE::find($fattura->codice_stato_fe);

@@ -35,7 +35,7 @@ if (!function_exists('aggiorna_sedi_movimenti')) {
 
             $dbo->query('UPDATE `mg_movimenti` SET `id_sede`='.prepare($id_sede).' WHERE `reference_type`='.prepare(Modules\DDT\DDT::class).' AND `reference_id`='.prepare($id));
         } elseif ($module == 'documenti') {
-            $rs = $dbo->fetchArray('SELECT `id_sede_partenza`, `id_sede_destinazione`, `dir` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($id));
+            $rs = $dbo->fetchArray('SELECT `id_sede_partenza`, `id_sede_destinazione`, `dir` FROM `co_documenti` INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($id));
 
             $id_sede = ($rs[0]['dir'] == 'uscita') ? $rs[0]['id_sede_destinazione'] : $rs[0]['id_sede_partenza'];
 

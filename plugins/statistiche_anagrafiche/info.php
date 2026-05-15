@@ -94,14 +94,14 @@ $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 $segmenti = $dbo->select('zz_segments', 'id', [], ['autofatture' => 0]);
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
-    ->whereHas('tipo', fn ($query) => $query->where('co_tipidocumento.dir', '=', 'entrata')
-        ->where('co_tipidocumento.reversed', '=', 0))
+    ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'entrata')
+        ->where('co_tipi_documento.reversed', '=', 0))
     ->whereIn('id_segment', array_column($segmenti, 'id'))
     ->get();
 $note_credito = Fattura::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
-    ->whereHas('tipo', fn ($query) => $query->where('co_tipidocumento.dir', '=', 'entrata')
-        ->where('co_tipidocumento.reversed', '=', 1))
+    ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'entrata')
+        ->where('co_tipi_documento.reversed', '=', 1))
     ->get();
 $totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito->sum('totale_imponibile');
 

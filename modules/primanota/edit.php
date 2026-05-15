@@ -35,7 +35,7 @@ use Models\Module;
 
 if (sizeof($rs_doc) > 0) {
     if (sizeof($rs_doc) == 1) {
-        $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['id_documento']));
+        $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipi_documento` INNER JOIN `co_documenti` ON `co_tipi_documento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[0]['id_documento']));
         $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
             
             <div class="col-md-2">
@@ -65,7 +65,7 @@ if (sizeof($rs_doc) > 0) {
                     <ul class="dropdown-menu">
         <?php
         for ($i = 0; $i < sizeof($rs_doc); ++$i) {
-            $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipidocumento` INNER JOIN `co_documenti` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['id_documento']));
+            $rs = $dbo->fetchArray('SELECT `dir` FROM `co_tipi_documento` INNER JOIN `co_documenti` ON `co_tipi_documento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `co_documenti`.`id`='.prepare($rs_doc[$i]['id_documento']));
             $id_modulo = ($rs[0]['dir'] == 'entrata') ? Module::where('name', 'Fatture di vendita')->first()->id : Module::where('name', 'Fatture di acquisto')->first()->id; ?>
                         <a href="<?php echo base_path_osm(); ?>/editor.php?id_module=<?php echo $id_modulo; ?>&id_record=<?php echo $rs_doc[$i]['id_documento']; ?>" class="btn dropdown-item">
                             <i class="fa fa-chevron-left"></i> <?php echo tr('Vai alla fattura n. '.$rs_doc[$i]['numero']); ?>

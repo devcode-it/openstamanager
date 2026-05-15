@@ -277,7 +277,7 @@ echo '
     <div class="card-body">';
 
 // Tipo del documento
-$query = "SELECT `co_tipidocumento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
+$query = "SELECT `co_tipi_documento`.`id`, CONCAT('(', `codice_tipo_documento_fe`, ') ', `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).") WHERE `dir` = 'uscita'";
 $query_tipo = $query.' AND `codice_tipo_documento_fe` = '.prepare($dati_generali['TipoDocumento']);
 $numero_tipo = $database->fetchNum($query_tipo);
 if (!empty($numero_tipo)) {
@@ -296,7 +296,7 @@ echo '
 // Sezionale
 $id_segment = null;
 if (!empty($id_tipo_documento)) {
-    $id_segment = $database->table('co_tipidocumento')->where('id', '=', $id_tipo_documento)->value('id_segment');
+    $id_segment = $database->table('co_tipi_documento')->where('id', '=', $id_tipo_documento)->value('id_segment');
 }
 
 echo '
@@ -322,9 +322,9 @@ if (!empty($anagrafica)) {
             `co_documenti`.`id`,
             CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
         FROM `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+            INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = 'uscita' AND
+            `co_tipi_documento`.`dir` = 'uscita' AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` != 'Bozza') AND
             `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);
@@ -347,10 +347,10 @@ if (!empty($anagrafica)) {
             `co_documenti`.`id`,
             CONCAT('Fattura num. ', `co_documenti`.`numero_esterno`, ' del ', DATE_FORMAT(`co_documenti`.`data`, '%d/%m/%Y')) AS descrizione
         FROM `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+            INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
         WHERE
-            `co_tipidocumento`.`dir` = 'entrata' AND
-            `co_tipidocumento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
+            `co_tipi_documento`.`dir` = 'entrata' AND
+            `co_tipi_documento`.`codice_tipo_documento_fe` IN('TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD28') AND
             (`co_documenti`.`data` BETWEEN NOW() - INTERVAL 1 YEAR AND NOW()) AND
             `co_documenti`.`id_stato` IN (SELECT `id_record` FROM `co_stati_documento_lang` WHERE `title` != 'Bozza') AND
             `co_documenti`.`id_anagrafica` = ".prepare($anagrafica->id);

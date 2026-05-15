@@ -264,7 +264,7 @@ if (!function_exists('aggiungi_movimento')) {
         }
 
         // Lettura info fattura
-        $query = 'SELECT *, `co_documenti`.`data_competenza`, `co_documenti`.`note`, `co_documenti`.`id_pagamento`, `co_documenti`.`id` AS id_documento, `co_stati_documento_lang`.`title` AS `stato`, `co_tipidocumento_lang`.`title` AS descrizione_tipo FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato`=`co_stati_documento`.`id` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id`='.prepare($id_documento);
+        $query = 'SELECT *, `co_documenti`.`data_competenza`, `co_documenti`.`note`, `co_documenti`.`id_pagamento`, `co_documenti`.`id` AS id_documento, `co_stati_documento_lang`.`title` AS `stato`, `co_tipi_documento_lang`.`title` AS descrizione_tipo FROM `co_documenti` INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato`=`co_stati_documento`.`id` INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica`=`an_anagrafiche`.`id` INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_documenti`.`id`='.prepare($id_documento);
 
         $rs = $dbo->fetchArray($query);
         $data = $rs[0]['data_competenza'];

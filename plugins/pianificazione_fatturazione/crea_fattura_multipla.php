@@ -68,7 +68,7 @@ echo '
 // Tipo di documento
 echo '
         <div class="col-md-6">
-            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipidocumento`.id, `co_tipidocumento_lang`.`title` as descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON(`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\'entrata\'", "link": "module:Tipi documento" ]}
+            {[ "type": "select", "label": "'.tr('Tipo di fattura').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.id, `co_tipi_documento_lang`.`title` as descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON(`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir`=\'entrata\'", "link": "module:Tipi documento" ]}
         </div>';
 
 // Sezionale

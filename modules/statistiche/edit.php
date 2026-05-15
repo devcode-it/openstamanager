@@ -228,22 +228,22 @@ $clienti = $dbo->fetchArray('SELECT
             COUNT(*)
         FROM
             `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+            INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
-            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
+            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipi_documento`.`dir`='entrata' AND `zz_segments`.`autofatture`=0) AS qta,
         `an_anagrafiche`.`id`,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='entrata'
+        `co_tipi_documento`.`dir`='entrata'
         AND `co_stati_documento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
@@ -258,12 +258,12 @@ $totale = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
-        AND `co_tipidocumento`.`dir`='entrata'
+        AND `co_tipi_documento`.`dir`='entrata'
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 
@@ -335,13 +335,13 @@ $articoli = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='entrata'
+        `co_tipi_documento`.`dir`='entrata'
         AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
@@ -357,12 +357,12 @@ $totale = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='entrata'
+        `co_tipi_documento`.`dir`='entrata'
         AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
@@ -438,22 +438,22 @@ $fornitori = $dbo->fetchArray('SELECT
             COUNT(*)
         FROM
             `co_documenti`
-            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+            INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
         WHERE
-            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipidocumento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
+            `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id` AND `co_documenti`.`data` BETWEEN '.prepare($start).' AND '.prepare($end)." AND `co_tipi_documento`.`dir`='uscita' AND `zz_segments`.`autofatture`=0) AS qta,
         `an_anagrafiche`.`id`,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id`=`co_documenti`.`id_anagrafica`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='uscita'
+        `co_tipi_documento`.`dir`='uscita'
         AND `co_stati_documento_lang`.`title` IN('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
@@ -468,12 +468,12 @@ $totale_fornitori = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
         `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
-        AND `co_tipidocumento`.`dir`='uscita'
+        AND `co_tipi_documento`.`dir`='uscita'
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
 
@@ -545,13 +545,13 @@ $articoli_acquistati = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record`=`mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='uscita'
+        `co_tipi_documento`.`dir`='uscita'
         AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0
@@ -567,12 +567,12 @@ $totale_acquistati = $dbo->fetchArray('SELECT
         `co_documenti`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         LEFT JOIN `co_stati_documento_lang` ON `co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id)."
-        INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
         INNER JOIN `mg_articoli` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
     WHERE
-        `co_tipidocumento`.`dir`='uscita'
+        `co_tipi_documento`.`dir`='uscita'
         AND `co_stati_documento_lang`.`title` IN ('Pagato', 'Parzialmente pagato', 'Emessa')
         AND `co_documenti`.`data` BETWEEN ".prepare($start).' AND '.prepare($end).'
         AND `zz_segments`.`autofatture`=0');
@@ -1046,7 +1046,7 @@ $nuovi_fornitori = $dbo->table('an_anagrafiche')
 // Nuovi clienti per i quali ho emesso almeno una fattura di vendita
 $clienti_acquisiti = $dbo->table('an_anagrafiche')
     ->join('co_documenti', 'an_anagrafiche.id', '=', 'co_documenti.id_anagrafica')
-    ->join('co_tipidocumento', 'co_documenti.id_tipo_documento', '=', 'co_tipidocumento.id')
+    ->join('co_tipi_documento', 'co_documenti.id_tipo_documento', '=', 'co_tipi_documento.id')
     ->join('an_tipi_anagrafiche_anagrafiche', 'an_anagrafiche.id', '=', 'an_tipi_anagrafiche_anagrafiche.id_anagrafica')
     ->join('an_tipi_anagrafiche', 'an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica', '=', 'an_tipi_anagrafiche.id')
     ->leftJoin('an_tipi_anagrafiche_lang', function ($join) {
@@ -1054,7 +1054,7 @@ $clienti_acquisiti = $dbo->table('an_anagrafiche')
             ->where('an_tipi_anagrafiche_lang.id_lang', '=', Models\Locale::getDefault()->id);
     })
     ->where('an_tipi_anagrafiche_lang.title', 'Cliente')
-    ->where('co_tipidocumento.dir', 'entrata')
+    ->where('co_tipi_documento.dir', 'entrata')
     ->whereBetween('an_anagrafiche.created_at', [$start, $end])
     ->select($dbo->raw('COUNT(*) AS result, GROUP_CONCAT(`an_anagrafiche`.`ragione_sociale`, "<br>") AS ragioni_sociali, YEAR(`an_anagrafiche`.`created_at`) AS year, MONTH(`an_anagrafiche`.`created_at`) AS month'))
     ->groupBy($dbo->raw('YEAR(`an_anagrafiche`.`created_at`)'), $dbo->raw('MONTH(`an_anagrafiche`.`created_at`)'))

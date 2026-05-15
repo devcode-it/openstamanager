@@ -344,7 +344,7 @@ switch ($op) {
             ->where('co_documenti.id_anagrafica', '=', $id_anagrafica)
             ->whereIn('id_stato', [$stato1->id, $stato2->id])
             ->join('co_scadenzario', 'co_documenti.id', '=', 'co_scadenzario.id_documento')
-            ->join('co_tipidocumento', 'co_tipidocumento.id', '=', 'co_documenti.id_tipo_documento')
+            ->join('co_tipi_documento', 'co_tipi_documento.id', '=', 'co_documenti.id_tipo_documento')
             ->whereRaw('co_scadenzario.da_pagare > co_scadenzario.pagato')
             ->whereRaw('co_scadenzario.scadenza < NOW()')
             ->groupBy('co_scadenzario.id_documento')

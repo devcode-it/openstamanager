@@ -22,7 +22,7 @@ use Modules\Fatture\Tipo;
 include_once __DIR__.'/../../core.php';
 
 if ($id_record) {
-    $record = $dbo->fetchOne('SELECT `co_tipidocumento`.*, `co_tipidocumento_lang`.`title` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipidocumento`.`id`='.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT `co_tipi_documento`.*, `co_tipi_documento_lang`.`title` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_documento`.`id`='.prepare($id_record));
 
     $tipo = Tipo::find($id_record);
 }

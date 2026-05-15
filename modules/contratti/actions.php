@@ -471,12 +471,12 @@ switch (post('op')) {
                 `co_documenti`.`numero` AS `numero`,
                 `co_documenti`.`numero_esterno` AS `numero_esterno`,
                 `co_documenti`.`data`,
-                `co_tipidocumento_lang`.`title` AS `tipo_documento`,
-                `co_tipidocumento`.`dir` AS `dir`
+                `co_tipi_documento_lang`.`title` AS `tipo_documento`,
+                `co_tipi_documento`.`dir` AS `dir`
             FROM
                 `co_documenti`
-                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+                LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 INNER JOIN co_righe_documenti ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
             WHERE
                 `co_righe_documenti`.`id_contratto` = '.prepare($id_record).'

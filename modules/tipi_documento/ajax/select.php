@@ -22,9 +22,9 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'tipi_documento':
-        $query = 'SELECT `co_tipidocumento`.`id`, `co_tipidocumento_lang`.`title` AS descrizione FROM `co_tipidocumento` |where| ORDER BY `title` ASC';
+        $query = 'SELECT `co_tipi_documento`.`id`, `co_tipi_documento_lang`.`title` AS descrizione FROM `co_tipi_documento` |where| ORDER BY `title` ASC';
 
-        $where[] = '`co_tipidocumento`.`enabled` = 1';
+        $where[] = '`co_tipi_documento`.`enabled` = 1';
         $where[] = '`dir`='.$superselect['dir'];
 
         foreach ($elements as $element) {

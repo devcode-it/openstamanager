@@ -123,11 +123,11 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
         $fatt_differita_vendita = Tipofattura::where('name', 'Fattura differita di vendita')->first()->id;
 
         if (!empty($options['reversed'])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` WHERE `co_tipidocumento`.`name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` WHERE `co_tipi_documento`.`name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
         } elseif (in_array($original_module->id, [$id_module_ddt_vendita, $id_module_ddt_acquisto])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipidocumento`.`id` = '.($dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita).' AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_documento`.`id` = '.($dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita).' AND `dir` = \''.$dir.'\'')['id'];
         } else {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipidocumento`.`id` FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
+            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
         }
 
         $id_bozza = StatoFattura::where('name', 'Bozza')->first()->id;
@@ -138,7 +138,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
             </div>
 
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` = '.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}
+                {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` = '.prepare($dir).' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}
             </div>
 
             <div class="col-md-4">
@@ -193,7 +193,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
     }
     echo '
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipidocumento', 'id_segment', ['id' => $id_tipo_documento])['id_segment'].'" ]}
+                    {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $final_module->id, 'is_sezionale' => 1]).', "value": "'.$database->selectOne('co_tipi_documento', 'id_segment', ['id' => $id_tipo_documento])['id_segment'].'" ]}
                 </div>';
 
     // Selezione fornitore per Ordine fornitore

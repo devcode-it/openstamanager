@@ -40,13 +40,13 @@ switch (filter('op')) {
                     MONTH(`co_documenti`.`data`) AS month 
                 FROM 
                     `co_documenti` 
-                    INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` 
-                    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.$locale_id.') 
+                    INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id` 
+                    LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.$locale_id.') 
                     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` 
                     INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`  
                 WHERE 
-                    `co_tipidocumento`.`dir`=\'entrata\' 
-                    AND `co_tipidocumento`.`name`!=\'Bozza\' 
+                    `co_tipi_documento`.`dir`=\'entrata\' 
+                    AND `co_tipi_documento`.`name`!=\'Bozza\' 
                     AND `co_documenti`.`data` BETWEEN '.$prepared_start.' AND '.$prepared_end.' 
                     AND `is_fiscale`=1  
                     AND `zz_segments`.`autofatture`=0 
@@ -69,13 +69,13 @@ switch (filter('op')) {
                             MONTH(`co_documenti`.`data`) AS month 
                         FROM 
                             `co_documenti` 
-                            INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id` 
-                            LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.$locale_id.') 
+                            INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id` 
+                            LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.$locale_id.') 
                             INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id` 
                             INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`  
                         WHERE 
-                            `co_tipidocumento`.`dir`=\'entrata\' 
-                            AND `co_tipidocumento`.`name`!=\'Bozza\' 
+                            `co_tipi_documento`.`dir`=\'entrata\' 
+                            AND `co_tipi_documento`.`name`!=\'Bozza\' 
                             AND `co_documenti`.`data` BETWEEN '.$prepared_start.' AND '.$prepared_end.' 
                             AND `is_fiscale`=1  
                             AND `zz_segments`.`autofatture`=0 
@@ -122,13 +122,13 @@ switch (filter('op')) {
                 MONTH(`co_documenti`.`data`) AS month
             FROM
                 `co_documenti`
-                INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.$locale_id.')
+                INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
+                LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.$locale_id.')
                 INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento`=`co_documenti`.`id`
                 INNER JOIN `zz_segments` ON `co_documenti`.`id_segment`=`zz_segments`.`id`
             WHERE
-                `co_tipidocumento`.`dir`=\'uscita\'
-                AND `co_tipidocumento`.`name`!=\'Bozza\'
+                `co_tipi_documento`.`dir`=\'uscita\'
+                AND `co_tipi_documento`.`name`!=\'Bozza\'
                 AND `co_documenti`.`data` BETWEEN '.$prepared_start.' AND '.$prepared_end.'
                 AND `is_fiscale`=1
                 AND `zz_segments`.`autofatture`=0

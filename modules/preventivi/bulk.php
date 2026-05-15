@@ -36,7 +36,7 @@ if (!isset($_SESSION['module_'.$id_fatture]['id_segment'])) {
     $_SESSION['module_'.$id_fatture]['id_segment'] = $segments[0]['id'] ?? null;
 }
 $id_segment = $_SESSION['module_'.$id_fatture]['id_segment'];
-$id_tipo_documento = $dbo->selectOne('co_tipidocumento', ['id'], [
+$id_tipo_documento = $dbo->selectOne('co_tipi_documento', ['id'], [
     'predefined' => 1,
     'dir' => 'entrata',
 ])['id'];
@@ -232,7 +232,7 @@ $operations['create_invoice'] = [
     'data' => [
         'title' => tr('Fatturare i _TYPE_ selezionati?', ['_TYPE_' => strtolower((string) $module->getTranslation('title'))]),
         'msg' => '{[ "type": "checkbox", "label": "<small>'.tr('Aggiungere alle fatture di vendita non ancora emesse?').'</small>", "placeholder": "'.tr('Aggiungere alle fatture di vendita nello stato bozza?').'", "name": "accodare" ]}<br>{[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "values": "query=SELECT `zz_segments`.`id`, `zz_segments_lang`.`title` AS descrizione FROM `zz_segments` LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`=\''.$id_fatture.'\' ORDER BY `zz_segments_lang`.`title`", "value": "'.$id_segment.'" ]}<br>
-        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipidocumento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipidocumento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}<br>
+        {[ "type": "select", "label": "'.tr('Tipo documento').'", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.`id`, CONCAT(`codice_tipo_documento_fe`, \' - \', `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `enabled` = 1 AND `dir` =\'entrata\' ORDER BY `codice_tipo_documento_fe`", "value": "'.$id_tipo_documento.'" ]}<br>
         {[ "type": "select", "label": "'.tr('Raggruppa per').'", "name": "raggruppamento", "required": 1, "values": "list=\"cliente\":\"Cliente\",\"sede\":\"Sede\"", "value": "'.setting('Raggruppamento fatturazione massiva preventivi').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

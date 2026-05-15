@@ -26,13 +26,13 @@ $r = $dbo->fetchOne('SELECT
         `an_anagrafiche`.`id_conto_fornitore`,
         `an_anagrafiche`.`ragione_sociale`,
         `an_referenti`.`nome`,
-        `co_tipidocumento_lang`.`title` AS tipo_documento,
+        `co_tipi_documento_lang`.`title` AS tipo_documento,
         `righe`.`totale`,
         (SELECT `pec` FROM `em_accounts` WHERE `em_accounts`.`id`='.prepare($template['id_account']).') AS is_pec
     FROM `co_documenti`
         INNER JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
-        LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+        LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         LEFT JOIN `an_referenti` ON `an_referenti`.`id` = `co_documenti`.`id_referente`
         LEFT JOIN (SELECT id_documento, SUM(subtotale - sconto + iva) AS totale FROM `co_righe_documenti` GROUP BY id_documento) righe ON `co_documenti`.`id` = `righe`.`id_documento`
     WHERE 

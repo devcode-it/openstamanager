@@ -49,9 +49,9 @@ switch ($resource) {
                 FROM 
                     `co_righe_documenti`
                     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-                    INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+                    INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
                 WHERE 
-                    `id_articolo`='.prepare($id_articolo).' AND `co_tipidocumento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
+                    `id_articolo`='.prepare($id_articolo).' AND `co_tipi_documento`.`dir`="entrata" AND `id_anagrafica`='.prepare($id_anagrafica).'
             UNION
                 SELECT 
                     `id_ddt` AS id, 
@@ -102,9 +102,9 @@ switch ($resource) {
         $documenti = $dbo->fetchArray('
             SELECT
                 `id_documento` AS id,
-                `co_tipidocumento_lang`.`title` AS tipo,
+                `co_tipi_documento_lang`.`title` AS tipo,
                 "Fatture di vendita" AS modulo,
-                ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
+                ((`subtotale` - `sconto`) / `qta` * IF(`co_tipi_documento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
                 `co_documenti`.`data` AS data_documento,
@@ -112,8 +112,8 @@ switch ($resource) {
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+                LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "entrata"
         UNION
@@ -168,9 +168,9 @@ switch ($resource) {
         $documenti = $dbo->fetchArray('
             SELECT
                 `id_documento` AS id,
-                `co_tipidocumento_lang`.`title` AS tipo,
+                `co_tipi_documento_lang`.`title` AS tipo,
                 "Fatture di acquisto" AS modulo,
-                ((`subtotale` - `sconto`) / `qta` * IF(`co_tipidocumento`.`reversed`, -1, 1)) AS costo_unitario,
+                ((`subtotale` - `sconto`) / `qta` * IF(`co_tipi_documento`.`reversed`, -1, 1)) AS costo_unitario,
                 `co_documenti`.`numero` AS n_documento,
                 `co_documenti`.`numero_esterno` AS n2_documento,
                 `co_documenti`.`data` AS data_documento,
@@ -178,8 +178,8 @@ switch ($resource) {
             FROM
                 `co_righe_documenti`
                 INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-                INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
-                LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+                LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
             WHERE
                 `id_articolo` = '.prepare($id_articolo).' AND `dir` = "uscita"
         UNION
@@ -315,7 +315,7 @@ switch ($resource) {
         }
 
         // Ultimo prezzo al cliente
-        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `id_articolo`='.prepare($id_articolo).' AND `id_anagrafica`='.prepare($id_anagrafica).' AND `co_tipidocumento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
+        $ultimo_prezzo = $dbo->fetchArray('SELECT '.($prezzi_ivati ? '(`prezzo_unitario_ivato`-`sconto_unitario_ivato`)' : '(`prezzo_unitario`-`sconto_unitario`)').' AS prezzo_ultimo FROM `co_righe_documenti`  INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento` INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id`=`co_documenti`.`id_tipo_documento` WHERE `id_articolo`='.prepare($id_articolo).' AND `id_anagrafica`='.prepare($id_anagrafica).' AND `co_tipi_documento`.`dir`='.prepare($direzione).' ORDER BY `data` DESC LIMIT 0,1');
 
         $results = array_merge($prezzi, $listini, $listini_sempre_visibili, $prezzo_articolo, $ultimo_prezzo);
 

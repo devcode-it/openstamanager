@@ -135,7 +135,7 @@ switch (filter('op')) {
                         // Tipo documento
                         $fattura_body = $fattura->getBody();
                         $dati_generali = $fattura_body['DatiGenerali']['DatiGeneraliDocumento'];
-                        $id_tipo = $database->fetchOne('SELECT id FROM co_tipidocumento WHERE dir = "entrata" AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];
+                        $id_tipo = $database->fetchOne('SELECT id FROM co_tipi_documento WHERE dir = "entrata" AND codice_tipo_documento_fe = '.prepare($dati_generali['TipoDocumento']))['id'];
 
                         // Tipo pagamento
                         $pagamenti = [];

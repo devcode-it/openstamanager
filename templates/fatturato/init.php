@@ -30,18 +30,18 @@ $raggruppamenti = $dbo->fetchArray('
     SELECT 
         `data_competenza`, 
         DATE_FORMAT(`data_competenza`, \'%m-%Y\') AS periodo,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva,
-        SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsa_inps`) *(IF(`co_tipidocumento`.`reversed` = 0,1,-1))) AS imponibile
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva,
+        SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsa_inps`) *(IF(`co_tipi_documento`.`reversed` = 0,1,-1))) AS imponibile
     FROM 
         `co_iva`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id` 
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento` 
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+        INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     WHERE 
-        `co_tipidocumento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_stati_documento`.`name` NOT IN ("Bozza", "Annullata", "Non valida") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `autofatture` = 0
+        `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_stati_documento`.`name` NOT IN ("Bozza", "Annullata", "Non valida") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `autofatture` = 0
     GROUP BY 
         `periodo`
     ORDER BY

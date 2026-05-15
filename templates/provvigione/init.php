@@ -33,7 +33,7 @@ SELECT
 FROM
     `co_documenti`
     LEFT JOIN `an_anagrafiche` ON `co_documenti`.`id_anagrafica` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
+    LEFT JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento` = `co_tipi_documento`.`id`
     LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `id_documento`) AS righe ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
     LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')

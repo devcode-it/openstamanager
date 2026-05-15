@@ -92,7 +92,7 @@ echo '
 </form>';
 
 // Documenti collegati
-$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipidocumento_lang`.`title` AS tipo_documento, `co_tipidocumento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `co_documenti`.`id_dichiarazione_intento` = '.prepare($record['id']));
+$elementi = $dbo->fetchArray('SELECT `co_documenti`.`id`, `co_documenti`.`data`, `co_documenti`.`numero`, `co_documenti`.`numero_esterno`, `co_tipi_documento_lang`.`title` AS tipo_documento, `co_tipi_documento`.`dir`, NULL AS `deleted_at` FROM `co_documenti` INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.Models\Locale::getDefault()->id.') WHERE `co_documenti`.`id_dichiarazione_intento` = '.prepare($record['id']));
 
 if (!empty($elementi)) {
     echo '

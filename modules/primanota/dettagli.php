@@ -32,7 +32,7 @@ $query = 'SELECT
     FROM 
         `co_movimenti`
         LEFT JOIN `co_documenti` ON `co_movimenti`.`id_documento` = `co_documenti`.`id`
-        LEFT JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento` = `co_tipidocumento`.`id`
+        LEFT JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento` = `co_tipi_documento`.`id`
     WHERE 
         `co_movimenti`.`id_conto`='.prepare($id_conto).' AND
         `co_movimenti`.`data` >= '.prepare($_SESSION['period_start']).' AND

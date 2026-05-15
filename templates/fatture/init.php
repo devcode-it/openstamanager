@@ -33,8 +33,8 @@ $d_totali = (int) setting('Cifre decimali per totali in stampa');
 $record = $dbo->fetchOne('SELECT 
     `co_documenti`.*,
     `co_stati_documento_lang`.`title` AS stato_doc,
-    `co_tipidocumento_lang`.`title` AS tipo_doc,
-    `co_tipidocumento`.`dir` AS dir,
+    `co_tipi_documento_lang`.`title` AS tipo_doc,
+    `co_tipi_documento`.`dir` AS dir,
     `co_pagamenti_lang`.`title` AS pagamento,
     `dt_causalet_lang`.`title` AS causalet,
     `dt_porto_lang`.`title` AS porto,
@@ -51,8 +51,8 @@ FROM
     LEFT JOIN `an_anagrafiche` AS vettore ON `vettore`.`id` = `co_documenti`.`id_vettore`
     INNER JOIN `co_stati_documento` ON `co_documenti`.`id_stato`=`co_stati_documento`.`id`
     LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-    INNER JOIN `co_tipidocumento` ON `co_documenti`.`id_tipo_documento`=`co_tipidocumento`.`id`
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento_lang`.`id_record` = `co_tipidocumento`.`id` AND `co_tipidocumento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento`=`co_tipi_documento`.`id`
+    LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_pagamenti` ON `co_documenti`.`id_pagamento`=`co_pagamenti`.`id`
     LEFT JOIN `co_pagamenti_lang` ON (`co_pagamenti_lang`.`id_record` = `co_pagamenti`.`id` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     LEFT JOIN `co_banche` ON `co_banche`.`id` = `co_documenti`.`id_banca_azienda`

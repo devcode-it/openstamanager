@@ -62,22 +62,22 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `co_documenti`.`data_registrazione`,
         `co_documenti`.`numero_esterno`,
         `co_documenti`.`data`,
-        `co_tipidocumento`.`codice_tipo_documento_fe`,
+        `co_tipi_documento`.`codice_tipo_documento_fe`,
         `co_iva`.`percentuale`,
         `co_iva_lang`.`title` as descrizione,
         `co_documenti`.`id` AS id,
         IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS subtotale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS totale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
         `an_anagrafiche`.`ragione_sociale`
     FROM
         `co_iva`
         LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
         INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
         INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-        INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+        INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
         INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
     WHERE
         `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata")) AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'
@@ -129,23 +129,23 @@ if ((!empty($vendita_banco)) && ($id_sezionale == -1) && ($tipo == 'vendite')) {
         `co_documenti`.`data_registrazione`,
         `co_documenti`.`numero_esterno`,
         `co_documenti`.`data`,
-        `co_tipidocumento`.`codice_tipo_documento_fe`,
+        `co_tipi_documento`.`codice_tipo_documento_fe`,
         `co_iva`.`percentuale`,
         `co_iva_lang`.`title` as descrizione,
         `co_documenti`.`id` AS id,
         `co_documenti`.`split_payment`,
         IF(`numero` = "", `numero_esterno`, `numero`) AS numero,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS subtotale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS totale,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
-        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipidocumento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`)*(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS subtotale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`+`iva`+`co_righe_documenti`.`rivalsa_inps` * `percentuale`/100)*(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS totale,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva_detraibile,
+        SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *`indetraibile`/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva_indetraibile,
         `an_anagrafiche`.`ragione_sociale`
 FROM
     `co_iva`
     LEFT JOIN `co_iva_lang` ON (`co_iva`.`id` = `co_iva_lang`.`id_record` AND `co_iva_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
     INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_iva` = `co_iva`.`id`
     INNER JOIN `co_documenti` ON `co_documenti`.`id` = `co_righe_documenti`.`id_documento`
-    INNER JOIN `co_tipidocumento` ON `co_tipidocumento`.`id` = `co_documenti`.`id_tipo_documento`
+    INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
     INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `co_documenti`.`id_anagrafica`
 WHERE
     `dir` = '.prepare($dir).' AND `id_stato` NOT IN (SELECT `id` FROM `co_stati_documento` WHERE `name` IN ("Bozza", "Annullata"))AND `is_descrizione` = 0 AND '.(($id_sezionale != -1) ? '`co_documenti`.`id_segment` = '.prepare($id_sezionale).'' : '1=1').'

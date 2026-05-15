@@ -33,7 +33,7 @@ if (!empty($id_record)) {
             `or_ordini`.`id_agente` AS id_agente,
             `or_ordini`.`id_stato` AS id_stato,
             `or_stati_ordine_lang`.`title` AS stato,
-            `or_tipiordine_lang`.`title` AS descrizione_tipodoc,
+            `or_tipi_ordine_lang`.`title` AS descrizione_tipodoc,
             `an_anagrafiche`.`tipo` AS tipo_anagrafica,
             `or_stati_ordine`.`is_bloccato` AS flag_completato
         FROM
@@ -41,8 +41,8 @@ if (!empty($id_record)) {
             LEFT JOIN `or_stati_ordine` ON `or_ordini`.`id_stato`=`or_stati_ordine`.`id`
             LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record`=`or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
             INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica`=`an_anagrafiche`.`id`
-            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
-            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+            INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
+            LEFT JOIN `or_tipi_ordine_lang` ON (`or_tipi_ordine_lang`.`id_record`=`or_tipi_ordine`.`id` AND `or_tipi_ordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
         WHERE
             `or_ordini`.`id`='.prepare($id_record));
 

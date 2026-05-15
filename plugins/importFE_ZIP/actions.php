@@ -804,13 +804,13 @@ switch (filter('op')) {
                         INNER JOIN `or_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
                         INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
                         LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                        INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
+                        INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
                     WHERE
                         `or_ordini`.`id_anagrafica` = '.prepare($anagrafica->id)." AND
                         |where_ordini| AND
                         `or_righe_ordini`.`qta` > `or_righe_ordini`.`qta_evasa` AND
                         `or_stati_ordine_lang`.`title` != 'Fatturato' AND
-                        `or_tipiordine`.`dir` ='entrata'";
+                        `or_tipi_ordine`.`dir` ='entrata'";
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {

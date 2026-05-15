@@ -32,7 +32,7 @@ switch ($resource) {
                 CONCAT("Ordine ", `numero_esterno`, " del ", DATE_FORMAT(data, "%d/%m/%Y"), " [", `or_stati_ordine_lang`.`title` , "]") AS descrizione
             FROM
                 `or_ordini`
-                INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
+                INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
                 INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
                 INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
                 LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
@@ -44,7 +44,7 @@ switch ($resource) {
                 $filter[] = '`or_ordini`.`id`='.prepare($element);
             }
 
-            $where[] = '`or_tipiordine`.`dir`='.prepare('entrata');
+            $where[] = '`or_tipi_ordine`.`dir`='.prepare('entrata');
             if (empty($elements)) {
                 $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
 

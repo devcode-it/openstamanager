@@ -208,7 +208,7 @@ class Ordine extends Document
         return getNextNumeroProgressivo('or_ordini', 'numero', $data, $id_segment, [
             'direction' => $direzione,
             'type_document_field' => 'id_tipo_ordine',
-            'type_document_table' => 'or_tipiordine',
+            'type_document_table' => 'or_tipi_ordine',
         ]);
     }
 
@@ -225,7 +225,7 @@ class Ordine extends Document
         return getNextNumeroSecondarioProgressivo('or_ordini', 'numero_esterno', $data, $id_segment, [
             'direction' => $direzione,
             'type_document_field' => 'id_tipo_ordine',
-            'type_document_table' => 'or_tipiordine',
+            'type_document_table' => 'or_tipi_ordine',
         ]);
     }
 

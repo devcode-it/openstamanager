@@ -35,7 +35,7 @@ switch ($resource) {
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
                 INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
                 LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
+                INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
             WHERE 
                 `id_anagrafica` = '.prepare($id_anagrafica)."
                 AND `title` != 'Fatturato'
@@ -113,7 +113,7 @@ switch ($resource) {
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
                 INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
                 LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `or_tipiordine` ON `or_ordini`.`idtipiordine` = `or_tipiordine`.`id`
+                INNER JOIN `or_tipi_ordine` ON `or_ordini`.`idtipiordine` = `or_tipi_ordine`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)."
                 AND `title` != 'Fatturato'

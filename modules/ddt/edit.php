@@ -397,12 +397,12 @@ if (!$block_edit) {
             `or_ordini`
             INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
             INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato`=`or_stati_ordine`.`id`
-            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
+            INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
             LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
         WHERE
             `id_anagrafica`='.prepare($record['id_anagrafica']).'
             AND `or_stati_ordine_lang`.`title` IN(\'Accettato\', \'Evaso\', \'Parzialmente evaso\', \'Parzialmente fatturato\')
-            AND `or_tipiordine`.`dir`='.prepare($dir).'
+            AND `or_tipi_ordine`.`dir`='.prepare($dir).'
             AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         GROUP BY
             `or_ordini`.`id`';

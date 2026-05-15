@@ -225,16 +225,16 @@ if (empty(get('modal'))) {
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT
                             *,
-                            `or_tipiordine_lang`.`title` AS tipo_documento,
-                            `or_tipiordine`.`dir`,
+                            `or_tipi_ordine_lang`.`title` AS tipo_documento,
+                            `or_tipi_ordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
                             `or_ordini`.`data`
                         FROM
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine`=`or_ordini`.`id`
-                            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
-                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine`.`id` = `or_tipiordine_lang`.`id_record` AND `or_tipiordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+                            INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
+                            LEFT JOIN `or_tipi_ordine_lang` ON (`or_tipi_ordine`.`id` = `or_tipi_ordine_lang`.`id_record` AND `or_tipi_ordine_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `or_righe_ordini`.`id`='.prepare($acquisto['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);
@@ -336,16 +336,16 @@ if (empty(get('modal'))) {
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT
                             *,
-                            `or_tipiordine_lang`.`title` AS tipo_ordine,
-                            `or_tipiordine`.`dir`,
+                            `or_tipi_ordine_lang`.`title` AS tipo_ordine,
+                            `or_tipi_ordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
                             `or_ordini`.`data`
                         FROM
                             `or_righe_ordini`
                             INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine`=`or_ordini`.`id`
-                            INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipiordine`.`id`
-                            LEFT JOIN `or_tipiordine_lang` ON (`or_tipiordine_lang`.`id_record`=`or_tipiordine`.`id` AND `or_tipiordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+                            INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
+                            LEFT JOIN `or_tipi_ordine_lang` ON (`or_tipi_ordine_lang`.`id_record`=`or_tipi_ordine`.`id` AND `or_tipi_ordine_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
                         WHERE
                             `or_righe_ordini`.`id`='.prepare($vendita['id_riga_ordine']);
                     $data = $dbo->fetchArray($query);

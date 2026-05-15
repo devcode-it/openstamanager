@@ -28,7 +28,7 @@ class Tipo extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    protected $table = 'or_tipiordine';
+    protected $table = 'or_tipi_ordine';
 
     protected static $translated_fields = [
         'title',

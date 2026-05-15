@@ -596,7 +596,7 @@ SELECT
     |select|
 FROM
     `or_ordini`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
+    INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
     INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN `an_anagrafiche` AS agente ON `or_ordini`.`id_agente` = `agente`.`id`
     LEFT JOIN (SELECT `id_ordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `id_ordine`) AS righe ON `or_ordini`.`id` = `righe`.`id_ordine`
@@ -620,7 +620,7 @@ UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
     `or_ordini`
-    INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id`
+    INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
     INNER JOIN `an_anagrafiche` ON `or_ordini`.`id_anagrafica` = `an_anagrafiche`.`id`
     LEFT JOIN (SELECT `id_ordine`, SUM(`qta` - `qta_evasa`) AS `qta_da_evadere`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`subtotale` - `sconto` + `iva`) AS `totale` FROM `or_righe_ordini` GROUP BY `id_ordine`) AS righe ON `or_ordini`.`id` = `righe`.`id_ordine`
     LEFT JOIN (SELECT `id_ordine`, MIN(`data_evasione`) AS `data_evasione` FROM `or_righe_ordini` WHERE (`qta` - `qta_evasa`) > 0 GROUP BY `id_ordine`) AS `righe_da_evadere` ON `righe`.`id_ordine` = `righe_da_evadere`.`id_ordine`
@@ -1206,6 +1206,8 @@ RENAME TABLE `openstamanager`.`in_tipiintervento_tipologie` TO `openstamanager`.
 RENAME TABLE `openstamanager`.`mg_unitamisura` TO `openstamanager`.`mg_unita_misura`;
 RENAME TABLE `openstamanager`.`or_statiordine` TO `openstamanager`.`or_stati_ordine`;
 RENAME TABLE `openstamanager`.`or_statiordine_lang` TO `openstamanager`.`or_stati_ordine_lang`;
+RENAME TABLE `openstamanager`.`or_tipiordine` TO `openstamanager`.`or_tipi_ordine`;
+RENAME TABLE `openstamanager`.`or_tipiordine_lang` TO `openstamanager`.`or_tipi_ordine_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1317,8 +1319,8 @@ FROM
     LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
     LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
     LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipiordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipiordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipiordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipiordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipi_ordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
+    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipi_ordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
     LEFT JOIN `zz_categorie` ON `mg_articoli`.`id_categoria` = `zz_categorie`.`id`
     LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
     LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`

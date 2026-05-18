@@ -559,17 +559,6 @@ ALTER TABLE `dt_aspettobeni` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `dt_aspettobeni_lang` ADD CONSTRAINT `dt_aspettobeni_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_aspettobeni`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Aspetto beni
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `dt_aspettobeni`
-    LEFT JOIN `dt_aspettobeni_lang` ON (`dt_aspettobeni_lang`.`id_record` = `dt_aspettobeni`.`id` AND `dt_aspettobeni_lang`.|lang|)
-WHERE 
-    1=1 
-HAVING 
-    2=2" WHERE `name` = 'Aspetto beni';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_aspettobeni`.`id`' WHERE `zz_modules`.`name` = 'Aspetto beni' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella dt_causalet_lang
@@ -594,17 +583,6 @@ ALTER TABLE `dt_causalet` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `dt_causalet_lang` ADD CONSTRAINT `dt_causalet_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `dt_causalet`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Causali trasporto
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `dt_causalet`
-    LEFT JOIN `dt_causalet_lang` ON (`dt_causalet_lang`.`id_record` = `dt_causalet`.`id` AND `dt_causalet_lang`.|lang|)
-WHERE 
-    1=1 AND `deleted_at` IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Causali';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`dt_causalet`.`id`' WHERE `zz_modules`.`name` = 'Causali' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella dt_porto_lang

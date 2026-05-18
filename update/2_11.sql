@@ -1458,6 +1458,46 @@ WHERE
 HAVING 
     2=2" WHERE `zz_modules`.`name` = 'Ammortamenti';
 
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM 
+    `dt_aspetto_beni`
+    LEFT JOIN `dt_aspetto_beni_lang` ON (`dt_aspetto_beni_lang`.`id_record` = `dt_aspetto_beni`.`id` AND `dt_aspetto_beni_lang`.|lang|)
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Aspetto beni';
+
+UPDATE `zz_modules` SET `options` = "SELECT 
+    |select| 
+FROM 
+    `mg_unita_misura`
+WHERE 
+    1=1 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Unità di misura';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+    `dt_causale_t`
+    LEFT JOIN `dt_causale_t_lang` ON (`dt_causale_t_lang`.`id_record` = `dt_causale_t`.`id` AND `dt_causale_t_lang`.|lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Causali';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `in_fasce_orarie`
+    LEFT JOIN `in_fasce_orarie_lang` ON (`in_fasce_orarie_lang`.`id_record` = `in_fasce_orarie`.`id` AND `in_fasce_orarie_lang`.|lang|)
+WHERE 
+    1=1 AND deleted_at IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Fasce orarie';
+
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(\' \',`an_tipi_anagrafiche_lang`.`title`)' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
 
@@ -1467,9 +1507,20 @@ UPDATE `zz_views` SET `query` = '`an_tipi_anagrafiche_lang`.`title`' WHERE `zz_v
 UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps`) * IF(co_tipi_documento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 UPDATE `zz_views` SET `query` = '(`righe`.`totale_imponibile` + IF(`co_documenti`.`split_payment` = 0, `righe`.`iva`, 0) + `co_documenti`.`rivalsa_inps` - `co_documenti`.`ritenuta_acconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi` != 0, (( `righe`.`totale_imponibile` * `co_ritenuta_contributi`.`percentuale_imponibile` / 100) / 100 * `co_ritenuta_contributi`.`percentuale`), 0)) *(1 - `co_documenti`.`sconto_finale_percentuale` / 100 ) * IF(`co_tipi_documento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "Netto a pagare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 UPDATE `zz_views` SET `query` = '`prima_nota`.`totale`' WHERE `zz_views`.`name` = "Prima nota" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = 'IF(`dup`.`numero_esterno` IS NOT NULL, \'#ec5353\', co_stati_documento.colore)' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento_lang`.`title`' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '`righe`.`totale_imponibile` * IF(`co_tipi_documento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "Imponibile" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '`co_stati_documento`.`icona`' WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '`co_stati_documento_lang`.`title`' WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
+UPDATE `zz_views` SET `query` = '(`righe`.`iva`)*IF(`co_tipi_documento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "IVA" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita');
 
 UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + righe.iva + `co_documenti`.`rivalsa_inps` + `co_documenti`.`iva_rivalsa_inps`) * IF(co_tipi_documento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Totale documento" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 UPDATE `zz_views` SET `query` = '(righe.totale_imponibile + IF(co_documenti.split_payment=0, righe.iva, 0) + `co_documenti`.`rivalsa_inps` + `co_documenti`.`iva_rivalsa_inps` - `co_documenti`.`ritenuta_acconto` - `co_documenti`.`sconto_finale` - IF(`co_documenti`.`id_ritenuta_contributi`!=0, ((`righe`.`totale_imponibile`*`co_ritenuta_contributi`.`percentuale_imponibile`/100)/100*`co_ritenuta_contributi`.`percentuale`), 0)) * (1 - `co_documenti`.`sconto_finale_percentuale` / 100) * IF(co_tipi_documento.reversed, -1, 1)' WHERE `zz_views`.`name` = "Netto a pagare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = 'IF(`d`.`conteggio`>1, \'#ec5353\', co_stati_documento.colore)' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento_lang`.`title`' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = '`righe`.`totale_imponibile` * IF(`co_tipi_documento`.`reversed`, -1, 1)' WHERE `zz_views`.`name` = "Imponibile" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = '`co_stati_documento`.`icona`' WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
+UPDATE `zz_views` SET `query` = '`co_stati_documento_lang`.`title`' WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto');
 
 UPDATE `zz_views` SET `query` = 'co_movimenti.id_mastrino' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
 
@@ -1479,14 +1530,25 @@ UPDATE `zz_views` SET `query` = '`marca`.`name`' WHERE `zz_views`.`name` = "Marc
 
 UPDATE `zz_views` SET `query` = "IF(`dt_ddt`.`id_sede_destinazione`=0, 'Sede legale',CONCAT_WS(' - ', sedi_destinazione.nome_sede,sedi_destinazione.citta))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
 UPDATE `zz_views` SET `query` = 'IF(dt_ddt.id_sede_partenza=0, "Sede legale",CONCAT_WS(" - ", sedi.nome_sede,sedi.citta))' WHERE `zz_views`.`name` = "Sede partenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+UPDATE `zz_views` SET `query` = '`dt_causale_t_lang`.`title`' WHERE `zz_views`.`name` = "Causale" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`icona`' WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt_lang`.`title`' WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`colore`' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
 
 UPDATE `zz_views` SET `query` = "IF(`dt_ddt`.`id_sede_destinazione`=0, 'Sede legale',CONCAT_WS(' - ', sedi_destinazione.nome_sede,sedi_destinazione.citta))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
 UPDATE `zz_views` SET `query` = 'IF(`dt_ddt`.`id_sede_partenza`=0, "Sede legale",CONCAT_WS(" - ", sedi.nome_sede,sedi.citta))' WHERE `zz_views`.`name` = "Sede partenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+UPDATE `zz_views` SET `query` = '`dt_causale_t_lang`.`title`' WHERE `zz_views`.`name` = "Causale" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`icona`' WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt_lang`.`title`' WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`colore`' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in entrata');
 
 UPDATE `zz_views` SET `query` = "IF(co_preventivi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
 UPDATE `zz_views` SET `query` = "`co_preventivi`.`informazioni_aggiuntive`" WHERE `zz_views`.`name` = "Note interne" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
 
 UPDATE `zz_views` SET `query` = "`co_contratti`.`informazioni_aggiuntive`" WHERE `zz_views`.`name` = "Note interne" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');
+UPDATE `zz_views` SET `query` = "`co_stati_contratti`.`icona`" WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');
+UPDATE `zz_views` SET `query` = "`co_stati_contratti_lang`.`title`" WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');
+UPDATE `zz_views` SET `query` = "`co_stati_contratti`.`colore`" WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');
 
 UPDATE `zz_views` SET `query` = "IF(my_impianti.id_sede > 0, sede.info, CONCAT('', IF (clienti.telefono!='',CONCAT(clienti.telefono,'<br>'),''), IF(clienti.cellulare!='', CONCAT(clienti.cellulare,'<br>'),''),IF(clienti.citta!='',clienti.citta,''),IF(clienti.indirizzo!='',CONCAT(' - ',clienti.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Impianti');
 
@@ -1494,6 +1556,23 @@ UPDATE `zz_views` SET `query` = "IF( mg_movimenti.id_sede=0, 'Sede legale', an_s
 UPDATE `zz_views` SET `query` = "mg_movimenti.id_articolo" WHERE `zz_views`.`name` = "_link_record_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');
 
 UPDATE `zz_views` SET `query` = "IFNULL(an_sedi.nome,an_sedi.nome_sede)" WHERE `zz_views`.`name` = "Nome" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi');
+
+UPDATE `zz_views` SET `query` = '`dt_aspetto_beni`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aspetto beni');
+UPDATE `zz_views` SET `query` = '`dt_aspetto_beni_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aspetto beni');
+
+UPDATE `zz_views` SET `query` = '`in_stati_intervento`.`colore`' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = '`in_stati_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = '`in_tipi_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+
+UPDATE `zz_views` SET `query` = '`dt_causale_t`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali');
+UPDATE `zz_views` SET `query` = '`dt_causale_t_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali');
+
+UPDATE `zz_views` SET `query` = '`in_fasce_orarie`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+UPDATE `zz_views` SET `query` = '`in_fasce_orarie_lang`.`title`' WHERE `zz_views`.`name` = "Nome" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+UPDATE `zz_views` SET `query` = 'IF(in_fasce_orarie.giorni = \'1,2,3,4,5\', \'Lavorativi\',  IF(in_fasce_orarie.giorni = \'6,7\', \'Fine settimana\', IF(in_fasce_orarie.giorni = \'6\', \'Solo Sabato\', IF(in_fasce_orarie.giorni = \'1,2,3,4,5,6,7\', \'Tutti\', \'Solo inclusi\' ))))' WHERE `zz_views`.`name` = "Giorni" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+UPDATE `zz_views` SET `query` = '`in_fasce_orarie`.`ora_inizio`' WHERE `zz_views`.`name` = "Ora inizio" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+UPDATE `zz_views` SET `query` = '`in_fasce_orarie`.`ora_fine`' WHERE `zz_views`.`name` = "Ora fine" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+UPDATE `zz_views` SET `query` = 'IF(`in_fasce_orarie`.`include_bank_holidays`, \'Sì\', \'No\')' WHERE `zz_views`.`name` = "Includi festività" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
 
 -- Allineamento impostazioni
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM `co_ritenuta_acconto` ORDER BY descrizione ASC" WHERE `nome` = "Ritenuta d'acconto predefinita";

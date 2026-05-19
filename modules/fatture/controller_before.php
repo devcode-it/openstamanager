@@ -46,8 +46,12 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     }
     $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli Fatture di vendita'))->format('Y-m-d');
 
-    $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)
-        ->where(function($query) {
+    $documenti = Fattura::where('data', '>', $data_limite)
+        ->where('data', '>', $data_setting)
+        ->whereHas('tipo', function ($query) {
+            $query->where('dir', 'entrata');
+        })
+        ->where(function ($query) {
             $query->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])
                 ->orWhereNull('codice_stato_fe');
         })->get();

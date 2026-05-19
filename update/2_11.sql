@@ -1578,6 +1578,22 @@ WHERE
 HAVING 
     2=2" WHERE `zz_modules`.`name` = 'Stati degli ordini';
 
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select| 
+FROM
+    `zz_segments`
+    LEFT JOIN `zz_segments_lang` ON (`zz_segments_lang`.`id_record` = `zz_segments`.`id` AND `zz_segments_lang`.|lang|)
+    INNER JOIN `zz_modules` ON `zz_modules`.`id` = `zz_segments`.`id_module`
+    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)
+    LEFT JOIN (SELECT GROUP_CONCAT(`zz_groups_lang`.`title` ORDER BY `zz_groups_lang`.`title`  SEPARATOR ', ') AS `gruppi`, `zz_group_segment`.`id_segment` FROM `zz_group_segment` INNER JOIN `zz_groups` ON `zz_groups`.`id` = `zz_group_segment`.`id_gruppo` LEFT JOIN `zz_groups_lang` ON (`zz_groups_lang`.`id_record` = `zz_groups`.`id` AND `zz_groups_lang`.|lang|) GROUP BY  `zz_group_segment`.`id_segment`) AS `t` ON `t`.`id_segment` = `zz_segments`.`id`
+WHERE
+    1=1
+HAVING
+    2=2
+ORDER BY `zz_segments_lang`.`title`, `zz_segments`.`id_module`" WHERE `zz_modules`.`name` = 'Segmenti';
+
+
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(\' \',`an_tipi_anagrafiche_lang`.`title`)' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
 
@@ -1628,6 +1644,17 @@ UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`colore`' WHERE `zz_views`.`name
 
 UPDATE `zz_views` SET `query` = "IF(co_preventivi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
 UPDATE `zz_views` SET `query` = "`co_preventivi`.`informazioni_aggiuntive`" WHERE `zz_views`.`name` = "Note interne" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
+UPDATE `zz_views` SET `query` = "`co_stati_preventivi`.`icona`" WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
+UPDATE `zz_views` SET `query` = "`co_stati_preventivi_lang`.`title`" WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
+UPDATE `zz_views` SET `query` = "`co_stati_preventivi`.`colore`" WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
+
+UPDATE `zz_views` SET `query` = "`or_stati_ordine`.`icona`" WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore');
+UPDATE `zz_views` SET `query` = "`or_stati_ordine_lang`.`title`" WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore');
+UPDATE `zz_views` SET `query` = "`or_stati_ordine`.`colore`" WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini fornitore');
+
+UPDATE `zz_views` SET `query` = "`or_stati_ordine`.`icona`" WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente');
+UPDATE `zz_views` SET `query` = "`or_stati_ordine_lang`.`title`" WHERE `zz_views`.`name` = "icon_title_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente');
+UPDATE `zz_views` SET `query` = "`or_stati_ordine`.`colore`" WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ordini cliente');
 
 UPDATE `zz_views` SET `query` = "`co_contratti`.`informazioni_aggiuntive`" WHERE `zz_views`.`name` = "Note interne" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');
 UPDATE `zz_views` SET `query` = "`co_stati_contratti`.`icona`" WHERE `zz_views`.`name` = "icon_Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Contratti');

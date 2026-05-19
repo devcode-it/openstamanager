@@ -1763,3 +1763,4 @@ UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`,
 
 -- Allineamento segmenti
 UPDATE `zz_segments` SET `clause` = '`in_interventi`.`id_stato` NOT IN(SELECT `in_stati_intervento`.`id` FROM `in_stati_intervento` WHERE `is_bloccato`=1)' WHERE `zz_segments`.`name` = 'Non completate' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_segments` SET `clause` = '1=1 AND Livello=\'error\'' WHERE `zz_segments`.`name` = 'Errori';

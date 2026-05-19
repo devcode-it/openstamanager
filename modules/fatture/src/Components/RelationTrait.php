@@ -22,14 +22,14 @@ namespace Modules\Fatture\Components;
 
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Fatture\Fattura;
-use Modules\Ritenute\ritenuta_acconto;
-use Modules\Rivalse\rivalsa_inps;
+use Modules\Ritenute\RitenutaAcconto;
+use Modules\Rivalse\RivalsaINPS;
 
 trait RelationTrait
 {
     public function getDocumentID()
     {
-        return 'id_documento';
+        return 'iddocumento';
     }
 
     public function document()
@@ -66,7 +66,7 @@ trait RelationTrait
     }
 
     /**
-     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsa_inps) dell'elemento.
+     * Restituisce il totale (imponibile + iva + rivalsa_inps + iva_rivalsainps) dell'elemento.
      *
      * @return float
      */
@@ -75,22 +75,22 @@ trait RelationTrait
         return $this->totale_imponibile + $this->iva + $this->rivalsa_inps + $this->iva_rivalsa_inps;
     }
 
-    public function getrivalsa_inpsAttribute()
+    public function getRivalsaINPSAttribute()
     {
         return $this->totale_imponibile / 100 * $this->rivalsa->percentuale;
     }
 
-    public function getIvarivalsa_inpsAttribute()
+    public function getIvaRivalsaINPSAttribute()
     {
         return $this->rivalsa_inps / 100 * $this->aliquota->percentuale;
     }
 
-    public function getritenuta_accontoAttribute()
+    public function getRitenutaAccontoAttribute()
     {
         $result = $this->totale_imponibile;
 
         if ($this->calcolo_ritenuta_acconto == 'IMP+RIV') {
-            $result += $this->rivalsa_inps;
+            $result += $this->rivalsainps;
         }
 
         $ritenuta = $this->ritenuta;
@@ -118,7 +118,7 @@ trait RelationTrait
      *
      * @param int $value
      */
-    public function setIdrivalsa_inpsAttribute($value)
+    public function setIdRivalsaINPSAttribute($value)
     {
         $this->attributes['id_rivalsa_inps'] = $value;
         $this->load('rivalsa');
@@ -129,7 +129,7 @@ trait RelationTrait
      *
      * @param int $value
      */
-    public function setIdritenuta_accontoAttribute($value)
+    public function setIdRitenutaAccontoAttribute($value)
     {
         $this->attributes['id_ritenuta_acconto'] = $value;
         $this->load('ritenuta');
@@ -147,12 +147,12 @@ trait RelationTrait
 
     public function rivalsa()
     {
-        return $this->belongsTo(rivalsa_inps::class, 'id_rivalsa_inps');
+        return $this->belongsTo(RivalsaINPS::class, 'id_rivalsa_inps');
     }
 
     public function ritenuta()
     {
-        return $this->belongsTo(ritenuta_acconto::class, 'id_ritenuta_acconto');
+        return $this->belongsTo(RitenutaAcconto::class, 'id_ritenuta_acconto');
     }
 
     /**
@@ -162,8 +162,8 @@ trait RelationTrait
      */
     public function save(array $options = [])
     {
-        $this->fixritenuta_acconto();
-        $this->fixrivalsa_inps();
+        $this->fixRitenutaAcconto();
+        $this->fixRivalsaINPS();
 
         return parent::save($options);
     }
@@ -174,7 +174,7 @@ trait RelationTrait
 
         // Aggiorna lo stato dell'intervento a 'OK' quando la riga viene eliminata
         $stato = \Modules\Interventi\Stato::where('codice', 'OK')->first()->id;
-        \Modules\Interventi\Intervento::where('id', $this->id_intervento)->update(['id_stato' => $stato]);
+        \Modules\Interventi\Intervento::where('id', $this->idintervento)->update(['id_stato' => $stato]);
 
         return $result;
     }
@@ -235,7 +235,7 @@ trait RelationTrait
     /**
      * Effettua i conti per la Rivalsa INPS.
      */
-    protected function fixrivalsa_inps()
+    protected function fixRivalsaINPS()
     {
         $this->attributes['rivalsa_inps'] = $this->rivalsa_inps;
     }
@@ -243,7 +243,7 @@ trait RelationTrait
     /**
      * Effettua i conti per la Ritenuta d'Acconto, basandosi sul valore del campo calcolo_ritenuta_acconto.
      */
-    protected function fixritenuta_acconto()
+    protected function fixRitenutaAcconto()
     {
         $this->attributes['ritenuta_acconto'] = $this->ritenuta_acconto;
     }

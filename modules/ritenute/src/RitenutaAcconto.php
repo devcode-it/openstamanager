@@ -23,7 +23,7 @@ namespace Modules\Ritenute;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class ritenuta_acconto extends Model
+class RitenutaAcconto extends Model
 {
     use SimpleModelTrait;
 

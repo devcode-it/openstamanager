@@ -408,7 +408,7 @@ if (!empty($sconto)) {
 }
 
 // RIVALSA INPS
-if (!empty($rivalsa_inps)) {
+if ($rivalsa_inps > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">';
@@ -441,7 +441,7 @@ if (!empty($rivalsa_inps)) {
 }
 
 // IVA
-if (!empty($iva)) {
+if ($iva > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">';
@@ -473,7 +473,7 @@ echo '
         </tr>';
 
 // RITENUTA D'ACCONTO
-if (!empty($ritenuta_acconto)) {
+if ($ritenuta_acconto > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
@@ -487,7 +487,7 @@ if (!empty($ritenuta_acconto)) {
 }
 
 // RITENUTA PREVIDENZIALE
-if (!empty($ritenuta_contributi)) {
+if ($ritenuta_contributi > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
@@ -501,7 +501,7 @@ if (!empty($ritenuta_contributi)) {
 }
 
 // SCONTO IN FATTURA
-if (!empty($sconto_finale)) {
+if ($sconto_finale > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">
@@ -529,7 +529,7 @@ if ($totale != $netto_a_pagare) {
 }
 
 // Provvigione
-if (!empty($fattura->provvigione)) {
+if ($fattura->provvigione > 0) {
     echo '
         <tr>
             <td colspan="'.$colspan.'" class="text-right">

@@ -963,12 +963,14 @@ ALTER TABLE `dt_ddt` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `in_righe_interventi` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idsede_partenza` `id_sede_partenza` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `dt_ddt` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `in_interventi` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 ALTER TABLE `or_ordini` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
+ALTER TABLE `co_documenti` CHANGE `idsede_destinazione` `id_sede_destinazione` INT NOT NULL;
 
 ALTER TABLE `co_contratti` CHANGE `idpagamento` `id_pagamento` INT NOT NULL;
 ALTER TABLE `co_preventivi` CHANGE `idpagamento` `id_pagamento` INT NULL DEFAULT NULL;

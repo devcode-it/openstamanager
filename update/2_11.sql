@@ -1762,6 +1762,7 @@ UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`,
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_piano_dei_conti3` ORDER BY `descrizione` ASC" WHERE `nome` = "Conto per Iva su vendite Intra UE";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_piano_dei_conti3` ORDER BY `descrizione` ASC" WHERE `nome` = "Conto per Iva su acquisti Reverse charge";
 UPDATE `zz_settings` SET `tipo` = "query=SELECT `id`, CONCAT_WS(' - ', `numero`, `descrizione`) AS descrizione FROM `co_piano_dei_conti3` ORDER BY `descrizione` ASC" WHERE `nome` = "Conto per Iva su vendite Reverse charge";
+UPDATE `zz_settings` SET `tipo` = "integer" WHERE `nome` IN ("Giorni validità fattura scartata", "Secondi timeout tavoletta Wacom");
 
 -- Allineamento segmenti
 UPDATE `zz_segments` SET `clause` = '`in_interventi`.`id_stato` NOT IN(SELECT `in_stati_intervento`.`id` FROM `in_stati_intervento` WHERE `is_bloccato`=1)' WHERE `zz_segments`.`name` = 'Non completate' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');

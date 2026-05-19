@@ -124,6 +124,19 @@ function setting($name)
         $value = $setting->valore;
     }
 
+    // Per le impostazioni boolean, restituisce 0 o 1 invece di "0" o "1"
+    if ($setting->tipo == 'boolean') {
+        $value = $value ? 1 : 0;
+    }
+
+    if ($setting->tipo == 'integer') {
+        $value = (int)$value;
+    }
+
+    if ($setting->tipo == 'decimal') {
+        $value = (float)$value;
+    }
+
     return $value;
 }
 

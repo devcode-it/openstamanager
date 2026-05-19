@@ -33,7 +33,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $documenti_invio = [];
     $codici_scarto = ['EC02', 'NS'];
     $codici_errore = ['ERR', 'ERVAL'];
-    $codici_invio = ['GEN', 'QUEUE'];
+    $codici_invio = ['GEN', 'QUEUE', null];
     $data_limite = (new Carbon())->subMonths(6);
     $data_limite_invio = (new Carbon())->subDays(10);
 
@@ -46,7 +46,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     }
     $data_setting = Carbon::createFromFormat('d/m/Y', setting('Data inizio controlli Fatture di vendita'))->format('Y-m-d');
 
-    $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->get();
+    $documenti = Fattura::where('data', '>', $data_limite)->where('data', '>', $data_setting)->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])->orWhereNull('codice_stato_fe')->get();
 
     foreach ($documenti as $documento) {
         $stato_fe = StatoFE::find($documento->codice_stato_fe);
@@ -98,7 +98,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                     '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
                     '_NUM_' => $documento->numero_esterno,
                     '_DATE_' => dateFormat($documento->data),
-                    '_STATO_' => $stato_fe->name,
+                    '_STATO_' => $stato_fe->name ?: tr('Da generare'),
                     '_ANTICIPATA_' => (($documento->data->diffInDays($data_limite_invio) < 10) ? '(Anticipata)' : ''),
                 ]));
             }
@@ -130,7 +130,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
             <button class="close" type="button" data-dismiss="alert" aria-hidden="true"><span aria-hidden="true">×</span><span class="sr-only">'.tr('Chiudi').'</span></button>
             <h4 class="alert-heading"><i class="fa fa-clock-o mr-2"></i>'.tr('Attenzione').'</h4>
             <p class="mb-2">'.tr('Le seguenti fatture sono in attesa di essere inviate').':</p>
-            <ul class="fa-ul list-unstyled mb-0">';
+            <ul class="fa-ul mb-0">';
         foreach ($documenti_invio as $documento) {
             echo '
                 <li class="mb-1"><span class="fa-li"><i class="fa fa-clock-o"></i></span><b>'.$documento.'</b></li>';

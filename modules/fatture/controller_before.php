@@ -51,7 +51,9 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
         ->whereHas('tipo', function ($query) {
             $query->where('dir', 'entrata');
         })
-        ->where(function ($query) {
+        ->whereHas('stato', function($query){
+            $query->whereNotIn('name', ['Bozza', 'Annullata', 'Non valida']);
+        })->where(function ($query) {
             $query->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])
                 ->orWhereNull('codice_stato_fe');
         })->get();
@@ -60,26 +62,25 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
         $stato_fe = StatoFE::find($documento->codice_stato_fe);
         if (in_array($documento->codice_stato_fe, $codici_scarto)) {
             // In caso di NS verifico che non sia semplicemente un codice 00404 (Fattura duplicata)
-            if ($documento->stato->name != 'Bozza' && $documento->stato->name != 'Non valida') {
-                $ricevuta_principale = $documento->getRicevutaPrincipale();
 
-                if (!empty($ricevuta_principale)) {
-                    $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename);
-                    $lista_errori = $contenuto_ricevuta['ListaErrori'];
-                    if ($lista_errori) {
-                        $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
-                        $errore = $lista_errori[0]['Errore'];
-                        if ($errore['Codice'] != '00404') {
-                            $documenti_scarto[] = [
-                                'id' => $documento->id,
-                                'label' => tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
-                                    '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
-                                    '_NUM_' => $documento->numero_esterno,
-                                    '_DATE_' => dateFormat($documento->data),
-                                    '_STATO_' => $stato_fe->name,
-                                ]),
-                            ];
-                        }
+            $ricevuta_principale = $documento->getRicevutaPrincipale();
+
+            if (!empty($ricevuta_principale)) {
+                $contenuto_ricevuta = XML::readFile(base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename);
+                $lista_errori = $contenuto_ricevuta['ListaErrori'];
+                if ($lista_errori) {
+                    $lista_errori = $lista_errori[0] ? $lista_errori : [$lista_errori];
+                    $errore = $lista_errori[0]['Errore'];
+                    if ($errore['Codice'] != '00404') {
+                        $documenti_scarto[] = [
+                            'id' => $documento->id,
+                            'label' => tr('_ICON_ Fattura numero _NUM_ del _DATE_ : <b>_STATO_</b>', [
+                                '_ICON_' => '<i class="'.$stato_fe->icon.'"></i>',
+                                '_NUM_' => $documento->numero_esterno,
+                                '_DATE_' => dateFormat($documento->data),
+                                '_STATO_' => $stato_fe->name,
+                            ]),
+                        ];
                     }
                 }
             }

@@ -375,7 +375,7 @@ UPDATE `zz_settings` SET `nome` = 'Data inizio controlli Fatture di vendita' WHE
 UPDATE `zz_settings_lang` SET `title` = 'Data inizio controlli Fatture di vendita' WHERE `zz_settings_lang`.`title` = 'Data inizio controlli su stati FE';
 
 -- Allineamento riferimento Scadenziario -> Scadenzario 
-RENAME TABLE `openstamanager`.`co_scadenziario` TO `openstamanager`.`co_scadenzario`;
+RENAME TABLE `co_scadenziario` TO `co_scadenzario`;
 
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = '`co_scadenzario`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
@@ -1164,46 +1164,46 @@ ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;
 
-RENAME TABLE `openstamanager`.`co_ritenutaacconto` TO `openstamanager`.`co_ritenuta_acconto`;
-RENAME TABLE `openstamanager`.`an_tipianagrafiche` TO `openstamanager`.`an_tipi_anagrafiche`;
-RENAME TABLE `openstamanager`.`an_tipianagrafiche_anagrafiche` TO `openstamanager`.`an_tipi_anagrafiche_anagrafiche`;
-RENAME TABLE `openstamanager`.`an_tipianagrafiche_lang` TO `openstamanager`.`an_tipi_anagrafiche_lang`;
-RENAME TABLE `openstamanager`.`co_contratti_tipiintervento` TO `openstamanager`.`co_contratti_tipi_intervento`;
-RENAME TABLE `openstamanager`.`co_pianodeiconti1` TO `openstamanager`.`co_piano_dei_conti1`;
-RENAME TABLE `openstamanager`.`co_pianodeiconti2` TO `openstamanager`.`co_piano_dei_conti2`;
-RENAME TABLE `openstamanager`.`co_pianodeiconti3` TO `openstamanager`.`co_piano_dei_conti3`;
-RENAME TABLE `openstamanager`.`co_stampecontabili` TO `openstamanager`.`co_stampe_contabili`;
-RENAME TABLE `openstamanager`.`co_staticontratti` TO `openstamanager`.`co_stati_contratti`;
-RENAME TABLE `openstamanager`.`co_staticontratti_lang` TO `openstamanager`.`co_stati_contratti_lang`;
-RENAME TABLE `openstamanager`.`co_statidocumento` TO `openstamanager`.`co_stati_documento`;
-RENAME TABLE `openstamanager`.`co_statidocumento_lang` TO `openstamanager`.`co_stati_documento_lang`;
-RENAME TABLE `openstamanager`.`co_statipreventivi` TO `openstamanager`.`co_stati_preventivi`;
-RENAME TABLE `openstamanager`.`co_statipreventivi_lang` TO `openstamanager`.`co_stati_preventivi_lang`;
-RENAME TABLE `openstamanager`.`co_tipidocumento` TO `openstamanager`.`co_tipi_documento`;
-RENAME TABLE `openstamanager`.`co_tipidocumento_lang` TO `openstamanager`.`co_tipi_documento_lang`;
-RENAME TABLE `openstamanager`.`dt_aspettobeni` TO `openstamanager`.`dt_aspetto_beni`;
-RENAME TABLE `openstamanager`.`dt_aspettobeni_lang` TO `openstamanager`.`dt_aspetto_beni_lang`;
-RENAME TABLE `openstamanager`.`dt_causalet` TO `openstamanager`.`dt_causale_t`;
-RENAME TABLE `openstamanager`.`dt_causalet_lang` TO `openstamanager`.`dt_causale_t_lang`;
-RENAME TABLE `openstamanager`.`dt_statiddt` TO `openstamanager`.`dt_stati_ddt`;
-RENAME TABLE `openstamanager`.`dt_statiddt_lang` TO `openstamanager`.`dt_stati_ddt_lang`;
-RENAME TABLE `openstamanager`.`dt_tipiddt` TO `openstamanager`.`dt_tipi_ddt`;
-RENAME TABLE `openstamanager`.`dt_tipiddt_lang` TO `openstamanager`.`dt_tipi_ddt_lang`;
-RENAME TABLE `openstamanager`.`in_fasceorarie` TO `openstamanager`.`in_fasce_orarie`;
-RENAME TABLE `openstamanager`.`in_fasceorarie_lang` TO `openstamanager`.`in_fasce_orarie_lang`;
-RENAME TABLE `openstamanager`.`in_fasceorarie_tipiintervento` TO `openstamanager`.`in_fasce_orarie_tipi_intervento`;
-RENAME TABLE `openstamanager`.`in_righe_tipiinterventi` TO `openstamanager`.`in_righe_tipi_interventi`;
-RENAME TABLE `openstamanager`.`in_statiintervento` TO `openstamanager`.`in_stati_intervento`;
-RENAME TABLE `openstamanager`.`in_statiintervento_lang` TO `openstamanager`.`in_stati_intervento_lang`;
-RENAME TABLE `openstamanager`.`in_tipiintervento` TO `openstamanager`.`in_tipi_intervento`;
-RENAME TABLE `openstamanager`.`in_tipiintervento_groups` TO `openstamanager`.`in_tipi_intervento_groups`;
-RENAME TABLE `openstamanager`.`in_tipiintervento_lang` TO `openstamanager`.`in_tipi_intervento_lang`;
-RENAME TABLE `openstamanager`.`in_tipiintervento_tipologie` TO `openstamanager`.`in_tipi_intervento_tipologie`;
-RENAME TABLE `openstamanager`.`mg_unitamisura` TO `openstamanager`.`mg_unita_misura`;
-RENAME TABLE `openstamanager`.`or_statiordine` TO `openstamanager`.`or_stati_ordine`;
-RENAME TABLE `openstamanager`.`or_statiordine_lang` TO `openstamanager`.`or_stati_ordine_lang`;
-RENAME TABLE `openstamanager`.`or_tipiordine` TO `openstamanager`.`or_tipi_ordine`;
-RENAME TABLE `openstamanager`.`or_tipiordine_lang` TO `openstamanager`.`or_tipi_ordine_lang`;
+RENAME TABLE `co_ritenutaacconto` TO `co_ritenuta_acconto`;
+RENAME TABLE `an_tipianagrafiche` TO `an_tipi_anagrafiche`;
+RENAME TABLE `an_tipianagrafiche_anagrafiche` TO `an_tipi_anagrafiche_anagrafiche`;
+RENAME TABLE `an_tipianagrafiche_lang` TO `an_tipi_anagrafiche_lang`;
+RENAME TABLE `co_contratti_tipiintervento` TO `co_contratti_tipi_intervento`;
+RENAME TABLE `co_pianodeiconti1` TO `co_piano_dei_conti1`;
+RENAME TABLE `co_pianodeiconti2` TO `co_piano_dei_conti2`;
+RENAME TABLE `co_pianodeiconti3` TO `co_piano_dei_conti3`;
+RENAME TABLE `co_stampecontabili` TO `co_stampe_contabili`;
+RENAME TABLE `co_staticontratti` TO `co_stati_contratti`;
+RENAME TABLE `co_staticontratti_lang` TO `co_stati_contratti_lang`;
+RENAME TABLE `co_statidocumento` TO `co_stati_documento`;
+RENAME TABLE `co_statidocumento_lang` TO `co_stati_documento_lang`;
+RENAME TABLE `co_statipreventivi` TO `co_stati_preventivi`;
+RENAME TABLE `co_statipreventivi_lang` TO `co_stati_preventivi_lang`;
+RENAME TABLE `co_tipidocumento` TO `co_tipi_documento`;
+RENAME TABLE `co_tipidocumento_lang` TO `co_tipi_documento_lang`;
+RENAME TABLE `dt_aspettobeni` TO `dt_aspetto_beni`;
+RENAME TABLE `dt_aspettobeni_lang` TO `dt_aspetto_beni_lang`;
+RENAME TABLE `dt_causalet` TO `dt_causale_t`;
+RENAME TABLE `dt_causalet_lang` TO `dt_causale_t_lang`;
+RENAME TABLE `dt_statiddt` TO `dt_stati_ddt`;
+RENAME TABLE `dt_statiddt_lang` TO `dt_stati_ddt_lang`;
+RENAME TABLE `dt_tipiddt` TO `dt_tipi_ddt`;
+RENAME TABLE `dt_tipiddt_lang` TO `dt_tipi_ddt_lang`;
+RENAME TABLE `in_fasceorarie` TO `in_fasce_orarie`;
+RENAME TABLE `in_fasceorarie_lang` TO `in_fasce_orarie_lang`;
+RENAME TABLE `in_fasceorarie_tipiintervento` TO `in_fasce_orarie_tipi_intervento`;
+RENAME TABLE `in_righe_tipiinterventi` TO `in_righe_tipi_interventi`;
+RENAME TABLE `in_statiintervento` TO `in_stati_intervento`;
+RENAME TABLE `in_statiintervento_lang` TO `in_stati_intervento_lang`;
+RENAME TABLE `in_tipiintervento` TO `in_tipi_intervento`;
+RENAME TABLE `in_tipiintervento_groups` TO `in_tipi_intervento_groups`;
+RENAME TABLE `in_tipiintervento_lang` TO `in_tipi_intervento_lang`;
+RENAME TABLE `in_tipiintervento_tipologie` TO `in_tipi_intervento_tipologie`;
+RENAME TABLE `mg_unitamisura` TO `mg_unita_misura`;
+RENAME TABLE `or_statiordine` TO `or_stati_ordine`;
+RENAME TABLE `or_statiordine_lang` TO `or_stati_ordine_lang`;
+RENAME TABLE `or_tipiordine` TO `or_tipi_ordine`;
+RENAME TABLE `or_tipiordine_lang` TO `or_tipi_ordine_lang`;
 
 -- Allineamento widgets
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(an_anagrafiche.id) AS dato FROM an_anagrafiche INNER JOIN (an_tipi_anagrafiche_anagrafiche INNER JOIN an_tipi_anagrafiche ON an_tipi_anagrafiche_anagrafiche.id_tipo_anagrafica=an_tipi_anagrafiche.id LEFT JOIN an_tipi_anagrafiche_lang ON (an_tipi_anagrafiche_lang.id_record = an_tipi_anagrafiche.id AND |lang|)) ON an_anagrafiche.id=an_tipi_anagrafiche_anagrafiche.id_anagrafica WHERE 1=1 AND name="Cliente" AND `deleted_at` IS NULL HAVING 2=2' WHERE `zz_widgets`.`name` = "Numero di clienti";
@@ -1269,8 +1269,7 @@ UPDATE `zz_plugins` SET `options` = '{ "main_query": [ { "type": "table", "field
 UPDATE `zz_plugins` SET `options` = '{ "main_query": [{"type": "table", "fields": "Barcode", "query": "SELECT mg_articoli_barcode.id, mg_articoli_barcode.barcode AS Barcode FROM mg_articoli_barcode WHERE 1=1 AND mg_articoli_barcode.id_articolo=|id_parent| HAVING 2=2 ORDER BY barcode ASC"}]}' WHERE `name` = "Barcode";
 
 -- Allineamento moduli
-UPDATE `zz_modules` SET `options` = "
-SELECT
+UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
     `an_anagrafiche`
@@ -1307,8 +1306,7 @@ UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente"
 UPDATE `zz_views` SET `query` = "IF(in_interventi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = 'IFNULL(SUM(in_interventi_tecnici.prezzo_ore_unitario*in_interventi_tecnici.ore-in_interventi_tecnici.sconto + in_interventi_tecnici.prezzo_km_unitario*in_interventi_tecnici.km-in_interventi_tecnici.sconto_km + in_interventi_tecnici.prezzo_diritto_chiamata), 0) + IFNULL(ricavo_righe, 0)' WHERE `zz_views`.`name` = "Ricavi" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 
-UPDATE `zz_modules` SET `options` = "
-SELECT
+UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
     `mg_articoli`
@@ -1458,8 +1456,7 @@ WHERE
 HAVING 
     2=2" WHERE `zz_modules`.`name` = 'Ammortamenti';
 
-UPDATE `zz_modules` SET `options` = "
-SELECT
+UPDATE `zz_modules` SET `options` = "SELECT
     |select| 
 FROM 
     `dt_aspetto_beni`
@@ -1498,6 +1495,89 @@ WHERE
 HAVING 
     2=2" WHERE `zz_modules`.`name` = 'Fasce orarie';
 
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+    `co_tipi_documento`
+    LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.|lang|)
+    LEFT JOIN `zz_segments` ON `co_tipi_documento`.`id_segment` = `zz_segments`.`id` 
+    LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.|lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Tipi documento';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `in_tipi_intervento`
+    LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.|lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Tipi di intervento';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+    `co_stati_documento`
+    LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento`.`id` = `co_stati_documento_lang`.`id_record` AND |lang|)
+WHERE 
+    1=1
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati fatture';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `in_stati_intervento`
+    LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.|lang|)
+WHERE 
+    1=1 AND `deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati di intervento';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+    `co_stati_preventivi`
+    LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi`.`id` = `co_stati_preventivi_lang`.`id_record` AND |lang|)
+WHERE 
+    1=1 AND deleted_at IS NULL
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati dei preventivi';
+
+UPDATE `zz_modules` SET `options` = "SELECT 
+    |select| 
+FROM 
+    `dt_stati_ddt` 
+    LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.|lang|) 
+WHERE 
+    1=1 AND `deleted_at` IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati DDT';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select| 
+FROM 
+    `co_stati_contratti`
+    LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND |lang|)
+WHERE 
+    1=1 AND deleted_at IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati dei contratti';
+
+UPDATE `zz_modules` SET `options` = "SELECT
+    |select|
+FROM 
+    `or_stati_ordine`
+    LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.|lang|)
+WHERE 
+    1=1 AND 
+    deleted_at IS NULL 
+HAVING 
+    2=2" WHERE `zz_modules`.`name` = 'Stati degli ordini';
+
 -- Allineamento viste
 UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(\' \',`an_tipi_anagrafiche_lang`.`title`)' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Anagrafiche');
 
@@ -1527,6 +1607,10 @@ UPDATE `zz_views` SET `query` = 'co_movimenti.id_mastrino' WHERE `zz_views`.`nam
 UPDATE `zz_views` SET `query` = 'co_movimenti_modelli.id_mastrino' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Modelli prima nota');
 
 UPDATE `zz_views` SET `query` = '`marca`.`name`' WHERE `zz_views`.`name` = "Marche" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Articoli');
+
+UPDATE `zz_views` SET `query` = 'SUM(IF(`co_tipi_documento`.`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`))' WHERE `zz_views`.`name` = "Q.tà" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Statistiche vendita');
+UPDATE `zz_views` SET `query` = 'ROUND((SUM(IF(`co_tipi_documento`.`reversed`=1, -`co_righe_documenti`.`qta`, `co_righe_documenti`.`qta`)) * 100 / `totali_generali`.`totale_qta_generale`), 2)' WHERE `zz_views`.`name` = "Percentuale Iva" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Statistiche vendita');
+UPDATE `zz_views` SET `query` = 'SUM(IF(`co_tipi_documento`.`reversed`=1, -(`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`), (`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto`)))' WHERE `zz_views`.`name` = "Totale" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Statistiche vendita');
 
 UPDATE `zz_views` SET `query` = "IF(`dt_ddt`.`id_sede_destinazione`=0, 'Sede legale',CONCAT_WS(' - ', sedi_destinazione.nome_sede,sedi_destinazione.citta))" WHERE `zz_views`.`name` = "Sede destinazione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
 UPDATE `zz_views` SET `query` = 'IF(dt_ddt.id_sede_partenza=0, "Sede legale",CONCAT_WS(" - ", sedi.nome_sede,sedi.citta))' WHERE `zz_views`.`name` = "Sede partenza" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Ddt in uscita');
@@ -1573,6 +1657,41 @@ UPDATE `zz_views` SET `query` = 'IF(in_fasce_orarie.giorni = \'1,2,3,4,5\', \'La
 UPDATE `zz_views` SET `query` = '`in_fasce_orarie`.`ora_inizio`' WHERE `zz_views`.`name` = "Ora inizio" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
 UPDATE `zz_views` SET `query` = '`in_fasce_orarie`.`ora_fine`' WHERE `zz_views`.`name` = "Ora fine" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
 UPDATE `zz_views` SET `query` = 'IF(`in_fasce_orarie`.`include_bank_holidays`, \'Sì\', \'No\')' WHERE `zz_views`.`name` = "Includi festività" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fasce orarie');
+
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`dir`' WHERE `zz_views`.`name` = "Direzione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`reversed`' WHERE `zz_views`.`name` = "Reversed" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`codice_tipo_documento_fe`' WHERE `zz_views`.`name` = "Codice FE" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`predefined`' WHERE `zz_views`.`name` = "Predefinito" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+UPDATE `zz_views` SET `query` = '`co_tipi_documento`.`enabled`' WHERE `zz_views`.`name` = "Attivo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi documento');
+
+UPDATE `zz_views` SET `query` = '`in_tipi_intervento`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_views` SET `query` = '`in_tipi_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+UPDATE `zz_views` SET `query` = '`in_tipi_intervento`.`tempo_standard`' WHERE `zz_views`.`name` = "Tempo standard" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Tipi di intervento');
+
+UPDATE `zz_views` SET `query` = '`co_stati_documento`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati fatture');
+UPDATE `zz_views` SET `query` = '`co_stati_documento_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati fatture');
+
+UPDATE `zz_views` SET `query` = '`in_stati_intervento`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
+UPDATE `zz_views` SET `query` = '`in_stati_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati di intervento');
+
+UPDATE `zz_views` SET `query` = '`co_stati_preventivi`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi');
+UPDATE `zz_views` SET `query` = '`co_stati_preventivi_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei preventivi');
+
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati DDT');
+UPDATE `zz_views` SET `query` = '`dt_stati_ddt_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati DDT');
+
+UPDATE `zz_views` SET `query` = '`co_stati_contratti`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti');
+UPDATE `zz_views` SET `query` = '`co_stati_contratti_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati dei contratti');
+
+UPDATE `zz_views` SET `query` = '`or_stati_ordine`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini');
+UPDATE `zz_views` SET `query` = '`or_stati_ordine_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Stati degli ordini');
+
+UPDATE `zz_views` SET `query` = '`co_stati_documento_lang`.`title`' WHERE `zz_views`.`name` = "descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario');
+
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(CASE WHEN totale > 0 THEN co_piano_dei_conti3.descrizione ELSE NULL END)' WHERE `zz_views`.`name` = "Conto dare" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
+UPDATE `zz_views` SET `query` = 'GROUP_CONCAT(CASE WHEN totale < 0 THEN co_piano_dei_conti3.descrizione ELSE NULL END)' WHERE `zz_views`.`name` = "Conto avere" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Prima nota');
 
 -- Allineamento impostazioni
 UPDATE `zz_settings` SET `tipo` = "query=SELECT id, descrizione FROM `co_ritenuta_acconto` ORDER BY descrizione ASC" WHERE `nome` = "Ritenuta d'acconto predefinita";

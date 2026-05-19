@@ -309,17 +309,6 @@ ALTER TABLE `co_staticontratti` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `co_staticontratti_lang` ADD CONSTRAINT `co_staticontratti_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_staticontratti`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Stati dei contratti
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_staticontratti`
-    LEFT JOIN `co_staticontratti_lang` ON (`co_staticontratti`.`id` = `co_staticontratti_lang`.`id_record` AND |lang|)
-WHERE 
-    1=1 AND deleted_at IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Stati dei contratti';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_staticontratti`.`id`' WHERE `zz_modules`.`name` = 'Stati dei contratti' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta colonna N. utenti abilitati
@@ -350,17 +339,6 @@ ALTER TABLE `co_statidocumento` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `co_statidocumento_lang` ADD CONSTRAINT `co_statidocumento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_statidocumento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Stati fatture
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_statidocumento`
-    LEFT JOIN `co_statidocumento_lang` ON (`co_statidocumento`.`id` = `co_statidocumento_lang`.`id_record` AND |lang|)
-WHERE 
-    1=1
-HAVING 
-    2=2" WHERE `name` = 'Stati fatture';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_statidocumento`.`id`' WHERE `zz_modules`.`name` = 'Stati fatture' AND `zz_views`.`name` = 'id';
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_anagrafiche`.`idanagrafica`' WHERE `zz_modules`.`name` = 'Tecnici e tariffe' AND `zz_views`.`name` = 'id';
@@ -476,19 +454,6 @@ ALTER TABLE `co_tipidocumento` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `co_tipidocumento_lang` ADD CONSTRAINT `co_tipidocumento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `co_tipidocumento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Tipi documento
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select| 
-FROM 
-    `co_tipidocumento`
-    LEFT JOIN `co_tipidocumento_lang` ON (`co_tipidocumento`.`id` = `co_tipidocumento_lang`.`id_record` AND `co_tipidocumento_lang`.|lang|)
-    LEFT JOIN `zz_segments` ON `co_tipidocumento`.`id_segment` = `zz_segments`.`id` 
-    LEFT JOIN `zz_segments_lang` ON (`zz_segments`.`id` = `zz_segments_lang`.`id_record` AND `zz_segments_lang`.|lang|)
-WHERE 
-    1=1 AND `deleted_at` IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Tipi documento';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`co_tipidocumento`.`id`' WHERE `zz_modules`.`name` = 'Tipi documento' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella co_tipi_scadenze_lang
@@ -931,17 +896,6 @@ ALTER TABLE `in_statiintervento`
 
 ALTER TABLE `in_statiintervento_lang` ADD CONSTRAINT `in_statiintervento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `in_statiintervento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Stati di intervento
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM 
-    `in_statiintervento`
-    LEFT JOIN `in_statiintervento_lang` ON (`in_statiintervento_lang`.`id_record` = `in_statiintervento`.`id` AND `in_statiintervento_lang`.|lang|)
-WHERE 
-    1=1 AND `deleted_at` IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Stati di intervento';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_statiintervento`.`id`' WHERE `zz_modules`.`name` = 'Stati di intervento' AND `zz_views`.`name` = 'id';
 
 UPDATE `zz_widgets` SET `query` = 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT id FROM in_statiintervento WHERE is_completato = 0) ' WHERE `zz_widgets`.`name` = 'Attività da pianificare'; 
@@ -970,17 +924,6 @@ ALTER TABLE `in_tipiintervento`
 
 ALTER TABLE `in_tipiintervento_lang` ADD CONSTRAINT `in_tipiintervento_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `in_tipiintervento`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Tipi di intervento
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM 
-    `in_tipiintervento`
-    LEFT JOIN `in_tipiintervento_lang` ON (`in_tipiintervento_lang`.`id_record` = `in_tipiintervento`.`id` AND `in_tipiintervento_lang`.|lang|)
-WHERE 
-    1=1 AND `deleted_at` IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Tipi di intervento';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`in_tipiintervento`.`id`' WHERE `zz_modules`.`name` = 'Tipi di intervento' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella mg_articoli_lang
@@ -1192,18 +1135,6 @@ ALTER TABLE `or_statiordine` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `or_statiordine_lang` ADD CONSTRAINT `or_statiordine_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `or_statiordine`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Stati degli ordini
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM 
-    `or_statiordine`
-    LEFT JOIN `or_statiordine_lang` ON (`or_statiordine`.`id` = `or_statiordine_lang`.`id_record` AND `or_statiordine_lang`.|lang|)
-WHERE 
-    1=1 AND 
-    deleted_at IS NULL 
-HAVING 
-    2=2" WHERE `name` = 'Stati degli ordini';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`or_statiordine`.`id`' WHERE `zz_modules`.`name` = 'Stati degli ordini' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella or_tipiordine_lang

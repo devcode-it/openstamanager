@@ -14,6 +14,12 @@
         "email": "info@openstamanager.com"
     }],
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Pek5892/fluidxml.php"
+        }
+    ],
     "require": {
         "php": "^8.5",
         "ext-curl": "*",
@@ -61,7 +67,7 @@
         "phpmailer/phpmailer": "^7.0",
         "picqer/php-barcode-generator": "^3.2",
         "respect/validation": "^2.0",
-        "servo/fluidxml": "^2.0",
+        "servo/fluidxml": "dev-main",
         "slim/flash": "^0.4.0",
         "spatie/laravel-route-attributes": "^1.25",
         "spipu/html2pdf": "^5.0.0",

@@ -82,16 +82,16 @@ class FatturaElettronica
 
             if (!$p_iva_match && !$cf_match) {
                 $message = tr('Impossibile importare la fattura: P.IVA/CF non corrispondono.')."\n";
-                $message .= tr('Azienda: P.IVA _p_iva_, CF _CF_', [
-                    '_p_iva_' => !empty($azienda->p_iva) ? $azienda->p_iva : '-',
+                $message .= tr('Azienda: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($azienda->p_iva) ? $azienda->p_iva : '-',
                     '_CF_' => !empty($azienda->codice_fiscale) ? $azienda->codice_fiscale : '-',
                 ])."\n";
-                $message .= tr('Cessionario: P.IVA _p_iva_, CF _CF_', [
-                    '_p_iva_' => !empty($p_iva_cessionario) ? $p_iva_cessionario : '-',
+                $message .= tr('Cessionario: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($piva_cessionario) ? $p_iva_cessionario : '-',
                     '_CF_' => !empty($cf_cessionario) ? $cf_cessionario : '-',
                 ])."\n";
-                $message .= tr('Cedente: P.IVA _p_iva_, CF _CF_', [
-                    '_p_iva_' => !empty($p_iva_cedente) ? $p_iva_cedente : '-',
+                $message .= tr('Cedente: P.IVA _PIVA_, CF _CF_', [
+                    '_PIVA_' => !empty($piva_cedente) ? $p_iva_cedente : '-',
                     '_CF_' => !empty($cf_cedente) ? $cf_cedente : '-',
                 ]);
 
@@ -724,8 +724,8 @@ class FatturaElettronica
             $elemento = [];
 
             // Conversione nodi XML -> campi interni
-            if (!empty($dato['id_documento'])) {
-                $elemento['id_documento'] = $dato['id_documento'];
+            if (!empty($dato['IdDocumento'])) {
+                $elemento['id_documento'] = $dato['IdDocumento'];
             }
 
             if (!empty($dato['Data'])) {

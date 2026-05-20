@@ -46,6 +46,12 @@ class Fattura extends Document
 
     protected $table = 'co_documenti';
 
+    protected $attributes = [
+        'ritenuta_acconto' => 0,
+        'iva_rivalsa_inps' => 0,
+        'rivalsa_inps' => 0,
+    ];
+
     protected $casts = [
         'bollo' => 'float',
         'peso' => 'float',
@@ -54,6 +60,10 @@ class Fattura extends Document
 
         'sconto_finale' => 'float',
         'sconto_finale_percentuale' => 'float',
+
+        'ritenuta_acconto' => 'float',
+        'iva_rivalsa_inps' => 'float',
+        'rivalsa_inps' => 'float',
     ];
 
     protected $with = [

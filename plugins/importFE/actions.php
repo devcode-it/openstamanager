@@ -329,39 +329,39 @@ switch (filter('op')) {
             if (is_array($dato['RiferimentoNumeroLinea'])) {
                 foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
                     foreach ($replaces as $replace) {
-                        if (string_starts_with($dato['id_documento'], $replace)) {
-                            $dato['id_documento'] = str_replace($replace, '', $dato['id_documento']);
+                        if (string_starts_with($dato['IdDocumento'], $replace)) {
+                            $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
                             break;
                         }
                     }
 
                     try {
                         $dati_ordini[(int) $linea] = [
-                            'numero' => $dato['id_documento'],
+                            'numero' => $dato['IdDocumento'],
                             'anno' => (new Carbon($dato['Data']))->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ordini[(int) $linea] = [
-                            'numero' => $dato['id_documento'],
+                            'numero' => $dato['IdDocumento'],
                         ];
                     }
                 }
             } else {
                 foreach ($replaces as $replace) {
-                    if (string_starts_with($dato['id_documento'], $replace)) {
-                        $dato['id_documento'] = str_replace($replace, '', $dato['id_documento']);
+                    if (string_starts_with($dato['IdDocumento'], $replace)) {
+                        $dato['IdDocumento'] = str_replace($replace, '', $dato['IdDocumento']);
                         break;
                     }
                 }
 
                 try {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
-                        'numero' => $dato['id_documento'],
+                        'numero' => $dato['IdDocumento'],
                         'anno' => (new Carbon($dato['Data']))->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
-                        'numero' => $dato['id_documento'],
+                        'numero' => $dato['IdDocumento'],
                     ];
                 }
             }
@@ -448,8 +448,9 @@ switch (filter('op')) {
             }
 
             // Se nella fattura elettronica è indicato un DDT cerco SOLO quel documento specifico
-            if (isset($dati_ddt[$numero_linea])) {
-                $ddt = $dati_ddt[$numero_linea];
+            $ddt_specifico = isset($dati_ddt[$numero_linea]) ? $dati_ddt[$numero_linea] : (isset($dati_ddt['generale']) ? $dati_ddt['generale'] : null);
+            if ($ddt_specifico) {
+                $ddt = $ddt_specifico;
                 $query = "SELECT
                     `dt_righe_ddt`.`id`,
                     `dt_righe_ddt`.`id_ddt` AS id_documento,
@@ -490,8 +491,9 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica NON è indicato un DDT ed è indicato un ordine
             // cerco SOLO per quell'ordine specifico
-            if (empty($collegamento) && isset($dati_ordini[$numero_linea])) {
-                $ordine = $dati_ordini[$numero_linea];
+            $ordine_specifico = isset($dati_ordini[$numero_linea]) ? $dati_ordini[$numero_linea] : (isset($dati_ordini['generale']) ? $dati_ordini['generale'] : null);
+            if (empty($collegamento) && $ordine_specifico) {
+                $ordine = $ordine_specifico;
                 $query = "SELECT
                     `or_righe_ordini`.`id`,
                     `or_righe_ordini`.`id_ordine` AS id_documento,

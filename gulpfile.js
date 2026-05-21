@@ -669,7 +669,7 @@ export function release(done) {
                     const { host: dbHost, username: dbUser, password: dbPass, name: dbName } = dbConfig;
 
                     // Dump completo (struttura e dati) esclusa zz_users
-                    const dumpAllCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ignore-table=${dbName}.zz_users`;
+                    const dumpAllCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ignore-table=${dbName}.zz_users --ignore-table=${dbName}.an_anagrafiche`;
                     const dumpAll = shell.exec(dumpAllCommand, { silent: true }).stdout;
 
                     // Dump solo struttura di zz_users

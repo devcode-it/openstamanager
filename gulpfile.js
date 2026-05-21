@@ -16,7 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Librerie NPM richieste per l'esecuzione
 import gulp from 'gulp';
@@ -541,6 +545,7 @@ export function release(done) {
                     '**/*',
                     '!checksum.json',
                     '!mysql.json',
+                    '!install.sql',
                     '!mariadb_10_x.json',
                     '!settings.json',
                     '!views.json',
@@ -656,6 +661,33 @@ export function release(done) {
                     }).stdout);
                     bufferStream.push(null);
                     archive.append(bufferStream, { name: 'REVISION' });
+
+                    // Generazione del dump del database (esclusi zz_users)
+                    // Lettura delle credenziali dal config.inc.php
+                    const dbConfigJson = shell.exec(`php -r 'include "${__dirname}/config.inc.php"; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);'`, { silent: true }).stdout.trim();
+                    const dbConfig = JSON.parse(dbConfigJson);
+                    const { host: dbHost, username: dbUser, password: dbPass, name: dbName } = dbConfig;
+
+                    // Dump completo (struttura e dati) esclusa zz_users
+                    const dumpAllCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ignore-table=${dbName}.zz_users`;
+                    const dumpAll = shell.exec(dumpAllCommand, { silent: true }).stdout;
+
+                    // Dump solo struttura di zz_users
+                    const dumpUsersStructureCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --no-data --tables zz_users`;
+                    const dumpUsersStructure = shell.exec(dumpUsersStructureCommand, { silent: true }).stdout;
+
+                    // Dump solo struttura di an_anagrafiche
+                    const dumpAnagraficheStructureCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --no-data --tables an_anagrafiche`;
+                    const dumpAnagraficheStructure = shell.exec(dumpAnagraficheStructureCommand, { silent: true }).stdout;
+
+
+                    // Concatenazione dei tre dump
+                    bufferStream = new Readable();
+                    bufferStream.push(dumpAll);
+                    bufferStream.push(dumpUsersStructure);
+                    bufferStream.push(dumpAnagraficheStructure);
+                    bufferStream.push(null);
+                    archive.append(bufferStream, { name: 'install.sql' });
 
                     // Creazione di un stream leggibile con la versione
                     const versionStream = new Readable({

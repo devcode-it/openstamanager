@@ -86,6 +86,7 @@ files/temp/*
 tmp/
 config.inc.php
 database.sql
+install.sql
 VERSION
 REVISION
 .php_cs.cache

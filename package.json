@@ -89,6 +89,9 @@
         "sass": "^1.62.1",
         "shelljs": "^0.10.0"
     },
+    "resolutions": {
+        "@openapitools/openapi-generator-cli": "2.25.0"
+    },
     "scripts": {
         "gulp": "gulp",
         "release-OSM": "yarn run develop-OSM && php composer.phar install --no-dev && gulp release",

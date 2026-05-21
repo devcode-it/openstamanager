@@ -523,8 +523,19 @@ class Update
 
         $database_ready = $database->isConnected() && $database->tableExists('updates');
 
-        // Individuazione di tutti gli aggiornamenti presenti
-        // Aggiornamenti del gestionale
+        if ($database->isConnected() && !$database->isInstalled()) {
+            $install_sql = base_dir().'/install.sql';
+            if (file_exists($install_sql)) {
+                if ($database->tableExists('updates')) {
+                    $database->query('DROP TABLE IF EXISTS `updates`');
+                }
+                $database->multiQuery($install_sql);
+                $database_ready = $database->tableExists('updates');
+            }
+        }
+
+        $database_ready = $database->isConnected() && $database->tableExists('updates');
+
         $core = self::getCoreUpdates();
 
         // Aggiornamenti supportati

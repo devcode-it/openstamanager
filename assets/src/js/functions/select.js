@@ -297,7 +297,7 @@ function initDynamicSelectInput(input) {
                 return {
                     search: params.term,
                     page: params.page || 0,
-                    length: params.length || 100,
+                    length: params.length || 150,
                     options: this.data('select-options'), // Dati aggiuntivi
                 };
             },

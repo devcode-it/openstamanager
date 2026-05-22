@@ -56,7 +56,7 @@ La documentazione ufficiale è disponibile all'indirizzo <https://docs.openstama
 
 ## Requisiti software
 
-L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com)  e il linguaggio di programmazione [PHP](https://php.net).
+L'installazione del gestionale richiede la presenza di un server web con abilitato il [DBMS MySQL](https://www.mysql.com) (o [MariaDB](https://mariadb.com) >= 10.5) e il linguaggio di programmazione [PHP](https://php.net).
 
 <table>
 <tr>
@@ -76,18 +76,36 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 </td>
 <td valign="top">
     
-| MYSQL | EOL | Supportato |
+| MYSQL/MARIADB | EOL | Supportato |
 |-----|-----|:----------:|
-| 9.1 | - | 🔴 |
-| 9.0 | 15/10/2024 | 🔴 |
-| 8.4 (LTS) | 30/04/2032 | 🔴 |
-| 8.3 | 10/04/2024 | 🟢 |
-| 8.2 | 14/12/2023 | 🟢 |
-| 8.1 | 25/10/2023 | 🟢 |
-| 8.0 (LTS) | 30/04/2026 | 🟢 |
-| 5.7 | 31/10/2023 | 🔴 |
-| 5.6 | 28/02/2021 | 🔴 |
-
+| MariaDB 11.8 | - | 🟢 |
+| MariaDB 11.7 | 31/05/2028 | 🟢 |
+| MariaDB 11.6 | 30/11/2027 | 🟢 |
+| MariaDB 11.5 | 31/05/2027 | 🟢 |
+| MariaDB 11.4 | 30/11/2026 | 🟢 |
+| MariaDB 11.3 | 31/05/2026 | 🟢 |
+| MariaDB 11.2 | 28/11/2025 | 🟢 |
+| MariaDB 11.1 | 24/06/2025 | 🟢 |
+| MariaDB 11.0 | 17/08/2026 | 🟢 |
+| MariaDB 10.11 (LTS) | 31/05/2031 | 🟢 |
+| MariaDB 10.10 | 16/08/2025 | 🟢 |
+| MariaDB 10.9 | 17/08/2024 | 🟢 |
+| MariaDB 10.8 | 18/05/2024 | 🟢 |
+| MariaDB 10.7 | 18/05/2023 | 🟢 |
+| MariaDB 10.6 | 13/07/2026 | 🟢 |
+| MariaDB 10.5 | 24/06/2025 | 🟢 |
+| MariaDB 10.4 | 15/06/2024 | 🔴 |
+| MariaDB 10.3 | 25/05/2023 | 🔴 |
+| MySQL 9.1 | - | 🔴 |
+| MySQL 9.0 | 15/10/2024 | 🔴 |
+| MySQL 8.4 (LTS) | 30/04/2032 | 🟢 |
+| MySQL 8.3 | 10/04/2024 | 🟢 |
+| MySQL 8.2 | 14/12/2023 | 🟢 |
+| MySQL 8.1 | 25/10/2023 | 🟢 |
+| MySQL 8.0 (LTS) | 30/04/2026 | 🟢 |
+| MySQL 5.7 | 31/10/2023 | 🔴 |
+| MySQL 5.6 | 28/02/2021 | 🔴 |
+ 
     
 </td>
 </tr>
@@ -95,7 +113,9 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
 
 Fonte EOL PHP: [https://endoflife.date/php](https://endoflife.date/php)
 
-Fonte EOL MYSQL: [https://endoflife.date/mysql](https://endoflife.date/mysql)
+Fonte EOL MySQL: [https://endoflife.date/mysql](https://endoflife.date/mysql)
+
+Fonte EOL MariaDB: [https://endoflife.date/mariadb](https://endoflife.date/mariadb)
 
 ❗Alcune dipendenze presenti dalla versione 2.5 non sono più compatibili con PHP 7.4 e PHP 8.0, dalla versione 2.5.3 sarà quindi richiesta una versione di php >= 8.1.
 

@@ -220,10 +220,10 @@ if ($database->isInstalled()) {
         $db = [
             'mysql_version' => [
                 'type' => 'version',
-                'warning' => $database->isMySQL() ? false : true,
-                'description' => $database->isMySQL() ? '8.0.x - 8.4.x' : '10.x',
-                'minimum' => $database->isMySQL() ? '8.0.0' : '10.1.0',
-                'maximum' => $database->isMySQL() ? '8.4.99' : '10.6.99',
+                'warning' => false,
+                'description' => $database->isMySQL() ? '8.0.x - 8.4.x' : '10.5.x - 11.8.x',
+                'minimum' => $database->isMySQL() ? '8.0.0' : '10.5.0',
+                'maximum' => $database->isMySQL() ? '8.4.99' : '11.8.99',
             ],
 
             'sort_buffer_size' => [
@@ -267,11 +267,6 @@ foreach ($db as $name => $values) {
         ]);
 
         $status = ((version_compare($database->getMySQLVersion(), $values['minimum'], '>=') && version_compare($database->getMySQLVersion(), $values['maximum'], '<=')) ? 1 : 0);
-
-        if ($values['warning'] && $status == 1) {
-            $status = 0;
-            $description .= '. <i class="fa fa-exclamation-triangle text-danger" ></i><b> '.tr('Al momento MariaDB _MYSQL_VERSION_ non è completamente supportato, si consiglia di passare a MySQL.', ['_MYSQL_VERSION_' => $database->getMySQLVersion()]).'</b>';
-        }
     } else {
         $type = tr('Impostazione');
 
@@ -339,7 +334,7 @@ foreach ($dirs_to_check as $name => $description) {
 // File di servizio
 $files_to_check = [
     'manifest.json' => tr('Necessario per l\'aggiunta a schermata home da terminale (creato al termine della configurazione)'),
-    'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x'),
+    'mariadb_10_x.json' => tr('Necessario per il controllo integrità con database MariaDB 10.x - 11.x'),
     'mysql.json' => tr('Necessario per il controllo integrità con database MySQL 8.0.x - 8.4.x'),
     'checksum.json' => tr('Necessario per il controllo integrità dei files del gestionale'),
     'settings.json' => tr('Necessario per il controllo delle impostazioni del gestionale'),

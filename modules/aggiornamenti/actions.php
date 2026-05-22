@@ -251,7 +251,7 @@ switch (filter('op')) {
             $results[] = [
                 'id' => $key,
                 'class' => $controllo,
-                'name' => new $controllo()->getName(),
+                'name' => (new $controllo())->getName(),
             ];
         }
 

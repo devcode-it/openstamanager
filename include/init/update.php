@@ -280,7 +280,7 @@ if (filter('action') == 'do_update') {
     // Lista aggiornamenti da applicare
     $updates = Update::getTodoUpdates();
 
-    if (!$dbo->isInstalled()) {
+    if (!$dbo->isInstalled() && file_exists(base_dir().'/install.sql')) {
         echo '
                 <div id="database-install-screen">
                     <div class="alert alert-info">

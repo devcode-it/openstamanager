@@ -573,6 +573,12 @@ class Update
                 }
                 $database->multiQuery($install_sql);
                 $database_ready = $database->tableExists('updates');
+            } else {
+                $create = base_dir().'/update/create_updates.sql';
+                if (file_exists($create) && !$database->tableExists('updates')) {
+                    $database->multiQuery($create);
+                    $database_ready = $database->tableExists('updates');
+                }
             }
         }
 

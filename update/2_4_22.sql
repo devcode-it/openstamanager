@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `zz_imports` (
 ) ENGINE=InnoDB;
 
 ALTER TABLE `zz_imports`
-    ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+    ADD CONSTRAINT `zz_imports_ibfk_2` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Importazioni di base
 INSERT INTO `zz_imports` (`id_module`, `name`, `class`) VALUES
@@ -191,7 +191,7 @@ UPDATE `zz_views` SET `name`='Conto avere' WHERE `name`='Conto avere_new';
 
 -- Aggiunta campo per scelta ordine in intervento
 ALTER TABLE `in_interventi` ADD `id_ordine` INT(11) AFTER `id_contratto`;
-ALTER TABLE `in_interventi` ADD FOREIGN KEY (`id_ordine`) REFERENCES `or_ordini`(`id`) ON DELETE CASCADE;
+ALTER TABLE `in_interventi` ADD CONSTRAINT `in_interventi_ibfk_12` FOREIGN KEY (`id_ordine`) REFERENCES `or_ordini`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta plugin consuntivo per ordini
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES

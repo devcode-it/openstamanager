@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `co_mandati_sepa` (
   `data_firma_mandato` DATE NOT NULL,
   `singola_disposizione` TINYINT(1) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_banca`) REFERENCES `co_banche`(`id`) ON DELETE CASCADE
+  CONSTRAINT `co_mandati_sepa_ibfk_1` FOREIGN KEY (`id_banca`) REFERENCES `co_banche`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Aggiunta del plugin

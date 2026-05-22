@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `zz_modules_flags` (
   `name` enum('use_checklists', 'use_notes', 'enable_otp') NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_module_flag` (`id_module`, `name`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_modules_flags_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Migrazione dei flag esistenti use_notes dalla tabella zz_modules
@@ -342,13 +342,11 @@ CREATE TABLE IF NOT EXISTS `an_automezzi_gestori` (
 
 -- Aggiunta foreign key per tipo carburante
 ALTER TABLE `an_automezzi_rifornimenti`
-    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_2`
-    FOREIGN KEY (`id_carburante`) REFERENCES `an_automezzi_tipi_carburante`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_2` FOREIGN KEY (`id_carburante`) REFERENCES `an_automezzi_tipi_carburante`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 -- Aggiunta foreign key per gestore
 ALTER TABLE `an_automezzi_rifornimenti`
-    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_3`
-    FOREIGN KEY (`id_gestore`) REFERENCES `an_automezzi_gestori`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+    ADD CONSTRAINT `an_automezzi_rifornimenti_ibfk_3` FOREIGN KEY (`id_gestore`) REFERENCES `an_automezzi_gestori`(`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 -- Inserimento modulo Tipi carburante
 INSERT INTO `zz_modules` (`name`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`)

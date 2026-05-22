@@ -60,19 +60,19 @@ UPDATE `my_impianti_interventi` SET `idintervento` = NULL WHERE `idintervento` =
 UPDATE `my_impianto_componenti` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = '';
 UPDATE `my_componenti_interventi` SET `id_intervento` = NULL WHERE `id_intervento` = 0 OR `id_intervento` = '';
 
-ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_ordiniservizio` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `co_ordiniservizio_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_preventivi_interventi` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `co_preventivi_interventi_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_contratti` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `co_righe_contratti_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 ALTER TABLE `co_righe_documenti` CHANGE `idintervento` `idintervento` int(11);
-ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `mg_articoli_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
-ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` int(11), ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `in_righe_interventi` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `in_righe_interventi_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `mg_movimenti` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `mg_movimenti_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `mg_articoli_interventi` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `mg_articoli_interventi_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianti_interventi` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `my_impianti_interventi_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianto_componenti` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `my_impianto_componenti_ibfk_1` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_componenti_interventi` CHANGE `id_intervento` `id_intervento` int(11), ADD CONSTRAINT `my_componenti_interventi_ibfk_3` FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in my_componenti_interventi
-ALTER TABLE `my_componenti_interventi` CHANGE `id_componente` `id_componente` int(11) NOT NULL, ADD FOREIGN KEY (`id_componente`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_componenti_interventi` CHANGE `id_componente` `id_componente` int(11) NOT NULL, ADD CONSTRAINT `my_componenti_interventi_ibfk_4` FOREIGN KEY (`id_componente`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
 -- Aggiornamento dei filtri per i gruppo di utenti
 UPDATE `zz_group_module` SET `clause` = ' AND in_interventi.id IN (SELECT idintervento FROM in_interventi_tecnici WHERE idintervento=in_interventi.id AND idtecnico=|idtecnico|)' WHERE `id` = 1;
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `zz_views` (
   `summable` tinyint(1) NOT NULL DEFAULT '0',
   `default` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_views_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 --
@@ -376,8 +376,8 @@ CREATE TABLE IF NOT EXISTS `zz_group_view` (
   `id_gruppo` int(11) NOT NULL,
   `id_vista` int(11) NOT NULL,
   PRIMARY KEY (`id_gruppo`, `id_vista`),
-  FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_vista`) REFERENCES `zz_views`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_group_view_ibfk_1` FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_group_view_ibfk_2` FOREIGN KEY (`id_vista`) REFERENCES `zz_views`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Aggiornamento delle query di default dei vari moduli predefiniti
@@ -485,7 +485,7 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'IVA'), 'id', 'id', 1, 1, 0, 0, 0);
 
 -- Modifica di an_anagrafiche per sostituire le nazioni con i corrispettivi nella tabella apposita
-ALTER TABLE `an_anagrafiche` ADD `id_nazione` int(11) AFTER `nazione`, ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
+ALTER TABLE `an_anagrafiche` ADD `id_nazione` int(11) AFTER `nazione`, ADD CONSTRAINT `an_anagrafiche_ibfk_1` FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
 UPDATE `an_anagrafiche` SET `id_nazione` = (SELECT `id` FROM `an_nazioni` WHERE `nome` = `nazione`);
 ALTER TABLE `an_anagrafiche` DROP COLUMN `nazione`;
 
@@ -494,22 +494,22 @@ ALTER TABLE `my_impianti` DROP PRIMARY KEY, ADD `id` int(11) PRIMARY KEY AUTO_IN
 
 ALTER TABLE `co_ordiniservizio` ADD `idimpianto` int(11);
 UPDATE `co_ordiniservizio` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `co_ordiniservizio`.`matricola`);
-ALTER TABLE `co_ordiniservizio` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_ordiniservizio` DROP COLUMN `matricola`, ADD CONSTRAINT `co_ordiniservizio_ibfk_2` FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `mg_articoli_interventi` ADD `idimpianto` int(11);
 UPDATE `mg_articoli_interventi` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `mg_articoli_interventi`.`matricola`);
-ALTER TABLE `mg_articoli_interventi` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `mg_articoli_interventi` DROP COLUMN `matricola`, ADD CONSTRAINT `mg_articoli_interventi_ibfk_2` FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `my_impianto_componenti` ADD `idimpianto` int(11);
 UPDATE `my_impianto_componenti` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianto_componenti`.`matricola`);
-ALTER TABLE `my_impianto_componenti` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianto_componenti` DROP COLUMN `matricola`, ADD CONSTRAINT `my_impianto_componenti_ibfk_2` FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `my_impianti_interventi` ADD `idimpianto` int(11);
 UPDATE `my_impianti_interventi` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianti_interventi`.`matricola`);
 DELETE FROM `my_impianti_interventi` WHERE `idimpianto` IS NULL;
-ALTER TABLE `my_impianti_interventi` DROP COLUMN `matricola`, ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianti_interventi` DROP COLUMN `matricola`, ADD CONSTRAINT `my_impianti_interventi_ibfk_2` FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 
-ALTER TABLE `my_impianti_contratti` ADD `idimpianto` int(11), ADD FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianti_contratti` ADD `idimpianto` int(11), ADD CONSTRAINT `my_impianti_contratti_ibfk_1` FOREIGN KEY (`idimpianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE;
 UPDATE `my_impianti_contratti` SET `idimpianto` = (SELECT `id` FROM `my_impianti` WHERE `my_impianti`.`matricola` = `my_impianti_contratti`.`matricola`);
 ALTER TABLE `my_impianti_contratti` DROP COLUMN `matricola`;
 
@@ -543,7 +543,7 @@ CREATE TABLE IF NOT EXISTS `mg_categorie` (
   `nota` varchar(1000) NOT NULL,
   `parent` int(11),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`parent`) REFERENCES `mg_categorie`(`id`) ON DELETE CASCADE
+  CONSTRAINT `mg_categorie_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `mg_categorie`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `mg_categorie` (`nome`) SELECT `categoria` FROM `mg_articoli` GROUP BY `categoria`;
@@ -666,34 +666,34 @@ INSERT INTO `zz_group_view` (`id_gruppo`, `id_vista`) VALUES
 -- Aggiunta di chiavi esterne in zz_modules
 ALTER TABLE `zz_modules` CHANGE `parent` `parent` int(11) NULL;
 UPDATE `zz_modules` SET `parent` = NULL WHERE `parent` = 0;
-ALTER TABLE `zz_modules` ADD FOREIGN KEY (`parent`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_modules` ADD CONSTRAINT `zz_modules_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_widgets
-ALTER TABLE `zz_widgets` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_widgets` ADD CONSTRAINT `zz_widgets_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_group_module
-ALTER TABLE `zz_group_module` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_group_module` ADD CONSTRAINT `zz_group_module_ibfk_1` FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD CONSTRAINT `zz_group_module_ibfk_2` FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_permissions
 DELETE FROM `zz_permissions` WHERE `idmodule` NOT IN (SELECT `id` FROM `zz_modules`);
-ALTER TABLE `zz_permissions` ADD FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_permissions` ADD CONSTRAINT `zz_permissions_ibfk_1` FOREIGN KEY (`idmodule`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD CONSTRAINT `zz_permissions_ibfk_2` FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_plugins
 DELETE FROM `zz_plugins` WHERE `idmodule_to` NOT IN (SELECT `id` FROM `zz_modules`);
 DELETE FROM `zz_plugins` WHERE `idmodule_from` NOT IN (SELECT `id` FROM `zz_modules`);
-ALTER TABLE `zz_plugins` ADD FOREIGN KEY (`idmodule_from`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD FOREIGN KEY (`idmodule_to`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_plugins` ADD CONSTRAINT `zz_plugins_ibfk_1` FOREIGN KEY (`idmodule_from`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE, ADD CONSTRAINT `zz_plugins_ibfk_2` FOREIGN KEY (`idmodule_to`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_users
-ALTER TABLE `zz_users` CHANGE `idutente` `id` int(11) NOT NULL AUTO_INCREMENT, ADD FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_users` CHANGE `idutente` `id` int(11) NOT NULL AUTO_INCREMENT, ADD CONSTRAINT `zz_users_ibfk_1` FOREIGN KEY (`idgruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_logs
 ALTER TABLE `zz_logs` DROP `password`, CHANGE `idutente` `id_utente` int(11), CHANGE `timestamp` `timestamp` datetime;
 UPDATE `zz_logs` SET `id_utente` = NULL WHERE `id_utente` = 0;
 DELETE FROM `zz_logs` WHERE `id_utente` IS NOT NULL AND `id_utente` NOT IN (SELECT `id` FROM `zz_users`);
-ALTER TABLE `zz_logs` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_logs` ADD CONSTRAINT `zz_logs_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta di chiavi esterne in zz_semaphores
-ALTER TABLE `zz_semaphores` ADD FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_semaphores` ADD CONSTRAINT `zz_semaphores_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE;
 
 -- Aggiunta della tabella per gestire le chiavi di accesso all'API
 CREATE TABLE IF NOT EXISTS `zz_tokens` (
@@ -703,11 +703,11 @@ CREATE TABLE IF NOT EXISTS `zz_tokens` (
   `descrizione` varchar(255),
   `enabled` boolean NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_tokens_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Modifica di an_sedi per sostituire le nazioni con i corrispettivi nella tabella apposita
-ALTER TABLE `an_sedi` ADD `id_nazione` int(11) COMMENT 'Nazione' AFTER `nazione`, ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
+ALTER TABLE `an_sedi` ADD `id_nazione` int(11) COMMENT 'Nazione' AFTER `nazione`, ADD CONSTRAINT `an_sedi_ibfk_1` FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
 UPDATE `an_sedi` SET `id_nazione` = `nazione` WHERE `nazione` IN (SELECT `id` FROM `an_nazioni`);
 ALTER TABLE `an_sedi` DROP COLUMN `nazione`;
 
@@ -716,7 +716,7 @@ ALTER TABLE `my_impianto_componenti` CHANGE `idsostituto` `idsostituto` int(11);
 UPDATE `my_impianto_componenti` SET `idsostituto` = NULL WHERE `idsostituto` = 0;
 -- PRIMA DI AGGIUNGERE LA CHIAVE ESTERNA: mi assicuro che non ci siano componenti collegati a componenti non più esistenti
 DELETE `t1` FROM `my_impianto_componenti` `t1` INNER JOIN `my_impianto_componenti` `t2` ON `t1`.`id` = `t2`.`id` WHERE `t1`.`idsostituto` NOT IN (`t2`.`id`);
-ALTER TABLE `my_impianto_componenti` ADD FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_impianto_componenti` ADD CONSTRAINT `my_impianto_componenti_ibfk_3` FOREIGN KEY (`idsostituto`) REFERENCES `my_impianto_componenti`(`id`) ON DELETE CASCADE;
 
 -- Adeguamento degli id di zz_files per interventi
 UPDATE `zz_files` SET `externalid` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `externalid`) WHERE module = 'interventi' ;
@@ -908,7 +908,7 @@ ALTER TABLE `my_impianto_componenti` CHANGE `data` `data` date, CHANGE `data_sos
 ALTER TABLE `or_righe_ordini` CHANGE `data_evasione` `data_evasione` date;
 
 -- Fix per i serial number
-ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
+ALTER TABLE `mg_prodotti` ADD `id_riga_documento` int(11), ADD CONSTRAINT `mg_prodotti_ibfk_1` FOREIGN KEY (`id_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE, ADD `id_riga_ordine` int(11), ADD CONSTRAINT `mg_prodotti_ibfk_2` FOREIGN KEY (`id_riga_ordine`) REFERENCES `or_righe_ordini`(`id`) ON DELETE CASCADE, ADD `id_riga_ddt` int(11), ADD CONSTRAINT `mg_prodotti_ibfk_3` FOREIGN KEY (`id_riga_ddt`) REFERENCES `dt_righe_ddt`(`id`) ON DELETE CASCADE, ADD `id_riga_intervento` int(11), ADD CONSTRAINT `mg_prodotti_ibfk_8` FOREIGN KEY (`id_riga_intervento`) REFERENCES `mg_articoli_interventi`(`id`) ON DELETE CASCADE, ADD `dir` enum('entrata', 'uscita') DEFAULT 'uscita', CHANGE `idarticolo` `id_articolo` int(11), ADD CONSTRAINT `mg_prodotti_ibfk_9` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `serial` `serial` varchar(50), CHANGE `lotto` `lotto` varchar(50), CHANGE `altro` `altro` varchar(50);
 
 INSERT INTO `mg_prodotti` (`id_riga_documento`, `dir`, `id_articolo`, `serial`, `lotto`, `altro`) SELECT `id`, (SELECT `dir` FROM `co_tipidocumento` JOIN `co_documenti` ON `co_tipidocumento`.`id` = `co_documenti`.`idtipodocumento` WHERE `co_documenti`.`id` = `co_righe_documenti`.`iddocumento`), IF(`idarticolo` IN (SELECT `id` FROM `mg_articoli`), `idarticolo`, NULL), `serial`, `lotto`, `altro` FROM `co_righe_documenti`;
 

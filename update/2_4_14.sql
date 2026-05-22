@@ -47,7 +47,7 @@ UPDATE `mg_articoli_interventi` SET `idarticolo` = (SELECT `id` FROM `mg_articol
 
 INSERT INTO `in_righe_interventi` (`old_id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `id`, `idarticolo`, `idintervento`, `is_descrizione`, `is_sconto`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `mg_articoli_interventi`;
 
-ALTER TABLE `co_promemoria_righe` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`, ADD `idimpianto` int(11), ADD `idarticolo` int(11), ADD FOREIGN KEY  (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `um` `um` varchar(25);
+ALTER TABLE `co_promemoria_righe` ADD `abilita_serial` boolean NOT NULL DEFAULT '0' AFTER `um`, ADD `idimpianto` int(11), ADD `idarticolo` int(11), ADD CONSTRAINT `co_promemoria_righe_ibfk_1` FOREIGN KEY  (`idarticolo`) REFERENCES `mg_articoli`(`id`) ON DELETE SET NULL, CHANGE `um` `um` varchar(25);
 ALTER TABLE `co_promemoria_righe` ADD `is_descrizione` TINYINT(1) DEFAULT FALSE NOT NULL, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
 INSERT INTO `co_promemoria_righe` (`idarticolo`, `id_promemoria`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto`) SELECT `idarticolo`, `id_promemoria`, `descrizione`, `prezzo_acquisto`, `prezzo_vendita`, `sconto`, `sconto_unitario`, `tipo_sconto`, `idiva`, `desc_iva`, `iva`, `qta`, `um`, `abilita_serial`, `idimpianto` FROM `co_promemoria_articoli`;
@@ -151,6 +151,7 @@ UPDATE `co_promemoria_righe` SET `qta` = IF(`qta` = 0, 1, `qta`),
     `sconto_unitario_ivato` = `sconto_unitario`;
 
 ALTER TABLE `co_promemoria_righe` RENAME TO `co_righe_promemoria`;
+
 
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE `mg_articoli_interventi`;
@@ -359,7 +360,7 @@ DELETE FROM `zz_widgets` WHERE `name` = 'Ordini di servizio da impostare';
 --
 -- Aggiornamento FE in base alla normativa del 28/02/2020
 --
-ALTER TABLE `co_iva` DROP FOREIGN KEY `co_iva_ibfk_1`;
+ALTER TABLE `co_iva` DROP FOREIGN KEY `co_iva_ibfk_2`;
 ALTER TABLE `fe_natura` MODIFY `codice` VARCHAR(5) NOT NULL;
 ALTER TABLE `co_iva` ADD CONSTRAINT `co_iva_ibfk_1` FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 

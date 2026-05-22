@@ -60,38 +60,37 @@ CREATE TABLE IF NOT EXISTS `mg_fornitore_articolo` (
    `qta_minima` decimal(15, 6) NOT NULL,
    `giorni_consegna` int(11) NOT NULL,
    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
-   PRIMARY KEY (`id`),
-   FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE,
-   FOREIGN KEY (`id_fornitore`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+    PRIMARY KEY (`id`),
+    CONSTRAINT `mg_fornitore_articolo_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `mg_fornitore_articolo_ibfk_2` FOREIGN KEY (`id_fornitore`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `directory`, `options`) VALUES
 (NULL, 'Fornitori Articolo', 'Fornitori', (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), (SELECT `id` FROM `zz_modules` WHERE `name`='Articoli'), 'tab', 'fornitori_articolo', 'custom');
 
 ALTER TABLE `or_righe_ordini` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
-  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `or_righe_ordini_ibfk_1` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `dt_righe_ddt` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
-ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+ADD CONSTRAINT `dt_righe_ddt_ibfk_1` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_preventivi` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
-  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `co_righe_preventivi_ibfk_2` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_contratti` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
- ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+ ADD CONSTRAINT `co_righe_contratti_ibfk_1` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_documenti` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
- ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+ ADD CONSTRAINT `co_righe_documenti_ibfk_2` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `in_righe_interventi` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
-  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `in_righe_interventi_ibfk_3` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_promemoria` ADD `id_dettaglio_fornitore` int(11) NULL DEFAULT NULL,
-  ADD FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `co_righe_promemoria_ibfk_2` FOREIGN KEY (`id_dettaglio_fornitore`) REFERENCES `mg_fornitore_articolo`(`id`) ON DELETE SET NULL;
 
 -- Aggiunta campo prezzo_vendita_ivato per gli Articoli
 ALTER TABLE `mg_articoli` ADD `prezzo_vendita_ivato` decimal(15,6) NOT NULL AFTER `prezzo_vendita`;
 UPDATE `mg_articoli` SET `prezzo_vendita_ivato` = `prezzo_vendita`;
 
 -- Aggiornamento ID per gli articoli degli Interventi
-ALTER TABLE `mg_prodotti` DROP FOREIGN KEY `mg_prodotti_ibfk_4`;
 UPDATE `mg_prodotti` SET `mg_prodotti`.`id_riga_intervento` = NULL WHERE `mg_prodotti`.`id_riga_intervento` NOT IN (SELECT `old_id` FROM `in_righe_interventi`);
 UPDATE `mg_prodotti` SET `mg_prodotti`.`id_riga_intervento` = (SELECT `id` FROM `in_righe_interventi` WHERE `mg_prodotti`.`id_riga_intervento` = `in_righe_interventi`.`old_id`);
-ALTER TABLE `mg_prodotti` ADD FOREIGN KEY (`id_riga_intervento`) REFERENCES `in_righe_interventi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `mg_prodotti` ADD CONSTRAINT `mg_prodotti_ibfk_10` FOREIGN KEY (`id_riga_intervento`) REFERENCES `in_righe_interventi`(`id`) ON DELETE CASCADE;
 
 -- Periodi di validità (Contratti e Preventivi)
 ALTER TABLE `co_contratti` ADD COLUMN `tipo_validita` ENUM('days', 'months', 'years') NULL DEFAULT NULL AFTER `validita`;

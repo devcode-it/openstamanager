@@ -19,7 +19,7 @@ INSERT INTO `co_staticontratti` (`id`, `descrizione`, `pianificabile`, `fatturab
 -- Fix ritenuta contributi
 ALTER TABLE `co_documenti` CHANGE `id_ritenuta_contributi` `id_ritenuta_contributi` INT(11);
 UPDATE `co_documenti` SET `id_ritenuta_contributi` = NULL WHERE `id_ritenuta_contributi` = 0;
-ALTER TABLE `co_documenti` ADD FOREIGN KEY (`id_ritenuta_contributi`) REFERENCES `co_ritenuta_contributi`(`id`) ON DELETE SET NULL;
+ALTER TABLE `co_documenti` ADD CONSTRAINT `co_documenti_ibfk_3` FOREIGN KEY (`id_ritenuta_contributi`) REFERENCES `co_ritenuta_contributi`(`id`) ON DELETE SET NULL;
 ALTER TABLE `co_righe_documenti` ADD `ritenuta_contributi` BOOLEAN NOT NULL DEFAULT FALSE;
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`) VALUES (NULL, 'Ritenuta contributi', '', 'query=SELECT * FROM co_ritenuta_contributi', 1, 'Fatturazione', 12);

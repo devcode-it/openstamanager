@@ -123,7 +123,7 @@ UPDATE `dt_righe_ddt` SET `sconto` = `sconto_globale`, `sconto_unitario` = `scon
 ALTER TABLE `dt_righe_ddt` DROP `sconto_globale`;
 
 -- Fix per la tabella in_righe_interventi
-ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`), ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
+ALTER TABLE `in_righe_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `idarticolo` INT(11) AFTER `idintervento`, ADD CONSTRAINT `in_righe_interventi_ibfk_2` FOREIGN KEY (`idarticolo`) REFERENCES `mg_articoli`(`id`), ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 ALTER TABLE `mg_articoli_interventi` ADD `is_descrizione` TINYINT(1) NOT NULL AFTER `idintervento`, ADD `is_sconto` BOOLEAN DEFAULT FALSE NOT NULL AFTER `is_descrizione`;
 
 -- Rimozione campi inutilizzati co_ritenutaacconto
@@ -230,7 +230,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 ALTER TABLE `zz_settings` CHANGE `help` `help` varchar(255);
 UPDATE `zz_settings` SET `help` = NULL WHERE `help` = '';
 
-ALTER TABLE `co_documenti` CHANGE `bollo` `bollo` decimal(12,4), CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
+ALTER TABLE `co_documenti` CHANGE `bollo` `bollo` decimal(12,4), CHANGE `data_stato_fe` `data_stato_fe` TIMESTAMP NULL, ADD `addebita_bollo` BOOLEAN NOT NULL DEFAULT TRUE, ADD `id_riga_bollo` int(11), ADD CONSTRAINT `co_documenti_ibfk_4` FOREIGN KEY (`id_riga_bollo`) REFERENCES `co_righe_documenti`(`id`) ON DELETE SET NULL;
 UPDATE `co_documenti` SET `bollo` = NULL WHERE `idstatodocumento` = (SELECT `id` FROM `co_statidocumento` WHERE `descrizione` = 'Bozza');
 UPDATE `co_documenti` SET `data_registrazione` = NULL WHERE `data_registrazione` = '0000-00-00';
 UPDATE `co_documenti` SET `data_registrazione` = `data` WHERE `data_registrazione` IS NULL AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = 'uscita');
@@ -326,7 +326,7 @@ CREATE TABLE IF NOT EXISTS `zz_hook_cache` (
   `hook_id` int(11) NOT NULL,
   `results` TEXT NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`hook_id`) REFERENCES `zz_hooks`(`id`)
+  CONSTRAINT `zz_hook_cache_ibfk_1` FOREIGN KEY (`hook_id`) REFERENCES `zz_hooks`(`id`)
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`) VALUES

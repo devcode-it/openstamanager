@@ -188,9 +188,9 @@ CREATE TABLE IF NOT EXISTS `zz_notes` (
   `notification_date` DATE,
   `content` TEXT,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_notes_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_notes_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_notes_ibfk_3` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Sistema di checklists
@@ -206,11 +206,11 @@ CREATE TABLE IF NOT EXISTS `zz_checks` (
   `id_parent` int(11),
   `order` int(11),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`checked_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_parent`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_checks_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checks_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checks_ibfk_3` FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checks_ibfk_4` FOREIGN KEY (`checked_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checks_ibfk_5` FOREIGN KEY (`id_parent`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `zz_check_user` (
@@ -218,8 +218,8 @@ CREATE TABLE IF NOT EXISTS `zz_check_user` (
    `id_utente` int(11) NOT NULL,
    `id_check` int(11) NOT NULL,
    PRIMARY KEY (`id`),
-   FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
-   FOREIGN KEY (`id_check`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
+   CONSTRAINT `zz_check_user_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE,
+   CONSTRAINT `zz_check_user_ibfk_2` FOREIGN KEY (`id_check`) REFERENCES `zz_checks`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `zz_checklists` (
@@ -228,8 +228,8 @@ CREATE TABLE IF NOT EXISTS `zz_checklists` (
   `id_module` int(11),
   `id_plugin` int(11),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_checklists_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checklists_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `zz_checklist_items` (
@@ -239,8 +239,8 @@ CREATE TABLE IF NOT EXISTS `zz_checklist_items` (
   `id_parent` int(11),
   `order` int(11),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_checklist`) REFERENCES `zz_checklists`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_parent`) REFERENCES `zz_checklist_items`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_checklist_items_ibfk_1` FOREIGN KEY (`id_checklist`) REFERENCES `zz_checklists`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_checklist_items_ibfk_2` FOREIGN KEY (`id_parent`) REFERENCES `zz_checklist_items`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Gestione di note e checklists
@@ -273,10 +273,10 @@ UPDATE `zz_prints` SET `options` = '{"pricing": false, "last-page-footer": true}
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`) VALUES (NULL, 'Note interne', 'custom', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Dashboard'), 'controller_top', 'col-md-12', NULL, '#4ccc4c', 'fa fa-file-text-o ', '', './modules/dashboard/widgets/notifiche.php', 'popup', './modules/dashboard/widgets/notifiche.php', 'Notifiche interne', '1', '1');
 
 -- Aggiunto collegamento degli allegati al creatore
-ALTER TABLE `zz_files` ADD `created_by` INT(11) AFTER `id_record`, ADD FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE SET NULL;
+ALTER TABLE `zz_files` ADD `created_by` INT(11) AFTER `id_record`, ADD CONSTRAINT `zz_files_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE SET NULL;
 
 -- Aggiunto riferimento allo Scadenzario nella Prima Nota
-ALTER TABLE `co_movimenti` ADD `id_scadenza` INT(11) AFTER `iddocumento`, ADD FOREIGN KEY (`id_scadenza`) REFERENCES `co_scadenziario`(`id`) ON DELETE CASCADE, ADD `is_insoluto` BOOLEAN NOT NULL DEFAULT FALSE AFTER `id_scadenza`;
+ALTER TABLE `co_movimenti` ADD `id_scadenza` INT(11) AFTER `iddocumento`, ADD CONSTRAINT `co_movimenti_ibfk_1` FOREIGN KEY (`id_scadenza`) REFERENCES `co_scadenziario`(`id`) ON DELETE CASCADE, ADD `is_insoluto` BOOLEAN NOT NULL DEFAULT FALSE AFTER `id_scadenza`;
 
 -- Aggiornamento indirizzo email SDI
 UPDATE `zz_emails` SET `cc` = 'sdi52@pec.fatturapa.it' WHERE `name` = 'PEC';
@@ -291,10 +291,11 @@ ALTER TABLE `mg_articoli` ADD `deleted_at` timestamp NULL DEFAULT NULL;
 ALTER TABLE `zz_hooks` ADD `processing_at` TIMESTAMP NULL DEFAULT NULL, ADD `processing_token` varchar(255);
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES (NULL, 'Backup', 'Modules\\Backups\\BackupHook', '1 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Backup'));
 
--- Miglioramento gestione email (questo RENAME genera un errore rif. tabella se mysql <= 5.5.55)
 RENAME TABLE `zz_emails` TO `em_templates`;
 RENAME TABLE `zz_smtps` TO `em_accounts`;
 RENAME TABLE `zz_email_print` TO `em_print_template`;
+
+
 
 UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
 UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');
@@ -313,8 +314,8 @@ CREATE TABLE IF NOT EXISTS `em_newsletters` (
   `completed_at` TIMESTAMP NULL DEFAULT NULL,
   `deleted_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_newsletters_ibfk_1` FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_newsletters_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_emails` (
@@ -331,10 +332,10 @@ CREATE TABLE IF NOT EXISTS `em_emails` (
   `processing_at` TIMESTAMP NULL DEFAULT NULL,
   `created_by` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_emails_ibfk_1` FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_emails_ibfk_2` FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_emails_ibfk_3` FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_emails_ibfk_4` FOREIGN KEY (`created_by`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_email_receiver` (
@@ -343,7 +344,7 @@ CREATE TABLE IF NOT EXISTS `em_email_receiver` (
    `type` varchar(255) NOT NULL,
    `address` varchar(255) NOT NULL,
    PRIMARY KEY (`id`),
-   FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
+   CONSTRAINT `em_email_receiver_ibfk_1` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_email_upload` (
@@ -352,8 +353,8 @@ CREATE TABLE IF NOT EXISTS `em_email_upload` (
   `id_file` int(11) NOT NULL,
   `name` varchar(255),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_file`) REFERENCES `zz_files`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_email_upload_ibfk_1` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_email_upload_ibfk_2` FOREIGN KEY (`id_file`) REFERENCES `zz_files`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_email_print` (
@@ -362,17 +363,17 @@ CREATE TABLE IF NOT EXISTS `em_email_print` (
   `id_print` int(11) NOT NULL,
   `name` varchar(255),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_email_print_ibfk_1` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_email_print_ibfk_2` FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `em_newsletter_anagrafica` (
   `id_newsletter` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
   `id_email` int(11),
-  FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_newsletter_anagrafica_ibfk_3` FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_newsletter_anagrafica_ibfk_4` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
+  CONSTRAINT `em_newsletter_anagrafica_ibfk_5` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Hook per la gestione della coda di invio
@@ -410,12 +411,12 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ALTER TABLE `em_templates` ADD `id_account` INT(11) NOT NULL;
 UPDATE `em_templates` SET `id_account` = `id_smtp`;
 ALTER TABLE `em_templates` DROP FOREIGN KEY `em_templates_ibfk_2`, DROP `id_smtp`;
-ALTER TABLE `em_templates` ADD FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;
+ALTER TABLE `em_templates` ADD CONSTRAINT `em_templates_ibfk_2` FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_print_template` ADD `id_template` INT(11) NOT NULL;
 UPDATE `em_print_template` SET `id_template` = `id_email`;
 ALTER TABLE `em_print_template` DROP FOREIGN KEY `em_print_template_ibfk_1`, DROP `id_email`;
-ALTER TABLE `em_print_template` ADD FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;
+ALTER TABLE `em_print_template` ADD CONSTRAINT `em_print_template_ibfk_3` FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;
 ALTER TABLE `an_anagrafiche` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;
@@ -479,10 +480,10 @@ CREATE TABLE IF NOT EXISTS `co_dichiarazioni_intento` (
     `totale` DECIMAL(12, 4) NOT NULL,
     `deleted_at` timestamp NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+    CONSTRAINT `co_dichiarazioni_intento_ibfk_1` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-ALTER TABLE `co_documenti` ADD `id_dichiarazione_intento` int(11), ADD FOREIGN KEY (`id_dichiarazione_intento`) REFERENCES `co_dichiarazioni_intento`(`id`) ON DELETE SET NULL;
+ALTER TABLE `co_documenti` ADD `id_dichiarazione_intento` int(11), ADD CONSTRAINT `co_documenti_ibfk_5` FOREIGN KEY (`id_dichiarazione_intento`) REFERENCES `co_dichiarazioni_intento`(`id`) ON DELETE SET NULL;
 
 INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`, `position`, `script`, `enabled`, `default`, `order`, `compatibility`, `version`, `options2`, `options`, `directory`, `help`) VALUES (NULL, 'Dichiarazioni d''Intento', 'Dichiarazioni d''Intento', (SELECT id FROM zz_modules WHERE name = 'Fatture di vendita'), (SELECT `id` FROM `zz_modules` WHERE name='Anagrafiche'), 'tab', '', '1', '1', '0', '', '', NULL, '{ "main_query": [	{	"type": "table", "fields": "Protocollo, Progressivo, Massimale, Totale, Data inizio, Data fine", "query": "SELECT id, numero_protocollo AS Protocollo, numero_progressivo AS Progressivo, DATE_FORMAT(data_inizio,''%d/%m/%Y'') AS ''Data inizio'', DATE_FORMAT(data_inizio,''%d/%m/%Y'') AS ''Data fine'', ROUND(massimale, 2) AS Massimale, ROUND(totale, 2) AS Totale FROM co_dichiarazioni_intento WHERE 1=1 AND deleted_at IS NULL AND id_anagrafica = |id_parent| HAVING 2=2 ORDER BY co_dichiarazioni_intento.id DESC"}	]}', 'dichiarazioni_intento', '');
 
@@ -502,8 +503,8 @@ CREATE TABLE IF NOT EXISTS `em_lists` (
 CREATE TABLE IF NOT EXISTS `em_list_anagrafica` (
   `id_list` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
-  FOREIGN KEY (`id_list`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+  CONSTRAINT `em_list_anagrafica_ibfk_3` FOREIGN KEY (`id_list`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_list_anagrafica_ibfk_4` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Liste newsletter', 'Liste', 'liste_newsletter', 'SELECT |select| FROM `em_lists` WHERE deleted_at IS NULL AND 1=1 HAVING 2=2', '', 'fa fa-list', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '0');
@@ -523,8 +524,8 @@ ALTER TABLE `zz_documenti_categorie` RENAME TO `do_categorie`;
 CREATE TABLE IF NOT EXISTS `do_permessi` (
     `id_categoria` int(11) NOT NULL,
     `id_gruppo` int(11) NOT NULL,
-    FOREIGN KEY (`id_categoria`) REFERENCES `do_categorie`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE
+    CONSTRAINT `do_permessi_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `do_categorie`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `do_permessi_ibfk_2` FOREIGN KEY (`id_gruppo`) REFERENCES `zz_groups`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `default`, `visible`) VALUES

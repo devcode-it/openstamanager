@@ -44,6 +44,21 @@ foreach ($logs as $log) {
 
 $database->query('ALTER TABLE `zz_operations` ADD FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE SET NULL');
 
+// Rinomina foreign keys dopo RENAME TABLE
+$fk_renames = [
+    ['table' => 'em_templates', 'old_fk' => 'zz_emails_ibfk_1', 'new_fk' => 'em_templates_ibfk_1', 'column' => 'id_module', 'ref_table' => 'zz_modules', 'ref_column' => 'id'],
+    ['table' => 'em_templates', 'old_fk' => 'zz_emails_ibfk_2', 'new_fk' => 'em_templates_ibfk_2', 'column' => 'id_smtp', 'ref_table' => 'em_accounts', 'ref_column' => 'id'],
+    ['table' => 'em_print_template', 'old_fk' => 'zz_email_print_ibfk_1', 'new_fk' => 'em_print_template_ibfk_1', 'column' => 'id_email', 'ref_table' => 'em_templates', 'ref_column' => 'id'],
+    ['table' => 'em_print_template', 'old_fk' => 'zz_email_print_ibfk_2', 'new_fk' => 'em_print_template_ibfk_2', 'column' => 'id_print', 'ref_table' => 'zz_prints', 'ref_column' => 'id'],
+];
+
+foreach ($fk_renames as $fk) {
+    $exists = $database->fetchOne('SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '.prepare($fk['table']).' AND CONSTRAINT_NAME = '.prepare($fk['old_fk']).' AND CONSTRAINT_TYPE = \'FOREIGN KEY\'');
+    if (!empty($exists)) {
+        $database->query('ALTER TABLE `'.$fk['table'].'` DROP FOREIGN KEY `'.$fk['old_fk'].'`, ADD CONSTRAINT `'.$fk['new_fk'].'` FOREIGN KEY (`'.$fk['column'].'`) REFERENCES `'.$fk['ref_table'].'`(`'.$fk['ref_column'].'`) ON DELETE CASCADE');
+    }
+}
+
 // Aggiunta permessi alla gestione documentale
 $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');
 $viste = $database->fetchArray('SELECT `id` FROM `do_categorie`');

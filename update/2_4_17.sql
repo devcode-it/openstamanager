@@ -159,8 +159,8 @@ INSERT INTO `mg_causali_movimenti` (`id`, `nome`, `descrizione`, `tipo_movimento
 CREATE TABLE IF NOT EXISTS `in_interventi_tecnici_assegnati` (
     `id_intervento` int(11) NOT NULL,
     `id_tecnico` int(11) NOT NULL,
-    FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`id_tecnico`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+    CONSTRAINT `in_interventi_tecnici_assegnati_ibfk_1` FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `in_interventi_tecnici_assegnati_ibfk_2` FOREIGN KEY (`id_tecnico`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Fix contenuti delle date (NULL al posto di 0000-00-00)

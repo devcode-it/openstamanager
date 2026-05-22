@@ -131,7 +131,7 @@ UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP05' WHERE `descriz
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP06' WHERE `descrizione` IN ('Cambiale');
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP08' WHERE `descrizione` IN ('Bancomat', 'Visa');
 UPDATE `co_pagamenti` SET `codice_modalita_pagamento_fe` = 'MP12' WHERE `descrizione` IN ('Ri.Ba. 30gg d.f.', 'Ri.Ba. 60gg d.f.', 'Ri.Ba. 90gg d.f.', 'Ri.Ba. 120gg d.f.', 'Ri.Ba. 150gg d.f.', 'Ri.Ba. 180gg d.f.', 'Ri.Ba. 30/60gg d.f.', 'Ri.Ba. 30/60gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.', 'Ri.Ba. 30gg d.f.f.m.', 'Ri.Ba. 60gg d.f.f.m.', 'Ri.Ba. 90gg d.f.f.m.', 'Ri.Ba. 120gg d.f.f.m.', 'Ri.Ba. 150gg d.f.f.m.', 'Ri.Ba. 180gg d.f.f.m.', 'Ri.Ba. 30/60gg d.f.f.m.', 'Ri.Ba. 30/60gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.', 'Ri.Ba. 30/60/90/120/150/180gg d.f.f.m.');
-ALTER TABLE `co_pagamenti` ADD FOREIGN KEY (`codice_modalita_pagamento_fe`) REFERENCES `fe_modalita_pagamento`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_pagamenti` ADD CONSTRAINT `co_pagamenti_ibfk_1` FOREIGN KEY (`codice_modalita_pagamento_fe`) REFERENCES `fe_modalita_pagamento`(`codice`) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS `fe_tipi_documento` (
   `codice` varchar(4) NOT NULL,
@@ -151,7 +151,7 @@ ALTER TABLE `co_tipidocumento` ADD `codice_tipo_documento_fe` varchar(4) NOT NUL
 UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD01' WHERE `descrizione` IN ('Fattura immediata di acquisto', 'Fattura immediata di vendita', 'Fattura differita di acquisto', 'Fattura differita di vendita', 'Fattura accompagnatoria di acquisto', 'Fattura accompagnatoria di vendita');
 UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD04', `descrizione` = 'Nota di credito' WHERE `descrizione` = 'Nota di accredito';
 UPDATE `co_tipidocumento` SET `codice_tipo_documento_fe` = 'TD05', `descrizione` = 'Nota di debito' WHERE `descrizione` = 'Nota di addebito';
-ALTER TABLE `co_tipidocumento` ADD FOREIGN KEY (`codice_tipo_documento_fe`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_tipidocumento` ADD CONSTRAINT `co_tipidocumento_ibfk_1` FOREIGN KEY (`codice_tipo_documento_fe`) REFERENCES `fe_tipi_documento`(`codice`) ON DELETE CASCADE;
 
 CREATE TABLE IF NOT EXISTS `fe_natura` (
   `codice` varchar(2) NOT NULL,
@@ -168,7 +168,7 @@ INSERT INTO `fe_natura` (`codice`, `descrizione`) VALUES
 ('N6','Inversione contabile (per le operazioni in reverse charge ovvero nei casi di autofatturazione per acquisti extra UE di servizi ovvero per importazioni di beni nei soli casi previsti)'),
 ('N7','IVA assolta in altro stato UE (vendite a distanza ex art. 40 c. 3 e 4 e art. 41 c. 1 lett. b, DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, art. 74-sexies DPR 633/72)');
 
-ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
+ALTER TABLE `co_iva` ADD `codice_natura_fe` varchar(4), ADD `deleted_at` timestamp NULL DEFAULT NULL, ADD `codice` int(11), ADD `esigibilita` enum('I', 'D', 'S') NOT NULL DEFAULT 'I', ADD `default` boolean NOT NULL DEFAULT 0, ADD CONSTRAINT `co_iva_ibfk_2` FOREIGN KEY (`codice_natura_fe`) REFERENCES `fe_natura`(`codice`) ON DELETE CASCADE;
 UPDATE `co_iva` SET `deleted_at` = NOW();
 
 INSERT INTO `co_iva` (`descrizione`, `percentuale`, `indetraibile`, `esente`, `codice_natura_fe`, `codice`, `default`) VALUES
@@ -395,10 +395,10 @@ CREATE TABLE IF NOT EXISTS `zz_operations` (
   `id_utente` int(11) NOT NULL,
   `op` varchar(255) NOT NULL,
   `options` text,
-  FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
+  CONSTRAINT `zz_operations_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_operations_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_operations_ibfk_3` FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `zz_operations_ibfk_4` FOREIGN KEY (`id_utente`) REFERENCES `zz_users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 ALTER TABLE `zz_smtp` RENAME `zz_smtps`;
@@ -444,7 +444,7 @@ UPDATE `zz_plugins` SET `script` = '', `options` = '	{ "main_query": [	{	"type":
 UPDATE `an_referenti` SET `idsede` = 0 WHERE `idsede` = -1;
 
 -- Rimozione co_preventivi_interventi
-ALTER TABLE `in_interventi` ADD `id_preventivo` int(11), ADD FOREIGN KEY (`id_preventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE, ADD `id_contratto` int(11), ADD FOREIGN KEY (`id_contratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `in_interventi` ADD `id_preventivo` int(11), ADD CONSTRAINT `in_interventi_ibfk_10` FOREIGN KEY (`id_preventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE, ADD `id_contratto` int(11), ADD CONSTRAINT `in_interventi_ibfk_11` FOREIGN KEY (`id_contratto`) REFERENCES `co_contratti`(`id`) ON DELETE CASCADE;
 UPDATE `in_interventi` SET `id_preventivo` = (SELECT `idpreventivo` FROM `co_preventivi_interventi` WHERE `co_preventivi_interventi`.`idintervento` = `in_interventi`.`id` LIMIT 1);
 DROP TABLE `co_preventivi_interventi`;
 
@@ -460,7 +460,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 -- Notifiche negli stati interventi
 ALTER TABLE `in_statiintervento` ADD `notifica` boolean NOT NULL DEFAULT 0, ADD `id_email` int(11), ADD `destinatari` varchar(255);
-ALTER TABLE `in_statiintervento` ADD FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE;
+ALTER TABLE `in_statiintervento` ADD CONSTRAINT `in_statiintervento_ibfk_1` FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE;
 
 -- Email di notifica
 INSERT INTO `zz_emails` (`id`, `id_module`, `id_smtp`, `name`, `icon`, `subject`, `reply_to`, `cc`, `bcc`, `body`, `read_notify`, `main`) VALUES
@@ -540,7 +540,7 @@ INSERT INTO `zz_plugins` (`id`, `name`, `title`, `idmodule_from`, `idmodule_to`,
 DELETE FROM co_righe_preventivi  WHERE  idpreventivo NOT IN (SELECT id FROM co_preventivi);
 
 -- Chiave secondaria per le righe del preventivo
-ALTER TABLE `co_righe_preventivi` ADD FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_preventivi` ADD CONSTRAINT `co_righe_preventivi_ibfk_1` FOREIGN KEY (`idpreventivo`) REFERENCES `co_preventivi`(`id`) ON DELETE CASCADE;
 
 -- Tabella categorie
 CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
@@ -552,7 +552,7 @@ CREATE TABLE IF NOT EXISTS `my_impianti_categorie` (
 ) ENGINE=InnoDB;
 
 -- Categoria impianto
-ALTER TABLE `my_impianti` ADD `id_categoria` INT(11) AFTER `idanagrafica`, ADD FOREIGN KEY (`id_categoria`) REFERENCES `my_impianti_categorie`(`id`) ON DELETE SET NULL;
+ALTER TABLE `my_impianti` ADD `id_categoria` INT(11) AFTER `idanagrafica`, ADD CONSTRAINT `my_impianti_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `my_impianti_categorie`(`id`) ON DELETE SET NULL;
 
 -- Rinominato Categorie in Categorie articoli
 UPDATE `zz_modules` SET `name` = 'Categorie articoli', `title` = 'Categorie articoli', `directory` = 'categorie_articoli' WHERE `zz_modules`.`name` = 'Categorie';

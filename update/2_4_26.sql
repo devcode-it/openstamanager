@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `mg_valori_attributi` (
     `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` timestamp NULL DEFAULT NULL,
     PRIMARY KEY(`id`),
-    FOREIGN KEY (`id_attributo`) REFERENCES `mg_attributi`(`id`)
+    CONSTRAINT `mg_valori_attributi_ibfk_1` FOREIGN KEY (`id_attributo`) REFERENCES `mg_attributi`(`id`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `mg_combinazioni` (
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `mg_combinazioni` (
     `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` timestamp NULL DEFAULT NULL,
     PRIMARY KEY(`id`),
-    FOREIGN KEY (`id_categoria`) REFERENCES `mg_categorie`(`id`) ON DELETE SET NULL,
-    FOREIGN KEY (`id_sottocategoria`) REFERENCES `mg_categorie`(`id`) ON DELETE SET NULL
+    CONSTRAINT `mg_combinazioni_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `mg_categorie`(`id`) ON DELETE SET NULL,
+    CONSTRAINT `mg_combinazioni_ibfk_2` FOREIGN KEY (`id_sottocategoria`) REFERENCES `mg_categorie`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `mg_attributo_combinazione` (
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS `mg_attributo_combinazione` (
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(`id_attributo`, `id_combinazione`),
-    FOREIGN KEY (`id_attributo`) REFERENCES `mg_attributi`(`id`),
-    FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`)
+    CONSTRAINT `mg_attributo_combinazione_ibfk_1` FOREIGN KEY (`id_attributo`) REFERENCES `mg_attributi`(`id`),
+    CONSTRAINT `mg_attributo_combinazione_ibfk_2` FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `mg_articolo_attributo` (
@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS `mg_articolo_attributo` (
     `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(`id_articolo`, `id_valore`),
-    FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
-    FOREIGN KEY (`id_valore`) REFERENCES `mg_valori_attributi`(`id`)
+    CONSTRAINT `mg_articolo_attributo_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
+    CONSTRAINT `mg_articolo_attributo_ibfk_2` FOREIGN KEY (`id_valore`) REFERENCES `mg_valori_attributi`(`id`)
 ) ENGINE=InnoDB;
 
-ALTER TABLE `mg_articoli` ADD `id_combinazione` int(11), ADD FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`);
+ALTER TABLE `mg_articoli` ADD `id_combinazione` int(11), ADD CONSTRAINT `mg_articoli_ibfk_1` FOREIGN KEY (`id_combinazione`) REFERENCES `mg_combinazioni`(`id`);
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES
 (NULL, 'Attributi Combinazioni', 'Attributi Combinazioni', 'attributi_combinazioni', 'SELECT |select| FROM mg_attributi WHERE mg_attributi.deleted_at IS NULL AND 1=1 HAVING 2=2', NULL, 'fa fa-angle-right', '1.0', '2.*', '100', (SELECT id FROM zz_modules t WHERE t.name = 'Magazzino'), '1', '1'),
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `zz_oauth2` (
 ) ENGINE=InnoDB;
 
 ALTER TABLE `em_accounts` ADD `id_oauth2` INT(11) DEFAULT NULL,
-    ADD FOREIGN KEY (`id_oauth2`) REFERENCES `zz_oauth2`(`id`);
+    ADD CONSTRAINT `em_accounts_ibfk_1` FOREIGN KEY (`id_oauth2`) REFERENCES `zz_oauth2`(`id`);
 
 -- Aggiunta opt-out Newsletter per Referenti e Sedi
 ALTER TABLE `an_referenti` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;

@@ -38,5 +38,5 @@ INSERT INTO `zz_api_resources` (`id`, `version`, `type`, `resource`, `class`, `e
 (NULL, 'app-v1', 'retrieve', 'checklist-cleanup', 'API\\App\\v1\\Checklists', '1');
 
 -- Rimozione id_module in zz_imports
-ALTER TABLE `zz_imports` DROP FOREIGN KEY `zz_imports_ibfk_1`;
+ALTER TABLE `zz_imports` DROP FOREIGN KEY `zz_imports_ibfk_2`;
 ALTER TABLE `zz_imports` DROP `id_module`;

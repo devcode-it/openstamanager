@@ -85,4 +85,4 @@ UPDATE `zz_widgets` SET `help` = 'Crediti iva inclusa accumulati con i clienti d
 UPDATE `zz_widgets` SET `help` = 'Debiti iva inclusa accumulati con i fornitori durante tutti gli anni di attività.' WHERE `zz_widgets`.`name` = 'Debiti verso fornitori';
 
 -- Fix relazione su modulo liste
-ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_1`; ALTER TABLE `em_list_anagrafica` ADD CONSTRAINT `em_list_anagrafica_ibfk_1` FOREIGN KEY (`id_list`) REFERENCES `em_lists`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `em_list_anagrafica` ADD CONSTRAINT `em_list_anagrafica_ibfk_1` FOREIGN KEY (`id_list`) REFERENCES `em_lists`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;

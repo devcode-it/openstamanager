@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS `in_fasceorarie_tipiintervento` (
   `costo_km_tecnico` decimal(12,6) NOT NULL,
   `costo_diritto_chiamata_tecnico` decimal(12,6) NOT NULL,
   PRIMARY KEY (`idfasciaoraria`,`idtipointervento`),
-  FOREIGN KEY (`idfasciaoraria`) REFERENCES `in_fasceorarie` (`id`),
-  FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento` (`idtipointervento`),
+  CONSTRAINT `in_fasceorarie_tipiintervento_ibfk_1` FOREIGN KEY (`idfasciaoraria`) REFERENCES `in_fasceorarie` (`id`),
+  CONSTRAINT `in_fasceorarie_tipiintervento_ibfk_2` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento` (`idtipointervento`),
   KEY `idtipointervento` (`idtipointervento`)
 ) ENGINE=InnoDB;
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `zz_events` (
   `is_recurring` tinyint(1) NOT NULL DEFAULT '0',
   `is_bank_holiday` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni` (`id`)
+  CONSTRAINT `zz_events_ibfk_1` FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni` (`id`)
 ) ENGINE=InnoDB;
 
 
@@ -97,7 +97,7 @@ CREATE TABLE `an_regioni` (
   `iso2` varchar(2) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`)
+  CONSTRAINT `an_regioni_ibfk_1` FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`)
 ) ENGINE=InnoDB;
 
 
@@ -147,7 +147,7 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conto per autofattura', (SELECT id FROM `co_pianodeiconti3` WHERE `descrizione`="Compensazione per autofattura"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti3` ORDER BY `descrizione` ASC', '1', 'Piano dei conti', NULL, NULL);
 
-ALTER TABLE `co_documenti` ADD `id_autofattura` INT NULL AFTER `id_ricevuta_principale`, ADD FOREIGN KEY (`id_autofattura`) REFERENCES `co_documenti`(`id`) ON DELETE SET NULL; 
+ALTER TABLE `co_documenti` ADD `id_autofattura` INT NULL AFTER `id_ricevuta_principale`, ADD CONSTRAINT `co_documenti_ibfk_6` FOREIGN KEY (`id_autofattura`) REFERENCES `co_documenti`(`id`) ON DELETE SET NULL; 
 
 -- Impostazione per gestire conto per la creazione conti anagrafiche
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES (NULL, 'Conto di secondo livello per i crediti clienti', (SELECT `id` FROM `co_pianodeiconti2` WHERE `descrizione`="Crediti clienti e crediti diversi"), 'query=SELECT `id`, CONCAT_WS(\' - \', `numero`, `descrizione`) AS descrizione FROM `co_pianodeiconti2` WHERE idpianodeiconti1=(SELECT id FROM co_pianodeiconti1 WHERE descrizione="Patrimoniale") ORDER BY `descrizione` ASC', '1', 'Piano dei conti', NULL, NULL);

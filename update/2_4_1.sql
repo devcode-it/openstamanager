@@ -228,22 +228,22 @@ ALTER TABLE `or_righe_ordini` ADD `idpreventivo` INT(11) NOT NULL AFTER `idartic
 
 -- Fix foreign keys (2.4)
 ALTER TABLE `zz_emails`
-ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-ADD FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `zz_emails_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+ADD CONSTRAINT `zz_emails_ibfk_2` FOREIGN KEY (`id_smtp`) REFERENCES `zz_smtp`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `zz_email_print`
-ADD FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
-ADD FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `zz_email_print_ibfk_1` FOREIGN KEY (`id_email`) REFERENCES `zz_emails`(`id`) ON DELETE CASCADE,
+ADD CONSTRAINT `zz_email_print_ibfk_2` FOREIGN KEY (`id_print`) REFERENCES `zz_prints`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `zz_fields`
-ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
-ADD FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `zz_fields_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+ADD CONSTRAINT `zz_fields_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `zz_field_record`
-ADD FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `zz_field_record_ibfk_1` FOREIGN KEY (`id_field`) REFERENCES `zz_fields`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `zz_prints`
-ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+ADD CONSTRAINT `zz_prints_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 -- Widget per attività senza nessun tecnico assegnato
 INSERT INTO `zz_widgets` (`id`, `name`, `type`, `id_module`, `location`, `class`, `query`, `bgcolor`, `icon`, `print_link`, `more_link`, `more_link_type`, `php_include`, `text`, `enabled`, `order`, `help`) VALUES (NULL, 'Attività da pianificare', 'stats', (SELECT id FROM zz_modules WHERE name = 'Dashboard'), 'controller_top', 'col-md-3', 'SELECT COUNT(id) AS dato FROM in_interventi WHERE id NOT IN (SELECT idintervento FROM in_interventi_tecnici) AND idstatointervento IN (SELECT idstatointervento FROM in_statiintervento WHERE completato = 0) ', '#6dab3c', 'fa fa-cogs', '', './modules/interventi/widgets/interventi.pianificazionedashboard.interventi.php', 'popup', '', 'Promemoria attività da pianificare', 1, '0', NULL);
@@ -318,8 +318,8 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 ((SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'), '_bg_', 'IF((SELECT COUNT(t.numero_esterno) FROM co_documenti AS t WHERE t.numero_esterno = co_documenti.numero_esterno AND t.id_segment = co_documenti.id_segment  AND idtipodocumento IN (SELECT id FROM co_tipidocumento WHERE dir = ''entrata'') AND t.data >= ''|period_start|'' AND t.data <= ''|period_end|'') > 1, ''red'', '''')', 0, 0, 0, 0, 1);
 
 -- Aggiunto supporto a Note di accredito e addebito
-ALTER TABLE `co_documenti` ADD `ref_documento` int(11) AFTER `idagente`, ADD FOREIGN KEY (`ref_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
-ALTER TABLE `co_righe_documenti` ADD `qta_evasa` decimal(12,4) NOT NULL AFTER `qta`, ADD `ref_riga_documento` int(11) AFTER `idcontratto`, ADD FOREIGN KEY (`ref_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_documenti` ADD `ref_documento` int(11) AFTER `idagente`, ADD CONSTRAINT `co_documenti_ibfk_13` FOREIGN KEY (`ref_documento`) REFERENCES `co_documenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `co_righe_documenti` ADD `qta_evasa` decimal(12,4) NOT NULL AFTER `qta`, ADD `ref_riga_documento` int(11) AFTER `idcontratto`, ADD CONSTRAINT `co_righe_documenti_ibfk_7` FOREIGN KEY (`ref_riga_documento`) REFERENCES `co_righe_documenti`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `co_tipidocumento` ADD `reversed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `dir`;
 UPDATE `co_tipidocumento` SET `reversed` = 1 WHERE `descrizione` = 'Nota di accredito';

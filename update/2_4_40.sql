@@ -39,7 +39,7 @@ UPDATE `zz_widgets` SET `text` = 'Valore' WHERE `zz_widgets`.`name` = 'Valore ma
 INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES ((SELECT `id` FROM `zz_modules` WHERE name='Scadenzario'), 'Banca azienda', '`banca`.`nome`', '18', '1', '0', '0', '0', NULL, NULL, '0', '0', '0'); 
 
 -- Aggiunta dichiarazione d'intento predefinita
-ALTER TABLE `an_anagrafiche` ADD `id_dichiarazione_intento_default` INT NULL AFTER `idtipointervento_default`, ADD FOREIGN KEY (`id_dichiarazione_intento_default`) REFERENCES `co_dichiarazioni_intento`(`id`);
+ALTER TABLE `an_anagrafiche` ADD `id_dichiarazione_intento_default` INT NULL AFTER `idtipointervento_default`, ADD CONSTRAINT `an_anagrafiche_ibfk_3` FOREIGN KEY (`id_dichiarazione_intento_default`) REFERENCES `co_dichiarazioni_intento`(`id`);
 
 -- Aggiunta impostazione Movimentazione articoli da fatture di acquisto
 INSERT INTO `zz_settings`(`nome`, `valore`, `tipo`, `editable`, `sezione`) VALUES ('Movimenta magazzino da fatture di acquisto','1','boolean','1','Fatturazione Elettronica');

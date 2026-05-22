@@ -286,10 +286,8 @@ CREATE TABLE IF NOT EXISTS `zz_links` (
     KEY `idx_zz_links_parent` (`parent`),
     KEY `idx_zz_links_enabled_order` (`enabled`, `order`),
     KEY `idx_zz_links_id_module` (`id_module`),
-    CONSTRAINT `fk_zz_links_parent`
-        FOREIGN KEY (`parent`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-    CONSTRAINT `fk_zz_links_module`
-        FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT
+    CONSTRAINT `zz_links_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+    CONSTRAINT `zz_links_ibfk_2` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `zz_links_lang` (
@@ -301,10 +299,8 @@ CREATE TABLE IF NOT EXISTS `zz_links_lang` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_zz_links_lang_record` (`id_lang`, `id_record`),
     KEY `idx_zz_links_lang_record` (`id_record`),
-    CONSTRAINT `fk_zz_links_lang_record`
-        FOREIGN KEY (`id_record`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-    CONSTRAINT `fk_zz_links_lang_lang`
-        FOREIGN KEY (`id_lang`)   REFERENCES `zz_langs`(`id`)  ON DELETE CASCADE ON UPDATE RESTRICT
+        CONSTRAINT `zz_links_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `zz_links`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+        CONSTRAINT `zz_links_lang_ibfk_2` FOREIGN KEY (`id_lang`)   REFERENCES `zz_langs`(`id`)  ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Registrazione modulo "Link navbar" per gestione CRUD voci zz_links

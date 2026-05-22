@@ -65,6 +65,115 @@ $module = $dbo->fetchOne('SELECT * FROM zz_modules WHERE name = ?', ['Fatture di
 $files = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module = ?', [$module['id']]);
 ```
 
+### Foreign Key Constraint Naming Convention
+
+> ⚠️ **ALWAYS provide an explicit `CONSTRAINT` name for every `FOREIGN KEY`** in both `ALTER TABLE` and `CREATE TABLE` statements. This is required for MySQL/MariaDB compatibility.
+
+**Why?**
+- MySQL auto-generates constraint names as `{table}_ibfk_{n}` (e.g., `em_templates_ibfk_2`)
+- MariaDB auto-generates constraint names as just `{n}` (e.g., `2`)
+- Without explicit names, `DROP FOREIGN KEY` and `RENAME TABLE` break across different database engines
+- Explicit naming ensures consistent behavior on both MySQL and MariaDB
+
+**Naming format**: `{table_name}_ibfk_{n}` where `n` is a progressive number per table.
+
+```sql
+-- ❌ WRONG - Auto-generated names differ between MySQL and MariaDB
+ALTER TABLE `my_table` ADD FOREIGN KEY (`id_column`) REFERENCES `other_table`(`id`);
+
+-- ❌ WRONG - Inline without CONSTRAINT name in CREATE TABLE
+CREATE TABLE `my_table` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `id_other` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`id_other`) REFERENCES `other_table`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ✅ CORRECT - ALTER TABLE with explicit CONSTRAINT name
+ALTER TABLE `my_table` ADD CONSTRAINT `my_table_ibfk_1` FOREIGN KEY (`id_column`) REFERENCES `other_table`(`id`) ON DELETE CASCADE;
+
+-- ✅ CORRECT - Multiple FK in same ALTER TABLE (progressive numbering)
+ALTER TABLE `my_table`
+    ADD CONSTRAINT `my_table_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE,
+    ADD CONSTRAINT `my_table_ibfk_2` FOREIGN KEY (`id_plugin`) REFERENCES `zz_plugins`(`id`) ON DELETE CASCADE;
+
+-- ✅ CORRECT - Inline in CREATE TABLE with explicit CONSTRAINT name
+CREATE TABLE `my_table` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `id_other` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `my_table_ibfk_1` FOREIGN KEY (`id_other`) REFERENCES `other_table`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+```
+
+**Progressive numbering rules:**
+- Numbers are progressive **per table**, not per file
+- When adding a new FK to a table that already has `_ibfk_1` through `_ibfk_3`, the next one is `_ibfk_4`
+- Check existing constraints in earlier migration files and in the current file before choosing a number
+- If a FK was dropped and recreated, reuse its number only if no other FK uses it
+
+### Renaming Tables with Foreign Keys
+
+> ⚠️ **When renaming a table, all FK constraints on that table still have the OLD table name.** You must rename them via the corresponding `.php` migration file using a conditional check on `information_schema.TABLE_CONSTRAINTS`.
+
+**Why?**
+- `RENAME TABLE` only changes the table name, not the constraint names
+- MySQL does **not** support `DROP FOREIGN KEY IF EXISTS` syntax
+- Writing `DROP FOREIGN KEY {old_name}` in `.sql` files fails if the constraint was already renamed or doesn't exist (e.g., on re-runs or partial migrations)
+- Placing the rename logic in the `.php` file with an existence check ensures idempotency
+
+**How to rename FK constraints after a `RENAME TABLE`:**
+1. In the `.sql` file: only put the `RENAME TABLE` statement(s)
+2. In the corresponding `.php` file: add the FK rename logic with an existence check
+
+**SQL file** (`update/2_11.sql`):
+```sql
+RENAME TABLE `zz_emails` TO `em_templates`;
+-- Do NOT put ALTER TABLE ... DROP FOREIGN KEY here
+```
+
+**PHP file** (`update/2_11.php`):
+```php
+$fk_renames = [
+    [
+        'table' => 'em_templates',
+        'old_fk' => 'zz_emails_ibfk_1',
+        'new_fk' => 'em_templates_ibfk_1',
+        'column' => 'id_module',
+        'ref_table' => 'zz_modules',
+        'ref_column' => 'id',
+        'on_delete' => 'CASCADE',
+        'on_update' => 'RESTRICT',
+    ],
+    [
+        'table' => 'em_templates',
+        'old_fk' => 'zz_emails_ibfk_2',
+        'new_fk' => 'em_templates_ibfk_2',
+        'column' => 'id_smtp',
+        'ref_table' => 'em_accounts',
+        'ref_column' => 'id',
+        'on_delete' => 'CASCADE',
+        'on_update' => 'RESTRICT',
+    ],
+];
+
+foreach ($fk_renames as $fk) {
+    $exists = $database->fetchOne('SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '.prepare($fk['table']).' AND CONSTRAINT_NAME = '.prepare($fk['old_fk']).' AND CONSTRAINT_TYPE = \'FOREIGN KEY\'');
+    if (!empty($exists)) {
+        $on_update = !empty($fk['on_update']) ? ' ON UPDATE '.$fk['on_update'] : '';
+        $database->query('ALTER TABLE `'.$fk['table'].'` DROP FOREIGN KEY `'.$fk['old_fk'].'`, ADD CONSTRAINT `'.$fk['new_fk'].'` FOREIGN KEY (`'.$fk['column'].'`) REFERENCES `'.$fk['ref_table'].'`(`'.$fk['ref_column'].'`) ON DELETE '.$fk['on_delete'].$on_update);
+    }
+}
+```
+
+**Rules for renaming tables with FK constraints:**
+1. In the `.sql` file: only put `RENAME TABLE` statements — never `ALTER TABLE ... DROP FOREIGN KEY ... ADD CONSTRAINT`
+2. In the `.php` file: for each FK that needs renaming, add an entry to the `$fk_renames` array with: `table` (new name), `old_fk`, `new_fk`, `column`, `ref_table`, `ref_column`, `on_delete`, `on_update`
+3. Each rename is guarded by a check on `information_schema.TABLE_CONSTRAINTS` — it only executes if the old FK name still exists
+4. Preserve the same FK definition (columns, reference, ON DELETE/UPDATE actions)
+5. Keep the same `_ibfk_{n}` number — only change the table prefix
+6. If the renamed table is referenced by FKs in other tables, those referencing FKs remain valid (they reference by table, not constraint name)
+
 ### Fundamental Rules
 
 > - **2.11.0** (MINOR.0) contains FEATURES + FIXES

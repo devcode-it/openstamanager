@@ -2,7 +2,7 @@
 ALTER TABLE `zz_hooks` ADD `enabled` boolean NOT NULL DEFAULT 1, ADD `id_module` int(11) NOT NULL;
 UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita') WHERE `name` = 'Ricevute';
 UPDATE `zz_hooks` SET `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto') WHERE `name` = 'Fatture';
-ALTER TABLE `zz_hooks` ADD FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
+ALTER TABLE `zz_hooks` ADD CONSTRAINT `zz_hooks_ibfk_1` FOREIGN KEY (`id_module`) REFERENCES `zz_modules`(`id`) ON DELETE CASCADE;
 
 INSERT INTO `zz_hooks` (`id`, `name`, `class`, `frequency`, `id_module`) VALUES
 (NULL, 'Aggiornamenti', 'Modules\\Aggiornamenti\\UpdateHook', '7 day', (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aggiornamenti'));
@@ -112,38 +112,38 @@ ALTER TABLE `in_tipiintervento` DROP PRIMARY KEY;
 ALTER TABLE `in_tipiintervento` CHANGE `idtipointervento` `codice` VARCHAR(25) NOT NULL, ADD `idtipointervento` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 
 UPDATE `in_interventi` INNER JOIN `in_tipiintervento` ON `in_interventi`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_interventi`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
-ALTER TABLE `in_interventi` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `in_interventi` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `in_interventi_ibfk_5` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 ALTER TABLE `in_statiintervento` DROP PRIMARY KEY;
 ALTER TABLE `in_statiintervento` CHANGE `idstatointervento` `codice` VARCHAR(25) NOT NULL, ADD `idstatointervento` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT;
 
 UPDATE `in_interventi` INNER JOIN `in_statiintervento` ON `in_interventi`.`idstatointervento` = `in_statiintervento`.`codice` SET `in_interventi`.`idstatointervento` = `in_statiintervento`.`idstatointervento`;
 UPDATE `in_interventi`  SET `idstatointervento` = (SELECT `idstatointervento` FROM `in_statiintervento` LIMIT 1) WHERE `idstatointervento` NOT IN (SELECT `idstatointervento` FROM `in_statiintervento`);
-ALTER TABLE `in_interventi` CHANGE `idstatointervento` `idstatointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idstatointervento`) REFERENCES `in_statiintervento`(`idstatointervento`);
+ALTER TABLE `in_interventi` CHANGE `idstatointervento` `idstatointervento` INT(11) NOT NULL, ADD CONSTRAINT `in_interventi_ibfk_6` FOREIGN KEY (`idstatointervento`) REFERENCES `in_statiintervento`(`idstatointervento`);
 
 UPDATE `an_anagrafiche` INNER JOIN `in_tipiintervento` ON `an_anagrafiche`.`idtipointervento_default` = `in_tipiintervento`.`codice` SET `an_anagrafiche`.`idtipointervento_default` = `in_tipiintervento`.`idtipointervento`;
 ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `idtipointervento_default` varchar(25);
 UPDATE `an_anagrafiche` SET `idtipointervento_default` = NULL WHERE `idtipointervento_default` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
-ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `idtipointervento_default` INT(11), ADD FOREIGN KEY (`idtipointervento_default`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `an_anagrafiche` CHANGE `idtipointervento_default` `idtipointervento_default` INT(11), ADD CONSTRAINT `an_anagrafiche_ibfk_2` FOREIGN KEY (`idtipointervento_default`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_contratti_tipiintervento` INNER JOIN `in_tipiintervento` ON `co_contratti_tipiintervento`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_contratti_tipiintervento`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
 DELETE FROM `co_contratti_tipiintervento` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
-ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `co_contratti_tipiintervento` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `co_contratti_tipiintervento_ibfk_1` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_preventivi` INNER JOIN `in_tipiintervento` ON `co_preventivi`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_preventivi`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
 UPDATE `co_preventivi`  SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_tipiintervento` LIMIT 1) WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
-ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `co_preventivi` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `co_preventivi_ibfk_1` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `co_promemoria` INNER JOIN `in_tipiintervento` ON `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`codice` SET `co_promemoria`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
-ALTER TABLE `co_promemoria` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `co_promemoria` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `co_promemoria_ibfk_2` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `in_interventi_tecnici` INNER JOIN `in_tipiintervento` ON `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_interventi_tecnici`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
 UPDATE `in_interventi_tecnici`  SET `idtipointervento` = (SELECT `idtipointervento` FROM `in_tipiintervento` LIMIT 1) WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
-ALTER TABLE `in_interventi_tecnici` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `in_interventi_tecnici` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `in_interventi_tecnici_ibfk_4` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `in_tariffe` INNER JOIN `in_tipiintervento` ON `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`codice` SET `in_tariffe`.`idtipointervento` = `in_tipiintervento`.`idtipointervento`;
 DELETE FROM `in_tariffe` WHERE `idtipointervento` NOT IN (SELECT `idtipointervento` FROM `in_tipiintervento`);
-ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
+ALTER TABLE `in_tariffe` CHANGE `idtipointervento` `idtipointervento` INT(11) NOT NULL, ADD CONSTRAINT `in_tariffe_ibfk_1` FOREIGN KEY (`idtipointervento`) REFERENCES `in_tipiintervento`(`idtipointervento`);
 
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'IF(`dup`.`numero_esterno` IS NULL, '''', ''red'')' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = '_bg_';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module`=`zz_modules`.`id` SET `zz_views`.`query` = 'an_anagrafiche.idanagrafica' WHERE `zz_modules`.`name` = 'Fatture di vendita' AND `zz_views`.`name` = 'idanagrafica';

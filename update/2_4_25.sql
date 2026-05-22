@@ -3,13 +3,13 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 (NULL, 'Numero email da inviare in contemporanea per account', '10', 'integer', 1, 'Newsletter', 2, 'Numero di email della Coda di invio da inviare in contemporanea per account email');
 
 -- Aggiornamento gestione destinatari per newsletter e liste relative
-ALTER TABLE `em_newsletter_anagrafica` DROP FOREIGN KEY `em_newsletter_anagrafica_ibfk_2`;
+ALTER TABLE `em_newsletter_anagrafica` DROP FOREIGN KEY `em_newsletter_anagrafica_ibfk_3`;
 ALTER TABLE `em_newsletter_anagrafica`
     ADD `record_type` VARCHAR(255) NOT NULL AFTER `id_newsletter`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
 UPDATE `em_newsletter_anagrafica`
 SET `record_type` ='Modules\\Anagrafiche\\Anagrafica';
 
-ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_2`;
+ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_1`;
 ALTER TABLE `em_list_anagrafica`
     ADD `record_type` VARCHAR(255) NOT NULL AFTER `id_list`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
 UPDATE `em_list_anagrafica`
@@ -43,16 +43,16 @@ UPDATE `my_componenti`
 SET `my_componenti`.`id_sostituzione` = `t`.`id` WHERE `my_componenti`.`id_componente_vecchio` IS NOT NULL;
 
 -- Aggiornamento collegamenti dinamico Componenti-Interventi
-ALTER TABLE `my_componenti_interventi` DROP FOREIGN KEY `my_componenti_interventi_ibfk_2`;
+ALTER TABLE `my_componenti_interventi` DROP FOREIGN KEY `my_componenti_interventi_ibfk_4`;
 DELETE FROM `my_componenti_interventi` WHERE `id_componente` NOT IN (SELECT `id_componente_vecchio` FROM `my_componenti`);
 UPDATE `my_componenti_interventi` SET `id_componente` = (SELECT `id` FROM `my_componenti` WHERE `id_componente_vecchio` = `my_componenti_interventi`.`id_componente`);
-ALTER TABLE `my_componenti_interventi` ADD FOREIGN KEY (`id_componente`) REFERENCES `my_componenti`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_componenti_interventi` ADD CONSTRAINT `my_componenti_interventi_ibfk_2` FOREIGN KEY (`id_componente`) REFERENCES `my_componenti`(`id`) ON DELETE CASCADE;
 
 -- Aggiornamento foreign keys
-ALTER TABLE `my_componenti` ADD FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE SET NULL,
-    ADD FOREIGN KEY (`id_sostituzione`) REFERENCES `my_componenti`(`id`) ON DELETE SET NULL,
-    ADD FOREIGN KEY (`id_impianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE,
-    ADD FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE;
+ALTER TABLE `my_componenti` ADD CONSTRAINT `my_componenti_ibfk_1` FOREIGN KEY (`id_intervento`) REFERENCES `in_interventi`(`id`) ON DELETE SET NULL,
+    ADD CONSTRAINT `my_componenti_ibfk_2` FOREIGN KEY (`id_sostituzione`) REFERENCES `my_componenti`(`id`) ON DELETE SET NULL,
+    ADD CONSTRAINT `my_componenti_ibfk_3` FOREIGN KEY (`id_impianto`) REFERENCES `my_impianti`(`id`) ON DELETE CASCADE,
+    ADD CONSTRAINT `my_componenti_ibfk_4` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`) ON DELETE CASCADE;
 
 -- Aggiunte colonne Sedi e Referenti in tabella Anagrafiche
 INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES

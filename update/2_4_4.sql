@@ -13,7 +13,7 @@ INSERT INTO `fe_stati_documento` (`codice`, `descrizione`, `icon`) VALUES
 ('ACK', 'Accettata', 'fa fa-paper-check text-success'),
 ('REF', 'Rifiuta', 'fa fa-times text-error');
 
-ALTER TABLE `co_documenti` ADD `codice_stato_fe` varchar(5), ADD FOREIGN KEY (`codice_stato_fe`) REFERENCES `fe_stati_documento`(`codice`) ON DELETE SET NULL;
+ALTER TABLE `co_documenti` ADD `codice_stato_fe` varchar(5), ADD CONSTRAINT `co_documenti_ibfk_2` FOREIGN KEY (`codice_stato_fe`) REFERENCES `fe_stati_documento`(`codice`) ON DELETE SET NULL;
 UPDATE `co_documenti` SET `codice_stato_fe` = 'GEN' WHERE `xml_generated_at` IS NOT NULL;
 ALTER TABLE `co_documenti` DROP `xml_generated_at`;
 

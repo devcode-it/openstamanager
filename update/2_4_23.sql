@@ -118,7 +118,7 @@ ALTER TABLE `co_banche` ADD `branch_code` VARCHAR(20) NULL,
     ADD `check_digits` VARCHAR(20) NULL,
     ADD `national_check_digits` VARCHAR(20) NULL,
     ADD `id_nazione` INT(11) NULL,
-    ADD FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
+    ADD CONSTRAINT `co_banche_ibfk_2` FOREIGN KEY (`id_nazione`) REFERENCES `an_nazioni`(`id`);
 
 -- Messaggio Verifica numero intervento
 INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `help`) VALUES

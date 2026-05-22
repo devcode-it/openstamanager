@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `zz_tasks_logs` (
     `message` TEXT NOT NULL,
     `context` TEXT NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`id_task`) REFERENCES `zz_tasks`(`id`)
+    CONSTRAINT `zz_tasks_logs_ibfk_1` FOREIGN KEY (`id_task`) REFERENCES `zz_tasks`(`id`)
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_cache` (`id`, `name`, `content`, `valid_time`, `expire_at`) VALUES
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS `mg_prezzi_articoli` (
     `prezzo_unitario_ivato` DECIMAL(15,6) NOT NULL,
     `dir` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
-    FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`)
+    CONSTRAINT `mg_prezzi_articoli_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `mg_articoli`(`id`),
+    CONSTRAINT `mg_prezzi_articoli_ibfk_2` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`)
 ) ENGINE=InnoDB;
 
 UPDATE `zz_plugins` SET `directory` = 'dettagli_articolo', `name`= 'Dettagli articolo', `title`= 'Dettagli' WHERE `name` = 'Fornitori Articolo';
@@ -181,7 +181,7 @@ ALTER TABLE `co_righe_preventivi` ADD `original_id` int(11), ADD `original_type`
 -- Aggiornamento del modulo Banche per il supporto completo alle Anagrafiche
 ALTER TABLE `co_banche` ADD `id_anagrafica` INT(11) NOT NULL, CHANGE `note` `note` TEXT, CHANGE `filiale` `filiale` varchar(255), ADD `predefined` BOOLEAN NOT NULL DEFAULT FALSE, ADD `creditor_id` varchar(255), ADD `codice_sia` varchar(5);
 UPDATE `co_banche` SET  `id_anagrafica` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = 'Azienda predefinita');
-ALTER TABLE `co_banche` ADD FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
+ALTER TABLE `co_banche` ADD CONSTRAINT `co_banche_ibfk_1` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE;
 
 -- Collegamento sulla base dei campi aggiuntivi per le Anagrafiche
 UPDATE `co_banche` SET `co_banche`.`id_anagrafica` = (SELECT valore FROM zz_settings WHERE nome = 'Azienda predefinita');

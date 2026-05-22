@@ -203,7 +203,7 @@ FROM `my_impianti_categorie_lang` `mic_lang`
 JOIN `my_impianti_categorie` `mic` ON (`mic_lang`.`id_record` = `mic`.`id` AND `mic_lang`.`id_lang` = 1)
 JOIN `zz_categorie` `zz_cat` ON `zz_cat`.`is_impianto` = 1 AND `zz_cat`.`name` = `mic`.`name`;
 
-ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_1`;
+ALTER TABLE `my_impianti` DROP FOREIGN KEY `my_impianti_ibfk_2`;
 
 UPDATE `my_impianti` `imp`
 JOIN `my_impianti_categorie` `mic` ON `imp`.`id_categoria` = `mic`.`id`

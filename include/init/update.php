@@ -85,14 +85,14 @@ if (filter('action') == 'do_update') {
 
         if (!empty($result)) {
             // Adding a generic message regarding the update
-            echo '
-                <script>
-                    addVersion("'.$update['name'].'");
-                </script>';
 
             if (is_array($result)) {
                 // Adding a message about the completion of the database update
                 if (!empty($update['sql']) && $result[1] == $result[2]) {
+                    echo '
+                <script>
+                    addVersion("'.$update['name'].'");
+                </script>';
                     echo '
                 <script>
                     updateCurrentFile("'.tr('Database aggiornato').': '.$update['filename'].'.sql");

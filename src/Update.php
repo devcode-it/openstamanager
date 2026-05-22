@@ -32,14 +32,56 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 class Update
 {
     protected static $current_version;
+    protected static $auto_install = true;
 
-    /** @var array Elenco degli aggiornamenti da completare */
+    /** @var array Elenco degli aggiornamento da completare */
     protected static $updates;
     /** @var array Percorsi da controllare per gli aggiornamenti */
     protected static $directories = [
         'modules',
         'plugins',
     ];
+
+    /**
+     * Imposta se l'installazione automatica di install.sql deve essere eseguita.
+     *
+     * @param bool $enabled
+     */
+    public static function setAutoInstall($enabled)
+    {
+        self::$auto_install = $enabled;
+    }
+
+    /**
+     * Esegue manualmente l'installazione del database tramite install.sql.
+     *
+     * @return bool
+     */
+    public static function doInstall()
+    {
+        $database = database();
+
+        if ($database->isConnected() && !$database->isInstalled()) {
+            $install_sql = base_dir().'/install.sql';
+            if (file_exists($install_sql)) {
+                try {
+                    if ($database->tableExists('updates')) {
+                        $database->query('DROP TABLE IF EXISTS `updates`');
+                    }
+                    $database->multiQuery($install_sql);
+                    return $database->tableExists('updates');
+                } catch (Exception $e) {
+                    $_SESSION['update_error'] = [
+                        'message' => $e->getMessage(),
+                        'query' => '',
+                    ];
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Restituisce l'elenco degli aggiornamento incompleti o non ancora effettuati.
@@ -523,7 +565,7 @@ class Update
 
         $database_ready = $database->isConnected() && $database->tableExists('updates');
 
-        if ($database->isConnected() && !$database->isInstalled()) {
+        if (self::$auto_install && $database->isConnected() && !$database->isInstalled()) {
             $install_sql = base_dir().'/install.sql';
             if (file_exists($install_sql)) {
                 if ($database->tableExists('updates')) {

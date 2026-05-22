@@ -23,6 +23,56 @@ include_once __DIR__.'/../../core.php';
 $updateRate = 20;
 $scriptValue = $updateRate * 5;
 
+// Disabilita l'installazione automatica se il database non è installato
+if (!$dbo->isInstalled()) {
+    Update::setAutoInstall(false);
+}
+
+/*
+* Installazione manuale del database tramite install.sql
+*/
+if (filter('action') == 'do_install') {
+    $result = Update::doInstall();
+
+    if ($result) {
+        echo '
+            <script>
+                $("#install-progress-bar").css("width", "100%");
+                setTimeout(function() {
+                    $("#database-install-screen").fadeOut(300, function() {
+                        $("#updates-install-screen").fadeIn(300);
+                        $("#progress").show();
+                        setPercent(1);
+                        updateCurrentFile("'.tr('Avvio installazione database...').'");
+                        $("#result").load("index.php?action=do_update&firstuse=true");
+                    });
+                }, 500);
+            </script>';
+    } else {
+        $error_message = isset($_SESSION['update_error']) ? $_SESSION['update_error']['message'] : '';
+
+        echo '
+            <script>
+                showUpdateError();
+            </script>
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title"><i class="fa fa-exclamation-circle mr-2"></i>'.tr("Errore durante l'installazione del database").'</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-light border-left border-danger">
+                        <h5 class="text-danger font-weight-bold"><i class="fa fa-info-circle mr-2"></i>'.tr('Messaggio di errore').'</h5>
+                        <p class="mb-0 font-weight-bold">'.$error_message.'</p>
+                    </div>
+                </div>
+            </div>';
+
+        unset($_SESSION['update_error']);
+    }
+
+    exit;
+}
+
 /*
 * Aggiornamento tramite AJAX
 */
@@ -232,22 +282,100 @@ if (filter('action') == 'do_update') {
 
     if (!$dbo->isInstalled()) {
         echo '
-                <p><strong>'.tr("Benvenuto! Procediamo con l'installazione del database").'.</strong></p>';
+                <div id="database-install-screen">
+                    <div class="alert alert-info">
+                        <h4 class="alert-heading"><i class="fa fa-info-circle mr-2"></i>'.tr('Installazione Database').'</h4>
+                        <p>'.tr('Verrà installato il database utilizzando il file _FILE_', [
+            '_FILE_' => '<b>install.sql</b>',
+        ]).'.</p>
+                        <hr>
+                        <p class="mb-0"><small>'.tr('Questo processo creerà tutte le tabelle necessarie e i dati iniziali per il funzionamento del gestionale').'.</small></p>
+                    </div>
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <div class="d-flex flex-column">
+                                <div class="d-flex align-items-start mb-3">
+                                    <i class="fa fa-database fa-3x text-primary mr-4 mt-1"></i>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 text-left">'.tr('Database MySQL').'</h5>
+                                        <p class="mb-0 text-muted text-left">'.tr('Installazione struttura e dati iniziali').'</p>
+                                    </div>
+                                </div>
+                                <div id="install-progress" class="w-70" style="display: none; margin-left: 55px;">
+                                    <div class="progress" style="height: 30px;">
+                                        <div id="install-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block text-center">'.tr('Installazione in corso...').'</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="button" class="btn btn-success btn-lg btn-block shadow" value="'.tr('Installa Database').'" onclick="startDatabaseInstallation()" id="install_db_button">
+                </div>
+
+                <div id="updates-install-screen" style="display: none;">
+                    <div id="progress" class="mb-4">
+                        <div class="progress-container" data-percentage="0%">
+                            <div id="custom-progress-bar" class="progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="text-center mt-3 mb-3">
+                            <span class="text-primary" id="progress-status">'.tr('Inizializzazione installazione...').'</span>
+                            <div id="current-file" class="mt-1 text-muted"></div>
+                        </div>
+                    </div>
+
+                    <div id="result" class="mt-3"></div>
+                </div>
+
+                <script>
+                function startDatabaseInstallation(){
+                    Swal.fire({
+                        title: "'.tr('Confermi l\\\'installazione del database?').'",
+                        text: "'.tr('Verrà creato il database utilizzando il file install.sql. Questa operazione è irreversibile.').'",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonColor: "#28a745",
+                        cancelButtonColor: "#6c757d",
+                        customClass: {
+                            confirmButton: "btn btn-lg btn-success",
+                            confirmButtonText: "'.tr('Installa').'",
+                        }
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            $("#install_db_button").prop("disabled", true).html("<i class=\'fa fa-spinner fa-spin mr-2\'></i> '.tr('Installazione in corso...').'");
+                            $("#install-progress").fadeIn(300);
+                            
+                            var progress = 0;
+                            var progressBar = $("#install-progress-bar");
+                            
+                            function animateProgress() {
+                                if (progress < 90) {
+                                    progress += 5;
+                                    progressBar.css("width", progress + "%");
+                                    setTimeout(animateProgress, 100);
+                                }
+                            }
+                            animateProgress();
+                            
+                            $("#result").load("index.php?action=do_install");
+                        }
+                    });
+                }
+                </script>';
     } else {
         echo '
                 <p>'.tr('È necessario aggiornare il database alla nuova versione').'.</p>';
-    }
 
-    // Prepara l'HTML per l'elenco degli aggiornamenti, ma non lo mostra ancora
-    $updates_html = '';
-    if (!empty($updates)) {
-        $updates_html .= '
+        // Prepara l'HTML per l'elenco degli aggiornamenti, ma non lo mostra ancora
+        $updates_html = '';
+        if (!empty($updates)) {
+            $updates_html .= '
             <div id="updates-container" style="display: none;">
             </div>';
 
-        echo $updates_html;
-    }
-    echo '
+            echo $updates_html;
+        }
+        echo '
                 <!-- Progress bar moved to the top -->
                 <div id="progress" class="mb-4" style="display: none;">
                     <!-- Progress bar personalizzata senza classe progress -->
@@ -261,17 +389,17 @@ if (filter('action') == 'do_update') {
                 </div>
 
                 <div id="install-instructions">
-                    <p>'.tr("Clicca su _BUTTON_ per avviare l'".(!$dbo->isInstalled() ? tr('installazione') : tr('aggiornamento')), [
+                    <p>'.tr("Clicca su _BUTTON_ per avviare l'aggiornamento", [
         '_BUTTON_' => '<b>"'.$button.'"</b>',
-    ]).'</p>
+    ]).'.</p>
                     <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
                 </div>
 
                 <script>
                 function continue_update(){
                     Swal.fire({
-                        title: "'.(!$dbo->isInstalled() ? tr('Confermi l\'installazione?') : tr('Confermi l\'aggiornamento?')).'",
-                        text: "'.(!$dbo->isInstalled() ? tr('Verrà creato il database e installati i dati iniziali') : tr('Il database verrà aggiornato alla nuova versione')).'",
+                        title: "'.tr('Confermi l\\\'aggiornamento?').'",
+                        text: "'.tr('Il database verrà aggiornato alla nuova versione').'",
                         icon: "warning",
                         showCancelButton: true,
                         customClass: {
@@ -280,21 +408,14 @@ if (filter('action') == 'do_update') {
                         }
                     }).then(function (result) {
                         if (result.isConfirmed) {
-                            // Nascondi le istruzioni di installazione
                             $("#install-instructions").hide();
 
-                            // Mostra la barra di progresso
                             $("#progress").fadeIn(300);
                             setPercent(1);
                             updateCurrentFile("'.tr('Avvio aggiornamento...').'");
 
-                            // Mostra il container degli aggiornamenti
                             $("#updates-container").fadeIn(300);
-
-                            // Mostra il container dei dettagli delle versioni
                             $("#versions-details-container").fadeIn(300);
-
-                            // Inizialmente nascondi i dettagli delle versioni
                             $("#updates-details").hide();
 
                             $("#result").load("index.php?action=do_update&firstuse='.$firstuse.'");
@@ -304,9 +425,11 @@ if (filter('action') == 'do_update') {
                 }
                 </script>
 
-                <div id="result" class="mt-3"></div>
+                <div id="result" class="mt-3"></div>';
+    }
+    echo'
 
-                <!-- Dettaglio versioni spostato in fondo -->
+    <!-- Dettaglio versioni spostato in fondo -->
                 <div id="versions-details-container" class="mt-4" style="display: none;">
                     <div class="card mb-3">
                         <div class="card-header bg-light">

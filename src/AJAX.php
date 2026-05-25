@@ -168,6 +168,27 @@ class AJAX
             }
         }
 
+        $dbo = database();
+        $available_modules = Modules::getAvailableModules();
+        $module_ids = array_column($available_modules->toArray(), 'id');
+
+        if (!empty($module_ids)) {
+            $notes = $dbo->fetchArray('SELECT `zz_notes`.`content`, `zz_notes`.`id_record`, `zz_notes`.`id_module` FROM `zz_notes` WHERE `zz_notes`.`content` LIKE '.prepare('%'.$term.'%').' AND `zz_notes`.`id_module` IN ('.implode(',', $module_ids).')');
+
+            foreach ($notes as $note) {
+                $result = [];
+                $result['link'] = base_path_osm().'/editor.php?id_module='.$note['id_module'].'&id_record='.$note['id_record'].'#tab_note';
+                $result['title'] = strip_tags(substr($note['content'], 0, 100));
+                $result['category'] = tr('Note interne');
+
+                $text = strip_tags($note['content']);
+                $highlighted = str_replace($term, "<span class='highlight'>".$term.'</span>', $text);
+                $result['labels'] = [tr('Nota').': '.$highlighted.'<br/>'];
+
+                $results[] = $result;
+            }
+        }
+
         return $results;
     }
 

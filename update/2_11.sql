@@ -1765,4 +1765,4 @@ UPDATE `zz_segments` SET `clause` = '`in_interventi`.`id_stato` NOT IN(SELECT `i
 UPDATE `zz_segments` SET `clause` = '1=1 AND Livello=\'error\'' WHERE `zz_segments`.`name` = 'Errori';
 
 ALTER TABLE em_list_receiver DROP FOREIGN KEY em_list_receiver_ibfk_1;
-ALTER TABLE em_list_receiver ADD CONSTRAINT em_list_receiver_ibfk_1 FOREIGN KEY (id_list) REFERENCES em_lists(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE em_newsletter_receiver DROP FOREIGN KEY em_newsletter_receiver_ibfk_1;

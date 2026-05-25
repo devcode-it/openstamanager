@@ -46,3 +46,81 @@ foreach ($fk_renames as $fk) {
         $database->query('ALTER TABLE `'.$fk['table'].'` DROP FOREIGN KEY `'.$fk['old_fk'].'`, ADD CONSTRAINT `'.$fk['new_fk'].'` FOREIGN KEY (`'.$fk['column'].'`) REFERENCES `'.$fk['ref_table'].'`(`'.$fk['ref_column'].'`) ON DELETE '.$fk['on_delete'].$on_update);
     }
 }
+
+$numeric_fks = $database->fetchArray("
+    SELECT tc.TABLE_NAME, tc.CONSTRAINT_NAME
+    FROM information_schema.TABLE_CONSTRAINTS tc
+    WHERE tc.TABLE_SCHEMA = DATABASE()
+    AND tc.CONSTRAINT_TYPE = 'FOREIGN KEY'
+    AND tc.CONSTRAINT_NAME REGEXP '^[0-9]+$'
+    ORDER BY tc.TABLE_NAME, CAST(tc.CONSTRAINT_NAME AS UNSIGNED)
+");
+
+if (!empty($numeric_fks)) {
+    $ibfk_counters = [];
+    $all_fks = $database->fetchArray("
+        SELECT TABLE_NAME, CONSTRAINT_NAME
+        FROM information_schema.TABLE_CONSTRAINTS
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND CONSTRAINT_TYPE = 'FOREIGN KEY'
+    ");
+    foreach ($all_fks as $afk) {
+        $t = $afk['TABLE_NAME'];
+        $n = $afk['CONSTRAINT_NAME'];
+        if (preg_match('/^'.preg_quote($t, '/').'_ibfk_(\d+)$/', $n, $m)) {
+            if (!isset($ibfk_counters[$t])) {
+                $ibfk_counters[$t] = 0;
+            }
+            $ibfk_counters[$t] = max($ibfk_counters[$t], (int) $m[1]);
+        }
+    }
+
+    foreach ($numeric_fks as $nfk) {
+        $table = $nfk['TABLE_NAME'];
+        $old_name = $nfk['CONSTRAINT_NAME'];
+
+        $columns = $database->fetchArray("
+            SELECT kcu.COLUMN_NAME, kcu.REFERENCED_TABLE_NAME, kcu.REFERENCED_COLUMN_NAME, kcu.ORDINAL_POSITION
+            FROM information_schema.KEY_COLUMN_USAGE kcu
+            WHERE kcu.TABLE_SCHEMA = DATABASE()
+            AND kcu.TABLE_NAME = ".prepare($table)."
+            AND kcu.CONSTRAINT_NAME = ".prepare($old_name)."
+            AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+            ORDER BY kcu.ORDINAL_POSITION
+        ");
+
+        if (empty($columns)) {
+            continue;
+        }
+
+        $rc = $database->fetchOne("
+            SELECT DELETE_RULE, UPDATE_RULE
+            FROM information_schema.REFERENTIAL_CONSTRAINTS
+            WHERE CONSTRAINT_SCHEMA = DATABASE()
+            AND TABLE_NAME = ".prepare($table)."
+            AND CONSTRAINT_NAME = ".prepare($old_name)."
+        ");
+
+        $on_delete = !empty($rc) ? $rc['DELETE_RULE'] : 'RESTRICT';
+        $on_update_rule = (!empty($rc) && $rc['UPDATE_RULE'] != '') ? $rc['UPDATE_RULE'] : 'RESTRICT';
+
+        if (!isset($ibfk_counters[$table])) {
+            $ibfk_counters[$table] = 0;
+        }
+        $ibfk_counters[$table]++;
+        $new_name = $table.'_ibfk_'.$ibfk_counters[$table];
+
+        $fk_cols = [];
+        $ref_cols = [];
+        $ref_table = $columns[0]['REFERENCED_TABLE_NAME'];
+        foreach ($columns as $col) {
+            $fk_cols[] = '`'.$col['COLUMN_NAME'].'`';
+            $ref_cols[] = '`'.$col['REFERENCED_COLUMN_NAME'].'`';
+        }
+
+        $on_update_sql = (!empty($on_update_rule) && $on_update_rule !== 'RESTRICT') ? ' ON UPDATE '.$on_update_rule : '';
+
+        $database->query('ALTER TABLE `'.$table.'` DROP FOREIGN KEY `'.$old_name.'`, ADD CONSTRAINT `'.$new_name.'` FOREIGN KEY ('.implode(', ', $fk_cols).') REFERENCES `'.$ref_table.'`('.implode(', ', $ref_cols).') ON DELETE '.$on_delete.$on_update_sql);
+    }
+}
+

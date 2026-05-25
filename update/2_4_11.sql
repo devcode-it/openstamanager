@@ -371,9 +371,9 @@ CREATE TABLE IF NOT EXISTS `em_newsletter_anagrafica` (
   `id_newsletter` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
   `id_email` int(11),
-  CONSTRAINT `em_newsletter_anagrafica_ibfk_3` FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_newsletter_anagrafica_ibfk_5` FOREIGN KEY (`id_newsletter`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
   CONSTRAINT `em_newsletter_anagrafica_ibfk_4` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE,
-  CONSTRAINT `em_newsletter_anagrafica_ibfk_5` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
+  CONSTRAINT `em_newsletter_anagrafica_ibfk_3` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Hook per la gestione della coda di invio
@@ -503,8 +503,8 @@ CREATE TABLE IF NOT EXISTS `em_lists` (
 CREATE TABLE IF NOT EXISTS `em_list_anagrafica` (
   `id_list` int(11) NOT NULL,
   `id_anagrafica` int(11) NOT NULL,
-  CONSTRAINT `em_list_anagrafica_ibfk_3` FOREIGN KEY (`id_list`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
-  CONSTRAINT `em_list_anagrafica_ibfk_4` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
+  CONSTRAINT `em_list_anagrafica_ibfk_1` FOREIGN KEY (`id_list`) REFERENCES `em_newsletters`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `em_list_anagrafica_ibfk_2` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`idanagrafica`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 INSERT INTO `zz_modules` (`id`, `name`, `title`, `directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`) VALUES (NULL, 'Liste newsletter', 'Liste', 'liste_newsletter', 'SELECT |select| FROM `em_lists` WHERE deleted_at IS NULL AND 1=1 HAVING 2=2', '', 'fa fa-list', '2.4.11', '2.*', '1', (SELECT `id` FROM `zz_modules` t WHERE t.`name` = 'Gestione email'), '1', '0');

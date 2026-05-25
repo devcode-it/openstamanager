@@ -3,13 +3,11 @@ INSERT INTO `zz_settings` (`id`, `nome`, `valore`, `tipo`, `editable`, `sezione`
 (NULL, 'Numero email da inviare in contemporanea per account', '10', 'integer', 1, 'Newsletter', 2, 'Numero di email della Coda di invio da inviare in contemporanea per account email');
 
 -- Aggiornamento gestione destinatari per newsletter e liste relative
-ALTER TABLE `em_newsletter_anagrafica` DROP FOREIGN KEY `em_newsletter_anagrafica_ibfk_3`;
 ALTER TABLE `em_newsletter_anagrafica`
     ADD `record_type` VARCHAR(255) NOT NULL AFTER `id_newsletter`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
 UPDATE `em_newsletter_anagrafica`
 SET `record_type` ='Modules\\Anagrafiche\\Anagrafica';
 
-ALTER TABLE `em_list_anagrafica` DROP FOREIGN KEY `em_list_anagrafica_ibfk_1`;
 ALTER TABLE `em_list_anagrafica`
     ADD `record_type` VARCHAR(255) NOT NULL AFTER `id_list`, CHANGE `id_anagrafica` `record_id` INT(11) NOT NULL;
 UPDATE `em_list_anagrafica`

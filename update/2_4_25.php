@@ -44,7 +44,7 @@ $fk_renames = [
     [
         'table' => 'em_newsletter_receiver',
         'old_fk' => 'em_newsletter_anagrafica_ibfk_3',
-        'new_fk' => 'em_newsletter_receiver_ibfk_5',
+        'new_fk' => 'em_newsletter_receiver_ibfk_3',
         'column' => 'id_newsletter',
         'ref_table' => 'em_newsletters',
         'ref_column' => 'id',
@@ -54,7 +54,7 @@ $fk_renames = [
     [
         'table' => 'em_newsletter_receiver',
         'old_fk' => 'em_newsletter_anagrafica_ibfk_5',
-        'new_fk' => 'em_newsletter_receiver_ibfk_1',
+        'new_fk' => 'em_newsletter_receiver_ibfk_5',
         'column' => 'id_email',
         'ref_table' => 'em_emails',
         'ref_column' => 'id',

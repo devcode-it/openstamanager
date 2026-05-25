@@ -43,7 +43,6 @@ class View extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'zz_views';
 
     protected static $translated_fields = [

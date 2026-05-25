@@ -183,6 +183,16 @@ try {
     return;
 }
 
+// Funzione helper per normalizzare il tipo di campo (es. tinyint(4) -> tinyint)
+function normalizeFieldType($type)
+{
+    if ($type === null) {
+        return null;
+    }
+
+    return preg_replace('/\([^)]*\)/', '', $type);
+}
+
 // Funzione helper per raggruppare gli errori per tabella
 function groupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data)
 {
@@ -230,6 +240,16 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                 } elseif (array_key_exists('current', $diff) && is_null($diff['current'])) {
                     $grouped[$table]['campi_mancanti'][$name] = $diff;
                 } else {
+                    // Verifica se l'unica differenza è il tipo normalizzato (es. tinyint(4) vs tinyint)
+                    $diff_keys = array_keys($diff);
+                    $normalized_current_type = normalizeFieldType($diff['current']['type'] ?? null);
+                    $normalized_expected_type = normalizeFieldType($diff['expected']['type'] ?? null);
+                    
+                    // Se l'unica differenza è il tipo e i tipi normalizzati sono uguali, salta questo campo
+                    if (count($diff_keys) == 1 && $diff_keys[0] == 'type' && $normalized_current_type === $normalized_expected_type) {
+                        continue;
+                    }
+                    
                     $grouped[$table]['campi_modificati'][$name] = $diff;
                 }
             }

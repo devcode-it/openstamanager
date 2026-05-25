@@ -43,7 +43,7 @@ echo '
         <tr class="fifth-level">
             <td style="vertical-align: middle;">'.str_repeat((string) $space, 5).'2.2.1.16.1 TipoDato</td>
             <td>
-                {[ "type": "text", "name": "altri_dati['.$key.'][tipo_dato]", "value": "'.$dato['tipo_dato'].'", "maxlength": 10 ]}
+                {[ "type": "text", "name": "altri_dati['.$key.'][tipo_dato]", "value": "'.$dato['tipo_dato'].'", "maxlength": 10, "help": "'.tr('Valori: TARGA, N.DOC.COMM, INVCONT, INTENTO, F24, NellAnno, AnniPreced, NB1, NB2, NB3, ALI-COMP, NO-COMP, OCC34BIS, ESENZSPORT').'" ]}
             </td>
         </tr>';
 

@@ -1775,3 +1775,19 @@ UPDATE `zz_segments` SET `clause` = '`in_interventi`.`id_stato` NOT IN(SELECT `i
 UPDATE `zz_segments` SET `clause` = '1=1 AND Livello=\'error\'' WHERE `zz_segments`.`name` = 'Errori';
 
 ALTER TABLE em_newsletter_receiver DROP FOREIGN KEY em_newsletter_receiver_ibfk_1;
+
+-- Aggiunta tipologia fattura TD29
+INSERT INTO `fe_tipi_documento` (`codice`, `name`, `is_autofattura`) VALUES ('TD29', 'Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)', 0);
+INSERT INTO `fe_tipi_documento_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, 'TD29', 'Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)'),
+(2, 'TD29', 'Communication for omitted or irregular invoicing (art. 6, paragraph 8, D.Lgs. 471/97)');
+
+INSERT INTO `co_tipi_documento` (`name`, `dir`, `reversed`, `codice_tipo_documento_fe`, `id_segment`) VALUES
+('Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)', 'entrata', 0, 'TD29', (SELECT `id` FROM `zz_segments` WHERE `name` = 'Vendite' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di vendita'))),
+('Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)', 'uscita', 0, 'TD29', (SELECT `id` FROM `zz_segments` WHERE `name` = 'Acquisti' AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Fatture di acquisto')));
+
+INSERT INTO `co_tipi_documento_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `co_tipi_documento` WHERE `codice_tipo_documento_fe` = 'TD29' AND `dir` = 'entrata'), 'Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)'),
+(2, (SELECT `id` FROM `co_tipi_documento` WHERE `codice_tipo_documento_fe` = 'TD29' AND `dir` = 'entrata'), 'Communication for omitted or irregular invoicing (art. 6, paragraph 8, D.Lgs. 471/97)'),
+(1, (SELECT `id` FROM `co_tipi_documento` WHERE `codice_tipo_documento_fe` = 'TD29' AND `dir` = 'uscita'), 'Comunicazione per omessa o irregolare fatturazione (art. 6, comma 8, D.Lgs. 471/97)'),
+(2, (SELECT `id` FROM `co_tipi_documento` WHERE `codice_tipo_documento_fe` = 'TD29' AND `dir` = 'uscita'), 'Communication for omitted or irregular invoicing (art. 6, paragraph 8, D.Lgs. 471/97)');

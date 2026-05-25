@@ -250,6 +250,14 @@ class Ricevuta
                 // Scartata
                 $descrizione = $errore_principale['Descrizione'] ?? null;
                 $suggerimento = $errore_principale['Suggerimento'] ?? null;
+
+                $codice_errore = $errore_principale['Codice'] ?? null;
+                $suggerimenti_sdi = [
+                    '00327' => tr('Il Codice Fiscale indicato per il cessionario/committente appartiene al Gruppo IVA e non a un singolo partecipante. Indicare il Codice Fiscale del singolo soggetto acquirente comunicato dal rappresentante del Gruppo IVA.'),
+                ];
+                if (!empty($codice_errore) && empty($suggerimento) && isset($suggerimenti_sdi[$codice_errore])) {
+                    $suggerimento = $suggerimenti_sdi[$codice_errore];
+                }
                 break;
             default:
                 // Codice non gestito

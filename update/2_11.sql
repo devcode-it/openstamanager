@@ -839,6 +839,8 @@ SELECT
 FROM 
     an_sedi 
     INNER JOIN zz_settings ON (zz_settings.valore=an_sedi.id_anagrafica AND zz_settings.nome='Azienda predefinita') 
+    LEFT JOIN (SELECT `zz_user_sedi`.`id_sede`, GROUP_CONCAT(DISTINCT `an_anagrafiche`.`ragione_sociale` SEPARATOR ', ') AS `nomi` FROM `zz_user_sedi` INNER JOIN `zz_users` ON `zz_user_sedi`.`id_user` = `zz_users`.`id` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `zz_users`.`id_anagrafica` GROUP BY `zz_user_sedi`.`id_sede`) AS `tecnici_assegnati` ON `tecnici_assegnati`.`id_sede` = `an_sedi`.`id`
+    LEFT JOIN (SELECT `v1`.`id_sede`, `an_anagrafiche`.`ragione_sociale` AS `nome` FROM `an_automezzi_viaggi` `v1` INNER JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `v1`.`id_tecnico` WHERE `v1`.`id` = (SELECT MAX(`v2`.`id`) FROM `an_automezzi_viaggi` `v2` WHERE `v2`.`id_sede` = `v1`.`id_sede`)) AS `tecnico_assegnato` ON `tecnico_assegnato`.`id_sede` = `an_sedi`.`id`
 WHERE 
     1=1 AND an_sedi.is_automezzo=1 
 HAVING 
@@ -1665,6 +1667,14 @@ UPDATE `zz_views` SET `query` = "IF( mg_movimenti.id_sede=0, 'Sede legale', an_s
 UPDATE `zz_views` SET `query` = "mg_movimenti.id_articolo" WHERE `zz_views`.`name` = "_link_record_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Movimenti');
 
 UPDATE `zz_views` SET `query` = "IFNULL(an_sedi.nome,an_sedi.nome_sede)" WHERE `zz_views`.`name` = "Nome" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi');
+
+-- Aggiunta vista Tecnico assegnato al modulo Automezzi
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `visible`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Automezzi'), 'Conducente', '`tecnico_assegnato`.`nome`', 5, 1);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_views`), 'Conducente'),
+(2, (SELECT MAX(`id`) FROM `zz_views`), 'Driver');
 
 UPDATE `zz_views` SET `query` = '`dt_aspetto_beni`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aspetto beni');
 UPDATE `zz_views` SET `query` = '`dt_aspetto_beni_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Aspetto beni');

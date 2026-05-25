@@ -13,7 +13,7 @@ $database->query("UPDATE my_impianto_componenti SET contenuto = REPLACE(REPLACE(
 $database->query('UPDATE `in_interventi_tecnici` SET `idintervento` = (SELECT `id` FROM `in_interventi` WHERE `in_interventi`.`codice` = `in_interventi_tecnici`.`idintervento`)');
 $database->query('ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` varchar(25)');
 $database->query("UPDATE `in_interventi_tecnici` SET `idintervento` = NULL WHERE `idintervento` = 0 OR `idintervento` = ''");
-$database->query('ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE');
+$database->query('ALTER TABLE `in_interventi_tecnici` CHANGE `idintervento` `idintervento` int(11), ADD CONSTRAINT `in_interventi_tecnici_ibfk_3` FOREIGN KEY (`idintervento`) REFERENCES `in_interventi`(`id`) ON DELETE CASCADE');
 
 // Fix dei timestamp delle tabelle mg_prodotti, mg_movimenti, zz_logs e zz_files
 $database->query('UPDATE `mg_prodotti` SET `created_at` = `data`');

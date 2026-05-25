@@ -1575,7 +1575,7 @@ CREATE TABLE IF NOT EXISTS `in_interventi_tecnici` (
   `prezzo_km_consuntivo_tecnico` float(12,4) NOT NULL,
   `prezzo_dirittochiamata_tecnico` float(12,4) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `in_interventi_tecnici_ibfk_1` (`idintervento`),
+  KEY `in_interventi_tecnici_ibfk_3` (`idintervento`),
   KEY `in_interventi_tecnici_ibfk_2` (`idtecnico`)
 ) ENGINE=InnoDB;
 

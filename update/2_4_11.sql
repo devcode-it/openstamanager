@@ -295,8 +295,6 @@ RENAME TABLE `zz_emails` TO `em_templates`;
 RENAME TABLE `zz_smtps` TO `em_accounts`;
 RENAME TABLE `zz_email_print` TO `em_print_template`;
 
-
-
 UPDATE zz_modules SET options = REPLACE(options, 'zz_emails', 'em_templates'), options2 = REPLACE(options2, 'zz_emails', 'em_templates');
 UPDATE zz_modules SET options = REPLACE(options, 'zz_smtps', 'em_accounts'), options2 = REPLACE(options2, 'zz_smtps', 'em_accounts');
 UPDATE zz_views SET query = REPLACE(query, 'zz_emails', 'em_templates');
@@ -410,13 +408,9 @@ INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`,
 
 ALTER TABLE `em_templates` ADD `id_account` INT(11) NOT NULL;
 UPDATE `em_templates` SET `id_account` = `id_smtp`;
-ALTER TABLE `em_templates` DROP FOREIGN KEY `em_templates_ibfk_2`, DROP `id_smtp`;
-ALTER TABLE `em_templates` ADD CONSTRAINT `em_templates_ibfk_2` FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_print_template` ADD `id_template` INT(11) NOT NULL;
 UPDATE `em_print_template` SET `id_template` = `id_email`;
-ALTER TABLE `em_print_template` DROP FOREIGN KEY `em_print_template_ibfk_1`, DROP `id_email`;
-ALTER TABLE `em_print_template` ADD CONSTRAINT `em_print_template_ibfk_3` FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;
 
 ALTER TABLE `em_accounts` ADD `timeout` INT(11) NOT NULL DEFAULT 1000;
 ALTER TABLE `an_anagrafiche` ADD `enable_newsletter` BOOLEAN DEFAULT TRUE;

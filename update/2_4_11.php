@@ -42,7 +42,7 @@ foreach ($logs as $log) {
     $database->query('UPDATE `zz_operations` SET `id_email` = '.prepare($mail->id).' WHERE `id_module` = '.prepare($log['id_module']).' AND `id_email` = '.prepare($log['id_email']).' AND `id_record` = '.prepare($log['id_record']).' AND `options` = '.prepare($log['options']).' AND `created_at` = '.prepare($log['created_at']));
 }
 
-$database->query('ALTER TABLE `zz_operations` ADD FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE SET NULL');
+$database->query('ALTER TABLE `zz_operations` ADD CONSTRAINT `zz_operations_ibfk_5` FOREIGN KEY (`id_email`) REFERENCES `em_emails`(`id`) ON DELETE SET NULL');
 
 // Rinomina foreign keys dopo RENAME TABLE
 $fk_renames = [
@@ -58,6 +58,12 @@ foreach ($fk_renames as $fk) {
         $database->query('ALTER TABLE `'.$fk['table'].'` DROP FOREIGN KEY `'.$fk['old_fk'].'`, ADD CONSTRAINT `'.$fk['new_fk'].'` FOREIGN KEY (`'.$fk['column'].'`) REFERENCES `'.$fk['ref_table'].'`(`'.$fk['ref_column'].'`) ON DELETE CASCADE');
     }
 }
+
+$database->query('ALTER TABLE `em_templates` DROP FOREIGN KEY `em_templates_ibfk_2`, DROP `id_smtp`');
+$database->query('ALTER TABLE `em_templates` ADD CONSTRAINT `em_templates_ibfk_2` FOREIGN KEY (`id_account`) REFERENCES `em_accounts`(`id`) ON DELETE CASCADE;');
+
+$database->query('ALTER TABLE `em_print_template` DROP FOREIGN KEY `em_print_template_ibfk_1`, DROP `id_email`;');
+$database->query('ALTER TABLE `em_print_template` ADD CONSTRAINT `em_print_template_ibfk_3` FOREIGN KEY (`id_template`) REFERENCES `em_templates`(`id`) ON DELETE CASCADE;');
 
 // Aggiunta permessi alla gestione documentale
 $gruppi = $database->fetchArray('SELECT `id` FROM `zz_groups`');

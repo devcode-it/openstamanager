@@ -432,9 +432,23 @@ echo '
         <td class="border-bottom">';
 
 if (!empty($documento->validita) && !empty($documento->tipo_validita)) {
-    $intervallo = CarbonInterval::make($documento->validita.' '.$documento->tipo_validita);
+    $mappa = [
+        'day' => tr('giorno'),
+        'days' => tr('giorni'),
+        'week' => tr('settimana'),
+        'weeks' => tr('settimane'),
+        'month' => tr('mese'),
+        'months' => tr('mesi'),
+        'year' => tr('anno'),
+        'years' => tr('anni'),
+    ];
 
-    echo $intervallo->forHumans();
+    $tipo = $mappa[$documento->tipo_validita] ?? $documento->tipo_validita;
+
+    echo tr('_TOT_ _TIPO_', [
+        '_TOT_' => $documento->validita,
+        '_TIPO_' => $tipo,
+    ]);
 } elseif (!empty($documento->validita)) {
     echo tr('_TOT_ giorni', [
         '_TOT_' => $documento->validita,

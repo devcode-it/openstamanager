@@ -225,8 +225,22 @@ function processComponent($file, $dbo)
     $info = Util\Ini::readFile($file->getRealPath());
     $config = getComponentConfig($type);
 
-    // Copia i file nella cartella relativa
-    copyr(dirname((string) $file->getRealPath()), base_dir().'/'.$config['directory'].'/'.$info['directory']);
+    $info['directory'] = basename(str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $info['directory']));
+    if (empty($info['directory']) || $info['directory'] === '.' || $info['directory'] === '..') {
+        flash()->error(tr('Nome directory del componente non valido.'));
+
+        return;
+    }
+
+    $intended_base = realpath(base_dir().'/'.$config['directory']);
+    $destination = $intended_base.DIRECTORY_SEPARATOR.$info['directory'];
+    if (!str_starts_with($destination, $intended_base.DIRECTORY_SEPARATOR)) {
+        flash()->error(tr('Percorso directory del componente non valido.'));
+
+        return;
+    }
+
+    copyr(dirname((string) $file->getRealPath()), $destination);
 
     // Inserisce il componente nel database
     insertComponent($type, $info, $config['table'], $dbo);

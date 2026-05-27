@@ -33,6 +33,13 @@ if (empty($structure) || empty($structure['enabled'])) {
     exit(tr('Accesso negato'));
 }
 
+$current_op = filter('op') ?: post('op');
+if (!empty($current_op) && $structure->permission != 'rw') {
+    flash()->error(tr('Accesso negato: permessi insufficienti'));
+    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record);
+    exit;
+}
+
 $database->beginTransaction();
 
 // Upload allegati e rimozione
@@ -266,10 +273,13 @@ elseif (filter('op') == 'rimuovi-notifica-nota') {
     $id_nota = post('id_nota');
     $nota = Note::find($id_nota);
 
-    $nota->notification_date = null;
-    $nota->save();
-
-    flash()->info(tr('Data di notifica rimossa dalla nota interna!'));
+    if (!empty($nota) && $nota->id_record == $id_record && (!empty($nota->id_module) && $nota->id_module == $id_module || !empty($nota->id_plugin) && $nota->id_plugin == $id_plugin)) {
+        $nota->notification_date = null;
+        $nota->save();
+        flash()->info(tr('Data di notifica rimossa dalla nota interna!'));
+    } else {
+        flash()->error(tr('Nota non trovata o accesso non autorizzato'));
+    }
 }
 
 // Rimozione nota interna
@@ -277,9 +287,12 @@ elseif (filter('op') == 'rimuovi-nota') {
     $id_nota = post('id_nota');
     $nota = Note::find($id_nota);
 
-    $nota->delete();
-
-    flash()->info(tr('Nota interna rimossa correttamente!'));
+    if (!empty($nota) && $nota->id_record == $id_record && (!empty($nota->id_module) && $nota->id_module == $id_module || !empty($nota->id_plugin) && $nota->id_plugin == $id_plugin)) {
+        $nota->delete();
+        flash()->info(tr('Nota interna rimossa correttamente!'));
+    } else {
+        flash()->error(tr('Nota non trovata o accesso non autorizzato'));
+    }
 }
 
 // Clonazione di una checklist

@@ -28,8 +28,8 @@ $date_end = $_SESSION['period_end'];
 
 $raggruppamenti = $dbo->fetchArray('
     SELECT 
-        `data_competenza`, 
-        DATE_FORMAT(`data_competenza`, \'%m-%Y\') AS periodo,
+        `data`, 
+        DATE_FORMAT(`data`, \'%m-%Y\') AS periodo,
         SUM((`subtotale`-`sconto`+`co_righe_documenti`.`rivalsa_inps`) *`percentuale`/100 *(100-`indetraibile`)/100 *(IF(`co_tipi_documento`.`reversed` = 0, 1,-1 ))) AS iva,
         SUM((`co_righe_documenti`.`subtotale` - `co_righe_documenti`.`sconto` + `co_righe_documenti`.`rivalsa_inps`) *(IF(`co_tipi_documento`.`reversed` = 0,1,-1))) AS imponibile
     FROM 
@@ -41,7 +41,7 @@ $raggruppamenti = $dbo->fetchArray('
         INNER JOIN `co_stati_documento` ON `co_stati_documento`.`id` = `co_documenti`.`id_stato`
         INNER JOIN `zz_segments` ON `co_documenti`.`id_segment` = `zz_segments`.`id`
     WHERE 
-        `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_stati_documento`.`name` NOT IN ("Bozza", "Annullata", "Non valida") AND `co_documenti`.`data_competenza` >= '.prepare($date_start).' AND `co_documenti`.`data_competenza` <= '.prepare($date_end).' AND `autofatture` = 0
+        `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_righe_documenti`.`is_descrizione` = 0 AND `co_stati_documento`.`name` NOT IN ("Bozza", "Annullata", "Non valida") AND `co_documenti`.`data` >= '.prepare($date_start).' AND `co_documenti`.`data` <= '.prepare($date_end).' AND `autofatture` = 0
     GROUP BY 
         `periodo`
     ORDER BY

@@ -5,6 +5,8 @@ namespace Modules\Impostazioni\API\Controllers;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ParameterNotFound;
 use ApiPlatform\State\ProviderInterface;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Auth;
 use Models\Setting;
 use Modules\Impostazioni\API\ImpostazioneResource;
 
@@ -12,6 +14,11 @@ final class ListImpostazioniProvider implements ProviderInterface
 {
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?array
     {
+        $user = Auth::user();
+        if (!$user || !$user->is_admin) {
+            throw new AuthorizationException();
+        }
+
         $sezione = $operation->getParameters()->get('sezione')->getValue();
         $search = $operation->getParameters()->get('ricerca')->getValue();
 

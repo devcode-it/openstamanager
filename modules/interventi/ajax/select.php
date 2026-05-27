@@ -71,8 +71,8 @@ switch ($resource) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }
 
-        if (!empty($superselect['idtipiintervento'])) {
-            $where[] = '`in_tipi_intervento`.`id` IN ('.implode(',', $superselect['idtipiintervento']).')';
+        if (!empty($superselect['id_tipi_intervento'])) {
+            $where[] = '`in_tipi_intervento`.`id` IN ('.implode(',', $superselect['id_tipi_intervento']).')';
         } elseif (!empty($superselect['id_anagrafica'])) {
             $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
             if (sizeof($rs) > 0) {

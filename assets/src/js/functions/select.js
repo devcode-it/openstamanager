@@ -44,6 +44,12 @@ function optionRendering(data, container) {
         return data.text;
     }
 
+    // Esclusione delle opzioni già selezionate dai risultati del dropdown
+    // (evita il flicker causato dal CSS [aria-selected=true] applicato dopo il rendering)
+    if (data.element && data.element.selected) {
+        return null;
+    }
+
     // Impostazione del colore dell'opzione
     let bg;
     if (data._bgcolor_) {

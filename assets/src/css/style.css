@@ -2244,12 +2244,13 @@ table.dataTable {
     margin-right: 3px;
     float: none;
     position: relative;
-    top: -1px;
+    top: 0;
     border: none;
     background: none;
     width: auto;
     height: auto;
     cursor: pointer;
+    vertical-align: middle;
 }
 
 /* Smaller font for select2 placeholder, selected values and dropdown options */

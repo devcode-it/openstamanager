@@ -255,7 +255,8 @@ function initStaticSelectInput(input) {
         width: '100%',
         maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
         minimumResultsForSearch: $input.hasClass('no-search') ? -1 : 0,
-        allowClear: !$input.hasClass('no-search'),
+        allowClear: true,
+        placeholder: $input.data('placeholder') || '',
         escapeMarkup: function (text) {
             return text;
         },
@@ -290,6 +291,7 @@ function initDynamicSelectInput(input) {
         maximumSelectionLength: $input.data('maximum') ? $input.data('maximum') : -1,
         minimumInputLength: $input.data('heavy') ? 3 : 0,
         allowClear: true,
+        placeholder: $input.data('placeholder') || '',
         escapeMarkup: function (text) {
             return text;
         },

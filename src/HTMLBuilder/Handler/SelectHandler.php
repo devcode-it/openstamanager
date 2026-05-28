@@ -80,6 +80,11 @@ class SelectHandler implements HandlerInterface
             $values['data-select-options'] = json_encode($infos);
             unset($values['select-options']);
 
+            if (!in_array('multiple', $extras)) {
+                $result .= '
+            <option></option>';
+            }
+
             if (!empty($values['value']) || is_numeric($values['value'])) {
                 $result .= $this->select2($source, $values['value'], $infos);
             }

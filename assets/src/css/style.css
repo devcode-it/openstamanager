@@ -2206,9 +2206,28 @@ table.dataTable {
     margin-top: 4px;
 }
 
-.select2-container--bootstrap4 .select2-selection__clear {
-    padding-left: 0.21em;
-    padding-top: 0.05em;
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__clear {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    color: #fff;
+    background-color: #aaa;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 1;
+    padding: 0;
+    margin: 0;
+    float: none;
+}
+
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__clear:hover {
+    background-color: #999;
 }
 
 .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {

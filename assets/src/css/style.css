@@ -1198,17 +1198,6 @@ span.form-control {
     padding-left: 0.75rem;
 }
 
-.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__placeholder {
-    float: left;
-    margin: 0;
-    padding: 0;
-    line-height: calc(1.5em + 0.75rem);
-    color: #6c757d;
-}
-
-.select2-container .select2-search--inline {
-    float: left;
-}
 
 .select2-container--bootstrap4 .select2-selection--multiple .select2-search--inline .select2-search__field {
     margin: 0;
@@ -1224,21 +1213,6 @@ span.form-control {
     display: block;
     width: 100%;
 }
-
-.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered > .select2-search--inline:only-child .select2-search__field {
-    width: 100%;
-}
-
-.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__placeholder ~ .select2-search--inline .select2-search__field {
-    width: 0;
-    min-width: 0;
-    padding: 0;
-}
-
-.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice ~ .select2-search--inline .select2-search__field {
-    min-width: 4em;
-}
-
 .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered::after {
     content: "";
     display: block;
@@ -2235,6 +2209,28 @@ table.dataTable {
 .select2-container--bootstrap4 .select2-selection__clear {
     padding-left: 0.21em;
     padding-top: 0.05em;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+    font-size: 13px;
+    padding: 0 0.4rem;
+    line-height: 1.6;
+    margin-top: 0.35rem;
+    border-radius: 3px;
+}
+
+.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 14px;
+    line-height: 1;
+    margin-right: 3px;
+    float: none;
+    position: relative;
+    top: -1px;
+    border: none;
+    background: none;
+    width: auto;
+    height: auto;
+    cursor: pointer;
 }
 
 /* Smaller font for select2 placeholder, selected values and dropdown options */

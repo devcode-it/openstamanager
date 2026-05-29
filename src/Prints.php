@@ -469,9 +469,23 @@ class Prints
     {
         $module = Module::find($record['id_module']);
 
-        $name = $record->getTranslation('filename').'.pdf';
+        $name = $record->getTranslation('filename');
         $name = $module->replacePlaceholders($id_record, $name);
 
+        if (in_array($record['name'], ['Fattura elettronica di acquisto'], true)) {
+            $invoice = database()->fetchOne('SELECT `data`, `numero` FROM `co_documenti` WHERE `id` = ?', [$id_record]);
+
+            if (!empty($invoice)) {
+                $date = !empty($invoice['data']) ? date('Ymd', strtotime($invoice['data'])) : null;
+                $numero = $invoice['numero'] ?? '';
+
+                if (!empty($date) && $numero !== '') {
+                    $name = $date.'-fattura elettronica-'.$numero.'-del-'.$date;
+                }
+            }
+        }
+
+        $name .= '.pdf';
         $replaces = [];
         foreach ($original_replaces as $key => $value) {
             $key = str_replace('$', '', $key);

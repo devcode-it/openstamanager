@@ -26,6 +26,7 @@ $imponibile = 0;
 foreach ($v_totale as $key => $v) {
     $totale_scontato += $v;
 }
+$totale_scontato = round($totale_scontato, $d_totali);
 
 $sconto = 0;
 foreach ($righe as $riga) {
@@ -44,8 +45,8 @@ $totale_iva = 0;
 foreach ($v_iva as $key => $v) {
     $totale_iva += $v;
 }
-
-$totale = $totale_iva + $totale_imponibile;
+$totale_iva = round($totale_iva, $d_totali);
+$totale = round($totale_iva + $totale_imponibile, $d_totali);
 
 $show_sconto = $sconto != 0;
 

@@ -76,6 +76,47 @@ switch (post('op')) {
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
 
+        // Salvataggio varianti dinamiche
+        $id_valori = post('id_valori');
+        if (!empty($id_valori) && is_array($id_valori)) {
+
+            // Creazione automatica della combinazione (modulo Combinazioni)
+            $combinazione = new \Modules\CombinazioniArticoli\Combinazione();
+            $combinazione->codice = $articolo->codice;
+            $combinazione->id_categoria = $articolo->id_categoria;
+            $combinazione->id_sottocategoria = $articolo->id_sottocategoria;
+            $combinazione->save();
+            $combinazione->setTranslation('title', $articolo->getTranslation('title'));
+
+            // Associazione dell'articolo alla combinazione appena creata
+            $articolo->id_combinazione = $combinazione->id;
+            $articolo->save();
+
+            // Inserimento attributi associati alla combinazione
+            $id_attributi = post('id_attributi');
+            if (!empty($id_attributi) && is_array($id_attributi)) {
+                $ordine = 1;
+                foreach ($id_attributi as $id_att) {
+                    if (!empty($id_att)) {
+                        $dbo->insert('mg_attributo_combinazione', [
+                            'id_combinazione' => $combinazione->id,
+                            'id_attributo' => $id_att,
+                            'order' => $ordine++
+                        ]);
+                    }
+                }
+            }
+
+            foreach ($id_valori as $id_valore) {
+                if (!empty($id_valore)) {
+                    $dbo->insert('mg_articolo_attributo', [
+                        'id_articolo' => $articolo->id,
+                        'id_valore' => $id_valore,
+                    ]);
+                }
+            }
+        }
+
         if (!empty(post('qta'))) {
             $data_movimento = new Carbon();
             $sede = post('sede');
@@ -209,6 +250,22 @@ switch (post('op')) {
 
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
+
+                // Salvataggio varianti
+        $id_valori = post('id_valori');
+        if ($id_valori !== null) {
+            $dbo->query('DELETE FROM `mg_articolo_attributo` WHERE `id_articolo`='.prepare($id_record));
+            if (!empty($id_valori) && is_array($id_valori)) {
+                foreach ($id_valori as $id_valore) {
+                    if (!empty($id_valore)) {
+                        $dbo->insert('mg_articolo_attributo', [
+                            'id_articolo' => $articolo->id,
+                            'id_valore' => $id_valore,
+                        ]);
+                    }
+                }
+            }
+        }
 
         // Salvataggio info componente (campo `contenuto`)
         if (!empty($componente)) {

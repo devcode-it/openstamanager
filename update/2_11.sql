@@ -1809,3 +1809,6 @@ UPDATE `zz_group_module` SET `clause` = 'an_anagrafiche.id_agente=|id_anagrafica
 UPDATE `zz_group_module` SET `clause` = 'co_preventivi.id_agente=|id_anagrafica|' WHERE `zz_group_module`.`name` = 'Mostra agli agenti solo i preventivi di cui sono agenti' AND `zz_group_module`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Preventivi');
 UPDATE `zz_group_module` SET `clause` = 'in_interventi.id_cliente_finale=|id_anagrafica|' WHERE `zz_group_module`.`name` = 'Mostra al cliente solo le attività in cui è impostato come ''Per conto di''' AND `zz_group_module`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_group_module` SET `clause` = '(in_interventi.id_anagrafica=|id_anagrafica| OR in_interventi.id_cliente_finale=|id_anagrafica|)' WHERE `zz_group_module`.`name` = 'Mostra al cliente tutte le attività in cui è coinvolto' AND `zz_group_module`.`id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+
+-- Aggiunta flag predefinito ai valori attributo
+ALTER TABLE `mg_attributi` ADD `predefinito` BOOLEAN NOT NULL DEFAULT FALSE AFTER `ordine`;

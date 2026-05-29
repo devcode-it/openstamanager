@@ -55,6 +55,39 @@ if ($articolo->servizio) {
 			<div class="row">
 				<div class="col-md-3">
 					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
+
+<?php
+$numero_attributi = database()->fetchOne("SELECT COUNT(*) AS count FROM mg_attributi")['count'];
+if ($numero_attributi > 0) {
+?>
+                    <div class="card card-info mt-4" id="varianti-wrapper">
+                        <div class="card-header">
+                            <h3 class="card-title"><?php echo tr('Varianti'); ?></h3>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row" id="varianti-container"></div>
+                            
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    {[ "type": "select", "name": "main_attributo_select", "id": "main-attributo-select", "ajax-source": "attributi", "placeholder": "<?php echo tr('Aggiungi...'); ?>" ]}
+                                </div>
+                                <div class="col-md-12 mt-2 text-right">
+                                    <button type="button" class="btn btn-success btn-sm w-100" id="btn-add-variante"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi'); ?></button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 variante-col mb-3" style="display:none;" id="variante-template">
+                                <div style="position: relative; padding-right: 35px;">
+                                    {[ "type": "select", "label": "LABEL", "name": "id_valori[]", "class": "valore-select", "ajax-source": "valori_attributi" ]}
+                                    <button type="button" class="btn btn-danger btn-sm btn-remove-variante" style="position:absolute; bottom:4px; right:0px;" title="<?php echo tr('Rimuovi'); ?>"><i class="fa fa-trash"></i></button>
+                                    <input type="hidden" class="attributo-hidden" name="id_attributi[]">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<?php
+}
+?>
 				</div>
 
                 <div class="col-md-9">
@@ -523,5 +556,83 @@ $(document).ready(function(){
     $("#prezziacquisto").load("<?php echo base_path_osm(); ?>/ajax_complete.php?module=Articoli&op=getprezziacquisto&id_articolo="+ <?php echo $id_record; ?> + "&limit=20");
 
     $("#prezzivendita").load("<?php echo base_path_osm(); ?>/ajax_complete.php?module=Articoli&op=getprezzivendita&id_articolo="+ <?php echo $id_record; ?> + "&limit=20");
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    var addedAttributes = [];
+    
+    // Funzione per aggiungere una variante alla UI
+    function addVariante(idAttributo, nomeAttributo, selectedIdValore, selectedNomeValore) {
+        var template = $('#variante-template').clone();
+        template.removeAttr('id');
+        template.css('display', 'block');
+        
+        var uniqueId = 'valore-select-' + idAttributo;
+        
+        template.find('label').first().text(nomeAttributo).attr('for', uniqueId);
+        template.find('.attributo-hidden').val(idAttributo);
+        template.attr('data-id-attributo', idAttributo);
+
+        var valoreSelect = template.find('.valore-select');
+        template.find('.select2-container').remove();
+        valoreSelect.removeClass('select2-hidden-accessible').removeAttr('data-select2-id tabindex aria-hidden multiple').show();
+        valoreSelect.find('option').removeAttr('data-select2-id');
+        
+        valoreSelect.attr('id', uniqueId);
+        valoreSelect.data('select-options', { id_attributo: idAttributo });
+        
+        if (selectedIdValore && selectedNomeValore) {
+            var option = new Option(selectedNomeValore, selectedIdValore, true, true);
+            valoreSelect.append(option);
+        }
+        
+        $('#varianti-container').append(template);
+        addedAttributes.push(String(idAttributo));
+        
+        input(valoreSelect[0]);
+
+        template.find('.btn-remove-variante').click(function() {
+            var col = $(this).closest('.variante-col');
+            var idAttr = col.attr('data-id-attributo');
+            var index = addedAttributes.indexOf(String(idAttr));
+            if (index !== -1) {
+                addedAttributes.splice(index, 1);
+            }
+            col.remove();
+        });
+    }
+
+    // Pre-popola le varianti esistenti
+    <?php
+    $varianti = database()->fetchArray("SELECT `mg_attributi`.`id` AS id_attributo, `mg_attributi_lang`.`title` AS nome_attributo, `mg_valori_attributi`.`id` AS id_valore, `mg_valori_attributi`.`nome` AS nome_valore FROM `mg_articolo_attributo` INNER JOIN `mg_valori_attributi` ON `mg_articolo_attributo`.`id_valore` = `mg_valori_attributi`.`id` INNER JOIN `mg_attributi` ON `mg_valori_attributi`.`id_attributo` = `mg_attributi`.`id` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.`id_lang` = " . prepare(Models\Locale::getDefault()->id) . ") WHERE `mg_articolo_attributo`.`id_articolo` = " . prepare($id_record) . " ORDER BY `mg_attributi`.`ordine` ASC");
+    foreach ($varianti as $v) {
+        echo "addVariante(".json_encode($v['id_attributo']).", ".json_encode($v['nome_attributo']).", ".json_encode($v['id_valore']).", ".json_encode($v['nome_valore']).");\n";
+    }
+    ?>
+
+    $('#btn-add-variante').click(function() {
+        var idAttributo = $('#main-attributo-select').val();
+        var dataAttributo = $('#main-attributo-select').select2('data');
+        var nomeAttributo = dataAttributo.length > 0 ? dataAttributo[0].text : '';
+
+        if (!idAttributo) {
+            return;
+        }
+
+        if (addedAttributes.indexOf(String(idAttributo)) !== -1) {
+            swal({
+                title: "Attenzione",
+                html: "Hai già aggiunto questo attributo.",
+                type: "warning"
+            });
+            $('#main-attributo-select').val(null).trigger('change');
+            return;
+        }
+
+        addVariante(idAttributo, nomeAttributo, null, null);
+        $('#main-attributo-select').val(null).trigger('change');
+    });
 });
 </script>

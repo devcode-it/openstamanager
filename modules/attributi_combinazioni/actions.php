@@ -33,6 +33,7 @@ switch (filter('op')) {
         } else {
             $attributo = Attributo::build();
             $attributo->name = $title;
+            $attributo->predefinito = post('predefinito') ? 1 : 0;
             $id_record = $dbo->lastInsertedID();
             $attributo->save();
 
@@ -42,7 +43,7 @@ switch (filter('op')) {
 
     case 'update':
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('title', $descrizione);
+        $attributo_new = (new Attributo())->getByField('title', $title);
 
         if (!empty($attributo_new) && $attributo_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
@@ -50,6 +51,7 @@ switch (filter('op')) {
             if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                 $attributo->name = $title;
             }
+            $attributo->predefinito = post('predefinito') ? 1 : 0;
             $attributo->save();
             $attributo->setTranslation('title', $title);
             flash()->info(tr('Attributo aggiornato correttamente!'));

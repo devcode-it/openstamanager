@@ -35,6 +35,10 @@ echo '
                 <div class="col-md-6">
                     {[ "type": "text", "label": "'.tr('Titolo').'", "name": "titolo", "value": "'.$attributo->getTranslation('title').'", "required": 1, "help": "'.tr("Nome visibile dell'attributo").'" ]}
                 </div>
+
+                <div class="col-md-6 mt-3 mt-md-0">
+                    {[ "type": "checkbox", "label": "'.tr('Predefinito').'", "name": "predefinito", "value": "'.($attributo->predefinito ?? 0).'" ]}
+                </div>
             </div>
         </div>
     </div>

@@ -135,6 +135,48 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
         </div>
     </div>
 
+<?php
+$numero_attributi = database()->fetchOne("SELECT COUNT(*) AS count FROM mg_attributi")['count'];
+if ($numero_attributi > 0) {
+?>
+
+    <div class="card card-warning collapsed-card">
+        <div class="card-header with-border">
+            <h3 class="card-title"><?php echo tr('Varianti'); ?></h3>
+            <div class="card-tools pull-right">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row" id="varianti-container-add"></div>
+            
+            <hr>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    {[ "type": "select", "label": "<?php echo tr('Attributo'); ?>", "name": "main_attributo_select", "id": "main-attributo-select-add", "ajax-source": "attributi" ]}
+                </div>
+                <div class="col-md-4" style="padding-top: 25px;">
+                    <button type="button" class="btn btn-success" id="btn-add-variante-add"><i class="fa fa-plus"></i> <?php echo tr('Aggiungi attributo'); ?></button>
+                </div>
+            </div>
+
+            <div class="col-md-4 variante-col mb-3" style="display:none;" id="variante-template-add">
+                <div style="position: relative; padding-right: 40px;">
+                    {[ "type": "select", "label": "LABEL", "name": "id_valori[]", "class": "valore-select", "ajax-source": "valori_attributi" ]}
+                    <button type="button" class="btn btn-danger btn-sm btn-remove-variante" style="position:absolute; bottom:4px; right:0px;" title="<?php echo tr('Rimuovi'); ?>"><i class="fa fa-trash"></i></button>
+                    <input type="hidden" class="attributo-hidden" name="id_attributi[]">
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php
+}
+?>
+
 	<!-- PULSANTI -->
 	<div class="modal-footer">
 		<div class="col-md-12 text-right">
@@ -274,5 +316,90 @@ $(document).ready(function() {
     if (input("prezzo_acquisto").get() > 0 || input("qta").get() > 0 || input("um").get()) {
         $(".card.collapsed-card .card-tools button[data-card-widget='collapse']").click();
     }
+});
+
+// Gestione Varianti
+$(document).ready(function() {
+    var addedAttributes = [];
+
+    function addVariante(idAttributo, nomeAttributo) {
+        if (!idAttributo) return;
+
+        idAttributo = idAttributo.toString();
+
+        // Blocco JS: impedisce di aggiungere due volte lo stesso attributo
+        if (addedAttributes.indexOf(idAttributo) !== -1) {
+            swal({
+                title: "Attenzione",
+                html: "Hai già aggiunto questo attributo.",
+                type: "warning"
+            });
+            $('#main-attributo-select-add').val(null).trigger('change');
+            return;
+        }
+
+        var template = $('#variante-template-add').clone();
+        template.removeAttr('id');
+        template.css('display', 'block');
+        
+        var uniqueId = 'valore-select-add-' + idAttributo;
+        
+        template.find('label').first().text(nomeAttributo).attr('for', uniqueId);
+        template.find('.attributo-hidden').val(idAttributo);
+        
+        // Assegna il data attributo per poterlo recuperare quando rimosso
+        template.attr('data-id-attributo', idAttributo);
+
+        // Pulizia select2 pre-inizializzato dal DOM nascosto
+        var valoreSelect = template.find('.valore-select');
+        template.find('.select2-container').remove();
+        valoreSelect.removeClass('select2-hidden-accessible').removeAttr('data-select2-id tabindex aria-hidden multiple').show();
+        valoreSelect.find('option').removeAttr('data-select2-id');
+        
+        // Imposta attributi per la corretta inizializzazione OSM
+        valoreSelect.attr('id', uniqueId);
+        valoreSelect.data('select-options', { id_attributo: idAttributo });
+        
+        $('#varianti-container-add').append(template);
+
+        // Aggiungi all'array e pulisci select principale
+        addedAttributes.push(idAttributo);
+        $('#main-attributo-select-add').val(null).trigger('change');
+
+        // Inizializza graficamente usando la funzione standard globale di OSM!
+        input(valoreSelect[0]);
+
+        // Rimuovi riga
+        template.find('.btn-remove-variante').click(function() {
+            var col = $(this).closest('.variante-col');
+            var idAttr = col.attr('data-id-attributo');
+            
+            // Rimuovi l'ID dall'array per permettere di nuovo la selezione
+            var index = addedAttributes.indexOf(idAttr.toString());
+            if (index !== -1) {
+                addedAttributes.splice(index, 1);
+            }
+            
+            col.remove();
+        });
+    }
+
+    $('#btn-add-variante-add').click(function() {
+        var idAttributo = $('#main-attributo-select-add').val();
+        var dataAttributo = $('#main-attributo-select-add').select2('data');
+        var nomeAttributo = dataAttributo.length > 0 ? dataAttributo[0].text : '';
+
+        addVariante(idAttributo, nomeAttributo);
+    });
+
+<?php
+$attributi_predefiniti = database()->fetchArray("SELECT id, name AS nome FROM mg_attributi WHERE predefinito = 1 AND deleted_at IS NULL ORDER BY ordine");
+if (!empty($attributi_predefiniti)) {
+    foreach ($attributi_predefiniti as $ap) {
+        echo "    addVariante('".$ap['id']."', ".json_encode($ap['nome']).");\n";
+    }
+    echo "    $('#varianti-container-add').closest('.card.collapsed-card').find('[data-card-widget=\"collapse\"]').click();\n";
+}
+?>
 });
 </script>

@@ -49,7 +49,7 @@ class Referente extends Model
     {
         $model = new static();
 
-        $model->id = $id;
+        $model->id_anagrafica = $id;
 
         $model->nome = $nome;
 

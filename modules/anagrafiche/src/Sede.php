@@ -58,7 +58,7 @@ class Sede extends Model
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'id');
+        return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
     }
 
     public function nazione()

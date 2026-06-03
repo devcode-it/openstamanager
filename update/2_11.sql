@@ -1812,3 +1812,6 @@ UPDATE `zz_group_module` SET `clause` = '(in_interventi.id_anagrafica=|id_anagra
 
 -- Aggiunta flag predefinito ai valori attributo
 ALTER TABLE `mg_attributi` ADD `predefinito` BOOLEAN NOT NULL DEFAULT FALSE AFTER `ordine`;
+
+-- Aggiunta campo commissioni Ri.Ba. insolute in banche
+ALTER TABLE `co_banche` ADD `commissioni_riba_insolute` DECIMAL(15, 6) NOT NULL DEFAULT 0 AFTER `codice_sia`;

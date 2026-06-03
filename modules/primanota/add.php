@@ -134,15 +134,17 @@ foreach ($id_documenti as $id_documento) {
     $is_importo_avere = ($dir == 'entrata' && !$is_nota_credito && !$is_insoluto) || ($dir == 'uscita' && ($is_nota_credito || $is_insoluto));
 
     // Predisposizione prima riga
-    $banca = Banca::find($fattura->id_banca_azienda);
+    // Per Ri.Ba. e SEPA, la banca è quella della controparte, altrimenti azienda
+    $id_banca = $fattura->pagamento->isRiBa() || $fattura->pagamento->isSepa() ? $fattura->id_banca_controparte : $fattura->id_banca_azienda;
+    $banca = Banca::find($id_banca);
     $conto_field = 'id_conto_'.($dir == 'entrata' ? 'vendite' : 'acquisti');
     $id_conto_aziendale = $banca->id_piano_dei_conti3 ?: ($fattura->pagamento[$conto_field] ?: setting('Conto aziendale predefinito'));
 
     // Se sto registrando un insoluto, leggo la prima rata disponibile (non pagata) altrimenti leggo la scadenza della fattura
     if ($is_insoluto) {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC LIMIT 0, 1');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) = ABS(pagato) ORDER BY updated_at DESC LIMIT 0, 1');
     } else {
-        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? 'AND id IN('.implode(',', array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
+        $scadenze = $database->fetchArray('SELECT id, ABS(da_pagare - pagato) AS rata, id_documento, tipo FROM co_scadenzario WHERE id_documento='.prepare($id_documento).' AND ABS(da_pagare) > ABS(pagato)'.(!empty($id_scadenze) ? ' AND id IN('.implode(',',  array_map(prepare(...), $id_scadenze)).')' : '').' ORDER BY YEAR(scadenza) ASC, MONTH(scadenza) ASC');
     }
 
     // Selezione prima scadenza
@@ -181,6 +183,11 @@ foreach ($id_documenti as $id_documento) {
         $conto_spese = $database->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE descrizione = '.prepare('Effetti insoluti'));
         $id_conto_spese_insoluti = $conto_spese['id'] ?? null;
 
+        // Recupero commissioni dalla banca appropriata
+        $id_banca = $fattura->pagamento->isRiBa() || $fattura->pagamento->isSepa() ? $fattura->id_banca_controparte : $fattura->id_banca_azienda;
+        $banca_commissioni = Banca::find($id_banca);
+        $commissioni_riba = $banca_commissioni ? $banca_commissioni->commissioni_riba_insolute : 0;
+
         $righe_documento[] = [
             'id_documento' => $scadenza_disponibile['id_documento'],
             'id_scadenza' => $scadenza_disponibile['id'],
@@ -201,7 +208,7 @@ foreach ($id_documenti as $id_documento) {
             'id_documento' => null,
             'id_scadenza' => null,
             'id_conto' => $id_conto_spese_insoluti,
-            'dare' => $scadenza_disponibile['rata'],
+            'dare' => $commissioni_riba,
             'avere' => 0,
         ];
 
@@ -210,7 +217,7 @@ foreach ($id_documenti as $id_documento) {
             'id_scadenza' => null,
             'id_conto' => $id_conto_aziendale,
             'dare' => 0,
-            'avere' => $scadenza_disponibile['rata'],
+            'avere' => $commissioni_riba,
         ];
     } else {
         // Riga controparte

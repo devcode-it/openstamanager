@@ -69,13 +69,17 @@ $endpoint = setting('Endpoint ibanapi.com');
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('ID Creditore SEPA'); ?>", "name": "id_creditor", "class": "alphanumeric-mask", "value": "$id_creditor$", "help": "<?php echo tr("Codice identificativo per l'azienda nell'area SEPA. Nel caso di aziende aderenti alla procedura Allineamento Elettronico Archivio per le quali non risulta reperibile in CF/p_iva viene generato un codice identificativo non significativo (NOTPROVIDEDXXXXXXXXXXXX)."); ?>" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Codice SIA azienda'); ?>", "name": "codice_sia", "class": "sia-code-mask", "maxlength": 5, "value": "$codice_sia$", "help":"<?php echo tr('Società Interbancaria per l\'Automazione. Questo campo è necessario per la generazione delle Ri.Ba.<br>E\' composto da 5 caratteri alfanumerici.'); ?>" ]}
                 </div>
+                
+                <div class="col-md-4">
+					{[ "type": "number", "label": "<?php echo tr('Commissioni per Ri.Ba. insolute'); ?>", "name": "commissioni_riba_insolute", "value": "$commissioni_riba_insolute$", "icon-after": "<i class='fa fa-euro'></i>", "help":"<?php echo tr('Valore delle commissioni applicate in caso di Ri.Ba. insolute per questa specifica banca.'); ?>" ]}
+				</div>
             </div>
 
 			<div class="row">

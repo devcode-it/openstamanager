@@ -61,6 +61,7 @@ switch (filter('op')) {
         $banca->filiale = post('filiale');
         $banca->id_creditor = post('id_creditor');
         $banca->codice_sia = post('codice_sia');
+        $banca->commissioni_riba_insolute = post('commissioni_riba_insolute');
 
         $banca->predefined = post('predefined');
 

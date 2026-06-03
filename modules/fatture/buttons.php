@@ -119,13 +119,11 @@ if (!empty($record['is_fiscale'])) {
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">';
-
     // Registra insoluto - sempre visibile ma disabilitato se non utilizzabile
     echo '
-            <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? 'data-href="'.base_path_osm().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'"' : '').'>
-                <i class="fa fa-ban"></i> '.tr('Registra insoluto').'
-            </a>';
-
+        <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_insoluto) ? '' : 'disabled').'" data-href="'.base_path_osm().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1&is_insoluto=1" data-title="'.tr('Registra insoluto').'">
+            <i class="fa fa-ban"></i> '.tr('Registra insoluto').'
+        </a>';
     // Registra contabile - sempre visibile ma disabilitato se non utilizzabile
     echo '
             <a class="btn dropdown-item '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? '' : 'disabled').'" '.(!empty($modulo_prima_nota) && !empty($registrazione_contabile) ? 'data-href="'.base_path_osm().'/add.php?id_module='.$modulo_prima_nota.'&id_documenti='.$id_record.'&single=1" data-title="'.tr('Registra contabile').'"' : '').'>

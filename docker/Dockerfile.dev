@@ -1,4 +1,4 @@
-FROM php:8.3-apache-bullseye
+FROM php:8.5-apache-bullseye
 
 # Installa dipendenze di sistema ed estensioni PHP
 RUN apt-get update && apt-get install -y --no-install-recommends \

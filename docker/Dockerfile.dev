@@ -46,7 +46,7 @@ RUN git clone https://github.com/devcode-it/openstamanager.git . && \
 
 # Crea file di configurazione
 RUN touch manifest.json \
-    mariadb_10_x.json \
+    mariadb.json \
     mysql.json \
     checksum.json \
     settings.json \

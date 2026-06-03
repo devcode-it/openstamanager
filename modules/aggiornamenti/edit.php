@@ -266,7 +266,7 @@ function verifyFileChecksums()
 function getDatabaseReferenceFile($database)
 {
     if ($database->getType() === 'MariaDB') {
-        return 'mariadb_10_x.json';
+        return 'mariadb.json';
     }
 
     if ($database->getType() === 'MySQL') {

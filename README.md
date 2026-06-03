@@ -78,6 +78,9 @@ L'installazione del gestionale richiede la presenza di un server web con abilita
     
 | MYSQL/MARIADB | EOL | Supportato |
 |-----|-----|:----------:|
+| MariaDB 12.2 | - | 🟢 |
+| MariaDB 12.1 | - | 🟢 |
+| MariaDB 12.0 | 05/08/2025 | 🟢 |
 | MariaDB 11.8 | - | 🟢 |
 | MariaDB 11.7 | 31/05/2028 | 🟢 |
 | MariaDB 11.6 | 30/11/2027 | 🟢 |

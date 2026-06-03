@@ -93,7 +93,7 @@ REVISION
 manifest.json
 checksum.json
 mysql.json
-mariadb_10_x.json
+mariadb.json
 settings.json
 views.json
 modules.json

@@ -44,7 +44,7 @@ if (!function_exists('getDatabaseReferenceFile')) {
     {
         switch ($database->getType()) {
             case 'MariaDB':
-                return 'mariadb_10_x.json';
+                return 'mariadb.json';
             case 'MySQL':
                 return 'mysql.json';
                 

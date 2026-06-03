@@ -109,7 +109,7 @@ if (!function_exists('customTables')) {
         $file_to_check_database = 'mysql.json';
         $database = database();
         if ($database->getType() === 'MariaDB') {
-            $file_to_check_database = 'mariadb_10_x.json';
+            $file_to_check_database = 'mariadb.json';
         } elseif ($database->getType() === 'MySQL') {
             $mysql_min_version = '8.0.0';
             $mysql_max_version = '8.4.99';

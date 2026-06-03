@@ -29,6 +29,7 @@ class Settore extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'an_settori';
 
     protected static $translated_fields = [

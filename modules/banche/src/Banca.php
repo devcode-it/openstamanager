@@ -31,6 +31,7 @@ class Banca extends Model
     use SimpleModelTrait;
     use SoftDeletes;
 
+    #[\Override]
     protected $table = 'co_banche';
 
     /**

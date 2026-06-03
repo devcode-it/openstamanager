@@ -27,5 +27,6 @@ class RitenutaAcconto extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'co_ritenuta_acconto';
 }

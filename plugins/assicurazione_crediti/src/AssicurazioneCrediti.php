@@ -34,6 +34,7 @@ class AssicurazioneCrediti extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'an_assicurazione_crediti';
 
     /**

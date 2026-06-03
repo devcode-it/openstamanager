@@ -27,6 +27,7 @@ class Log extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'zz_logs';
 
     /* Relazioni Eloquent */

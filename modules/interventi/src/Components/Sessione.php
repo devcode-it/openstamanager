@@ -37,6 +37,7 @@ class Sessione extends Model
     use SimpleModelTrait;
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'in_interventi_tecnici';
 
     protected $aliquota_iva;

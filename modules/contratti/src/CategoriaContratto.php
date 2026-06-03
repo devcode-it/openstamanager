@@ -31,6 +31,7 @@ class CategoriaContratto extends Model
     use HierarchyTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'co_categorie_contratti';
     protected static $translated_fields = [
         'title',

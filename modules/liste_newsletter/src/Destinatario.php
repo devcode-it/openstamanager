@@ -27,6 +27,7 @@ class Destinatario extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'em_list_receiver';
     protected $origine;
 

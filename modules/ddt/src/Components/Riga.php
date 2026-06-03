@@ -26,5 +26,6 @@ class Riga extends Row
 {
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'dt_righe_ddt';
 }

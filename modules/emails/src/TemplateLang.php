@@ -29,5 +29,6 @@ class TemplateLang extends Model
     use SimpleModelTrait;
     use LocalPoolTrait;
 
+    #[\Override]
     protected $table = 'em_templates_lang';
 }

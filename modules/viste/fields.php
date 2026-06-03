@@ -42,8 +42,8 @@ foreach ($fields as $key => $field) {
                         <h3 class="card-title">
                             <i class="fa '.($field->visible ? 'fa-eye text-success' : 'fa-eye-slash text-danger').'"></i>
                             <strong>'.$field->getTranslation('title').'</strong>
-                            <small class="text-muted tip" title="'.(new Carbon\Carbon($field->updated_at))->format('d/m/Y H:i').'">
-                                <i class="fa fa-clock-o"></i> '.tr('modificato').' '.(new Carbon\Carbon($field->updated_at))->diffForHumans().'
+                            <small class="text-muted tip" title="'.new Carbon\Carbon($field->updated_at)->format('d/m/Y H:i').'">
+                                <i class="fa fa-clock-o"></i> '.tr('modificato').' '.new Carbon\Carbon($field->updated_at)->diffForHumans().'
                             </small>
                         </h3>
 

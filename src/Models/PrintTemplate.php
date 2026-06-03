@@ -34,6 +34,7 @@ class PrintTemplate extends Model
     use LocalPoolTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'zz_prints';
     protected $main_folder = 'templates';
 

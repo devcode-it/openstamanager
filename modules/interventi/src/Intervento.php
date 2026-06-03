@@ -33,10 +33,12 @@ class Intervento extends Document
     use ReferenceTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'in_interventi';
 
     protected $info = [];
 
+    #[\Override]
     protected $casts = [
         'data_richiesta' => 'date',
         'data_scadenza' => 'date',

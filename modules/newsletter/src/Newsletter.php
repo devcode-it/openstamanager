@@ -39,6 +39,7 @@ class Newsletter extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'em_newsletters';
 
     public static function build(?User $user = null, ?Template $template = null, $name = null)

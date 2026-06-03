@@ -51,6 +51,7 @@ class Upload extends Model
         'image/tiff' => 'tiff',
     ];
 
+    #[\Override]
     protected $table = 'zz_files';
 
     protected $file_info;

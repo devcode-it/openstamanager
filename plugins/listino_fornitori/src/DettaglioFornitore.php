@@ -36,6 +36,7 @@ class DettaglioFornitore extends Model
     use SimpleModelTrait;
     use SoftDeletes;
 
+    #[\Override]
     protected $table = 'mg_fornitore_articolo';
 
     /**

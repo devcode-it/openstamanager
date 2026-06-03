@@ -1744,14 +1744,7 @@ class DocumentiCollegati
                 if (!empty($intervento['id_contratto'])) {
                     $doc_info = self::getInfoDocumento($intervento['id_contratto'], Modules\Contratti\Contratto::class);
                     if ($doc_info) {
-                        // Verifica che non sia già stato aggiunto
-                        $già_presente = false;
-                        foreach ($documenti_precedenti as $doc) {
-                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
-                                $già_presente = true;
-                                break;
-                            }
-                        }
+                        $già_presente = array_any($documenti_precedenti, fn ($doc) => $doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']);
                         if (!$già_presente) {
                             $documenti_precedenti[] = $doc_info;
                         }
@@ -1762,14 +1755,7 @@ class DocumentiCollegati
                 if (!empty($intervento['id_ordine'])) {
                     $doc_info = self::getInfoDocumento($intervento['id_ordine'], Modules\Ordini\Ordine::class);
                     if ($doc_info) {
-                        // Verifica che non sia già stato aggiunto
-                        $già_presente = false;
-                        foreach ($documenti_precedenti as $doc) {
-                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
-                                $già_presente = true;
-                                break;
-                            }
-                        }
+                        $già_presente = array_any($documenti_precedenti, fn ($doc) => $doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']);
                         if (!$già_presente) {
                             $documenti_precedenti[] = $doc_info;
                         }
@@ -1780,14 +1766,7 @@ class DocumentiCollegati
                 if (!empty($intervento['id_preventivo'])) {
                     $doc_info = self::getInfoDocumento($intervento['id_preventivo'], Modules\Preventivi\Preventivo::class);
                     if ($doc_info) {
-                        // Verifica che non sia già stato aggiunto
-                        $già_presente = false;
-                        foreach ($documenti_precedenti as $doc) {
-                            if ($doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']) {
-                                $già_presente = true;
-                                break;
-                            }
-                        }
+                        $già_presente = array_any($documenti_precedenti, fn ($doc) => $doc['id'] == $doc_info['id'] && $doc['tipo_documento'] == $doc_info['tipo_documento']);
                         if (!$già_presente) {
                             $documenti_precedenti[] = $doc_info;
                         }

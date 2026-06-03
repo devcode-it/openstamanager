@@ -28,6 +28,7 @@ class Porto extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'dt_porto';
 
     protected static $translated_fields = [

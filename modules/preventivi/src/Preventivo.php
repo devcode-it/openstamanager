@@ -40,8 +40,10 @@ class Preventivo extends Document
     /**
      * @var bool Disabilita movimentazione automatica
      */
+    #[\Override]
     public static $movimenta_magazzino = false;
 
+    #[\Override]
     protected $table = 'co_preventivi';
 
     /**
@@ -49,6 +51,7 @@ class Preventivo extends Document
      *
      * @var array
      */
+    #[\Override]
     protected $with = ['anagrafica', 'stato', 'pagamento'];
 
     /**
@@ -56,6 +59,7 @@ class Preventivo extends Document
      *
      * @var array
      */
+    #[\Override]
     protected $casts = [
         'data_bozza' => 'date',
         'data_conclusione' => 'date',

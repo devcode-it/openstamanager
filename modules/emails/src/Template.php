@@ -36,6 +36,7 @@ class Template extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'em_templates';
 
     protected static $translated_fields = [

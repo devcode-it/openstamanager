@@ -40,6 +40,7 @@ class Contratto extends Document
     /**
      * @var bool Disabilita movimentazione automatica
      */
+    #[\Override]
     public static $movimenta_magazzino = false;
 
     /**
@@ -47,6 +48,7 @@ class Contratto extends Document
      */
     protected $is_saving = false;
 
+    #[\Override]
     protected $table = 'co_contratti';
 
     /**
@@ -54,6 +56,7 @@ class Contratto extends Document
      *
      * @var array
      */
+    #[\Override]
     protected $casts = [
         'data_bozza' => 'date',
         'data_conclusione' => 'date',

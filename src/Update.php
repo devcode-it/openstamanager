@@ -69,12 +69,14 @@ class Update
                         $database->query('DROP TABLE IF EXISTS `updates`');
                     }
                     $database->multiQuery($install_sql);
+
                     return $database->tableExists('updates');
                 } catch (Exception $e) {
                     $_SESSION['update_error'] = [
                         'message' => $e->getMessage(),
                         'query' => '',
                     ];
+
                     return false;
                 }
             }
@@ -166,13 +168,8 @@ class Update
     public static function isUpdateLocked()
     {
         $todos = array_column(self::getTodoUpdates(), 'done');
-        foreach ($todos as $todo) {
-            if ($todo !== null && $todo !== 1) {
-                return true;
-            }
-        }
 
-        return false;
+        return array_any($todos, fn ($todo) => $todo !== null && $todo !== 1);
     }
 
     /**

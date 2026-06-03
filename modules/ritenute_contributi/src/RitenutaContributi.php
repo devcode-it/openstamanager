@@ -28,6 +28,7 @@ class RitenutaContributi extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'co_ritenuta_contributi';
 
     public function fatture()

@@ -31,25 +31,13 @@ use Util\Query;
  */
 class Prints
 {
-    private const MIN_FONT_SIZE = 8.5;
-    private const MAX_FONT_SIZE = 12.0;
+    private const float MIN_FONT_SIZE = 8.5;
+    private const float MAX_FONT_SIZE = 12.0;
 
     /** @var array Elenco delle stampe disponibili */
     protected static $prints = [];
     /** @var array Elenco delle stampe per modulo */
     protected static $modules = [];
-
-    /**
-     * Normalizza il valore di font-size per le stampe.
-     *
-     * @param mixed $font_size
-     *
-     * @return float
-     */
-    protected static function normalizeFontSize($font_size): float
-    {
-        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
-    }
 
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
@@ -253,8 +241,6 @@ class Prints
     /**
      * Restituisce il codice semplificato per il link alla stampa.
      *
-     * @deprecated 2.4.1
-     *
      * @param string|int $print
      * @param int        $id_record
      * @param string     $btn
@@ -264,6 +250,7 @@ class Prints
      *
      * @return string
      */
+    #[Deprecated(message: '2.4.1')]
     public static function getLink($print, $id_record, $btn = null, $title = null, $icon = null, $get = '')
     {
         return '{( "name": "button", "type": "print", "id": "'.$print.'", "id_record": "'.$id_record.'", "label": "'.$title.'", "icon": "'.$icon.'", "parameters": "'.$get.'", "class": "'.$btn.'" )}';
@@ -313,6 +300,14 @@ class Prints
         $directory = 'templates/'.$template['directory'].'|custom|';
 
         return App::filepath($directory, $file);
+    }
+
+    /**
+     * Normalizza il valore di font-size per le stampe.
+     */
+    protected static function normalizeFontSize($font_size): float
+    {
+        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
     }
 
     /**
@@ -476,7 +471,7 @@ class Prints
             $invoice = database()->fetchOne('SELECT `data`, `numero_esterno` FROM `co_documenti` WHERE `id` = ?', [$id_record]);
 
             if (!empty($invoice)) {
-                $date = !empty($invoice['data']) ? date('Ymd', strtotime($invoice['data'])) : null;
+                $date = !empty($invoice['data']) ? date('Ymd', strtotime((string) $invoice['data'])) : null;
                 $numero = $invoice['numero_esterno'] ?? '';
 
                 if (!empty($date) && $numero !== '') {

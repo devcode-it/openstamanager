@@ -26,6 +26,8 @@ class Articolo extends Article
 {
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'co_righe_contratti';
+    #[\Override]
     protected $serialRowID = 'contratto';
 }

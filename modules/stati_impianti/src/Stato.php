@@ -31,6 +31,7 @@ class Stato extends Model
     use RecordTrait;
     use SoftDeletes;
 
+    #[\Override]
     protected $table = 'my_stati_impianti';
 
     protected static $translated_fields = [

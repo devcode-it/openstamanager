@@ -32,7 +32,7 @@ class ServicesHook extends Manager
         $message = null;
 
         if (Services::isEnabled()) {
-            $limite_scadenze = (new Carbon())->addDays(60);
+            $limite_scadenze = new Carbon()->addDays(60);
             $message = '';
 
             // Recupera le risorse attive una sola volta dalla cache

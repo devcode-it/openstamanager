@@ -28,6 +28,7 @@ class Aliquota extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'co_iva';
 
     protected static $translated_fields = [

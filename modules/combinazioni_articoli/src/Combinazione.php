@@ -16,6 +16,7 @@ class Combinazione extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'mg_combinazioni';
 
     protected static $translated_fields = [

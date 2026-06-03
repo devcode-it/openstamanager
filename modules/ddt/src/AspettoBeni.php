@@ -28,6 +28,7 @@ class AspettoBeni extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'dt_aspetto_beni';
 
     protected static $translated_fields = [

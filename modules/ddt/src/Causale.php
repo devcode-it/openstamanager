@@ -28,6 +28,7 @@ class Causale extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'dt_causale_t';
 
     protected static $translated_fields = [

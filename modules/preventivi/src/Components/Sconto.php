@@ -26,5 +26,6 @@ class Sconto extends Discount
 {
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'co_righe_preventivi';
 }

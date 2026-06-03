@@ -29,6 +29,7 @@ class Provenienza extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'an_provenienze';
 
     protected static $translated_fields = [

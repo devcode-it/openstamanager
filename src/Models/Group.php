@@ -28,6 +28,7 @@ class Group extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'zz_groups';
 
     protected static $translated_fields = [

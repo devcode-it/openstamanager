@@ -32,8 +32,10 @@ class DDT extends Document
     use ReferenceTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'dt_ddt';
 
+    #[\Override]
     protected $casts = [
         'bollo' => 'float',
         'peso' => 'float',
@@ -43,6 +45,7 @@ class DDT extends Document
         'sconto_finale_percentuale' => 'float',
     ];
 
+    #[\Override]
     protected $with = [
         'tipo',
     ];

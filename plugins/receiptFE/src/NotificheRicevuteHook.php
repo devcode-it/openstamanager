@@ -75,7 +75,7 @@ class NotificheRicevuteHook extends Manager
         }
 
         // Controllo se ci sono fatture in elaborazione da più di 7 giorni per le quali non ho ancora una ricevuta
-        $data_limite = (new Carbon())->subDays(7);
+        $data_limite = new Carbon()->subDays(7);
         $in_attesa = Fattura::vendita()
             ->where('codice_stato_fe', 'WAIT')
             ->where('data_stato_fe', '>=', $_SESSION['period_start'])

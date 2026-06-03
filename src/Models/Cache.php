@@ -37,11 +37,13 @@ class Cache extends Model
     use LocalPoolTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'zz_cache';
 
     protected static $translated_fields = [
         'title',
     ];
+    #[\Override]
     protected $casts = [
         'content' => 'array',
         'expire_at' => 'datetime',
@@ -82,10 +84,10 @@ class Cache extends Model
     {
         if (!empty($this->valid_time)) {
             $interval = CarbonInterval::make($this->valid_time);
-            $this->expire_at = (new Carbon())->add($interval);
+            $this->expire_at = new Carbon()->add($interval);
         } elseif (empty($this->expire_at)) {
             $interval = CarbonInterval::make('6 hours');
-            $this->expire_at = (new Carbon())->add($interval);
+            $this->expire_at = new Carbon()->add($interval);
         }
 
         return parent::save($options);

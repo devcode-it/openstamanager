@@ -178,10 +178,10 @@ class AJAX
             foreach ($notes as $note) {
                 $result = [];
                 $result['link'] = base_path_osm().'/editor.php?id_module='.$note['id_module'].'&id_record='.$note['id_record'].'#tab_note';
-                $result['title'] = strip_tags(substr($note['content'], 0, 100));
+                $result['title'] = strip_tags(substr((string) $note['content'], 0, 100));
                 $result['category'] = tr('Note interne');
 
-                $text = strip_tags($note['content']);
+                $text = strip_tags((string) $note['content']);
                 $highlighted = str_replace($term, "<span class='highlight'>".$term.'</span>', $text);
                 $result['labels'] = [tr('Nota').': '.$highlighted.'<br/>'];
 

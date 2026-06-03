@@ -28,6 +28,7 @@ class Stato extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'co_stati_documento';
 
     protected static $translated_fields = [

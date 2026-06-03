@@ -29,6 +29,7 @@ class Relazione extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'an_relazioni';
 
     protected static $translated_fields = [

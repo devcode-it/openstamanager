@@ -29,5 +29,6 @@ class Descrizione extends Description
 {
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'co_righe_documenti';
 }

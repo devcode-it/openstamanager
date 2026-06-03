@@ -48,6 +48,7 @@ class Account extends Model
         ],
     ];
 
+    #[\Override]
     protected $table = 'em_accounts';
 
     public function testConnection()

@@ -30,12 +30,15 @@ class Log extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'zz_tasks_logs';
 
+    #[\Override]
     protected $casts = [
         'context' => 'array',
     ];
 
+    #[\Override]
     protected $hidden = [
         'task',
     ];

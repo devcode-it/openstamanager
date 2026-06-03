@@ -28,6 +28,7 @@ class PagamentoLang extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'co_pagamenti_lang';
 
     protected static $translated_fields = [

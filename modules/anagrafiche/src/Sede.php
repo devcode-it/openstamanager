@@ -27,6 +27,7 @@ class Sede extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'an_sedi';
 
     /**
@@ -34,6 +35,7 @@ class Sede extends Model
      *
      * @var array
      */
+    #[\Override]
     protected $guarded = [];
 
     /**

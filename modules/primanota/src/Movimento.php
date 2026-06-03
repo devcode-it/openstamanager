@@ -29,8 +29,10 @@ class Movimento extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'co_movimenti';
 
+    #[\Override]
     protected $appends = [
         'id_conto',
         'avere',

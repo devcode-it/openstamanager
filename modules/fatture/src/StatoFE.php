@@ -28,8 +28,11 @@ class StatoFE extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
+    #[\Override]
     public $incrementing = false;
+    #[\Override]
     protected $table = 'fe_stati_documento';
+    #[\Override]
     protected $primaryKey = 'codice';
 
     protected static $translated_fields = [

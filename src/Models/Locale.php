@@ -27,6 +27,7 @@ class Locale extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'zz_langs';
 
     protected static $lang;

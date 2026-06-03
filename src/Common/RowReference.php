@@ -24,6 +24,7 @@ class RowReference extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'co_riferimenti_righe';
 
     public function source()

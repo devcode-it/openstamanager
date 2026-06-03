@@ -42,18 +42,23 @@ class Anagrafica extends Model
     use SimpleModelTrait;
     use SoftDeletes;
 
+    #[\Override]
     protected $table = 'an_anagrafiche';
 
+    #[\Override]
     protected $primaryKey = 'id';
 
     protected $module = 'Anagrafiche';
 
+    #[\Override]
     protected $guarded = [];
 
+    #[\Override]
     protected $appends = [
         'partita_iva',
     ];
 
+    #[\Override]
     protected $hidden = [
         'p_iva',
     ];

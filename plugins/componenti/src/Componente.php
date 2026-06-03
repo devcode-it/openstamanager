@@ -35,8 +35,10 @@ class Componente extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'my_componenti';
 
+    #[\Override]
     protected $casts = [
         'data_registrazione' => 'date',
         'data_sostituzione' => 'date',
@@ -44,6 +46,7 @@ class Componente extends Model
         'data_rimozione' => 'date',
     ];
 
+    #[\Override]
     protected $fillable = [
         'serial',
     ];

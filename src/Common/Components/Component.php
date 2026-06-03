@@ -50,12 +50,15 @@ abstract class Component extends Model
      */
     protected $original_model;
 
+    #[\Override]
     protected $guarded = [];
 
+    #[\Override]
     protected $appends = [
         'max_qta',
     ];
 
+    #[\Override]
     protected $hidden = [
         'document',
     ];

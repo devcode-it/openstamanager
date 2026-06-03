@@ -27,6 +27,7 @@ class Receiver extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'em_email_receiver';
 
     /* Relazioni Eloquent */

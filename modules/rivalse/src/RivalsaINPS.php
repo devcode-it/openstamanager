@@ -27,5 +27,6 @@ class RivalsaINPS extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'co_rivalse';
 }

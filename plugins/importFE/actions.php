@@ -338,7 +338,7 @@ switch (filter('op')) {
                     try {
                         $dati_ordini[(int) $linea] = [
                             'numero' => $dato['IdDocumento'],
-                            'anno' => (new Carbon($dato['Data']))->format('Y'),
+                            'anno' => new Carbon($dato['Data'])->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ordini[(int) $linea] = [
@@ -357,7 +357,7 @@ switch (filter('op')) {
                 try {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['IdDocumento'],
-                        'anno' => (new Carbon($dato['Data']))->format('Y'),
+                        'anno' => new Carbon($dato['Data'])->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
@@ -382,7 +382,7 @@ switch (filter('op')) {
                     try {
                         $dati_ddt[(int) $linea] = [
                             'numero' => $dato['NumeroDDT'],
-                            'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
+                            'anno' => new Carbon($dato['DataDDT'])->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ddt[(int) $linea] = [
@@ -400,7 +400,7 @@ switch (filter('op')) {
                 try {
                     $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['NumeroDDT'],
-                        'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
+                        'anno' => new Carbon($dato['DataDDT'])->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
@@ -448,7 +448,7 @@ switch (filter('op')) {
             }
 
             // Se nella fattura elettronica è indicato un DDT cerco SOLO quel documento specifico
-            $ddt_specifico = isset($dati_ddt[$numero_linea]) ? $dati_ddt[$numero_linea] : (isset($dati_ddt['generale']) ? $dati_ddt['generale'] : null);
+            $ddt_specifico = $dati_ddt[$numero_linea] ?? $dati_ddt['generale'] ?? null;
             if ($ddt_specifico) {
                 $ddt = $ddt_specifico;
                 $query = "SELECT
@@ -491,7 +491,7 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica NON è indicato un DDT ed è indicato un ordine
             // cerco SOLO per quell'ordine specifico
-            $ordine_specifico = isset($dati_ordini[$numero_linea]) ? $dati_ordini[$numero_linea] : (isset($dati_ordini['generale']) ? $dati_ordini['generale'] : null);
+            $ordine_specifico = $dati_ordini[$numero_linea] ?? $dati_ordini['generale'] ?? null;
             if (empty($collegamento) && $ordine_specifico) {
                 $ordine = $ordine_specifico;
                 $query = "SELECT

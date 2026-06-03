@@ -127,7 +127,6 @@ class OAuth2 extends Model
 
             return ['access_token' => $access_token];
         }
-
         return null;
     }
 

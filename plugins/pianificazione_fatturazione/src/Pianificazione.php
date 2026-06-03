@@ -26,6 +26,7 @@ use Modules\Fatture\Fattura;
 
 class Pianificazione extends Document
 {
+    #[\Override]
     protected $table = 'co_fatturazione_contratti';
 
     /**
@@ -33,6 +34,7 @@ class Pianificazione extends Document
      *
      * @var array
      */
+    #[\Override]
     protected $casts = [
         'data_scadenza' => 'date',
     ];

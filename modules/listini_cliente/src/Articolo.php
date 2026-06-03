@@ -34,6 +34,7 @@ class Articolo extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'mg_listini_articoli';
 
     /**

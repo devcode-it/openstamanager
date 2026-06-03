@@ -37,12 +37,16 @@ class Mastrino extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     public $incrementing = false;
 
+    #[\Override]
     protected $table = 'co_movimenti';
 
+    #[\Override]
     protected $primaryKey = 'id_mastrino';
 
+    #[\Override]
     protected $hidden = [
         'id_mastrino',
         'data_documento',

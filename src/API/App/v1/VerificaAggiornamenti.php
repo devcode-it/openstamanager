@@ -123,7 +123,7 @@ class VerificaAggiornamenti extends Resource implements RetrieveInterface
         return [
             'aggiornamenti_disponibili' => $aggiornamenti_disponibili,
             'last_sync_at' => $last_sync_at ? $last_sync_at->toISOString() : null,
-            'timestamp_controllo' => (new Carbon())->toISOString(),
+            'timestamp_controllo' => new Carbon()->toISOString(),
             'statistiche' => [
                 'totale_risorse_controllate' => count(self::RISORSE_DA_CONTROLLARE),
                 'risorse_con_aggiornamenti' => count($risorse_con_aggiornamenti),

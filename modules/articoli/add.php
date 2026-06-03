@@ -136,9 +136,9 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
     </div>
 
 <?php
-$numero_attributi = database()->fetchOne("SELECT COUNT(*) AS count FROM mg_attributi")['count'];
+$numero_attributi = database()->fetchOne('SELECT COUNT(*) AS count FROM mg_attributi')['count'];
 if ($numero_attributi > 0) {
-?>
+    ?>
 
     <div class="card card-warning collapsed-card">
         <div class="card-header with-border">
@@ -393,7 +393,7 @@ $(document).ready(function() {
     });
 
 <?php
-$attributi_predefiniti = database()->fetchArray("SELECT id, name AS nome FROM mg_attributi WHERE predefinito = 1 AND deleted_at IS NULL ORDER BY ordine");
+$attributi_predefiniti = database()->fetchArray('SELECT id, name AS nome FROM mg_attributi WHERE predefinito = 1 AND deleted_at IS NULL ORDER BY ordine');
 if (!empty($attributi_predefiniti)) {
     foreach ($attributi_predefiniti as $ap) {
         echo "    addVariante('".$ap['id']."', ".json_encode($ap['nome']).");\n";

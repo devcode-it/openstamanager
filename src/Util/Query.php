@@ -634,13 +634,8 @@ class Query
         ];
 
         $upper_query = strtoupper($query);
-        foreach ($dangerous_keywords as $keyword) {
-            if (str_contains($upper_query, $keyword)) {
-                return false;
-            }
-        }
 
-        return true;
+        return array_all($dangerous_keywords, fn ($keyword) => !str_contains($upper_query, (string) $keyword));
     }
 
     /**

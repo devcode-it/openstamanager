@@ -30,6 +30,7 @@ class ChecklistItem extends Model
     use HierarchyTrait;
 
     protected static $parent_identifier = 'id_parent';
+    #[\Override]
     protected $table = 'zz_checklist_items';
 
     /**

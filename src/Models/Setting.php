@@ -44,8 +44,10 @@ class Setting extends Model
     use SimpleModelTrait;
     use LocalPoolTrait;
     use RecordTrait;
+    #[\Override]
     protected $table = 'zz_settings';
 
+    #[\Override]
     protected $appends = [
         'description',
     ];

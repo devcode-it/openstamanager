@@ -38,10 +38,12 @@ class Articolo extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    #[\Override]
     protected $guarded = [
         'qta',
     ];
 
+    #[\Override]
     protected $table = 'mg_articoli';
 
     protected static $translated_fields = [

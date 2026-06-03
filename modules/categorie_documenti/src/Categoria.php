@@ -32,6 +32,7 @@ class Categoria extends Model
     use SoftDeletes;
     use RecordTrait;
 
+    #[\Override]
     protected $table = 'do_categorie';
 
     protected static $translated_fields = [

@@ -33,8 +33,10 @@ class Promemoria extends Document
     /**
      * @var bool Disabilita movimentazione automatica
      */
+    #[\Override]
     public static $movimenta_magazzino = false;
 
+    #[\Override]
     protected $table = 'co_promemoria';
 
     /**
@@ -42,6 +44,7 @@ class Promemoria extends Document
      *
      * @var array
      */
+    #[\Override]
     protected $casts = [
         'data_richiesta' => 'date',
     ];

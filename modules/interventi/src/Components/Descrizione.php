@@ -26,5 +26,6 @@ class Descrizione extends Description
 {
     use RelationTrait;
 
+    #[\Override]
     protected $table = 'in_righe_interventi';
 }

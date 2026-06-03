@@ -27,6 +27,7 @@ class UserTokens extends Model
 {
     use SimpleModelTrait;
 
+    #[\Override]
     protected $table = 'zz_tokens';
 
     /* Relazioni Eloquent */

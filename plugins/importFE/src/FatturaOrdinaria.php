@@ -140,7 +140,7 @@ class FatturaOrdinaria extends FatturaElettronica
         foreach ($riepiloghi as $riepilogo) {
             $aliquota_iva = $riepilogo['AliquotaIVA'];
 
-            if (array_key_exists($aliquota_iva, $riepiloghi_raggruppati)) {
+            if (array_key_exists((string) $aliquota_iva, $riepiloghi_raggruppati)) {
                 $riepiloghi_raggruppati[$aliquota_iva]['ImponibileImporto'] += $riepilogo['ImponibileImporto'];
                 $riepiloghi_raggruppati[$aliquota_iva]['Imposta'] += $riepilogo['Imposta'];
             } else {
@@ -289,7 +289,7 @@ class FatturaOrdinaria extends FatturaElettronica
                 }
 
                 $nome_categoria = 'Importazione automatica';
-                $categoria = Categoria::find((new Categoria())->getByField('title', strtolower($nome_categoria)));
+                $categoria = Categoria::find(new Categoria()->getByField('title', strtolower($nome_categoria)));
                 if (empty($categoria)) {
                     $categoria = Categoria::build();
                     $categoria->name = $nome_categoria;

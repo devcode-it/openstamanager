@@ -366,6 +366,14 @@ elseif (post('op') == 'send-email') {
 
     $mail = Modules\Emails\Mail::build(user: $user, template: $template, id_record: $id_record, reset_from_template: false);
 
+    // CC e BCC dal template
+    if (!empty($template['cc'])) {
+        $mail->addReceiver($template['cc'], 'cc');
+    }
+    if (!empty($template['bcc'])) {
+        $mail->addReceiver($template['bcc'], 'bcc');
+    }
+
     // Rimozione allegati predefiniti
     $mail->resetPrints();
     $mail->resetUploads();

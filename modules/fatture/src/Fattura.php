@@ -108,7 +108,7 @@ class Fattura extends Document
         $database = database();
 
         // Individuazione dello stato predefinito per il documento (con cache)
-        $id_stato_attuale_documento = self::getid_stato('Bozza');
+        $id_stato_attuale_documento = self::getidstato('Bozza');
         $direzione = $tipo_documento->dir;
 
         // Conto predefinito sulla base del flusso di denaro
@@ -588,9 +588,9 @@ class Fattura extends Document
         $id_stato_attuale = $this->stato['id'] ?? null;
 
         // Ottieni gli ID degli stati con cache per evitare query ripetute
-        $id_stato_bozza = self::getid_stato('Bozza');
-        $id_stato_emessa = self::getid_stato('Emessa');
-        $id_stato_pagato = self::getid_stato('Pagato');
+        $id_stato_bozza = self::getidstato('Bozza');
+        $id_stato_emessa = self::getidstato('Emessa');
+        $id_stato_pagato = self::getidstato('Pagato');
         $stati_non_attivi = self::getIdStatiNonAttivi();
 
         $dichiarazione_precedente = !empty($this->original['id_dichiarazione_intento'])
@@ -669,7 +669,7 @@ class Fattura extends Document
         $new->id_ricevuta_principale = null;
 
         // Spostamento dello stato (con cache)
-        $id_stato_bozza = self::getid_stato('Bozza');
+        $id_stato_bozza = self::getidstato('Bozza');
         $new->stato()->associate($id_stato_bozza);
 
         return $new;
@@ -925,7 +925,7 @@ class Fattura extends Document
      *
      * @return int|null
      */
-    protected static function getid_stato($nome)
+    protected static function getidstato($nome)
     {
         if (!isset(self::$statiCache[$nome])) {
             self::$statiCache[$nome] = Stato::where('name', $nome)->first()?->id;
@@ -973,9 +973,9 @@ class Fattura extends Document
     protected static function getIdStatiNonAttivi()
     {
         return [
-            self::getid_stato('Bozza'),
-            self::getid_stato('Annullata'),
-            self::getid_stato('Non valida'),
+            self::getidstato('Bozza'),
+            self::getidstato('Annullata'),
+            self::getidstato('Non valida'),
         ];
     }
 

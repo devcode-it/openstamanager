@@ -93,7 +93,7 @@ class Movimento extends Model
 
     // Attributi
 
-    public function getid_contoAttribute()
+    public function getIdContoAttribute()
     {
         return $this->attributes['id_conto'];
     }

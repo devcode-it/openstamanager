@@ -88,7 +88,7 @@ class DDT extends Document
         $model->id_agente = $anagrafica->id_agente;
         $model->data = $data;
 
-        $id_pagamento = self::getid_pagamento($anagrafica, $direzione);
+        $id_pagamento = self::getidpagamento($anagrafica, $direzione);
         if (!empty($id_pagamento)) {
             $model->id_pagamento = $id_pagamento;
         }
@@ -395,7 +395,7 @@ class DDT extends Document
      *
      * @return int|null
      */
-    protected static function getid_pagamento(Anagrafica $anagrafica, $direzione)
+    protected static function getidpagamento(Anagrafica $anagrafica, $direzione)
     {
         $conto = $direzione == 'entrata' ? 'vendite' : 'acquisti';
         $id_pagamento = $anagrafica['id_pagamento_'.$conto];

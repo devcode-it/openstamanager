@@ -23,7 +23,7 @@ use Modules\Fatture\Fattura;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT co_scadenzario.*, an_anagrafiche.ragione_sociale FROM co_scadenzario LEFT JOIN an_anagrafiche ON co_scadenzario.id_anagrafica=an_anagrafiche.id WHERE id = '.prepare($id_record));
+    $record = $dbo->fetchOne('SELECT co_scadenzario.*, an_anagrafiche.ragione_sociale FROM co_scadenzario LEFT JOIN an_anagrafiche ON co_scadenzario.id_anagrafica=an_anagrafiche.id WHERE co_scadenzario.id = '.prepare($id_record));
     $documento = Fattura::find($record['id_documento']);
 
     // Scelgo la query in base alla scadenza

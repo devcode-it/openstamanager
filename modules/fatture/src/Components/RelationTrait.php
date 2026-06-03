@@ -135,12 +135,12 @@ trait RelationTrait
         $this->load('ritenuta');
     }
 
-    public function getid_contoAttribute()
+    public function getidcontoAttribute()
     {
         return $this->attributes['id_conto'];
     }
 
-    public function setid_contoAttribute($value)
+    public function setidcontoAttribute($value)
     {
         $this->attributes['id_conto'] = $value;
     }

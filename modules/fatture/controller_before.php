@@ -34,8 +34,8 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
     $codici_scarto = ['EC02', 'NS'];
     $codici_errore = ['ERR', 'ERVAL'];
     $codici_invio = ['GEN', 'QUEUE', null];
-    $data_limite = (new Carbon())->subMonths(6);
-    $data_limite_invio = (new Carbon())->subDays(10);
+    $data_limite = new Carbon()->subMonths(6);
+    $data_limite_invio = new Carbon()->subDays(10);
 
     // Verifica se la data cade di sabato o domenica
     $giorno_settimana = $data_limite_invio->dayOfWeek;
@@ -51,7 +51,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
         ->whereHas('tipo', function ($query) {
             $query->where('dir', 'entrata');
         })
-        ->whereHas('stato', function($query){
+        ->whereHas('stato', function ($query) {
             $query->whereNotIn('name', ['Bozza', 'Annullata', 'Non valida']);
         })->where(function ($query) {
             $query->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])
@@ -84,7 +84,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
                     }
                 }
             }
-            $show_avviso = $show_avviso ?: ($documento->data_stato_fe < (new Carbon())->subDays(4) ? 1 : 0);
+            $show_avviso = $show_avviso ?: ($documento->data_stato_fe < new Carbon()->subDays(4) ? 1 : 0);
         } elseif (in_array($documento->codice_stato_fe, $codici_errore)) {
             $documenti_scarto[] = [
                 'id' => $documento->id,

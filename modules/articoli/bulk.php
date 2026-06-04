@@ -460,7 +460,7 @@ switch (post('op')) {
             do {
                 // Genera il codice EAN-13 basato sull'ID dell'articolo più il numero di tentativi
                 $codice = '200'.str_pad((string) ($id + $tentativi), 9, '0', STR_PAD_LEFT);
-                $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
+                $barcode = new Picqer\Barcode\Types\TypeEan13()->getBarcode($codice)->getBarcode();
 
                 // Controlla se il barcode è già presente nella tabella mg_articoli (barcode principali)
                 $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;

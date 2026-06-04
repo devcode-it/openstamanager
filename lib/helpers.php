@@ -130,11 +130,11 @@ function setting($name)
     }
 
     if ($setting->tipo == 'integer') {
-        $value = (int)$value;
+        $value = (int) $value;
     }
 
     if ($setting->tipo == 'decimal') {
-        $value = (float)$value;
+        $value = (float) $value;
     }
 
     return $value;

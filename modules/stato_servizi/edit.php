@@ -27,7 +27,7 @@ use Util\FileSystem;
 include_once __DIR__.'/../../core.php';
 
 $days = 60;
-$limite_scadenze = (new Carbon())->addDays($days);
+$limite_scadenze = new Carbon()->addDays($days);
 
 if (Services::isEnabled()) {
     echo '

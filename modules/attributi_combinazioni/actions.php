@@ -26,7 +26,7 @@ use Modules\AttributiCombinazioni\ValoreAttributo;
 switch (filter('op')) {
     case 'add':
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('title', $title);
+        $attributo_new = new Attributo()->getByField('title', $title);
 
         if ($attributo_new) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));
@@ -43,7 +43,7 @@ switch (filter('op')) {
 
     case 'update':
         $title = post('titolo');
-        $attributo_new = (new Attributo())->getByField('title', $title);
+        $attributo_new = new Attributo()->getByField('title', $title);
 
         if (!empty($attributo_new) && $attributo_new != $id_record) {
             flash()->error(tr('Questo nome è già stato utilizzato per un altro attributo.'));

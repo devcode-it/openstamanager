@@ -82,16 +82,16 @@ function calcolaImportiLiquidazioneIva($date_start, $date_end)
 {
     global $dbo;
 
-    $anno_precedente_start = (new Carbon($date_start))->subYears(1)->format('Y-m-d');
-    $anno_precedente_end = (new Carbon($date_end))->subYears(1)->format('Y-m-d');
+    $anno_precedente_start = new Carbon($date_start)->subYears(1)->format('Y-m-d');
+    $anno_precedente_end = new Carbon($date_end)->subYears(1)->format('Y-m-d');
     $periodo = setting('Liquidazione iva');
 
     if ($periodo == 'Mensile') {
-        $periodo_precedente_start = (new Carbon($date_start))->subMonth()->format('Y-m-d');
-        $periodo_precedente_end = (new Carbon($date_end))->subMonth()->format('Y-m-d');
+        $periodo_precedente_start = new Carbon($date_start)->subMonth()->format('Y-m-d');
+        $periodo_precedente_end = new Carbon($date_end)->subMonth()->format('Y-m-d');
     } else {
-        $periodo_precedente_start = (new Carbon($date_start))->subMonths(3)->format('Y-m-d');
-        $periodo_precedente_end = (new Carbon($date_end))->subMonths(3)->format('Y-m-d');
+        $periodo_precedente_start = new Carbon($date_start)->subMonths(3)->format('Y-m-d');
+        $periodo_precedente_end = new Carbon($date_end)->subMonths(3)->format('Y-m-d');
     }
 
     $vendita_banco = Module::where('name', 'Vendita al banco')->first()->id;
@@ -1012,7 +1012,7 @@ function generaXmlLipe($date_start, $date_end)
     foreach ($mesi as $mese) {
         // Calcola date per il mese corrente
         $mese_start = $anno.'-'.str_pad((string) $mese, 2, '0', STR_PAD_LEFT).'-01';
-        $mese_end = (new Carbon($mese_start))->endOfMonth()->format('Y-m-d');
+        $mese_end = new Carbon($mese_start)->endOfMonth()->format('Y-m-d');
 
         // Calcola importi per il mese specifico
         $importi_mese = calcolaImportiLiquidazioneIva($mese_start, $mese_end);

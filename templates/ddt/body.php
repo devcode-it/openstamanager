@@ -89,7 +89,7 @@ if (!setting('Visualizza riferimento su ogni riga in stampa')) {
     foreach ($righe as $riga) {
         $riferimento = $riga->getOriginalComponent() ? $riga->getOriginalComponent()->getDocument()->getReference() : null;
         if (!empty($riferimento)) {
-            if (!array_key_exists($riferimento, $riferimenti)) {
+            if (!array_key_exists((string) $riferimento, $riferimenti)) {
                 $riferimenti[$riferimento] = [];
             }
 

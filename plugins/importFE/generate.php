@@ -462,14 +462,14 @@ if (!empty($righe)) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ordini[(int) $linea] = [
                 'numero' => $dato['IdDocumento'],
-                'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
+                'data' => new Carbon($dato['Data'])->format('d/m/Y'),
             ];
         }
 
         if (!$dato['RiferimentoNumeroLinea']) {
             $dati_ordini_documento[] = [
                 'numero' => $dato['IdDocumento'],
-                'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
+                'data' => new Carbon($dato['Data'])->format('d/m/Y'),
             ];
         }
     }
@@ -480,14 +480,14 @@ if (!empty($righe)) {
         foreach ($dato['RiferimentoNumeroLinea'] as $dati => $linea) {
             $dati_ddt[(int) $linea] = [
                 'numero' => $dato['NumeroDDT'],
-                'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
+                'data' => new Carbon($dato['DataDDT'])->format('d/m/Y'),
             ];
         }
 
         if (!$dato['RiferimentoNumeroLinea']) {
             $dati_ddt_documento[] = [
                 'numero' => $dato['NumeroDDT'],
-                'data' => (new Carbon($dato['DataDDT']))->format('d/m/Y'),
+                'data' => new Carbon($dato['DataDDT'])->format('d/m/Y'),
             ];
         }
     }

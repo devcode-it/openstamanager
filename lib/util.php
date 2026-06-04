@@ -105,6 +105,7 @@ if (!function_exists('string_starts_with')) {
         if ($string === null) {
             return false;
         }
+
         return str_starts_with($string, $starts_with);
     }
 }
@@ -123,6 +124,7 @@ if (!function_exists('string_ends_with')) {
         if ($string === null) {
             return false;
         }
+
         return str_ends_with($string, $ends_with);
     }
 }
@@ -141,6 +143,7 @@ if (!function_exists('string_contains')) {
         if ($string === null) {
             return false;
         }
+
         return str_contains($string, $contains);
     }
 }

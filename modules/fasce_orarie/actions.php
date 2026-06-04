@@ -31,7 +31,7 @@ switch (post('op')) {
         $is_predefined = post('is_predefined');
 
         if (isset($descrizione)) {
-            $fascia_oraria_new = FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $fascia_oraria_new = FasciaOraria::where('id', '=', new FasciaOraria()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($fascia_oraria_new)) {
                 if (!empty($is_predefined)) {
                     $dbo->query('UPDATE `in_fasce_orarie` SET `is_predefined` = 0');
@@ -65,7 +65,7 @@ switch (post('op')) {
         $ora_fine = post('ora_fine');
 
         if (isset($descrizione)) {
-            if (empty(FasciaOraria::where('id', '=', (new FasciaOraria())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(FasciaOraria::where('id', '=', new FasciaOraria()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $fascia_oraria = FasciaOraria::build($descrizione);
                 $id_record = $dbo->lastInsertedID();
                 $fascia_oraria->ora_inizio = $ora_inizio;

@@ -29,7 +29,7 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata');
 
         if (isset($descrizione)) {
-            $relazione_new = Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $relazione_new = Relazione::where('id', '=', new Relazione()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($relazione_new)) {
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $relazione->name = $descrizione;
@@ -56,7 +56,7 @@ switch (filter('op')) {
         $is_bloccata = filter('is_bloccata_add');
 
         if (isset($descrizione)) {
-            if (empty(Relazione::where('id', '=', (new Relazione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(Relazione::where('id', '=', new Relazione()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $relazione = Relazione::build($descrizione);
                 $relazione->colore = $colore;
                 $relazione->is_bloccata = $is_bloccata;

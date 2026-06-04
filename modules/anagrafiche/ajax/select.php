@@ -160,70 +160,7 @@ switch ($resource) {
 
         break;
 
-    case 'agenti':
-        $id_azienda = setting('Azienda predefinita');
-        $tipologia = Tipo::where('name', 'Agente')->first()->id;
-
-        $query = "SELECT
-            `an_anagrafiche`.`id` AS id,
-            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'), IF(`is_bloccata` = 1, CONCAT(' (', `an_relazioni_lang`.`title`, ')'), ''),' - ', `an_anagrafiche`.`codice`) AS descrizione,
-            `id_tipo_intervento_default` AS `id_tipo_intervento`,
-            `co_pagamenti`.`id` AS id_pagamento,
-            `co_pagamenti_lang`.`title` AS desc_pagamento,
-            `banca_acquisti`.`id` AS id_banca_acquisti,
-            CONCAT(`banca_acquisti`.`nome`, ' - ', `banca_acquisti`.`iban`) AS descrizione_banca_acquisti,
-            `an_relazioni`.`is_bloccata` AS is_bloccata
-        FROM
-            `an_anagrafiche`
-            INNER JOIN (
-                `an_tipi_anagrafiche_anagrafiche`
-                INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id`
-                LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
-                LEFT JOIN `co_pagamenti` ON `an_anagrafiche`.`id_pagamento_acquisti`=`co_pagamenti`.`id`
-                LEFT JOIN `co_pagamenti_lang` co_pagamenti_lang ON (`co_pagamenti`.`id` = `co_pagamenti_lang`.`id_record` AND `co_pagamenti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).")
-                LEFT JOIN `co_banche` banca_acquisti ON `co_pagamenti`.`id_conto_acquisti` = `banca_acquisti`.`id_piano_dei_conti3` AND `banca_acquisti`.`id_anagrafica` = '.prepare($id_azienda).' AND `banca_acquisti`.`deleted_at` IS NULL AND `banca_acquisti`.`predefined` = 1
-                LEFT JOIN an_relazioni ON an_anagrafiche.id_relazione=an_relazioni.id
-                LEFT JOIN `an_relazioni_lang` ON (`an_relazioni`.`id`=`an_relazioni_lang`.`id_record` AND `an_relazioni_lang`.`id_lang`= ".prepare(Models\Locale::getDefault()->id).')
-                |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
-            ORDER BY
-                `ragione_sociale`';
-
-        foreach ($elements as $element) {
-            $filter[] = '`an_anagrafiche`.`id`='.prepare($element);
-        }
-
-        if (empty($filter)) {
-            $where[] = '`an_tipi_anagrafiche`.`id`= '.prepare($tipologia);
-            $where[] = '`an_anagrafiche`.`deleted_at` IS NULL';
-        }
-
-        if (!empty($search)) {
-            $search_fields[] = '`ragione_sociale` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`citta` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`provincia` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`codice` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`p_iva` LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '`an_anagrafiche`.`codice_fiscale` LIKE '.prepare('%'.$search.'%');
-        }
-
-        $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
-        $rs = $data['results'];
-
-        foreach ($rs as $k => $r) {
-            $rs[$k] = array_merge($r, [
-                'text' => $r['descrizione'],
-                'disabled' => $r['is_bloccata'],
-            ]);
-        }
-
-        $results = [
-            'results' => $rs,
-            'recordsFiltered' => $data['recordsFiltered'],
-            'link' => 'module:Anagrafiche',
-        ];
-
-        break;
-
+    
     case 'vettori':
         $tipologia = Tipo::where('name', 'Vettore')->first()->id;
 
@@ -250,11 +187,6 @@ switch ($resource) {
         }
 
         break;
-
-        /*
-         * Opzioni utilizzate:
-         * - id_anagrafica
-         */
     case 'agenti':
         $tipologia = Tipo::where('name', 'Agente')->first()->id;
 
@@ -389,7 +321,7 @@ switch ($resource) {
 
         break;
 
-        // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
+    // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
         $query = "SELECT `an_anagrafiche`.`id` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipi_anagrafiche_lang`.`title` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
         |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
@@ -438,10 +370,10 @@ switch ($resource) {
         }
         break;
 
-        /*
-         * Opzioni utilizzate:
-         * - id_anagrafica
-         */
+    /*
+        * Opzioni utilizzate:
+        * - id_anagrafica
+    */
     case 'sedi':
         if (isset($superselect['id_anagrafica'])) {
             $query = "
@@ -502,10 +434,10 @@ switch ($resource) {
 
         break;
 
-        /*
-         * Opzioni utilizzate:
-         * - id_anagrafica
-         */
+    /*
+        * Opzioni utilizzate:
+        * - id_anagrafica
+    */
     case 'referenti':
         if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`id_mansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';

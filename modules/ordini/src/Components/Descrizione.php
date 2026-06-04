@@ -26,6 +26,5 @@ class Descrizione extends Description
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'or_righe_ordini';
 }

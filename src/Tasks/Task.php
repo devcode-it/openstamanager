@@ -33,14 +33,12 @@ class Task extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'zz_tasks';
 
     protected static $translated_fields = [
         'title',
     ];
 
-    #[\Override]
     protected $casts = [
         'next_execution_at' => 'datetime',
         'last_executed_at' => 'datetime',

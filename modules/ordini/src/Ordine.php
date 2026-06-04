@@ -37,13 +37,10 @@ class Ordine extends Document
     /**
      * @var bool Disabilita movimentazione automatica
      */
-    #[\Override]
     public static $movimenta_magazzino = false;
 
-    #[\Override]
     protected $table = 'or_ordini';
 
-    #[\Override]
     protected $with = [
         'tipo',
     ];

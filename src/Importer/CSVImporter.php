@@ -150,7 +150,7 @@ abstract class CSVImporter implements ImporterInterface
 
             foreach ($this->getAvailableFields() as $field) {
                 if (isset($field['required']) && $field['required'] === true) {
-                    if (!array_key_exists((string) $field['field'], $record) || trim((string) $record[$field['field']]) === '') {
+                    if (!array_key_exists($field['field'], $record) || trim((string) $record[$field['field']]) === '') {
                         $missing_required_fields[] = $field['field'];
                     }
                 }
@@ -224,7 +224,7 @@ abstract class CSVImporter implements ImporterInterface
         fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
         foreach ($content as $row) {
-            fputcsv($file, $row, ';', escape: '\\');
+            fputcsv($file, $row, ';');
         }
 
         fclose($file);
@@ -348,14 +348,14 @@ abstract class CSVImporter implements ImporterInterface
             // Scrivi l'intestazione con colonna errore
             $header = $this->getHeader();
             $header[] = 'Errore';
-            fputcsv($file, $header, ';', escape: '\\');
+            fputcsv($file, $header, ';');
         }
 
         // Scrivi le righe fallite con errore
         foreach ($this->failed_rows as $index => $row) {
             $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
             $row[] = $error_message;
-            fputcsv($file, $row, ';', escape: '\\');
+            fputcsv($file, $row, ';');
         }
 
         fclose($file);

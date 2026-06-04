@@ -29,10 +29,8 @@ class Barcode extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'mg_articoli_barcode';
 
-    #[\Override]
     protected $fillable = [
         'id_articolo',
         'barcode',

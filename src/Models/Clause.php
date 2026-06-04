@@ -28,7 +28,6 @@ class Clause extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'zz_group_module';
 
     protected static $translated_fields = [

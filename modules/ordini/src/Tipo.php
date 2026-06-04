@@ -28,7 +28,6 @@ class Tipo extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'or_tipi_ordine';
 
     protected static $translated_fields = [

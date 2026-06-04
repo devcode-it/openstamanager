@@ -31,7 +31,6 @@ abstract class Document extends Model implements ReferenceInterface, DocumentInt
      * @var bool
      */
     public static $movimenta_magazzino = true;
-    #[\Override]
     protected $casts = [
         'sconto_finale' => 'float',
         'sconto_finale_percentuale' => 'float',

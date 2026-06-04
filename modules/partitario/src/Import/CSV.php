@@ -196,9 +196,9 @@ class CSV extends CSVImporter
     /**
      * Trova il conto di terzo livello in base al numero e al conto2.
      *
-     * @param string $codice_conto3       Codice del conto di terzo livello
+     * @param string $codice_conto3    Codice del conto di terzo livello
      * @param int    $id_piano_dei_conti2 ID del conto di secondo livello
-     * @param object $database            Connessione al database
+     * @param object $database         Connessione al database
      *
      * @return array|null
      */

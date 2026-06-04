@@ -31,7 +31,6 @@ class FileAdapter extends Model
     use LocalPoolTrait;
     use SoftDeletes;
 
-    #[\Override]
     protected $table = 'zz_storage_adapters';
 
     public function testConnection()

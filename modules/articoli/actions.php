@@ -79,8 +79,9 @@ switch (post('op')) {
         // Salvataggio varianti dinamiche
         $id_valori = post('id_valori');
         if (!empty($id_valori) && is_array($id_valori)) {
+
             // Creazione automatica della combinazione (modulo Combinazioni)
-            $combinazione = new Combinazione();
+            $combinazione = new \Modules\CombinazioniArticoli\Combinazione();
             $combinazione->codice = $articolo->codice;
             $combinazione->id_categoria = $articolo->id_categoria;
             $combinazione->id_sottocategoria = $articolo->id_sottocategoria;
@@ -100,7 +101,7 @@ switch (post('op')) {
                         $dbo->insert('mg_attributo_combinazione', [
                             'id_combinazione' => $combinazione->id,
                             'id_attributo' => $id_att,
-                            'order' => $ordine++,
+                            'order' => $ordine++
                         ]);
                     }
                 }
@@ -134,7 +135,7 @@ switch (post('op')) {
             do {
                 // Genera il codice EAN-13 basato sull'ID dell'articolo più il numero di tentativi
                 $codice = '200'.str_pad((string) ($articolo->id + $tentativi), 9, '0', STR_PAD_LEFT);
-                $barcode = new Picqer\Barcode\Types\TypeEan13()->getBarcode($codice)->getBarcode();
+                $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
 
                 // Controlla se il barcode è già presente nella tabella mg_articoli (barcode principali)
                 $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;
@@ -250,7 +251,7 @@ switch (post('op')) {
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
 
-        // Salvataggio varianti
+                // Salvataggio varianti
         $id_valori = post('id_valori');
         if ($id_valori !== null) {
             $dbo->query('DELETE FROM `mg_articolo_attributo` WHERE `id_articolo`='.prepare($id_record));
@@ -545,7 +546,7 @@ switch (post('op')) {
         do {
             // Genera il codice EAN-13 basato sull'ID dell'articolo più il numero di tentativi
             $codice = '200'.str_pad((string) ($id_record + $tentativi), 9, '0', STR_PAD_LEFT);
-            $barcode = new Picqer\Barcode\Types\TypeEan13()->getBarcode($codice)->getBarcode();
+            $barcode = (new Picqer\Barcode\Types\TypeEan13())->getBarcode($codice)->getBarcode();
 
             // Controlla se il barcode è già presente nella tabella mg_articoli (barcode principali)
             $esistente_articoli = Articolo::where('barcode', $barcode)->count() > 0;

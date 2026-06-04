@@ -55,7 +55,6 @@ class Module extends Model
     use ChecklistTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_modules';
 
     protected static $translated_fields = [
@@ -67,7 +66,6 @@ class Module extends Model
 
     protected $variables = [];
 
-    #[\Override]
     protected $appends = [
         'permission',
         'option',
@@ -75,7 +73,6 @@ class Module extends Model
         'use_checklists',
     ];
 
-    #[\Override]
     protected $hidden = [
         'options',
         'options2',

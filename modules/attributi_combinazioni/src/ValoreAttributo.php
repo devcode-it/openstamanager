@@ -11,7 +11,6 @@ class ValoreAttributo extends Model
     use SimpleModelTrait;
     use SoftDeletes;
 
-    #[\Override]
     protected $table = 'mg_valori_attributi';
 
     public static function build(?Attributo $attributo = null, $valore = null)

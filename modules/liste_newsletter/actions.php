@@ -28,7 +28,7 @@ include_once __DIR__.'/../../core.php';
 switch (filter('op')) {
     case 'add':
         $name = post('name');
-        $lista_new = Lista::where('id', '=', new Lista()->getByField('title', $name))->where('id', '!=', $id_record)->first();
+        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->where('id', '!=', $id_record)->first();
 
         if (!empty($lista_new)) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
@@ -52,7 +52,7 @@ switch (filter('op')) {
             $query = html_entity_decode($query);
         }
 
-        $lista_new = Lista::where('id', '=', new Lista()->getByField('title', $name))->where('id', '!=', $id_record)->first();
+        $lista_new = Lista::where('id', '=', (new Lista())->getByField('title', $name))->where('id', '!=', $id_record)->first();
 
         if (!empty($lista_new)) {
             flash()->error(tr('Esiste già una lista con questo nome.'));
@@ -146,7 +146,7 @@ switch (filter('op')) {
         $handle = fopen($file, 'w');
 
         // Scrittura dell'intestazione
-        fputcsv($handle, ['Email', 'Ragione sociale'], ';', escape: '\\');
+        fputcsv($handle, ['Email', 'Ragione sociale'], ';');
 
         // Scrittura dei dati
         foreach ($results as $destinatario) {
@@ -156,7 +156,7 @@ switch (filter('op')) {
             fputcsv($handle, [
                 $origine->email,
                 $anagrafica->ragione_sociale,
-            ], ';', escape: '\\');
+            ], ';');
         }
         fclose($handle);
 

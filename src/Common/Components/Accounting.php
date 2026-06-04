@@ -52,7 +52,6 @@ use Modules\Iva\Aliquota;
  */
 abstract class Accounting extends Component
 {
-    #[\Override]
     protected $casts = [
         'qta' => 'float',
         'qta_evasa' => 'float',
@@ -69,7 +68,6 @@ abstract class Accounting extends Component
         // 'qta_evasa' => 'float',
     ];
 
-    #[\Override]
     protected $appends = [
         'prezzo_unitario_corrente',
         'sconto_unitario_corrente',
@@ -83,7 +81,6 @@ abstract class Accounting extends Component
         'totale',
     ];
 
-    #[\Override]
     protected $hidden = [
         'document',
         'aliquota',

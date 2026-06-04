@@ -34,13 +34,11 @@ class Hook extends Model
     use SimpleModelTrait;
     use LocalPoolTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'zz_hooks';
 
     protected static $translated_fields = [
         'title',
     ];
-    #[\Override]
     protected $appends = [
         'permission',
     ];

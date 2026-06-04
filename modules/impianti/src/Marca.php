@@ -30,7 +30,6 @@ class Marca extends Model
     use SimpleModelTrait;
     use HierarchyTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'my_impianti_marche';
     protected static $parent_identifier = 'parent';
 

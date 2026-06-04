@@ -29,7 +29,6 @@ class Nazione extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'an_nazioni';
 
     protected static $translated_fields = [

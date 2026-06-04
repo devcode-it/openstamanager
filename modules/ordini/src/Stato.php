@@ -30,7 +30,6 @@ class Stato extends Model
     use SimpleModelTrait;
     use RecordTrait;
     use SoftDeletes;
-    #[\Override]
     protected $table = 'or_stati_ordine';
 
     protected static $translated_fields = [

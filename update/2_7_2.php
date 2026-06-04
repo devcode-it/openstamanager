@@ -39,8 +39,8 @@ delete($files);
 $anagrafiche = $dbo->fetchArray('SELECT * FROM an_anagrafiche');
 
 foreach ($anagrafiche as $anagrafica) {
-    $tipologie = explode(',', (string) $anagrafica['tipo']);
-
+    $tipologie = explode(',', $anagrafica['tipo']);
+    
     if (in_array('Cliente', $tipologie)) {
         $idconto = $dbo->fetchOne('SELECT idconto_cliente FROM an_anagrafiche WHERE idanagrafica = ?', [$anagrafica['idanagrafica']])['idconto_cliente'];
         if (!$idconto) {
@@ -80,10 +80,10 @@ if ($riepilogativo_fornitori && $riepilogativo_clienti) {
 
 foreach ($fatture as $fattura) {
     $documento = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id = ?', [$fattura['iddocumento']]);
-
+    
     if ($documento) {
         $anagrafica = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica = ?', [$documento['idanagrafica']]);
-
+        
         if ($anagrafica) {
             $conto_cliente = $anagrafica['idconto_cliente'];
             $conto_fornitore = $anagrafica['idconto_fornitore'];
@@ -103,14 +103,14 @@ $fatture_senzanome = $dbo->fetchArray('SELECT `iddocumento`, `idconto` FROM `co_
 
 foreach ($fatture_senzanome as $fattura) {
     $documento = $dbo->fetchOne('SELECT * FROM co_documenti WHERE id = ?', [$fattura['iddocumento']]);
-
+    
     if ($documento) {
         $anagrafica = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE idanagrafica = ?', [$documento['idanagrafica']]);
-
+        
         if ($anagrafica) {
             $dir = $documento['idtipodocumento'] ? $dbo->fetchOne('SELECT dir FROM co_tipidocumento WHERE id = ?', [$documento['idtipodocumento']])['dir'] : null;
             $conto = ($dir == 'uscita' ? $anagrafica['idconto_fornitore'] : $anagrafica['idconto_cliente']);
-
+            
             if ($conto) {
                 $dbo->query('UPDATE co_movimenti SET idconto = ? WHERE iddocumento = ? AND idconto = ?', [$conto, $documento['id'], $fattura['idconto']]);
             }

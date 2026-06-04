@@ -56,7 +56,7 @@ class FatturaSemplificata extends FatturaElettronica
         $info = [
             'partita_iva' => $anagrafe['IdFiscaleIVA']['IdCodice'],
             'codice_fiscale' => $anagrafe['CodiceFiscale'],
-            'codice_nazione' => $anagrafe['IdFiscaleIVA']['IdPaese'],
+           'codice_nazione' => $anagrafe['IdFiscaleIVA']['IdPaese'],
             'ragione_sociale' => $anagrafe['Denominazione'],
             'nome' => $anagrafe['Nome'],
             'cognome' => $anagrafe['Cognome'],

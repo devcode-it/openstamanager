@@ -28,7 +28,7 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            $provenienza_new = Provenienza::where('id', '=', new Provenienza()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $provenienza_new = Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($provenienza_new)) {
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $provenienza->name = $descrizione;
@@ -54,7 +54,7 @@ switch (filter('op')) {
         $colore = filter('colore');
 
         if (isset($descrizione)) {
-            if (empty(Provenienza::where('id', '=', new Provenienza()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(Provenienza::where('id', '=', (new Provenienza())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $provenienza = Provenienza::build($descrizione);
                 $provenienza->colore = $colore;
                 $provenienza->save();

@@ -26,6 +26,5 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'co_righe_promemoria';
 }

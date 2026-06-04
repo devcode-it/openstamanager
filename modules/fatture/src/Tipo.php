@@ -28,7 +28,6 @@ class Tipo extends Model
 {
     use SimpleModelTrait;
     use RecordTrait;
-    #[\Override]
     protected $table = 'co_tipi_documento';
 
     protected static $translated_fields = [

@@ -29,9 +29,7 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'co_righe_documenti';
-    #[\Override]
     protected $serialRowID = 'documento';
 
     #[\Override]

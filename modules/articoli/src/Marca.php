@@ -32,7 +32,6 @@ class Marca extends Model
     use HierarchyTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_marche';
 
     public static function build($nome = null)

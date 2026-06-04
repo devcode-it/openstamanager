@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Carbon\CarbonInterval;
 use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';

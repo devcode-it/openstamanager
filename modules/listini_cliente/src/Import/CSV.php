@@ -37,7 +37,6 @@ class CSV extends CSVImporter
     /**
      * Array per memorizzare gli errori specifici per ogni record fallito.
      */
-    #[\Override]
     protected $failed_errors = [];
 
     /**
@@ -230,12 +229,12 @@ class CSV extends CSVImporter
 
         $header = $this->getHeader();
         $header[] = 'Errore';
-        fputcsv($file, $header, ';', escape: '\\');
+        fputcsv($file, $header, ';');
 
         foreach ($this->failed_rows as $index => $row) {
             $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
             $row[] = $error_message;
-            fputcsv($file, $row, ';', escape: '\\');
+            fputcsv($file, $row, ';');
         }
 
         fclose($file);

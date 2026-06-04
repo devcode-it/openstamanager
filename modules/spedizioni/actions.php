@@ -29,7 +29,7 @@ switch (filter('op')) {
         $predefined = post('predefined');
 
         if (isset($descrizione)) {
-            $spedizione_new = Spedizione::where('id', '=', new Spedizione()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
+            $spedizione_new = Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($spedizione_new)) {
                 if (!empty($predefined)) {
                     $dbo->query('UPDATE `dt_spedizione` SET `predefined` = 0');
@@ -55,7 +55,7 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if (empty(Spedizione::where('id', '=', new Spedizione()->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
+            if (empty(Spedizione::where('id', '=', (new Spedizione())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first())) {
                 $spedizione = Spedizione::build();
                 $spedizione->name = $descrizione;
                 $spedizione->save();

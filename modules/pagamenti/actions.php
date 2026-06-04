@@ -80,7 +80,7 @@ switch (filter('op')) {
         $codice_modalita_pagamento_fe = filter('codice_modalita_pagamento_fe_add');
 
         if (isset($descrizione)) {
-            $id_pagamento = new Pagamento()->getByField('title', $descrizione);
+            $id_pagamento = (new Pagamento())->getByField('title', $descrizione);
 
             if ($id_pagamento) {
                 flash()->error(tr('Esiste già un metodo di pagamento con questo nome!'));

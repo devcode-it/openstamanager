@@ -26,8 +26,6 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'or_righe_ordini';
-    #[\Override]
     protected $serialRowID = 'ordine';
 }

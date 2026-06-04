@@ -34,7 +34,6 @@ class Lista extends Model
     use SoftDeletes;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'em_lists';
 
     protected static $translated_fields = [

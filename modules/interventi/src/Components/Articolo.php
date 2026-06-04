@@ -26,8 +26,6 @@ class Articolo extends Article
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'in_righe_interventi';
-    #[\Override]
     protected $serialRowID = 'intervento';
 }

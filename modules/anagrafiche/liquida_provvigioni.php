@@ -30,7 +30,7 @@ $nome_stampa = filter('nome_stampa');
 $id_print = PrintTemplate::where('name', $nome_stampa)->first()->id;
 $id_module = Module::where('name', 'Stampe contabili')->first()->id;
 
-$year = new Carbon($_SESSION['period_end'])->format('Y');
+$year = (new Carbon($_SESSION['period_end']))->format('Y');
 
 // Trovo id_print della stampa
 $link = Prints::getHref($nome_stampa, $id_record);

@@ -35,7 +35,6 @@ class DettaglioPrezzo extends Model
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'mg_prezzi_articoli';
 
     /**

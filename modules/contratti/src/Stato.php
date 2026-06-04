@@ -31,7 +31,6 @@ class Stato extends Model
     use RecordTrait;
     use SoftDeletes;
 
-    #[\Override]
     protected $table = 'co_stati_contratti';
 
     protected static $translated_fields = [

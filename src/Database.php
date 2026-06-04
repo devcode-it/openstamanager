@@ -298,12 +298,12 @@ class Database extends Util\Singleton
      * Restituisce un'array strutturato in base agli indici degli attributi della selezione.
      *
      * @since 2.0
+     * @deprecated 2.3
      *
      * @param string $query Query da eseguire
      *
      * @return array
      */
-    #[Deprecated(message: '2.3')]
     public function fetchRows($query)
     {
         return $this->fetchArray($query, [], true);
@@ -313,12 +313,12 @@ class Database extends Util\Singleton
      * Restituisce il primo elemento della selezione, strutturato in base ai nomi degli attributi.
      *
      * @since 2.0
+     * @deprecated 2.3
      *
      * @param string $query Query da eseguire
      *
      * @return array
      */
-    #[Deprecated(message: '2.3')]
     public function fetchRow($query)
     {
         return $this->fetchOne($query);
@@ -387,10 +387,10 @@ class Database extends Util\Singleton
      * Restituisce l'identificativo dell'ultimo elemento inserito.
      *
      * @since 2.0
+     * @deprecated 2.3
      *
      * @return int
      */
-    #[Deprecated(message: '2.3')]
     public function last_inserted_id()
     {
         return $this->lastInsertedID();

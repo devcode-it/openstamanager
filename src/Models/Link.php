@@ -34,7 +34,6 @@ class Link extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_links';
 
     protected static $translated_fields = [
@@ -42,7 +41,6 @@ class Link extends Model
         'title',
     ];
 
-    #[\Override]
     protected $casts = [
         'assets' => 'array',
     ];

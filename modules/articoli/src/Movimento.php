@@ -33,10 +33,8 @@ class Movimento extends Model
 
     protected $document;
 
-    #[\Override]
     protected $table = 'mg_movimenti';
 
-    #[\Override]
     protected $casts = [
         'id_sede' => 'integer',
     ];

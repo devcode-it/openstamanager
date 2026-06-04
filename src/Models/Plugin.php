@@ -46,18 +46,15 @@ class Plugin extends Model
         'title',
     ];
 
-    #[\Override]
     protected $table = 'zz_plugins';
     protected $main_folder = 'plugins';
     protected $component_identifier = 'id_plugin';
 
-    #[\Override]
     protected $appends = [
         'permission',
         'option',
     ];
 
-    #[\Override]
     protected $hidden = [
         'options',
         'options2',

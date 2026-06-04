@@ -30,7 +30,6 @@ class Import extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_imports';
 
     protected static $translated_fields = [

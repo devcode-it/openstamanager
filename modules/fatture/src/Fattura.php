@@ -44,17 +44,14 @@ class Fattura extends Document
     use RecordTrait;
     use ReferenceTrait;
 
-    #[\Override]
     protected $table = 'co_documenti';
 
-    #[\Override]
     protected $attributes = [
         'ritenuta_acconto' => 0,
         'iva_rivalsa_inps' => 0,
         'rivalsa_inps' => 0,
     ];
 
-    #[\Override]
     protected $casts = [
         'bollo' => 'float',
         'peso' => 'float',
@@ -69,7 +66,6 @@ class Fattura extends Document
         'rivalsa_inps' => 'float',
     ];
 
-    #[\Override]
     protected $with = [
         'tipo',
         'stato',

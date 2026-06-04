@@ -29,7 +29,6 @@ class CausaleMovimento extends Model
     use SimpleModelTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'mg_causali_movimenti';
 
     protected static $translated_fields = [

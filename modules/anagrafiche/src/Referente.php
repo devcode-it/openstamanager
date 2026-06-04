@@ -27,7 +27,6 @@ class Referente extends Model
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'an_referenti';
 
     /**
@@ -35,7 +34,6 @@ class Referente extends Model
      *
      * @var array
      */
-    #[\Override]
     protected $guarded = [];
 
     /**

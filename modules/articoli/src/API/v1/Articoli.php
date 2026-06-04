@@ -137,7 +137,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         $sottocategoria = null;
 
         // Gestione categoria
-        $categoria = new Categoria()->getByField('title', $nome_categoria);
+        $categoria = (new Categoria())->getByField('title', $nome_categoria);
         $categoria = Categoria::find($categoria);
         if (empty($categoria) && !empty($nome_categoria)) {
             $categoria = Categoria::build();
@@ -151,7 +151,7 @@ class Articoli extends Resource implements RetrieveInterface, UpdateInterface, C
         }
 
         // Gestione sotto-categoria
-        $sottocategoria = new Categoria()->getByField('title', $nome_sottocategoria);
+        $sottocategoria = (new Categoria())->getByField('title', $nome_sottocategoria);
         $sottocategoria = Categoria::find($sottocategoria);
         if ((empty($sottocategoria) && !empty($nome_sottocategoria)) || (!empty($nome_sottocategoria) && $sottocategoria->parent != $categoria->id)) {
             $sottocategoria = Categoria::build();

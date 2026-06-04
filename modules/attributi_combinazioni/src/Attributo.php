@@ -13,7 +13,6 @@ class Attributo extends Model
     use SoftDeletes;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'mg_attributi';
 
     protected static $translated_fields = [

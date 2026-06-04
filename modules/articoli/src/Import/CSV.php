@@ -42,7 +42,6 @@ use Plugins\ListinoFornitori\DettaglioFornitore;
  */
 class CSV extends CSVImporter
 {
-    #[\Override]
     protected $failed_errors = [];
 
     #[\Override]
@@ -57,7 +56,7 @@ class CSV extends CSVImporter
 
             $missing_required_fields = [];
             foreach ($this->getAvailableFields() as $field) {
-                if (isset($field['required']) && $field['required'] === true && array_key_exists((string) $field['field'], $record)) {
+                if (isset($field['required']) && $field['required'] === true && array_key_exists($field['field'], $record)) {
                     if (trim((string) $record[$field['field']]) === '') {
                         $missing_required_fields[] = $field['field'];
                     }
@@ -620,12 +619,12 @@ class CSV extends CSVImporter
 
         $header = $this->getHeader();
         $header[] = 'Errore';
-        fputcsv($file, $header, ';', escape: '\\');
+        fputcsv($file, $header, ';');
 
         foreach ($this->failed_rows as $index => $row) {
             $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
             $row[] = $error_message;
-            fputcsv($file, $row, ';', escape: '\\');
+            fputcsv($file, $row, ';');
         }
 
         fclose($file);
@@ -651,7 +650,7 @@ class CSV extends CSVImporter
         }
 
         try {
-            $categoria_id = new Categoria()->getByField('title', $record['categoria']);
+            $categoria_id = (new Categoria())->getByField('title', $record['categoria']);
             $categoria = $categoria_id ? Categoria::find($categoria_id) : null;
 
             if (empty($categoria)) {
@@ -681,7 +680,7 @@ class CSV extends CSVImporter
         }
 
         try {
-            $sottocategoria_id = new Categoria()->getByField('title', $record['sottocategoria']);
+            $sottocategoria_id = (new Categoria())->getByField('title', $record['sottocategoria']);
             $sottocategoria = null;
 
             if ($sottocategoria_id) {

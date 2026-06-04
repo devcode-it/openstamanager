@@ -33,7 +33,6 @@ class Mail extends Model
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'em_emails';
 
     protected $options;

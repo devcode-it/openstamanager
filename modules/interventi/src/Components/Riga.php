@@ -26,6 +26,5 @@ class Riga extends Row
 {
     use RelationTrait;
 
-    #[\Override]
     protected $table = 'in_righe_interventi';
 }

@@ -18,11 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-use Druidfi\Mysqldump\Mysqldump;
 use Util\FileSystem;
 use Util\Generator;
 use Util\Zip;
-
+use Druidfi\Mysqldump\Mysqldump;
 /**
  * Classe per la gestione dei backup.
  *
@@ -317,7 +316,7 @@ class Backup
     {
         $config = App::getConfig();
 
-        $dsn = 'mysql:host='.$config['db_host'].';dbname='.$config['db_name'];
+        $dsn = 'mysql:host=' . $config['db_host'] . ';dbname=' . $config['db_name'];
         $username = $config['db_username'];
         $password = $config['db_password'];
 
@@ -330,8 +329,8 @@ class Backup
         try {
             $dump = new Mysqldump($dsn, $username, $password, $settings);
             $dump->start($file);
-        } catch (Exception $e) {
-            throw new Exception('mysqldump-php error: '.$e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception('mysqldump-php error: ' . $e->getMessage());
         }
     }
 

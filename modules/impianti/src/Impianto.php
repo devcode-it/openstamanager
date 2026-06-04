@@ -30,7 +30,6 @@ class Impianto extends Model
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'my_impianti';
 
     // Relazioni Eloquent

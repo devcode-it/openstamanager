@@ -31,7 +31,6 @@ class Categoria extends Model
     use SoftDeletes;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_files_categories';
 
     public static function build()

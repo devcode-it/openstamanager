@@ -27,7 +27,6 @@ class PianoSconto extends Model
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'mg_piani_sconto';
 
     public static function build($nome = null, $percentuale = null)

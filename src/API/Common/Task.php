@@ -60,7 +60,7 @@ class Task extends Resource implements RetrieveInterface, CreateInterface
         $in_esecuzione = Cache::where('name', 'Cron in esecuzione')->first();
 
         while ($in_esecuzione->content) {
-            $timestamp = new Carbon()->addMinutes(1)->getTimestamp();
+            $timestamp = (new Carbon())->addMinutes(1)->getTimestamp();
             time_sleep_until($timestamp);
 
             $in_esecuzione->refresh();

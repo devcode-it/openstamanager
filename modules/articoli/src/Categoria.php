@@ -31,7 +31,6 @@ class Categoria extends Model
     use HierarchyTrait;
     use RecordTrait;
 
-    #[\Override]
     protected $table = 'zz_categorie';
     protected static $translated_fields = [
         'title',

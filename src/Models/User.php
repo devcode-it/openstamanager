@@ -29,10 +29,8 @@ class User extends Model implements Authenticatable
 {
     use SimpleModelTrait;
 
-    #[\Override]
     protected $table = 'zz_users';
 
-    #[\Override]
     protected $appends = [
         'is_admin',
         'gruppo',
@@ -44,7 +42,6 @@ class User extends Model implements Authenticatable
      *
      * @var array
      */
-    #[\Override]
     protected $fillable = [
         'name',
         'email',
@@ -60,7 +57,6 @@ class User extends Model implements Authenticatable
      *
      * @var array
      */
-    #[\Override]
     protected $hidden = [
         'password',
         'remember_token',

@@ -224,7 +224,7 @@ abstract class CSVImporter implements ImporterInterface
         fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
         foreach ($content as $row) {
-            fputcsv($file, $row, ';');
+            fputcsv($file, $row, ';', escape: '\\');
         }
 
         fclose($file);

@@ -1894,5 +1894,9 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Totale'), 'Totale'),
 (2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Totale'), 'Total');
 
-INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `title`, `filename`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `default`, `enabled`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 1, 'Nota spese', 'Nota spese', 'Nota spese num. {numero} del {data}', 'note_spese', 'id', '{"pricing": true}', 'fa fa-print', '2.11', '2.11', 0, 1, 1, 1);
+INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 1, 'Nota spese', 'note_spese', 'id', '{"pricing": true}', 'fa fa-print', '2.11', '2.11', 0, 1, 1);
+
+INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
+(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Nota spese'), 'Nota spese', 'Nota spese num. {numero} del {data}'),
+(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Nota spese'), 'Expense report', 'Expense report no. {numero} dated {data}');

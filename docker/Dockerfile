@@ -1,4 +1,4 @@
-FROM php:8.5-apache-bullseye
+FROM php:8.5-apache-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LAST_VERSION_URL="https://api.github.com/repos/devcode-it/openstamanager/releases/latest" \

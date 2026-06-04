@@ -77,7 +77,7 @@ $settings = [
     'php_version' => [
         'type' => 'version',
         'description' => '8.5.x',
-        'minimum' => '8.5.0',
+        'minimum' => '8.3.0',
         'maximum' => '8.5.99',
     ],
 

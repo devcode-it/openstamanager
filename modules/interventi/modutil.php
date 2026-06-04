@@ -386,7 +386,7 @@ if (!function_exists('aggiungi_sessioni_in_fattura')) {
             if ($viaggio->prezzo_km_unitario == 0 || $qta_trasferta == 0) {
                 continue;
             }
-
+            
             $riga = Riga::build($fattura);
 
             $riga->descrizione = tr("Trasferta dell'attività _NUM_ del _DATE_", [

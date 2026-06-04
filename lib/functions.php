@@ -446,8 +446,13 @@ function check_query($query)
     $query = mb_strtoupper((string) $query);
 
     $blacklist = ['INSERT', 'UPDATE', 'TRUNCATE', 'DELETE', 'DROP', 'GRANT', 'CREATE', 'REVOKE'];
+    foreach ($blacklist as $value) {
+        if (preg_match("/\b".preg_quote($value)."\b/", $query)) {
+            return false;
+        }
+    }
 
-    return array_all($blacklist, fn ($value) => !preg_match("/\b".preg_quote((string) $value)."\b/", $query));
+    return true;
 }
 
 /**

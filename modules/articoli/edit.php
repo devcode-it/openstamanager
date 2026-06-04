@@ -57,9 +57,9 @@ if ($articolo->servizio) {
 					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
 
 <?php
-$numero_attributi = database()->fetchOne('SELECT COUNT(*) AS count FROM mg_attributi')['count'];
+$numero_attributi = database()->fetchOne("SELECT COUNT(*) AS count FROM mg_attributi")['count'];
 if ($numero_attributi > 0) {
-    ?>
+?>
                     <div class="card card-info mt-4" id="varianti-wrapper">
                         <div class="card-header">
                             <h3 class="card-title"><?php echo tr('Varianti'); ?></h3>
@@ -606,11 +606,11 @@ $(document).ready(function() {
 
     // Pre-popola le varianti esistenti
     <?php
-    $varianti = database()->fetchArray('SELECT `mg_attributi`.`id` AS id_attributo, `mg_attributi_lang`.`title` AS nome_attributo, `mg_valori_attributi`.`id` AS id_valore, `mg_valori_attributi`.`nome` AS nome_valore FROM `mg_articolo_attributo` INNER JOIN `mg_valori_attributi` ON `mg_articolo_attributo`.`id_valore` = `mg_valori_attributi`.`id` INNER JOIN `mg_attributi` ON `mg_valori_attributi`.`id_attributo` = `mg_attributi`.`id` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articolo_attributo`.`id_articolo` = '.prepare($id_record).' ORDER BY `mg_attributi`.`ordine` ASC');
-foreach ($varianti as $v) {
-    echo 'addVariante('.json_encode($v['id_attributo']).', '.json_encode($v['nome_attributo']).', '.json_encode($v['id_valore']).', '.json_encode($v['nome_valore']).");\n";
-}
-?>
+    $varianti = database()->fetchArray("SELECT `mg_attributi`.`id` AS id_attributo, `mg_attributi_lang`.`title` AS nome_attributo, `mg_valori_attributi`.`id` AS id_valore, `mg_valori_attributi`.`nome` AS nome_valore FROM `mg_articolo_attributo` INNER JOIN `mg_valori_attributi` ON `mg_articolo_attributo`.`id_valore` = `mg_valori_attributi`.`id` INNER JOIN `mg_attributi` ON `mg_valori_attributi`.`id_attributo` = `mg_attributi`.`id` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.`id_lang` = " . prepare(Models\Locale::getDefault()->id) . ") WHERE `mg_articolo_attributo`.`id_articolo` = " . prepare($id_record) . " ORDER BY `mg_attributi`.`ordine` ASC");
+    foreach ($varianti as $v) {
+        echo "addVariante(".json_encode($v['id_attributo']).", ".json_encode($v['nome_attributo']).", ".json_encode($v['id_valore']).", ".json_encode($v['nome_valore']).");\n";
+    }
+    ?>
 
     $('#btn-add-variante').click(function() {
         var idAttributo = $('#main-attributo-select').val();

@@ -519,7 +519,7 @@ switch (filter('op')) {
             if (!isset($dato['RiferimentoNumeroLinea']) || !$dato['RiferimentoNumeroLinea']) {
                 $dati_ordini_documento[] = [
                     'numero' => $dato['IdDocumento'],
-                    'data' => new Carbon($dato['Data'])->format('d/m/Y'),
+                    'data' => (new Carbon($dato['Data']))->format('d/m/Y'),
                 ];
                 continue;
             }
@@ -536,7 +536,7 @@ switch (filter('op')) {
                     try {
                         $dati_ordini[(int) $linea] = [
                             'numero' => $dato['IdDocumento'],
-                            'anno' => new Carbon($dato['Data'])->format('Y'),
+                            'anno' => (new Carbon($dato['Data']))->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ordini[(int) $linea] = [
@@ -555,7 +555,7 @@ switch (filter('op')) {
                 try {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['IdDocumento'],
-                        'anno' => new Carbon($dato['Data'])->format('Y'),
+                        'anno' => (new Carbon($dato['Data']))->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ordini[(int) $dato['RiferimentoNumeroLinea']] = [
@@ -580,7 +580,7 @@ switch (filter('op')) {
                     try {
                         $dati_ddt[(int) $linea] = [
                             'numero' => $dato['NumeroDDT'],
-                            'anno' => new Carbon($dato['DataDDT'])->format('Y'),
+                            'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
                         ];
                     } catch (Exception) {
                         $dati_ddt[(int) $linea] = [
@@ -598,7 +598,7 @@ switch (filter('op')) {
                 try {
                     $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [
                         'numero' => $dato['NumeroDDT'],
-                        'anno' => new Carbon($dato['DataDDT'])->format('Y'),
+                        'anno' => (new Carbon($dato['DataDDT']))->format('Y'),
                     ];
                 } catch (Exception) {
                     $dati_ddt[(int) $dato['RiferimentoNumeroLinea']] = [

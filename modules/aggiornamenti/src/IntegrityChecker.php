@@ -213,7 +213,13 @@ class IntegrityChecker
 
         $fk_hash = self::getForeignKeyHash($fk_data);
 
-        return array_any($foreign_keys, fn ($fk_info) => self::getForeignKeyHash($fk_info) === $fk_hash);
+        foreach ($foreign_keys as $fk_name => $fk_info) {
+            if (self::getForeignKeyHash($fk_info) === $fk_hash) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

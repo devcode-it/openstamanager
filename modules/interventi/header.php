@@ -214,7 +214,7 @@ echo '
 if (count($interventi_programmati) != 0) {
     echo ' <div class="readmore mt-1" data-height="60">';
     foreach ($interventi_programmati as $intervento_programmato) {
-        $diffTime = new Carbon($intervento_programmato->data_richiesta)->diffForHumans();
+        $diffTime = (new Carbon($intervento_programmato->data_richiesta))->diffForHumans();
         // Remove the "days" label by using a regex to extract just the number
         $diffTime = preg_replace('/(\d+)\s+giorni?.*/', '$1', $diffTime);
         echo ' <a class="btn btn-outline-primary btn-sm mr-1 mb-1" href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$intervento_programmato->id.'" target="_blank"><i class="fa fa-calendar-check-o mr-1"></i>'.$intervento_programmato->codice.' <span class="badge bg-light ml-1">('.$diffTime.')</span></a>';

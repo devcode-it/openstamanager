@@ -235,11 +235,11 @@ if ($dir == 'entrata') {
 
     // Verifica la data dell'intervento rispetto alla data della fattura
     $fatturazione_futura = false;
-    $data_fattura = new Carbon($fattura->data)->startOfDay();
+    $data_fattura = (new Carbon($fattura->data))->startOfDay();
     $interventi_collegati = $fattura->getDocumentiCollegati()[Intervento::class];
     if (!empty($interventi_collegati)) {
         foreach ($interventi_collegati as $intervento) {
-            $fine_intervento = new Carbon($intervento->fine)->startOfDay();
+            $fine_intervento = (new Carbon($intervento->fine))->startOfDay();
 
             if ($fine_intervento->diffInDays($data_fattura, false) < 0) {
                 $fatturazione_futura = true;

@@ -42,11 +42,15 @@ function saveQueriesToSession($queries)
 if (!function_exists('getDatabaseReferenceFile')) {
     function getDatabaseReferenceFile($database)
     {
-        return match ($database->getType()) {
-            'MariaDB' => 'mariadb.json',
-            'MySQL' => 'mysql.json',
-            default => 'mysql.json',
-        };
+        switch ($database->getType()) {
+            case 'MariaDB':
+                return 'mariadb.json';
+            case 'MySQL':
+                return 'mysql.json';
+                
+            default:
+                return 'mysql.json';
+        }
     }
 }
 
@@ -240,12 +244,12 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                     $diff_keys = array_keys($diff);
                     $normalized_current_type = normalizeFieldType($diff['current']['type'] ?? null);
                     $normalized_expected_type = normalizeFieldType($diff['expected']['type'] ?? null);
-
+                    
                     // Se l'unica differenza è il tipo e i tipi normalizzati sono uguali, salta questo campo
                     if (count($diff_keys) == 1 && $diff_keys[0] == 'type' && $normalized_current_type === $normalized_expected_type) {
                         continue;
                     }
-
+                    
                     $grouped[$table]['campi_modificati'][$name] = $diff;
                 }
             }

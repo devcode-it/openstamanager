@@ -27,7 +27,7 @@ switch (filter('op')) {
         $nome = post('nome');
         $descrizione = post('descrizione');
         if (isset($descrizione)) {
-            $causale_new = Causale::where('id', '=', new Causale()->getByField('title', $nome))->where('id', '!=', $id_record)->first();
+            $causale_new = Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first();
             if (empty($causale_new)) {
                 $causale->tipo_movimento = post('tipo_movimento');
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
@@ -52,7 +52,7 @@ switch (filter('op')) {
     case 'add':
         $nome = post('nome');
         $descrizione = post('descrizione');
-        if (empty(Causale::where('id', '=', new Causale()->getByField('title', $nome))->where('id', '!=', $id_record)->first())) {
+        if (empty(Causale::where('id', '=', (new Causale())->getByField('title', $nome))->where('id', '!=', $id_record)->first())) {
             $causale = Causale::build($nome);
             $causale->tipo_movimento = post('tipo_movimento');
             $causale->save();

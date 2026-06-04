@@ -67,7 +67,7 @@ if (!empty($numeric_fks)) {
     foreach ($all_fks as $afk) {
         $t = $afk['TABLE_NAME'];
         $n = $afk['CONSTRAINT_NAME'];
-        if (preg_match('/^'.preg_quote((string) $t, '/').'_ibfk_(\d+)$/', (string) $n, $m)) {
+        if (preg_match('/^'.preg_quote($t, '/').'_ibfk_(\d+)$/', $n, $m)) {
             if (!isset($ibfk_counters[$t])) {
                 $ibfk_counters[$t] = 0;
             }
@@ -79,27 +79,27 @@ if (!empty($numeric_fks)) {
         $table = $nfk['TABLE_NAME'];
         $old_name = $nfk['CONSTRAINT_NAME'];
 
-        $columns = $database->fetchArray('
+        $columns = $database->fetchArray("
             SELECT kcu.COLUMN_NAME, kcu.REFERENCED_TABLE_NAME, kcu.REFERENCED_COLUMN_NAME, kcu.ORDINAL_POSITION
             FROM information_schema.KEY_COLUMN_USAGE kcu
             WHERE kcu.TABLE_SCHEMA = DATABASE()
-            AND kcu.TABLE_NAME = '.prepare($table).'
-            AND kcu.CONSTRAINT_NAME = '.prepare($old_name).'
+            AND kcu.TABLE_NAME = ".prepare($table)."
+            AND kcu.CONSTRAINT_NAME = ".prepare($old_name)."
             AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
             ORDER BY kcu.ORDINAL_POSITION
-        ');
+        ");
 
         if (empty($columns)) {
             continue;
         }
 
-        $rc = $database->fetchOne('
+        $rc = $database->fetchOne("
             SELECT DELETE_RULE, UPDATE_RULE
             FROM information_schema.REFERENTIAL_CONSTRAINTS
             WHERE CONSTRAINT_SCHEMA = DATABASE()
-            AND TABLE_NAME = '.prepare($table).'
-            AND CONSTRAINT_NAME = '.prepare($old_name).'
-        ');
+            AND TABLE_NAME = ".prepare($table)."
+            AND CONSTRAINT_NAME = ".prepare($old_name)."
+        ");
 
         $on_delete = !empty($rc) ? $rc['DELETE_RULE'] : 'RESTRICT';
         $on_update_rule = (!empty($rc) && $rc['UPDATE_RULE'] != '') ? $rc['UPDATE_RULE'] : 'RESTRICT';
@@ -107,7 +107,7 @@ if (!empty($numeric_fks)) {
         if (!isset($ibfk_counters[$table])) {
             $ibfk_counters[$table] = 0;
         }
-        ++$ibfk_counters[$table];
+        $ibfk_counters[$table]++;
         $new_name = $table.'_ibfk_'.$ibfk_counters[$table];
 
         $fk_cols = [];
@@ -123,3 +123,4 @@ if (!empty($numeric_fks)) {
         $database->query('ALTER TABLE `'.$table.'` DROP FOREIGN KEY `'.$old_name.'`, ADD CONSTRAINT `'.$new_name.'` FOREIGN KEY ('.implode(', ', $fk_cols).') REFERENCES `'.$ref_table.'`('.implode(', ', $ref_cols).') ON DELETE '.$on_delete.$on_update_sql);
     }
 }
+

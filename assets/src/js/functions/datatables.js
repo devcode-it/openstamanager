@@ -50,8 +50,8 @@ function start_datatables( $elements ) {
         // Controlla che la tabella non sia già inizializzata
         if (!$.fn.DataTable.isDataTable('#' + $this.attr('id'))) {
             const id_module = $this.data('id_module');
-            const id_plugin = $this.data('idplugin');
-            const id_parent = $this.data('idparent');
+            const id_plugin = $this.data('id_plugin');
+            const id_parent = $this.data('id_parent');
 
             // Parametri di ricerca da url o sessione
             const search = getTableSearch();
@@ -292,7 +292,7 @@ function initComplete(settings) {
 
         // Valore predefinito della ricerca
         let tempo;
-        const id_plugin = $this.data('idplugin');
+        const id_plugin = $this.data('id_plugin');
         const header = $(column.header());
         const name = header.attr('id').replace('th_', '');
 
@@ -331,7 +331,7 @@ function initComplete(settings) {
                 }
 
                 // Impostazione delle sessioni per le ricerche del modulo e del campo specificati
-                const module_id = $this.data('id_module') + "-" + $this.data('idplugin');
+                const module_id = $this.data('id_module') + "-" + $this.data('id_plugin');
                 const field = $(this).parent().attr('id').replace('th_', '');
                 const value = $(this).val();
                 if (e.keyCode == 13 || $(this).val() == '') {
@@ -463,7 +463,7 @@ function getTable(selector) {
         table: table,
 
         id_module: table.data('id_module'),
-        id_plugin: table.data('idplugin'),
+        id_plugin: table.data('id_plugin'),
 
         initDatatable: function () {
             if (table.hasClass('datatables')) {

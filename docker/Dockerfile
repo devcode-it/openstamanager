@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    default-jre-headless \
     libcurl4-openssl-dev \
     libicu-dev \
     libonig-dev \

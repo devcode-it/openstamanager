@@ -1,4 +1,4 @@
-FROM php:8.5-apache-bullseye
+FROM php:8.5-apache-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LAST_VERSION_URL="https://api.github.com/repos/devcode-it/openstamanager/releases/latest" \
@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    default-jre-headless \
     libcurl4-openssl-dev \
     libicu-dev \
     libonig-dev \

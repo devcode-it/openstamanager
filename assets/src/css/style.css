@@ -2226,6 +2226,10 @@ table.dataTable {
     float: none;
 }
 
+.input-group-append .select2-selection__clear {
+    display: none !important;
+}
+
 .select2-container--bootstrap4 .select2-selection--single .select2-selection__clear:hover {
     background-color: #999;
 }

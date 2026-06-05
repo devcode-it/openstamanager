@@ -456,6 +456,7 @@ class DDT extends Document
         return database()->table('co_righe_documenti')
             ->selectRaw('SUM(qta) as qta_fatturata')
             ->where('id_ddt', $this->id)
+            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
             ->value('qta_fatturata') ?? 0;
     }
 

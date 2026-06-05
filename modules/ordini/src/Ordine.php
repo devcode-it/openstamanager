@@ -163,24 +163,17 @@ class Ordine extends Document
 
         // Ottimizzazione: singola query per calcolare quantità fatturate
         $righe_ids = $righe->pluck('id')->toArray();
-        $class_type = Components\Articolo::class;
 
-        $fatture_collegate = database()->table('co_righe_documenti')
+        $qta_fatturate = (float) database()->table('co_righe_documenti')
             ->whereIn('original_id', $righe_ids)
-            ->where('original_type', $class_type)
-            ->join('co_documenti', 'co_righe_documenti.id_documento', '=', 'co_documenti.id')
-            ->select('co_righe_documenti.original_id', 'co_righe_documenti.id_documento')
-            ->get()
-            ->keyBy('original_id');
+            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->sum('qta');
 
-        $qta_fatturate = 0;
-        $fatture_collegate_totali = $fatture_collegate->count();
-
-        foreach ($righe as $riga) {
-            if ($fatture_collegate->has($riga->id)) {
-                $qta_fatturate += $riga->qta;
-            }
-        }
+        $fatture_collegate_totali = database()->table('co_righe_documenti')
+            ->whereIn('original_id', $righe_ids)
+            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->distinct('id_documento')
+            ->count('id_documento');
 
         $parziale_fatturato = $qta != $qta_fatturate;
         $descrizione = $this->determinaNuovoStato($trigger, $qta_evasa, $parziale, $parziale_fatturato, $nome_stato, $fatture_collegate_totali);

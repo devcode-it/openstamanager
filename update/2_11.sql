@@ -1164,6 +1164,8 @@ ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;
 
+ALTER TABLE `in_interventi_tecnici` CHANGE `prezzo_dirittochiamata_tecnico` `prezzo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
+
 RENAME TABLE `co_ritenutaacconto` TO `co_ritenuta_acconto`;
 RENAME TABLE `an_tipianagrafiche` TO `an_tipi_anagrafiche`;
 RENAME TABLE `an_tipianagrafiche_anagrafiche` TO `an_tipi_anagrafiche_anagrafiche`;

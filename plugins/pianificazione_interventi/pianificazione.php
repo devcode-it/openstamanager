@@ -44,7 +44,7 @@ $id_impianti = explode(',', (string) $impianti[0]['id_impianti']);
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {
     $id_sede = $dbo->fetchOne('SELECT id_sede FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_sede'];
-    $id_tecnico = $dbo->fetchOne('SELECT id_tecnicoo FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_tecnico'];
+    $id_tecnico = $dbo->fetchOne('SELECT id_tecnico FROM my_impianti WHERE id = '.prepare($id_impianti[0]))['id_tecnico'];
 }
 
 // Informazioni del promemoria
@@ -239,7 +239,7 @@ echo '
                 </div>
 
                 <div class="col-md-4">
-                    {[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "id_tecnicoo[]", "ajax-source": "tecnici", "disabled": "1", "value": "'.$id_tecnico.'" ]}
+                    {[ "type": "select", "label": "'.tr('Tecnici').'", "multiple": "1",  "name": "id_tecnico[]", "ajax-source": "tecnici", "disabled": "1", "value": "'.$id_tecnico.'" ]}
                 </div>
 
 
@@ -305,7 +305,7 @@ echo '
 
 				$("#modals > div .btn-primary").prop("disabled", true);
 
-				$("#id_tecnicoo").prop("disabled", true)
+				$("#id_tecnico").prop("disabled", true)
 				    .removeAttr("required");
                 $("#orario_inizio").prop("disabled", true)
                     .removeAttr("required");
@@ -316,14 +316,14 @@ echo '
 
         $("#pianifica_intervento").click(function() {
             if ($(this).is(":checked")){
-                $("#id_tecnicoo").removeAttr("disabled")
+                $("#id_tecnico").removeAttr("disabled")
                     .prop("required", true);
                 $("#orario_inizio").removeAttr("disabled")
                     .prop("required", true);
                 $("#orario_fine").removeAttr("disabled")
                     .prop("required", true);
             } else {
-                $("#id_tecnicoo").prop("disabled", true)
+                $("#id_tecnico").prop("disabled", true)
                     .removeAttr("required");
                 $("#orario_inizio").prop("disabled", true)
                     .removeAttr("required");

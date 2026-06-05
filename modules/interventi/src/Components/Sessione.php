@@ -132,7 +132,7 @@ class Sessione extends Model
 
     public function setTecnico($id_tecnico)
     {
-        $previous = $this->id_tecnicoo;
+        $previous = $this->id_tecnico;
 
         $anagrafica = Anagrafica::find($id_tecnico);
         $this->anagrafica()->associate($anagrafica);
@@ -184,7 +184,7 @@ class Sessione extends Model
 
     public function anagrafica()
     {
-        return $this->belongsTo(Anagrafica::class, 'id_tecnicoo');
+        return $this->belongsTo(Anagrafica::class, 'id_tecnico');
     }
 
     public function tipo()
@@ -464,7 +464,7 @@ class Sessione extends Model
         $database = database();
 
         // Costi unitari dalla tariffa del tecnico
-        $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE id_tecnicoo='.prepare($this->anagrafica->id).' AND id_tipo_intervento = '.prepare($id_tipo));
+        $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE id_tecnico='.prepare($this->anagrafica->id).' AND id_tipo_intervento = '.prepare($id_tipo));
 
         // Costi unitari specifici per la sede
         $id_sede = $this->intervento->id_sede_destinazione;

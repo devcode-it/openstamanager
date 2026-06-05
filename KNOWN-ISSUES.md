@@ -13,6 +13,49 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 
 #### 2.10.4 - 28/04/2026
 
+ ##### Problemi noti
+- Corretto Path Traversal via Unsanitized `directory` Field in ZIP Component Upload Leads to RCE (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/e50cd6a7b
+
+- Corretto Read-Only Users Can Perform Write Operations via Missing Permission Check in actions.php (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/883cb90b6
+
+- Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/5e32e86eb
+
+- Corretto errore HTML Injection in modules/utenti/edit.php
+https://github.com/devcode-it/openstamanager/commit/184
+
+- Corretto SQL injection e vulnerability minori in controlli su tipo valore database per compatibilità MariaDB
+https://github.com/devcode-it/openstamanager/commit/5d4f1f3d6
+
+- Corretto calcolo arrotondamento iva in vista fatture
+https://github.com/devcode-it/openstamanager/commit/13bcd771f
+
+- Corretto addebito spese di incasso in fattura
+https://github.com/devcode-it/openstamanager/commit/65e02d283
+
+- Corretto invio email a cc in template email
+https://github.com/devcode-it/openstamanager/commit/a0375a68e
+
+- Corretto trigger evasione stato in base a quantità evasa
+https://github.com/devcode-it/openstamanager/commit/8ecc58470
+
+- Aggiunte al controllo fatture da inviare anche le fatture non generate
+https://github.com/devcode-it/openstamanager/commit/216564e3d
+
+- Corretto visualizzazione ritenuta in fattura
+https://github.com/devcode-it/openstamanager/commit/9496b21a3
+
+- Corretto totali nella stampa fatture rispecchiano totali delle righe
+https://github.com/devcode-it/openstamanager/commit/feb0f8766
+
+- Corretto estrazione stampe in invio mail
+https://github.com/devcode-it/openstamanager/commit/9435fc060
+
+---
+
+#### 2.10.3 - 07/04/2026
 ##### Problemi noti
 - Corretto invio mail con allegato a utenti senza i permessi per il modulo Coda di invio 
 https://github.com/devcode-it/openstamanager/commit/24d870675
@@ -34,7 +77,7 @@ https://github.com/devcode-it/openstamanager/commit/cfce79f81
 
 ---
 
-#### 2.10.3 - 07/04/2026
+#### 2.10.2 - 17/03/2026
 
 ##### Problemi noti
 - Corretto registrazione insoluto da tasto Registra insoluto
@@ -60,7 +103,7 @@ https://github.com/devcode-it/openstamanager/commit/d6bdb0fbb
 
 ---
 
-#### 2.10.2 - 17/03/2026
+#### 2.10.1 - 26/02/2026
 
 ##### Problemi noti
 - Corretto Remote Code Execution via Insecure Deserialization in OAuth2 (vulnerabilità critica)
@@ -126,7 +169,7 @@ https://github.com/devcode-it/openstamanager/commit/db9e8d890
 
 ---
 
-#### 2.10.1 - 26/02/2026
+#### 2.10 - 05/02/2026
 
 ##### Problemi noti
 - Corretto Unauthenticated privilege escalation (vulnerabilità critica)
@@ -166,7 +209,7 @@ https://github.com/devcode-it/openstamanager/commit/4af28973e
 - Corretto percorso suggerito per la configurazione del cron, non veniva riportata la root dir
 https://github.com/devcode-it/openstamanager/commit/163f88fef
 
-#### 2.10 - 05/02/2026
+#### 2.9.8 - 23/12/2025
 
 ##### Problemi noti
 - Corretta iva calcolata su ritenuta in tabella riepilogo iva della stampa fattura
@@ -184,7 +227,7 @@ https://github.com/devcode-it/openstamanager/commit/7402d4371
 - Corretta prevenzione sql injection
 https://github.com/devcode-it/openstamanager/commit/bae00c059
 
-#### 2.9.8 - 23/12/2025
+#### 2.9.7 - 09/12/2025
 
 ##### Problemi noti
 - Corretta la generazione di scadenze relative a fatture con marca da bollo
@@ -202,7 +245,7 @@ https://github.com/devcode-it/openstamanager/commit/5deab378f
 - Corretta la selezione del tipo documento in fase di generazione nota di credito
 https://github.com/devcode-it/openstamanager/commit/0a32be473
 
-#### 2.9.7 - 09/12/2025
+#### 2.9.6 - 26/11/2025
 
 ##### Problemi noti
 - Corretta rivalsa in FE

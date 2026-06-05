@@ -39,24 +39,31 @@ function optionRendering(data, container) {
     selectOptionAttributes(data);
 
     // Gestione delle opzioni disabilitate - solo attributi per CSS
-    if ((data.element && $(data.element).prop('disabled')) || data.disabled) {
+    if (data.disabled) {
         $(container).attr('aria-disabled', 'true');
         return data.text;
     }
 
-    // Esclusione delle opzioni già selezionate dai risultati del dropdown
-    // (evita il flicker causato dal CSS [aria-selected=true] applicato dopo il rendering)
-    if (data.element && data.element.selected) {
-        return null;
+    // Per elementi HTML statici (non AJAX)
+    if (data.element) {
+        if ($(data.element).prop('disabled')) {
+            $(container).attr('aria-disabled', 'true');
+        }
+
+        // Esclusione delle opzioni già selezionate dai risultati del dropdown
+        // (evita il flicker causato dal CSS [aria-selected=true] applicato dopo il rendering)
+        if (data.element.selected) {
+            return null;
+        }
     }
 
     // Impostazione del colore dell'opzione
     let bg;
     if (data._bgcolor_) {
         bg = data._bgcolor_;
-    } else if ($(data.element).attr("_bgcolor_")) {
+    } else if (data.element && $(data.element).attr("_bgcolor_")) {
         bg = $(data.element).attr("_bgcolor_");
-    } else if ($(data.element).data("_bgcolor_")) {
+    } else if (data.element && $(data.element).data("_bgcolor_")) {
         bg = $(data.element).data("_bgcolor_");
     }
 
@@ -89,9 +96,14 @@ function selectionRendering(data) {
  */
 function selectOptionAttributes(data) {
     // Aggiunta degli attributi impostati staticamente
-    let attributes = $(data.element).data("select-attributes");
-    if (attributes) {
-        for ([key, value] of Object.entries(attributes)) {
+    let attributes = null;
+
+    if (data.element) {
+        attributes = $(data.element).data("select-attributes");
+    }
+
+    if (attributes && typeof attributes === 'object') {
+        for (let [key, value] of Object.entries(attributes)) {
             data[key] = value;
         }
     }
@@ -232,9 +244,14 @@ function updateSelectOption(name, value) {
 function initSelectInput(input) {
     let $input = $(input);
 
+    // Evita doppia inizializzazione
+    if ($input.data('select2')) {
+        return $input.data('select2');
+    }
+
     if ($input.hasClass('superselect')) {
         initStaticSelectInput(input);
-    } else {
+    } else if ($input.hasClass('superselectajax')) {
         initDynamicSelectInput(input);
     }
 
@@ -248,6 +265,23 @@ function initSelectInput(input) {
  */
 function initStaticSelectInput(input) {
     let $input = $(input);
+
+    // Verifica che l'elemento esista nel DOM
+    if ($input.length === 0) {
+        console.warn('Select element not found:', input);
+        return null;
+    }
+
+    // Verifica che select2 sia disponibile
+    if (typeof $input.select2 !== 'function') {
+        console.warn('select2 is not available for:', $input.attr('name'));
+        return null;
+    }
+
+    // Rimuovi eventuali inizializzazioni precedenti
+    if ($input.data('select2')) {
+        $input.select2('destroy');
+    }
 
     $input.select2({
         theme: "bootstrap4",
@@ -278,12 +312,56 @@ function initStaticSelectInput(input) {
 }
 
 /**
+ * Assegna un _resultId a tutti gli elementi dei risultati AJAX per evitare
+ * il bug di Select2 4.1.0 dove _normalizeItem perde il contesto 'this'
+ * quando passato a Array.map(), causando 'this.generateResultId is not a function'.
+ *
+ * @param items
+ */
+function assignSelect2ResultIds(items) {
+    if (!items || !Array.isArray(items)) {
+        return;
+    }
+
+    items.forEach(function (item) {
+        if (item && item.id != null && item._resultId == null) {
+            item._resultId = 'select2-result-' + item.id;
+        }
+
+        if (item && item.children) {
+            assignSelect2ResultIds(item.children);
+        }
+    });
+}
+
+/**
  * Funzione per l'inizializzazione del select dinamico.
  *
  * @param input
  */
 function initDynamicSelectInput(input) {
     let $input = $(input);
+
+    // Verifica che l'elemento esista nel DOM
+    if ($input.length === 0) {
+        console.warn('Select element not found:', input);
+        return null;
+    }
+
+    // Verifica che select2 sia disponibile
+    if (typeof $input.select2 !== 'function') {
+        console.warn('select2 is not available for:', $input.attr('name'));
+        return null;
+    }
+
+    // Salva il valore corrente prima dell'inizializzazione
+    let currentValue = $input.val();
+    let hasOptions = $input.find('option').length > 0;
+
+    // Rimuovi eventuali inizializzazioni precedenti
+    if ($input.data('select2')) {
+        $input.select2('destroy');
+    }
 
     $input.select2({
         theme: "bootstrap4",
@@ -333,6 +411,8 @@ function initDynamicSelectInput(input) {
                     results = results_groups;
                 }
 
+                assignSelect2ResultIds(results);
+
                 return {
                     results: results,
                     pagination: {
@@ -344,6 +424,15 @@ function initDynamicSelectInput(input) {
         },
         width: '100%'
     });
+
+    // Ripristina il valore se c'era un valore pre-impostato
+    if (currentValue && !hasOptions) {
+        setTimeout(function() {
+            if ($input.data('select2')) {
+                $input.val(currentValue).trigger('change');
+            }
+        }, 100);
+    }
 
     // Previeni la selezione di opzioni disabilitate per select AJAX
     $input.on('select2:selecting', function (e) {

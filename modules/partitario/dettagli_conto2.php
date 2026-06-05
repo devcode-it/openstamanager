@@ -25,10 +25,10 @@ $conto_secondo = $dbo->selectOne('co_piano_dei_conti2', '*', ['id' => $id_conto]
 $conto_primo = $dbo->selectOne('co_piano_dei_conti1', '*', ['id' => $conto_secondo['id_piano_dei_conti1']]);
 
 // Livello 3
-$query3 = 'SELECT `co_piano_dei_conti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, anagrafica.id, anagrafica.deleted_at
+$query3 = 'SELECT `co_piano_dei_conti3`.*, movimenti.numero_movimenti, movimenti.totale, movimenti.totale_reddito, id_anagrafica, anagrafica.deleted_at
     FROM `co_piano_dei_conti3`
         LEFT OUTER JOIN (
-            SELECT id,
+            SELECT id as id_anagrafica,
                 id_conto_cliente,
                 id_conto_fornitore,
                 deleted_at

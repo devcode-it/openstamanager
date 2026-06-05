@@ -203,7 +203,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
 
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "tipo_anagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "id_anagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 

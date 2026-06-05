@@ -270,7 +270,6 @@ function getDatabaseReferenceFile($database)
     }
 
     if ($database->getType() === 'MySQL') {
-
         return 'mysql.json';
     }
 

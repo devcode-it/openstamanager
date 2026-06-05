@@ -69,12 +69,14 @@ class Update
                         $database->query('DROP TABLE IF EXISTS `updates`');
                     }
                     $database->multiQuery($install_sql);
+
                     return $database->tableExists('updates');
                 } catch (Exception $e) {
                     $_SESSION['update_error'] = [
                         'message' => $e->getMessage(),
                         'query' => '',
                     ];
+
                     return false;
                 }
             }

@@ -40,18 +40,6 @@ class Prints
     protected static $modules = [];
 
     /**
-     * Normalizza il valore di font-size per le stampe.
-     *
-     * @param mixed $font_size
-     *
-     * @return float
-     */
-    protected static function normalizeFontSize($font_size): float
-    {
-        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
-    }
-
-    /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
      *
      * @return array
@@ -313,6 +301,14 @@ class Prints
         $directory = 'templates/'.$template['directory'].'|custom|';
 
         return App::filepath($directory, $file);
+    }
+
+    /**
+     * Normalizza il valore di font-size per le stampe.
+     */
+    protected static function normalizeFontSize($font_size): float
+    {
+        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
     }
 
     /**

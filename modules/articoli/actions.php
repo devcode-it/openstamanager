@@ -79,9 +79,8 @@ switch (post('op')) {
         // Salvataggio varianti dinamiche
         $id_valori = post('id_valori');
         if (!empty($id_valori) && is_array($id_valori)) {
-
             // Creazione automatica della combinazione (modulo Combinazioni)
-            $combinazione = new \Modules\CombinazioniArticoli\Combinazione();
+            $combinazione = new Combinazione();
             $combinazione->codice = $articolo->codice;
             $combinazione->id_categoria = $articolo->id_categoria;
             $combinazione->id_sottocategoria = $articolo->id_sottocategoria;
@@ -101,7 +100,7 @@ switch (post('op')) {
                         $dbo->insert('mg_attributo_combinazione', [
                             'id_combinazione' => $combinazione->id,
                             'id_attributo' => $id_att,
-                            'order' => $ordine++
+                            'order' => $ordine++,
                         ]);
                     }
                 }
@@ -251,7 +250,7 @@ switch (post('op')) {
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
 
-                // Salvataggio varianti
+        // Salvataggio varianti
         $id_valori = post('id_valori');
         if ($id_valori !== null) {
             $dbo->query('DELETE FROM `mg_articolo_attributo` WHERE `id_articolo`='.prepare($id_record));

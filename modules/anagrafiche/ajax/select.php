@@ -160,7 +160,6 @@ switch ($resource) {
 
         break;
 
-    
     case 'vettori':
         $tipologia = Tipo::where('name', 'Vettore')->first()->id;
 
@@ -321,7 +320,7 @@ switch ($resource) {
 
         break;
 
-    // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
+        // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
         $query = "SELECT `an_anagrafiche`.`id` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipi_anagrafiche_lang`.`title` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
         |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
@@ -370,10 +369,10 @@ switch ($resource) {
         }
         break;
 
-    /*
-        * Opzioni utilizzate:
-        * - id_anagrafica
-    */
+        /*
+            * Opzioni utilizzate:
+            * - id_anagrafica
+        */
     case 'sedi':
         if (isset($superselect['id_anagrafica'])) {
             $query = "
@@ -434,10 +433,10 @@ switch ($resource) {
 
         break;
 
-    /*
-        * Opzioni utilizzate:
-        * - id_anagrafica
-    */
+        /*
+            * Opzioni utilizzate:
+            * - id_anagrafica
+        */
     case 'referenti':
         if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`id_mansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';

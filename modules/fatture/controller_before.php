@@ -51,7 +51,7 @@ if ($module->name == 'Fatture di vendita' && $services_enable) {
         ->whereHas('tipo', function ($query) {
             $query->where('dir', 'entrata');
         })
-        ->whereHas('stato', function($query){
+        ->whereHas('stato', function ($query) {
             $query->whereNotIn('name', ['Bozza', 'Annullata', 'Non valida']);
         })->where(function ($query) {
             $query->whereIn('codice_stato_fe', ['EC02', 'ERR', 'ERVAL', 'NS', 'GEN', 'QUEUE'])

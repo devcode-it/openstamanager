@@ -1198,13 +1198,25 @@ $(document).ready(function() {
 <script type="text/javascript">
 // Inizializzazione automatica tramite text-shortener.js
 
-$("#idtipiintervento").change(function(){
-    let tipi = "";
-    if( $(this).val() ){
-        idtipi = JSON.stringify($(this).val());
-    }
+$(document).ready(function() {
+    var isInitialized = false;
+    
+    $("#idtipiintervento").on("select2:select select2:unselect", function() {
+        if (isInitialized) {
+            let current_value = $(this).val();
+            let idtipi = "";
+            
+            if (current_value) {
+                idtipi = JSON.stringify(current_value);
+            }
 
-    session_set("superselect,idtipiintervento",idtipi,0);
-    location.reload();
+            session_set("superselect,idtipiintervento", idtipi, 0);
+            location.reload();
+        }
+    });
+    
+    setTimeout(function() {
+        isInitialized = true;
+    }, 500);
 });
 </script>';

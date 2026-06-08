@@ -379,7 +379,7 @@ switch ($resource) {
             SELECT
                 *
             FROM
-                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, NULL AS deleted_at, (SELECT `id_zona` FROM `an_anagrafiche` |where|) AS id_zona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
+                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where_legale|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where_legale|) AS lng, NULL AS deleted_at, (SELECT `id_zona` FROM `an_anagrafiche` |where_legale|) AS id_zona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where_legale|)) AS descrizione
 
             UNION
 
@@ -389,7 +389,7 @@ switch ($resource) {
                 `lng`,
                 `id_zona`,
                 `deleted_at`,
-                CONCAT_WS(' - ', `nome_sede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab
+                CONCAT_WS(' - ', `nome_sede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where_sedi|) AS tab
             HAVING
                 `descrizione` LIKE ".prepare('%'.$search.'%').'
             ORDER BY
@@ -400,16 +400,20 @@ switch ($resource) {
             }
 
             if (empty($filter)) {
-                $where[] = 'deleted_at IS NULL';
+                $where_sedi[] = 'deleted_at IS NULL';
             }
 
-            $where[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
+            $where_sedi[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
+            $where_legale[] = '`id`='.prepare($superselect['id_anagrafica']);
 
             /*
             if (!empty($search)) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
             */
+
+            $query = str_replace('|where_legale|', !empty($where_legale) ? 'WHERE '.implode(' AND ', $where_legale) : '', $query);
+            $query = str_replace('|where_sedi|', !empty($where_sedi) ? 'WHERE '.implode(' AND ', $where_sedi) : '', $query);
         }
         break;
 

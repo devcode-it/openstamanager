@@ -21,6 +21,7 @@
 namespace Importer;
 
 use League\Csv\Reader;
+use League\Csv\Statement;
 
 /**
  * Classe dedicata alla gestione dell'importazione da file CSV.
@@ -96,17 +97,24 @@ abstract class CSVImporter implements ImporterInterface
         return array_shift($first_row);
     }
 
+    /**
+     * Numero totale di record presenti nel file CSV (intestazione inclusa).
+     * Usato dalla UI per calcolare la percentuale di avanzamento dell'importazione.
+     */
+    public function getTotalRows()
+    {
+        return count($this->csv);
+    }
+
     public function getRows($offset, $length)
     {
         $rows = [];
-        for ($i = 0; $i < $length; ++$i) {
-            // Lettura di una singola riga alla volta
-            $row = $this->csv->fetchOne($offset + $i);
-            if (empty($row)) {
-                break;
-            }
 
-            // Aggiunta all'insieme dei record
+        // Lettura del blocco in un'unica passata sequenziale.
+        // NB: chiamare fetchOne($offset + $i) in un ciclo è O(n²), perché league/csv
+        // ri-scorre il file dall'inizio ad ogni chiamata; Statement lo scorre una sola volta.
+        $statement = Statement::create()->offset((int) $offset)->limit((int) $length);
+        foreach ($statement->process($this->csv) as $row) {
             $rows[] = \Filter::parse($row);
         }
 
@@ -170,8 +178,10 @@ abstract class CSVImporter implements ImporterInterface
             $validated_records[] = $record;
         }
 
-        $batch_size = 100;
         $import_failed = 0;
+
+        // Autocommit per riga (volutamente NON in un'unica transazione per batch): così i lock
+        // restano brevissimi e un import lento/abbandonato non blocca l'intera applicazione.
         foreach ($validated_records as $index => $record) {
             $row = $validated_rows[$index];
 

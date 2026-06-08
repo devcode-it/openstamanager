@@ -630,19 +630,19 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "id_spedizionee", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "id_spedizionene$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "id_spedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "id_spedizionene$" ]}
                 </div>
 
                 <div class="col-md-3">';
     $esterno = $dbo->selectOne('dt_spedizione', 'esterno', [
-        'id' => $record['id_spedizionee'],
+        'id' => $record['id_spedizione'],
     ])['esterno']; ?>
 
                     {[ "type": "select", "label": "<?php echo tr('Vettore'); ?>", "name": "id_vettore", "ajax-source": "vettori", "value": "$id_vettore$", "disabled": <?php echo empty($esterno) || (!empty($esterno) && !empty($record['id_vettore'])) ? 1 : 0; ?>, "required": <?php echo !empty($esterno) ?: 0; ?>, "icon-after": "add|<?php echo $id_modulo_anagrafiche; ?>|tipoanagrafica=Vettore&readonly_tipo=1|btn_id_vettore|<?php echo ($esterno and (intval(!$record['flag_completato']) || empty($record['id_vettore']))) ? '' : 'disabled'; ?>", "class": "<?php echo empty($record['id_vettore']) ? 'unblockable' : ''; ?>" ]}
                 </div>
 
 <script>
-    $("#id_spedizionee").change(function() {
+    $("#id_spedizione").change(function() {
         if($(this).val()){
             if (!$(this).selectData().esterno) {
                 $("#id_vettore").attr("required", false);

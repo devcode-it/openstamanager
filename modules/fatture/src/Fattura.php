@@ -313,7 +313,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getrivalsa_inpsAttribute()
+    public function getRivalsaInpsAttribute()
     {
         return $this->calcola('rivalsa_inps');
     }
@@ -344,7 +344,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getIvarivalsa_inpsAttribute()
+    public function getIvaRivalsaInpsAttribute()
     {
         return $this->calcola('iva_rivalsa_inps');
     }
@@ -354,7 +354,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getritenuta_accontoAttribute()
+    public function getRitenutaAccontoAttribute()
     {
         return $this->getRigheContabili()->sum('ritenuta_acconto') ?? 0;
     }

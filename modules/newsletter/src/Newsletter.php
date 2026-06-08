@@ -86,7 +86,7 @@ class Newsletter extends Model
     public function getNumeroDestinatariSenzaEmail()
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
-            ->join('an_anagrafiche', 'id', '=', 'record_id')
+            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'record_id')
             ->where('email', '=', '')
             ->count();
 
@@ -106,7 +106,7 @@ class Newsletter extends Model
     public function getNumeroDestinatariSenzaConsenso()
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
-            ->join('an_anagrafiche', 'id', '=', 'record_id')
+            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'record_id')
             ->where('an_anagrafiche.enable_newsletter', '=', false)
             ->count();
 

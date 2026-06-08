@@ -237,6 +237,10 @@ if (empty($id_record)) {
     // Totale record del CSV (intestazione inclusa): serve alla progress bar lato client
     $totale_record = $csv->getTotalRows();
 
+    // La geolocalizzazione automatica (solo anagrafiche) fa una chiamata online per ogni riga:
+    // se attiva, l'importazione è più lenta e lo segnaliamo nell'overlay di avanzamento.
+    $geoloc_attiva = $import_selezionato === CSV::class && setting('Geolocalizzazione automatica');
+
     echo '
 <div id="import-progress-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99999; background:rgba(255,255,255,0.92); flex-direction:column; justify-content:center; align-items:center;">
     <div style="width:60%; max-width:600px;">
@@ -247,7 +251,10 @@ if (empty($id_record)) {
         <div id="import-progress-label" class="text-center text-muted" style="margin-top:8px;"></div>
         <div class="text-center" style="margin-top:18px; color:#b8860b; font-weight:600;">
             <i class="fa fa-exclamation-triangle"></i> '.tr('Non chiudere né ricaricare questa pagina finché l\'importazione non è completata: interrompendola, alcune righe potrebbero non essere importate.').'
-        </div>
+        </div>'.($geoloc_attiva ? '
+        <div class="text-center" style="margin-top:12px; color:#6c757d;">
+            <i class="fa fa-clock-o"></i> '.tr('La geolocalizzazione automatica delle anagrafiche è attiva: ogni riga viene geolocalizzata tramite un servizio online, perciò l\'importazione può richiedere molto più tempo del normale.').'
+        </div>' : '').'
     </div>
 </div>';
 

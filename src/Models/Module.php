@@ -89,7 +89,8 @@ class Module extends Model
 
     public function getPlaceholders($id_record, $options = [])
     {
-        if (!isset($this->variables[$id_record])) {
+        $key = $id_record ?? '';
+        if (!isset($this->variables[$key])) {
             $dbo = $database = database();
 
             // Lettura delle variabili nei singoli moduli
@@ -104,10 +105,10 @@ class Module extends Model
                 $replaces['{'.$key.'}'] = $value;
             }
 
-            $this->variables[$id_record] = $replaces;
+            $this->variables[$key] = $replaces;
         }
 
-        return $this->variables[$id_record];
+        return $this->variables[$key];
     }
 
     /**

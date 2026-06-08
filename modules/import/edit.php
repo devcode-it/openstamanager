@@ -245,6 +245,9 @@ if (empty($id_record)) {
             <div id="import-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width:0%; line-height:28px;">0%</div>
         </div>
         <div id="import-progress-label" class="text-center text-muted" style="margin-top:8px;"></div>
+        <div class="text-center" style="margin-top:18px; color:#b8860b; font-weight:600;">
+            <i class="fa fa-exclamation-triangle"></i> '.tr('Non chiudere né ricaricare questa pagina finché l\'importazione non è completata: interrompendola, alcune righe potrebbero non essere importate.').'
+        </div>
     </div>
 </div>';
 

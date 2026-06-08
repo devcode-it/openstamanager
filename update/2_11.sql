@@ -1818,3 +1818,15 @@ ALTER TABLE `mg_attributi` ADD `predefinito` BOOLEAN NOT NULL DEFAULT FALSE AFTE
 
 -- Aggiunta campo commissioni Ri.Ba. insolute in banche
 ALTER TABLE `co_banche` ADD `commissioni_riba_insolute` DECIMAL(15, 6) NOT NULL DEFAULT 0 AFTER `codice_sia`;
+
+-- Allineamento vista Tipi di anagrafiche
+UPDATE `zz_modules` SET `options` = "
+SELECT
+    |select|
+FROM
+    `an_tipi_anagrafiche`
+    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.|lang|)
+WHERE
+    1=1
+HAVING
+    2=2" WHERE `name` = 'Tipi di anagrafiche';

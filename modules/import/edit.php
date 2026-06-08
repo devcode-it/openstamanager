@@ -234,10 +234,34 @@ if (empty($id_record)) {
     </div>
 </form>';
 
+    // Totale record del CSV (intestazione inclusa): serve alla progress bar lato client
+    $totale_record = $csv->getTotalRows();
+
+    echo '
+<div id="import-progress-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:99999; background:rgba(255,255,255,0.92); flex-direction:column; justify-content:center; align-items:center;">
+    <div style="width:60%; max-width:600px;">
+        <h4 class="text-center" style="margin-bottom:15px;">'.tr('Importazione in corso...').'</h4>
+        <div class="progress" style="height:28px;">
+            <div id="import-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width:0%; line-height:28px;">0%</div>
+        </div>
+        <div id="import-progress-label" class="text-center text-muted" style="margin-top:8px;"></div>
+    </div>
+</div>';
+
     echo '
 <script>
 var count = 0;
 var failed_records_filename = null;  // Variabile globale per mantener il nome del file di errore tra batch
+var importTotalRecords = '.$totale_record.';  // record totali nel CSV (intestazione inclusa)
+var importTotalRows = 0;                       // righe dati effettive da importare
+var importProcessed = 0;                       // righe processate finora (importate + fallite)
+
+function updateImportProgress() {
+    var pct = importTotalRows > 0 ? Math.min(100, Math.round(importProcessed / importTotalRows * 100)) : 0;
+    var done = Math.min(importProcessed, importTotalRows);
+    $("#import-progress-bar").css("width", pct + "%").text(pct + "%");
+    $("#import-progress-label").text(done + " / " + importTotalRows + " '.tr('righe').'");
+}
 
 $(document).ready(function() {';
 
@@ -256,6 +280,12 @@ $(document).ready(function() {';
     save.on("click", function() {
         count = 0;
         failed_records_filename = null;  // Reset della variabile
+
+        // Avanzamento: se la prima riga non viene importata è l\'intestazione, quindi va esclusa dal totale
+        importProcessed = 0;
+        importTotalRows = $("#include_first_row").is(":checked") ? importTotalRecords : Math.max(0, importTotalRecords - 1);
+        updateImportProgress();
+
         importPage(0);
     });
 });
@@ -279,7 +309,7 @@ function importPage(page) {
         }
     }
 
-    $("#main_loading").show();
+    $("#import-progress-overlay").css("display", "flex");
 
     let data = {
         id_module: "'.$id_module.'",
@@ -302,7 +332,7 @@ function importPage(page) {
 
             // Gestione errori di validazione
             if (data.error) {
-                $("#main_loading").fadeOut();
+                $("#import-progress-overlay").hide();
 
                 Swal.fire({
                     title: "'.tr('Errore').'",
@@ -321,11 +351,17 @@ function importPage(page) {
             // Aggiorna i contatori
             count += data.imported;
 
+            // Avanzamento: somma le righe processate in questo batch (importate + fallite)
+            importProcessed += data.total;
+            updateImportProgress();
+
             // Se ci sono altre pagine da importare
             if(data.more) {
                 importPage(page + 1);
             } else {
-                $("#main_loading").fadeOut();
+                importProcessed = importTotalRows;
+                updateImportProgress();
+                $("#import-progress-overlay").hide();
 
                 // Prepara il messaggio di completamento
                 let title = "'.tr('Importazione completata').'";
@@ -399,10 +435,16 @@ function importPage(page) {
                 }
             }
         },
-        error: function(data) {
-            $("#main_loading").fadeOut();
+        error: function(xhr) {
+            $("#import-progress-overlay").hide();
 
-            alert("'.tr('Errore').': " + data);
+            var message = (xhr && xhr.responseJSON && xhr.responseJSON.message) || (xhr && xhr.responseText) || (xhr && xhr.statusText) || "'.tr('Errore sconosciuto').'";
+
+            Swal.fire({
+                title: "'.tr('Errore').'",
+                text: message,
+                icon: "error",
+            });
         }
     });
 };

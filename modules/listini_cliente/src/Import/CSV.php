@@ -229,12 +229,12 @@ class CSV extends CSVImporter
 
         $header = $this->getHeader();
         $header[] = 'Errore';
-        fputcsv($file, $header, ';');
+        fputcsv($file, $header, ';', escape: '\\');
 
         foreach ($this->failed_rows as $index => $row) {
             $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
             $row[] = $error_message;
-            fputcsv($file, $row, ';');
+            fputcsv($file, $row, ';', escape: '\\');
         }
 
         fclose($file);

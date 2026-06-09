@@ -655,6 +655,17 @@ globals.dashboard = {
             },
 
             editable: globals.dashboard.write_permission,
+            eventDragStart: function(info) {
+                if ($(info.el).hasClass("tooltipstered")) {
+                    $(info.el).tooltipster("hide");
+                    $(info.el).tooltipster("disable");
+                }
+            },
+            eventDragStop: function(info) {
+                if ($(info.el).hasClass("tooltipstered")) {
+                    $(info.el).tooltipster("enable");
+                }
+            },
             eventDrop: function (info) {// info
                 let event = info.event;
 
@@ -678,6 +689,12 @@ globals.dashboard = {
 
                         if (data !== "ok") {
                             info.revert();
+                        } else {
+                            if ($(info.el).hasClass("tooltipstered")) {
+                                $(info.el).tooltipster("destroy");
+                            }
+                            
+                            createTooltip($(info.el), event.id, event.extendedProps.id_intervento, event.allDay);
                         }
 
                     });
@@ -706,6 +723,12 @@ globals.dashboard = {
 
                     if (data !== "ok") {
                         info.revert();
+                    } else {
+                        if ($(info.el).hasClass("tooltipstered")) {
+                            $(info.el).tooltipster("destroy");
+                        }
+                        
+                        createTooltip($(info.el), event.id, event.extendedProps.id_intervento, event.allDay);
                     }
 
                 });
@@ -754,47 +777,7 @@ echo '
                 let id_record = info.event.extendedProps.id_intervento;
 
                 if (globals.dashboard.tooltip == 1 && element[0].childElementCount > 0 ) {
-                    element.tooltipster({
-                        content: globals.translations.loading + "...",
-                        animation: "grow",
-                        updateAnimation: "grow",
-                        contentAsHTML: true,
-                        hideOnClick: true,
-                        speed: 200,
-                        delay: globals.dashboard.tooltip_delay,
-                        maxWidth: 400,
-                        theme: "tooltipster-shadow",
-                        touchDevices: true,
-                        trigger: "hover",
-                        position: "left",
-                        interactive: true,
-                        autoClose: false,
-                        functionReady: function(instance, helper) {
-                            $(".tooltipster-base").css("z-index", "10000");
-                        },
-                        functionAfter: function(instance, helper) {
-                            // Rimuove il flag "loaded" quando il tooltip viene chiuso
-                            // per permettere di ricaricarlo la prossima volta
-                            $(helper.origin).data("loaded", false);
-                        },
-                        functionBefore: function (instance, helper) {
-                            let $origin = $(helper.origin);
-
-                            if ($origin.data("loaded") !== true) {
-                                $.post(globals.dashboard.load_url, {
-                                    op: "tooltip_info",
-                                    id_record: info.event.id,
-                                    id_intervento: id_record,
-                                    allDay: info.event.allDay,
-                                }, function (data, response) {
-                                    if (data !== "") {
-                                        instance.content(data);
-                                        $origin.data("loaded", true);
-                                     }
-                                });
-                            }
-                        }
-                    });
+                    createTooltip(element, info.event.id, id_record, info.event.allDay);
                 }
             },
 
@@ -835,5 +818,49 @@ echo '
         calendar.render();
 
         globals.dashboard.calendar = calendar;
+    }
+
+    function createTooltip(element, id_event, id_record, allDay) {
+        element.tooltipster({
+            content: globals.translations.loading + "...",
+            animation: "grow",
+            updateAnimation: "grow",
+            contentAsHTML: true,
+            hideOnClick: true,
+            speed: 200,
+            delay: globals.dashboard.tooltip_delay,
+            maxWidth: 400,
+            theme: "tooltipster-shadow",
+            touchDevices: true,
+            trigger: "hover",
+            position: "left",
+            interactive: true,
+            autoClose: false,
+            functionReady: function(instance, helper) {
+                $(".tooltipster-base").css("z-index", "10000");
+            },
+            functionAfter: function(instance, helper) {
+                // Rimuove il flag "loaded" quando il tooltip viene chiuso
+                // per permettere di ricaricarlo la prossima volta
+                $(helper.origin).data("loaded", false);
+            },
+            functionBefore: function (instance, helper) {
+                let $origin = $(helper.origin);
+
+                if ($origin.data("loaded") !== true) {
+                    $.post(globals.dashboard.load_url, {
+                        op: "tooltip_info",
+                        id_record: id_event,
+                        id_intervento: id_record,
+                        allDay: allDay
+                    }, function (data, response) {
+                        if (data !== "") {
+                            instance.content(data);
+                            $origin.data("loaded", true);
+                         }
+                    });
+                }
+            }
+        });
     }
 </script>';

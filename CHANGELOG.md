@@ -4,7 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.11.0 (2026-06-05)](#2110-2026-06-05)
+- [2.11.0 (2026-06-09)](#2110-2026-06-09)
 - [2.10.4 (2026-04-28)](#2104-2026-04-28)
 - [2.10.3 (2026-04-07)](#2103-2026-04-07)
 - [2.10.2 (2026-03-17)](#2102-2026-03-17)
@@ -74,8 +74,7 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
 
-## 2.11.0 (2026-06-05)
-
+## 2.11.0 (2026-06-09)
 ### Aggiunto (Added)
 - Aggiunte azioni di gruppo per duplicazione massiva documenti
 - Aggiunta colonna Data insoluto in Fatture di vendita

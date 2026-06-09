@@ -3,7 +3,7 @@ name: OpenSTAManager
 url: https://github.com/devcode-it/openstamanager/
 landingURL: https://openstamanager.com
 softwareVersion: 2.11-beta
-releaseDate: 2026-06-05
+releaseDate: 2026-06-09
 logo: https://shop.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png
 platforms:
   - web

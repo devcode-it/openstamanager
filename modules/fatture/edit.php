@@ -1274,7 +1274,6 @@ $(document).ready(function () {
 	    const statoDocumento = $("#id_stato");
 	    const statoCorrente = Number('.$fattura->stato->id.');
 	    const id_statoBozza = Number('.$id_stato_bozza.');
-        const id_statoPagato = Number('.$id_stato_pagato.');
 	    const statiChiusi = [
 	        Number('.$id_stato_emessa.'),
 	        Number('.$id_stato_pagato.'),

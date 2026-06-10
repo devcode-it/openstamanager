@@ -1274,6 +1274,7 @@ $(document).ready(function () {
 	    const statoDocumento = $("#id_stato");
 	    const statoCorrente = Number('.$fattura->stato->id.');
 	    const id_statoBozza = Number('.$id_stato_bozza.');
+        const id_statoPagato = Number('.$id_stato_pagato.');
 	    const statiChiusi = [
 	        Number('.$id_stato_emessa.'),
 	        Number('.$id_stato_pagato.'),
@@ -1298,7 +1299,7 @@ $(document).ready(function () {
 	            };
 	        }
 
-	        if (statiPrimaNota.includes(nuovoStato)) {
+	        if (statiPrimaNota.includes(nuovoStato) && !statiPrimaNota.includes(statoCorrente)) {
 	            return {
 	                title: "'.tr('Attenzione').'",
 	                text: "'.tr('Sicuro di voler impostare manualmente la fattura come pagata senza aggiungere il movimento in prima nota?').'",

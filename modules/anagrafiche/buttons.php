@@ -22,7 +22,7 @@ use Models\Group;
 use Models\Module;
 use Models\Upload;
 
-if (!$is_anagrafica_deleted) {
+if (!$is_anagrafica_deleted && !$is_relazione_bloccata) {
     if (in_array($id_cliente, $tipi_anagrafica) or in_array($id_fornitore, $tipi_anagrafica)) {
         echo '
         <div class="btn-group">

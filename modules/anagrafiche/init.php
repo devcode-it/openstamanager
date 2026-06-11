@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Relazione;
 use Modules\Anagrafiche\Tipo;
 
 $rs = Tipo::get();
@@ -58,4 +59,5 @@ if (!empty($id_record)) {
     }
 
     $is_anagrafica_deleted = $anagrafica->deleted_at;
+    $is_relazione_bloccata = $anagrafica->idrelazione ? Relazione::find($anagrafica->idrelazione)->is_bloccata : false;
 }

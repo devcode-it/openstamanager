@@ -323,6 +323,10 @@ switch (filter('op')) {
                     $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-calendar-check-o"></i> '.tr('Data scadenza').':</span> <span class="tooltip-info-value">'.Translator::timestampToLocale($rs[0]['data_scadenza']).'</span></div>';
                 }
 
+                if (!empty($rs[0]['firma_data']) && $rs[0]['firma_data'] != '0000-00-00 00:00:00') {
+                    $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-pencil"></i> '.tr('Data firma').':</span> <span class="tooltip-info-value">'.Translator::timestampToLocale($rs[0]['firma_data']).'</span></div>';
+                }
+
                 $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Tecnico').':</span> <span class="tooltip-info-value">'.$tecnico.'</span></div>';
 
                 $tooltip .= '<div class="tooltip-info-row"><span class="tooltip-info-label"><i class="fa fa-users"></i> '.tr('Sessione').':</span> <span class="tooltip-info-value">'.$orario.'</span></div>';

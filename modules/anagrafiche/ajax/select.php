@@ -189,9 +189,18 @@ switch ($resource) {
     case 'agenti':
         $tipologia = Tipo::where('name', 'Agente')->first()->id;
 
-        $query = "SELECT `an_anagrafiche`.`id` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `id_tipo_intervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+        $query = "SELECT 
+            `an_anagrafiche`.`id` AS id, 
+            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, 
+            `id_tipo_intervento_default` 
+        FROM 
+            `an_anagrafiche` 
+            INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
         |where|
-        ORDER BY `ragione_sociale`';
+        GROUP BY
+            `an_anagrafiche`.`id`
+        ORDER BY 
+            `ragione_sociale`';
 
         foreach ($elements as $element) {
             $filter[] = '`an_anagrafiche`.`id`='.prepare($element);

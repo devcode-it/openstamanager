@@ -98,7 +98,7 @@ $id = $data[$modulo]['id'];
 if ($modulo == 'veb') {
     $riga = 'id_riga_venditabanco';
 } else {
-    $riga = str_replace('id', 'id_riga_', $id);
+    $riga = str_replace('id', 'id_riga', $id);
 }
 
 $idriga = get('idriga') ?: get('riga_id');

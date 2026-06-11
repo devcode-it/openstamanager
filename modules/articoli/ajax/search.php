@@ -45,7 +45,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT CASE WHEN COUNT(`mg_articoli_barcode`.`barcode`) <= 2 THEN GROUP_CONCAT(`mg_articoli_barcode`.`barcode` SEPARATOR \',\') ELSE CONCAT((SELECT GROUP_CONCAT(`b1`.`barcode` SEPARATOR \',\') FROM (SELECT `barcode` FROM `mg_articoli_barcode` `b2` WHERE `b2`.`id_articolo` = `mg_articoli_barcode`.`id_articolo` ORDER BY `b2`.`barcode` ASC) `b1`)) END AS `lista`, `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli` LEFT JOIN `mg_articoli_barcode` ON `mg_articoli_barcode`.`id_articolo` = `mg_articoli`.`id` GROUP BY `mg_articoli`.`id`) AS `barcode` ON `barcode`.`id_articolo` = `mg_articoli`.`id` WHERE deleted_at IS NULL AND (1=0 ';
+$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT mg_articoli.id AS id_articolo, GROUP_CONCAT(mg_articoli_barcode.barcode ORDER BY mg_articoli_barcode.barcode SEPARATOR \',\') AS lista FROM mg_articoli LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.id_articolo = mg_articoli.id GROUP BY mg_articoli.id) AS barcode ON barcode.id_articolo = mg_articoli.id WHERE deleted_at IS NULL AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');

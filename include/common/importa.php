@@ -554,15 +554,18 @@ foreach ($righe as $i => $riga) {
 
             $list = [];
             foreach ($serials as $serial) {
-                $list[] = [
-                    'id' => $serial,
-                    'text' => $serial,
-                ];
+                $già_usato = database()->fetchOne('SELECT id FROM mg_prodotti WHERE serial = '.prepare($serial).' AND id_riga_intervento IS NOT NULL');
+                if (empty($già_usato)) {
+                    $list[] = [
+                        'id' => $serial,
+                        'text' => $serial,
+                    ];
+                }
             }
 
-            if (!empty($serials)) {
+            if (!empty($list)) {
                 echo '
-                        {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
+                        {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', array_column($list, 'id')).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
             }
         }
 

@@ -27,7 +27,7 @@ $id_module = Module::where('name', 'Preventivi')->first()->id;
 
 $rs = Preventivo::where('id_stato', '=', Stato::where('name', 'In lavorazione')->first()->id)->where('default_revision', '=', 1)->get();
 
-if (!empty($rs)) {
+if (count($rs) > 0) {
     echo "
 <table class='table table-hover'>
     <tr>

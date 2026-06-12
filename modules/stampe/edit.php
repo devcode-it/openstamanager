@@ -138,7 +138,7 @@ echo '
 
 foreach ($available_options as $option => $value) {
     echo '
-            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="badge badge-default" >'.$value.'</span>' : '').'</li>';
+            <li><code>'.$option.'</code>'.((!empty($value)) ? ' <span class="badge badge-secondary" >'.$value.'</span>' : '').'</li>';
 }
 
 echo '

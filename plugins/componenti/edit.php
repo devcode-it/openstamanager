@@ -182,7 +182,7 @@ foreach ($elenchi as $elenco) {
 
         $data = dateFormat($componente[$date]);
         $icona_allegati = $numero_allegati == 0 ? 'fa fa-times-circle text-danger' : 'fa fa-check-circle text-success';
-        $badge_allegati = $numero_allegati > 0 ? '<span class="badge badge-success">'.$numero_allegati.'</span>' : '<span class="badge badge-default">0</span>';
+        $badge_allegati = $numero_allegati > 0 ? '<span class="badge badge-success">'.$numero_allegati.'</span>' : '<span class="badge badge-secondary">0</span>';
 
         $serial_badge = '';
         if (!empty($articolo->abilita_serial)) {

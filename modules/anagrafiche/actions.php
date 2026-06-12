@@ -375,14 +375,14 @@ switch (post('op')) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
                 $data = explode(',', post('firma_base64'));
-                $img = getImageManager()->read(base64_decode($data[1]));
+                $img = getImageManager()->decode(base64_decode($data[1]));
                 $img->scaleDown(680, 202);
 
                 if (setting('Sistema di firma') == 'Tavoletta Wacom') {
                     $img->brightness((float) setting('Luminosità firma Wacom'));
                     $img->contrast((float) setting('Contrasto firma Wacom'));
                 }
-                $encoded_image = $img->toJpeg();
+                $encoded_image = $img->encodeUsingMediaType('image/jpeg');
                 $file_content = $encoded_image->toString();
 
                 // Upload del file della firma in zz_files con categoria "GDPR"

@@ -674,9 +674,6 @@ function aggiornaRighe(id) {
         }
     }).catch(swal.noop);
 }
-        });
-    }).catch(swal.noop);
-}
 
 function rimuoviRiga(id) {
     Swal.fire({

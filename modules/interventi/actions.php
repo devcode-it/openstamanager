@@ -1310,7 +1310,7 @@ switch (post('op')) {
         $id_stato = post('id_stato');
         $ora_richiesta = post('ora_richiesta');
         $copia_sessioni = post('copia_sessioni');
-        $copia_righe = post('copia_righe');
+        $copia_righe = post('copia_righe_duplica');
         $copia_impianti = post('copia_impianti');
         $copia_allegati = post('copia_allegati');
         $data_inizio = post('data_inizio');

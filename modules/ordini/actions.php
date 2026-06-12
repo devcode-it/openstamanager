@@ -993,7 +993,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        if (!empty(post('copia_righe'))) {
+        if (!empty(post('copia_righe_duplica'))) {
             $righe = $ordine->getRighe();
             foreach ($righe as $riga) {
                 $new_riga = $riga->replicate();

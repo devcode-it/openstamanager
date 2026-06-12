@@ -63,9 +63,12 @@ if (!empty($impianti)) {
     }
 
     echo '
-                <br>
+        <tr>
+            <td class="border-bottom" colspan="3">
                 <p class="small-bold text-muted">'.tr('Impianti', [], ['upper' => true]).'</p>
-                <p><small>'.implode(', ', $list).'</small></p>';
+                <p><small>'.implode(', ', $list).'</small></p>
+            </td>
+        </tr>';
 }
 echo '
     </table>

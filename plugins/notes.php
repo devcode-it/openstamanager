@@ -58,7 +58,7 @@ if (!empty($notes) && !$notes->isEmpty()) {
 
         if (!empty($nota->notification_date)) {
             echo '
-                                <span class="badge badge-default tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
+                                <span class="badge badge-secondary tip" title="'.tr('Data di notifica').'" style="margin-right: 5px">
                                     <i class="fa fa-bell"></i> '.dateFormat($nota->notification_date).'
                                 </span>
 

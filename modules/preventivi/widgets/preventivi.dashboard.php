@@ -31,9 +31,13 @@ if (count($rs) > 0) {
     echo "
 <table class='table table-hover'>
     <tr>
-        <th width='70%'>Preventivo</th>
-        <th width='15%'>Data inizio</th>
-        <th width='15%'>Data conclusione</th>
+        <th width='35%'>Preventivo</th>
+        <th width='15%'>Cliente</th>
+        <th width='10%'>Agente</th>
+        <th width='10%'>Imponibile</th>
+        <th width='10%'>Totale documento</th>
+        <th width='10%'>Data inizio</th>
+        <th width='10%'>Data conclusione</th>
     </tr>";
 
     foreach ($rs as $preventivo) {
@@ -46,9 +50,19 @@ if (count($rs) > 0) {
             $attr = '';
         }
 
-        echo '<tr '.$attr.'><td><a href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$preventivo->id.'">'.$preventivo->nome."</a><br><small class='help-block'>".$preventivo->ragione_sociale.'</small></td>';
+        $agente = Modules\Anagrafiche\Anagrafica::find($preventivo->id_agente);
+        $imponibile = number_format($preventivo->totale_imponibile, 2, ',', '.');
+        $totale = number_format($preventivo->totale, 2, ',', '.');
+
+        echo '<tr '.$attr.'>';
+        echo '<td><a href="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$preventivo->id.'">'.$preventivo->nome.'</a></td>';
+        echo '<td>'.$preventivo->anagrafica->ragione_sociale.'</td>';
+        echo '<td>'.($agente ? $agente->ragione_sociale : '').'</td>';
+        echo '<td>'.$imponibile.'</td>';
+        echo '<td>'.$totale.'</td>';
         echo '<td '.$attr.'>'.$data_accettazione.'</td>';
-        echo '<td '.$attr.'>'.$data_conclusione.'</td></tr>';
+        echo '<td '.$attr.'>'.$data_conclusione.'</td>';
+        echo '</tr>';
     }
 
     echo '

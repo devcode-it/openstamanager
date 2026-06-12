@@ -31,10 +31,9 @@ if (!empty($rs)) {
     <tr>
         <th width="50">'.tr('Codice').'</th>
         <th width="150">'.tr('Cliente').'</th>
-        <th width="70"><small>'.tr('Data richiesta').'</small></th>
+        <th width="70">'.tr('Data richiesta').'</th>
         <th width="20%" class="text-center">'.tr('Tecnici assegnati').'</th>
         <th width="200">'.tr('Tipo intervento').'</th>
-        <th width="200">'.tr('Stato intervento').'</th>
         <th width="40"></th>
     </tr>';
 
@@ -74,7 +73,7 @@ if (!empty($rs)) {
             </tr>
             
             <tr style="display: none">
-                <td colspan="7">
+                <td colspan="6">
                     '.input([
             'type' => 'ckeditor',
             'name' => 'descrizione_'.$r->id,

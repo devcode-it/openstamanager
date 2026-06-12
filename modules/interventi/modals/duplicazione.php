@@ -56,7 +56,7 @@ echo '
 
     <div class="row">
         <div class="col-md-3">
-            {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'" ]}
+            {["type": "checkbox", "label": "'.tr('Duplica righe').'", "name": "copia_righe_duplica", "help": "'.tr('Selezione per riportare anche le righe nella nuova attività').'" ]}
         </div>
 
         <div class="col-md-3">

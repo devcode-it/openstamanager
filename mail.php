@@ -190,13 +190,21 @@ if (empty($template->categories) && empty($uploads)) {
 
 $uploads = array_unique($uploads);
 
+$company_uploads_query = 'SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.prepare(Module::where('name', 'Anagrafiche')->first()->id).' AND `id_record` = '.prepare(setting('Azienda predefinita'));
+
+$category_ids = $template->categories->pluck('id')->toArray();
+if (!empty($category_ids)) {
+    $company_uploads_query .= ' AND `id_category` IN ('.implode(',', $category_ids).')';
+} else {
+    $company_uploads_query .= ' AND 0=1';
+}
+
 // Allegati
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.Module::where('name', 'Anagrafiche')->first()->id.' AND `id_record` = '.setting('Azienda predefinita').'", "link": "allegato" ]}
-        </div>
-    </div>';
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION '.$company_uploads_query.'", "link": "allegato" ]}
+        </div>';
 
 echo '
     <div class="row">

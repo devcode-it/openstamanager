@@ -84,3 +84,24 @@ echo '
 		</div>
     </div>
 </form>';
+
+echo '
+<script>$(document).ready(init)</script>';
+
+echo '
+<script>
+$(document).ready(function () {
+    // Quando modifico inizio pausa, allineo anche la fine pausa
+    $("#pausa_inizio").on("dp.change", function (e) {
+        if($("#pausa_fine").data("DateTimePicker").date() < e.date){
+            $("#pausa_fine").data("DateTimePicker").date(e.date);
+        }
+    });
+
+    $("#pausa_fine").on("dp.change", function (e) {
+        if($("#pausa_inizio").data("DateTimePicker").date() > e.date){
+            $("#pausa_inizio").data("DateTimePicker").date(e.date);
+        }
+    });
+});
+</script>';

@@ -56,7 +56,7 @@ switch ($resource) {
                 $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
                 $where[] = '`co_preventivi`.`default_revision`=1';
 
-                $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile', 'is_concluso'];
+                $stati_consentiti = ['is_pianificabile', 'is_bloccato', 'is_fatturabile', 'is_concluso'];
                 $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                     ? $superselect['stato']
                     : 'is_pianificabile';

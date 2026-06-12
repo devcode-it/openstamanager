@@ -387,6 +387,185 @@ input[type=file] {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* Fix search results for light sidebar themes */
+.main-sidebar.bg-black-light .search-results-header h6,
+.main-sidebar.bg-green-light .search-results-header h6,
+.main-sidebar.bg-blue-light .search-results-header h6,
+.main-sidebar.bg-red-light .search-results-header h6,
+.main-sidebar.bg-yellow-light .search-results-header h6,
+.main-sidebar.bg-purple-light .search-results-header h6,
+.main-sidebar.bg-info-light .search-results-header h6 {
+    color: var(--text-dark) !important;
+}
+
+.main-sidebar.bg-black-light .search-results-header .search-term,
+.main-sidebar.bg-green-light .search-results-header .search-term,
+.main-sidebar.bg-blue-light .search-results-header .search-term,
+.main-sidebar.bg-red-light .search-results-header .search-term,
+.main-sidebar.bg-yellow-light .search-results-header .search-term,
+.main-sidebar.bg-purple-light .search-results-header .search-term,
+.main-sidebar.bg-info-light .search-results-header .search-term {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-dark);
+}
+
+.main-sidebar.bg-black-light .search-category h6,
+.main-sidebar.bg-green-light .search-category h6,
+.main-sidebar.bg-blue-light .search-category h6,
+.main-sidebar.bg-red-light .search-category h6,
+.main-sidebar.bg-yellow-light .search-category h6,
+.main-sidebar.bg-purple-light .search-category h6,
+.main-sidebar.bg-info-light .search-category h6 {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
+    color: var(--text-dark) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.main-sidebar.bg-black-light .search-category h6 i,
+.main-sidebar.bg-green-light .search-category h6 i,
+.main-sidebar.bg-blue-light .search-category h6 i,
+.main-sidebar.bg-red-light .search-category h6 i,
+.main-sidebar.bg-yellow-light .search-category h6 i,
+.main-sidebar.bg-purple-light .search-category h6 i,
+.main-sidebar.bg-info-light .search-category h6 i {
+    color: var(--text-medium);
+}
+
+.main-sidebar.bg-black-light .search-category h6 .badge,
+.main-sidebar.bg-green-light .search-category h6 .badge,
+.main-sidebar.bg-blue-light .search-category h6 .badge,
+.main-sidebar.bg-red-light .search-category h6 .badge,
+.main-sidebar.bg-yellow-light .search-category h6 .badge,
+.main-sidebar.bg-purple-light .search-category h6 .badge,
+.main-sidebar.bg-info-light .search-category h6 .badge {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-dark);
+}
+
+.main-sidebar.bg-black-light .search-result-item,
+.main-sidebar.bg-green-light .search-result-item,
+.main-sidebar.bg-blue-light .search-result-item,
+.main-sidebar.bg-red-light .search-result-item,
+.main-sidebar.bg-yellow-light .search-result-item,
+.main-sidebar.bg-purple-light .search-result-item,
+.main-sidebar.bg-info-light .search-result-item {
+    color: var(--text-dark) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.main-sidebar.bg-black-light .search-result-item:hover,
+.main-sidebar.bg-green-light .search-result-item:hover,
+.main-sidebar.bg-blue-light .search-result-item:hover,
+.main-sidebar.bg-red-light .search-result-item:hover,
+.main-sidebar.bg-yellow-light .search-result-item:hover,
+.main-sidebar.bg-purple-light .search-result-item:hover,
+.main-sidebar.bg-info-light .search-result-item:hover {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-left-color: rgba(0, 0, 0, 0.15);
+}
+
+.main-sidebar.bg-black-light .search-result-item .nav-icon,
+.main-sidebar.bg-green-light .search-result-item .nav-icon,
+.main-sidebar.bg-blue-light .search-result-item .nav-icon,
+.main-sidebar.bg-red-light .search-result-item .nav-icon,
+.main-sidebar.bg-yellow-light .search-result-item .nav-icon,
+.main-sidebar.bg-purple-light .search-result-item .nav-icon,
+.main-sidebar.bg-info-light .search-result-item .nav-icon {
+    color: var(--text-medium);
+}
+
+.main-sidebar.bg-black-light .search-result-text > div,
+.main-sidebar.bg-green-light .search-result-text > div,
+.main-sidebar.bg-blue-light .search-result-text > div,
+.main-sidebar.bg-red-light .search-result-text > div,
+.main-sidebar.bg-yellow-light .search-result-text > div,
+.main-sidebar.bg-purple-light .search-result-text > div,
+.main-sidebar.bg-info-light .search-result-text > div {
+    color: var(--text-dark);
+}
+
+.main-sidebar.bg-black-light .search-result-text small,
+.main-sidebar.bg-green-light .search-result-text small,
+.main-sidebar.bg-blue-light .search-result-text small,
+.main-sidebar.bg-red-light .search-result-text small,
+.main-sidebar.bg-yellow-light .search-result-text small,
+.main-sidebar.bg-purple-light .search-result-text small,
+.main-sidebar.bg-info-light .search-result-text small {
+    color: var(--text-muted);
+}
+
+.main-sidebar.bg-black-light #clear-search,
+.main-sidebar.bg-green-light #clear-search,
+.main-sidebar.bg-blue-light #clear-search,
+.main-sidebar.bg-red-light #clear-search,
+.main-sidebar.bg-yellow-light #clear-search,
+.main-sidebar.bg-purple-light #clear-search,
+.main-sidebar.bg-info-light #clear-search {
+    color: var(--text-medium);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.main-sidebar.bg-black-light #clear-search:hover,
+.main-sidebar.bg-green-light #clear-search:hover,
+.main-sidebar.bg-blue-light #clear-search:hover,
+.main-sidebar.bg-red-light #clear-search:hover,
+.main-sidebar.bg-yellow-light #clear-search:hover,
+.main-sidebar.bg-purple-light #clear-search:hover,
+.main-sidebar.bg-info-light #clear-search:hover {
+    color: #fff;
+    background: rgba(220, 53, 69, 0.9);
+}
+
+.main-sidebar.bg-black-light .search-no-results,
+.main-sidebar.bg-green-light .search-no-results,
+.main-sidebar.bg-blue-light .search-no-results,
+.main-sidebar.bg-red-light .search-no-results,
+.main-sidebar.bg-yellow-light .search-no-results,
+.main-sidebar.bg-purple-light .search-no-results,
+.main-sidebar.bg-info-light .search-no-results {
+    color: var(--text-muted);
+}
+
+.main-sidebar.bg-black-light .search-no-results i,
+.main-sidebar.bg-green-light .search-no-results i,
+.main-sidebar.bg-blue-light .search-no-results i,
+.main-sidebar.bg-red-light .search-no-results i,
+.main-sidebar.bg-yellow-light .search-no-results i,
+.main-sidebar.bg-purple-light .search-no-results i,
+.main-sidebar.bg-info-light .search-no-results i {
+    color: var(--text-medium);
+}
+
+.main-sidebar.bg-black-light .search-no-results p,
+.main-sidebar.bg-green-light .search-no-results p,
+.main-sidebar.bg-blue-light .search-no-results p,
+.main-sidebar.bg-red-light .search-no-results p,
+.main-sidebar.bg-yellow-light .search-no-results p,
+.main-sidebar.bg-purple-light .search-no-results p,
+.main-sidebar.bg-info-light .search-no-results p {
+    color: var(--text-muted);
+}
+
+.main-sidebar.bg-black-light .search-loading,
+.main-sidebar.bg-green-light .search-loading,
+.main-sidebar.bg-blue-light .search-loading,
+.main-sidebar.bg-red-light .search-loading,
+.main-sidebar.bg-yellow-light .search-loading,
+.main-sidebar.bg-purple-light .search-loading,
+.main-sidebar.bg-info-light .search-loading {
+    color: var(--text-dark);
+}
+
+.main-sidebar.bg-black-light .search-loading i,
+.main-sidebar.bg-green-light .search-loading i,
+.main-sidebar.bg-blue-light .search-loading i,
+.main-sidebar.bg-red-light .search-loading i,
+.main-sidebar.bg-yellow-light .search-loading i,
+.main-sidebar.bg-purple-light .search-loading i,
+.main-sidebar.bg-info-light .search-loading i {
+    color: var(--text-medium);
+}
+
 
 .autocomplete>div:hover:not(.group),
 .autocomplete>div.selected {

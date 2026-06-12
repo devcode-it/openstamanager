@@ -348,14 +348,14 @@ abstract class CSVImporter implements ImporterInterface
             // Scrivi l'intestazione con colonna errore
             $header = $this->getHeader();
             $header[] = 'Errore';
-            fputcsv($file, $header, ';');
+            fputcsv($file, $header, ';', escape: '\\');
         }
 
         // Scrivi le righe fallite con errore
         foreach ($this->failed_rows as $index => $row) {
             $error_message = $this->failed_errors[$index] ?? 'Errore sconosciuto';
             $row[] = $error_message;
-            fputcsv($file, $row, ';');
+            fputcsv($file, $row, ';', escape: '\\');
         }
 
         fclose($file);

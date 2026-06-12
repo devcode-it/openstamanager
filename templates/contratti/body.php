@@ -55,9 +55,6 @@ if ($destinazione) {
 // Diminuisco le righe disponibili per pagina
 $autofill->setRows($rows_per_page - $c, 0, $rows_first_page - $c);
 
-// Elenco impianti
-$impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.id_impianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($documento['id']).')');
-
 // Descrizione
 if (!empty($documento['descrizione'])) {
     echo '

@@ -37,7 +37,7 @@ FROM
     LEFT JOIN (SELECT `id_documento`, SUM(`subtotale` - `sconto`) AS `totale_imponibile`, SUM(`iva`) AS `iva` FROM `co_righe_documenti` GROUP BY `id_documento`) AS righe ON `co_documenti`.`id` = `righe`.`id_documento`
     LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
     LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
-	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`id_anagrafica` = `co_documenti`.`id_agente`
+	LEFT JOIN `an_anagrafiche` as agenti ON `agenti`.`id` = `co_documenti`.`id_agente`
     LEFT JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
 WHERE
     1=1 AND `provvigione` > 0

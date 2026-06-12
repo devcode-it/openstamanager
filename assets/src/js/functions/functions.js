@@ -74,11 +74,25 @@ function openModal(title, href) {
         const data = $(href).html();
 
         $(id).html(content.replace("|data|", data));
+        
+        // Sposta il footer se presente nel contenuto
+        const $footer = $(id).find('.modal-body .pull-footer');
+        if ($footer.length) {
+            $footer.removeClass('pull-footer').appendTo($(id).find('.modal-content'));
+        }
+        
         $(id).modal('show');
     } else {
         $.get(href, function (data, response) {
             if (response === 'success') {
                 $(id).html(content.replace("|data|", data));
+                
+                // Sposta il footer se presente nel contenuto
+                const $footer = $(id).find('.modal-body .pull-footer');
+                if ($footer.length) {
+                    $footer.removeClass('pull-footer').appendTo($(id).find('.modal-content'));
+                }
+                
                 $(id).modal('show');
             }
         });

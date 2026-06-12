@@ -134,22 +134,19 @@ $idx = 0;
 
 foreach ($emails as $email) {
     echo '
-            <div class="col-md-12">
-                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
-            </div>';
+        <div class="col-md-12">
+            {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
+        </div>';
 }
 
 if (empty($emails)) {
     echo '
-            <div class="col-md-12">
-                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
-            </div>';
+        <div class="col-md-12">
+            {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
+        </div>';
 }
 echo '
     </div>
-
-    <br>
-
     <div class="row">
         <div class="col-md-8">
             {[ "type": "text", "label": "'.tr('Oggetto').'", "name": "subject", "value": "'.$subject.'", "required": 1 ]}
@@ -204,7 +201,8 @@ echo '
 
         <div class="col-md-6">
             {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION '.$company_uploads_query.'", "link": "allegato" ]}
-        </div>';
+        </div>
+    </div>';
 
 echo '
     <div class="row">
@@ -219,17 +217,16 @@ echo input([
 ]);
 
 echo '
-            </div>
+        </div>
     </div>';
 
 echo '
-
     <!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
+    <div class="modal-footer">
+        <div class="col-md-12 text-right">
             <button type="button" class="btn btn-primary" onclick="inviaEmail()"><i class="fa fa-envelope"></i> '.tr('Invia').'</button>
-		</div>
-	</div>
+        </div>
+    </div>
 </form>';
 
 echo '

@@ -253,7 +253,7 @@ switch (post('op')) {
             if (post('firma_base64') != '') {
                 // Salvataggio firma
                 $data = explode(',', post('firma_base64'));
-                $img = getImageManager()->read(base64_decode($data[1]));
+                $img = getImageManager()->decodeBinary(base64_decode($data[1]));
                 $img->resize(680, 202, function ($constraint) {
                     $constraint->aspectRatio();
                 });
@@ -262,7 +262,7 @@ switch (post('op')) {
                     $img->brightness((float) setting('Luminosità firma Wacom'));
                     $img->contrast((float) setting('Contrasto firma Wacom'));
                 }
-                $encoded_image = $img->toJpeg();
+                $encoded_image = $img->encodeUsingMediaType('image/jpeg');
                 $file_content = $encoded_image->toString();
 
                 // Upload del file in zz_files

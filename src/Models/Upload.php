@@ -597,7 +597,7 @@ class Upload extends Model
             return;
         }
 
-        $img = getImageManager()->read($filepath);
+        $img = getImageManager()->decodePath($filepath);
 
         $img->scaleDown(600, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb600.'.$info['extension']));

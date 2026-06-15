@@ -150,7 +150,15 @@ switch ($resource) {
          * - id_record
          */
     case 'tipiintervento_abilitati':
-        $id_record = $options['id_record'] ?? get('id_record') ?? $superselect['id_record'];
+        // Try to get id_contratto from various sources
+        $id_contratto = null;
+        if (!empty($superselect['id_record'])) {
+            $id_contratto = $superselect['id_record'];
+        } elseif (!empty($superselect['tipiintervento']['id_record'])) {
+            $id_contratto = $superselect['tipiintervento']['id_record'];
+        } elseif (isset($id_record)) {
+            $id_contratto = $id_record;
+        }
 
         $query = 'SELECT
                     `in_tipi_intervento`.`id` AS id,
@@ -160,7 +168,7 @@ switch ($resource) {
                     INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
                     LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
-                    `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).'
+                    `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_contratto).'
                     AND `co_contratti_tipi_intervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipi_intervento_lang`.`title`';

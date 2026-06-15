@@ -387,4 +387,18 @@ class Interventi extends AppResource
             'key' => 'signature',
         ]);
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che questo tecnico sia assegnato all'intervento
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM in_interventi_tecnici 
+             WHERE idintervento = '.prepare($id).' AND idtecnico = '.prepare($user->id_anagrafica)
+        );
+        return $count['cnt'] > 0;
+    }
 }

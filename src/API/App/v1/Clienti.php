@@ -171,4 +171,20 @@ class Clienti extends AppResource
         $record->cellulare = $data['cellulare'];
         $record->email = $data['email'];
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che il tecnico abbia lavorato almeno su un intervento per questo cliente
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM in_interventi 
+             INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+             WHERE in_interventi.id_anagrafica = '.prepare($id).' 
+             AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica)
+        );
+        return $count['cnt'] > 0;
+    }
 }

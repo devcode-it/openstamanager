@@ -74,4 +74,24 @@ class Referenti extends AppResource implements RetrieveInterface
 
         return $record;
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che il referente appartenga a un cliente con cui il tecnico ha lavorato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM an_referenti
+             WHERE an_referenti.id = '.prepare($id).'
+             AND an_referenti.id_anagrafica IN (
+                 SELECT DISTINCT in_interventi.id_anagrafica
+                 FROM in_interventi
+                 INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+                 WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
+             )'
+        );
+        return $count['cnt'] > 0;
+    }
 }

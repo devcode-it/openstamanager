@@ -81,4 +81,21 @@ class Automezzi extends AppResource
 
         return $record;
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che l'automezzo sia collegato all'utente tramite zz_user_sedi
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM an_sedi
+             INNER JOIN zz_user_sedi ON zz_user_sedi.id_sede = an_sedi.id
+             WHERE an_sedi.id = '.prepare($id).'
+             AND an_sedi.is_automezzo = 1
+             AND zz_user_sedi.id_user = '.prepare($user->id)
+        );
+        return $count['cnt'] > 0;
+    }
 }

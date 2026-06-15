@@ -62,11 +62,16 @@ class ImpostazioneResource
 
     public static function fromModel(Setting $setting)
     {
+        $valore = $setting->valore;
+        if (preg_match('/password/i', $setting->getTranslation('title'))) {
+            $valore = '********';
+        }
+
         return new self(
             id: $setting->id,
             sezione: $setting->sezione,
             nome: $setting->nome,
-            valore: $setting->valore,
+            valore: $valore,
             tipo: $setting->tipo,
             editable: $setting->editable,
             created_at: $setting->created_at,

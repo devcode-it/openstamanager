@@ -24,7 +24,8 @@ use Modules\Interventi\Intervento;
 
 $id_records = explode(';', get('id_records'));
 $id_print = setting('Stampa per anteprima e firma');
-$template = PrintTemplate::find($id_print)->getTranslation('title');
+$print_template = PrintTemplate::find($id_print);
+$template = !empty($print_template) ? $print_template->name : null;
 
 $interventi_completati = [];
 $interventi_firmati = [];
@@ -73,7 +74,7 @@ if ($interventi_da_firmare) {
         ])).'
                             </td>
                             <td class="text-center">
-                                '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
+                                '.($template ? Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print') : '').'
                             </td>
                         <tr>';
     }
@@ -115,7 +116,7 @@ if ($interventi_firmati) {
         ])).'
                             </td>
                             <td class="text-center">
-                                '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
+                                '.($template ? Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print') : '').'
                             </td>
                         <tr>';
     }
@@ -157,7 +158,7 @@ if ($interventi_completati) {
         ])).'
                             </td>
                             <td class="text-center">
-                                '.Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print').'
+                                '.($template ? Prints::getLink($template, $id, 'btn btn-xs btn-primary', '', 'fa fa-print') : '').'
                             </td>
                         <tr>';
     }

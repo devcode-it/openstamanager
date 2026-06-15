@@ -21,6 +21,7 @@
 include_once __DIR__.'/../../core.php';
 
 use Models\Module;
+use Models\PrintTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo as ArticoloOriginale;
 use Modules\Articoli\Barcode;
@@ -689,7 +690,8 @@ switch (filter('op')) {
         $_SESSION['superselect']['barcode_ddt_righe'] = $articoli_barcode;
 
         // Restituisce l'URL per la stampa
-        $id_print = Prints::getPrints()['Barcode'];
+        $print = PrintTemplate::where('name', 'Barcode')->first();
+        $id_print = $print ? $print->id : Prints::getPrints()['Barcode bulk'];
         $url = base_path_osm().'/pdfgen.php?id_print='.$id_print.'&id_record='.ArticoloOriginale::where('codice', '!=', '')->first()->id.'&from_ddt=1';
 
         echo $url;

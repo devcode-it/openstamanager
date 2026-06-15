@@ -25,7 +25,7 @@ switch ($resource) {
         $query = 'SELECT `co_tipi_documento`.`id`, `co_tipi_documento_lang`.`title` AS descrizione FROM `co_tipi_documento` |where| ORDER BY `title` ASC';
 
         $where[] = '`co_tipi_documento`.`enabled` = 1';
-        $where[] = '`dir`='.$superselect['dir'];
+        $where[] = '`dir`='.prepare($superselect['dir']);
 
         foreach ($elements as $element) {
             $filter[] = '`id`='.prepare($element);

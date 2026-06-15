@@ -182,11 +182,18 @@ foreach ($righe as $riga) {
 
         if ($options['pricing']) {
             // Prezzo unitario
+            $prezzo_unitario_visualizzato = $prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario;
+            if ($riga->sconto_unitario < 0) {
+                $prezzo_unitario_visualizzato = $riga->prezzo_unitario - $riga->sconto_unitario;
+                if ($prezzi_ivati) {
+                    $prezzo_unitario_visualizzato = $riga->prezzo_unitario_ivato - ($riga->sconto_unitario * (1 + $riga->aliquota->percentuale / 100));
+                }
+            }
             echo '
             <td class="text-right" nowrap="nowrap">
-				'.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
+				'.moneyFormat($prezzo_unitario_visualizzato, $d_importi);
 
-            if ($riga->sconto != 0) {
+            if ($riga->sconto > 0) {
                 $text = discountInfo($riga, true);
 
                 $text = '<br><small class="text-muted">'.$text.'</small>';

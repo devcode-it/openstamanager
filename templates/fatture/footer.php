@@ -30,7 +30,7 @@ $totale_scontato = round($totale_scontato, $d_totali);
 
 $sconto = 0;
 foreach ($righe as $riga) {
-    $sconto += floatval($riga->sconto);
+    $sconto += floatval($riga->sconto > 0 ? $riga->sconto : 0);
 }
 
 $rivalsa = 0;
@@ -48,7 +48,7 @@ foreach ($v_iva as $key => $v) {
 $totale_iva = round($totale_iva, $d_totali);
 $totale = round($totale_iva + $totale_imponibile, $d_totali);
 
-$show_sconto = $sconto != 0;
+$show_sconto = $sconto > 0;
 
 $volume = $documento->volume ?: $documento->volume_calcolato;
 $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
@@ -78,7 +78,7 @@ $etichette = [
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan='5' class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -229,11 +229,11 @@ if ($has_ritenuta || $show_sconto || $has_rivalsa) {
 if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
-            ".tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true])."
+            ".tr('Sconto', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr($sconto > 0 ? 'Totale scontato' : 'Totale maggiorato', [], ['upper' => true]).'
+            ".tr('Totale scontato', [], ['upper' => true]).'
         </th>';
 }
 if ($has_rivalsa) {
@@ -314,13 +314,8 @@ if ($has_rivalsa) {
     </td>';
 }
 
-$first_colspan = 3;
-$second_colspan = 2;
-
-if (empty($sconto) || $has_sconto_finale) {
-    --$first_colspan;
-    --$second_colspan;
-}
+$first_colspan = $show_sconto ? 4 : 3;
+$second_colspan = 1;
 
 echo '
 <tr>
@@ -356,13 +351,8 @@ echo '
 if ($has_ritenuta) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE id_documento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
-    $first_colspan = 3;
-    $second_colspan = 2;
-
-    if (empty($sconto)) {
-        --$first_colspan;
-        --$second_colspan;
-    }
+    $first_colspan = $show_sconto ? 4 : 2;
+    $second_colspan = $show_sconto ? 1 : 3;
 
     $contributi = tr('_DESCRIZIONE_: _PRC_%', [
         '_DESCRIZIONE_' => $documento->ritenutaContributi->descrizione,
@@ -436,8 +426,8 @@ if ($has_ritenuta) {
  * Totale IVA | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA)
  */
 if ($has_split_payment) {
-    $first_colspan = 2;
-    $second_colspan = 1;
+    $first_colspan = $show_sconto ? 4 : 2;
+    $second_colspan = $show_sconto ? 1 : 3;
 
     echo '
     <tr>
@@ -468,8 +458,8 @@ if ($has_split_payment) {
  * Sconto in | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
  */
 if ($has_sconto_finale) {
-    $first_colspan = 2;
-    $second_colspan = 1;
+    $first_colspan = $show_sconto ? 4 : 2;
+    $second_colspan = $show_sconto ? 1 : 3;
 
     echo '
     <tr>
@@ -489,7 +479,7 @@ if ($has_sconto_finale) {
 
     $totale = $totale - $sconto_finale;
     echo '
-	 <tr>
+ 	 <tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>

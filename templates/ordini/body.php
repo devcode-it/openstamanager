@@ -249,9 +249,20 @@ foreach ($righe as $riga) {
 
         if ($options['pricing']) {
             // Prezzo unitario
+            $prezzo_unitario_visualizzato = $prezzo_unitario ?: ($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario);
+            if ($riga->sconto_unitario < 0) {
+                $base_prezzo = $prezzo_unitario ?: ($riga->prezzo_unitario);
+                $prezzo_unitario_visualizzato = $base_prezzo - $riga->sconto_unitario;
+                if ($prezzi_ivati) {
+                    $prezzo_unitario_visualizzato = ($prezzo_unitario ?: $riga->prezzo_unitario_ivato) - ($riga->sconto_unitario * (1 + $riga->aliquota->percentuale / 100));
+                }
+                if ($riga->isArticolo() && $documento->direzione == 'uscita' && !empty($riga->articolo->um_secondaria)) {
+                    $prezzo_unitario_visualizzato = $prezzo_unitario_visualizzato / $riga->articolo->fattore_um_secondaria;
+                }
+            }
             echo '
             <td class="text-right">
-                '.moneyFormat($prezzo_unitario ?: ($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario), $d_importi);
+                '.moneyFormat($prezzo_unitario_visualizzato, $d_importi);
 
             if ($riga->sconto > 0) {
                 $text = discountInfo($riga, false);
@@ -313,6 +324,7 @@ $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto != 0;
+$show_maggiorazione = $sconto > 0;
 
 $colspan = 5;
 $documento->direzione == 'uscita' ? $colspan += 2 : $colspan;
@@ -328,16 +340,16 @@ if ($options['pricing']) {
         </td>
 
         <th colspan="2" class="text-right">
-            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
 
-    // Eventuale sconto incondizionato
-    if ($show_sconto) {
+    // Eventuale sconto incondizionato (solo sconto, non maggiorazione)
+    if ($show_sconto && $show_maggiorazione) {
         echo '
     <tr>
         <td colspan="'.$colspan.'" class="text-right text-muted">
-            <b>'.tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true]).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="2" class="text-right">

@@ -219,4 +219,25 @@ class Checklists extends AppResource
     {
         return new Interventi();
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che il checklist appartenga a un intervento a cui il tecnico è assegnato
+        // e che sia assegnato al tecnico o non abbia assegnazione specifica
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM zz_checks
+             INNER JOIN in_interventi ON zz_checks.id_record = in_interventi.id
+             INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+             LEFT JOIN zz_check_user ON zz_checks.id = zz_check_user.id_check
+             WHERE zz_checks.id = '.prepare($id).'
+             AND zz_checks.id_module = (SELECT id FROM zz_modules WHERE name = "Interventi")
+             AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
+             AND (zz_check_user.id_utente = '.prepare($user->id).' OR zz_check_user.id_utente IS NULL)'
+        );
+        return $count['cnt'] > 0;
+    }
 }

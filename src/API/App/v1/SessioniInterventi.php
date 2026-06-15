@@ -210,4 +210,17 @@ class SessioniInterventi extends AppResource
             return $isoDateTime;
         }
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che questa sessione appartenga al tecnico
+        $sessione = database()->fetchOne(
+            'SELECT id_tecnico FROM in_interventi_tecnici WHERE id = '.prepare($id)
+        );
+        return !empty($sessione) && $sessione['id_tecnico'] == $user->id_anagrafica;
+    }
 }

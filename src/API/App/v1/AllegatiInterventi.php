@@ -131,4 +131,22 @@ class AllegatiInterventi extends AppResource
     {
         return new Interventi();
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che l'allegato appartenga a un intervento a cui il tecnico è assegnato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM zz_files
+             INNER JOIN in_interventi ON zz_files.id_record = in_interventi.id
+             INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+             WHERE zz_files.id = '.prepare($id).'
+             AND zz_files.id_module = (SELECT id FROM zz_modules WHERE name = "Interventi")
+             AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica)
+        );
+        return $count['cnt'] > 0;
+    }
 }

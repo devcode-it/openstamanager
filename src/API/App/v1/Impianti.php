@@ -116,4 +116,35 @@ class Impianti extends AppResource
     {
         return new Interventi();
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica se il limite impianti è attivo
+        $limite_impianti = setting('Limita la visualizzazione degli impianti a quelli gestiti dal tecnico');
+
+        if ($limite_impianti == 1) {
+            // L'impianto deve essere assegnato al tecnico
+            $impianto = database()->fetchOne(
+                'SELECT id_tecnico FROM my_impianti WHERE id = '.prepare($id)
+            );
+            return !empty($impianto) && $impianto['id_tecnico'] == $user->id_anagrafica;
+        }
+
+        // Altrimenti, verifica che l'impianto appartenga a un cliente con cui il tecnico ha lavorato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM my_impianti
+             WHERE my_impianti.id = '.prepare($id).'
+             AND my_impianti.id_anagrafica IN (
+                 SELECT DISTINCT in_interventi.id_anagrafica
+                 FROM in_interventi
+                 INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+                 WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
+             )'
+        );
+        return $count['cnt'] > 0;
+    }
 }

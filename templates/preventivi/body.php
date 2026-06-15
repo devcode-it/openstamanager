@@ -192,13 +192,20 @@ foreach ($righe as $key => $riga) {
 
             if ($options['pricing']) {
                 // Prezzo unitario
+                $prezzo_unitario_visualizzato = $prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario;
+                if ($riga->sconto_unitario < 0) {
+                    $prezzo_unitario_visualizzato = $riga->prezzo_unitario - $riga->sconto_unitario;
+                    if ($prezzi_ivati) {
+                        $prezzo_unitario_visualizzato = $riga->prezzo_unitario_ivato - ($riga->sconto_unitario * (1 + $riga->aliquota->percentuale / 100));
+                    }
+                }
                 echo '
                 <td class="text-right" style="vertical-align: middle">
-                    '.moneyFormat($prezzi_ivati ? $riga->prezzo_unitario_ivato : $riga->prezzo_unitario, $d_importi);
+                    '.moneyFormat($prezzo_unitario_visualizzato, $d_importi);
 
                 // Gestione ottimizzata degli sconti
                 if ($riga->sconto != 0) {
-                    $text = discountInfo($riga, true);
+                    $text = discountInfo($riga, false);
 
                     echo '
                     <br><small class="text-muted">'.$text.'</small>';
@@ -298,6 +305,7 @@ $sconto_finale = $documento->getScontoFinale();
 $netto_a_pagare = $documento->netto;
 
 $show_sconto = $sconto != 0;
+$show_maggiorazione = $sconto > 0;
 
 // TOTALE COSTI FINALI
 if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-only-total']) {
@@ -309,16 +317,16 @@ if (($options['pricing'] && !isset($options['hide-total'])) || $options['show-on
         </td>
 
         <th colspan="1" class="text-right">
-            <b>'.moneyFormat($show_sconto ? $imponibile : $totale_imponibile, $d_totali).'</b>
+            <b>'.moneyFormat($totale_imponibile, $d_totali).'</b>
         </th>
     </tr>';
 
-    // Eventuale sconto incondizionato
-    if ($show_sconto) {
+    // Eventuale sconto incondizionato (solo sconto, non maggiorazione)
+    if ($show_sconto && $show_maggiorazione) {
         echo '
     <tr>
         <td colspan="'.($options['show-only-total'] ? (($has_image) ? 3 : 2) : (($has_image) ? 6 : 5)).'" class="text-right text-muted">
-            <b>'.tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true]).':</b>
+            <b>'.tr('Sconto', [], ['upper' => true]).':</b>
         </td>
 
         <th colspan="1" class="text-right">

@@ -373,9 +373,9 @@ class Interventi extends AppResource
     protected function salvaFirma($firma_base64, $id_intervento)
     {
         $data = explode(',', (string) $firma_base64);
-        $img = getImageManager()->read(base64_decode($data[1]));
+        $img = getImageManager()->decodeBinary(base64_decode($data[1]));
         $img->scaleDown(680, 202);
-        $encoded_image = $img->toJpeg();
+        $encoded_image = $img->encodeUsingMediaType('image/jpeg');
         $file_content = $encoded_image->toString();
 
         // Upload del file in zz_files

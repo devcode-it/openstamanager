@@ -182,7 +182,8 @@ class AJAX
                 $result['category'] = tr('Note interne');
 
                 $text = strip_tags($note['content']);
-                $highlighted = str_replace($term, "<span class='highlight'>".$term.'</span>', $text);
+                $safe_term = htmlspecialchars($term, ENT_QUOTES, 'UTF-8');
+                $highlighted = str_replace($term, "<span class='highlight'>".$safe_term.'</span>', $text);
                 $result['labels'] = [tr('Nota').': '.$highlighted.'<br/>'];
 
                 $results[] = $result;

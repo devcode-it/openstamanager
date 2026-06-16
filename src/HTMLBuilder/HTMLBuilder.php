@@ -288,7 +288,7 @@ class HTMLBuilder
     {
         $result = null;
 
-        $class = self::$managers['list'][$input];
+        $class = self::$managers['list'][$input ?? ''];
         if (!empty($class)) {
             if (empty(self::$managers['instances'][$class])) {
                 self::$managers['instances'][$class] = new $class();

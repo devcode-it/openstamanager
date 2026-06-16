@@ -425,6 +425,13 @@ class Prints
             // Operazioni di sostituzione
             include base_dir().'/templates/replace.php';
 
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
+
             $mode = !empty($directory) ? 'F' : 'I';
             $mode = !empty($return_string) ? 'S' : $mode;
 
@@ -642,6 +649,23 @@ class Prints
             // Operazioni di sostituzione
             include base_dir().'/templates/replace.php';
 
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $head = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $head
+            );
+            $foot = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $foot
+            );
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
+
             // Impostazione di header e footer
             $mpdf->SetHTMLHeader($head);
             $mpdf->SetHTMLFooter($foot);
@@ -725,6 +749,13 @@ class Prints
 
             // Impostazione del titolo del PDF
             $mpdf->SetTitle($title);
+
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
 
             // Aggiunta dei contenuti
             $mpdf->WriteHTML($report);

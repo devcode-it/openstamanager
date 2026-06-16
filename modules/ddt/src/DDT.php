@@ -453,9 +453,21 @@ class DDT extends Document
      */
     protected function getQtaFatturata()
     {
-        return database()->table('co_righe_documenti')
+        $qta_id_ddt = database()->table('co_righe_documenti')
             ->selectRaw('SUM(qta) as qta_fatturata')
             ->where('id_ddt', $this->id)
+            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->value('qta_fatturata') ?? 0;
+
+        if ($qta_id_ddt > 0) {
+            return $qta_id_ddt;
+        }
+
+        // Cerca anche tramite original_document_id e original_document_type
+        return database()->table('co_righe_documenti')
+            ->selectRaw('SUM(qta) as qta_fatturata')
+            ->where('original_document_id', $this->id)
+            ->where('original_document_type', 'Modules\\DDT\\DDT')
             ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
             ->value('qta_fatturata') ?? 0;
     }
@@ -467,8 +479,18 @@ class DDT extends Document
      */
     protected function hasFattureCollegate()
     {
-        return database()->table('co_righe_documenti')
+        $has_id_ddt = database()->table('co_righe_documenti')
             ->where('id_ddt', $this->id)
+            ->exists();
+
+        if ($has_id_ddt) {
+            return true;
+        }
+
+        // Cerca anche tramite original_document_id e original_document_type
+        return database()->table('co_righe_documenti')
+            ->where('original_document_id', $this->id)
+            ->where('original_document_type', 'Modules\\DDT\\DDT')
             ->exists();
     }
 }

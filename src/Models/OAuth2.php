@@ -106,7 +106,7 @@ class OAuth2 extends Model
 
             // Redirect the user to the authorization URL.
             return ['authorization_url' => $authorization_url];
-        } elseif (!empty($this->state) && $this->state !== $state) {
+        } elseif (empty($this->state) || $this->state !== $state) {
             $this->state = null;
             $this->save();
 

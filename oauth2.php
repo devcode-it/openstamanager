@@ -20,13 +20,18 @@
 
 use Models\OAuth2;
 
-$skip_permissions = true;
 include_once __DIR__.'/core.php';
 session_write_close();
 
 // Authorization information
 $state = filter('state');
 $code = filter('code');
+
+// Only skip permissions when processing an OAuth callback (state present)
+if (!empty($state)) {
+    // OAuth callback from provider — no session available
+    Permissions::skip();
+}
 
 // Account individuato via state
 if (!empty($state)) {

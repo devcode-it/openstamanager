@@ -216,7 +216,7 @@ if (empty($id_record)) {
             echo '
                         <tr>
                             <td>'.($key + 1).'</td>
-                            <td>'.$row[$column].'</td>
+                            <td>'.htmlspecialchars((string) $row[$column], ENT_QUOTES, 'UTF-8').'</td>
                         </tr>';
         }
 

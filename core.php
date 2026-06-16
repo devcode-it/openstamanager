@@ -278,6 +278,28 @@ if (!API\Response::isAPIRequest()) {
         }
 
         Permissions::check();
+
+        // Controllo record-level per accesso tramite token
+        if (Permissions::isTokenAccess() && !empty($id_record)) {
+            if (!Permissions::checkTokenRecordAccess($id_record)) {
+                $token_info = $_SESSION['token_access'];
+                if (!empty($token_info['id_record_target'])) {
+                    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$token_info['id_record_target']);
+                    exit;
+                }
+                exit(tr('Accesso negato'));
+            }
+        }
+
+        // Per controller.php, gli utenti con token scoped a un record specifico
+        // devono essere reindirizzati all'editor con il record autorizzato
+        if (Permissions::isTokenAccess() && !empty($id_module) && empty($id_record)) {
+            $token_info = $_SESSION['token_access'];
+            if (!empty($token_info['id_record_target'])) {
+                redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$token_info['id_record_target']);
+                exit;
+            }
+        }
     }
 
     // Retrocompatibilità

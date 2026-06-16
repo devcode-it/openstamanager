@@ -458,6 +458,10 @@ function initDynamicSelectInput(input) {
     // Rimozione per select singoli
     else {
         $input.on('select2:selecting', function (e) {
+            let name = $input.attr('name');
+            if (name && name.startsWith('selezione_riferimento')) {
+                return;
+            }
             let data = $input.selectData();
             if (data) {
                 let option = $input.find('option[value="' + data.id + '"]');

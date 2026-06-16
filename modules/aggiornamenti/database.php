@@ -242,12 +242,38 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                 } else {
                     // Verifica se l'unica differenza è il tipo normalizzato (es. tinyint(4) vs tinyint)
                     $diff_keys = array_keys($diff);
+                    
+                    // Calcola i tipi normalizzati
                     $normalized_current_type = normalizeFieldType($diff['current']['type'] ?? null);
                     $normalized_expected_type = normalizeFieldType($diff['expected']['type'] ?? null);
-
-                    // Se l'unica differenza è il tipo e i tipi normalizzati sono uguali, salta questo campo
-                    if (count($diff_keys) == 1 && $diff_keys[0] == 'type' && $normalized_current_type === $normalized_expected_type) {
-                        continue;
+                    
+                    // Se l'unica differenza è il tipo (ignorando la normalizzazione) e i tipi normalizzati sono uguali, salta questo campo
+                    $only_type_diff = true;
+                    foreach ($diff_keys as $key) {
+                        if (!in_array($key, ['current', 'expected'])) {
+                            $only_type_diff = false;
+                            break;
+                        }
+                    }
+                    
+                    if ($only_type_diff && isset($diff['current']) && isset($diff['expected']) && is_array($diff['current']) && is_array($diff['expected'])) {
+                        $only_type_diff = true;
+                        $current_keys = array_keys($diff['current']);
+                        $expected_keys = array_keys($diff['expected']);
+                        
+                        foreach ($current_keys as $key) {
+                            if ($key != 'type' && isset($diff['expected'][$key]) && $diff['current'][$key] == $diff['expected'][$key]) {
+                                continue;
+                            }
+                            if ($key != 'type') {
+                                $only_type_diff = false;
+                                break;
+                            }
+                        }
+                        
+                        if ($only_type_diff && $normalized_current_type === $normalized_expected_type) {
+                            continue;
+                        }
                     }
 
                     $grouped[$table]['campi_modificati'][$name] = $diff;
@@ -604,17 +630,6 @@ function renderUnifiedTable($errors, $table, $data, &$query_conflitti)
 $grouped_errors = groupErrorsByTable($results, $results_added, $premium_fields, $premium_foreign_keys, $data);
 
 if (!empty($grouped_errors)) {
-    echo '
-<div>
-    <div class="alert alert-warning">
-        <i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_ e la versione _MYSQL_VERSION_ di _DBMS_TYPE_ rilevata a sistema', [
-        '_FILE_' => '<b>'.$file_to_check_database.'</b>',
-        '_MYSQL_VERSION_' => '<b>'.$database->getMySQLVersion().'</b>',
-        '_DBMS_TYPE_' => '<b>'.$database->getType().'</b>',
-    ]).'.
-    </div>
-</div>';
-
     // Prepara un array per tracciare quali tabelle hanno già una card
     $tables_with_card = [];
 

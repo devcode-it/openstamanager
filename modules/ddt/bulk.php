@@ -92,7 +92,7 @@ switch (post('op')) {
                                 ->where('id_sede_destinazione', $id_sede)
                                 ->first();
                         } else {
-                            $fattura = Fattura::where('v', $id_anagrafica)
+                            $fattura = Fattura::where('id_anagrafica', $id_anagrafica)
                                 ->where('id_stato', $stato_documenti_accodabili->id)
                                 ->where('id_tipo_documento', $tipo_documento->id)
                                 ->first();

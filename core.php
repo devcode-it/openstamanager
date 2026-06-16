@@ -65,7 +65,7 @@ if (!headers_sent()) {
     ini_set('session.use_trans_sid', '0');
     ini_set('session.use_only_cookies', '1');
 
-    session_set_cookie_params(0, base_path_osm(), null, isHTTPS(true));
+    session_set_cookie_params(0, base_path_osm(), null, isHTTPS(true), true);
     session_start();
 }
 
@@ -242,8 +242,11 @@ if (!API\Response::isAPIRequest()) {
         // Periodo di visualizzazione dei record
         // Personalizzato
         if (!empty($_GET['period_start'])) {
-            $_SESSION['period_start'] = $_GET['period_start'];
-            $_SESSION['period_end'] = $_GET['period_end'];
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_start'])
+                && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_end'])) {
+                $_SESSION['period_start'] = $_GET['period_start'];
+                $_SESSION['period_end'] = $_GET['period_end'];
+            }
         }
         // Dal 01-01-yyy al 31-12-yyyy
         elseif (!isset($_SESSION['period_start'])) {

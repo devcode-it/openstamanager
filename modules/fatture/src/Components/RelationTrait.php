@@ -218,6 +218,12 @@ trait RelationTrait
         // Chiama il metodo parent per mantenere la compatibilità
         parent::customAfterDataCopiaIn($original);
 
+        // Imposta id_ddt se l'originale proviene da un DDT
+        if (str_contains((string) $original::class, 'Modules\\DDT\\Components\\')) {
+            $ddt = $original->getDocument();
+            $this->id_ddt = $ddt->id;
+        }
+
         // Verifica se l'impostazione "Descrizione aggiuntiva personalizzata in fatturazione" è configurata
         $descrizione_aggiuntiva = setting('Descrizione aggiuntiva personalizzata in fatturazione');
 

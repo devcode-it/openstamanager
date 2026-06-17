@@ -28,6 +28,21 @@ if (empty($file)) {
     return;
 }
 
+// Authorization check: verify user has read access to the file's parent module
+$id_module = $file->id_module;
+if (!empty($file->id_plugin)) {
+    $plugin = Models\Plugin::find($file->id_plugin);
+    $id_module = $plugin ? $plugin->id_module_to : null;
+}
+
+if (!empty($id_module)) {
+    $permission = Modules::getPermission($id_module);
+    if (!in_array($permission, ['r', 'rw'])) {
+        http_response_code(403);
+        exit(tr('Accesso negato'));
+    }
+}
+
 $file_content = $file->get_contents();
 
 // Force download of the file

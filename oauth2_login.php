@@ -31,7 +31,19 @@ $code = get('code');
 if (!empty($state)) {
     $account = OAuth2::find($_SESSION['oauth2_id']);
 } else {
+    // Require authentication for initiating OAuth2 reconfiguration
+    if (!AuthOSM::check()) {
+        echo tr('Autenticazione richiesta');
+        return;
+    }
+
     $account = OAuth2::find(get('id'));
+
+    // Verify the account exists before modifying
+    if (empty($account)) {
+        echo tr('Errore durante il completamento della configurazione: account non trovato');
+        return;
+    }
 
     // Impostazione access token a null per reimpostare la configurazione
     $account->access_token = null;

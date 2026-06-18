@@ -75,7 +75,7 @@
         "symfony/finder": "^7.0",
         "symfony/framework-bundle": "^7.0",
         "symfony/polyfill-ctype": "^1.8",
-        "symfony/translation": "^7.0",
+        "symfony/translation": "^8.0",
         "symfony/var-dumper": "^7.0",
         "thenetworg/oauth2-azure": "^2.0",
         "voku/stringy": "^6.0.0",

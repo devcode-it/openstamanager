@@ -752,8 +752,7 @@ $dataset = '';
 foreach ($tipi as $tipo) {
     $interventi = $dbo->table('in_interventi')
         ->join('in_interventi_tecnici', 'in_interventi.id', '=', 'in_interventi_tecnici.id_intervento')
-        ->where('in_interventi.id_tipo_intervento', $tipo->id_tipo_intervento)
-        ->whereBetween('in_interventi.data_richiesta', [$start, $end])
+        ->where('in_interventi_tecnici.id_tipo_intervento', $tipo->id_tipo_intervento)
         ->whereBetween('in_interventi_tecnici.orario_fine', [$start, $end])
         ->select($dbo->raw('ROUND(SUM(in_interventi_tecnici.ore), 2) AS result, YEAR(in_interventi_tecnici.orario_fine) AS year, MONTH(in_interventi_tecnici.orario_fine) AS month'))
         ->groupBy($dbo->raw('YEAR(in_interventi_tecnici.orario_fine)'), $dbo->raw('MONTH(in_interventi_tecnici.orario_fine)'))

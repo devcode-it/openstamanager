@@ -159,8 +159,7 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
 if (count($sessioni) > 0) {
     echo '
 <tr>
-    <th></th>
-    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.tr('Sessioni').'</small></th>
+    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 4 : 3).'"><small>'.tr('Sessioni').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Data').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Inizio').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Fine').'</small></th>
@@ -169,8 +168,7 @@ if (count($sessioni) > 0) {
     foreach ($sessioni as $sessione) {
         echo '
 <tr>
-    <td></td>
-    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$sessione->anagrafica->ragione_sociale.' ('.$sessione->tipo->getTranslation('title').')</small></td>
+    <td colspan="'.(get('id_print') != 24 ? 4 : 3).'"><small>'.$sessione->anagrafica->ragione_sociale.' ('.$sessione->tipo->getTranslation('title').')</small></td>
     <td class="text-center"><small>'.dateFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_inizio).'</small></td>
     <td class="text-center"><small>'.timeFormat($sessione->orario_fine).'</small></td>
@@ -183,8 +181,7 @@ $righe = $intervento->getRighe();
 if (!$righe->isEmpty()) {
     echo '
 <tr>
-    <td></td>
-    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
+    <th style="background-color: #eee" colspan="'.(get('id_print') != 24 ? 4 : 3).'"><small>'.tr('Materiale utilizzato e spese aggiuntive').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.tr('Qta').'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.($tipo == 'interno' ? tr('Costo unitario') : tr('Prezzo unitario')).'</small></th>
     <th class="text-center" style="background-color: #eee"><small>'.($tipo == 'interno' ? tr('Costo netto') : tr('Imponibile')).'</small></th>
@@ -196,18 +193,29 @@ if (!$righe->isEmpty()) {
 
         echo '
 <tr>
-    <td></td>
-    <td colspan="'.(get('id_print') != 24 ? 3 : 2).'"><small>'.$riga->descrizione.'</small></td>
+    <td colspan="'.(get('id_print') != 24 ? 4 : 3).'"><small>'.$riga->descrizione.'</small></td>
     <td class="text-center"><small>'.$riga->qta.' '.$riga->um.'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($prezzo, $d_importi) : '-').'</small></td>
     <td class="text-center"><small>'.($pricing ? moneyFormat($totale, $d_importi) : '-').'</small></td>
 </tr>';
     }
+}
 
-    // Riga di riepilogo con i valori dell'intervento
-    echo '
+// Header spostato qui dal top.php
+echo '
 <tr>
-    <td colspan="2" class="text-muted" style="border-top: 1px solid #ddd;">'.tr('Totale intervento', [], ['upper' => true]).':</td>
+    <th colspan="2"></th>
+    <th class="text-center text-muted" style="width:8%"><small>'.tr('KM', [], ['upper' => true]).'</small></th>
+    <th class="text-center text-muted" style="width:8%"><small>'.tr('Ore', [], ['upper' => true]).'</small></th>
+    <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</small></th>
+    <th class="text-center text-muted" style="width:15%"><small>'.tr('Sconto', [], ['upper' => true]).'</small></th>
+    <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
+</tr>';
+
+// Riga di riepilogo con i valori dell'intervento
+echo '
+<tr>
+    <td colspan="2" class="text-right text-muted" style="border-top: 1px solid #ddd;"><b>'.tr('Totale intervento', [], ['upper' => true]).':</b></td>
     <td class="text-center" style="border-top: 1px solid #ddd;">'.($pricing ? $km : '-').'</td>
     <td class="text-center" style="border-top: 1px solid #ddd;">'.($pricing ? $ore : '-').'</td>
     <td class="text-center" style="border-top: 1px solid #ddd;">'.($pricing ? moneyFormat($imponibile, $d_importi) : '-').'</td>
@@ -215,9 +223,8 @@ if (!$righe->isEmpty()) {
     <td class="text-center" style="border-top: 1px solid #ddd;"><b>'.($pricing ? moneyFormat($totale_imponibile, $d_importi) : '-').'</b></td>
 </tr>';
 
-    // Linea di separazione più distinta tra interventi
-    echo '
+// Linea di separazione più distinta tra interventi
+echo '
 <tr>
     <td colspan="7" style="border-bottom: 1px solid #000; padding: 10px 0;"></td>
 </tr>';
-}

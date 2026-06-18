@@ -18,6 +18,7 @@
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { execFileSync } from 'child_process';
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -664,7 +665,9 @@ export function release(done) {
 
                     // Generazione del dump del database (esclusi zz_users)
                     // Lettura delle credenziali dal config.inc.php
-                    const dbConfigJson = shell.exec(`php -r 'include "${__dirname}/config.inc.php"; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);'`, { silent: true }).stdout.trim();
+                    const phpConfigPath = `${__dirname}/config.inc.php`;
+                    const phpReadConfigCode = 'include $argv[1]; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);';
+                    const dbConfigJson = execFileSync('php', ['-r', phpReadConfigCode, phpConfigPath], { encoding: 'utf8' }).trim();
                     const dbConfig = JSON.parse(dbConfigJson);
                     const { host: dbHost, username: dbUser, password: dbPass, name: dbName } = dbConfig;
 

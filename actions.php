@@ -180,6 +180,8 @@ if (filter('op') == 'download-allegato') {
     }
 } elseif (filter('op') == 'visualizza-modifica-allegato') {
     include_once base_dir().'/include/modifica_allegato.php';
+} elseif (filter('op') == 'visualizza-modifica-iva') {
+    include_once base_dir().'/include/modifica_iva.php';
 }
 
 // Zip allegati

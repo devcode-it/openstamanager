@@ -773,7 +773,7 @@ function apriInformazioniFE(button) {
 
 function modificaIvaRighe(righe) {
     if (righe.length > 0) {
-        openModal("'.tr('Modifica IVA').'", globals.rootdir + "/include/modifica_iva.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&tipo_documento=fatture&righe=" + righe.join(','));
+        openModal("'.tr('Modifica IVA').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza-modifica-iva&tipo_documento=fatture&righe=" + righe.join(','));
     }
 }
 

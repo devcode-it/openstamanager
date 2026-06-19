@@ -382,6 +382,14 @@ elseif (post('op') == 'send-email') {
     $mail->resetPrints();
     $mail->resetUploads();
 
+    // CC e BCC dal template
+    if (!empty($template['cc'])) {
+        $mail->addReceiver($template['cc'], 'cc');
+    }
+    if (!empty($template['bcc'])) {
+        $mail->addReceiver($template['bcc'], 'bcc');
+    }
+
     // Destinatari
     $receivers = array_clean(post('destinatari'));
     $types = post('tipo_destinatari');

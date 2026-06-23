@@ -124,8 +124,7 @@ class Contratto extends Document
         // Costruisci l'array di inserimento in un'unica operazione
         $database = database();
         foreach ($tipi as $tipo) {
-            // Verifica se il tipo di intervento è abilitato per l'anagrafica
-            $is_abilitato = in_array($tipo->id, $id_tipi_abilitati) ? 1 : 0;
+            $is_abilitato = (!empty($id_tipi_abilitati) && in_array($tipo->id, $id_tipi_abilitati)) || empty($id_tipi_abilitati) ? 1 : 0;
 
             $database->insert('co_contratti_tipi_intervento', [
                 'id_contratto' => $this->id,

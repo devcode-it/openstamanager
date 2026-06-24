@@ -57,7 +57,7 @@ switch ($resource) {
         $id_anagrafica = get('id_anagrafica');
 
         if (!empty($id_anagrafica)) {
-            $where = 'AND id_anagrafica = '.prepare($id_anagrafica);
+            $where = 'AND id = '.prepare($id_anagrafica);
         }
 
         $results = [];

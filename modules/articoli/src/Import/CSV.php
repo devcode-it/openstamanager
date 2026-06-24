@@ -781,6 +781,7 @@ class CSV extends CSVImporter
                     'original_name' => $name,
                     'id_module' => Module::where('name', 'Articoli')->first()->id,
                     'id_record' => $articolo->id,
+                    'key' => 'cover'
                 ], [
                     'thumbnails' => true,
                 ]);

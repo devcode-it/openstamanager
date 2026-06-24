@@ -886,10 +886,10 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id_anagrafica' => $contratto->id_agente])['provvigione_default'];
+            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $contratto->id_agente])['provvigione_default'];
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }
@@ -1000,7 +1000,7 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }

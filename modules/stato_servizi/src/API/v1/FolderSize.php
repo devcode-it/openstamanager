@@ -31,7 +31,7 @@ class FolderSize extends Resource implements RetrieveInterface
         $dirs = $request['dirs'];
 
         if (empty($dirs)) {
-            $backup_dir = \App::getConfig()['backup_dir'];
+            $backup_dir = \Backup::getDirectory();
 
             $dirs = [
                 $backup_dir => tr('Backup'),

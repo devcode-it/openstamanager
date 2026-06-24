@@ -402,7 +402,7 @@ switch (filter('op')) {
     case 'sizes':
         $results = [];
 
-        $backup_dir = App::getConfig()['backup_dir'];
+        $backup_dir = Backup::getDirectory();
 
         $dirs = [
             $backup_dir => tr('Backup'),

@@ -80,12 +80,12 @@ class Mail extends Model
 
         // CC
         if (!empty($template['cc'])) {
-            $this->addReceiver($template['cc'], 'cc');
+            $model->addReceiver($template['cc'], 'cc');
         }
 
         // BCC
         if (!empty($template['bcc'])) {
-            $this->addReceiver($template['bcc'], 'bcc');
+            $model->addReceiver($template['bcc'], 'bcc');
         }
 
         $model->save();

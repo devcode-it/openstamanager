@@ -24,6 +24,21 @@ $impegnato = 0;
 $ordinato = 0;
 $giacenze = $articolo->getGiacenze();
 
+$all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+
+$allowed_sedi_ids = $user->sedi;
+$sedi_allowed = [];
+$sedi_not_allowed = [];
+foreach ($all_sedi as $sede) {
+    if (in_array($sede['id'], $allowed_sedi_ids)) {
+        $sedi_allowed[] = $sede;
+    } else {
+        $sedi_not_allowed[] = $sede;
+    }
+}
+
+$sedi = $sedi_allowed;
+
 $query = 'SELECT
         `or_ordini`.`id` AS id,
         `or_ordini`.`numero`,
@@ -207,6 +222,34 @@ foreach ($sedi as $sede) {
                     </tr>';
 }
 
+if (!empty($sedi_not_allowed)) {
+    $altre_sedi_da_ordinare = 0;
+    foreach ($sedi_not_allowed as $sede) {
+        $qta_presente = $giacenze[$sede['id']][0] ?? 0;
+        $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+        $da_ordinare = (($diff <= 0) ? 0 : $diff);
+        $altre_sedi_da_ordinare += $da_ordinare;
+    }
+    echo '
+                    <tr>
+                        <td>'.tr('Altre sedi').'</td>
+                        <td class="text-right">'.numberFormat($altre_sedi_da_ordinare, 'qta').'</td>
+                    </tr>';
+}
+
+$totale_da_ordinare = 0;
+foreach ($all_sedi as $sede) {
+    $qta_presente = $giacenze[$sede['id']][0] ?? 0;
+    $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+    $da_ordinare = (($diff <= 0) ? 0 : $diff);
+    $totale_da_ordinare += $da_ordinare;
+}
+echo '
+                    <tr>
+                        <td><strong>'.tr('Totale').'</strong></td>
+                        <td class="text-right"><strong>'.numberFormat($totale_da_ordinare, 'qta').'</strong></td>
+                    </tr>';
+
 echo '
                 </table>
 			</div>
@@ -235,6 +278,28 @@ foreach ($sedi as $sede) {
                     </tr>';
 }
 
+if (!empty($sedi_not_allowed)) {
+    $altre_sedi_giacenza = 0;
+    foreach ($sedi_not_allowed as $sede) {
+        $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
+    }
+    echo '
+                    <tr>
+                        <td>'.tr('Altre sedi').'</td>
+                        <td class="text-right">'.numberFormat($altre_sedi_giacenza, 'qta').'</td>
+                    </tr>';
+}
+
+$totale_giacenza = 0;
+foreach ($all_sedi as $sede) {
+    $totale_giacenza += $giacenze[$sede['id']][0] ?? 0;
+}
+echo '
+                    <tr>
+                        <td><strong>'.tr('Totale').'</strong></td>
+                        <td class="text-right"><strong>'.numberFormat($totale_giacenza, 'qta').'</strong></td>
+                    </tr>';
+
 echo '
                 </table>
 			</div>
@@ -243,7 +308,6 @@ echo '
 </div>';
 
 $giacenze = $articolo->getGiacenze();
-$sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
 
 echo '
 <div class="row">
@@ -284,6 +348,42 @@ foreach ($sedi as $sede) {
                             </td>
                         </tr>';
 }
+
+if (!empty($sedi_not_allowed)) {
+    $altre_sedi_giacenza = 0;
+    foreach ($sedi_not_allowed as $sede) {
+        $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
+    }
+
+    echo '
+                        <tr>
+                            <td>'.tr('Altre sedi').'</td>
+                            <td>-</td>
+                            <td class="text-right">
+                                '.numberFormat($altre_sedi_giacenza, 'qta').'
+                            </td>
+                            <td class="text-center">
+                                -
+                            </td>
+                        </tr>';
+}
+
+$totale_tutte_sedi = 0;
+foreach ($all_sedi as $sede) {
+    $totale_tutte_sedi += $giacenze[$sede['id']][0] ?? 0;
+}
+
+echo '
+                        <tr>
+                            <td><strong>'.tr('Totale').'</strong></td>
+                            <td>-</td>
+                            <td class="text-right">
+                                <strong>'.numberFormat($totale_tutte_sedi, 'qta').'</strong>
+                            </td>
+                            <td class="text-center">
+                                -
+                            </td>
+                        </tr>';
 
 echo '
                     </tbody>

@@ -1,4 +1,3 @@
-
 UPDATE `zz_modules` SET `options` = "SELECT
     |select|
 FROM
@@ -20,6 +19,8 @@ FROM
     LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `mg_articoli`.`id_modello`
 WHERE
     1=1 AND `mg_articoli`.`deleted_at` IS NULL
+GROUP BY
+    `mg_articoli`.`id`
 HAVING
     2=2
 ORDER BY

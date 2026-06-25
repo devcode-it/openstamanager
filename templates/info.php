@@ -133,16 +133,21 @@ $default_footer = !empty($options['hide-footer']) ? '' : $default_footer;
 // Logo di default
 $default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
 
-// Logo generico
-if (!empty(setting('Logo stampe'))) {
-    $custom_logo = App::filepath('files/anagrafiche/'.setting('Logo stampe'));
-}
+// Logo specifico dell'anagrafica
+$anagrafica_logo = null;
+if (!empty($id_azienda)) {
+    $upload = \Models\Upload::where('id_module', Models\Module::where('name', 'Anagrafiche')->first()->id)
+        ->where('id_record', $id_azienda)
+        ->where('key', 'print_logo')
+        ->first();
 
-// Logo specifico della stampa
-$logo = Prints::filepath($id_print, 'logo_azienda.jpg');
-
-if (empty($logo)) {
-    $logo = empty($custom_logo) ? $default_logo : $custom_logo;
+    if (!empty($upload)) {
+        $fileinfo = \Uploads::fileInfo($upload->filename);
+        $logo_directory = '/files/anagrafiche/';
+        $image = $logo_directory.$upload->filename;
+        $image_thumbnail = $logo_directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+        $anagrafica_logo = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
+    }
 }
 
 // Valori aggiuntivi per la sostituzione
@@ -150,7 +155,7 @@ $replaces = array_merge($replaces, [
     'default_header' => $default_header,
     'default_footer' => $default_footer,
     'default_logo' => $default_logo,
-    'logo' => $logo,
+    'logo' => $anagrafica_logo,
     'base_dir()' => base_dir(),
     'base_link()' => base_path_osm(),
     'directory' => Prints::get($id_print)['full_directory'],

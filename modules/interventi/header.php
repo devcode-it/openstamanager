@@ -102,9 +102,20 @@ $insoluti = Scadenza::where('id_anagrafica', $intervento->id_anagrafica)
     ->count();
 
 // Logo
-$logo = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)->where('id_record', $intervento->id_anagrafica)->where('name', 'Logo azienda')->first()->filename;
+$upload = Upload::where('id_module', Module::where('name', 'Anagrafiche')->first()->id)
+    ->where('id_record', $intervento->id_anagrafica)
+    ->where('key', 'print_logo')
+    ->first();
 
-$logo = $logo ? base_path_osm().'/files/anagrafiche/'.$logo : App::getPaths()['img'].'/logo_header.png';
+if (!empty($upload)) {
+    $fileinfo = \Uploads::fileInfo($upload->filename);
+    $directory = '/files/anagrafiche/';
+    $image = $directory.$upload->filename;
+    $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+    $logo = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
+} else {
+    $logo = App::getPaths()['img'].'/logo_header.png';
+}
 
 echo '
 <hr>
@@ -116,11 +127,11 @@ echo '
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <img src="'.$logo.'" class="img-fluid img-thumbnail">
                     </div>
 
-                    <div class="col-md-9">';
+                    <div class="col-md-8">';
 
 // Cliente
 echo '

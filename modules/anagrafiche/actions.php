@@ -107,12 +107,33 @@ switch (post('op')) {
 
         $anagrafica->save();
 
-        // Aggiorno i tipi attività utilizzabili
-        $idtipiintervento = (array) post('idtipiintervento');
         $dbo->query('DELETE FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($id_record));
         foreach ($idtipiintervento as $id_tipo_intervento) {
             if (!empty($id_tipo_intervento) && $id_tipo_intervento != '-1') {
                 $dbo->query('INSERT INTO an_anagrafiche_tipi_intervento(id_tipo_intervento, id_anagrafica) VALUES('.prepare($id_tipo_intervento).', '.prepare($id_record).')');
+            }
+        }
+
+        if (!empty($_FILES) && !empty($_FILES['logo']['name'])) {
+            $upload = Uploads::upload($_FILES['logo'], [
+                'name' => 'Logo stampe',
+                'category' => 'Immagini',
+                'id_module' => $id_module,
+                'id_record' => $id_record,
+                'key' => 'print_logo',
+            ], [
+                'thumbnails' => true,
+            ]);
+
+            if (empty($upload)) {
+                flash()->warning(tr("Errore durante il caricamento del logo!"));
+            }
+        }
+
+        if (!empty(post('delete_logo'))) {
+            $logo = $anagrafica->immagine_upload;
+            if (!empty($logo)) {
+                $logo->delete();
             }
         }
 
@@ -440,19 +461,10 @@ switch (post('op')) {
         break;
 }
 
-// Operazioni aggiuntive per il logo e filigrana stampe
+// Operazioni aggiuntive per filigrana stampe
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') {
     $nome = $upload->name;
 
-    $logo_stampe = ['logo stampe', 'logo_stampe', 'logo stampe.jpg', 'logo stampe.png'];
-    if (in_array(strtolower((string) $nome), $logo_stampe)) {
-        $nome = 'Logo stampe';
-        $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
-        foreach ($uploads as $logo) {
-            $logo->setTranslation('title', $nome);
-            $logo->save();
-        }
-    }
 
     $filigrana_stampe = ['filigrana stampe', 'filigrana_stampe', 'filigrana stampe.jpg', 'filigrana stampe.png'];
     if (in_array(strtolower((string) $nome), $filigrana_stampe)) {
@@ -464,7 +476,7 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
         }
     }
 
-    if (($nome == 'Logo stampe' || $nome == 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
+    if (($nome == 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
         Settings::setValue($nome, $upload->filename);
     }
 }
@@ -473,9 +485,6 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') 
 elseif (filter('op') == 'rimuovi-allegato') {
     $filename = filter('filename');
 
-    if (str_contains($filename, setting('Logo stampe'))) {
-        $nome = 'Logo stampe';
-    }
     if (str_contains($filename, setting('Filigrana stampe'))) {
         $nome = 'Filigrana stampe';
     }

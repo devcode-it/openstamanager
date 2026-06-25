@@ -240,6 +240,36 @@ class Anagrafica extends Model
         return 'Anagrafiche';
     }
 
+    public function getImmagineUploadAttribute()
+    {
+        return \Models\Upload::where('id_module', \Models\Module::where('name', 'Anagrafiche')->first()->id)
+            ->where('id_record', $this->id)
+            ->where('key', 'print_logo')
+            ->first();
+    }
+
+    public function getImageAttribute()
+    {
+        $module = $this->getModule();
+        $upload = $module->files($this->id, true)
+            ->where('key', 'print_logo')
+            ->first();
+
+        if (empty($upload)) {
+            return null;
+        }
+
+        $fileinfo = \Uploads::fileInfo($upload->filename);
+
+        $directory = '/files/'.$module->attachments_directory.'/';
+        $image = $directory.$upload->filename;
+        $image_thumbnail = $directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
+
+        $url = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
+
+        return $url;
+    }
+
     public function getPartitaIvaAttribute()
     {
         return $this->attributes['p_iva'];

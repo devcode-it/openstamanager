@@ -82,7 +82,7 @@ if (count($problemi_anagrafica) > 0) {
 
 ?>
 
-<form action="" method="post" id="edit-form">
+<form action="" method="post" id="edit-form" enctype="multipart/form-data">
     <fieldset>
         <input type="hidden" name="backto" value="record-edit">
         <input type="hidden" name="op" value="update">
@@ -98,30 +98,44 @@ if (count($problemi_anagrafica) > 0) {
                     <div class="col-md-6">
                         {[ "type": "text", "label": "<?php echo tr('Denominazione'); ?>", "name": "ragione_sociale", "required": 1, "value": "$ragione_sociale$", "extra": "" ]}
                     </div>
-
-                    <div class="col-md-3">
-                        {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "p_iva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$p_iva$", "validation": "partita_iva" ]}
+                    <div class="col-md-2">
+                        {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <?php
+                        $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
+                            '_NATION_' => '<b>Nazione</b>',
+                        ]).':<br><br><ul>
+                                <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
+                                <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
+                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>
+                            '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
+
+                        if (in_array($id_azienda, $tipi_anagrafica)) {
+                            $help_codice_destinatario .= ' <br><b>'.tr('Attenzione').': </b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato all'interno portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI) (ivaservizi.agenziaentrate.gov.it)").'.';
+                        }
+                        ?>
+                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>", "validation": "codice_intermediario" ]}
+                    </div>
+
+                    <div class="col-md-2">
                         {[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "tipo", "values": "list=\"Azienda\": \"<?php echo tr('Azienda'); ?>\", \"Ente pubblico\": \"<?php echo tr('Ente pubblico'); ?>\" <?php echo $anagrafica->isAzienda() ? '' : ',\"Privato\":\"'.tr('Privato').'\"'; ?>", "value": "$tipo$", "placeholder": "<?php echo tr('Non specificato'); ?>" ]}
                     </div>
                 </div>
 
                 <div class="row">
-
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {[ "type": "text", "label": "<?php echo tr('Cognome'); ?>", "name": "cognome", "required": 0, "value": "$cognome$", "extra": "" ]}
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 0, "value": "$nome$", "extra": "" ]}
                     </div>
-
                     <div class="col-md-4">
-                        {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$", "validation": "codice_fiscale" ]}
+                        {[ "type": "image", "label": "<?php echo $anagrafica->isAzienda() ? tr('Logo stampe') : tr('Logo azienda'); ?>", "name": "logo", "class": "img-thumbnail img-fluid", "value": "<?php echo $anagrafica->image; ?>", "accept": "image/x-png,image/gif,image/jpeg", "help": "<?php echo tr('Formato consigliato: JPG, PNG o GIF - Risoluzione consigliata: 302x111 pixel'); ?>" ]}
                     </div>
-
+                    
                 </div>
 
                <!-- RIGA PER LE ANAGRAFICHE CON TIPOLOGIA 'PRIVATO' -->
@@ -142,36 +156,22 @@ if (count($problemi_anagrafica) > 0) {
                <?php } ?>
 
                <div class="row">
-                   <div class="col-md-2">
-                       {[ "type": "text", "label": "<?php echo tr('Codice anagrafica'); ?>", "name": "codice", "required": 1, "class": "text-center alphanumeric-mask", "value": "$codice$", "maxlength": 20, "validation": "codice" ]}
+                   <div class="col-md-3">
+                       {[ "type": "text", "label": "<?php echo tr('Partita IVA'); ?>", "maxlength": 16, "name": "p_iva", "class": "text-center alphanumeric-mask text-uppercase", "value": "$p_iva$", "validation": "partita_iva" ]}
                    </div>
 
-                   <div class="col-md-2">
-                       <?php
-                                        $help_codice_destinatario = tr("Per impostare il codice specificare prima il campo '_NATION_' dell'anagrafica", [
-                                            '_NATION_' => '<b>Nazione</b>',
-                                        ]).':<br><br><ul>
-                                <li>'.tr('Azienda (B2B) - Codice Destinatario, 7 caratteri').'</li>
-                                <li>'.tr('Ente pubblico (B2G/PA) - Codice Univoco Ufficio (www.indicepa.gov.it), 6 caratteri').'</li>
-                                <li>'.tr('Privato (B2C) - viene utilizzato il Codice Fiscale').'</li></ul>
-                            '.tr('Se non si conosce il codice destinatario lasciare vuoto il campo, e verrà applicato in automatico quello previsto di default dal sistema (\'0000000\', \'999999\', \'XXXXXXX\')').'.';
+                   <div class="col-md-3">
+                       {[ "type": "text", "label": "<?php echo tr('Codice fiscale'); ?>", "maxlength": 16, "name": "codice_fiscale", "class": "text-center alphanumeric-mask text-uppercase", "value": "$codice_fiscale$", "validation": "codice_fiscale" ]}
+                   </div>
 
-if (in_array($id_azienda, $tipi_anagrafica)) {
-    $help_codice_destinatario .= ' <br><b>'.tr('Attenzione').': </b>'.tr("Non è necessario comunicare il proprio codice destinatario ai fornitori in quanto è sufficiente che questo sia registrato all'interno portale del Sistema Di Interscambio dell'Agenzia Entrate (SDI) (ivaservizi.agenziaentrate.gov.it)").'.';
-}
+                   <div class="col-md-3">
+                       {[ "type": "email", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "placeholder":"pec@dominio.ext", "value": "$pec$", "validation": "email" ]}
+                   </div>
 
-?>
-                        {[ "type": "text", "label": "<?php echo ($record['tipo'] == 'Ente pubblico') ? tr('Codice unico ufficio') : tr('Codice destinatario'); ?>", "name": "codice_destinatario", "required": 0, "class": "text-center text-uppercase alphanumeric-mask", "value": "$codice_destinatario$", "maxlength": <?php echo ($record['tipo'] == 'Ente pubblico') ? '6' : '7'; ?>, "help": "<?php echo tr($help_codice_destinatario); ?>", "readonly": "<?php echo intval($nazione_anagrafica ? !(($nazione_anagrafica->iso2 === 'IT') || ($nazione_anagrafica->iso2 === 'SM')) : 0); ?>", "validation": "codice_intermediario" ]}
-                    </div>
-
-                    <div class="col-md-4">
-                        {[ "type": "email", "label": "<?php echo tr('PEC'); ?>", "name": "pec", "placeholder":"pec@dominio.ext", "value": "$pec$", "validation": "email" ]}
-                    </div>
-
-                    <div class="col-md-4">
-                        {[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sito_web", "placeholder":"www.dominio.ext", "value": "$sito_web$", "icon-before": "<i class='fa fa-globe'></i>" ]}
-                    </div>
-                </div>
+                   <div class="col-md-3">
+                       {[ "type": "text", "label": "<?php echo tr('Sito web'); ?>", "name": "sito_web", "placeholder":"www.dominio.ext", "value": "$sito_web$", "icon-before": "<i class='fa fa-globe'></i>" ]}
+                   </div>
+               </div>
             </div>
         </div>
 

@@ -42,9 +42,9 @@ $banca = Modules\Banche\Banca::where('id_anagrafica', setting('Azienda predefini
     ->where('predefined', 1)
     ->first();
 
-if (!empty(setting('Logo stampe'))) {
-    $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
-} else {
+$azienda = Modules\Anagrafiche\Anagrafica::find(setting('Azienda predefinita'));
+$logo_azienda = $azienda->image;
+if (empty($logo_azienda)) {
     $logo_azienda = str_replace(base_dir(), base_url(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }

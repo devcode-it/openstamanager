@@ -84,9 +84,10 @@ if (post('action') == 'init') {
                 'name' => 'Logo stampe',
                 'id_module' => $id_module,
                 'id_record' => $id_record,
+                'key' => 'print_logo',
+            ], [
+                'thumbnails' => true,
             ]);
-
-            Settings::setValue('Logo stampe', $upload->filename);
         }
     }
 

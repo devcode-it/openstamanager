@@ -91,12 +91,12 @@ foreach ($impostazioni as $impostazione) {
                     $("#setting" + id).val(data.file_id);
                     aggiornaAnteprimaMedia(id, data.file_url, data.file_name);
                 } else {
-                    Swal.fire("'.tr('Errore').'", data.message || "'.tr('Errore durante il caricamento').'", "error");
+                    Swal.fire("<?php echo tr('Errore'); ?>", data.message || "<?php echo tr('Errore durante il caricamento'); ?>", "error");
                     input.value = "";
                 }
             },
             error: function() {
-                Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il caricamento del file').'", "error");
+                Swal.fire("<?php echo tr('Errore'); ?>", "<?php echo tr('Errore durante il caricamento del file'); ?>", "error");
                 input.value = "";
             }
         });
@@ -104,12 +104,12 @@ foreach ($impostazioni as $impostazione) {
 
     function rimuoviMediaImpostazione(id) {
         Swal.fire({
-            title: "'.tr('Eliminare il file?').'",
-            text: "'.tr('L\\'immagine verrà rimossa definitivamente').'",
+            title: "<?php echo tr('Eliminare il file?'); ?>",
+            text: "<?php echo tr('L\'immagine verrà rimossa definitivamente'); ?>",
             type: "warning",
             showCancelButton: true,
-            confirmButtonText: "'.tr('Elimina').'",
-            cancelButtonText: "'.tr('Annulla').'",
+            confirmButtonText: "<?php echo tr('Elimina'); ?>",
+            cancelButtonText: "<?php echo tr('Annulla'); ?>",
         }).then(function(result) {
             if (!result.value) {
                 return;
@@ -131,7 +131,7 @@ foreach ($impostazioni as $impostazione) {
                         $("#media_" + id).val("");
                         $("#media_preview_" + id).remove();
                     } else {
-                        Swal.fire("'.tr('Errore').'", data.message || "'.tr('Errore durante l\\'eliminazione').'", "error");
+                        Swal.fire("<?php echo tr('Errore'); ?>", data.message || "<?php echo tr('Errore durante l\'eliminazione'); ?>", "error");
                     }
                 }
             });

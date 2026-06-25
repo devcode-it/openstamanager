@@ -109,6 +109,10 @@ function setting($name)
     /** @var Models\Setting $setting */
     $setting = Settings::get($name);
 
+    if (empty($setting)) {
+        return '';
+    }
+
     $user = auth_osm()->getUser();
     $user_options = [];
 

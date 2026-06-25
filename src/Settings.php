@@ -45,7 +45,11 @@ class Settings
             $references = [];
             $sections = [];
 
-            $results = Setting::all();
+            try {
+                $results = Setting::all();
+            } catch (\Exception $e) {
+                $results = [];
+            }
 
             foreach ($results as $result) {
                 $settings[$result->id] = $result;

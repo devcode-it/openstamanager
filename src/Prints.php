@@ -21,6 +21,7 @@
 use Jurosh\PDFMerge\PDFMerger;
 use Models\Module;
 use Models\PrintTemplate;
+use Models\Upload;
 use Mpdf\Mpdf;
 use Util\Query;
 
@@ -577,9 +578,14 @@ class Prints
             $mpdf->PageNumSubstitutions[] = $mpdfPageNumSubstitutions;
         }
 
+        $watermark = null;
         if (setting('Filigrana stampe')) {
+            $watermark = Upload::find(setting('Filigrana stampe'));
+        }
+
+        if (!empty($watermark)) {
             $mpdf->SetWatermarkImage(
-                base_dir().'/files/anagrafiche/'.setting('Filigrana stampe'),
+                base_dir().'/files/impostazioni/'.$watermark->filename,
                 0.5,
                 'F',
                 'F'

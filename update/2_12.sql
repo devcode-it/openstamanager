@@ -8,3 +8,14 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 
 -- Rimozione impostazione "Logo stampe"
 DELETE FROM `zz_settings` WHERE `nome` = 'Logo stampe';
+
+-- Spostamento impostazioni in sezione "Personalizzazioni grafiche"
+UPDATE `zz_settings` SET `sezione` = 'Personalizzazioni grafiche' WHERE `nome` = 'Filigrana stampe';
+UPDATE `zz_settings` SET `sezione` = 'Personalizzazioni grafiche' WHERE `nome` = 'CSS Personalizzato';
+
+-- Impostazione "Filigrana stampe" trasformata in campo di caricamento file (tipo media, editabile)
+UPDATE `zz_settings` SET `tipo` = 'media', `editable` = 1 WHERE `nome` = 'Filigrana stampe';
+
+-- Aggiornamento traduzioni dell'impostazione "Filigrana stampe"
+UPDATE `zz_settings_lang` SET `help` = 'Carica un\'immagine da utilizzare come filigrana per le stampe dell\'azienda.' WHERE `id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Filigrana stampe') AND `id_lang` = 1;
+UPDATE `zz_settings_lang` SET `help` = 'Upload an image to use as a watermark for company prints.' WHERE `id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Filigrana stampe') AND `id_lang` = 2;

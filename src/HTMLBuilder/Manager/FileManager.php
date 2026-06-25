@@ -167,7 +167,7 @@ class FileManager implements ManagerInterface
                     <i class="fa fa-external-link"></i> '.$file->name.'
                 </a>
 
-                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.((($file->key == 'print_logo') || (setting('Filigrana stampe') == $file->filename)) ? '<span class="tip" title="'.tr('Logo caricato correttamente').'." >✔️</span>' : '').'</small>'.'
+                <small> ('.$file->extension.')'.((!empty($file->size)) ? ' ('.FileSystem::formatBytes($file->size).')' : '').' '.((($file->key == 'print_logo') || ($file->key == 'watermark') || (setting('Filigrana stampe') == $file->id)) ? '<span class="tip" title="'.tr('Logo caricato correttamente').'." >✔️</span>' : '').'</small>'.'
             </td>
 
             <td class="text-center">'.timestampFormat($file['created_at']).'</td>

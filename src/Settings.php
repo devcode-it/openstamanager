@@ -256,6 +256,11 @@ class Settings
             ]);
         }
 
+        // Media (caricamento file)
+        elseif ($setting->tipo == 'media') {
+            $result = self::mediaInput($setting, $input_value, $required, $user_setting_icon, $tooltip);
+        }
+
         // Campi di default
         elseif (in_array($setting->tipo, ['textarea', 'timestamp', 'date', 'time'])) {
             $result = '
@@ -272,6 +277,61 @@ class Settings
             $result = '
     {[ "type": "'.$tipo.'", "label": '.json_encode($user_setting_icon.' '.$setting->getTranslation('title')).', "readonly": "'.!$setting->editable.'", "name": "setting['.$setting->id.']", "value": "'.$input_value.'"'.($numerico && $setting->tipo == 'integer' ? ', "decimals": 0' : '').', "required": "'.intval($required).'", "help": "'.$tooltip.'"  ]}';
         }
+
+        return $result;
+    }
+
+    /**
+     * Genera l'input HTML per il caricamento di un file (impostazioni di tipo "media").
+     *
+     * @param Setting $setting
+     * @param string  $input_value
+     * @param bool    $required
+     * @param string  $user_setting_icon
+     * @param string  $tooltip
+     *
+     * @return string
+     */
+    protected static function mediaInput($setting, $input_value, $required, $user_setting_icon, $tooltip)
+    {
+        $upload = null;
+        $accepted = '.jpg,.jpeg,.png,.gif,.bmp,.svg';
+
+        if (!empty($input_value)) {
+            $upload = \Models\Upload::find($input_value);
+        }
+
+        // Anteprima del file caricato
+        $preview = '';
+        if (!empty($upload)) {
+            $preview_url = base_path_osm().'/view.php?file_id='.$upload->id.'&preview=1';
+            $preview = '
+        <div class="setting-media-preview mb-2" id="media_preview_'.$setting->id.'">
+            <img src="'.$preview_url.'" class="img-thumbnail" style="max-height: 80px;">
+            <div class="mt-1">
+                <a href="'.$file_url.'" target="_blank"><i class="fa fa-external-link"></i> '.$upload->name.'</a>
+                <button type="button" class="btn btn-xs btn-danger ml-2" onclick="rimuoviMediaImpostazione('.$setting->id.')">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>';
+        }
+
+        $result = '
+    <div class="form-group">
+        <label>'.$user_setting_icon.' '.$setting->getTranslation('title').'</label>';
+
+        if (!empty($tooltip)) {
+            $result .= '
+        <span class="tip" title="'.prepareToField($tooltip).'">
+            <i class="fa fa-question-circle-o text-muted ml-1"></i>
+        </span>';
+        }
+
+        $result .= $preview.'
+        <input type="file" name="media_'.$setting->id.'" id="media_'.$setting->id.'" accept="'.$accepted.'" class="form-control"'.(!empty($setting->editable) ? '' : ' disabled').'>
+        <input type="hidden" name="setting['.$setting->id.']" id="setting'.$setting->id.'" value="'.$input_value.'">
+    </div>';
 
         return $result;
     }

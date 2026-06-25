@@ -460,36 +460,3 @@ switch (post('op')) {
 
         break;
 }
-
-// Operazioni aggiuntive per filigrana stampe
-if (filter('op') == 'aggiungi-allegato' || filter('op') == 'modifica-allegato') {
-    $nome = $upload->name;
-
-
-    $filigrana_stampe = ['filigrana stampe', 'filigrana_stampe', 'filigrana stampe.jpg', 'filigrana stampe.png'];
-    if (in_array(strtolower((string) $nome), $filigrana_stampe)) {
-        $nome = 'Filigrana stampe';
-        $uploads = $structure->uploads($id_record)->where('filename', $upload->filename);
-        foreach ($uploads as $filigrana) {
-            $filigrana->setTranslation('title', $nome);
-            $filigrana->save();
-        }
-    }
-
-    if (($nome == 'Filigrana stampe') && (setting('Azienda predefinita') == $id_record)) {
-        Settings::setValue($nome, $upload->filename);
-    }
-}
-
-// Operazioni aggiuntive per il logo
-elseif (filter('op') == 'rimuovi-allegato') {
-    $filename = filter('filename');
-
-    if (str_contains($filename, setting('Filigrana stampe'))) {
-        $nome = 'Filigrana stampe';
-    }
-
-    if (setting('Azienda predefinita') == $id_record && $filename == setting($nome)) {
-        Settings::setValue($nome, '');
-    }
-}

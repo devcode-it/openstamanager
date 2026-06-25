@@ -216,13 +216,26 @@ if (!empty($error_message)) {
             </script>';
 }
 
+$login_logo = App::getPaths()['img'].'/logo_completo.png';
+$login_logo_setting = setting('Login logo');
+if (!empty($login_logo_setting)) {
+    try {
+        $login_logo_file = Models\Upload::find($login_logo_setting);
+    } catch (Exception $e) {
+        $login_logo_file = null;
+    }
+    if (!empty($login_logo_file)) {
+        $login_logo = base_path_osm().'/files/impostazioni/'.$login_logo_file->filename;
+    }
+}
+
 if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) {
     echo '
 			<form action="?op=login" method="post" autocomplete="off">
 				<div class="login-box card-center-medium">
                     <div class="card card-primary shadow-lg">
                         <div class="card-header text-center bg-light py-4">
-                            <img src="'.App::getPaths()['img'].'/logo_completo.png" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid">
+                            <img src="'.$login_logo.'" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid">
                         </div>
 
                         <div class="card-body pt-4">

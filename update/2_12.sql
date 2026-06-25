@@ -19,3 +19,11 @@ UPDATE `zz_settings` SET `tipo` = 'media', `editable` = 1 WHERE `nome` = 'Filigr
 -- Aggiornamento traduzioni dell'impostazione "Filigrana stampe"
 UPDATE `zz_settings_lang` SET `help` = 'Carica un\'immagine da utilizzare come filigrana per le stampe dell\'azienda.' WHERE `id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Filigrana stampe') AND `id_lang` = 1;
 UPDATE `zz_settings_lang` SET `help` = 'Upload an image to use as a watermark for company prints.' WHERE `id_record` = (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Filigrana stampe') AND `id_lang` = 2;
+
+-- Impostazione "Login" per caricare il logo personalizzato nella schermata di login
+INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `order`, `is_user_setting`) VALUES
+('Login logo', '', 'media', 1, 'Personalizzazioni grafiche', 5, 0);
+
+INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
+(1, (SELECT MAX(`id`) FROM `zz_settings`), 'Login', 'Carica un\'immagine da visualizzare nella schermata di login. Se non viene caricato nessun file, viene utilizzato il logo predefinito.'),
+(2, (SELECT MAX(`id`) FROM `zz_settings`), 'Login', 'Upload an image to display on the login screen. If no file is uploaded, the default logo is used.');

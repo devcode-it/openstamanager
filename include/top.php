@@ -20,12 +20,41 @@
 
 use Models\Module;
 use Models\Plugin;
+use Models\Upload;
 use Util\FileSystem;
 
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();
 $user = auth_osm()->getUser();
+
+$menu_logo_completo = App::getPaths()['img'].'/logo_completo.png';
+$menu_logo_piccolo = App::getPaths()['img'].'/logo.png';
+
+$menu_logo_esteso_setting = setting('Logo menu');
+if (!empty($menu_logo_esteso_setting)) {
+    try {
+        $menu_logo_esteso_file = Models\Upload::find($menu_logo_esteso_setting);
+    } catch (Exception $e) {
+        $menu_logo_esteso_file = null;
+    }
+    if (!empty($menu_logo_esteso_file)) {
+        $menu_logo_completo = base_path_osm().'/files/'.$menu_logo_esteso_file->attachments_directory.'/'.$menu_logo_esteso_file->filename;
+    }
+}
+
+$menu_logo_compatto_setting = setting('Logo menu quadrato / favicon');
+if (!empty($menu_logo_compatto_setting)) {
+    try {
+        $menu_logo_compatto_file = Models\Upload::find($menu_logo_compatto_setting);
+    } catch (Exception $e) {
+        $menu_logo_compatto_file = null;
+    }
+    if (!empty($menu_logo_compatto_file)) {
+        $menu_logo_piccolo = base_path_osm().'/files/impostazioni/'.$menu_logo_compatto_file->filename;
+    }
+}
+
 
 if (empty($pageTitle)) {
     if ($structure instanceof Module) {
@@ -252,7 +281,8 @@ if (AuthOSM::check()) {
                 end_date_settings: '.json_encode(Translator::dateToEnglish(setting('Fine periodo calendario'))).',
                 end_date_settings_formatted: '.json_encode(setting('Fine periodo calendario')).',
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
-
+                sidebarLogoExpanded: "'.$menu_logo_completo.'",
+                sidebarLogoCollapsed: "'.$menu_logo_piccolo.'",
                 collapse_plugin_sidebar: '.($show_plugin_bar ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
                 ckeditorToolbar: [
                     ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt"],
@@ -539,7 +569,7 @@ if (AuthOSM::check()) {
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar '.$theme.' elevation-4">
                 <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" target="_blank">
-                    <img src="'.App::getPaths()['img'].'/'.(!empty($hide_sidebar) ? 'logo.png' : 'logo_completo.png').'" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" id="sidebar-logo">
+                    <img src="'.(!empty($hide_sidebar) ? $menu_logo_piccolo : $menu_logo_completo).'" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" id="sidebar-logo">
                     <span class="brand-text font-weight-light">&nbsp;</span>
 
                 </a>

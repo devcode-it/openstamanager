@@ -123,10 +123,12 @@ $(document).ready(function () {
 
                 if ($body.hasClass('sidebar-collapse')) {
                     // Sidebar chiusa: mostra logo piccolo
-                    $logo.attr('src', imgPath + '/logo.png');
+                    const collapsedLogo = globals.sidebarLogoCollapsed || (imgPath + '/logo.png');
+                    $logo.attr('src', collapsedLogo);
                 } else {
                     // Sidebar aperta: mostra logo completo
-                    $logo.attr('src', imgPath + '/logo_completo.png');
+                    const expandedLogo = globals.sidebarLogoExpanded || (imgPath + '/logo_completo.png');
+                    $logo.attr('src', expandedLogo);
                 }
             }
         });

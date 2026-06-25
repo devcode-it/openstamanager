@@ -110,14 +110,40 @@ echo '
 
     <p><b>'.tr('Mittente').'</b>: '.$smtp['from_name'].' &lt;'.$smtp['from_address'].'&gt;</p>';
 
+// Verifica se l'utente può modificare CC e CCN
+$allowed_groups = setting('Gruppi abilitati alla modifica CC e CCN');
+$allowed_groups_array = !empty($allowed_groups) ? explode(',', $allowed_groups) : [];
+$user = auth_osm()->getUser();
+$user_group = $user->id_gruppo;
+$can_edit_cc_bcc = in_array($user_group, $allowed_groups_array);
+
+// Mostra CC e CCN
 if (!empty($template['cc'])) {
-    echo '
-    <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
+    if ($can_edit_cc_bcc) {
+        echo '
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "'.tr('CC').'", "name": "cc", "value": "'.$template['cc'].'", "help": "'.tr('Copia carbone').'" ]}
+            </div>
+        </div>';
+    } else {
+        echo '
+        <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
+    }
 }
 
 if (!empty($template['bcc'])) {
-    echo '
-    <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
+    if ($can_edit_cc_bcc) {
+        echo '
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "'.tr('CCN').'", "name": "bcc", "value": "'.$template['bcc'].'", "help": "'.tr('Copia carbone nascosta').'" ]}
+            </div>
+        </div>';
+    } else {
+        echo '
+        <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
+    }
 }
 
 if (!empty($reply_to)) {

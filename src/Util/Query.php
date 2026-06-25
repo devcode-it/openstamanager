@@ -249,7 +249,7 @@ class Query
 
             if (isset($total['order_by'][$column_index])) {
                 // Rimozione ORDER BY esistente in modo più efficiente
-                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', (string) $query);
+                $query = preg_replace('/\s+ORDER\s+BY\s+(?!.*\bORDER\s+BY\b).*$/is', '', (string) $query);
                 $order_clause = $total['order_by'][$column_index];
 
                 // Sanitizzazione della clausola ORDER BY

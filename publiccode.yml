@@ -2,8 +2,8 @@ publiccodeYmlVersion: 0.4.0
 name: OpenSTAManager
 url: https://github.com/devcode-it/openstamanager/
 landingURL: https://openstamanager.com
-softwareVersion: 2.11-beta
-releaseDate: 2026-06-09
+softwareVersion: 2.11.1-beta
+releaseDate: 2026-06-30
 logo: https://shop.openstamanager.com/wp-content/uploads/2015/04/logo_full-2.png
 platforms:
   - web

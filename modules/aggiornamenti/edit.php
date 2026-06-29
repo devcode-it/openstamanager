@@ -1254,7 +1254,7 @@ $(document).ready(function() {
             customClass: {
                 confirmButton: "btn btn-lg btn-warning",
                 cancelButton: "btn btn-lg btn-default",
-            }
+            },
             buttonsStyling: false,
             showLoaderOnConfirm: true,
             preConfirm: function() {

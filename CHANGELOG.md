@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.11.1 (2026-06-30)](#2111-2026-06-30)
 - [2.11.0 (2026-06-09)](#2110-2026-06-09)
 - [2.10.4 (2026-04-28)](#2104-2026-04-28)
 - [2.10.3 (2026-04-07)](#2103-2026-04-07)
@@ -72,6 +73,60 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.11.1 (2026-06-30)
+
+### Modificato (Changed)
+- Aggiornamento dipendenza protobufjs
+
+### Fixed
+- Corretta visualizzazione limitata alle sedi abilitate nel plugin movimenti
+- Corretta gestione giacenze sedi in base ai permessi
+- Corretta query vista articoli per righe duplicate
+- Corretta impostazione foto articolo da import CSV
+- Corretto avviso uscita documento nei contratti
+- Corretta impostazione cc e bcc da template in invio mail
+- Corretta eliminazione anagrafiche da azioni di gruppo
+- Corretta gestione indirizzo di risposta alle mail inviate
+- Corretta creazione contratto con tipologie di attività disabilitati
+- Corretto completamento automatico dati bancari
+- Corretta inclusione file per modifica iva righe da bulk
+- Corretto grafico ore interventi per tipologia (conteggia correttamente tutte le sessioni)
+- Corretta stampa riepilogo interventi
+- Corretto ordine colonne con query order by che vanno a capo
+- Corretta query liste newsletter
+- Corretta compatibilità PHP <= 8.5 (fputcsv legacy escape)
+- Corretto problema evasione quantità ddt durante import FE
+- Corretto tasto invia in modale di invio mail
+- Corretto selezione allegati in invio mail azienda
+- Corretto visualizzazione impianti in stampa contratti
+- Corretti valori della ricerca con tema chiaro
+- Corretto errore in firma GDPR e Interventi
+- Corretto fullcalendar in selezione data e ora in pausa sessione
+- Corretto refuso che non permette la disabilitazione degli hooks in Stato dei servizi
+- Rimosso pulsante crea per anagrafiche con relazione bloccata
+- Corretta selezione seriali in fatture di vendita
+- Corretta descrizione riga in importazione fattura elettronica
+- Corretta query vista Articoli per compatibilità con MariaDB
+- Corretta select agenti
+- Corretto avviso in fase di salvataggio fattura in stato pagato
+- Corretta creazione immagine docker
+- Corretto aggiornamento del tooltip con le informazioni dell'attività dopo il trascinamento
+- Corretto Unauthenticated RCE via PHP Code Injection in Configuration Wizard
+- Corretto IDOR in OAuth2 Callback Allows Unauthenticated Token Destruction for Any Account
+- Corretto SQL Injection via Unsanitized json_decode in download-zip-allegati Action
+- Corretto IDOR in view.php Allows Any Authenticated User to Download Arbitrary Uploaded Files
+- Corretto Stored XSS via CSV Import Preview — Unescaped Cell Values Rendered in HTML
+- Corretto Reflected XSS via unsanitized period_start/period_end GET parameters embedded in JavaScript
+- Corretto Stored XSS via Content-Type Mismatch in Image File Preview
+- Corretto Token Record-Level Access Control Bypass via editor.php IDOR
+- Corretto Stored SSRF via HTML Injection in PDF Generation (mPDF img tag fetching)
+- Corretto Unauthenticated OAuth2 Token Reset and Injection via IDOR in oauth2.php
+- Corretto IDOR in API AppResource Allows Any Authenticated User to Read/Modify Any Record
+- Corretto SQL Injection in ajax_select.php via unsanitized options[idtipiintervento] parameter in tipiintervento endpoint
+- Corretto SQL Injection in ajax_select.php via unsanitized options[dir] parameter in tipi_documento endpoint
+- Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets
+- Corretta potenziale esecuzione comandi shell da valori ambiente (code scanning alert)
 
 
 ## 2.11.0 (2026-06-09)

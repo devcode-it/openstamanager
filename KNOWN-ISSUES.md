@@ -10,10 +10,96 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 - **Commit di risoluzione**: Link diretto al commit GitHub che contiene la correzione del bug
 
 ---
+#### 2.11 - 09/06/2026
+
+##### Problemi noti
+- Corretto Unauthenticated RCE via PHP Code Injection in Configuration Wizard (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/83a0a3d09
+
+- Corretto IDOR in OAuth2 Callback Allows Unauthenticated Token Destruction for Any Account (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/00b576ee7
+
+- Corretto SQL Injection via Unsanitized json_decode in download-zip-allegati Action (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/50f447a09
+
+- Corretto IDOR in view.php Allows Any Authenticated User to Download Arbitrary Uploaded Files (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/d4fe89126
+
+- Corretto Stored XSS via CSV Import Preview (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/8043d550a
+
+- Corretto Reflected XSS via unsanitized period_start/period_end GET parameters (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/2d4330df4
+
+- Corretto Stored XSS via Content-Type Mismatch in Image File Preview (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/1edd46d3d
+
+- Corretto Token Record-Level Access Control Bypass via editor.php IDOR (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/f8d53bb35
+
+- Corretto Stored SSRF via HTML Injection in PDF Generation (mPDF) (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/1278c7849
+
+- Corretto Unauthenticated OAuth2 Token Reset and Injection via IDOR (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/49aa73d79
+
+- Corretto IDOR in API AppResource Allows Any Authenticated User to Read/Modify Any Record (vulnerabilità critica)
+https://github.com/devcode-it/openstamanager/commit/799195174
+
+- Corretto SQL Injection in ajax_select.php via unsanitized options[idtipiintervento] parameter
+https://github.com/devcode-it/openstamanager/commit/2a5319c51
+
+- Corretto SQL Injection in ajax_select.php via unsanitized options[dir] parameter
+https://github.com/devcode-it/openstamanager/commit/6abdcfe8f
+
+- Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets
+https://github.com/devcode-it/openstamanager/commit/654e653c3
+
+- Corretta potenziale esecuzione comandi shell da valori ambiente
+https://github.com/devcode-it/openstamanager/commit/ce6ee93bf
+
+- Corretta visualizzazione limitata alle sedi abilitate nel plugin movimenti
+https://github.com/devcode-it/openstamanager/commit/9c2ee4a90
+
+- Corretta gestione giacenze sedi in base ai permessi
+https://github.com/devcode-it/openstamanager/commit/4efbc6b61
+
+- Corretta eliminazione anagrafiche da azioni di gruppo
+https://github.com/devcode-it/openstamanager/commit/801d260ce
+
+- Corretta creazione contratto con tipologie di attività disabilitati
+https://github.com/devcode-it/openstamanager/commit/ed9b00e2f
+
+- Corretta inclusione file per modifica IVA righe da bulk
+https://github.com/devcode-it/openstamanager/commit/a0a77797c
+
+- Corretta importazione fattura di acquisto con DDT o ordine collegato
+https://github.com/devcode-it/openstamanager/commit/d615ceae8
+
+- Corretto #1292 problema evasione quantità DDT durante import FE
+https://github.com/devcode-it/openstamanager/commit/20a03bc92
+
+- Corretto cambio di stato in fatturato per DDT collegati a fatture di acquisto in importazione
+https://github.com/devcode-it/openstamanager/commit/c365ddd1c
+
+- Corretta descrizione riga in importazione fattura elettronica
+https://github.com/devcode-it/openstamanager/commit/163eb2d5b
+
+- Corretta selezione seriali in fatture di vendita
+https://github.com/devcode-it/openstamanager/commit/394f88e28
+
+- Corretto avviso in fase di salvataggio fattura in stato pagato
+https://github.com/devcode-it/openstamanager/commit/ad54fc729
+
+- Corretto refuso che non permette la disabilitazione degli hooks in Stato dei servizi
+https://github.com/devcode-it/openstamanager/commit/393690d70
+
+
+---
 
 #### 2.10.4 - 28/04/2026
 
- ##### Problemi noti
+##### Problemi noti
 - Corretto Path Traversal via Unsanitized `directory` Field in ZIP Component Upload Leads to RCE (vulnerabilità critica)
 https://github.com/devcode-it/openstamanager/commit/e50cd6a7b
 

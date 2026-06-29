@@ -323,7 +323,6 @@ class Fattura extends Document
      *
      * @return float
      */
-    #[\Override]
     public function getIvaAttribute()
     {
         return $this->calcola('iva', 'iva_rivalsa_inps');
@@ -466,7 +465,6 @@ class Fattura extends Document
 
     // Metodi generali
 
-    #[\Override]
     public function triggerComponent(Component $trigger)
     {
         parent::triggerComponent($trigger);
@@ -580,7 +578,6 @@ class Fattura extends Document
      *
      * @return bool
      */
-    #[\Override]
     public function save(array $options = [])
     {
         // Informazioni sul cambio dei valori
@@ -629,7 +626,6 @@ class Fattura extends Document
         $this->gestioneFatturaElettronica($id_stato_precedente, $id_stato_bozza, $id_stato_emessa, $id_stato_attuale);
     }
 
-    #[\Override]
     public function delete()
     {
         $result = parent::delete();
@@ -646,7 +642,6 @@ class Fattura extends Document
         return $result;
     }
 
-    #[\Override]
     public function replicate(?array $except = null)
     {
         $new = parent::replicate($except);

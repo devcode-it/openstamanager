@@ -96,6 +96,7 @@ class Automezzi extends AppResource
              AND an_sedi.is_automezzo = 1
              AND zz_user_sedi.id_user = '.prepare($user->id)
         );
+
         return $count['cnt'] > 0;
     }
 }

@@ -560,8 +560,8 @@ function hasArticoliFiglio($id_articolo)
 function getImageManager()
 {
     return extension_loaded('gd')
-        ? ImageManager::usingDriver(new \Intervention\Image\Drivers\Gd\Driver())
-        : ImageManager::usingDriver(new \Intervention\Image\Drivers\Imagick\Driver());
+        ? ImageManager::usingDriver(new Intervention\Image\Drivers\Gd\Driver())
+        : ImageManager::usingDriver(new Intervention\Image\Drivers\Imagick\Driver());
 }
 
 /**

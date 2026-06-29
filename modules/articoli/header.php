@@ -164,30 +164,30 @@ if ($articolo->servizio) {
         }
     }
 
-if (!empty($sedi_senza_permessi)) {
-    $altre_sedi_giacenza = 0;
-    foreach ($sedi_senza_permessi as $sede) {
-        $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
-    }
-    $altre_sedi_giacenza = numberFormat($altre_sedi_giacenza, null);
-    $altre_sedi_giacenza_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($altre_sedi_giacenza * $articolo->fattore_um_secondaria, null) : '';
+    if (!empty($sedi_senza_permessi)) {
+        $altre_sedi_giacenza = 0;
+        foreach ($sedi_senza_permessi as $sede) {
+            $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
+        }
+        $altre_sedi_giacenza = numberFormat($altre_sedi_giacenza, null);
+        $altre_sedi_giacenza_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($altre_sedi_giacenza * $articolo->fattore_um_secondaria, null) : '';
 
-    echo '
+        echo '
                     <tr>
                         <td>'.tr('Altre sedi').'</td>
                         <td class="text-right">'.$altre_sedi_giacenza.' '.$articolo->um.'</td>
                         '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right">'.$altre_sedi_giacenza_secondary.' '.$articolo->um_secondaria.'</td>' : '').'
                     </tr>';
-}
+    }
 
-$totale_tutte_sedi = 0;
-foreach ($all_sedi as $sede) {
-    $totale_tutte_sedi += $giacenze[$sede['id']][0] ?? 0;
-}
-$totale_tutte_sedi = numberFormat($totale_tutte_sedi, null);
-$totale_tutte_sedi_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($totale_tutte_sedi * $articolo->fattore_um_secondaria, null) : '';
+    $totale_tutte_sedi = 0;
+    foreach ($all_sedi as $sede) {
+        $totale_tutte_sedi += $giacenze[$sede['id']][0] ?? 0;
+    }
+    $totale_tutte_sedi = numberFormat($totale_tutte_sedi, null);
+    $totale_tutte_sedi_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($totale_tutte_sedi * $articolo->fattore_um_secondaria, null) : '';
 
-echo '
+    echo '
                     <tr>
                         <td><strong>'.tr('Totale').'</strong></td>
                         <td class="text-right"><strong>'.$totale_tutte_sedi.' '.$articolo->um.'</strong></td>

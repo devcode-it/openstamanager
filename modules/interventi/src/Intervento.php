@@ -142,7 +142,6 @@ class Intervento extends Document
      *
      * @return iterable
      */
-    #[\Override]
     public function getRigheContabili()
     {
         $results = parent::getRigheContabili();
@@ -202,7 +201,6 @@ class Intervento extends Document
         return $this->hasMany(Components\Sessione::class, 'id_intervento');
     }
 
-    #[\Override]
     public function toArray()
     {
         $array = parent::toArray();

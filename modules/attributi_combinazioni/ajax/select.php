@@ -27,8 +27,8 @@ switch ($resource) {
         $where[] = '`mg_attributi`.`deleted_at` IS NULL';
 
         if (!empty($superselect['exclude_ids'])) {
-            $exclude_ids = is_array($superselect['exclude_ids']) ? $superselect['exclude_ids'] : explode(',', $superselect['exclude_ids']);
-            $exclude_ids = array_map('intval', $exclude_ids);
+            $exclude_ids = is_array($superselect['exclude_ids']) ? $superselect['exclude_ids'] : explode(',', (string) $superselect['exclude_ids']);
+            $exclude_ids = array_map(intval(...), $exclude_ids);
             if (!empty($exclude_ids)) {
                 $where[] = '`mg_attributi`.`id` NOT IN ('.implode(',', $exclude_ids).')';
             }

@@ -108,7 +108,6 @@ class SessioniInterventi extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function createRecord($data)
     {
         // Informazioni sull'utente
@@ -130,7 +129,6 @@ class SessioniInterventi extends AppResource
         ];
     }
 
-    #[\Override]
     public function updateRecord($data)
     {
         $sessione = Sessione::find($data['id']);
@@ -221,6 +219,7 @@ class SessioniInterventi extends AppResource
         $sessione = database()->fetchOne(
             'SELECT id_tecnico FROM in_interventi_tecnici WHERE id = '.prepare($id)
         );
+
         return !empty($sessione) && $sessione['id_tecnico'] == $user->id_anagrafica;
     }
 }

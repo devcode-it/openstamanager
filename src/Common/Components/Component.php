@@ -179,7 +179,6 @@ abstract class Component extends Model
         return true;
     }
 
-    #[\Override]
     public function delete()
     {
         if (!$this->canDelete()) {
@@ -393,7 +392,6 @@ abstract class Component extends Model
      */
     abstract public function getDocumentID();
 
-    #[\Override]
     public function save(array $options = [])
     {
         $result = parent::save($options);
@@ -411,7 +409,6 @@ abstract class Component extends Model
         return $result;
     }
 
-    #[\Override]
     public function replicate(?array $except = null)
     {
         $new = parent::replicate($except);
@@ -476,7 +473,6 @@ abstract class Component extends Model
     {
     }
 
-    #[\Override]
     protected static function boot()
     {
         // Pre-caricamento Documento

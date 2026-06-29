@@ -39,7 +39,7 @@ delete($files);
 $anagrafiche = $dbo->fetchArray('SELECT * FROM an_anagrafiche');
 
 foreach ($anagrafiche as $anagrafica) {
-    $tipologie = explode(',', $anagrafica['tipo']);
+    $tipologie = explode(',', (string) $anagrafica['tipo']);
 
     if (in_array('Cliente', $tipologie)) {
         $idconto = $dbo->fetchOne('SELECT idconto_cliente FROM an_anagrafiche WHERE idanagrafica = ?', [$anagrafica['idanagrafica']])['idconto_cliente'];

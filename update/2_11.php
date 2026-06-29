@@ -67,7 +67,7 @@ if (!empty($numeric_fks)) {
     foreach ($all_fks as $afk) {
         $t = $afk['TABLE_NAME'];
         $n = $afk['CONSTRAINT_NAME'];
-        if (preg_match('/^'.preg_quote($t, '/').'_ibfk_(\d+)$/', $n, $m)) {
+        if (preg_match('/^'.preg_quote((string) $t, '/').'_ibfk_(\d+)$/', (string) $n, $m)) {
             if (!isset($ibfk_counters[$t])) {
                 $ibfk_counters[$t] = 0;
             }

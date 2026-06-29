@@ -90,7 +90,6 @@ class Pianificazione extends Document
         return $pianificazioni->search(fn ($item) => $item->id == $p->id) + 1;
     }
 
-    #[\Override]
     public function getRighe()
     {
         $righe = $this->contratto->getRighe();

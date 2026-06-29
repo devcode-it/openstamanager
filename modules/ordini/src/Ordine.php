@@ -141,7 +141,6 @@ class Ordine extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    #[\Override]
     public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);

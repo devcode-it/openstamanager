@@ -77,7 +77,6 @@ class Cache extends Model
         return $this->save();
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         if (!empty($this->valid_time)) {
@@ -91,7 +90,6 @@ class Cache extends Model
         return parent::save($options);
     }
 
-    #[\Override]
     public function delete()
     {
         if (empty($this->valid_time)) {

@@ -88,7 +88,6 @@ class AllegatiInterventi extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function createRecord($data)
     {
         $module_record = Module::where('name', 'Interventi')->first();
@@ -147,6 +146,7 @@ class AllegatiInterventi extends AppResource
              AND zz_files.id_module = (SELECT id FROM zz_modules WHERE name = "Interventi")
              AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica)
         );
+
         return $count['cnt'] > 0;
     }
 }

@@ -44,7 +44,6 @@ class CSV extends CSVImporter
 {
     protected $failed_errors = [];
 
-    #[\Override]
     public function importRows($offset, $length, $update_record = true, $add_record = true)
     {
         $rows = $this->getRows($offset, $length);
@@ -602,7 +601,6 @@ class CSV extends CSVImporter
         ];
     }
 
-    #[\Override]
     public function saveFailedRecordsWithErrors($filepath)
     {
         if (empty($this->failed_rows)) {
@@ -637,7 +635,6 @@ class CSV extends CSVImporter
      *
      * @return array
      */
-    #[\Override]
     public function getFailedErrors()
     {
         return $this->failed_errors;
@@ -781,7 +778,7 @@ class CSV extends CSVImporter
                     'original_name' => $name,
                     'id_module' => Module::where('name', 'Articoli')->first()->id,
                     'id_record' => $articolo->id,
-                    'key' => 'cover'
+                    'key' => 'cover',
                 ], [
                     'thumbnails' => true,
                 ]);

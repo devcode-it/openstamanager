@@ -149,7 +149,8 @@ if (!empty(post('db_host'))) {
             $lang = 'it_IT';
         }
 
-        function escape_php_string($value) {
+        function escape_php_string($value)
+        {
             return str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
         }
 
@@ -203,7 +204,7 @@ if (!empty(post('db_host'))) {
 						<input type="hidden" name="db_name" value="'.htmlspecialchars($db_name, ENT_QUOTES, 'UTF-8').'">
 						<input type="hidden" name="db_password" value="'.htmlspecialchars($db_password, ENT_QUOTES, 'UTF-8').'">
 						<input type="hidden" name="db_username" value="'.htmlspecialchars($db_username, ENT_QUOTES, 'UTF-8').'">
-						<input type="hidden" name="db_host" value="'.htmlspecialchars($db_host, ENT_QUOTES, 'UTF-8').'">
+						<input type="hidden" name="db_host" value="'.htmlspecialchars((string) $db_host, ENT_QUOTES, 'UTF-8').'">
 					</div>
 					<a class="btn btn-warning btn-lg" href="'.base_path_osm().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Indietro').'</a>
 					<button class="btn btn-info btn-lg"><i class="fa fa-refresh"></i> '.tr('Riprova').'</button>

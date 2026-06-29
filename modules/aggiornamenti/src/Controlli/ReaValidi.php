@@ -34,7 +34,6 @@ class ReaValidi extends Controllo
         return 'warning';
     }
 
-    #[\Override]
     public function getOptions($record)
     {
         return [
@@ -50,7 +49,6 @@ class ReaValidi extends Controllo
     /**
      * Indica se questo controllo supporta azioni globali.
      */
-    #[\Override]
     public function hasGlobalActions()
     {
         return true;
@@ -105,7 +103,6 @@ class ReaValidi extends Controllo
     /**
      * Override del metodo solveGlobal per gestire la rimozione dei codici REA non validi.
      */
-    #[\Override]
     public function solveGlobal($params = [])
     {
         $results = [];

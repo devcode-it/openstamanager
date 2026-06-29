@@ -344,18 +344,18 @@ switch ($resource) {
     case 'serial-articolo':
         // Query per selezionare i serial disponibili in magazzino
         // Un serial è disponibile se il suo ultimo movimento cronologico ha dir='uscita'
-        
+
         // Verifica se il modulo Vendita al banco è installato
-        $modulo_venditabanco = \Models\Module::where('name', 'Vendita al banco')->first();
+        $modulo_venditabanco = Models\Module::where('name', 'Vendita al banco')->first();
         $has_venditabanco = !empty($modulo_venditabanco);
-        
+
         // Costruisci la query per ottenere la data del movimento
-        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`";
-        
+        $data_movimento = 'COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`';
+
         if ($has_venditabanco) {
-            $data_movimento .= ", `vb_venditabanco`.`data`";
+            $data_movimento .= ', `vb_venditabanco`.`data`';
         }
-        
+
         $data_movimento .= ", '1000-01-01')";
 
         // Costruisci la query base per i movimenti seriali
@@ -372,13 +372,13 @@ switch ($resource) {
             LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
             LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`';
-        
+
         if ($has_venditabanco) {
             $movimenti_seriali .= '
             LEFT JOIN `vb_righe_venditabanco` ON `mg_prodotti`.`id_riga_venditabanco` = `vb_righe_venditabanco`.`id`
             LEFT JOIN `vb_venditabanco` ON `vb_righe_venditabanco`.`idvendita` = `vb_venditabanco`.`id`';
         }
-        
+
         $movimenti_seriali .= '
         WHERE `mg_prodotti`.`serial` IS NOT NULL';
 

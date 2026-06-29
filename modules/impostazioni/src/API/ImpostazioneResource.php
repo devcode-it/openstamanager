@@ -63,7 +63,7 @@ class ImpostazioneResource
     public static function fromModel(Setting $setting)
     {
         $valore = $setting->valore;
-        if (preg_match('/password/i', $setting->getTranslation('title'))) {
+        if (preg_match('/password/i', (string) $setting->getTranslation('title'))) {
             $valore = '********';
         }
 

@@ -169,7 +169,6 @@ class Hook extends Model
         return self::$translated_fields;
     }
 
-    #[\Override]
     protected static function boot()
     {
         parent::boot();

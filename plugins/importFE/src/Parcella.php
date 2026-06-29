@@ -41,7 +41,6 @@ class Parcella extends FatturaOrdinaria
      *
      * @return Fattura
      */
-    #[\Override]
     public function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
         if (empty($ref_fattura)) {

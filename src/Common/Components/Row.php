@@ -60,7 +60,6 @@ abstract class Row extends Accounting
         return false;
     }
 
-    #[\Override]
     protected static function boot()
     {
         parent::boot();

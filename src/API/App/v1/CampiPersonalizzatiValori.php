@@ -64,7 +64,6 @@ class CampiPersonalizzatiValori extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function updateRecord($data)
     {
         $id = $data['id'];

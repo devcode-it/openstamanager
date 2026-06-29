@@ -158,7 +158,6 @@ class Sessione extends Model
      *
      * @return bool
      */
-    #[\Override]
     public function save(array $options = [])
     {
         $this->attributes['ore'] = $this->ore_calcolate;

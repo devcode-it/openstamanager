@@ -72,7 +72,7 @@ switch ($resource) {
         }
 
         if (!empty($superselect['id_tipi_intervento'])) {
-            $ids = array_map('intval', (array) $superselect['id_tipi_intervento']);
+            $ids = array_map(intval(...), (array) $superselect['id_tipi_intervento']);
             $where[] = '`in_tipi_intervento`.`id` IN ('.implode(',', $ids).')';
         } elseif (!empty($superselect['id_anagrafica'])) {
             $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));

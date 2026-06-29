@@ -370,7 +370,6 @@ elseif (post('op') == 'send-email') {
 
     $mail = Modules\Emails\Mail::build(user: $user, template: $template, id_record: $id_record, reset_from_template: false);
 
-
     // Rimozione allegati predefiniti
     $mail->resetPrints();
     $mail->resetUploads();

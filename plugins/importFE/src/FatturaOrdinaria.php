@@ -651,7 +651,6 @@ class FatturaOrdinaria extends FatturaElettronica
         }
     }
 
-    #[\Override]
     protected function prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo = null)
     {
         $fattura = parent::prepareFattura($id_tipo, $data, $data_registrazione, $id_sezionale, $ref_fattura, $tipo);

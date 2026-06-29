@@ -80,7 +80,6 @@ class Movimento extends Model
         $this->totale = $totale;
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         // Aggiornamento automatico di totale_reddito

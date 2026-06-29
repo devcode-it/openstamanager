@@ -34,6 +34,7 @@ if (!empty($state)) {
     // Require authentication for initiating OAuth2 reconfiguration
     if (!AuthOSM::check()) {
         echo tr('Autenticazione richiesta');
+
         return;
     }
 
@@ -42,6 +43,7 @@ if (!empty($state)) {
     // Verify the account exists before modifying
     if (empty($account)) {
         echo tr('Errore durante il completamento della configurazione: account non trovato');
+
         return;
     }
 

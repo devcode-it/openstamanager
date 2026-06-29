@@ -283,7 +283,6 @@ class Preventivo extends Document
         }
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         $this->fixBudget();
@@ -292,7 +291,6 @@ class Preventivo extends Document
         return parent::save($options);
     }
 
-    #[\Override]
     public function delete()
     {
         $this->interventi()->update(['id_preventivo' => null]);
@@ -309,7 +307,6 @@ class Preventivo extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    #[\Override]
     public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);

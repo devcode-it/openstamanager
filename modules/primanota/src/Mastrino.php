@@ -77,13 +77,11 @@ class Mastrino extends Model
         return $movimenti;
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         return true;
     }
 
-    #[\Override]
     public function delete()
     {
         // Per ogni movimento imposto il totale = 0

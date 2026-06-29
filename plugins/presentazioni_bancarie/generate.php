@@ -404,8 +404,8 @@ function esporta(button) {
         dataType: "json",
         data: {
             id_module: globals.id_module,
-            id_plugin: <?= json_encode($id_plugin) ?>,
-            scadenze: <?= json_encode($id_scadenze->toArray()) ?>,
+            id_plugin: <?php echo json_encode($id_plugin); ?>,
+            scadenze: <?php echo json_encode($id_scadenze->toArray()); ?>,
             sequenze: sequenze,
             op: "generate",
         },
@@ -430,7 +430,7 @@ function esporta(button) {
             }
         } else {
              Swal.fire({
-                title: <?= json_encode(tr('Impossibile esportare le scadenze indicate!')) ?>,
+                title: <?php echo json_encode(tr('Impossibile esportare le scadenze indicate!')); ?>,
                 icon: "error",
             })
         }
@@ -453,12 +453,12 @@ $(document).on('click', '.scarica-file', function() {
 
             window.URL.revokeObjectURL(url);
         })
-      .catch(() => Swal.fire(<?= json_encode(tr('Errore')) ?>, <?= json_encode(tr('Errore durante il download')) ?>, "error"));
+      .catch(() => Swal.fire(<?php echo json_encode(tr('Errore')); ?>, <?php echo json_encode(tr('Errore durante il download')); ?>, "error"));
 });
 
 function registraPagamenti(button) {
     let scadenze = $(button).data("scadenze");
 
-    openModal(<?= json_encode(tr('Registrazione contabile pagamento')) ?>, globals.rootdir + "/add.php?id_module=<?= $modulo_prima_nota['id'] ?>&id_records=" + scadenze.join(";"));
+    openModal(<?php echo json_encode(tr('Registrazione contabile pagamento')); ?>, globals.rootdir + "/add.php?id_module=<?php echo $modulo_prima_nota['id']; ?>&id_records=" + scadenze.join(";"));
 }
 </script>

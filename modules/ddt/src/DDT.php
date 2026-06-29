@@ -210,7 +210,6 @@ class DDT extends Document
      * Effettua un controllo sui campi del documento.
      * Viene richiamato dalle modifiche alle righe del documento.
      */
-    #[\Override]
     public function triggerEvasione(Component $trigger)
     {
         parent::triggerEvasione($trigger);
@@ -467,7 +466,7 @@ class DDT extends Document
         return database()->table('co_righe_documenti')
             ->selectRaw('SUM(qta) as qta_fatturata')
             ->where('original_document_id', $this->id)
-            ->where('original_document_type', 'Modules\\DDT\\DDT')
+            ->where('original_document_type', DDT::class)
             ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
             ->value('qta_fatturata') ?? 0;
     }
@@ -490,7 +489,7 @@ class DDT extends Document
         // Cerca anche tramite original_document_id e original_document_type
         return database()->table('co_righe_documenti')
             ->where('original_document_id', $this->id)
-            ->where('original_document_type', 'Modules\\DDT\\DDT')
+            ->where('original_document_type', DDT::class)
             ->exists();
     }
 }

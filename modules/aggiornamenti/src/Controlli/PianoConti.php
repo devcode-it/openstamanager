@@ -34,7 +34,6 @@ class PianoConti extends Controllo
         return 'warning';
     }
 
-    #[\Override]
     public function getOptions($record)
     {
         return [

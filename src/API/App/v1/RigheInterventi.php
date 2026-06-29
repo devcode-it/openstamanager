@@ -141,7 +141,6 @@ class RigheInterventi extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function createRecord($data)
     {
         $intervento = Intervento::find($data['id_intervento']);
@@ -160,7 +159,6 @@ class RigheInterventi extends AppResource
         ];
     }
 
-    #[\Override]
     public function updateRecord($data)
     {
         $riga = $this->getRecord($data['id']);
@@ -262,6 +260,7 @@ class RigheInterventi extends AppResource
              WHERE in_righe_interventi.id = '.prepare($id).'
              AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica)
         );
+
         return $count['cnt'] > 0;
     }
 }

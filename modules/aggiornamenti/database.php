@@ -42,15 +42,11 @@ function saveQueriesToSession($queries)
 if (!function_exists('getDatabaseReferenceFile')) {
     function getDatabaseReferenceFile($database)
     {
-        switch ($database->getType()) {
-            case 'MariaDB':
-                return 'mariadb.json';
-            case 'MySQL':
-                return 'mysql.json';
-
-            default:
-                return 'mysql.json';
-        }
+        return match ($database->getType()) {
+            'MariaDB' => 'mariadb.json',
+            'MySQL' => 'mysql.json',
+            default => 'mysql.json',
+        };
     }
 }
 
@@ -242,11 +238,11 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                 } else {
                     // Verifica se l'unica differenza è il tipo normalizzato (es. tinyint(4) vs tinyint)
                     $diff_keys = array_keys($diff);
-                    
+
                     // Calcola i tipi normalizzati
                     $normalized_current_type = normalizeFieldType($diff['current']['type'] ?? null);
                     $normalized_expected_type = normalizeFieldType($diff['expected']['type'] ?? null);
-                    
+
                     // Se l'unica differenza è il tipo (ignorando la normalizzazione) e i tipi normalizzati sono uguali, salta questo campo
                     $only_type_diff = true;
                     foreach ($diff_keys as $key) {
@@ -255,12 +251,12 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                             break;
                         }
                     }
-                    
+
                     if ($only_type_diff && isset($diff['current']) && isset($diff['expected']) && is_array($diff['current']) && is_array($diff['expected'])) {
                         $only_type_diff = true;
                         $current_keys = array_keys($diff['current']);
                         $expected_keys = array_keys($diff['expected']);
-                        
+
                         foreach ($current_keys as $key) {
                             if ($key != 'type' && isset($diff['expected'][$key]) && $diff['current'][$key] == $diff['expected'][$key]) {
                                 continue;
@@ -270,7 +266,7 @@ function groupErrorsByTable($results, $results_added, $premium_fields, $premium_
                                 break;
                             }
                         }
-                        
+
                         if ($only_type_diff && $normalized_current_type === $normalized_expected_type) {
                             continue;
                         }

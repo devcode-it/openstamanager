@@ -34,7 +34,6 @@ class PianoContiRagioneSociale extends Controllo
         return 'warning';
     }
 
-    #[\Override]
     public function getOptions($record)
     {
         return [
@@ -50,7 +49,6 @@ class PianoContiRagioneSociale extends Controllo
     /**
      * Indica se questo controllo supporta azioni globali.
      */
-    #[\Override]
     public function hasGlobalActions()
     {
         return true;
@@ -127,7 +125,6 @@ class PianoContiRagioneSociale extends Controllo
     /**
      * Override del metodo solveGlobal per gestire l'eliminazione dei conti vuoti.
      */
-    #[\Override]
     public function solveGlobal($params = [])
     {
         $database = database();

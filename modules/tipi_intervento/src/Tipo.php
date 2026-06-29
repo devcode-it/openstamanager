@@ -82,7 +82,6 @@ class Tipo extends Model
         $this->attributes['tempo_standard'] = $result;
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         parent::save($options);

@@ -449,7 +449,7 @@ switch (filter('op')) {
             }
 
             // Se nella fattura elettronica è indicato un DDT cerco SOLO quel documento specifico
-            $ddt_specifico = isset($dati_ddt[$numero_linea]) ? $dati_ddt[$numero_linea] : (isset($dati_ddt['generale']) ? $dati_ddt['generale'] : null);
+            $ddt_specifico = $dati_ddt[$numero_linea] ?? $dati_ddt['generale'] ?? null;
             if ($ddt_specifico) {
                 $ddt = $ddt_specifico;
                 $query = "SELECT
@@ -502,7 +502,7 @@ switch (filter('op')) {
 
             // Se nella fattura elettronica NON è indicato un DDT ed è indicato un ordine
             // cerco SOLO per quell'ordine specifico
-            $ordine_specifico = isset($dati_ordini[$numero_linea]) ? $dati_ordini[$numero_linea] : (isset($dati_ordini['generale']) ? $dati_ordini['generale'] : null);
+            $ordine_specifico = $dati_ordini[$numero_linea] ?? $dati_ordini['generale'] ?? null;
             if (empty($collegamento) && $ordine_specifico) {
                 $ordine = $ordine_specifico;
                 $query = "SELECT

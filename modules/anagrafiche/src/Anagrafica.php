@@ -213,7 +213,6 @@ class Anagrafica extends Model
         return $this->tipi()->get()->search(fn ($item, $key) => TipoAnagrafica::find($item->id)->name == $type) !== false;
     }
 
-    #[\Override]
     public function delete()
     {
         if (!$this->isAzienda()) {
@@ -221,7 +220,6 @@ class Anagrafica extends Model
         }
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         $this->fixRagioneSociale();

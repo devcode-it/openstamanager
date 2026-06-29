@@ -65,7 +65,6 @@ class PianoSconto extends Model
         return $this->prc_guadagno;
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         $combinato = $this->prc_combinato;

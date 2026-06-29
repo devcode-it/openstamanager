@@ -35,21 +35,6 @@ use Illuminate\Support\Collection;
 abstract class AppResource extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
 {
     /**
-     * Verifica l'autorizzazione dell'utente ad accedere a un record specifico.
-     * Di default, solo gli amministratori possono accedere a tutti i record.
-     * Le sottoclassi possono sovrascrivere questo metodo per implementare logiche di autorizzazione specifiche.
-     *
-     * @param string $id ID del record
-     * @param mixed  $user Utente autenticato
-     *
-     * @return bool True se l'utente è autorizzato, false altrimenti
-     */
-    protected function authorizeRecord($id, $user)
-    {
-        return $user->is_admin;
-    }
-
-    /**
      * Gestisce le operazioni di *retrieve* in tre fasi:
      * - Cleanup (elenco di record da rimuovere nell'applicazione);
      * - Record modificati (elenco di record che sono stati aggiornati nel gestionale);
@@ -237,6 +222,21 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
      */
     public function deleteRecord($id)
     {
+    }
+
+    /**
+     * Verifica l'autorizzazione dell'utente ad accedere a un record specifico.
+     * Di default, solo gli amministratori possono accedere a tutti i record.
+     * Le sottoclassi possono sovrascrivere questo metodo per implementare logiche di autorizzazione specifiche.
+     *
+     * @param string $id   ID del record
+     * @param mixed  $user Utente autenticato
+     *
+     * @return bool True se l'utente è autorizzato, false altrimenti
+     */
+    protected function authorizeRecord($id, $user)
+    {
+        return $user->is_admin;
     }
 
     /**

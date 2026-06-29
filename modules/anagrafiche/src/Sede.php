@@ -64,7 +64,6 @@ class Sede extends Model
         return $this->belongsTo(Nazione::class, 'id_nazione');
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         $this->fixRappresentanteFiscale();

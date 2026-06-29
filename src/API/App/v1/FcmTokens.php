@@ -43,7 +43,6 @@ class FcmTokens extends AppResource
         return [];
     }
 
-    #[\Override]
     public function createRecord($data)
     {
         $database = database();
@@ -90,7 +89,6 @@ class FcmTokens extends AppResource
      *
      * @return array Risposta dell'operazione
      */
-    #[\Override]
     public function updateRecord($data)
     {
         // Per i token FCM, l'operazione di update è identica a create

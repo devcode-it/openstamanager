@@ -212,7 +212,6 @@ class Mail extends Model
         }
     }
 
-    #[\Override]
     public function save(array $options = [])
     {
         if (isset($this->options)) {

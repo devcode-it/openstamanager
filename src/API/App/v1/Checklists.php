@@ -197,7 +197,6 @@ class Checklists extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function updateRecord($data)
     {
         $check = Check::find($data['id']);
@@ -238,6 +237,7 @@ class Checklists extends AppResource
              AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
              AND (zz_check_user.id_utente = '.prepare($user->id).' OR zz_check_user.id_utente IS NULL)'
         );
+
         return $count['cnt'] > 0;
     }
 }

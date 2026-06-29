@@ -179,7 +179,6 @@ class EmailNotification extends PHPMailer implements NotificationInterface
      *
      * @return bool
      */
-    #[\Override]
     public function send()
     {
         if (empty($this->AltBody)) {

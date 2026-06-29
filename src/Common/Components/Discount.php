@@ -63,7 +63,6 @@ abstract class Discount extends Accounting
         return false;
     }
 
-    #[\Override]
     public function getIvaAttribute()
     {
         return $this->attributes['iva'];
@@ -92,13 +91,11 @@ abstract class Discount extends Accounting
         }
     }
 
-    #[\Override]
     public function setPrezzoUnitario($prezzo_unitario, $id_iva): never
     {
         throw new \InvalidArgumentException();
     }
 
-    #[\Override]
     public function setSconto($value, $type, $value_combinato = null): never
     {
         throw new \InvalidArgumentException();
@@ -107,7 +104,6 @@ abstract class Discount extends Accounting
     /**
      * Effettua i conti per l'IVA.
      */
-    #[\Override]
     protected function fixIva()
     {
         $this->attributes['iva'] = parent::getIvaAttribute();
@@ -125,7 +121,6 @@ abstract class Discount extends Accounting
         $this->is_sconto = $original->is_sconto;
     }
 
-    #[\Override]
     protected static function boot($bypass = false)
     {
         parent::boot();

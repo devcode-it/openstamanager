@@ -115,7 +115,6 @@ class Task extends Model
         $this->next_execution_at = $calculated_next;
     }
 
-    #[\Override]
     public function delete()
     {
         return false;

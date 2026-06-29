@@ -293,7 +293,6 @@ class Interventi extends AppResource
         return $record;
     }
 
-    #[\Override]
     public function createRecord($data)
     {
         $anagrafica = Anagrafica::find($data['id_cliente']);
@@ -312,7 +311,6 @@ class Interventi extends AppResource
         ];
     }
 
-    #[\Override]
     public function updateRecord($data)
     {
         $intervento = Intervento::find($data['id']);
@@ -399,6 +397,7 @@ class Interventi extends AppResource
             'SELECT COUNT(*) AS cnt FROM in_interventi_tecnici 
              WHERE idintervento = '.prepare($id).' AND idtecnico = '.prepare($user->id_anagrafica)
         );
+
         return $count['cnt'] > 0;
     }
 }

@@ -92,6 +92,7 @@ class Referenti extends AppResource implements RetrieveInterface
                  WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
              )'
         );
+
         return $count['cnt'] > 0;
     }
 }

@@ -31,8 +31,8 @@ use Util\Query;
  */
 class Prints
 {
-    private const MIN_FONT_SIZE = 8.5;
-    private const MAX_FONT_SIZE = 12.0;
+    private const float MIN_FONT_SIZE = 8.5;
+    private const float MAX_FONT_SIZE = 12.0;
 
     /** @var array Elenco delle stampe disponibili */
     protected static $prints = [];
@@ -479,7 +479,7 @@ class Prints
             $invoice = database()->fetchOne('SELECT `data`, `numero_esterno` FROM `co_documenti` WHERE `id` = ?', [$id_record]);
 
             if (!empty($invoice)) {
-                $date = !empty($invoice['data']) ? date('Ymd', strtotime($invoice['data'])) : null;
+                $date = !empty($invoice['data']) ? date('Ymd', strtotime((string) $invoice['data'])) : null;
                 $numero = $invoice['numero_esterno'] ?? '';
 
                 if (!empty($date) && $numero !== '') {
@@ -663,7 +663,7 @@ class Prints
             $report = preg_replace(
                 '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
                 '',
-                $report
+                (string) $report
             );
 
             // Impostazione di header e footer

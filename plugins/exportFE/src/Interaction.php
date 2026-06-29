@@ -30,7 +30,6 @@ use Modules\Fatture\Fattura;
  */
 class Interaction extends Services
 {
-    #[\Override]
     public static function isEnabled()
     {
         return parent::isEnabled() && self::verificaRisorsaAttiva('Fatturazione Elettronica');

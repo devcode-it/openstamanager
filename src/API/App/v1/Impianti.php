@@ -131,6 +131,7 @@ class Impianti extends AppResource
             $impianto = database()->fetchOne(
                 'SELECT id_tecnico FROM my_impianti WHERE id = '.prepare($id)
             );
+
             return !empty($impianto) && $impianto['id_tecnico'] == $user->id_anagrafica;
         }
 
@@ -145,6 +146,7 @@ class Impianti extends AppResource
                  WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
              )'
         );
+
         return $count['cnt'] > 0;
     }
 }

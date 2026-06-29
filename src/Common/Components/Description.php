@@ -72,7 +72,6 @@ abstract class Description extends Component
         $this->is_descrizione = $original->is_descrizione;
     }
 
-    #[\Override]
     protected static function boot($bypass = false)
     {
         // Pre-caricamento Documento

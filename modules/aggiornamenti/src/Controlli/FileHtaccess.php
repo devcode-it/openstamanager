@@ -65,7 +65,6 @@ class FileHtaccess extends Controllo
         return 'warning';
     }
 
-    #[\Override]
     public function getOptions($record)
     {
         return [
@@ -78,13 +77,11 @@ class FileHtaccess extends Controllo
         ];
     }
 
-    #[\Override]
     public function hasGlobalActions()
     {
         return true;
     }
 
-    #[\Override]
     public function getGlobalActions()
     {
         $missing_count = count($this->results);
@@ -150,7 +147,6 @@ class FileHtaccess extends Controllo
     /**
      * Rigenera tutti i file .htaccess mancanti.
      */
-    #[\Override]
     public function solveGlobal($params = [])
     {
         $action = $params['action'] ?? '';

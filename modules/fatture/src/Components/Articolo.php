@@ -32,7 +32,6 @@ class Articolo extends Article
     protected $table = 'co_righe_documenti';
     protected $serialRowID = 'documento';
 
-    #[\Override]
     public function movimenta($qta)
     {
         $documento = $this->getDocument();

@@ -263,7 +263,6 @@ class Upload extends Model
         return $this->isImage() || $this->isFatturaElettronica() || $this->isPDF();
     }
 
-    #[\Override]
     public function delete()
     {
         // Verifica permessi prima dell'eliminazione
@@ -295,7 +294,6 @@ class Upload extends Model
         return parent::delete();
     }
 
-    #[\Override]
     public function save(array $options = [], $skip_resize = false)
     {
         if ($this->isImage() && !$skip_resize) {

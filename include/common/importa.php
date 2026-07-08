@@ -346,10 +346,8 @@ $disponibilita_articoli = [];
 $abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino && $documento->direzione != 'uscita' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
 
 // Recupera la sede di partenza dal documento (preventivo/ordine)
-// Per documenti con direzione 'entrata' (DDT in uscita, Ordini cliente), la sede di partenza è id_sede_destinazione
-// Per documenti con direzione 'uscita' (DDT in entrata, Ordini fornitore), la sede di partenza è id_sede_partenza
-$id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
-$id_sede_partenza = $id_sede_partenza ?: 0;
+// Per tutti i documenti, la sede di partenza è id_sede_partenza (magazzino da cui partono le merci)
+$id_sede_partenza = $documento->id_sede_partenza ?: 0;
 
 if ($abilita_controllo_disponibilita) {
     foreach ($righe as $riga) {
@@ -374,7 +372,7 @@ if ($abilita_controllo_disponibilita) {
                     AND or_tipi_ordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1
                     AND or_stati_ordine.impegnato = 1
-                    AND or_ordini.id_sede_destinazione = '.prepare($id_sede_partenza);
+                    AND or_ordini.id_sede_partenza = '.prepare($id_sede_partenza);
 
                 // Se il documento di origine è un ordine cliente, escludiamolo dal calcolo
                 if ($original_module->name == 'Ordini cliente' && !empty($documento->id)) {

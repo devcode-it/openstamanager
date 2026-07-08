@@ -7,17 +7,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Models\Setting;
 use Modules\Impostazioni\API\ImpostazioneResource;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 
 final class GetImpostazioneController extends BaseController
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        if (!$user || !$user->is_admin) {
-            throw new AuthorizationException();
-        }
+        $this->init($request);
 
         $setting = Setting::find($request->route('id'));
         if (!$setting) {
@@ -27,5 +22,10 @@ final class GetImpostazioneController extends BaseController
         $response = ImpostazioneResource::fromModel($setting);
 
         return new JsonResponse($response);
+    }
+
+    protected function hasAccess($request): bool
+    {
+        return $this->hasModuleReadAccess('Impostazioni');
     }
 }

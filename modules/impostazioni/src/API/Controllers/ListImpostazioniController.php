@@ -5,8 +5,6 @@ namespace Modules\Impostazioni\API\Controllers;
 use API\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 use Models\Setting;
 use Modules\Impostazioni\API\ImpostazioneResource;
 
@@ -14,11 +12,8 @@ final class ListImpostazioniController extends BaseController
 {
     public function __invoke(Request $request): JsonResponse
     {
-         $user = Auth::user();
-        if (!$user || !$user->is_admin) {
-            throw new AuthorizationException();
-        }
-        
+        $this->init($request);
+
         $sezione = $request->query('sezione');
         $search = $request->query('ricerca');
 
@@ -39,5 +34,10 @@ final class ListImpostazioniController extends BaseController
         }
 
         return new JsonResponse($results);
+    }
+
+    protected function hasAccess($request): bool
+    {
+        return $this->hasModuleReadAccess('Impostazioni');
     }
 }

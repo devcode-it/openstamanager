@@ -6,12 +6,11 @@ use ApiPlatform\Metadata\Post;
 use DTO\DataTablesLoadRequest\Column;
 use DTO\DataTablesLoadRequest\DataTablesLoadRequest;
 use DTO\DataTablesLoadResponse\DataTablesLoadResponse;
-use Models\Module;
-use Util\Query;
-
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Models\Module;
+use Util\Query;
 
 #[Post(
     uriTemplate: '/datatables/list/{id_module}/{id_plugin}/{id_parent}',
@@ -27,7 +26,7 @@ final class DataTablesController extends BaseController
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $request_body = $this->_cast($request, DataTablesLoadRequest::class);
+        $request_body = $this->init($request, DataTablesLoadRequest::class);
 
         $id_module = (int) $request_body->getIdModule();
         $id_plugin = (int) $request_body->getIdPlugin();
@@ -35,7 +34,7 @@ final class DataTablesController extends BaseController
 
         $module = \Modules::get($id_module);
         \Modules::setCurrent($id_module);
-        
+
         $plugin = null;
         if (!empty($id_plugin)) {
             \Plugins::setCurrent($id_plugin);
@@ -44,7 +43,22 @@ final class DataTablesController extends BaseController
 
         $structure = $plugin ?? $module;
 
-        return new JsonResponse($this->retrieveRecords($structure, $request_body, $id_module, $id_plugin, $id_parent));
+        if (!$structure->permission == 'r' && !$structure->permission == 'rw') {
+            throw new AuthorizationException();
+        }
+
+        $type = $structure['option'];
+
+        if (!empty($type) && $type != 'menu' && $type != 'custom') {
+            return new JsonResponse($this->retrieveRecords($structure, $request_body, $id_module, $id_plugin, $id_parent));
+        }
+
+        throw new AuthorizationException();
+    }
+
+    protected function hasAccess($request): bool
+    {
+        return true;
     }
 
     /*

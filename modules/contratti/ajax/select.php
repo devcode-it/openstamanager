@@ -76,8 +76,10 @@ switch ($resource) {
             if ($ore_previste) {
                 if ($perc_ore < 75) {
                     $color = '#81f794';
-                } elseif ($perc_ore > 75) {
+                } elseif ($perc_ore <= 100) {
                     $color = '#f5cb78';
+                } else {
+                    $color = '#ff7b7b';
                 }
             } else {
                 $color = '';

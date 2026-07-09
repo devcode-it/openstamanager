@@ -45,14 +45,14 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT mg_articoli.id AS id_articolo, GROUP_CONCAT(mg_articoli_barcode.barcode ORDER BY mg_articoli_barcode.barcode SEPARATOR \',\') AS lista FROM mg_articoli LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.id_articolo = mg_articoli.id GROUP BY mg_articoli.id) AS barcode ON barcode.id_articolo = mg_articoli.id WHERE deleted_at IS NULL AND (1=0 ';
+$query .= ' FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN `mg_prodotti` ON `mg_prodotti`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN (SELECT mg_articoli.id AS id_articolo, GROUP_CONCAT(mg_articoli_barcode.barcode ORDER BY mg_articoli_barcode.barcode SEPARATOR \',\') AS lista FROM mg_articoli LEFT JOIN mg_articoli_barcode ON mg_articoli_barcode.id_articolo = mg_articoli.id GROUP BY mg_articoli.id) AS barcode ON barcode.id_articolo = mg_articoli.id WHERE deleted_at IS NULL AND 1=1 AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
-$query .= ') GROUP BY `mg_articoli`.`id`';
+$query .= ') GROUP BY `mg_articoli`.`id` HAVING 2=2';
 
-$query .= Modules::getAdditionalsQuery(Module::where('name', 'Articoli')->first()->id);
+$query = Modules::replaceAdditionals(Module::where('name', 'Articoli')->first()->id, $query);
 
 $rs = $dbo->fetchArray($query);
 

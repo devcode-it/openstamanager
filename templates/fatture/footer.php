@@ -23,6 +23,7 @@ if (!$is_last_page) {
 }
 
 $imponibile = 0;
+$totale_scontato = 0;
 foreach ($v_totale as $key => $v) {
     $totale_scontato += $v;
 }

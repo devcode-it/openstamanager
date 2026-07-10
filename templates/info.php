@@ -131,7 +131,8 @@ $default_footer = include $footer_file;
 $default_footer = !empty($options['hide-footer']) ? '' : $default_footer;
 
 // Logo di default
-$default_logo = App::filepath('templates/base|custom|/logo_azienda.jpg');
+$default_logo_path = App::filepath('templates/base|custom|/logo_azienda.jpg');
+$default_logo = str_replace(base_dir(), base_path_osm(), $default_logo_path);
 
 // Logo specifico dell'anagrafica
 $anagrafica_logo = null;
@@ -148,6 +149,11 @@ if (!empty($id_azienda)) {
         $image_thumbnail = $logo_directory.$fileinfo['filename'].'_thumb600.'.$fileinfo['extension'];
         $anagrafica_logo = file_exists(base_dir().$image_thumbnail) ? base_path_osm().$image_thumbnail : base_path_osm().$image;
     }
+}
+
+// Usa il logo di default se non è stato caricato un logo specifico
+if (empty($anagrafica_logo)) {
+    $anagrafica_logo = $default_logo;
 }
 
 // Valori aggiuntivi per la sostituzione

@@ -79,7 +79,7 @@ $etichette = [
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan='5' class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -315,8 +315,13 @@ if ($has_rivalsa) {
     </td>';
 }
 
-$first_colspan = $show_sconto ? 4 : 3;
-$second_colspan = 1;
+$first_colspan = 3;
+$second_colspan = 2;
+
+if (empty($sconto) || $has_sconto_finale) {
+    --$first_colspan;
+    --$second_colspan;
+}
 
 echo '
 <tr>
@@ -352,8 +357,13 @@ echo '
 if ($has_ritenuta) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE id_documento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 3;
+    $second_colspan = 2;
+
+    if (empty($sconto)) {
+        --$first_colspan;
+        --$second_colspan;
+    }
 
     $contributi = tr('_DESCRIZIONE_: _PRC_%', [
         '_DESCRIZIONE_' => $documento->ritenutaContributi->descrizione,
@@ -427,8 +437,8 @@ if ($has_ritenuta) {
  * Totale IVA | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA)
  */
 if ($has_split_payment) {
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
@@ -459,8 +469,8 @@ if ($has_split_payment) {
  * Sconto in | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
  */
 if ($has_sconto_finale) {
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
@@ -480,7 +490,7 @@ if ($has_sconto_finale) {
 
     $totale = $totale - $sconto_finale;
     echo '
- 	 <tr>
+	<tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>

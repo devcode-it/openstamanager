@@ -50,7 +50,7 @@ const replace = require('gulp-replace');
 
 // Release
 const md5File = require('md5-file')
-const archiver = require('archiver');
+import { ZipArchive } from 'archiver';
 const shell = require('shelljs');
 const { Readable } = require('stream');
 import * as fs from 'fs';
@@ -528,7 +528,7 @@ export function release(done) {
                 // Impostazione dello zip con il nome che include la versione
                 let zipFileName = `openstamanager-${version}.zip`;
                 let output = fs.createWriteStream(`./${zipFileName}`, { flags: 'w' });
-                let archive = archiver('zip');
+                let archive = new ZipArchive();
 
                 output.on('close', function () {
                     console.log(`ZIP completato: ${zipFileName}`);

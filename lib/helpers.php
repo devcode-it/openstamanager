@@ -105,6 +105,11 @@ function get($param, $raw = false)
  */
 function setting($name)
 {
+    // Check if database is installed
+    if (!database()->isInstalled()) {
+        return '';
+    }
+
     // Utilizza la classe Settings che implementa il caching per ridurre le query
     /** @var Models\Setting $setting */
     $setting = Settings::get($name);

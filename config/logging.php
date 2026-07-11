@@ -6,6 +6,7 @@ use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -17,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'daily'),
+    'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,39 +51,32 @@ return [
     */
 
     'channels' => [
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
 
-        /*
-         * Tutti i log applicativi (Laravel + logger_osm()) scrivono in logs/
-         * nella root del progetto, insieme a error.log e cron-*.log.
-         * Non usare storage_path() per i log: in OpenSTAManager
-         * puoi trovare tutto in logs/ e non in storage/logs/.
-         * La cartella storage/logs/ viene mantenuta vuota perché Laravel
-         * la ricrea automaticamente al bootstrap.
-         */
         'single' => [
             'driver' => 'single',
-            'path' => base_path_osm().'logs/app.log',
+            'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => base_path_osm().'logs/app.log',
+            'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 30),
+            'days' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
         ],
 
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => env('LOG_SLACK_USERNAME', 'Laravel Log'),
+            'username' => env('LOG_SLACK_USERNAME', env('APP_NAME', 'Laravel')),
             'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
             'level' => env('LOG_LEVEL', 'critical'),
             'replace_placeholders' => true,
@@ -130,7 +124,9 @@ return [
         ],
 
         'emergency' => [
-            'path' => base_path_osm().'logs/app.log',
+            'path' => storage_path('logs/laravel.log'),
         ],
+
     ],
+
 ];

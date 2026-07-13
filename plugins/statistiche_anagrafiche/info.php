@@ -29,6 +29,7 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
+use Modules\Impianti\Impianto;
 
 $calendar_id = filter('calendar_id');
 $start = filter('start');
@@ -104,6 +105,11 @@ $note_credito = Fattura::whereBetween('data', [$start, $end])
         ->where('co_tipi_documento.reversed', '=', 1))
     ->get();
 $totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito->sum('totale_imponibile');
+
+// Impianti
+$impianti = Impianto::whereBetween('data', [$start, $end])
+    ->where('id_anagrafica', $id_record)
+    ->get();
 
 echo '
 <div class="card card-info" id="row-'.$calendar_id.'">
@@ -210,6 +216,21 @@ echo '
                         <span class="info-box-number">
                             <big>'.($fatture_vendita->count() + $note_credito->count()).'</big><br>
                             <small class="help-block">'.moneyFormat($totale_fatture_vendita).'</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-'.($impianti->count() == 0 ? 'gray' : 'orange').'"><i class="fa fa-puzzle-piece"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Impianti').'
+                        '.($impianti->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Impianti')->first()->id.'&_search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.$impianti->count().'</big>
+                            <br><br>
                         </span>
                     </div>
                 </div>

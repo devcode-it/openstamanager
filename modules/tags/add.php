@@ -25,8 +25,12 @@ include_once __DIR__.'/../../core.php';
 
 	<div class="row">
 
-		<div class="col-md-12">
+		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "", "extra": "" ]}
+		</div>
+
+		<div class="col-md-3">
+			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "#fff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
 
 	</div>
@@ -38,4 +42,15 @@ include_once __DIR__.'/../../core.php';
 		</div>
 	</div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        $('#modals .colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+            $(this).parent().find('.square').css('background', event.value);
+        });
+        $('#modals .colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
+        
+    });
+	
+</script>
 

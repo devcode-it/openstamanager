@@ -23,6 +23,7 @@ include_once __DIR__.'/../../core.php';
 switch (post('op')) {
     case 'update':
         $nome = post('name');
+        $colore = post('colore');
         $tag_new = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`name`='.prepare($nome));
 
         if (!empty($tag_new) && $tag_new['id'] != $id_record) {
@@ -30,7 +31,7 @@ switch (post('op')) {
                 '_NAME_' => $nome,
             ]));
         } else {
-            $dbo->query('UPDATE `in_tags` SET `name`='.prepare($nome).' WHERE `in_tags`.`id`='.prepare($id_record));
+            $dbo->query('UPDATE `in_tags` SET `name`='.prepare($nome).', `colore`='.prepare($colore).' WHERE `in_tags`.`id`='.prepare($id_record));
 
             flash()->info(tr('Informazioni salvate correttamente!'));
         }
@@ -39,6 +40,7 @@ switch (post('op')) {
 
     case 'add':
         $nome = post('name');
+        $colore = post('colore');
         $tag_new = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`name`='.prepare($nome));
 
         if (!empty($tag_new)) {
@@ -48,6 +50,7 @@ switch (post('op')) {
         } else {
             $record = $dbo->insert('in_tags', [
                 'name' => $nome,
+                'colore' => $colore,
             ]);
             $id_record = $dbo->lastInsertedID();
 

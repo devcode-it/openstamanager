@@ -931,8 +931,8 @@ if (empty($record['deleted_at'])) {
 
         $(".colorpicker").colorpicker({
             format: 'hex'
-        }).on("changeColor", function() {
-            $("#colore_t").parent().find(".square").css("background", $("#colore_t").val());
+        }).on("colorpickerChange", function(event) {
+            $("#colore_t").parent().find(".square").css("background", event.value);
         });
 
         $("#colore_t").parent().find(".square").css("background", $("#colore_t").val());

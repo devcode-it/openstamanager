@@ -20,7 +20,7 @@
 
 namespace Plugins\ExportFE;
 
-use Respect\Validation\Validator as v;
+use Respect\Validation\ValidatorBuilder as v;
 
 class Validator
 {

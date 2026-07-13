@@ -19,7 +19,7 @@
  */
 
 use Models\Setting;
-use Respect\Validation\Validator as v;
+use Respect\Validation\ValidatorBuilder as v;
 
 /**
  * Classe per la gestione dell impostazioni del progetto.

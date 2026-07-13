@@ -693,7 +693,7 @@ class Validator
             }
 
             if (!empty($validator)) {
-                $validation = $validator->validate($output);
+                $validation = $validator->isValid($output);
 
                 // Segnalazione dell'irregolarità
                 if (!intval($validation)) {

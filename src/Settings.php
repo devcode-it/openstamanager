@@ -126,7 +126,7 @@ class Settings
         // list
         // verifico che il valore scelto sia nella lista enumerata nel db
         elseif (preg_match("/list\[(.+?)\]/", (string) $setting->tipo, $m)) {
-            $validator = v::in(explode(',', $m[1]));
+            $validator = v::in(explode(',', $m[1]))->nonStrict();
         }
 
         // multiple
@@ -140,7 +140,7 @@ class Settings
             $validator = v::boolType();
         }
 
-        if (empty($validator) || $validator->validate($value)) {
+        if (empty($validator) || $validator->isValid($value)) {
             $setting->valore = $value;
             $setting->save();
 

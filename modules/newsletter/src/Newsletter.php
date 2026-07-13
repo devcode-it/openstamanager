@@ -147,7 +147,7 @@ class Newsletter extends Model
 
         $abilita_newsletter = $origine->enable_newsletter;
         $email = $destinatario->email;
-        if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
+        if (empty($email) || empty($abilita_newsletter) || !v::email()->isValid($email)) {
             return null;
         }
 

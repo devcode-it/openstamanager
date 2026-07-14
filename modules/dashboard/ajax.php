@@ -631,32 +631,51 @@ switch (filter('op')) {
 
         break;
 
-    case 'calendario_eventi':
+        case 'calendario_eventi':
         $start = filter('start');
         $end = filter('end');
+        $start_dt = new DateTime($start);
+        $end_dt = new DateTime($end);
 
-        // TODO: Problema con anni bisestili Es. 2024-02-29 e 2023-03-01 sono entrambi il 60 esimo giorno dell'anno.
-        $query = 'SELECT *, DAYOFYEAR(`zz_events`.`data`) AS d, DAYOFYEAR('.prepare($start).') AS st, DAYOFYEAR('.prepare($end).') AS fi FROM `zz_events`
-            WHERE `zz_events`.`is_bank_holiday` = 1
-            AND
-            (`zz_events`.`is_recurring` = 1
-            AND DAYOFYEAR(`zz_events`.`data`) BETWEEN DAYOFYEAR('.prepare($start).') AND IF(YEAR('.prepare($start).') = YEAR('.prepare($end).'), DAYOFYEAR('.prepare($end).'), 365 + DAYOFYEAR('.prepare($end).')) )
-            OR
-            (`zz_events`.`is_recurring` = 0 AND `zz_events`.`data` >= '.prepare($start).' AND  `zz_events`.`data` <= '.prepare($end).')';
-
-        $eventi = $dbo->fetchArray($query);
+        $eventi = $dbo->fetchArray('SELECT * FROM `zz_events` WHERE `is_bank_holiday` = 1');
 
         $results = [];
+        $is_cross_year = ($start_dt->format('Y') != $end_dt->format('Y'));
+
         foreach ($eventi as $evento) {
-            $results[] = [
-                'id' => $evento['id'],
-                'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
-                'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $evento['data'])) : $evento['data']),
-                // 'end' => date('Y-m-d', strtotime($evento['data']. '+1 day')),
-                'display' => 'background',
-                'allDay' => true,
-                'overlap' => true,
-            ];
+            $start_date = $evento['data'];
+
+            if ($evento['is_recurring']) {
+                $month_day = date('-m-d', strtotime($start_date));
+
+                for ($year = $start_dt->format('Y'); $year <= $end_dt->format('Y'); $year++) {
+                    $event_date = $year . $month_day;
+
+                    if ($month_day === '-02-29' && !date('L', strtotime($event_date))) {
+                        $event_date = $year . '-02-28';
+                    }
+
+                    if ($event_date >= $start && $event_date <= $end) {
+                        $results[] = [
+                            'id' => $evento['id'],
+                            'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
+                            'start' => $event_date,
+                            'display' => 'background',
+                            'allDay' => true,
+                            'overlap' => true,
+                        ];
+                    }
+                }
+            } elseif ($start_date >= $start && $start_date <= $end) {
+                $results[] = [
+                    'id' => $evento['id'],
+                    'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
+                    'start' => $start_date,
+                    'display' => 'background',
+                    'allDay' => true,
+                    'overlap' => true,
+                ];
+            }
         }
 
         echo json_encode($results);

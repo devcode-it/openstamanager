@@ -356,10 +356,45 @@ switch (filter('op')) {
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
-                        // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->id_articolo);
 
                         $prezzo = ($tipo == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto);
+
+                        // Estrazione del prezzo dal listino dell'anagrafica se presente
+                        $id_listino = $ddt->anagrafica->id_listino;
+                        if ($id_listino) {
+                            $prezzi_listino = database()->fetchArray(
+                                'SELECT prezzo_unitario, minimo, massimo FROM mg_listini_articoli
+                                 INNER JOIN mg_listini ON mg_listini_articoli.id_listino = mg_listini.id
+                                 WHERE mg_listini_articoli.id_listino = '.prepare($id_listino).'
+                                 AND mg_listini_articoli.id_articolo = '.prepare($riga->id_articolo).'
+                                 AND mg_listini_articoli.dir = '.prepare($dir).'
+                                 AND mg_listini.attivo = 1
+                                 AND mg_listini.data_attivazione <= NOW()
+                                 AND (mg_listini_articoli.data_scadenza IS NULL OR mg_listini_articoli.data_scadenza >= NOW())
+                                 AND (mg_listini.data_scadenza_predefinita IS NULL OR mg_listini.data_scadenza_predefinita >= NOW())
+                                 AND (mg_listini_articoli.minimo IS NULL OR mg_listini_articoli.minimo <= '.prepare($qta).')
+                                 AND (mg_listini_articoli.massimo IS NULL OR mg_listini_articoli.massimo >= '.prepare($qta).')'
+                            );
+
+                            $prezzo_listino_selezionato = null;
+                            $prezzo_listino_predefinito = null;
+
+                            foreach ($prezzi_listino as $prezzo_listino) {
+                                if ($prezzo_listino['minimo'] == null && $prezzo_listino['massimo'] == null) {
+                                    $prezzo_listino_predefinito = $prezzo_listino;
+                                } else {
+                                    $prezzo_listino_selezionato = $prezzo_listino;
+                                }
+                            }
+
+                            $prezzo_listino_finale = $prezzo_listino_selezionato ?: $prezzo_listino_predefinito;
+
+                            if ($prezzo_listino_finale) {
+                                $prezzo = $prezzo_listino_finale['prezzo_unitario'];
+                            }
+                        }
+
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
                         } else {

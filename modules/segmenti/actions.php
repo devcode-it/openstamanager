@@ -33,17 +33,17 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE `zz_segments` SET `predefined` = 0 WHERE `id_module` = '.prepare($module));
+            database()->table('zz_segments')->where('id_module', $module)->update(['predefined' => 0]);
         }
 
         $predefined_accredito = post('predefined_accredito');
         if ($predefined_accredito) {
-            $dbo->query('UPDATE `zz_segments` SET `predefined_accredito` = 0 WHERE `id_module` = '.prepare($module));
+            database()->table('zz_segments')->where('id_module', $module)->update(['predefined_accredito' => 0]);
         }
 
         $predefined_addebito = post('predefined_addebito');
         if ($predefined_addebito) {
-            $dbo->query('UPDATE `zz_segments` SET `predefined_addebito` = 0 WHERE `id_module` = '.prepare($module));
+            database()->table('zz_segments')->where('id_module', $module)->update(['predefined_addebito' => 0]);
         }
 
         $dbo->update('zz_segments', [
@@ -82,7 +82,7 @@ switch (post('op')) {
         }
 
         if ($predefined) {
-            $dbo->query('UPDATE `zz_segments` SET `predefined` = 0 WHERE `id_module` = '.prepare($module));
+            database()->table('zz_segments')->where('id_module', $module)->update(['predefined' => 0]);
         }
 
         $dbo->insert('zz_segments', [
@@ -104,17 +104,20 @@ switch (post('op')) {
         ]);
 
         // Aggiunta permessi segmento solo per i gruppi che hanno accesso al modulo
-        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($module).' AND `permessi` IN (\'r\', \'rw\')');
+        $gruppi_con_accesso = database()->table('zz_permissions')
+            ->where('id_module', $module)
+            ->whereIn('permessi', ['r', 'rw'])
+            ->pluck('id_gruppo')
+            ->toArray();
 
         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
         $id_gruppo_admin = 1; // ID del gruppo Amministratori
-        $gruppi_ids = array_column($gruppi_con_accesso, 'id_gruppo');
-        if (!in_array($id_gruppo_admin, $gruppi_ids)) {
-            $gruppi_con_accesso[] = ['id_gruppo' => $id_gruppo_admin];
+        if (!in_array($id_gruppo_admin, $gruppi_con_accesso)) {
+            $gruppi_con_accesso[] = $id_gruppo_admin;
         }
 
         // Usa sync per evitare duplicati e sincronizzare correttamente i permessi
-        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => array_column($gruppi_con_accesso, 'id_gruppo')]);
+        $dbo->sync('zz_group_segment', ['id_segment' => $id_record], ['id_gruppo' => $gruppi_con_accesso]);
 
         flash()->info(tr('Nuovo segmento aggiunto'));
 

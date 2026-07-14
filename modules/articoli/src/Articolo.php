@@ -298,22 +298,26 @@ class Articolo extends Model
 
     public function getNomeVarianteAttribute()
     {
-        $valori = database()->fetchArray("SELECT
-            CONCAT(`mg_attributi_lang`.`title`, ': ', `mg_valori_attributi`.`nome`) AS nome
-        FROM
-            `mg_articolo_attributo`
-            INNER JOIN `mg_valori_attributi` ON `mg_valori_attributi`.`id` = `mg_articolo_attributo`.`id_valore`
-            INNER JOIN `mg_attributi` ON `mg_attributi`.`id` = `mg_valori_attributi`.`id_attributo`
-            LEFT JOIN `mg_attributi_lang` ON (`mg_attributi_lang`.`id_record` = `mg_attributi`.`id` AND `mg_attributi_lang`.`id_lang` = ".prepare(\Models\Locale::getDefault()->id).')
-            INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articolo_attributo`.`id_articolo`
-            INNER JOIN `mg_combinazioni` ON `mg_combinazioni`.`id` = `mg_articoli`.`id_combinazione`
-            INNER JOIN `mg_attributo_combinazione` ON `mg_attributo_combinazione`.`id_combinazione` = `mg_combinazioni`.`id` AND `mg_attributo_combinazione`.`id_attributo` = `mg_attributi`.`id`
-        WHERE
-            `mg_articoli`.`id` = '.prepare($this->id).'
-        ORDER BY
-            `mg_attributo_combinazione`.`order`');
+        $valori = database()->table('mg_articolo_attributo')
+            ->select(database()->raw("CONCAT(`mg_attributi_lang`.`title`, ': ', `mg_valori_attributi`.`nome`) AS nome"))
+            ->join('mg_valori_attributi', 'mg_valori_attributi.id', '=', 'mg_articolo_attributo.id_valore')
+            ->join('mg_attributi', 'mg_attributi.id', '=', 'mg_valori_attributi.id_attributo')
+            ->leftJoin('mg_attributi_lang', function ($join) {
+                $join->on('mg_attributi_lang.id_record', '=', 'mg_attributi.id')
+                     ->where('mg_attributi_lang.id_lang', '=', \Models\Locale::getDefault()->id);
+            })
+            ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articolo_attributo.id_articolo')
+            ->join('mg_combinazioni', 'mg_combinazioni.id', '=', 'mg_articoli.id_combinazione')
+            ->join('mg_attributo_combinazione', function ($join) {
+                $join->on('mg_attributo_combinazione.id_combinazione', '=', 'mg_combinazioni.id')
+                     ->on('mg_attributo_combinazione.id_attributo', '=', 'mg_attributi.id');
+            })
+            ->where('mg_articoli.id', $this->id)
+            ->orderBy('mg_attributo_combinazione.order')
+            ->pluck('nome')
+            ->toArray();
 
-        return implode(', ', array_column($valori, 'nome'));
+        return implode(', ', $valori);
     }
 
     // Relazioni Eloquent

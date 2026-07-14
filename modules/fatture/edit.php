@@ -178,9 +178,10 @@ if (!empty($fattura->ref_documento) && $fattura->isNota()) {
 // Ricordo che si sta emettendo una fattura conto terzi
 if ($dir == 'entrata' && $fattura->stato->id == $id_stato_bozza) {
     if ($fattura->is_fattura_conto_terzi) {
+        $ragione_sociale = database()->table('an_anagrafiche')->where('id', setting('Azienda predefinita'))->value('ragione_sociale');
         echo '
 <div class="alert alert-info">
-    <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).'</b>"']).'.</b>
+    <i class="fa fa-info"></i> '.tr("Questa è una fattura per conto di terzi. Nell'XML della Fattura Elettronica sarà indicato il fornitore _FORNITORE_ come cessionario e il cliente come cedente/prestatore", ['_FORNITORE_' => '"<b>'.stripslashes($ragione_sociale).'</b>"']).'.</b>
 </div>';
     }
 
@@ -273,8 +274,8 @@ $query = 'SELECT `co_stati_documento`.*, `co_stati_documento`.`id` AS id, `color
 if (empty($record['is_fiscale'])) {
     $query .= " WHERE `co_stati_documento`.`id` = $id_stato_bozza";
 
-    $plugin = $dbo->fetchArray('SELECT `zz_plugins`.`id` FROM `zz_plugins` WHERE `zz_plugins`.`name`="Fatturazione Elettronica" AND `id_module_to` = '.prepare($id_module));
-    echo '<script>  $("li.btn-default.nav-item:has(#link-tab_'.$plugin[0]['id'].')").addClass("disabled"); </script>';
+    $plugin = database()->table('zz_plugins')->where('name', 'Fatturazione Elettronica')->where('id_module_to', $id_module)->value('id');
+    echo '<script>  $("li.btn-default.nav-item:has(#link-tab_'.$plugin.')").addClass("disabled"); </script>';
 }
 // Forzo il passaggio della fattura da Bozza ad Emessa per il corretto calcolo del numero.
 elseif ($fattura->stato->id == $id_stato_bozza) {
@@ -320,8 +321,9 @@ $query .= ' ORDER BY `title`';
                 <div class="col-md-3">';
 
 if ($dir == 'entrata') {
+    $ragione_sociale_help = stripslashes(database()->table('an_anagrafiche')->where('id', setting('Azienda predefinita'))->value('ragione_sociale'));
     ?>
-						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").stripslashes((string) $database->fetchOne('SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `id` = '.prepare(setting('Azienda predefinita')))['ragione_sociale']); ?>", "value": "$id_anagrafica$" ]}
+						{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "ajax-source": "clienti", "help": "<?php echo tr("In caso di autofattura indicare l'azienda: ").$ragione_sociale_help; ?>", "value": "$id_anagrafica$" ]}
 <?php
 } else {
     ?>
@@ -391,7 +393,12 @@ echo '
 
 <?php
 // Conteggio numero articoli fatture
-$articolo = $dbo->fetchArray('SELECT `mg_articoli`.`id` FROM ((`mg_articoli` INNER JOIN `co_righe_documenti` ON `mg_articoli`.`id`=`co_righe_documenti`.`id_articolo`) INNER JOIN `co_documenti` ON `co_documenti`.`id`=`co_righe_documenti`.`id_documento`) WHERE `co_documenti`.`id`='.prepare($id_record));
+$articolo = database()->table('mg_articoli')
+    ->join('co_righe_documenti', 'mg_articoli.id', '=', 'co_righe_documenti.id_articolo')
+    ->join('co_documenti', 'co_righe_documenti.id_documento', '=', 'co_documenti.id')
+    ->where('co_documenti.id', $id_record)
+    ->pluck('mg_articoli.id')
+    ->toArray();
 $id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;
 if ($dir == 'entrata') {
     echo '
@@ -421,7 +428,7 @@ if ($dir == 'entrata') {
 				<div class="col-md-3">
 					<!-- Nella realtà la fattura accompagnatoria non può esistere per la fatturazione elettronica, in quanto la risposta dal SDI potrebbe non essere immediata e le merci in viaggio. Dunque si può emettere una documento di viaggio valido per le merci ed eventualmente una fattura pro-forma per l'incasso della stessa, emettendo infine la fattura elettronica differita. -->
 
-					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipi_documento`.`id` = <?php echo $record['id_tipo_documento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$id_tipo_documento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo ($database->fetchOne('SELECT tipo FROM an_anagrafiche WHERE id = '.prepare($record['id_anagrafica']))['tipo'] == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
+					{[ "type": "select", "label": "<?php echo tr('Tipo documento'); ?>", "name": "id_tipo_documento", "required": 1, "values": "query=SELECT `co_tipi_documento`.`id`, CONCAT_WS(' - ',`codice_tipo_documento_fe`, `title`) AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = <?php echo prepare(Locale::getDefault()->id); ?>) WHERE `dir`='<?php echo $dir; ?>' AND ((`reversed` = 0 AND `id_segment` ='<?php echo $record['id_segment']; ?>') OR `co_tipi_documento`.`id` = <?php echo $record['id_tipo_documento']; ?>) ORDER BY `codice_tipo_documento_fe`", "value": "$id_tipo_documento$", "readonly": <?php echo intval($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata); ?>, "help": "<?php echo (database()->table('an_anagrafiche')->where('id', $record['id_anagrafica'])->value('tipo') == 'Ente pubblico') ? 'FPA12 - fattura verso PA (Ente pubblico)' : 'FPR12 - fattura verso soggetti privati (Azienda o Privato)'; ?>" ]}
 				</div>
 
 				<div class="col-md-3">
@@ -467,7 +474,10 @@ if ($dir == 'entrata') {
     if ($dir == 'entrata') {
         ?>
                 <div class="col-md-3">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.stripslashes((string) $database->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')))['ragione_sociale']).') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
+                    <?php
+                    $ragione_sociale_help = stripslashes(database()->table('an_anagrafiche')->where('id', setting('Azienda predefinita'))->value('ragione_sociale'));
+                    ?>
+                    {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.$ragione_sociale_help.') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
                 </div>
 
                 <?php
@@ -808,30 +818,66 @@ if (!$block_edit) {
             }
 
             // Lettura interventi non rifiutati, non fatturati
-            $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `in_stati_intervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) '.$where;
-            $interventi = $dbo->fetchArray($int_query)[0]['tot'];
+            $interventi = database()->table('in_interventi')
+                ->join('in_stati_intervento', 'in_interventi.id_stato', '=', 'in_stati_intervento.id')
+                ->where('in_interventi.id_anagrafica', $record['id_anagrafica'])
+                ->where('in_stati_intervento.is_fatturabile', 1)
+                ->whereNotIn('in_interventi.id', function ($query) {
+                    $query->select('id_intervento')->from('co_righe_documenti')->whereNotNull('id_intervento');
+                })
+                ->when(!setting('Permetti fatturazione delle attività collegate a contratti'), function ($query) {
+                    return $query->whereNull('in_interventi.id_contratto');
+                })
+                ->when(!setting('Permetti fatturazione delle attività collegate a ordini'), function ($query) {
+                    return $query->whereNull('in_interventi.id_ordine');
+                })
+                ->when(!setting('Permetti fatturazione delle attività collegate a preventivi'), function ($query) {
+                    return $query->whereNull('in_interventi.id_preventivo');
+                })
+                ->count();
 
             // Se non trovo niente provo a vedere se ce ne sono per clienti terzi
             if (empty($interventi)) {
                 // Lettura interventi non rifiutati, non fatturati
-                $int_query = 'SELECT COUNT(*) AS tot FROM `in_interventi` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id` WHERE `id_cliente_finale`='.prepare($record['id_anagrafica']).' AND `in_stati_intervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) '.$where;
-                $interventi = $dbo->fetchArray($int_query)[0]['tot'];
+                $interventi = database()->table('in_interventi')
+                    ->join('in_stati_intervento', 'in_interventi.id_stato', '=', 'in_stati_intervento.id')
+                    ->where('in_interventi.id_cliente_finale', $record['id_anagrafica'])
+                    ->where('in_stati_intervento.is_fatturabile', 1)
+                    ->whereNotIn('in_interventi.id', function ($query) {
+                        $query->select('id_intervento')->from('co_righe_documenti')->whereNotNull('id_intervento');
+                    })
+                    ->when(!setting('Permetti fatturazione delle attività collegate a contratti'), function ($query) {
+                        return $query->whereNull('in_interventi.id_contratto');
+                    })
+                    ->when(!setting('Permetti fatturazione delle attività collegate a ordini'), function ($query) {
+                        return $query->whereNull('in_interventi.id_ordine');
+                    })
+                    ->when(!setting('Permetti fatturazione delle attività collegate a preventivi'), function ($query) {
+                        return $query->whereNull('in_interventi.id_preventivo');
+                    })
+                    ->count();
             }
 
             // Lettura preventivi accettati, in attesa di conferma o in lavorazione
-            $prev_query = 'SELECT
-                    COUNT(*) AS tot
-                FROM
-                    `co_preventivi`
-                    LEFT JOIN `co_righe_preventivi` ON `co_preventivi`.id = `co_righe_preventivi`.id_preventivo
-                    INNER JOIN `co_stati_preventivi` ON `co_stati_preventivi`.id = `co_preventivi`.id_stato
-                WHERE
-                    `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `co_stati_preventivi`.`is_fatturabile` = 1 AND `default_revision` = 1 AND (`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0';
-            $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
+            $preventivi = database()->table('co_preventivi')
+                ->leftJoin('co_righe_preventivi', 'co_preventivi.id', '=', 'co_righe_preventivi.id_preventivo')
+                ->join('co_stati_preventivi', 'co_stati_preventivi.id', '=', 'co_preventivi.id_stato')
+                ->where('co_preventivi.id_anagrafica', $record['id_anagrafica'])
+                ->where('co_stati_preventivi.is_fatturabile', 1)
+                ->where('co_preventivi.default_revision', 1)
+                ->whereRaw('(`co_righe_preventivi`.`qta` - `co_righe_preventivi`.`qta_evasa`) > 0')
+                ->count();
 
             // Lettura contratti accettati, in attesa di conferma o in lavorazione
-            $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_stati_contratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `id_contratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`id_contratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
-            $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
+            $contratti = database()->table('co_contratti')
+                ->where('co_contratti.id_anagrafica', $record['id_anagrafica'])
+                ->whereIn('co_contratti.id_stato', function ($query) {
+                    $query->select('id')->from('co_stati_contratti')->where('is_fatturabile', 1);
+                })
+                ->whereIn('co_contratti.id', function ($query) {
+                    $query->select('id_contratto')->from('co_righe_contratti')->whereColumn('co_righe_contratti.id_contratto', '=', 'co_contratti.id')->whereRaw('(`qta` - `qta_evasa`) > 0');
+                })
+                ->count();
         }
 
         $id_stato_evaso = StatoDDT::where('name', 'Evaso')->first()->id;
@@ -839,22 +885,21 @@ if (!$block_edit) {
         $id_stato_parz_fatt = StatoDDT::where('name', 'Parzialmente fatturato')->first()->id;
 
         // Lettura ddt (entrata o uscita)
-        $ddt_query = 'SELECT
-            COUNT(*) AS tot
-        FROM
-            `dt_ddt`
-            INNER JOIN `dt_causale_t` ON `dt_causale_t`.`id` = `dt_ddt`.`id_causale_t`
-            INNER JOIN `dt_stati_ddt` ON `dt_stati_ddt`.`id` = `dt_ddt`.`id_stato`
-            LEFT JOIN `dt_stati_ddt_lang` ON (`dt_stati_ddt`.`id` = `dt_stati_ddt_lang`.`id_record` AND `dt_stati_ddt_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-            LEFT JOIN `dt_tipi_ddt` ON `dt_tipi_ddt`.`id` = `dt_ddt`.`id_tipo_ddt`
-            INNER JOIN `dt_righe_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
-        WHERE
-            `id_anagrafica`='.prepare($record['id_anagrafica']).'
-            AND `dt_stati_ddt`.`id` IN ('.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
-            AND `dt_tipi_ddt`.`dir` = '.prepare($dir).'
-            AND `dt_causale_t`.`is_importabile` = 1
-            AND (`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0';
-        $ddt = $dbo->fetchArray($ddt_query)[0]['tot'];
+        $ddt = database()->table('dt_ddt')
+            ->join('dt_causale_t', 'dt_causale_t.id', '=', 'dt_ddt.id_causale_t')
+            ->join('dt_stati_ddt', 'dt_stati_ddt.id', '=', 'dt_ddt.id_stato')
+            ->leftJoin('dt_stati_ddt_lang', function ($join) {
+                $join->on('dt_stati_ddt.id', '=', 'dt_stati_ddt_lang.id_record')
+                     ->where('dt_stati_ddt_lang.id_lang', '=', Locale::getDefault()->id);
+            })
+            ->leftJoin('dt_tipi_ddt', 'dt_tipi_ddt.id', '=', 'dt_ddt.id_tipo_ddt')
+            ->join('dt_righe_ddt', 'dt_righe_ddt.id_ddt', '=', 'dt_ddt.id')
+            ->where('dt_ddt.id_anagrafica', $record['id_anagrafica'])
+            ->whereIn('dt_stati_ddt.id', [$id_stato_evaso, $id_stato_parz_evaso, $id_stato_parz_fatt])
+            ->where('dt_tipi_ddt.dir', $dir)
+            ->where('dt_causale_t.is_importabile', 1)
+            ->whereRaw('(`dt_righe_ddt`.`qta` - `dt_righe_ddt`.`qta_evasa`) > 0')
+            ->count();
 
         // Lettura ordini (cliente o fornitore)
         $id_stato_accettato = StatoOrdine::where('name', 'Accettato')->first()->id;
@@ -862,20 +907,19 @@ if (!$block_edit) {
         $id_stato_parz_evaso = StatoOrdine::where('name', 'Parzialmente evaso')->first()->id;
         $id_stato_parz_fatt = StatoOrdine::where('name', 'Parzialmente fatturato')->first()->id;
 
-        $ordini_query = 'SELECT
-                COUNT(*) AS tot
-            FROM
-                `or_ordini`
-                INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
-                INNER JOIN `or_stati_ordine` ON `or_stati_ordine`.`id` = `or_ordini`.`id_stato`
-                LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine`.`id` = `or_stati_ordine_lang`.`id_record` AND `or_stati_ordine_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).')
-                INNER JOIN `or_tipi_ordine` ON `or_tipi_ordine`.`id` = `or_ordini`.`id_tipo_ordine`
-            WHERE
-                id_anagrafica='.prepare($record['id_anagrafica']).'
-                AND `or_stati_ordine`.`id` IN ('.prepare($id_stato_accettato).','.prepare($id_stato_evaso).','.prepare($id_stato_parz_evaso).','.prepare($id_stato_parz_fatt).')
-                AND `dir`='.prepare($dir).'
-                AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0';
-        $ordini = $dbo->fetchArray($ordini_query)[0]['tot'];
+        $ordini = database()->table('or_ordini')
+            ->join('or_righe_ordini', 'or_ordini.id', '=', 'or_righe_ordini.id_ordine')
+            ->join('or_stati_ordine', 'or_stati_ordine.id', '=', 'or_ordini.id_stato')
+            ->leftJoin('or_stati_ordine_lang', function ($join) {
+                $join->on('or_stati_ordine.id', '=', 'or_stati_ordine_lang.id_record')
+                     ->where('or_stati_ordine_lang.id_lang', '=', Locale::getDefault()->id);
+            })
+            ->join('or_tipi_ordine', 'or_tipi_ordine.id', '=', 'or_ordini.id_tipo_ordine')
+            ->where('or_ordini.id_anagrafica', $record['id_anagrafica'])
+            ->whereIn('or_stati_ordine.id', [$id_stato_accettato, $id_stato_evaso, $id_stato_parz_evaso, $id_stato_parz_fatt])
+            ->where('or_tipi_ordine.dir', $dir)
+            ->whereRaw('(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0')
+            ->count();
     }
 
     // Form di inserimento riga documento

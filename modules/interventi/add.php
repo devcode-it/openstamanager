@@ -62,9 +62,9 @@ if (empty($id_anagrafica)) {
     $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->id_anagrafica;
 }
 
-$anagrafica = $dbo->fetchOne('SELECT id_tipo_intervento_default, id_zona FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
-$id_tipo = $anagrafica['id_tipo_intervento_default'];
-$id_zona = $anagrafica['id_zona'];
+$anagrafica = database()->table('an_anagrafiche')->where('id', $id_anagrafica)->first(['id_tipo_intervento_default', 'id_zona']);
+$id_tipo = $anagrafica->id_tipo_intervento_default;
+$id_zona = $anagrafica->id_zona;
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
@@ -90,8 +90,8 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
     // Caricamento degli impianti a Contratto se non definiti in Promemoria
     if (empty($impianti_collegati)) {
-        $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($id_contratto));
-        $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
+        $rs = database()->table('my_impianti_contratti')->where('id_contratto', $id_contratto)->pluck('id_impianto')->toArray();
+        $impianti_collegati = implode(',', $rs);
     }
 }
 
@@ -117,17 +117,17 @@ elseif (!empty($id_intervento)) {
         $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $intervento['tempo_standard']));
     }
 
-    $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_interventi WHERE id_intervento = '.prepare($id_intervento));
-    $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
+    $rs = database()->table('my_impianti_interventi')->where('id_intervento', $id_intervento)->pluck('id_impianto')->toArray();
+    $impianti_collegati = implode(',', $rs);
 
-    $rs = $dbo->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_intervento));
-    $tecnici_assegnati = implode(',', array_column($rs, 'id_tecnico'));
+    $rs = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_intervento)->pluck('id_tecnico')->toArray();
+    $tecnici_assegnati = implode(',', $rs);
 }
 
 // Selezione dei tecnici predefiniti per gli impianti selezionati
 if (!empty($impianti_collegati)) {
-    $tecnici_impianti = $dbo->fetchArray('SELECT id_tecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
-    $id_tecnico = array_unique(array_column($tecnici_impianti, 'id_tecnico'));
+    $tecnici_impianti = database()->table('my_impianti')->whereIn('id', explode(',', $impianti_collegati))->pluck('id_tecnico')->toArray();
+    $id_tecnico = array_unique($tecnici_impianti);
 }
 
 // Impostazione della data se mancante

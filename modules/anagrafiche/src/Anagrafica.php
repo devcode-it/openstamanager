@@ -116,7 +116,7 @@ class Anagrafica extends Model
             $anagrafica->save();
         } else {
             $conto = $anagrafica->id_conto_cliente;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = '.$anagrafica['id_conto_cliente']);
+            $is_esistente = database()->table('co_piano_dei_conti3')->where('id', $anagrafica['id_conto_cliente'])->first();
             if (!$is_esistente) {
                 $anagrafica->id_conto_cliente = null;
                 $anagrafica->save();
@@ -136,7 +136,7 @@ class Anagrafica extends Model
             $anagrafica->save();
         } else {
             $conto = $anagrafica->id_conto_fornitore;
-            $is_esistente = database()->fetchOne('SELECT id FROM co_piano_dei_conti3 WHERE id = '.$anagrafica['id_conto_fornitore']);
+            $is_esistente = database()->table('co_piano_dei_conti3')->where('id', $anagrafica['id_conto_fornitore'])->first();
             if (!$is_esistente) {
                 $anagrafica->id_conto_fornitore = null;
                 $anagrafica->save();
@@ -149,7 +149,7 @@ class Anagrafica extends Model
     {
         $database = database();
 
-        $presenti = $database->fetchArray('SELECT id_tipo_intervento FROM in_tariffe WHERE id_tecnico = '.prepare($anagrafica->id));
+        $presenti = $database->table('in_tariffe')->where('id_tecnico', $anagrafica->id)->get()->pluck('id_tipo_intervento')->toArray();
 
         // Aggiunta associazioni costi unitari al contratto
         $tipi = TipoSessione::whereNotIn('id', array_column($presenti, 'id_tipo_intervento'))->get();

@@ -274,135 +274,6 @@ if (filter('draw', null, true) !== '') {
         $columns_js .= ', { data: "'.($is_economico ? '3' : '2').'" }';
 
         echo '
-<style>
-    /* Stile scoped alla DataTable dei sottoconti (override delle regole BS3 di datatables.css) */
-
-    /* Length menu: select2 inline, tutto su una riga */
-    .sottoconti-dt .dataTables_length label {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        margin: 0;
-        font-weight: normal;
-    }
-    .sottoconti-dt .dataTables_length .select2-container {
-        display: inline-block !important;
-        width: auto !important;
-        min-width: 4.5rem;
-        vertical-align: middle;
-    }
-
-    /* Campo ricerca: come #input-cerca in cima alla pagina, solo piu\' piccola (no -lg) */
-    .sottoconti-dt .dataTables_filter label {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-        margin: 0;
-    }
-    .sottoconti-dt .dataTables_filter input {
-        display: block;
-        width: 16rem;
-        max-width: 100%;
-        height: calc(2.25rem + 2px);
-        margin: 0;
-        padding: .375rem .75rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: .25rem !important;
-        box-shadow: none;
-    }
-
-    /* Riga paginazione: campo "Vai a pagina" + pager, allineati a destra */
-    .sottoconti-dt .dt-pagination-col {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        gap: .5rem .75rem;
-        padding-top: .5rem;
-    }
-    .sottoconti-dt .dt-pagination-col .dataTables_paginate {
-        padding-top: 0;
-        text-align: right;
-    }
-    .sottoconti-dt .dt-goto {
-        width: auto;
-        flex: 0 0 auto;
-        margin: 0;
-    }
-    .sottoconti-dt .dt-goto .input-group-text {
-        /* !important per battere la regola globale .input-group-text di style.css */
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-    }
-    .sottoconti-dt .dt-goto input {
-        width: 4.5rem;
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-    }
-
-    /* Bottoni paginazione in stile BS4 */
-    .sottoconti-dt .dataTables_paginate .paginate_button {
-        display: inline-block;
-        box-sizing: border-box;
-        min-width: 2.25rem;
-        padding: .375rem .75rem !important; /* !important per battere il padding 24px BS3 su prev/next */
-        border: 1px solid #dee2e6;
-        background: #fff;
-        color: #007bff;
-        line-height: 1.25;
-        text-align: center;
-        cursor: pointer;
-    }
-    .sottoconti-dt .dataTables_paginate .paginate_button:hover {
-        background: #e9ecef;
-        color: #0056b3;
-        text-decoration: none;
-    }
-    .sottoconti-dt .dataTables_paginate .paginate_button.current,
-    .sottoconti-dt .dataTables_paginate .paginate_button.current:hover {
-        border-color: #007bff;
-        background: #007bff;
-        color: #fff;
-    }
-    .sottoconti-dt .dataTables_paginate .paginate_button.disabled,
-    .sottoconti-dt .dataTables_paginate .paginate_button.disabled:hover {
-        color: #6c757d;
-        background: #fff;
-        cursor: default;
-    }
-    /* Gruppo numeri: bottoni uniti, estremi arrotondati */
-    .sottoconti-dt .dataTables_paginate span a.paginate_button {
-        margin-left: -1px;
-        border-radius: 0;
-    }
-    .sottoconti-dt .dataTables_paginate span a.paginate_button:first-child {
-        margin-left: 0;
-        border-top-left-radius: .25rem;
-        border-bottom-left-radius: .25rem;
-    }
-    .sottoconti-dt .dataTables_paginate span a.paginate_button:last-child {
-        border-top-right-radius: .25rem;
-        border-bottom-right-radius: .25rem;
-    }
-    /* Prec/Succ: bottoni separati dal gruppo numeri */
-    .sottoconti-dt .dataTables_paginate .paginate_button.previous {
-        border-radius: .25rem;
-        margin-right: .5rem;
-    }
-    .sottoconti-dt .dataTables_paginate .paginate_button.next {
-        border-radius: .25rem;
-        margin-left: .5rem;
-    }
-    /* niente frecce FontAwesome doppie: solo le icone passate via language.paginate */
-    .sottoconti-dt .dataTables_paginate .paginate_button.previous:before,
-    .sottoconti-dt .dataTables_paginate .paginate_button.next:after {
-        content: none !important;
-    }
-</style>
 <script>
     $(function() {
         var $dt = $("#'.$datatable_id.'");
@@ -446,10 +317,8 @@ if (filter('draw', null, true) !== '') {
                 dom: "<\'row\'<\'col-sm-12 col-md-6\'l><\'col-sm-12 col-md-6\'f>>rt<\'row\'<\'col-sm-12 col-md-5\'i><\'col-sm-12 col-md-7\'p>>",
                 initComplete: function () {
                     var api = this.api();
-                    // Classe sul wrapper per agganciare le regole CSS scoped (sopra)
                     var $container = $(api.table().container()).addClass("sottoconti-dt");
 
-                    // Length menu: select2 tema bootstrap4 (coerente con gli altri select dell\'app)
                     $container.find(".dataTables_length select").select2({
                         theme: "bootstrap4",
                         language: "it",
@@ -458,12 +327,13 @@ if (filter('draw', null, true) !== '') {
                         allowClear: false,
                     });
 
-                    // Campo ricerca: come #input-cerca in cima alla pagina, solo piu\' piccolo
+                    $container.find(".dataTables_length label").addClass("d-inline-flex align-items-center m-0 font-weight-normal");
+                    $container.find(".dataTables_filter label").addClass("d-flex justify-content-end w-100 m-0");
                     $container.find(".dataTables_filter input").addClass("form-control text-center");
 
-                    // Campo "Vai a pagina" accanto al pager (fratello del pager: il redraw non lo cancella)
                     var $pagCol = $container.find(".dataTables_paginate").parent().addClass("dt-pagination-col");
-                    var $goto = $(\'<div class="dt-goto input-group input-group-sm"><div class="input-group-prepend"><span class="input-group-text">'.tr('Vai a pagina').'</span></div><input type="number" min="1" class="form-control text-center"></div>\');
+                    $pagCol.addClass("d-flex align-items-center justify-content-end flex-wrap");
+                    var $goto = $('<div class="dt-goto input-group input-group-sm"><div class="input-group-prepend"><span class="input-group-text">'.tr('Vai a pagina').'</span></div><input type="number" min="1" class="form-control text-center"></div>');
                     $goto.prependTo($pagCol);
                     $goto.find("input").on("keydown change", function (e) {
                         if (e.type === "keydown" && e.key !== "Enter") {

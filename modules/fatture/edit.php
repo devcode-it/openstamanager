@@ -90,7 +90,6 @@ if ($dir == 'entrata' && !empty($fattura->dichiarazione)) {
 </div>';
         }
     } else {
-        // TODO link ad impostazioni con nuova ricerca rapida
         echo '
 <div class="alert alert-warning">
     <i class="fa fa-warning"></i> '.tr("Attenzione nessuna aliq. IVA definita per la dichiarazione d'intento. _SETTING_", [

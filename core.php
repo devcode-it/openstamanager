@@ -310,36 +310,27 @@ if (!API\Response::isAPIRequest()) {
     $get = Filter::getGET();
 }
 
-// Inclusione dei file modutil.php
-// TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}
-$files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
-$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
-foreach ($custom_files as $key => $value) {
-    $index = array_search(str_replace('custom/', '', $value), $files);
-    if ($index !== false) {
-        unset($files[$index]);
+function includeModuleFiles($pattern) {
+    $files = glob(__DIR__.'/'.$pattern, GLOB_BRACE);
+    $custom_files = glob(__DIR__.'/'.str_replace('/*/', '/*/custom/', $pattern), GLOB_BRACE);
+    
+    $files_map = array_flip($files);
+    foreach ($custom_files as $file) {
+        $base_path = str_replace('/custom/', '/', $file);
+        if (isset($files_map[$base_path])) {
+            unset($files_map[$base_path]);
+        }
+    }
+    
+    foreach (array_merge(array_keys($files_map), $custom_files) as $file) {
+        if (is_file($file)) {
+            include_once $file;
+        }
     }
 }
 
-$list = array_merge($files, $custom_files);
-foreach ($list as $file) {
-    include_once $file;
-}
-
-// Inclusione dei file vendor/autoload.php di Composer
-$files = glob(__DIR__.'/{modules,plugins}/*/vendor/autoload.php', GLOB_BRACE);
-$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/vendor/autoload.php', GLOB_BRACE);
-foreach ($custom_files as $key => $value) {
-    $index = array_search(str_replace('custom/', '', $value), $files);
-    if ($index !== false) {
-        unset($files[$index]);
-    }
-}
-
-$list = array_merge($files, $custom_files);
-foreach ($list as $file) {
-    include_once $file;
-}
+includeModuleFiles('{modules,plugins}/*/modutil.php');
+includeModuleFiles('{modules,plugins}/*/vendor/autoload.php');
 
 // Inizializzazione traduzioni
 if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {

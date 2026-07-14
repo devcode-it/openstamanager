@@ -22,6 +22,7 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Anagrafiche\GeocodingService;
 
 class Sede extends Model
 {
@@ -148,49 +149,13 @@ class Sede extends Model
             && !empty($this->provincia)
             && $new_indirizzo != $prev_indirizzo
         ) {
-            $indirizzo = urlencode($this->indirizzo.', '.$this->citta.', '.$this->provincia);
+            $indirizzo = $this->indirizzo.', '.$this->citta.', '.$this->provincia;
+            $data = GeocodingService::geocode($indirizzo);
 
-            if (setting('Gestore mappa') == 'OpenStreetMap') {
-                // TODO: da riscrivere con Guzzle e spostare su hook
-                if (!function_exists('curl_init')) {
-                    // cURL non è attivo
-                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
-
-                    return false;
-                }
-                $ch = curl_init();
-
-                $lang = \Models\Locale::find(setting('Lingua'))->language_code;
-                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
-                $user_agent = 'traccar';
-                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $data = json_decode(curl_exec($ch));
-
-                // Salvataggio informazioni
-                $this->gaddress = $data[0]->display_name;
-                $this->lat = $data[0]->lat;
-                $this->lng = $data[0]->lon;
-            } elseif (setting('Gestore mappa') == 'Google Maps') {
-                $apiKey = setting('Google Maps API key per Tecnici');
-                $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$indirizzo.'&key='.$apiKey;
-
-                // Validazione URL per prevenire SSRF
-                $parsed_url = parse_url($url);
-                if (!isset($parsed_url['host']) || $parsed_url['host'] !== 'maps.googleapis.com') {
-                    return false;
-                }
-
-                $response = file_get_contents($url);
-                $data = json_decode($response, true);
-
-                if ($data['status'] == 'OK') {
-                    $this->lat = $data['results'][0]['geometry']['location']['lat'];
-                    $this->lng = $data['results'][0]['geometry']['location']['lng'];
-                    $this->gaddress = $data['results'][0]['formatted_address'];
-                }
+            if ($data) {
+                $this->gaddress = $data['gaddress'];
+                $this->lat = $data['lat'];
+                $this->lng = $data['lng'];
             }
         }
     }

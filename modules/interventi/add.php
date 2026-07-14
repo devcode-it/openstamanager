@@ -520,10 +520,15 @@ echo '
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
-		// TODO: da gestire via ajax
-        if($("input[name=id_contratto_riga]").val()) {
-            $("#modals > div button.close").on("click", function() {
-                location.reload();
+        const id_contratto_riga = $("input[name=id_contratto_riga]").val();
+        if(id_contratto_riga) {
+            $("#modals").on("hidden.bs.modal", function(e) {
+                // Ricarica le DataTables per aggiornare la lista dei promemoria
+                $(".main-records, .datatables").each(function() {
+                    if($.fn.DataTable.isDataTable($(this))) {
+                        $(this).DataTable().ajax.reload();
+                    }
+                });
             });
         }
 

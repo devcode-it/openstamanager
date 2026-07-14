@@ -46,15 +46,15 @@ class Scadenze
      */
     public function registra($is_pagato = false, $ignora_fe = false)
     {
-        // Rimozione degli elementi pre-esistenti
-        $this->rimuovi();
+        // Rimozione degli elementi pre-esistenti e ottimizzazione caricamento assicurazioni
+        $assicurazioni_map = $this->rimuovi();
 
         if (!$ignora_fe && $this->fattura->module == 'Fatture di acquisto' && $this->fattura->isFE()) {
-            $scadenze_fe = $this->registraScadenzeFE($is_pagato);
+            $scadenze_fe = $this->registraScadenzeFE($is_pagato, $assicurazioni_map);
         }
 
         if (empty($scadenze_fe)) {
-            $this->registraScadenzeTradizionali($is_pagato);
+            $this->registraScadenzeTradizionali($is_pagato, $assicurazioni_map);
         }
 
         // Registrazione scadenza per Ritenuta d'Acconto
@@ -79,12 +79,14 @@ class Scadenze
             $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenuta_acconto');
+            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenuta_acconto', $assicurazioni_map);
         }
     }
 
     /**
      * Elimina le scadenze della fattura.
+     *
+     * @return array Mappa delle assicurazioni caricate (id_anagrafica => assicurazione)
      */
     public function rimuovi()
     {
@@ -98,17 +100,23 @@ class Scadenze
         if ($id_anagrafiche->isNotEmpty()) {
             $assicurazioni_list = AssicurazioneCrediti::whereIn('id_anagrafica', $id_anagrafiche)->get();
 
-            // Crea una mappa per accesso rapido
+            // Crea una mappa per accesso rapido: chiave = id_anagrafica, valore = lista assicurazioni
             foreach ($assicurazioni_list as $assicurazione) {
-                $key = $assicurazione->id_anagrafica.'_'.$assicurazione->data_inizio.'_'.$assicurazione->data_fine;
-                $assicurazioni_map[$key] = $assicurazione;
+                if (!isset($assicurazioni_map[$assicurazione->id_anagrafica])) {
+                    $assicurazioni_map[$assicurazione->id_anagrafica] = [];
+                }
+                $assicurazioni_map[$assicurazione->id_anagrafica][] = $assicurazione;
             }
-        }
 
-        foreach ($scadenze as $scadenza) {
-            $key = $scadenza->id_anagrafica.'_'.$scadenza->scadenza->format('Y-m-d').'_'.$scadenza->scadenza->format('Y-m-d');
-            if (isset($assicurazioni_map[$key])) {
-                $assicurazioni[] = $assicurazioni_map[$key];
+            // Salva le assicurazioni da aggiornare dopo la cancellazione
+            foreach ($scadenze as $scadenza) {
+                if (isset($assicurazioni_map[$scadenza->id_anagrafica])) {
+                    foreach ($assicurazioni_map[$scadenza->id_anagrafica] as $assicurazione) {
+                        if ($scadenza->scadenza >= $assicurazione->data_inizio && $scadenza->scadenza <= $assicurazione->data_fine) {
+                            $assicurazioni[] = $assicurazione;
+                        }
+                    }
+                }
             }
         }
 
@@ -118,17 +126,24 @@ class Scadenze
             $assicurazione->fixTotale();
             $assicurazione->save();
         }
+
+        return $assicurazioni_map;
     }
 
     /**
      * Registra una specifica scadenza nel database.
      *
-     * @param float  $importo
+     * @param Fattura $fattura
+     * @param float $importo
      * @param string $data_scadenza
-     * @param bool   $is_pagato
+     * @param bool $is_pagato
+     * @param string $id_pagamento
+     * @param string $id_banca_azienda
+     * @param string $id_banca_controparte
      * @param string $type
+     * @param array $assicurazioni_map Mappa delle assicurazioni (id_anagrafica => [assicurazioni]) per ottimizzazione
      */
-    protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura')
+    protected function registraScadenza(Fattura $fattura, $importo, $data_scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type = 'fattura', $assicurazioni_map = null)
     {
         $numero = $fattura->numero_esterno ?: $fattura->numero;
         $descrizione = $fattura->tipo->getTranslation('title').' numero '.$numero;
@@ -139,8 +154,21 @@ class Scadenze
         $scadenza->data_emissione = $fattura->data;
         $scadenza->save();
 
-        // TODO: Considerare di passare le assicurazioni come parametro se chiamato da rimuovi()
-        $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->id_anagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        $assicurazione_crediti = null;
+
+        if ($assicurazioni_map !== null && isset($assicurazioni_map[$id_anagrafica])) {
+            // Ottimizzazione: usa la mappa delle assicurazioni già caricata
+            foreach ($assicurazioni_map[$id_anagrafica] as $assicurazione) {
+                if ($scadenza->scadenza >= $assicurazione->data_inizio && $scadenza->scadenza <= $assicurazione->data_fine) {
+                    $assicurazione_crediti = $assicurazione;
+                    break;
+                }
+            }
+        } else {
+            // Query al database se la mappa non è disponibile
+            $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->id_anagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
+        }
+
         if (!empty($assicurazione_crediti)) {
             $assicurazione_crediti->fixTotale();
             $assicurazione_crediti->save();
@@ -171,10 +199,11 @@ class Scadenze
      * Registra le scadenze della fattura elettronica collegata al documento.
      *
      * @param bool $is_pagato
+     * @param array $assicurazioni_map Mappa delle assicurazioni per ottimizzazione
      *
      * @return bool
      */
-    protected function registraScadenzeFE($is_pagato = false)
+    protected function registraScadenzeFE($is_pagato = false, $assicurazioni_map = null)
     {
         $xml = XML::read($this->fattura->getXML());
 
@@ -198,7 +227,7 @@ class Scadenze
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
-                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
+                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
             }
         }
 
@@ -209,8 +238,9 @@ class Scadenze
      * Registra le scadenze tradizionali del gestionale.
      *
      * @param bool $is_pagato
+     * @param array $assicurazioni_map Mappa delle assicurazioni per ottimizzazione
      */
-    protected function registraScadenzeTradizionali($is_pagato = false)
+    protected function registraScadenzeTradizionali($is_pagato = false, $assicurazioni_map = null)
     {
         // Inversione di segno per le note
         $netto = $this->fattura->netto;
@@ -227,7 +257,7 @@ class Scadenze
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte);
+            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
         }
     }
 }

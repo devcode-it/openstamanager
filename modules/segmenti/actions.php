@@ -48,7 +48,7 @@ switch (post('op')) {
 
         $dbo->update('zz_segments', [
             'id_module' => $module,
-            'clause' => $_POST['clause'],
+            'clause' => post('clause'),
             'pattern' => $pattern,
             'note' => post('note'),
             'dicitura_fissa' => post('dicitura_fissa'),

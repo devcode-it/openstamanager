@@ -170,7 +170,7 @@ if (!$elenco_promemoria->isEmpty()) {
     </tbody>
 </table>';
 
-    if (!empty($promemorias)) {
+    if (!$elenco_promemoria->isEmpty()) {
         echo '
 <br>
 <div class="float-right d-none d-sm-inline">

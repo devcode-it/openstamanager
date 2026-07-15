@@ -23,6 +23,7 @@ namespace Modules\Articoli;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Models\Locale;
 use Models\Plugin;
 use Modules\AttributiCombinazioni\ValoreAttributo;
 use Modules\CombinazioniArticoli\Combinazione;
@@ -421,6 +422,32 @@ class Articolo extends Model
     public function barcodes()
     {
         return $this->hasMany(Barcode::class, 'id_articolo');
+    }
+
+    public function varianti($forList = false)
+    {
+        $defaultLang = Locale::getDefault()?->id ?? 1;
+
+        $columns = $forList ? [
+            'mg_attributi_lang.title as attributo',
+            'mg_valori_attributi.nome as valore',
+        ] : [
+            'mg_attributi.id as id_attributo',
+            'mg_attributi_lang.title as nome_attributo',
+            'mg_valori_attributi.id as id_valore',
+            'mg_valori_attributi.nome as nome_valore',
+        ];
+
+        return database()->table('mg_articolo_attributo')
+            ->join('mg_valori_attributi', 'mg_valori_attributi.id', '=', 'mg_articolo_attributo.id_valore')
+            ->join('mg_attributi', 'mg_attributi.id', '=', 'mg_valori_attributi.id_attributo')
+            ->leftJoin('mg_attributi_lang', function ($join) use ($defaultLang) {
+                $join->on('mg_attributi_lang.id_record', '=', 'mg_attributi.id')
+                    ->where('mg_attributi_lang.id_lang', '=', $defaultLang);
+            })
+            ->where('mg_articolo_attributo.id_articolo', $this->id)
+            ->orderBy('mg_attributi.ordine')
+            ->get($columns);
     }
 
     public static function getTranslatedFields()

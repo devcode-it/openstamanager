@@ -246,11 +246,11 @@ echo '
 
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
 if (!empty($record['id_contratto'])) {
-    $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['id_contratto']));
-    $record['id_documento_fe'] = $contratto['id_documento_fe'];
-    $record['codice_cup'] = $contratto['codice_cup'];
-    $record['codice_cig'] = $contratto['codice_cig'];
-    $record['num_item'] = $contratto['num_item'];
+    $contratto = Modules\Contratti\Contratto::find($record['id_contratto']);
+    $record['id_documento_fe'] = $contratto['id_documento_fe'] ?? null;
+    $record['codice_cup'] = $contratto['codice_cup'] ?? null;
+    $record['codice_cig'] = $contratto['codice_cig'] ?? null;
+    $record['num_item'] = $contratto['num_item'] ?? null;
 }
 
 ?>

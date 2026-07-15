@@ -123,11 +123,11 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
         $fatt_differita_vendita = Tipofattura::where('name', 'Fattura differita di vendita')->first()->id;
 
         if (!empty($options['reversed'])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` WHERE `co_tipi_documento`.`name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = Tipofattura::where('name', 'Nota di credito')->where('dir', $dir)->value('id');
         } elseif (in_array($original_module->id, [$id_module_ddt_vendita, $id_module_ddt_acquisto])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_documento`.`id` = '.($dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita).' AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = Tipofattura::where('id', $dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita)->where('dir', $dir)->value('id');
         } else {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
+            $id_tipo_documento = Tipofattura::where('dir', $dir)->where('predefined', 1)->value('id');
         }
 
         $id_bozza = StatoFattura::where('name', 'Bozza')->first()->id;

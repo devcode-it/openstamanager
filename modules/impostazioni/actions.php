@@ -59,7 +59,7 @@ switch (filter('op')) {
             break;
         }
 
-        $id_module = database()->fetchOne('SELECT `id` FROM `zz_modules` WHERE `directory` = "impostazioni"')['id'];
+        $id_module = Models\Module::where('directory', 'impostazioni')->value('id');
 
         // Rimozione del file watermark precedente
         $old_file_id = $impostazione->valore;

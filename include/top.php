@@ -638,19 +638,33 @@ if (AuthOSM::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = Plugin::where('id_module_to', $id_module)
-            ->where('position', ($in_editor ? 'tab' : 'tab_main'))
-            ->where('enabled', 1)
-            ->orderBy('order', 'ASC')
-            ->get();
+    $id_lang = Models\Locale::getDefault()->id;
+
+    $plugins = Plugin::where('zz_plugins.id_module_to', $id_module)
+        ->where('position', ($in_editor ? 'tab' : 'tab_main'))
+        ->where('enabled', 1)
+        ->leftJoin('zz_plugins_lang', function ($join) use ($id_lang) {
+            $join->on('zz_plugins.id', '=', 'zz_plugins_lang.id_record')
+                ->where('zz_plugins_lang.id_lang', '=', $id_lang);
+        })
+        ->select(
+            'zz_plugins.id',
+            'zz_plugins_lang.title',
+            'zz_plugins.options',
+            'zz_plugins.options2',
+            'zz_plugins.order'
+        )
+        ->orderBy('zz_plugins.order', 'ASC')
+        ->get();
+
         foreach ($plugins as $plugin) {
             // Badge count per record plugin
             $count = 0;
             $opt = '';
-            if (!empty($plugin['options2'])) {
-                $opt = json_decode((string) $plugin['options2'], true);
-            } elseif (!empty($plugin['options'])) {
-                $opt = json_decode((string) $plugin['options'], true);
+            if (!empty($plugin->options2)) {
+                $opt = json_decode((string) $plugin->options2, true);
+            } elseif (!empty($plugin->options)) {
+                $opt = json_decode((string) $plugin->options, true);
             }
 
             if (!empty($opt)) {

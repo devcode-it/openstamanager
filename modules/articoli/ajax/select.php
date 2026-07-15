@@ -205,18 +205,28 @@ switch ($resource) {
         // Utilizzo dell'impostazione per disabilitare articoli con quantità <= 0
         $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ? true : $superselect['permetti_movimento_a_zero'];
 
+        // Pre-carica le quantità per tutti gli articoli
+        $articoli_ids = array_column($rs, 'id');
+        $qta_per_articolo = [];
+        $sede_id = $superselect['dir'] == 'uscita' ? $superselect['id_sede_destinazione'] : $superselect['id_sede_partenza'];
+        
+        if (!empty($articoli_ids) && !empty($sede_id)) {
+            $movimenti = database()->table('mg_movimenti')
+                ->whereIn('id_articolo', $articoli_ids)
+                ->where('id_sede', $sede_id)
+                ->groupBy('id_articolo')
+                ->select('id_articolo', database()->raw('IFNULL(SUM(qta), 0) as qta'))
+                ->get();
+            
+            foreach ($movimenti as $movimento) {
+                $qta_per_articolo[$movimento->id_articolo] = $movimento->qta;
+            }
+        }
+
         // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
-            // Lettura movimenti delle mie sedi
-            // Per documenti di acquisto (dir=uscita): usa id_sede_destinazione
-            // Per documenti di vendita (dir=entrata): usa id_sede_partenza
-            if ($superselect['dir'] == 'uscita') {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_destinazione']))['qta'];
-                $qta_da_usare = $qta_sede;
-            } else {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_partenza']))['qta'];
-                $qta_da_usare = $qta_sede;
-            }
+            $qta_sede = $qta_per_articolo[$r['id']] ?? 0;
+            $qta_da_usare = $qta_sede;
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_da_usare).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),

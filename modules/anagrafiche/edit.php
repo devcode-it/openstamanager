@@ -625,9 +625,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     <p><b>'.tr('Piano dei conti cliente').'</b></p>';
 
-    if (!empty($conto['numero_conto'])) {
-        $piano_dei_conti_cliente = $conto['numero'].'.'.$conto['numero_conto'].' '.$conto['descrizione'];
-        echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto['id']);
+    if (!empty($conto->numero_conto)) {
+        $piano_dei_conti_cliente = $conto->numero.'.'.$conto->numero_conto.' '.$conto->descrizione;
+        echo Modules::link('Piano dei conti', null, $piano_dei_conti_cliente, null, '', 1, 'movimenti-'.$conto->id);
     } else {
         $piano_dei_conti_cliente = tr('Nessuno');
     }

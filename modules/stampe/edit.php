@@ -63,12 +63,12 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
             <div class="row">
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Attiva'); ?>", "name": "enabled", "value": "$enabled$", "disabled": "1" ]}
-                </div>
-
-                <div class="col-md-4">
 					{[ "type": "number", "label": "<?php echo tr('Ordine'); ?>", "name": "order", "required": 0, "value": "$order$", "decimals":0 ]}
 				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Attiva'); ?>", "name": "enabled", "value": "$enabled$" ]}
+                </div>
 
                 <?php
                 $stampa_predefinita = PrintTemplate::where('predefined', true)

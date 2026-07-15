@@ -28,6 +28,7 @@ switch (post('op')) {
         $print->options = post('options');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
+        $print->enabled = post('enabled');
         $print->save();
 
         $print->setTranslation('title', post('title'));

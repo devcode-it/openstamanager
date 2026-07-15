@@ -403,8 +403,11 @@ switch (filter('op')) {
         $options2 = htmlspecialchars_decode(post('options2'), ENT_QUOTES);
 
         if (check_query($options2)) {
-            $dbo->query('UPDATE `zz_modules` SET `options2`='.prepare($options2).' WHERE `id`='.prepare($id_record));
-            $dbo->query('UPDATE `zz_modules_lang` SET `title`='.prepare(post('title')).' WHERE (`id_record`='.prepare($id_record).' AND `id_lang`='.prepare(Models\Locale::getDefault()->id).')');
+            Module::where('id', $id_record)->update(['options2' => $options2]);
+            $module = Module::find($id_record);
+            if ($module) {
+                $module->setTranslation('title', post('title'));
+            }
             $rs = true;
         } else {
             $rs = false;

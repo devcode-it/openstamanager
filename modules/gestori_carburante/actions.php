@@ -20,13 +20,17 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Automezzi\Gestore;
+use Modules\Automezzi\Rifornimento;
+
 switch (filter('op')) {
     case 'update':
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_automezzi_gestori` WHERE `descrizione`='.prepare($descrizione).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `an_automezzi_gestori` SET `descrizione`='.prepare($descrizione).' WHERE `id`='.prepare($id_record));
+            $exists = Gestore::where('descrizione', $descrizione)->where('id', '!=', $id_record)->exists();
+            if (!$exists) {
+                Gestore::find($id_record)->update(['descrizione' => $descrizione]);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente un gestore con questa descrizione."));
@@ -41,10 +45,10 @@ switch (filter('op')) {
         $descrizione = filter('descrizione');
 
         if (isset($descrizione)) {
-            if ($dbo->fetchNum('SELECT * FROM `an_automezzi_gestori` WHERE `descrizione`='.prepare($descrizione)) == 0) {
-                $dbo->query('INSERT INTO `an_automezzi_gestori` (`descrizione`) VALUES ('.prepare($descrizione).')');
-
-                $id_record = $dbo->lastInsertedID();
+            $exists = Gestore::where('descrizione', $descrizione)->exists();
+            if (!$exists) {
+                $gestore = Gestore::create(['descrizione' => $descrizione]);
+                $id_record = $gestore->id;
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $id_record, 'text' => $descrizione]);
@@ -61,10 +65,10 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $rifornimenti = $dbo->fetchNum('SELECT `id` FROM `an_automezzi_rifornimenti` WHERE `id_gestore`='.prepare($id_record));
+        $has_rifornimenti = Rifornimento::where('id_gestore', $id_record)->exists();
 
-        if ((!empty($id_record)) && empty($rifornimenti)) {
-            $dbo->delete('an_automezzi_gestori', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_rifornimenti) {
+            Gestore::find($id_record)->delete();
 
             flash()->info(tr('Gestore eliminato con successo!'));
         } else {

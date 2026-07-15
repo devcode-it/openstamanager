@@ -18,20 +18,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+namespace Models;
 
-switch (filter('op')) {
-    case 'update':
-        $oauth = Models\OAuth2::find($id_record);
-        $oauth->update([
-            'client_id' => post('client_id'),
-            'client_secret' => post('client_secret'),
-            'config' => post('config'),
-            'enabled' => post('enabled'),
-            'after_configuration' => base_path_osm().'/index.php',
-        ]);
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
-        flash()->info(tr('Salvataggio completato!'));
+class DefaultDescription extends Model
+{
+    use SimpleModelTrait;
 
-        break;
+    protected $table = 'zz_default_description';
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'name',
+        'descrizione',
+        'note',
+    ];
 }

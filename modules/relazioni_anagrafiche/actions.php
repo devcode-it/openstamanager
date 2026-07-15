@@ -82,7 +82,11 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE `an_relazioni` SET `deleted_at`=NOW() WHERE `id`='.prepare($id_record));
+        $relazione = Relazione::find($id_record);
+        if ($relazione) {
+            $relazione->deleted_at = now();
+            $relazione->save();
+        }
         flash()->info(tr('Relazione _NAME_ eliminata con successo!', [
             '_NAME_' => $descrizione,
         ]));

@@ -638,7 +638,11 @@ if (AuthOSM::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module_to`='.prepare($id_module)." AND `position`='".($in_editor ? 'tab' : 'tab_main')."' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` ASC");
+        $plugins = Plugin::where('id_module_to', $id_module)
+            ->where('position', ($in_editor ? 'tab' : 'tab_main'))
+            ->where('enabled', 1)
+            ->orderBy('order', 'ASC')
+            ->get();
         foreach ($plugins as $plugin) {
             // Badge count per record plugin
             $count = 0;
@@ -651,7 +655,22 @@ if (AuthOSM::check()) {
 
             if (!empty($opt)) {
                 $q = str_replace('|id_parent|', $id_record ?: $id_parent, $opt['main_query'][0]['query']);
-                $count = $dbo->fetchNum($q);
+
+                // Se la query è un semplice COUNT su una singola tabella, usa il query builder per migliore performance
+                $count = 0;
+                $q_trim = trim($q);
+                if (preg_match('/^SELECT\s+COUNT\(\*\)\s+AS\s+count\s+FROM\s+`?([a-z0-9_]+)`?\s+WHERE\s+(.+)$/i', $q_trim, $m)) {
+                    $table = $m[1];
+                    $where = $m[2];
+                    try {
+                        $count = database()->table($table)->whereRaw($where)->count();
+                    } catch (Exception $e) {
+                        // Fallback a fetchNum se whereRaw fallisce
+                        $count = $dbo->fetchNum($q);
+                    }
+                } else {
+                    $count = $dbo->fetchNum($q);
+                }
             }
 
             echo '

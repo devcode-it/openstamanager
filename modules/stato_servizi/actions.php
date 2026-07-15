@@ -278,7 +278,7 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id) {
-            $dbo->query('UPDATE `zz_modules` SET `order`='.prepare($i).' WHERE `id`='.prepare($id));
+            Module::where('id', $id)->update(['order' => $i]);
         }
 
         break;

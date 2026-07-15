@@ -36,9 +36,10 @@ include_once base_dir().'/actions.php';
 // Widget in alto
 echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "place": "controller" )}';
 
-$segmenti = $dbo->FetchArray('SELECT `id` FROM `zz_segments` WHERE `id_module` = '.prepare($id_module));
-if ($segmenti) {
-    $segmenti = Modules::getSegments($id_module);
+	// Recupera gli id dei segmenti tramite Eloquent per evitare query raw
+	$segmenti = \Modules\Segmenti\Segmento::where('id_module', $id_module)->pluck('id')->toArray();
+	if (!empty($segmenti)) {
+		$segmenti = Modules::getSegments($id_module);
     if (empty($segmenti)) {
         echo '
 <div class="alert alert-warning">

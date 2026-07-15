@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../core.php';
 use Models\Module;
+use Models\View;
 
 // Compatibilità per controller ed editor
 $structure = Module::find($id_module);
@@ -28,7 +29,22 @@ echo '
 <p>'.tr('Trascina le colonne per ordinare la struttura della tabella principale, seleziona e deseleziona le colonne per renderle visibili o meno').'.</p>
 <div class="sortable row">';
 
-$fields = $dbo->fetchArray('SELECT `zz_views`.*, zz_views_lang.title, (SELECT GROUP_CONCAT(`zz_groups_lang`.`title`) FROM `zz_group_view` INNER JOIN `zz_groups` ON `zz_group_view`.`id_gruppo` = `zz_groups`.`id` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_group_view`.`id_vista` = `zz_views`.`id`) AS gruppi_con_accesso FROM `zz_views` LEFT JOIN `zz_views_lang` ON (`zz_views`.`id` = `zz_views_lang`.`id_record` AND `zz_views_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module`='.prepare($id_module).' ORDER BY `order` ASC');
+$lang_id = Models\Locale::getDefault()->id;
+$fields = View::selectRaw('zz_views.*, zz_views_lang.title, (
+        SELECT GROUP_CONCAT(zz_groups_lang.title)
+        FROM zz_group_view
+        INNER JOIN zz_groups ON zz_group_view.id_gruppo = zz_groups.id
+        LEFT JOIN zz_groups_lang ON (zz_groups.id = zz_groups_lang.id_record AND zz_groups_lang.id_lang = ?)
+        WHERE zz_group_view.id_vista = zz_views.id
+    ) AS gruppi_con_accesso', [$lang_id])
+    ->leftJoin('zz_views_lang', function ($join) use ($lang_id) {
+        $join->on('zz_views.id', '=', 'zz_views_lang.id_record')
+            ->where('zz_views_lang.id_lang', $lang_id);
+    })
+    ->where('id_module', $id_module)
+    ->orderBy('order', 'ASC')
+    ->get()
+    ->toArray();
 foreach ($fields as $field) {
     echo '
     <div class="card card-default clickable col-md-4" data-id="'.$field['id'].'">

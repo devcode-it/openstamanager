@@ -19,11 +19,12 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Models\PrintTemplate;
 
 switch (post('op')) {
     case 'update':
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
-            $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.prepare(post('module')));
+            PrintTemplate::where('id_module', '=', post('module'))->update(['predefined' => 0]);
         }
         $print->options = post('options');
         $print->order = post('order');

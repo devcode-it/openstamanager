@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\PrimaNota\MovimentoModello;
+
 switch (post('op')) {
     case 'add':
         $id_mastrino = get_new_id_mastrino('co_movimenti_modelli');
@@ -37,17 +39,14 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(id_mastrino, nome, descrizione, id_conto, totale) VALUES (:id_mastrino, :nome, :descrizione, :id_conto, :totale)';
-                $params = [
-                    ':id_mastrino' => $id_mastrino,
-                    ':nome' => $nome,
-                    ':descrizione' => $descrizione,
-                    ':id_conto' => $id_conto,
-                    ':totale' => $totale,
-                ];
-                if ($dbo->query($query, $params)) {
-                    $id_record = $id_mastrino;
-                }
+                $movimento = MovimentoModello::create([
+                    'id_mastrino' => $id_mastrino,
+                    'nome' => $nome,
+                    'descrizione' => $descrizione,
+                    'id_conto' => $id_conto,
+                    'totale' => $totale,
+                ]);
+                $id_record = $id_mastrino;
             }
         }
 
@@ -59,7 +58,7 @@ switch (post('op')) {
         $nome = post('nome');
 
         // Eliminazione prima nota
-        $dbo->delete('co_movimenti_modelli', ['id_mastrino' => $id_mastrino]);
+        MovimentoModello::where('id_mastrino', $id_mastrino)->delete();
 
         for ($i = 0; $i < sizeof(post('id_conto')); ++$i) {
             $id_conto = post('id_conto')[$i];
@@ -72,17 +71,14 @@ switch (post('op')) {
                 } else {
                     $totale = -$avere;
                 }
-                $query = 'INSERT INTO co_movimenti_modelli(id_mastrino, nome, descrizione, id_conto, totale) VALUES (:id_mastrino, :nome, :descrizione, :id_conto, :totale)';
-                $params = [
-                    ':id_mastrino' => $id_mastrino,
-                    ':nome' => $nome,
-                    ':descrizione' => $descrizione,
-                    ':id_conto' => $id_conto,
-                    ':totale' => $totale,
-                ];
-                if ($dbo->query($query, $params)) {
-                    $id_record = $id_mastrino;
-                }
+                $movimento = MovimentoModello::create([
+                    'id_mastrino' => $id_mastrino,
+                    'nome' => $nome,
+                    'descrizione' => $descrizione,
+                    'id_conto' => $id_conto,
+                    'totale' => $totale,
+                ]);
+                $id_record = $id_mastrino;
             }
         }
 
@@ -93,7 +89,7 @@ switch (post('op')) {
 
         if (!empty($id_mastrino)) {
             // Eliminazione prima nota
-            $dbo->delete('co_movimenti_modelli', ['id_mastrino' => $id_mastrino]);
+            MovimentoModello::where('id_mastrino', $id_mastrino)->delete();
 
             flash()->info(tr('Movimento eliminato!'));
         }

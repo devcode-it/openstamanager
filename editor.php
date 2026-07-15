@@ -21,6 +21,7 @@ include_once __DIR__.'/core.php';
 
 use Carbon\Carbon;
 use Models\Module;
+use Models\OperationLog;
 use Util\Query;
 
 // Disabilitazione dei campi
@@ -139,11 +140,16 @@ if (empty($record) || !$has_access) {
             <div id="tab_0" class="tab-pane active nav-item">';
 
     if (!empty($record['deleted_at'])) {
-        $operation = $dbo->fetchOne("SELECT zz_operations.created_at, username FROM zz_operations INNER JOIN zz_users ON zz_operations.id_utente =  zz_users.id  WHERE op='delete' AND id_module=".prepare($id_module).' AND id_record='.prepare($id_record).' ORDER BY zz_operations.created_at DESC');
+        $operation = OperationLog::with('user')
+            ->where('op', 'delete')
+            ->where('id_module', $id_module)
+            ->where('id_record', $id_record)
+            ->orderByDesc('created_at')
+            ->first();
 
         $info = tr('Il record è stato eliminato il <b>_DATE_</b> da <b>_USER_</b>', [
-            '_DATE_' => (($operation['created_at']) ? Translator::timestampToLocale($operation['created_at']) : Translator::timestampToLocale($record['deleted_at'])),
-            '_USER_' => ((!empty($operation['username'])) ? $operation['username'] : 'N.D.'),
+            '_DATE_' => (($operation?->created_at) ? Translator::timestampToLocale($operation->created_at) : Translator::timestampToLocale($record['deleted_at'])),
+            '_USER_' => $operation?->user?->username ?: 'N.D.',
         ]).'. ';
 
         echo '

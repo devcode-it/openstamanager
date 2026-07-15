@@ -29,16 +29,15 @@ switch (post('op')) {
         $is_recurring = post('is_recurring');
         $is_bank_holiday = post('is_bank_holiday');
 
-        if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-            $dbo->update('zz_events', [
+        $exists = Models\Event::where('nome', $nome)->where('id', '!=', $id_record)->exists();
+        if (!$exists) {
+            Models\Event::find($id_record)->update([
                 'nome' => $nome,
                 'data' => $data,
                 'id_nazione' => $id_nazione,
                 'id_regione' => $id_regione,
                 'is_recurring' => $is_recurring,
                 'is_bank_holiday' => $is_bank_holiday,
-            ], [
-                'id' => $id_record,
             ]);
 
             flash()->info(tr('Salvataggio completato.'));
@@ -54,14 +53,17 @@ switch (post('op')) {
         $nome = post('nome');
         $data = post('data');
         $id_nazione = post('id_nazione');
-        if ($dbo->fetchNum('SELECT * FROM `zz_events` WHERE `id_nazione` = '.prepare($id_nazione).' AND `nome`='.prepare($nome).' AND `data`='.prepare($data)) == 0) {
-            $dbo->insert('zz_events', [
+        $exists = Models\Event::where('id_nazione', $id_nazione)
+            ->where('nome', $nome)
+            ->where('data', $data)
+            ->exists();
+        if (!$exists) {
+            $event = Models\Event::create([
                 'nome' => $nome,
                 'data' => $data,
                 'id_nazione' => $id_nazione,
             ]);
-
-            $id_record = $dbo->lastInsertedID();
+            $id_record = $event->id;
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
@@ -79,9 +81,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->delete('zz_events', [
-            'id' => $id_record,
-        ]);
+        Models\Event::find($id_record)->delete();
 
         flash()->info(tr('_TYPE_ eliminato con successo.', [
             '_TYPE_' => 'Evento',

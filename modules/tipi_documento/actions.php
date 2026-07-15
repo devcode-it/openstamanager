@@ -34,7 +34,7 @@ switch (filter('op')) {
                 flash()->error(tr('Questa combinazione di nome, codice e direzione è già stata utilizzata per un altro tipo di documento.'));
             } else {
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE `co_tipi_documento` SET `predefined` = 0 WHERE `dir` = '.prepare($dir));
+                    Tipo::where('dir', $dir)->update(['predefined' => 0]);
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $tipo->name = $descrizione;
@@ -88,16 +88,18 @@ switch (filter('op')) {
         $documenti = $dbo->fetchNum('SELECT `id` FROM `co_documenti` WHERE `id_tipo_documento` ='.prepare($id_record));
 
         if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->delete('co_tipi_documento', ['id' => $id_record]);
+            Tipo::destroy($id_record);
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'tipo documento',
             ]));
         } else {
-            $dbo->update('co_tipi_documento', [
-                'deleted_at' => date(),
-                'predefined' => 0,
-                'enabled' => 0,
-            ], ['id' => $id_record]);
+            $tipo = Tipo::find($id_record);
+            if ($tipo) {
+                $tipo->deleted_at = date();
+                $tipo->predefined = 0;
+                $tipo->enabled = 0;
+                $tipo->save();
+            }
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'tipo documento',

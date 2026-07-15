@@ -77,7 +77,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `zz_checklist_items` SET `order` = '.prepare($i).' WHERE id='.prepare($id_riga));
+            ChecklistItem::where('id', $id_riga)->update(['order' => $i]);
         }
 
         break;

@@ -57,14 +57,14 @@ switch (filter('op')) {
 
         // Abilita utente
     case 'enable_user':
-        if ($dbo->query('UPDATE `zz_users` SET `enabled`=1 WHERE `id`='.prepare($id_utente))) {
+        if (User::where('id', $id_utente)->update(['enabled' => 1])) {
             flash()->info(tr('Utente abilitato!'));
         }
         break;
 
         // Disabilita utente
     case 'disable_user':
-        if ($dbo->query('UPDATE `zz_users` SET `enabled`=0 WHERE `id`='.prepare($id_utente))) {
+        if (User::where('id', $id_utente)->update(['enabled' => 0])) {
             flash()->info(tr('Utente disabilitato!'));
         }
         break;
@@ -186,17 +186,17 @@ switch (filter('op')) {
     case 'token_enable':
         $utente = User::find($id_utente);
 
-        $already_token = $dbo->fetchOne('SELECT `id` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_utente))['id'];
+        $already_token = UserTokens::where('id_utente', $id_utente)->value('id');
 
         if (empty($already_token)) {
             // Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
             $tokens = $utente->getApiTokens();
 
             foreach ($tokens as $token) {
-                $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+                UserTokens::where('id', $token['id'])->update(['enabled' => 1]);
                 flash()->info(tr('Token creato!'));
             }
-        } elseif ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
+        } elseif (UserTokens::where('id_utente', $id_utente)->update(['enabled' => 1])) {
             flash()->info(tr('Token abilitato!'));
         }
 
@@ -208,7 +208,7 @@ switch (filter('op')) {
         $tokens = $utente->getApiTokens();
 
         foreach ($tokens as $token) {
-            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
+            UserTokens::where('id', $token['id'])->update(['enabled' => 0]);
         }
 
         flash()->info(tr('Token disabilitato!'));
@@ -217,10 +217,9 @@ switch (filter('op')) {
         // Elimina gruppo
     case 'deletegroup':
         // Verifico se questo gruppo si può eliminare
-        $query = 'SELECT `editable` FROM `zz_groups` WHERE `id`='.prepare($id_record);
-        $rs = $dbo->fetchArray($query);
+        $editable = Group::where('id', $id_record)->value('editable');
 
-        if ($rs[0]['editable'] == 1) {
+        if ($editable == 1) {
             $group = Group::find($id_record);
             $group->delete();
             User::where('id_gruppo', $id_record)->delete();

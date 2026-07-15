@@ -65,13 +65,13 @@ foreach ($mansioni as $mansione) {
 
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
 if ($template->name == 'Notifica intervento') {
-    $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
-    foreach ($tecnici as $tecnico) {
-        $anagrafica = $dbo->table('an_anagrafiche')->where('id', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
-        if (!in_array($anagrafica->email, $emails)) {
+    $tecnici = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
+    foreach ($tecnici as $id_tecnico) {
+        $anagrafica = database()->table('an_anagrafiche')->where('id', $id_tecnico)->where('email', '!=', '')->first();
+        if (!empty($anagrafica) && !in_array($anagrafica->email, $emails)) {
             $emails[] = $anagrafica->email;
         }
-    }
+}
 }
 
 // Campi mancanti
@@ -184,8 +184,9 @@ echo '
     </div>';
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']));
-$selected = array_column($selected_prints, 'id_print');
+// Recupera gli id delle stampe selezionate tramite query builder
+$selected_prints = database()->table('em_print_template')->where('id_template', $template->id)->pluck('id_print')->toArray();
+$selected = $selected_prints;
 
 echo '
 
@@ -197,8 +198,14 @@ echo '
 $uploads = [];
 
 if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
-    $pec_uploads = $dbo->fetchArray('SELECT zz_files.id FROM zz_files LEFT JOIN zz_files_categories ON zz_files.id_category = zz_files_categories.id WHERE zz_files.id_module = '.prepare($module['id']).' AND zz_files.id_record = '.prepare($id_record).' AND (zz_files_categories.name = \'Fattura Elettronica\' OR zz_files_categories.name = \'Fattura elettronica\')');
-    $uploads = array_merge($uploads, array_column($pec_uploads, 'id'));
+    $pec_uploads = database()->table('zz_files')
+        ->leftJoin('zz_files_categories', 'zz_files.id_category', '=', 'zz_files_categories.id')
+        ->where('zz_files.id_module', $module->id)
+        ->where('zz_files.id_record', $id_record)
+        ->whereIn('zz_files_categories.name', ['Fattura Elettronica', 'Fattura elettronica'])
+        ->pluck('zz_files.id')
+        ->toArray();
+    $uploads = array_merge($uploads, $pec_uploads);
 }
 
 $template_uploads = $template->uploads($id_record);
@@ -207,8 +214,8 @@ if (!empty($template_uploads)) {
 }
 
 if (empty($template->categories) && empty($uploads)) {
-    $all_document_uploads = $dbo->fetchArray('SELECT `id` FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record));
-    $uploads = array_merge($uploads, array_column($all_document_uploads, 'id'));
+    $all_document_uploads = database()->table('zz_files')->where('id_module', $id_module)->where('id_record', $id_record)->pluck('id')->toArray();
+    $uploads = array_merge($uploads, $all_document_uploads);
 }
 
 $uploads = array_unique($uploads);
@@ -324,8 +331,7 @@ echo '
                 update(suggestions);
             },
             onSelect: function (item) {
-                input.value = item.value;
-                aggiungiDestinatario();
+            
             },
         });
     }

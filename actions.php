@@ -166,9 +166,10 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
 // Download allegati
 if (filter('op') == 'download-allegato') {
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
-
-    $file = Upload::find($rs[0]['id']);
+    $file = Upload::where('id_module', $id_module)
+        ->where('id', filter('id'))
+        ->where('filename', filter('filename'))
+        ->first();
 
     if (!empty($file)) {
         $content = $file->get_contents();
@@ -188,7 +189,9 @@ if (filter('op') == 'download-allegato') {
 elseif (filter('op') == 'download-zip-allegati') {
     $ids = (array) json_decode(filter('id'));
     $ids = array_map('intval', $ids);
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',', $ids).')');
+    $rs = Upload::where('id_module', $id_module)
+        ->whereIn('id', $ids)
+        ->get();
 
     $dir = base_dir().'/'.$module->upload_directory;
     directory($dir.'tmp/');
@@ -535,7 +538,7 @@ if ($structure->permission == 'rw') {
                     Filter::set('get', 'id_record', $id_record);
 
                     foreach ($values as $key => $value) {
-                        $name = $dbo->fetchOne('SELECT `name` FROM `zz_fields` WHERE `id` = '.prepare($key));
+                        $name = database()->table('zz_fields')->where('id', $key)->value('name');
                         $custom_fields = new HTMLBuilder\Manager\FieldManager();
                         $campo = $custom_fields->getValue(['id_record' => $id_record, 'id_module' => $id_module], $name);
                         if (empty($campo)) {

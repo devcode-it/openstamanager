@@ -24,14 +24,17 @@ switch (post('op')) {
     case 'update':
         $nome = post('name');
         $colore = post('colore');
-        $tag_new = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`name`='.prepare($nome));
+        $tag_new = database()->table('in_tags')->where('name', $nome)->first();
 
-        if (!empty($tag_new) && $tag_new['id'] != $id_record) {
+        if (!empty($tag_new) && $tag_new->id != $id_record) {
             flash()->error(tr('Tag _NAME_ già esistente!', [
                 '_NAME_' => $nome,
             ]));
         } else {
-            $dbo->query('UPDATE `in_tags` SET `name`='.prepare($nome).', `colore`='.prepare($colore).' WHERE `in_tags`.`id`='.prepare($id_record));
+            database()->table('in_tags')->where('id', $id_record)->update([
+                'name' => $nome,
+                'colore' => $colore,
+            ]);
 
             flash()->info(tr('Informazioni salvate correttamente!'));
         }
@@ -41,18 +44,17 @@ switch (post('op')) {
     case 'add':
         $nome = post('name');
         $colore = post('colore');
-        $tag_new = $dbo->fetchOne('SELECT * FROM `in_tags` WHERE `in_tags`.`name`='.prepare($nome));
+        $tag_new = database()->table('in_tags')->where('name', $nome)->first();
 
         if (!empty($tag_new)) {
             flash()->error(tr('Tag _NAME_ già esistente!', [
                 '_NAME_' => $nome,
             ]));
         } else {
-            $record = $dbo->insert('in_tags', [
+            $id_record = database()->table('in_tags')->insertGetId([
                 'name' => $nome,
                 'colore' => $colore,
             ]);
-            $id_record = $dbo->lastInsertedID();
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
@@ -64,7 +66,7 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->delete('in_tags', ['id' => $id_record]);
+        database()->table('in_tags')->where('id', $id_record)->delete();
 
         flash()->info(tr('Tag eliminato!'));
 

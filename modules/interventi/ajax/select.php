@@ -30,9 +30,9 @@ switch ($resource) {
 
         if (!empty($id_contratto)) {
             // Verifica se il contratto ha righe con tipi di intervento specificati
-            $righe_contratto = $dbo->fetchOne('SELECT COUNT(*) AS count FROM `co_righe_contratti` WHERE `id_contratto` = '.prepare($id_contratto).' AND `id_tipo_intervento` IS NOT NULL');
+            $righe_contratto_count = database()->table('co_righe_contratti')->where('id_contratto', $id_contratto)->whereNotNull('id_tipo_intervento')->count();
 
-            if ($righe_contratto['count'] > 0) {
+            if ($righe_contratto_count > 0) {
                 // Se il contratto ha righe con tipi di intervento: mostra SOLO tipi presenti nelle righe del contratto
                 $query = 'SELECT DISTINCT `in_tipi_intervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`, IF(`in_tipi_intervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\', IF(`in_tipi_intervento`.`deleted_at` IS NULL, "", " ('.tr('eliminato').')")) END AS descrizione, `tempo_standard`
                     FROM `in_tipi_intervento`
@@ -75,34 +75,47 @@ switch ($resource) {
             $ids = array_map('intval', (array) $superselect['id_tipi_intervento']);
             $where[] = '`in_tipi_intervento`.`id` IN ('.implode(',', $ids).')';
         } elseif (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
-            if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipi_intervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+            $ids_tipo_intervento = database()->table('an_anagrafiche_tipi_intervento')->where('id_anagrafica', $superselect['id_anagrafica'])->pluck('id_tipo_intervento')->toArray();
+            if (sizeof($ids_tipo_intervento) > 0) {
+                $filter[] = '`in_tipi_intervento`.`id` IN('.implode(',', $ids_tipo_intervento).')';
             }
         }
 
         $data = AJAX::selectResults($query, $where, $filter, $search_fields, $limit, $custom);
         $rs = $data['results'];
 
+        // Pre-carica i dati delle anagrafiche e dei tipi intervento
+        $anagrafica_tipo = database()->table('an_anagrafiche')->where('id', $superselect['id_anagrafica'] ?? null)->value('tipo');
+        
+        $tipi_intervento_ids = array_column($rs, 'id');
+        $tipologie_per_tipo = [];
+        if (!empty($tipi_intervento_ids)) {
+            $tipologie = database()->table('in_tipi_intervento_tipologie')->whereIn('id_tipo_intervento', $tipi_intervento_ids)->get(['id_tipo_intervento', 'tipo']);
+            foreach ($tipologie as $tipologia) {
+                $tipologie_per_tipo[$tipologia->id_tipo_intervento][] = $tipologia->tipo;
+            }
+        }
+
+        $gruppi_per_tipo = [];
+        if (!empty($tipi_intervento_ids)) {
+            $gruppi = database()->table('in_tipi_intervento_groups')->whereIn('id_tipo_intervento', $tipi_intervento_ids)->get(['id_tipo_intervento', 'id_gruppo']);
+            foreach ($gruppi as $gruppo) {
+                $gruppi_per_tipo[$gruppo->id_tipo_intervento][] = $gruppo->id_gruppo;
+            }
+        }
+
         foreach ($rs as $k => $r) {
             $disabled = false;
 
             // Controllo se il tipo intervento è compatibile con la tipologia dell'anagrafica
             if (!empty($superselect['id_anagrafica'])) {
-                // Ottengo la tipologia dell'anagrafica selezionata
-                $anagrafica_tipo = $dbo->fetchOne('SELECT `tipo`
-                    FROM `an_anagrafiche`
-                    WHERE `id` = '.prepare($superselect['id_anagrafica']));
-
                 // Ottengo le tipologie associate al tipo intervento
-                $tipologie_tipo_intervento = $dbo->fetchArray('SELECT `tipo`
-                    FROM `in_tipi_intervento_tipologie`
-                    WHERE `id_tipo_intervento` = '.prepare($r['id']));
-
+                $tipologie_tipo_intervento = $tipologie_per_tipo[$r['id']] ?? [];
+                
                 $tipologie_tipo_intervento = array_column($tipologie_tipo_intervento, 'tipo');
                 if (!empty($tipologie_tipo_intervento)) {
                     // Controllo se la tipologia dell'anagrafica è presente nelle tipologie del tipo intervento
-                    $compatibile = in_array($anagrafica_tipo['tipo'], $tipologie_tipo_intervento);
+                    $compatibile = in_array($anagrafica_tipo, $tipologie_tipo_intervento);
                     if (!$compatibile) {
                         $disabled = true;
                     }
@@ -110,11 +123,7 @@ switch ($resource) {
             }
 
             // Controllo se il tipo intervento è compatibile con il gruppo utente
-            $gruppi_tipo_intervento = $dbo->fetchArray('SELECT `id_gruppo`
-                FROM `in_tipi_intervento_groups`
-                WHERE `id_tipo_intervento` = '.prepare($r['id']));
-
-            $gruppi_tipo_intervento = array_column($gruppi_tipo_intervento, 'id_gruppo');
+            $gruppi_tipo_intervento = $gruppi_per_tipo[$r['id']] ?? [];
             if (!empty($gruppi_tipo_intervento)) {
                 $compatibile = in_array($id_gruppo, $gruppi_tipo_intervento);
                 if (!$compatibile) {
@@ -228,9 +237,9 @@ switch ($resource) {
         }
 
         if (!empty($superselect['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']));
-            if (sizeof($rs) > 0) {
-                $filter[] = '`in_tipi_intervento`.`id` IN(SELECT id_tipo_intervento FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($superselect['id_anagrafica']).')';
+            $ids_tipo_intervento = database()->table('an_anagrafiche_tipi_intervento')->where('id_anagrafica', $superselect['id_anagrafica'])->pluck('id_tipo_intervento')->toArray();
+            if (sizeof($ids_tipo_intervento) > 0) {
+                $filter[] = '`in_tipi_intervento`.`id` IN('.implode(',', $ids_tipo_intervento).')';
             }
         }
 

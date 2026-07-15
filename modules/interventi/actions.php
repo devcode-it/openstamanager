@@ -46,6 +46,27 @@ use Plugins\PianificazioneInterventi\Promemoria;
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
 
+function getIvaDichiarazione() {
+    static $iva = null;
+    if ($iva === null) {
+        $iva = Aliquota::where('codice_natura_fe', 'N3.5')
+            ->where('deleted_at', null)
+            ->first();
+    }
+    return $iva;
+}
+
+function getPianoSconto($id_anagrafica) {
+    static $piani = [];
+    if (!isset($piani[$id_anagrafica])) {
+        $piani[$id_anagrafica] = database()->table('an_anagrafiche')
+            ->join('mg_piani_sconto', 'an_anagrafiche.id_piano_sconto_vendite', '=', 'mg_piani_sconto.id')
+            ->where('an_anagrafiche.id', $id_anagrafica)
+            ->value('mg_piani_sconto.prc_guadagno');
+    }
+    return $piani[$id_anagrafica];
+}
+
 switch (post('op')) {
     case 'update':
         $id_promemoria = post('id_contratto_riga');
@@ -1441,7 +1462,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `in_righe_interventi` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            Riga::where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -1502,9 +1523,9 @@ switch (post('op')) {
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $intervento->id_agente])['provvigione_default'];
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE an_anagrafiche.id='.prepare($id_anagrafica));
+                $piano_sconto = getPianoSconto($id_anagrafica);
                 if (!empty($piano_sconto)) {
-                    $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                    $sconto = parseScontoCombinato($piano_sconto.'+'.$sconto);
                 }
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
@@ -1679,9 +1700,9 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = getPianoSconto($id_anagrafica);
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');

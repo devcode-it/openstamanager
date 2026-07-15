@@ -4624,3 +4624,7 @@ table.dataTable thead th:nth-child(6) {
 .colorpicker{
     box-sizing: border-box;
 }
+
+.nav-tabs{
+    margin-bottom: 1rem;
+}

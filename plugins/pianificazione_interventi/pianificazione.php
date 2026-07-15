@@ -21,25 +21,22 @@
 include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Models\Plugin;
-
-$plugin = Plugin::find($id_plugin);
-$id_module = Module::where('name', 'Contratti')->first()->id;
-$block_edit = filter('add') ? false : true;
-$id_module_interventi = Module::where('name', 'Interventi')->first()->id;
+use Modules\Contratti\Contratto;
+use Plugins\PianificazioneInterventi\Promemoria;
 
 // Informazioni contratto
-$contratto = $dbo->fetchOne('SELECT * FROM `co_contratti` WHERE `id` = :id', [
-    ':id' => $id_parent,
-]);
+$contratto = Contratto::find($id_parent);
 $data_accettazione = $contratto['data_accettazione'];
 $data_conclusione = $contratto['data_conclusione'];
 $id_anagrafica = $contratto['id_anagrafica'];
 
 // Impianti del contratto
-$impianti = $dbo->fetchArray('SELECT `id_impianti` FROM `co_promemoria` WHERE `id` = '.$id_record.' AND `id_contratto` = :id', [
-    ':id' => $id_parent,
-]);
-$id_impianti = explode(',', (string) $impianti[0]['id_impianti']);
+$promemoria = Promemoria::find($id_record);
+$impianti = [];
+if ($promemoria && $promemoria->id_contratto == $id_parent) {
+    $impianti = $promemoria->impianti()->pluck('id_impianto')->toArray();
+}
+$id_impianti = explode(',', trim((string) ($impianti[0]['id_impianti'] ?? '')));
 
 // solo se ho selezionato un solo impianto nel contratto, altrimenti non so quale sede e tecnico prendere
 if (count($id_impianti) == 1) {

@@ -107,12 +107,14 @@ switch (post('op')) {
 
         $anagrafica->save();
 
-        $dbo->query('DELETE FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($id_record));
-        foreach ($idtipiintervento as $id_tipo_intervento) {
-            if (!empty($id_tipo_intervento) && $id_tipo_intervento != '-1') {
-                $dbo->query('INSERT INTO an_anagrafiche_tipi_intervento(id_tipo_intervento, id_anagrafica) VALUES('.prepare($id_tipo_intervento).', '.prepare($id_record).')');
-            }
-        }
+        $idtipiintervento = (array) post('idtipiintervento');
+        $idtipiintervento = array_filter($idtipiintervento, fn ($value) => !empty($value) && $value != '-1');
+
+        $dbo->sync('an_anagrafiche_tipi_intervento', [
+            'id_anagrafica' => $id_record,
+        ], [
+            'id_tipo_intervento' => $idtipiintervento,
+        ]);
 
         if (!empty($_FILES) && !empty($_FILES['logo']['name'])) {
             $upload = Uploads::upload($_FILES['logo'], [

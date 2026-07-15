@@ -63,7 +63,7 @@ switch (filter('op')) {
         }
 
         // Recupera le traduzioni del modulo
-        $module_langs = $dbo->fetchArray('SELECT `id_lang`, `title` FROM `zz_modules_lang` WHERE `id_record` = '.prepare($id_record));
+        $module_langs = database()->table('zz_modules_lang')->where('id_record', $id_record)->get(['id_lang', 'title'])->toArray();
         $module_data['translations'] = [];
         foreach ($module_langs as $lang) {
             $module_data['translations'][$lang['id_lang']] = [
@@ -92,7 +92,7 @@ switch (filter('op')) {
             ];
 
             // Recupera le traduzioni della vista
-            $view_langs = $dbo->fetchArray('SELECT `id_lang`, `title` FROM `zz_views_lang` WHERE `id_record` = '.prepare($view->id));
+            $view_langs = database()->table('zz_views_lang')->where('id_record', $view->id)->get(['id_lang', 'title'])->toArray();
             $view_data['translations'] = [];
             foreach ($view_langs as $lang) {
                 $view_data['translations'][$lang['id_lang']] = [
@@ -101,14 +101,12 @@ switch (filter('op')) {
             }
 
             // Recupera i gruppi associati alla vista
-            $view_groups = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_group_view` WHERE `id_vista` = '.prepare($view->id));
-            $view_data['groups'] = [];
-            foreach ($view_groups as $group) {
-                $group_info = $dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($group['id_gruppo']));
-                if (!empty($group_info)) {
-                    $view_data['groups'][] = $group_info[0]['nome'];
-                }
-            }
+            $view_groups = database()->table('zz_group_view')
+                ->join('zz_groups', 'zz_groups.id', '=', 'zz_group_view.id_gruppo')
+                ->where('id_vista', $view->id)
+                ->pluck('zz_groups.nome')
+                ->toArray();
+            $view_data['groups'] = $view_groups;
 
             $module_data['views'][] = $view_data;
         }
@@ -199,7 +197,7 @@ switch (filter('op')) {
                 $module_id = $existing_module->id;
 
                 // Aggiorna i dati del modulo
-                $dbo->update('zz_modules', [
+                Module::where('id', $module_id)->update([
                     'directory' => $module_data['directory'],
                     'options' => $module_data['options'],
                     'options2' => $module_data['options2'],
@@ -209,19 +207,19 @@ switch (filter('op')) {
                     'order' => $module_data['order'],
                     'default' => $module_data['default'],
                     'enabled' => $module_data['enabled'],
-                ], ['id' => $module_id]);
+                ]);
 
                 // Gestione dei flag use_notes e use_checklists nel nuovo sistema
                 if ($module_data['use_notes']) {
-                    $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_notes\')');
+                    database()->table('zz_modules_flags')->insertOrIgnore(['id_module' => $module_id, 'name' => 'use_notes']);
                 } else {
-                    $dbo->delete('zz_modules_flags', ['id_module' => $module_id, 'name' => 'use_notes']);
+                    database()->table('zz_modules_flags')->where('id_module', $module_id)->where('name', 'use_notes')->delete();
                 }
 
                 if ($module_data['use_checklists']) {
-                    $dbo->query('INSERT IGNORE INTO `zz_modules_flags` (`id_module`, `name`) VALUES ('.prepare($module_id).', \'use_checklists\')');
+                    database()->table('zz_modules_flags')->insertOrIgnore(['id_module' => $module_id, 'name' => 'use_checklists']);
                 } else {
-                    $dbo->delete('zz_modules_flags', ['id_module' => $module_id, 'name' => 'use_checklists']);
+                    database()->table('zz_modules_flags')->where('id_module', $module_id)->where('name', 'use_checklists')->delete();
                 }
             } else {
                 // Crea un nuovo modulo
@@ -261,17 +259,14 @@ switch (filter('op')) {
             // Aggiorna le traduzioni del modulo
             if (isset($module_data['translations'])) {
                 foreach ($module_data['translations'] as $id_lang => $translation) {
-                    // Verifica se la traduzione esiste già
-                    $existing_translation = $dbo->fetchArray('SELECT `id` FROM `zz_modules_lang` WHERE `id_record` = '.prepare($module_id).' AND `id_lang` = '.prepare($id_lang));
+                    $existing_translation = database()->table('zz_modules_lang')->where('id_record', $module_id)->where('id_lang', $id_lang)->value('id');
 
                     if (!empty($existing_translation)) {
-                        // Aggiorna la traduzione esistente
-                        $dbo->update('zz_modules_lang', [
+                        database()->table('zz_modules_lang')->where('id', $existing_translation)->update([
                             'title' => $translation['title'],
-                        ], ['id' => $existing_translation[0]['id']]);
+                        ]);
                     } else {
-                        // Crea una nuova traduzione
-                        $dbo->insert('zz_modules_lang', [
+                        database()->table('zz_modules_lang')->insert([
                             'id_record' => $module_id,
                             'id_lang' => $id_lang,
                             'title' => $translation['title'],
@@ -329,11 +324,11 @@ switch (filter('op')) {
                     // Gestisci i gruppi associati alla vista
                     if (isset($view_data['groups'])) {
                         foreach ($view_data['groups'] as $group_name) {
-                            $group = $dbo->fetchArray('SELECT `id` FROM `zz_groups` WHERE `nome` = '.prepare($group_name));
+                            $group = Models\Group::where('nome', $group_name)->value('id');
                             if (!empty($group)) {
-                                $dbo->insert('zz_group_view', [
+                                database()->table('zz_group_view')->insert([
                                     'id_vista' => $view_id,
-                                    'id_gruppo' => $group[0]['id'],
+                                    'id_gruppo' => $group,
                                 ]);
                             }
                         }
@@ -344,20 +339,17 @@ switch (filter('op')) {
             // Gestisci i filtri
             if (isset($module_data['clauses'])) {
                 // Elimina tutti i filtri esistenti per il modulo
-                $existing_clauses = $dbo->fetchArray('SELECT `id` FROM `zz_group_module` WHERE `id_module` = '.prepare($module_id));
+                $existing_clauses = Models\Permissions::where('id_module', $module_id)->pluck('id')->toArray();
 
                 // Elimina tutti i filtri
-                $dbo->delete('zz_group_module', ['id_module' => $module_id]);
+                Models\Permissions::where('id_module', $module_id)->delete();
 
                 // Crea tutti i nuovi filtri dal file JSON
                 foreach ($module_data['clauses'] as $clause_data) {
                     // Trova l'ID del gruppo
                     $group_id = null;
                     if (isset($clause_data['group'])) {
-                        $group = $dbo->fetchArray('SELECT `id` FROM `zz_groups` WHERE `nome` = '.prepare($clause_data['group']));
-                        if (!empty($group)) {
-                            $group_id = $group[0]['id'];
-                        }
+                        $group_id = Models\Group::where('nome', $clause_data['group'])->value('id');
                     }
 
                     // Salta se non è stato trovato il gruppo
@@ -376,17 +368,17 @@ switch (filter('op')) {
                     ];
 
                     // Crea il nuovo filtro
-                    $dbo->insert('zz_group_module', $clause_array);
-                    $clause_id = $dbo->lastInsertedID();
+                    database()->table('zz_group_module')->insert($clause_array);
+                    $clause_id = database()->getPdo()->lastInsertId();
 
                     // Crea le traduzioni del filtro
                     if (isset($clause_data['translations'])) {
                         foreach ($clause_data['translations'] as $id_lang => $translation) {
-                            $dbo->insert('zz_group_module_lang', [
-                                'id_record' => $clause_id,
-                                'id_lang' => $id_lang,
-                                'title' => $translation['title'],
-                            ]);
+                        database()->table('zz_group_module_lang')->insert([
+                            'id_record' => $clause_id,
+                            'id_lang' => $id_lang,
+                            'title' => $translation['title'],
+                        ]);
                         }
                     }
                 }
@@ -463,7 +455,7 @@ switch (filter('op')) {
                     // Se è una nuova vista, aggiungi automaticamente tutti i gruppi che hanno accesso al modulo
                     if (empty(post('gruppi')[$c])) {
                         // Ottieni tutti i gruppi che hanno accesso al modulo (permessi 'r' o 'rw')
-                        $gruppi_con_accesso = $dbo->fetchArray('SELECT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($id_record).' AND `permessi` IN (\'r\', \'rw\')');
+                        $gruppi_con_accesso = Models\Permissions::where('id_module', $id_record)->whereIn('permessi', ['r', 'rw'])->pluck('id_gruppo')->toArray();
 
                         // Assicurati che il gruppo Amministratori (ID 1) sia incluso
                         $id_gruppo_admin = 1; // ID del gruppo Amministratori
@@ -474,9 +466,9 @@ switch (filter('op')) {
 
                         // Aggiungi i permessi per tutti i gruppi con accesso
                         foreach ($gruppi_con_accesso as $gruppo) {
-                            $dbo->insert('zz_group_view', [
+                            database()->table('zz_group_view')->insert([
                                 'id_vista' => $id,
-                                'id_gruppo' => $gruppo['id_gruppo'],
+                                'id_gruppo' => $gruppo,
                             ]);
                         }
 
@@ -575,7 +567,7 @@ switch (filter('op')) {
 
         $view = View::find($id);
         $view->delete();
-        $dbo->delete('zz_group_view', ['id_vista' => $id]);
+        database()->table('zz_group_view')->where('id_vista', $id)->delete();
 
         flash()->info(tr('Eliminazione completata!'));
 
@@ -595,7 +587,7 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `zz_views` SET `order` = '.prepare($i).' WHERE `id`='.prepare($id_riga));
+            View::where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -604,7 +596,7 @@ switch (filter('op')) {
         $visible = filter('visible');
         $id_riga = filter('id_vista');
 
-        $dbo->query('UPDATE `zz_views` SET `visible` = '.prepare($visible).' WHERE `id` = '.prepare($id_riga));
+        View::where('id', $id_riga)->update(['visible' => $visible]);
 
         break;
 }

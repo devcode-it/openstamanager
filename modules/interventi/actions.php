@@ -84,12 +84,7 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
-        $tags = $dbo->select('in_interventi_tags', 'id_tag', [], ['id_intervento' => $intervento->id]);
-        $tags_presenti = [];
-
-        foreach ($tags as $tag) {
-            $tags_presenti[] = $tag['id_tag'];
-        }
+        $tags_presenti = database()->table('in_interventi_tags')->where('id_intervento', $intervento->id)->pluck('id_tag')->toArray();
 
         $tags = post('tags') ?: [];
         $tags_presenti = [];
@@ -105,16 +100,16 @@ switch (post('op')) {
             'id_tag' => $tags_presenti,
         ]);
 
-        $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
+        $tecnici_presenti_array = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $intervento->id)->pluck('id_tecnico')->toArray();
         $tecnici_presenti = [];
 
         foreach ($tecnici_presenti_array as $tecnico_presente) {
-            $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
+            $tecnici_presenti[] = $tecnico_presente;
 
             // Notifica rimozione tecnico assegnato
             if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
-                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati_array)) {
-                    $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
+                if (!in_array($tecnico_presente, $tecnici_assegnati_array)) {
+                    $tecnico = Anagrafica::find($tecnico_presente);
                     if (!empty($tecnico['email'])) {
                         $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
@@ -180,12 +175,12 @@ switch (post('op')) {
 
             $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
-                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
+                $tecnici_intervento = database()->table('in_interventi_tecnici')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
             }
 
             $tecnici_assegnati = [];
             if (!empty($stato['notifica_tecnico_assegnato'])) {
-                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
+                $tecnici_assegnati = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
             }
 
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
@@ -1401,19 +1396,19 @@ switch (post('op')) {
 
                     // Copia degli impianti
                     if (!empty($copia_impianti)) {
-                        $impianti = $dbo->select('my_impianti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                        $impianti = database()->table('my_impianti_interventi')->where('id_intervento', $intervento->id)->get();
                         foreach ($impianti as $impianto) {
-                            $dbo->insert('my_impianti_interventi', [
+                            database()->table('my_impianti_interventi')->insert([
                                 'id_intervento' => $id_record,
-                                'id_impianto' => $impianto['id_impianto'],
+                                'id_impianto' => $impianto->id_impianto,
                             ]);
                         }
 
-                        $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                        $componenti = database()->table('my_componenti_interventi')->where('id_intervento', $intervento->id)->get();
                         foreach ($componenti as $componente) {
-                            $dbo->insert('my_componenti_interventi', [
+                            database()->table('my_componenti_interventi')->insert([
                                 'id_intervento' => $id_record,
-                                'id_componente' => $componente['id_componente'],
+                                'id_componente' => $componente->id_componente,
                             ]);
                         }
                     }

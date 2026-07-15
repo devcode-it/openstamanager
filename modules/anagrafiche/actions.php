@@ -339,12 +339,12 @@ switch (post('op')) {
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!$anagrafica->isAzienda()) {
             // $anagrafica->delete();
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE id = '.prepare($id_record));
+            $anagrafica->update(['deleted_at' => date('Y-m-d H:i:s')]);
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE id_anagrafica = '.prepare($id_record));
+            Models\User::where('id_anagrafica', $id_record)->update(['enabled' => 0]);
             // Disabilito anche il token
-            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
+            database()->table('zz_tokens')->where('id_utente', $id_utente)->update(['enabled' => 0]);
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

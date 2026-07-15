@@ -1161,20 +1161,16 @@ switch ($op) {
 
     case 'controlla_serial':
         if (post('is_rientrabile')) {
-            // Controllo che i serial entrati e usciti siano uguali in modo da poterli registrare nuovamente.
-            $serial_uscita = $dbo->table('mg_prodotti')
+            $countSerials = database()->table('mg_prodotti')
                 ->where('serial', post('serial'))
-                ->where('dir', 'uscita')
                 ->where('id_articolo', post('id_articolo'))
-                ->count();
-            $serial_entrata = $dbo->table('mg_prodotti')
-                ->where('serial', post('serial'))
-                ->where('dir', 'entrata')
-                ->where('id_articolo', post('id_articolo'))
-                ->count();
-            $has_serial = $serial_entrata != $serial_uscita;
+                ->selectRaw('SUM(CASE WHEN dir = "uscita" THEN 1 ELSE 0 END) as uscita')
+                ->selectRaw('SUM(CASE WHEN dir = "entrata" THEN 1 ELSE 0 END) as entrata')
+                ->first();
+
+            $has_serial = ($countSerials->entrata ?? 0) != ($countSerials->uscita ?? 0);
         } else {
-            $has_serial = $dbo->table('mg_prodotti')
+            $has_serial = database()->table('mg_prodotti')
                 ->where('serial', post('serial'))
                 ->where('dir', 'uscita')
                 ->where('id_articolo', post('id_articolo'))
@@ -1196,14 +1192,15 @@ switch ($op) {
         $save_inline_barcode = true;
 
         if (!empty($barcode)) {
-            $id_articolo = $dbo->table('mg_articoli_barcode')->where('barcode', $barcode)->value('id_articolo');
-            if (empty($id_articolo)) {
-                $id_articolo = $dbo->table('mg_articoli')
-                    ->where('deleted_at', null)
+            $barcodeObj = Modules\Articoli\Barcode::where('barcode', $barcode)->first();
+            if ($barcodeObj) {
+                $id_articolo = $barcodeObj->id_articolo;
+            } else {
+                $articolo = Modules\Articoli\Articolo::where('codice', $barcode)
                     ->where('attivo', 1)
-                    ->where('barcode', '')
-                    ->where('codice', $barcode)
-                    ->value('id');
+                    ->where('deleted_at', null)
+                    ->first();
+                $id_articolo = $articolo ? $articolo->id : null;
                 $save_inline_barcode = false;
             }
         }

@@ -40,6 +40,16 @@ use Modules\Iva\Aliquota;
 use Plugins\ExportFE\Interaction;
 use Util\XML;
 
+function getIvaDichiarazione() {
+    static $iva = null;
+    if ($iva === null) {
+        $iva = Aliquota::where('codice_natura_fe', 'N3.5')
+            ->where('deleted_at', null)
+            ->first();
+    }
+    return $iva;
+}
+
 $module = Module::find($id_module);
 $op = post('op');
 if ($module->name == 'Fatture di vendita') {
@@ -437,10 +447,7 @@ switch ($op) {
 
             // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
             if (!empty($fattura->id_dichiarazione_intento)) {
-                $iva_dichiarazione = $database->table('co_iva')
-                    ->where('codice_natura_fe', 'N3.5')
-                    ->where('deleted_at', null)
-                    ->first();
+                $iva_dichiarazione = getIvaDichiarazione();
 
                 if (!empty($iva_dichiarazione)) {
                     $id_iva_intervento = $iva_dichiarazione->id;
@@ -948,10 +955,7 @@ switch ($op) {
 
                 // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
                 if (!empty($fattura->id_dichiarazione_intento)) {
-                    $iva_dichiarazione = $database->table('co_iva')
-                        ->where('codice_natura_fe', 'N3.5')
-                        ->where('deleted_at', null)
-                        ->first();
+                    $iva_dichiarazione = getIvaDichiarazione();
 
                     if (!empty($iva_dichiarazione)) {
                         $id_iva = $iva_dichiarazione->id;
@@ -978,10 +982,7 @@ switch ($op) {
 
                 // Se la fattura ha una dichiarazione d'intento, applica l'aliquota IVA N3.5
                 if (!empty($fattura->id_dichiarazione_intento)) {
-                    $iva_dichiarazione = $database->table('co_iva')
-                        ->where('codice_natura_fe', 'N3.5')
-                        ->where('deleted_at', null)
-                        ->first();
+                    $iva_dichiarazione = getIvaDichiarazione();
 
                     if (!empty($iva_dichiarazione)) {
                         $copia->id_iva = $iva_dichiarazione->id;

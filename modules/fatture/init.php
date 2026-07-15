@@ -71,8 +71,9 @@ if (!empty($id_record)) {
         `co_tipi_documento`.`dir` = '.prepare($dir).' AND `co_documenti`.`id`='.prepare($id_record));
 
     // Note di credito collegate
-    $note_accredito = Fattura::where('reversed', 1)
-        ->where('ref_documento', $id_record)
+    $note_accredito = Fattura::whereHas('tipo', function ($query) {
+        $query->where('reversed', 1);
+    })->where('ref_documento', $id_record)
         ->get(['id'])
         ->map(fn ($f) => ['id' => $f->id, 'numero' => $f->numero_esterno ?: $f->numero, 'data' => $f->data])
         ->toArray();

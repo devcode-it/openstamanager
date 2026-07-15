@@ -363,13 +363,8 @@ switch ($op) {
     case 'delete':
         try {
             $fattura->delete();
-
-            $dbo->table('co_scadenzario')
-                ->where('id_documento', $id_record)
-                ->delete();
-            $dbo->table('co_movimenti')
-                ->where('id_documento', $id_record)
-                ->delete();
+            $fattura->scadenze()->delete();
+            $fattura->movimentiContabili()->delete();
 
             flash()->info(tr('Fattura eliminata!'));
         } catch (InvalidArgumentException) {
@@ -1081,35 +1076,19 @@ switch ($op) {
         $tipo = Tipo::find(post('id_tipo_documento_autofattura'));
         $iva = Aliquota::find(setting('Iva predefinita'));
 
-        $imponibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
-            ->where('co_righe_documenti.id_documento', $fattura->id)
-            ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
-            ->sum('subtotale');
+        $natura_fe_list = ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'];
 
-        $sconto = $database->table('co_righe_documenti')
+        $righe_fe = $database->table('co_righe_documenti')
             ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
             ->where('co_righe_documenti.id_documento', $fattura->id)
-            ->whereIn('co_iva.codice_natura_fe', ['N2', 'N2.1', 'N2.2', 'N3', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N6', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9'])
-            ->sum('sconto');
+            ->whereIn('co_iva.codice_natura_fe', $natura_fe_list)
+            ->get(['co_righe_documenti.subtotale', 'co_righe_documenti.sconto', 'co_iva.indetraibile', 'co_iva.id as id_iva']);
 
-        $imponibile_indetraibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
-            ->where('co_righe_documenti.id_documento', $fattura->id)
-            ->where('co_iva.indetraibile', 100)
-            ->sum('subtotale');
-
-        $sconto_indetraibile = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
-            ->where('co_righe_documenti.id_documento', $fattura->id)
-            ->where('co_iva.indetraibile', 100)
-            ->sum('sconto');
-
-        $iva_indetraibile_id = $database->table('co_righe_documenti')
-            ->join('co_iva', 'co_iva.id', '=', 'co_righe_documenti.id_iva')
-            ->where('co_righe_documenti.id_documento', $fattura->id)
-            ->where('co_iva.indetraibile', 100)
-            ->value('co_iva.id');
+        $imponibile = $righe_fe->where('indetraibile', '!=', 100)->sum('subtotale');
+        $sconto = $righe_fe->where('indetraibile', '!=', 100)->sum('sconto');
+        $imponibile_indetraibile = $righe_fe->where('indetraibile', 100)->sum('subtotale');
+        $sconto_indetraibile = $righe_fe->where('indetraibile', 100)->sum('sconto');
+        $iva_indetraibile_id = $righe_fe->where('indetraibile', 100)->first()->id_iva ?? null;
 
         // Recupera l'oggetto Aliquota per l'IVA indetraibile se esiste
         $iva_indetraibile = null;

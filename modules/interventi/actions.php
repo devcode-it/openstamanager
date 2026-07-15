@@ -53,7 +53,7 @@ switch (post('op')) {
 
         // Rimozione del collegamento al promemoria
         if (!empty($id_promemoria) && $intervento->id_contratto != $id_contratto) {
-            $dbo->update('co_promemoria', ['id_intervento' => null], ['id_intervento' => $id_record]);
+            Promemoria::where('id_intervento', $id_record)->update(['id_intervento' => null]);
         }
 
         // Salvataggio modifiche intervento
@@ -327,9 +327,7 @@ switch (post('op')) {
             $intervento->id_stato = $id_stato;
             $intervento->save();
 
-            $id_contratto = $dbo->fetchOne('SELECT id_contratto FROM co_promemoria WHERE id_intervento = :id', [
-                ':id' => $id_record,
-            ])['id_contratto'];
+            $id_contratto = Promemoria::where('id_intervento', $id_record)->value('id_contratto');
         }
 
         // Collegamenti tecnici/interventi
@@ -370,8 +368,8 @@ switch (post('op')) {
                     // Calcola i km se necessario
                     if ($tipo_sessione->calcola_km) {
                         if (!empty($intervento['id_sede_destinazione'])) {
-                            $sede = $dbo->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
-                            $km = $sede['km'];
+                            $sede = Modules\Anagrafiche\Sede::find($intervento['id_sede_destinazione']);
+                            $km = $sede ? $sede->km : null;
                         } else {
                             $km = $intervento->anagrafica->sedeLegale->km;
                         }

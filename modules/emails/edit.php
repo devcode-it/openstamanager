@@ -119,14 +119,11 @@ if (!empty($template_predefinito)) {
 <?php
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($id_record));
-$selected_prints = array_column($selected_prints, 'id_print');
+$selected_prints = database()->table('em_print_template')->where('id_template', $id_record)->pluck('id_print')->toArray();
 
-$selected_mansioni = $dbo->fetchArray('SELECT id_mansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
-$selected_mansioni = array_column($selected_mansioni, 'id_mansione');
+$selected_mansioni = database()->table('em_mansioni_template')->where('id_template', $id_record)->pluck('id_mansione')->toArray();
 
-$selected_categories = $dbo->fetchArray('SELECT id_category FROM em_files_categories_template WHERE id_template = '.prepare($id_record));
-$selected_categories = array_column($selected_categories, 'id_category');
+$selected_categories = database()->table('em_files_categories_template')->where('id_template', $id_record)->pluck('id_category')->toArray();
 
 echo '
 

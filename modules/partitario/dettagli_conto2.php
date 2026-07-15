@@ -43,11 +43,11 @@ function partitario_sottoconto_cells($conto_terzo, $conto_secondo, $conto_primo)
 
     // Possibilità di esplodere i movimenti del conto
     if (!empty($numero_movimenti)) {
-        $cella .= '<button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-default btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
+        $cella .= '<button type="button" id="movimenti-'.$conto_terzo['id'].'" class="btn btn-secondary btn-xs plus-btn"><i class="fa fa-plus"></i></button>';
     }
 
     // Span con i pulsanti
-    $cella .= '<span class="hide tools pull-right">';
+    $cella .= '<span class="hide tools float-right">';
 
     // Possibilità di visionare l'anagrafica
     $id_anagrafica = $conto_terzo['id_anagrafica'];
@@ -79,7 +79,7 @@ function partitario_sottoconto_cells($conto_terzo, $conto_secondo, $conto_primo)
         ? tr('(deducibile al _PERC_%', ['_PERC_' => Translator::numberToLocale($conto_terzo['percentuale_deducibile'], 0)]).')'
         : '';
     $cella .= '<span class="clickable" id="movimenti-'.$conto_terzo['id'].'">&nbsp;'.$conto_secondo['numero'].'.'.$conto_terzo['numero'].' '.$conto_terzo['descrizione'].' <span class="text-muted">'.$deducibile.'</span></span>';
-    $cella .= '<div id="conto_'.$conto_terzo['id'].'" style="display:none;"></div>';
+    $cella .= '<div id="conto_'.$conto_terzo['id'].'" class="d-none"></div>';
 
     $cells = [$cella, moneyFormat($totale_conto, 2)];
     if ($is_economico) {
@@ -199,7 +199,7 @@ if (filter('draw', null, true) !== '') {
             'DT_RowClass' => 'conto3',
         ];
         if (empty($conto_terzo['numero_movimenti'])) {
-            $row['DT_RowAttr'] = ['style' => 'opacity: 0.5;'];
+            $row['DT_RowClass'] .= ' opacity-50';
         }
         foreach ($cells as $i => $cella) {
             $row[$i] = $cella;
@@ -218,10 +218,11 @@ if (filter('draw', null, true) !== '') {
     ]);
 } else {
     // === Ramo HTML: guscio (oltre soglia, server-side) o elenco completo (sotto soglia) ===
+    echo '<style>.opacity-50 { opacity: 0.5; }</style>';
     echo '<div id="'.$root_id.'">';
 
     if ($total_sottoconti == 0) {
-        echo '<br><span>'.tr('Nessun conto presente').'</span>';
+        echo '<p class="text-muted mb-3">'.tr('Nessun conto presente').'</p>';
     } elseif ($usa_datatable) {
         // Totale del mastro per il footer: una sola query (indipendente dai filtri).
         $tot = $dbo->fetchOne('SELECT SUM(movimenti.totale) AS totale, SUM(movimenti.totale_reddito) AS totale_reddito
@@ -263,7 +264,7 @@ if (filter('draw', null, true) !== '') {
                 </tr>
             </tfoot>
         </table>
-        <br><br>
+        <div class="my-4"></div>
     </div>';
 
         // Colonne (3 Patrimoniale, 4 Economico) — importi allineati a destra via className.
@@ -333,7 +334,7 @@ if (filter('draw', null, true) !== '') {
 
                     var $pagCol = $container.find(".dataTables_paginate").parent().addClass("dt-pagination-col");
                     $pagCol.addClass("d-flex align-items-center justify-content-end flex-wrap");
-                    var $goto = $('<div class="dt-goto input-group input-group-sm"><div class="input-group-prepend"><span class="input-group-text">'.tr('Vai a pagina').'</span></div><input type="number" min="1" class="form-control text-center"></div>');
+                    var $goto = $("<div class=\"dt-goto input-group input-group-sm\"><div class=\"input-group-prepend\"><span class=\"input-group-text\">".tr("Vai a pagina")."</span></div><input type=\"number\" min=\"1\" class=\"form-control text-center\"></div>");
                     $goto.prependTo($pagCol);
                     $goto.find("input").on("keydown change", function (e) {
                         if (e.type === "keydown" && e.key !== "Enter") {
@@ -373,16 +374,17 @@ if (filter('draw', null, true) !== '') {
             $totale_reddito2 += $totale_reddito;
 
             $cells = partitario_sottoconto_cells($conto_terzo, $conto_secondo, $conto_primo);
+            $row_class = 'conto3'.(empty($conto_terzo['numero_movimenti']) ? ' opacity-50' : '');
             echo '
-                <tr class="conto3" id="conto3-'.$conto_terzo['id'].'" style="'.(!empty($conto_terzo['numero_movimenti']) ? '' : 'opacity: 0.5;').'">
+                <tr class="'.$row_class.'" id="conto3-'.$conto_terzo['id'].'">
                     <td>'.$cells[0].'</td>
-                    <td width="10%" class="text-right">'.$cells[1].'</td>';
+                    <td class="text-right">'.$cells[1].'</td>';
             if ($is_economico) {
                 echo '
-                    <td width="10%" class="text-right">'.$cells[2].'</td>';
+                    <td class="text-right">'.$cells[2].'</td>';
             }
             echo '
-                    <td width="5%"></td>
+                    <td></td>
                 </tr>';
         }
         echo '
@@ -399,7 +401,7 @@ if (filter('draw', null, true) !== '') {
                 </tr>
             </tfoot>
         </table>
-        <br><br>
+        <div class="my-4"></div>
     </div>';
     }
 

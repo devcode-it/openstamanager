@@ -138,8 +138,14 @@ if ($articolo->servizio) {
                         </tr>
                     </thead>
                     <tbody>';
+    $thresholds = database()->table('mg_scorte_sedi')
+        ->where('id_articolo', $articolo->id)
+        ->get(['id_sede', 'threshold_qta'])
+        ->pluck('threshold_qta', 'id_sede')
+        ->toArray();
+
     foreach ($sedi as $sede) {
-        $threshold_sede = $dbo->fetchOne('SELECT `threshold_qta` FROM `mg_scorte_sedi` WHERE `id_sede` = '.prepare($sede['id']).' AND `id_articolo` = '.prepare($articolo->id))['threshold_qta'];
+        $threshold_sede = $thresholds[$sede['id']] ?? 0;
         $giacenza_value = $giacenze[$sede['id']][0];
         $is_low = $giacenza_value < $threshold_sede;
 

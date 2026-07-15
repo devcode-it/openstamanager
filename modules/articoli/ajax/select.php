@@ -350,7 +350,7 @@ switch ($resource) {
         $has_venditabanco = !empty($modulo_venditabanco);
         
         // Costruisci la query per ottenere la data del movimento
-        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`";
+        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`, `in_interventi`.`data_richiesta`";
         
         if ($has_venditabanco) {
             $data_movimento .= ", `vb_venditabanco`.`data`";
@@ -371,7 +371,9 @@ switch ($resource) {
             LEFT JOIN `dt_righe_ddt` ON `mg_prodotti`.`id_riga_ddt` = `dt_righe_ddt`.`id`
             LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
-            LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`';
+            LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
+            LEFT JOIN `in_righe_interventi` ON `mg_prodotti`.`id_riga_intervento` = `in_righe_interventi`.`id`
+            LEFT JOIN `in_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`';
         
         if ($has_venditabanco) {
             $movimenti_seriali .= '

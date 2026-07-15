@@ -502,6 +502,10 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     {[ "type": "text", "label": "'.tr('Dicitura fissa in fattura').'", "name": "dicitura_fissa_fattura", "value": "$dicitura_fissa_fattura$" ]}
                                 </div>
+
+                                <div class="col-md-3">
+                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "id_relazione", "ajax-source": "relazioni", "value": "$id_relazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
+                                </div>
                             </div>
 
                             <div class="row">
@@ -581,8 +585,9 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr('Listino').'", "name": "id_listino", "ajax-source": "listini", "value": "$id_listino$" ]}
                                 </div>
-                                <div class="col-md-6">
-                                        {[ "type": "select", "label": "'.tr('Relazione').'", "name": "id_relazione", "ajax-source": "relazioni", "value": "$id_relazione$", "icon-after": "add|'.Module::where('name', 'Relazioni')->first()->id.'" ]}
+                               
+                                 <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "id_tipo_intervento_default", "ajax-source": "tipiintervento",  "select-options": '.json_encode(['idtipiintervento' => '']).', "value": "$id_tipo_intervento_default$" ]}
                                 </div>
                             </div>
                             <div class="row">
@@ -603,14 +608,12 @@ if ($is_cliente or $is_fornitore or $is_tecnico) {
     echo '
                                     {[ "type": "select", "multiple": "1", "label": "'.tr('Tipi attività utilizzabili').'", "id": "idtipiintervento", "name": "idtipiintervento[]", "values": "query=SELECT in_tipi_intervento.id, title as descrizione FROM in_tipi_intervento LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY title ASC", "value": "'.implode(',', $idtipiintervento).'" ]}
                                 </div>
-                                <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Tipo attività predefinita').'", "name": "id_tipo_intervento_default", "ajax-source": "tipiintervento",  "select-options": '.json_encode(['idtipiintervento' => '']).', "value": "$id_tipo_intervento_default$" ]}
+
+                               <div class="col-md-6">
+                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Per conto di').'", "name": "id_cliente_finale", "value": "'.$id_cliente_finale.'", "ajax-source": "clienti" ]}
-                                </div>
                                 <div class="col-md-6">
                                     {[ "type": "select", "label": "'.tr("Dichiarazione d'intento").'", "name": "id_dichiarazione_intento_default", "ajax-source": "dichiarazioni_intento", "select-options": {"id_anagrafica": '.$id_record.', "data": "'.Carbon::now().'"},"value": "$id_dichiarazione_intento_default$" ]}
                                 </div>';

@@ -68,3 +68,14 @@ ALTER TABLE `co_piano_dei_conti3` ADD INDEX `idx_id_piano_dei_conti2_numero` (`i
 -- Indici per il join anagrafica del dettaglio sottoconti
 ALTER TABLE `an_anagrafiche` ADD INDEX `idx_id_conto_cliente` (`id_conto_cliente`);
 ALTER TABLE `an_anagrafiche` ADD INDEX `idx_id_conto_fornitore` (`id_conto_fornitore`);
+
+
+UPDATE `zz_views`
+LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module`
+SET `zz_views`.`query` = '`mg_articoli`.`qta`-IFNULL((SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = `mg_articoli`.`id` AND `mg_movimenti`.`id_sede` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = ''Magazzino cespiti'')), 0)'
+WHERE `zz_views`.`name` = 'Q.tà' AND `zz_modules`.`name` = 'Articoli';
+
+UPDATE `zz_views`
+LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_views`.`id_module`
+SET `zz_views`.`query` = '`mg_articoli`.`qta`-IFNULL(a.qta_impegnata, 0)-IFNULL((SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = `mg_articoli`.`id` AND `mg_movimenti`.`id_sede` = (SELECT `valore` FROM `zz_settings` WHERE `nome` = ''Magazzino cespiti'')), 0)'
+WHERE `zz_views`.`name` = 'Q.tà disponibile' AND `zz_modules`.`name` = 'Articoli';

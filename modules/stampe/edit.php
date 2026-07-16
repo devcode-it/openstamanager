@@ -38,12 +38,16 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
 		<div class="card-body">
 			<div class="row">
 
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Titolo'); ?>", "name": "title", "required": 1, "value": "$title$" ]}
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Nome del file'); ?>", "name": "filename", "required": 1, "value": "$filename$" ]}
+				</div>
+
+                <div class="col-md-4">
+                    {[ "type": "text", "label": "<?php echo tr('Directory'); ?>", "name": "directory", "required": 1, "value": "$directory$" ]}
 				</div>
 
 			</div>
@@ -51,7 +55,7 @@ $id_files = $dbo->select('zz_files_print', 'id_file', [], ['id_print' => $id_rec
             <div class="row">
 
                 <div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`enabled` = 1 AND `options` != 'custom') OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `title` ASC", "value": "<?php echo $record['id_module']; ?>", "disabled": "1" ]}
+					{[ "type": "select", "label": "<?php echo tr('Modulo'); ?>", "name": "module", "required": 1, "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE (`enabled` = 1 AND `options` != 'custom') OR `zz_modules`.`id` = <?php echo $record['id_module']; ?> ORDER BY `title` ASC", "value": "<?php echo $record['id_module']; ?>" ]}
 				</div>
 
                 <div class="col-md-6">
@@ -83,7 +87,7 @@ if (!empty($stampa_predefinita)) {
 ?>
 
                 <div class="col-md-4">
-                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$nome_stampa_predefinita); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinita'); ?>", "help" : "<?php echo tr('Attiva per impostare questa stampa come predefinita. Attualmente la stampa predefinita per questo modulo è: '.$nome_stampa_predefinita); ?>", "name": "predefined", "value": "$predefined$" ]}
                 </div>
 
             </div>

@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\PrintTemplate;
+
 include_once __DIR__.'/../../core.php';
 use Models\PrintTemplate;
 
@@ -26,7 +28,9 @@ switch (post('op')) {
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
             PrintTemplate::where('id_module', '=', post('module'))->update(['predefined' => 0]);
         }
+        $print->id_module = post('module');
         $print->options = post('options');
+        $print->directory = post('directory');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
         $print->enabled = post('enabled');
@@ -46,6 +50,23 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Modifiche salvate correttamente'));
+
+        break;
+
+    case 'add':
+
+        $module = post('module');
+        $title = post('title');
+        $filename = post('filename');
+        $directory = post('directory');
+        
+        $print = PrintTemplate::build($module, $title, $directory);
+        $id_record = $dbo->lastInsertedID();
+    
+        $print->setTranslation('title', $title);
+        $print->setTranslation('filename', $filename);
+        flash()->info(tr('Aggiunta nuova stampa!'));
+
 
         break;
 }

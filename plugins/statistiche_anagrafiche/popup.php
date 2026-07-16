@@ -93,21 +93,32 @@ switch ($type) {
 
     case 'interventi':
         $titolo = tr('Attività');
-        if ($anagrafica->isTipo('Cliente')) {
-            $results = Intervento::whereBetween('data_richiesta', [$start, $end])
-                ->where('id_anagrafica', $id_record)
-                ->get();
-        } else {
-            $ids = $dbo->fetchArray('SELECT DISTINCT id_intervento FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_record));
-            $results = Intervento::whereBetween('data_richiesta', [$start, $end])
-                ->whereIn('id', array_column($ids, 'id_intervento'))
-                ->get();
-        }
+        $id_param = $anagrafica->isTipo('Cliente') ? 'i.id_anagrafica = '.prepare($id_record) : 'it.id_tecnico = '.prepare($id_record);
+        $results = $dbo->fetchArray('
+            SELECT i.id, i.codice, i.data_richiesta,
+                MAX(it.orario_fine) AS data_fine,
+                ti.name AS tipo,
+                SUM(it.ore) AS ore,
+                si.name AS stato,
+                GROUP_CONCAT(DISTINCT a.nome ORDER BY a.nome SEPARATOR ", ") AS tecnici,
+                i.descrizione
+            FROM in_interventi i
+            INNER JOIN in_stati_intervento si ON si.id = i.id_stato
+            INNER JOIN in_tipi_intervento ti ON ti.id = i.id_tipo_intervento
+            LEFT JOIN in_interventi_tecnici it ON it.id_intervento = i.id
+            LEFT JOIN an_anagrafiche a ON a.id = it.id_tecnico
+            WHERE i.data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end).' AND '.$id_param.'
+            GROUP BY i.id, i.codice, i.data_richiesta, ti.name, si.name, i.descrizione
+            ORDER BY i.data_richiesta ASC');
         $columns = [
             'codice' => tr('Numero'),
-            'data_richiesta' => tr('Data richiesta'),
+            'data_richiesta' => tr('Data inizio'),
+            'data_fine' => tr('Data fine'),
+            'tipo' => tr('Tipo'),
+            'ore' => tr('Ore'),
             'stato' => tr('Stato'),
-            'totale_imponibile' => tr('Totale'),
+            'tecnici' => tr('Tecnici'),
+            'descrizione' => tr('Descrizione'),
         ];
         break;
 
@@ -314,12 +325,14 @@ foreach ($results as $result) {
             $value = moneyFormat($value);
         } elseif (in_array($key, ['data', 'data_bozza', 'data_richiesta'])) {
             $value = dateFormat($value);
+        } elseif ($key == 'data_fine') {
+            $value = !empty($value) ? dateFormat($value) : '';
         } elseif ($key == 'orario_inizio') {
             $value = timestampFormat($value);
         } elseif ($key == 'id_tecnico') {
             $value = is_object($result) && $result->anagrafica ? $result->anagrafica->nome : '';
         } elseif ($key == 'ore') {
-            $value = numberFormat($value, 0);
+            $value = $value !== null ? numberFormat($value, 0) : '0';
         } elseif ($key == 'qta') {
             $value = numberFormat($value, 2);
         } elseif ($key == 'numero') {

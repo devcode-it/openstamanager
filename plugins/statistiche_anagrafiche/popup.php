@@ -93,14 +93,14 @@ switch ($type) {
 
     case 'interventi':
         $titolo = tr('Attività');
-        $id_param = $anagrafica->isTipo('Cliente') ? 'i.id_anagrafica = '.prepare($id_record) : 'it.id_tecnico = '.prepare($id_record);
+        $id_param = $anagrafica->isTipo('Cliente') ? 'i.id_anagrafica = '.prepare($id_record) : 'EXISTS (SELECT 1 FROM in_interventi_tecnici WHERE id_intervento = i.id AND id_tecnico = '.prepare($id_record).')';
         $results = $dbo->fetchArray('
             SELECT i.id, i.codice, i.data_richiesta,
                 MAX(it.orario_fine) AS data_fine,
                 ti.name AS tipo,
                 SUM(it.ore) AS ore,
                 si.name AS stato,
-                GROUP_CONCAT(DISTINCT a.nome ORDER BY a.nome SEPARATOR ", ") AS tecnici,
+                GROUP_CONCAT(DISTINCT a.ragione_sociale ORDER BY a.ragione_sociale SEPARATOR ", ") AS tecnici,
                 i.descrizione
             FROM in_interventi i
             INNER JOIN in_stati_intervento si ON si.id = i.id_stato

@@ -228,7 +228,7 @@ switch (post('op')) {
         $agente_is_logged = false;
         if (!empty($user['id_anagrafica'])) {
             $anagrafica = Anagrafica::find($user['id_anagrafica']);
-            $agente_is_logged = $anagrafica->tipi()->where('title', 'Agente')->exists();
+            $agente_is_logged = $anagrafica->tipi()->where('name', 'Agente')->exists();
         }
 
         $id_agente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['id_anagrafica'] : 0;

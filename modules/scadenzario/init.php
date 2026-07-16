@@ -32,7 +32,7 @@ if (!empty($id_record)) {
         $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id_documento = '.prepare($documento->id).' ORDER BY scadenza ASC');
         $totale_da_pagare = $documento->netto;
     } else {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record).' ORDER BY scadenza ASC');
+        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record));
         $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
     }
 }

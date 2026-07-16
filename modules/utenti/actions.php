@@ -271,7 +271,7 @@ switch (filter('op')) {
 
         // Verifico che ci sia il permesso per questo gruppo
         if ($permessi != '-') {
-            $rs = $dbo->fetchArray('SELECT * FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo));
+            $rs = $dbo->fetchArray('SELECT id FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo));
             if (empty($rs)) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
                 $query = 'INSERT IGNORE INTO zz_permissions(id_gruppo, id_module, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';

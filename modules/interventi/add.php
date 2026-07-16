@@ -97,7 +97,7 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `id_intervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as id_preventivo, (SELECT `tempo_standard` FROM `in_tipi_intervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT `in_interventi`.*, `co_promemoria`.`id_contratto`, `in_tipi_intervento`.`tempo_standard` FROM `in_interventi` LEFT JOIN `co_promemoria` ON `co_promemoria`.`id_intervento` = `in_interventi`.`id` LEFT JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `in_interventi`.`id_tipo_intervento` WHERE `in_interventi`.`id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];

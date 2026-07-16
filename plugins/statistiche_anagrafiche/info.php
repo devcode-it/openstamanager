@@ -111,8 +111,37 @@ $impianti = Impianto::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
     ->get();
 
+// Articoli venduti (venuti)
+$articoli_venduti = $dbo->fetchArray('
+    SELECT DISTINCT rd.id_articolo
+    FROM co_righe_documenti rd
+    INNER JOIN co_documenti d ON d.id = rd.id_documento
+    INNER JOIN co_tipi_documento td ON td.id = d.id_tipo_documento
+    WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'entrata\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+    UNION ALL
+    SELECT DISTINCT rdd.id_articolo
+    FROM dt_righe_ddt rdd
+    INNER JOIN dt_ddt dd ON dd.id = rdd.id_ddt
+    INNER JOIN dt_tipi_ddt tdd ON tdd.id = dd.id_tipo_ddt
+    WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'entrata\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end));
+
+// Articoli acquistati
+$articoli_acquistati = $dbo->fetchArray('
+    SELECT DISTINCT rd.id_articolo
+    FROM co_righe_documenti rd
+    INNER JOIN co_documenti d ON d.id = rd.id_documento
+    INNER JOIN co_tipi_documento td ON td.id = d.id_tipo_documento
+    WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'uscita\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+    UNION ALL
+    SELECT DISTINCT rdd.id_articolo
+    FROM dt_righe_ddt rdd
+    INNER JOIN dt_ddt dd ON dd.id = rdd.id_ddt
+    INNER JOIN dt_tipi_ddt tdd ON tdd.id = dd.id_tipo_ddt
+    WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'uscita\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end));
+
+
 echo '
-<div class="card card-info" id="row-'.$calendar_id.'">
+<div class="card card-info" id="row-'.$calendar_id.'" data-start="'.$start.'" data-end="'.$end.'">
     <div class="card-header">
         <h3 class="card-title">'.tr('Dal _START_ al _END_', [
     '_START_' => dateFormat($start),
@@ -125,11 +154,11 @@ echo '
     <div class="card-body">
         <div class="row">
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'preventivi\')">
                     <span class="info-box-icon bg-'.($preventivi->count() == 0 ? 'gray' : 'info').'"><i class="fa fa-question"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Preventivi').'
-                        '.($preventivi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Preventivi')->first()->id.'&_search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($preventivi->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$preventivi->count().'</big><br>
@@ -140,11 +169,11 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'contratti\')">
                     <span class="info-box-icon bg-'.($contratti->count() == 0 ? 'gray' : 'purple').'"><i class="fa fa-refresh"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Contratti').'
-                        '.($contratti->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Contratti')->first()->id.'&_search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($contratti->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$contratti->count().'</big><br>
@@ -155,11 +184,11 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'ordini_cliente\')">
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ordini cliente').'
-                        '.($ordini_cliente->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ordini cliente')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($ordini_cliente->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ordini_cliente->count().'</big><br>
@@ -170,18 +199,12 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'interventi\')">
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Attività');
-if ($anagrafica->isTipo('Cliente')) {
-    echo '
-                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
-} else {
-    echo '
-                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
-}
-echo '                     
+echo '
+                            '.($interventi->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$interventi->count().'</big><br>
@@ -192,11 +215,11 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'ddt\')">
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ddt in uscita').'
-                        '.($ddt_uscita->count() > 0 ? '<a class="pull-right"href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($ddt_uscita->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ddt_uscita->count().'</big><br>
@@ -207,11 +230,11 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'fatture\')">
                     <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Fatture').'
-                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.($fatture_vendita->count() + $note_credito->count()).'</big><br>
@@ -222,11 +245,11 @@ echo '
             </div>
 
             <div class="col-md-3">
-                <div class="info-box">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'impianti\')">
                     <span class="info-box-icon bg-'.($impianti->count() == 0 ? 'gray' : 'orange').'"><i class="fa fa-puzzle-piece"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Impianti').'
-                        '.($impianti->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Impianti')->first()->id.'&_search_Cliente='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($impianti->count() > 0 ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$impianti->count().'</big>
@@ -236,23 +259,45 @@ echo '
                 </div>
             </div>
 
-            <div class="col-md-3
-            ">
-                <div class="info-box">
+            <div class="col-md-3">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'interventi\')">
                     <span class="info-box-icon bg-'.(!empty($sessioni) ? 'warning' : 'gray').'"><i class="fa fa-wrench"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Ore lavorate');
-if ($anagrafica->isTipo('Cliente')) {
-    echo '
-                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
-} else {
-    echo '
-                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
-}
-echo '                     
+                        <span class="info-box-text pull-left">'.tr('Ore lavorate').'
+                        '.($sessioni ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.numberFormat($totale_ore_lavorate, 0).'</big>
+                            <br><br>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'articoli_venduti\')">
+                    <span class="info-box-icon bg-'.($articoli_venduti ? 'teal' : 'gray').'"><i class="fa fa-shopping-cart"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Articoli venduti').'
+                        '.(!empty($articoli_venduti) ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.count($articoli_venduti).'</big>
+                            <br><br>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'articoli_acquistati\')">
+                    <span class="info-box-icon bg-'.($articoli_acquistati ? 'teal' : 'gray').'"><i class="fa fa-truck-loading"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Articoli acquistati').'
+                        '.(!empty($articoli_acquistati) ? '<span class="pull-right">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></span>' : '').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.count($articoli_acquistati).'</big>
                             <br><br>
                         </span>
                     </div>

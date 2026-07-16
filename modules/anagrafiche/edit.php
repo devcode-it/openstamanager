@@ -50,8 +50,6 @@ if (!$is_cliente && !$is_fornitore && !$is_azienda && $is_tecnico) {
 
 if (!$is_cliente) {
     $ignore = Plugin::where('name', 'Impianti del cliente')
-        ->orWhere('name', 'Contratti del cliente')
-        ->orWhere('name', 'Ddt del cliente')
         ->get();
 
     foreach ($ignore as $plugin) {

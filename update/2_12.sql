@@ -82,3 +82,9 @@ WHERE `zz_views`.`name` = 'Q.tà disponibile' AND `zz_modules`.`name` = 'Articol
 
 -- Rimossa condizione per poter visualizzare anche le Stampe non attive
 UPDATE `zz_modules` SET `options` = 'SELECT\r\n    |select| \r\nFROM \r\n    `zz_prints`\r\n    LEFT JOIN `zz_prints_lang` ON (`zz_prints_lang`.`id_record` = `zz_prints`.`id` AND `zz_prints_lang`.|lang|)\r\n    LEFT JOIN `zz_modules` ON `zz_modules`.`id` = `zz_prints`.`id_module`\r\n    LEFT JOIN `zz_modules_lang` ON (`zz_modules_lang`.`id_record` = `zz_modules`.`id` AND `zz_modules_lang`.|lang|)\r\nWHERE \r\n    1=1 \r\nHAVING \r\n    2=2' WHERE `zz_modules`.`name` = 'Stampe';
+
+-- Rimozione dei plugin sostituiti dalla consultazione centralizzata nel plugin "Statistiche"
+DELETE FROM `zz_plugins` WHERE `name` = "Ddt del cliente";
+DELETE FROM `zz_plugins` WHERE `name` = "Storico attività";
+DELETE FROM `zz_plugins` WHERE `name` = "Contratti del cliente";
+DELETE FROM `zz_plugins` WHERE `name` = "Impianti del cliente";

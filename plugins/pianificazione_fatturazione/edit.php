@@ -22,11 +22,19 @@ include_once __DIR__.'/../../core.php';
 
 use Modules\Contratti\Contratto;
 use Modules\Contratti\Stato;
+use Modules\Fatture\Fattura;
 
 $contratto = Contratto::find($id_record);
 if (empty($contratto)) {
     return;
 }
+
+// Elenco delle fatture di vendita collegate alla stessa anagrafica del contratto,
+// utilizzabili per il collegamento manuale ad una rata di pianificazione
+$fatture_collegabili = Fattura::vendita()
+    ->where('id_anagrafica', $contratto->id_anagrafica)
+    ->orderBy('data', 'DESC')
+    ->get();
 
 $is_pianificabile = $contratto->stato->is_pianificabile && !empty($contratto['data_accettazione']) && !empty($contratto['data_conclusione']); // Contratto permette la pianificazione
 $is_pianificato = false;
@@ -53,10 +61,14 @@ if (!$pianificazioni->isEmpty()) {
                 <th width="10%">'.tr('Scadenza').'</th>
                 <th>'.tr('Documento').'</th>
                 <th class="text-center" width="15%">'.tr('Importo').'</th>
-                <th class="text-center" width="12%">#</th>
+                <th class="text-center" width="25%">#</th>
             </tr>
         </thead>
         <tbody>';
+
+    // Query per la select di collegamento ad una fattura esistente della stessa anagrafica
+    $id_lang = Models\Locale::getDefault()->id;
+    $query_fatture = "SELECT `co_documenti`.`id`, CONCAT('".tr('Fattura num.')." ', IF(`numero_esterno` != '', `numero_esterno`, `numero`), ' ".tr('del')." ', DATE_FORMAT(`data`, '%d/%m/%Y'), ' (', `co_stati_documento_lang`.`title`, ')') AS descrizione FROM `co_documenti` LEFT JOIN `co_stati_documento_lang` ON (`co_documenti`.`id_stato` = `co_stati_documento_lang`.`id_record` AND `co_stati_documento_lang`.`id_lang` = ".prepare($id_lang).") INNER JOIN `co_tipi_documento` ON `co_documenti`.`id_tipo_documento` = `co_tipi_documento`.`id` WHERE `co_tipi_documento`.`dir` = 'entrata' AND `co_documenti`.`id_anagrafica` = ".prepare($contratto->id_anagrafica)." ORDER BY `data` DESC";
 
     $previous = null;
     foreach ($pianificazioni as $pianificazione) {
@@ -85,9 +97,24 @@ if (!$pianificazioni->isEmpty()) {
                 '_NUM_' => $fattura->numero_esterno,
                 '_DATE_' => dateFormat($fattura->data),
             ])).' (<i class="'.$fattura->stato->icona.'"></i> '.$fattura->stato->getTranslation('title').')';
-        } else {
+
+            // Scollegamento della fattura dalla scadenza (la fattura non viene eliminata)
             echo '
-                    <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato');
+                    <button type="button" class="btn btn-warning btn-sm ask unblockable tip pull-right" title="'.tr('Scollega la fattura da questa scadenza').'" data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="unlink_fattura" data-rata="'.$pianificazione->id.'" data-msg="'.tr('Scollegare la fattura da questa scadenza?').'" data-button="'.tr('Scollega fattura').'" data-backto="record-edit">
+                        <i class="fa fa-chain-broken"></i>
+                    </button>
+                    <div class="clearfix"></div>';
+        } else {
+            // Collegamento ad una fattura esistente della stessa anagrafica
+            echo '
+                    <i class="fa fa-hourglass-start"></i> '.tr('Non ancora fatturato').'
+                    <button type="button" class="btn btn-success btn-sm unblockable tip pull-right" title="'.tr('Collega la fattura selezionata a questa scadenza').'" onclick="collega_fattura('.$pianificazione->id.')">
+                        <i class="fa fa-link"></i>
+                    </button>
+                    <div class="clearfix"></div>
+                    <div style="margin-top:5px;">
+                        {[ "type": "select", "name": "fattura_esistente_'.$pianificazione->id.'", "id": "fattura_esistente_'.$pianificazione->id.'", "placeholder": "'.tr('Collega fattura esistente...').'", "values": "query='.$query_fatture.'", "class": "unblockable" ]}
+                    </div>';
         }
         echo '
                 </td>
@@ -96,11 +123,14 @@ if (!$pianificazioni->isEmpty()) {
                     '.moneyFormat($pianificazione->totale_imponibile).'
                 </td>';
 
-        // Creazione fattura
+        // Creazione fattura ed eliminazione riga di pianificazione
         echo '
                 <td class="text-center">
                     <button type="button" class="btn btn-primary btn-sm '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' onclick="crea_fattura('.$pianificazione->id.')">
                         <i class="fa fa-euro"></i> '.tr('Crea fattura').'
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm ask '.(!empty($fattura) ? 'disabled' : '').'" '.(!empty($fattura) ? 'disabled' : '').' title="'.tr('Elimina la riga di pianificazione').'" data-id_plugin="'.$id_plugin.'" data-id_record="'.$id_record.'" data-id_module="'.$id_module.'" data-op="delete_pianificazione" data-id="'.$pianificazione->id.'" data-msg="'.tr('Eliminare la riga di pianificazione?').'" data-button="'.tr('Elimina riga').'" data-backto="record-edit">
+                        <i class="fa fa-trash"></i>
                     </button>
                 </td>
             </tr>';
@@ -136,4 +166,39 @@ echo '
         function crea_fattura(rata){
             openModal("Crea fattura", "'.$structure->fileurl('crea_fattura.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&rata=" + rata);
         }
+
+        function collega_fattura(rata){
+            var id_fattura = input("fattura_esistente_" + rata).get();
+            if (!id_fattura) {
+                alert("'.tr('Seleziona una fattura da collegare').'");
+                return;
+            }
+
+            $.ajax({
+                url: globals.rootdir + "/actions.php",
+                type: "POST",
+                data: {
+                    id_module: '.$id_module.',
+                    id_plugin: '.$id_plugin.',
+                    id_record: '.$id_record.',
+                    op: "link_fattura",
+                    rata: rata,
+                    id_fattura: id_fattura
+                },
+                success: function (response) {
+                    renderMessages();
+                    location.reload();
+                },
+                error: function() {
+                    renderMessages();
+                }
+            });
+        }
+
+        // Riabilita le select/pulsanti di collegamento fattura anche quando il
+        // contratto è in stato bloccato (block_edit), dato che la fatturazione
+        // deve poter essere gestita comunque.
+        $(document).ready(function() {
+            $("select.unblockable, button.unblockable", "#tab_'.$id_plugin.'").prop("disabled", false).removeAttr("readonly").removeClass("disabled");
+        });
     </script>';

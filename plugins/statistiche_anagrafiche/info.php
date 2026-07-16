@@ -25,11 +25,12 @@ use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
+use Modules\Impianti\Impianto;
 use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
-use Modules\Impianti\Impianto;
+use Modules\Segmenti\Segmento;
 
 $calendar_id = filter('calendar_id');
 $start = filter('start');
@@ -60,25 +61,43 @@ $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
 $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 
 // Interventi e Ore lavorate
-$interventi = [];
+$interventi_ids = [];
+$sessioni_ids = [];
+
 // Clienti
 if ($anagrafica->isTipo('Cliente')) {
-    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi WHERE in_interventi.id_anagrafica='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
-    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.id_intervento WHERE in_interventi.id_anagrafica='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi_ids = Intervento::where('id_anagrafica', $id_record)
+        ->whereBetween('data_richiesta', [$start, $end])
+        ->pluck('id')
+        ->toArray();
+    $sessioni_ids = Sessione::whereHas('parent', function ($query) use ($id_record) {
+        $query->where('id_anagrafica', $id_record);
+    })
+        ->whereBetween('orario_inizio', [$start, $end])
+        ->pluck('id')
+        ->toArray();
 }
 
 // Tecnici
 elseif ($anagrafica->isTipo('Tecnico')) {
-    $interventi = $dbo->fetchArray('SELECT in_interventi.id FROM in_interventi INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.id_intervento WHERE in_interventi_tecnici.id_tecnico='.prepare($id_record).' AND data_richiesta BETWEEN '.prepare($start).' AND '.prepare($end));
+    $interventi_ids = Intervento::whereHas('sessioni', function ($query) use ($id_record) {
+        $query->where('id_tecnico', $id_record);
+    })
+        ->whereBetween('data_richiesta', [$start, $end])
+        ->pluck('id')
+        ->toArray();
 
-    $sessioni = $dbo->fetchArray('SELECT in_interventi_tecnici.id FROM in_interventi_tecnici WHERE in_interventi_tecnici.id_tecnico='.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+    $sessioni_ids = Sessione::where('id_tecnico', $id_record)
+        ->whereBetween('orario_inizio', [$start, $end])
+        ->pluck('id')
+        ->toArray();
 }
 
-$interventi = Intervento::whereIn('id', array_column($interventi, 'id'))->get();
+$interventi = Intervento::whereIn('id', $interventi_ids)->get();
 $totale_interventi = $interventi->sum('totale_imponibile');
 
-if ($sessioni) {
-    $sessioni = Sessione::whereIn('id', array_column($sessioni, 'id'))->get();
+if (!empty($sessioni_ids)) {
+    $sessioni = Sessione::whereIn('id', $sessioni_ids)->get();
     $totale_ore_lavorate = $sessioni->sum('ore');
 }
 
@@ -92,12 +111,12 @@ $ddt_uscita = DDT::whereBetween('data', [$start, $end])
 $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 
 // Fatture di vendita
-$segmenti = $dbo->select('zz_segments', 'id', [], ['autofatture' => 0]);
+$segmenti = Segmento::where('autofatture', 0)->pluck('id')->toArray();
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'entrata')
         ->where('co_tipi_documento.reversed', '=', 0))
-    ->whereIn('id_segment', array_column($segmenti, 'id'))
+    ->whereIn('id_segment', $segmenti)
     ->get();
 $note_credito = Fattura::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)

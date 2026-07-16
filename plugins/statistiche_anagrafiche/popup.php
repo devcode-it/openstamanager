@@ -26,10 +26,10 @@ use Modules\Contratti\Contratto;
 use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Impianti\Impianto;
-use Modules\Interventi\Intervento;
 use Modules\Interventi\Components\Sessione;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
+use Modules\Segmenti\Segmento;
 
 $start = filter('start');
 $end = filter('end');
@@ -41,7 +41,7 @@ if (empty($anagrafica)) {
 }
 
 $link_module = function ($name) {
-    return Module::where('name', $name)->first()->id;
+    return Module::where('name', $name)->value('id');
 };
 
 $titolo = '';
@@ -125,9 +125,17 @@ switch ($type) {
     case 'sessioni':
         $titolo = tr('Ore lavorate');
         if ($anagrafica->isTipo('Cliente')) {
-            $ids = $dbo->fetchArray('SELECT DISTINCT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.id_intervento WHERE in_interventi.id_anagrafica = '.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+            $ids = Sessione::whereHas('parent', function ($query) use ($id_record) {
+                $query->where('id_anagrafica', $id_record);
+            })
+                ->whereBetween('orario_inizio', [$start, $end])
+                ->pluck('id')
+                ->toArray();
         } else {
-            $ids = $dbo->fetchArray('SELECT id FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_record).' AND orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+            $ids = Sessione::where('id_tecnico', $id_record)
+                ->whereBetween('orario_inizio', [$start, $end])
+                ->pluck('id')
+                ->toArray();
         }
         $results = Sessione::whereBetween('orario_inizio', [$start, $end])
             ->whereIn('id', array_column($ids, 'id'))
@@ -157,11 +165,11 @@ switch ($type) {
 
     case 'fatture':
         $titolo = tr('Fatture');
-        $segmenti = $dbo->select('zz_segments', 'id', [], ['autofatture' => 0]);
+        $segmenti = Segmento::where('autofatture', 0)->pluck('id')->toArray();
         $results = Fattura::whereBetween('data', [$start, $end])
             ->where('id_anagrafica', $id_record)
             ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'entrata'))
-            ->whereIn('id_segment', array_column($segmenti, 'id'))
+            ->whereIn('id_segment', $segmenti)
             ->get();
         $columns = [
             'numero' => tr('Numero'),

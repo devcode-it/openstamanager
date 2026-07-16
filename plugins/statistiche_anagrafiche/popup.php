@@ -27,6 +27,7 @@ use Modules\DDT\DDT;
 use Modules\Fatture\Fattura;
 use Modules\Impianti\Impianto;
 use Modules\Interventi\Intervento;
+use Modules\Interventi\Components\Sessione;
 use Modules\Ordini\Ordine;
 use Modules\Preventivi\Preventivo;
 
@@ -110,6 +111,23 @@ switch ($type) {
         ];
         break;
 
+    case 'sessioni':
+        $titolo = tr('Ore lavorate');
+        if ($anagrafica->isTipo('Cliente')) {
+            $ids = $dbo->fetchArray('SELECT DISTINCT in_interventi_tecnici.id FROM in_interventi_tecnici INNER JOIN in_interventi ON in_interventi.id = in_interventi_tecnici.id_intervento WHERE in_interventi.id_anagrafica = '.prepare($id_record).' AND in_interventi_tecnici.orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+        } else {
+            $ids = $dbo->fetchArray('SELECT id FROM in_interventi_tecnici WHERE id_tecnico = '.prepare($id_record).' AND orario_inizio BETWEEN '.prepare($start).' AND '.prepare($end));
+        }
+        $results = Sessione::whereBetween('orario_inizio', [$start, $end])
+            ->whereIn('id', array_column($ids, 'id'))
+            ->get();
+        $columns = [
+            'orario_inizio' => tr('Data'),
+            'id_tecnico' => tr('Tecnico'),
+            'ore' => tr('Ore'),
+        ];
+        break;
+
     case 'ddt':
         $titolo = tr('Ddt in uscita');
         $results = DDT::whereBetween('data', [$start, $end])
@@ -157,27 +175,27 @@ switch ($type) {
     case 'articoli_venduti':
         $titolo = tr('Articoli venduti');
         $results = $dbo->fetchArray('
-            SELECT mg_articoli.id, mg_articoli.codice, mg_articoli.name,
-                SUM(righe.qta) AS qta
+            SELECT id_articolo, codice, name, SUM(qta) AS qta
             FROM (
-                SELECT rd.id_articolo, rd.qta
+                SELECT rd.id_articolo, a.codice, a.name, rd.qta
                 FROM co_righe_documenti rd
                 INNER JOIN co_documenti d ON d.id = rd.id_documento
                 INNER JOIN co_tipi_documento td ON td.id = d.id_tipo_documento
-                WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'entrata\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+                INNER JOIN mg_articoli a ON a.id = rd.id_articolo
+                WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'uscita\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
                 UNION ALL
-                SELECT rdd.id_articolo, rdd.qta
+                SELECT rdd.id_articolo, a.codice, a.name, rdd.qta
                 FROM dt_righe_ddt rdd
                 INNER JOIN dt_ddt dd ON dd.id = rdd.id_ddt
                 INNER JOIN dt_tipi_ddt tdd ON tdd.id = dd.id_tipo_ddt
-                WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'entrata\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end).'
-            ) righe
-            INNER JOIN mg_articoli ON mg_articoli.id = righe.id_articolo
-            GROUP BY mg_articoli.id, mg_articoli.codice, mg_articoli.name
-            ORDER BY mg_articoli.name ASC');
+                INNER JOIN mg_articoli a ON a.id = rdd.id_articolo
+                WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'uscita\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+            ) AS righe
+            GROUP BY id_articolo, codice, name
+            ORDER BY name ASC');
         $columns = [
             'codice' => tr('Codice'),
-            'descrizione' => tr('Descrizione'),
+            'name' => tr('Descrizione'),
             'qta' => tr('Quantità'),
         ];
         break;
@@ -185,27 +203,27 @@ switch ($type) {
     case 'articoli_acquistati':
         $titolo = tr('Articoli acquistati');
         $results = $dbo->fetchArray('
-            SELECT mg_articoli.id, mg_articoli.codice, mg_articoli.name,
-                SUM(righe.qta) AS qta
+            SELECT id_articolo, codice, name, SUM(qta) AS qta
             FROM (
-                SELECT rd.id_articolo, rd.qta
+                SELECT rd.id_articolo, a.codice, a.name, rd.qta
                 FROM co_righe_documenti rd
                 INNER JOIN co_documenti d ON d.id = rd.id_documento
                 INNER JOIN co_tipi_documento td ON td.id = d.id_tipo_documento
-                WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'uscita\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+                INNER JOIN mg_articoli a ON a.id = rd.id_articolo
+                WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = \'entrata\' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).'
                 UNION ALL
-                SELECT rdd.id_articolo, rdd.qta
+                SELECT rdd.id_articolo, a.codice, a.name, rdd.qta
                 FROM dt_righe_ddt rdd
                 INNER JOIN dt_ddt dd ON dd.id = rdd.id_ddt
                 INNER JOIN dt_tipi_ddt tdd ON tdd.id = dd.id_tipo_ddt
-                WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'uscita\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end).'
-            ) righe
-            INNER JOIN mg_articoli ON mg_articoli.id = righe.id_articolo
-            GROUP BY mg_articoli.id, mg_articoli.codice, mg_articoli.name
-            ORDER BY mg_articoli.name ASC');
+                INNER JOIN mg_articoli a ON a.id = rdd.id_articolo
+                WHERE dd.id_anagrafica = '.prepare($id_record).' AND tdd.dir = \'entrata\' AND dd.data BETWEEN '.prepare($start).' AND '.prepare($end).'
+            ) AS righe
+            GROUP BY id_articolo, codice, name
+            ORDER BY name ASC');
         $columns = [
             'codice' => tr('Codice'),
-            'descrizione' => tr('Descrizione'),
+            'name' => tr('Descrizione'),
             'qta' => tr('Quantità'),
         ];
         break;
@@ -220,10 +238,27 @@ if (empty($results) || (is_countable($results) ? count($results) : $results->cou
     return;
 }
 
+$tipi_documento = [
+    'preventivi',
+    'contratti',
+    'ordini_cliente',
+    'interventi',
+    'ddt',
+    'fatture',
+    'articoli_venduti',
+    'articoli_acquistati',
+];
+
+$espandibile = in_array($type, $tipi_documento);
+
 echo '
 <table class="table table-striped table-bordered table-hover table-condensed">
     <thead>
         <tr>';
+if ($espandibile) {
+    echo '
+            <th class="text-center" width="30"></th>';
+}
 foreach ($columns as $key => $label) {
     $class = in_array($key, ['totale_imponibile', 'qta']) ? 'text-right' : 'text-left';
     echo '
@@ -235,11 +270,13 @@ echo '
     <tbody>';
 
 foreach ($results as $result) {
-    $id = is_object($result) ? $result->id : $result['id'];
+    $id = is_object($result) ? $result->id : ($result['id_articolo'] ?? $result['id']);
     $link = '#';
     $module_name = '';
+    $source = '';
 
     if (is_object($result)) {
+        $source = $result->source ?? '';
         $module_name = match ($type) {
             'preventivi' => 'Preventivi',
             'contratti' => 'Contratti',
@@ -248,6 +285,7 @@ foreach ($results as $result) {
             'ddt' => 'Ddt in uscita',
             'fatture' => 'Fatture di vendita',
             'impianti' => 'Impianti',
+            'articoli_venduti', 'articoli_acquistati' => $source == 'ddt' ? 'Ddt in uscita' : 'Fatture di vendita',
             default => '',
         };
 
@@ -256,8 +294,14 @@ foreach ($results as $result) {
         }
     }
 
+    $row_attr = $espandibile ? ' data-toggle="details" data-type="'.$type.'" data-id="'.$id.'" data-start="'.$start.'" data-end="'.$end.'"'.($source ? ' data-source="'.$source.'"' : '').' style="cursor: pointer;"' : '';
+
     echo '
-        <tr>';
+        <tr'.$row_attr.'>';
+    if ($espandibile) {
+        echo '
+            <td class="text-center"><i class="fa fa-chevron-right"></i></td>';
+    }
     foreach ($columns as $key => $label) {
         $class = in_array($key, ['totale_imponibile', 'qta']) ? 'text-right' : 'text-left';
         $value = is_object($result) ? $result->{$key} : $result[$key];
@@ -270,6 +314,12 @@ foreach ($results as $result) {
             $value = moneyFormat($value);
         } elseif (in_array($key, ['data', 'data_bozza', 'data_richiesta'])) {
             $value = dateFormat($value);
+        } elseif ($key == 'orario_inizio') {
+            $value = timestampFormat($value);
+        } elseif ($key == 'id_tecnico') {
+            $value = is_object($result) && $result->anagrafica ? $result->anagrafica->nome : '';
+        } elseif ($key == 'ore') {
+            $value = numberFormat($value, 0);
         } elseif ($key == 'qta') {
             $value = numberFormat($value, 2);
         } elseif ($key == 'numero') {
@@ -286,8 +336,67 @@ foreach ($results as $result) {
     }
     echo '
         </tr>';
+
+    if ($espandibile) {
+        echo '
+        <tr class="righe-documento" style="display: none;">
+            <td colspan="'.(count($columns) + 1).'">
+                <div class="righe-content" data-loaded="0"></div>
+            </td>
+        </tr>';
+    }
 }
 
 echo '
     </tbody>
 </table>';
+
+if ($espandibile) {
+    echo '
+<script>
+$(document).ready(function () {
+    $("tr[data-toggle=\"details\"]").on("click", function (e) {
+        if ($(e.target).is("a")) {
+            return;
+        }
+
+        var row = $(this);
+        var details = row.next("tr.righe-documento");
+        var icon = row.find("i.fa");
+        var content = details.find(".righe-content");
+        var start = row.data("start");
+        var end = row.data("end");
+
+        if (details.is(":visible")) {
+            details.hide();
+            icon.removeClass("fa-chevron-down").addClass("fa-chevron-right");
+        } else {
+            details.show();
+            icon.removeClass("fa-chevron-right").addClass("fa-chevron-down");
+
+            if (content.data("loaded") == 0) {
+                content.html("<p class=\"text-center\"><i class=\"fa fa-spinner fa-spin\"></i> Caricamento righe...</p>");
+                $.ajax({
+                    url: globals.rootdir + "/plugins/statistiche_anagrafiche/ajax/righe.php",
+                    type: "POST",
+                    data: {
+                        type: row.data("type"),
+                        id_record: globals.id_record,
+                        id_documento: row.data("id"),
+                        start: start,
+                        end: end
+                    },
+                    success: function (data) {
+                        content.html(data);
+                        content.data("loaded", 1);
+                    },
+                    error: function () {
+                        content.html("<div class=\"alert alert-danger\">Errore durante il caricamento delle righe</div>");
+                    }
+                });
+            }
+        }
+    });
+});
+</script>';
+}

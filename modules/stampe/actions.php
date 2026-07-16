@@ -21,7 +21,6 @@
 use Models\PrintTemplate;
 
 include_once __DIR__.'/../../core.php';
-use Models\PrintTemplate;
 
 switch (post('op')) {
     case 'update':

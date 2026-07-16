@@ -124,18 +124,21 @@ switch (post('op')) {
         $tecnici_presenti_array = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $intervento->id)->pluck('id_tecnico')->toArray();
         $tecnici_presenti = [];
 
+        $all_tecnici_ids = array_unique(array_merge($tecnici_presenti_array, $tecnici_assegnati_array));
+        $tecnici_map = Anagrafica::whereIn('id', $all_tecnici_ids)->get()->keyBy('id');
+        $template_rimozione = Template::where('name', 'Notifica rimozione intervento')->first();
+        $template_notifica_intervento = Template::where('name', 'Notifica intervento')->first();
+
         foreach ($tecnici_presenti_array as $tecnico_presente) {
             $tecnici_presenti[] = $tecnico_presente;
 
             // Notifica rimozione tecnico assegnato
             if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
                 if (!in_array($tecnico_presente, $tecnici_assegnati_array)) {
-                    $tecnico = Anagrafica::find($tecnico_presente);
+                    $tecnico = $tecnici_map[$tecnico_presente] ?? null;
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica rimozione intervento')->first();
-
-                        if (!empty($template)) {
-                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                        if (!empty($template_rimozione)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template_rimozione, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -152,13 +155,11 @@ switch (post('op')) {
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!in_array($tecnico_assegnato, $tecnici_presenti)) {
-                    $tecnico = Anagrafica::find($tecnico_assegnato);
+                    $tecnico = $tecnici_map[$tecnico_assegnato] ?? null;
 
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica intervento')->first();
-
-                        if (!empty($template)) {
-                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                        if (!empty($template_notifica_intervento)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -206,8 +207,10 @@ switch (post('op')) {
 
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
+            $tecnici_map_notifica = Anagrafica::whereIn('id', $tecnici)->get()->keyBy('id');
+
             foreach ($tecnici as $tecnico) {
-                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id_anagrafica' => $tecnico]);
+                $mail_tecnico = $tecnici_map_notifica[$tecnico] ?? null;
                 if (!empty($mail_tecnico['email'])) {
                     $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($mail_tecnico['email']);
@@ -419,16 +422,17 @@ switch (post('op')) {
             }
         }
 
+        $tecnici_map_add = Anagrafica::whereIn('id', $tecnici_assegnati)->get()->keyBy('id');
+        $template_notifica_intervento_add = Template::where('name', 'Notifica intervento')->first();
+
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
-            $tecnico = Anagrafica::find($tecnico_assegnato);
+            $tecnico = $tecnici_map_add[$tecnico_assegnato] ?? null;
 
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!empty($tecnico->email)) {
-                    $template = Template::where('name', 'Notifica intervento')->first();
-
-                    if (!empty($template)) {
-                        $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                    if (!empty($template_notifica_intervento_add)) {
+                        $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento_add, $intervento->id);
                         $mail->addReceiver($tecnico->email);
                         $mail->save();
                         flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));

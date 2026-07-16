@@ -27,7 +27,7 @@ class EmailTask extends Manager
 {
     public function needsExecution()
     {
-        $lista = database()->fetchArray('SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at');
+        $lista = database()->fetchArray('SELECT id FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at LIMIT 1');
         $remaining = sizeof($lista);
 
         return !empty($remaining);

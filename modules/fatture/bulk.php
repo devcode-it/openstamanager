@@ -504,11 +504,21 @@ switch (post('op')) {
         $count = 0;
         $count_tot = count($id_records);
 
-        foreach ($id_records as $id) {
-            $documento = Fattura::find($id);
-            $emails = database()->fetchOne("SELECT COUNT(`em_emails`.`id`) as `count` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` = ".$id.' GROUP BY `em_emails`.`id_record`')['count'];
+        $fatture = Fattura::whereIn('id', $id_records)->get()->keyBy('id');
 
-            if (($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == '') && empty($emails)) {
+        $id_records_prepared = array_map('prepare', $id_records);
+        $emails = database()->fetchArray("SELECT COUNT(`em_emails`.`id`) as `count`, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` IN (".implode(',', $id_records_prepared).") GROUP BY `em_emails`.`id_record`");
+        $email_counts = array_column($emails, 'count', 'id_record');
+
+        foreach ($id_records as $id) {
+            $documento = $fatture[$id] ?? null;
+            if (!$documento) {
+                continue;
+            }
+
+            $email_count = $email_counts[$id] ?? 0;
+
+            if (($documento->codice_stato_fe == 'GEN' || $documento->codice_stato_fe == '') && empty($email_count)) {
                 try {
                     $documento->delete();
                 } catch (InvalidArgumentException) {

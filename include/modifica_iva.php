@@ -88,7 +88,7 @@ function buildAliquotaArray($riga)
 
 // Recupero le righe selezionate
 $riga_id = get('riga_id');
-$righe_ids = sanitizeRighe($_GET['righe'] ?? '');
+$righe_ids = sanitizeRighe(get('righe') ?? '');
 
 // Array per memorizzare le aliquote IVA distinte
 $aliquote_iva = [];

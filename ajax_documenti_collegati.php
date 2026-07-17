@@ -47,7 +47,7 @@ if (empty($id_record) || !is_numeric($id_record)) {
 
 // Verifica che id_module sia presente
 if (empty($id_module)) {
-    $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
+    $count_only = get('count_only') == '1';
 
     if ($count_only) {
         header('Content-Type: application/json');
@@ -59,7 +59,7 @@ if (empty($id_module)) {
 }
 
 // Verifica se è richiesto solo il conteggio
-$count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
+$count_only = get('count_only') == '1';
 
 try {
     // Recupera informazioni sul modulo corrente

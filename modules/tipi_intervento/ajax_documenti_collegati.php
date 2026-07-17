@@ -8,7 +8,7 @@ ob_clean();
 
 // Verifica che l'id_record sia valido
 if (empty($id_record) || !is_numeric($id_record)) {
-    if (isset($_GET['count_only']) && $_GET['count_only'] == '1') {
+    if (get('count_only') == '1') {
         header('Content-Type: application/json');
         echo json_encode(['count' => 0, 'error' => 'ID record non valido']);
     } else {
@@ -31,7 +31,7 @@ try {
     $elementi = $dbo->fetchArray($query);
 } catch (Exception $e) {
     // Gestione errori database
-    if (isset($_GET['count_only']) && $_GET['count_only'] == '1') {
+    if (get('count_only') == '1') {
         // Pulisci l'output buffer prima di inviare JSON
         ob_clean();
         header('Content-Type: application/json');
@@ -43,8 +43,7 @@ try {
 }
 
 // Se è richiesto solo il conteggio
-if (isset($_GET['count_only']) && $_GET['count_only'] == '1') {
-    // Pulisci completamente l'output buffer
+if (get('count_only') == '1') {
     ob_clean();
     header('Content-Type: application/json');
     $count = count($elementi);

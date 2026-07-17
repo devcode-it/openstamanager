@@ -82,7 +82,7 @@ function dateFormatMoment(format) {
     var formatEx = /[dDjlNSwzWFmMntLoYyaABgGhHisueIOPTZcrU]/g;
 
     return format.replace(formatEx, function (phpStr) {
-        return typeof formatMap[phpStr] === 'function' ? formatMap[phpStr].call(that) : formatMap[phpStr];
+        return typeof formatMap[phpStr] === 'function' ? formatMap[phpStr].call(this) : formatMap[phpStr];
     })
 }
 

@@ -425,7 +425,7 @@ switch (filter('op')) {
         $rs = true;
 
         // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-        $queries = (array) $_POST['query'];
+        $queries = (array) post('query');
         foreach ($queries as $c => $query) {
             if (check_query($query)) {
                 $array = [
@@ -476,7 +476,9 @@ switch (filter('op')) {
                         }
 
                         // Aggiorna l'array dei gruppi per la sincronizzazione successiva
-                        $_POST['gruppi'][$c] = array_column($gruppi_con_accesso, 'id_gruppo');
+                        $gruppi_array = post('gruppi');
+                        $gruppi_array[$c] = array_column($gruppi_con_accesso, 'id_gruppo');
+                        $_POST['gruppi'] = $gruppi_array;
                     }
                 }
 
@@ -505,9 +507,9 @@ switch (filter('op')) {
         $rs = true;
 
         // Fix per la protezone contro XSS, che interpreta la sequenza "<testo" come un tag HTML
-        $queries = (array) $_POST['query'];
+        $queries = (array) post('query');
         foreach ($queries as $c => $query) {
-            $query = $_POST['query'][$c];
+            $query = post('query')[$c];
 
             if (check_query($query)) {
                 $array = [

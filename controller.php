@@ -97,6 +97,7 @@ echo '
 // Plugins
 $plugins = Plugin::where('id_module_to', $id_module)->where('position', 'tab_main')->where('enabled', 1)->get();
 
+$record = $record ?? [];
 $module_record = $record;
 foreach ($plugins as $plugin) {
     $record = $module_record;

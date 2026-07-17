@@ -39,7 +39,6 @@ if (!function_exists('base_dir')) {
 use Models\Module;
 use Modules\Aggiornamenti\IntegrityChecker;
 use Modules\Aggiornamenti\Utils;
-use Update;
 
 // Funzioni per il controllo database (wrapper per compatibilità)
 function integrity_diff($expected, $current)

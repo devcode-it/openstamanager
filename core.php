@@ -163,7 +163,7 @@ $dbo = $database = database();
 
 /* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
+$lang = !empty($config['lang']) ? $config['lang'] : get('lang');
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans_osm();
 $translator->addLocalePath(base_dir().'/locale');
@@ -241,11 +241,11 @@ if (!API\Response::isAPIRequest()) {
     if ($continue) {
         // Periodo di visualizzazione dei record
         // Personalizzato
-        if (!empty($_GET['period_start'])) {
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_start'])
-                && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_end'])) {
-                $_SESSION['period_start'] = $_GET['period_start'];
-                $_SESSION['period_end'] = $_GET['period_end'];
+        if (!empty(get('period_start'))) {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', get('period_start'))
+                && preg_match('/^\d{4}-\d{2}-\d{2}$/', get('period_end'))) {
+                $_SESSION['period_start'] = get('period_start');
+                $_SESSION['period_end'] = get('period_end');
             }
         }
         // Dal 01-01-yyy al 31-12-yyyy

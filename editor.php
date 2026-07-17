@@ -184,6 +184,7 @@ if (empty($record) || !$has_access) {
 
     // Pulsante Precedente e Successivo
     // Aggiungo eventuali filtri applicati alla vista
+    $where = [];
     if (count(getSearchValues($id_module)) > 0) {
         foreach (getSearchValues($id_module) as $key => $value) {
             $where[$key] = $value;
@@ -568,6 +569,7 @@ echo '
         <script>';
 
 // Se l'utente ha i permessi in sola lettura per il modulo, converto tutti i campi di testo in span
+$block_edit = $block_edit ?? false;
 if ($read_only || !empty($block_edit)) {
     $not = $read_only ? '' : '.not(".unblockable")';
 

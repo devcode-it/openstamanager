@@ -42,6 +42,8 @@ if (!empty($current_op) && $structure->permission != 'rw') {
 
 $database->beginTransaction();
 
+$options = [];
+
 // Upload allegati e rimozione
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // UPLOAD PER CKEDITOR
@@ -260,7 +262,7 @@ elseif (filter('op') == 'validate') {
         include_once $validation;
     }
 
-    echo json_encode($response);
+    echo json_encode($response ?? []);
 
     return;
 }

@@ -38,7 +38,10 @@ switch (get('op')) {
 
         // Filtri per stato
         $checks = explode(',', $checks);
-        $where[] = "`in_stati_intervento_lang`.`title` IN ('".implode("','", $checks)."')";
+        $checks = array_map(function ($check) {
+            return prepare($check);
+        }, $checks);
+        $where[] = "`in_stati_intervento_lang`.`title` IN (".implode(',', $checks).")";
 
         $add_query = 'WHERE 1=1 AND '.implode(' AND ', $where);
 

@@ -73,7 +73,7 @@ switch (filter('op')) {
     case 'update_user':
         $username = filter('username');
         $email = filter('email');
-        $password = $_POST['password'];
+        $password = post('password');
 
         $id_utente = filter('id_utente');
         if ($dbo->fetchNum('SELECT `username` FROM `zz_users` WHERE `id` != '.prepare($id_utente).' AND `username`='.prepare($username)) == 0) {

@@ -73,10 +73,10 @@ if (empty($_GET['visualizza_movimenti'])) {
         foreach ($movimenti as $movimento) {
             $documento = $modulo == 'Anagrafiche' ? Fattura::find($movimento['id_documento']) : null;
             $scalare += $movimento['totale'];
-            $descrizione = $movimento['conto2'].'.'.$movimento['conto3'].' - '.$movimento['descrizione'];
+            $link = '';
 
             if ($movimento['prima_nota'] == 1) {
-                $descrizione = Modules::link('Prima nota', $movimento['id_mastrino'], $descrizione);
+                $link = Modules::link('Prima nota', $movimento['id_mastrino']);
             }
 
             echo '
@@ -88,7 +88,7 @@ if (empty($_GET['visualizza_movimenti'])) {
                                         {[ "type": "select", "name": "id_conto['.$movimento['id'].']", "required": 1, "value": "'.$movimento['id_conto'].'", "ajax-source": "conti", "class": "unblockable" ]}
                                     </div>
                                     <div class="col-md-2">
-                                        <small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
+                                        '.$link.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
                                     </div>
                                 </div>
                             </td>
@@ -107,10 +107,10 @@ if (empty($_GET['visualizza_movimenti'])) {
             foreach ($altri_movimenti as $altro_movimento) {
                 $documento = $modulo == 'Anagrafiche' ? Fattura::find($altro_movimento['id_documento']) : null;
                 $scalare += $altro_movimento['totale'];
-                $descrizione = $altro_movimento['conto2'].'.'.$altro_movimento['conto3'].' - '.$altro_movimento['descrizione'];
+                $link = '';
 
                 if ($altro_movimento['prima_nota'] == 1) {
-                    $descrizione = Modules::link('Prima nota', $altro_movimento['id_mastrino'], $descrizione);
+                    $link = Modules::link('Prima nota', $altro_movimento['id_mastrino']);
                 }
 
                 echo '
@@ -122,7 +122,7 @@ if (empty($_GET['visualizza_movimenti'])) {
                                         {[ "type": "select", "name": "id_conto['.$altro_movimento['id'].']", "required": 1, "value": "'.$altro_movimento['id_conto'].'", "ajax-source": "conti", "class": "unblockable" ]}
                                     </div>
                                     <div class="col-md-2">
-                                        <small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
+                                        '.$link.'<small class="pull-right text-right text-muted" style="font-size:8pt;">'.($documento ? $documento->getReference() : '').'</small>
                                     </div>
                                 </div>
                             </td>

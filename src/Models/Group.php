@@ -30,6 +30,8 @@ class Group extends Model
     use RecordTrait;
     protected $table = 'zz_groups';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

@@ -33,6 +33,7 @@ class Upload extends Model
 {
     use SimpleModelTrait;
 
+    protected $guarded = ['id'];
     /**
      * Elenco delle estensioni file per mime type.
      * Fonte: https://www.iana.org/assignments/media-types/media-types.xhtml.

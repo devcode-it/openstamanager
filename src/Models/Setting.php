@@ -46,6 +46,8 @@ class Setting extends Model
     use RecordTrait;
     protected $table = 'zz_settings';
 
+    protected $guarded = ['id'];
+
     protected $appends = [
         'description',
     ];

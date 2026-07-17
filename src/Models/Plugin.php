@@ -47,6 +47,7 @@ class Plugin extends Model
     ];
 
     protected $table = 'zz_plugins';
+    protected $guarded = ['id'];
     protected $main_folder = 'plugins';
     protected $component_identifier = 'id_plugin';
 

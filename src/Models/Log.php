@@ -29,6 +29,8 @@ class Log extends Model
 
     protected $table = 'zz_logs';
 
+    protected $guarded = ['id'];
+
     /* Relazioni Eloquent */
 
     public function user()

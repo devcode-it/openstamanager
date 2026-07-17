@@ -57,6 +57,8 @@ class Module extends Model
 
     protected $table = 'zz_modules';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

@@ -35,6 +35,7 @@ class PrintTemplate extends Model
     use RecordTrait;
 
     protected $table = 'zz_prints';
+    protected $guarded = ['id'];
     protected $main_folder = 'templates';
 
     protected static $translated_fields = [

@@ -30,6 +30,8 @@ class OperationLog extends Model
 
     protected $table = 'zz_operations';
 
+    protected $guarded = ['id'];
+
     protected static $info = [];
 
     public static function setInfo($name, $value)

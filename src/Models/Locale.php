@@ -29,6 +29,8 @@ class Locale extends Model
 
     protected $table = 'zz_langs';
 
+    protected $guarded = ['id'];
+
     protected static $lang;
     protected static $predefined;
 

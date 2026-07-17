@@ -34,6 +34,8 @@ class OAuth2 extends Model
 
     protected $table = 'zz_oauth2';
 
+    protected $guarded = ['id'];
+
     protected $casts = [
         'config' => 'array',
     ];

@@ -156,7 +156,7 @@ switch (post('op')) {
             $dbo->table('co_preventivi')->where('id', $id_record)->update(['id_stato' => $stato_in_lavorazione]);
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
-                '_NUM_' => $rs[0]['codice'],
+                '_NUM_' => $intervento->codice,
             ]));
         }
         break;

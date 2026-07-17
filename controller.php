@@ -34,7 +34,7 @@ include_once App::filepath('include|custom|', 'top.php');
 include_once base_dir().'/actions.php';
 
 // Widget in alto
-echo '{( "name": "widgets", "id_module": "'.$id_module.'", "position": "top", "place": "controller" )}';
+echo '{( "name": "widgets", "id_module": "'.prepareToField($id_module).'", "position": "top", "place": "controller" )}';
 
 	// Recupera gli id dei segmenti tramite Eloquent per evitare query raw
 	$segmenti = \Modules\Segmenti\Segmento::where('id_module', $id_module)->pluck('id')->toArray();

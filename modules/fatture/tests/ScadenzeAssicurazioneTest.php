@@ -3,6 +3,8 @@
 require_once __DIR__ . '/ScadenzeTestHelpers.php';
 
 use Carbon\Carbon;
+use Mockery\MockInterface;
+use Modules\Fatture\Gestori\Scadenze;
 use Modules\Pagamenti\Pagamento;
 use Modules\Scadenzario\Scadenza;
 
@@ -32,6 +34,7 @@ class ScadenzeAssicurazioneTest extends PHPUnit\Framework\TestCase
             ]),
         ], 'test-an-1', collect([$scadenza_esistente]));
 
+        /** @var Scadenze&MockInterface $gestore */
         $gestore = $this->getGestore($fattura);
         $gestore->shouldReceive('trovaPagamento')->andReturn(null);
         $gestore->shouldReceive('trovaAssicurazioneCrediti')->andReturn(collect([$assicurazione]));

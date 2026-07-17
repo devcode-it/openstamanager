@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Mockery\MockInterface;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Scadenze;
 use Modules\Fatture\Tipo;
@@ -43,7 +44,7 @@ trait ScadenzeTestHelpers
         return $ref;
     }
 
-    protected function getFatturaConRate($data, $netto, $rate, $idAnagrafica = 'test-an-1', $scadenze = null): Fattura
+    protected function getFatturaConRate($data, $netto, $rate, $idAnagrafica = 'test-an-1', $scadenze = null): Fattura&MockInterface
     {
         $tipo = $this->mockModel(Tipo::class);
         $tipo->shouldReceive('getAttribute')->with('dir')->andReturn('entrata');
@@ -72,7 +73,7 @@ trait ScadenzeTestHelpers
         return $fattura;
     }
 
-    protected function getGestore($fattura): Scadenze
+    protected function getGestore($fattura): Scadenze&MockInterface
     {
         $database = $this->mockModel(Database::class);
         $database->shouldReceive('delete')->andReturn(null);

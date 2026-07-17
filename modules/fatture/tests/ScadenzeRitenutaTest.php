@@ -3,6 +3,7 @@
 require_once __DIR__ . '/ScadenzeTestHelpers.php';
 
 use Carbon\Carbon;
+use Mockery\MockInterface;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Gestori\Scadenze;
 use Modules\Fatture\Tipo;
@@ -60,6 +61,7 @@ class ScadenzeRitenutaTest extends PHPUnit\Framework\TestCase
         $database->shouldReceive('delete')->andReturn(null);
         $database->shouldReceive('selectOne')->andReturn(null);
 
+        /** @var Scadenze&MockInterface $gestore */
         $gestore = Mockery::mock(Scadenze::class, [$fattura, $database])->shouldAllowMockingProtectedMethods()->makePartial();
         $gestore->shouldReceive('generaScadenza')->andReturnUsing(function ($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type) {
             return $this->mockModel(Scadenza::class, [

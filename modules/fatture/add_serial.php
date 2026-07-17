@@ -106,7 +106,7 @@ $idriga = get('idriga') ?: get('riga_id');
 $rs = $dbo->fetchArray('SELECT `mg_articoli`.`id` AS id_articolo, `mg_articoli`.`codice`, `mg_articoli_lang`.`title`, '.$table.'.`qta` FROM '.$table.' INNER JOIN `mg_articoli` ON '.$table.'.`id_articolo`=`mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id`=`mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE '.$table.'.'.$id.'='.prepare($id_record).' AND '.$table.'.`id`='.prepare($idriga));
 
 echo '
-<h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['descrizione'].'</h4>
+<h4 class="text-center">'.tr('Articolo').': '.$rs[0]['codice'].' - '.$rs[0]['title'].'</h4>
 
 <form action="'.base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.'" method="post" id="serial-form">
     <input type="hidden" name="op" value="add_serial">

@@ -180,7 +180,9 @@ Input.prototype.disable = function () {
     // Gestione dell'editor
     if (this.element.hasClass("editor-input")) {
         const name = this.element.attr("id");
-        CKEDITOR.instances[name].setReadOnly(true);
+        if (CKEDITOR.instances[name]) {
+            CKEDITOR.instances[name].setReadOnly(true);
+        }
     }
 
     return this;
@@ -214,7 +216,9 @@ Input.prototype.enable = function () {
     // Gestione dell'editor
     if (this.element.hasClass("editor-input")) {
         const name = this.element.attr("id");
-        CKEDITOR.instances[name].setReadOnly(false);
+        if (CKEDITOR.instances[name]) {
+            CKEDITOR.instances[name].setReadOnly(false);
+        }
     }
 
     return this;
@@ -380,7 +384,7 @@ Input.prototype.trigger = function (event, callable) {
  */
 Input.prototype.destroy = function () {
     if (this.element.data('select2')) {
-        this.element.select2().select2("destroy")
+        this.element.select2("destroy");
     }
 
     // Gestione della distruzione per l'editor

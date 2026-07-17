@@ -131,7 +131,7 @@ const JS = gulp.parallel(function vendorJS() {
         '@fullcalendar/moment/index.global.js',
         '@fullcalendar/core/locales/it.global.js',
         'geocomplete/jquery.geocomplete.js',
-        'inputmask/dist/min/jquery.inputmask.bundle.min.js',
+        'inputmask/dist/jquery.inputmask.min.js',
         'jquery-form/src/jquery.form.js',
         'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
         'numeral/numeral.js',

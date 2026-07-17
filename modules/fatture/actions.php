@@ -59,6 +59,7 @@ if ($module->name == 'Fatture di vendita') {
 }
 
 // Controllo se la fattura è già stata inviata allo SDI
+$stato_fe = [];
 if ($fattura) {
     $stato_fe = ['codice_stato_fe' => $fattura->codice_stato_fe];
 }
@@ -214,6 +215,8 @@ switch ($op) {
             flash()->info(tr('Fattura modificata correttamente!'));
         }
 
+        $results = $results ?? [];
+        
         foreach ($results as $numero => $result) {
             foreach ($result as $title => $links) {
                 foreach ($links as $link => $errors) {
@@ -225,13 +228,13 @@ switch ($op) {
                         ]).'.');
                     } else {
                         $message .= '
-                            <p><b>'.$title.' '.$link.'</b></p>
+                            <p><b>'.prepareToField($title).' '.prepareToField($link).'</b></p>
                             <ul>';
 
                         foreach ($errors as $error) {
                             if (!empty($error)) {
                                 $message .= '
-                                    <li>'.$error.'</li>';
+                                    <li>'.prepareToField($error).'</li>';
                             }
                         }
 
@@ -951,7 +954,8 @@ switch ($op) {
             }
 
             if (post('importa_sessioni')) {
-                $id_iva = $anagrafica->id_iva_vendite ?: setting('Iva predefinita');
+                $anagrafica_fattura = Anagrafica::find($fattura->id_anagrafica);
+                $id_iva = $anagrafica_fattura->id_iva_vendite ?: setting('Iva predefinita');
 
                 // Se la fattura ha una dichiarazione d'intento, usa l'aliquota IVA N3.5
                 if (!empty($fattura->id_dichiarazione_intento)) {
@@ -1320,8 +1324,13 @@ switch ($op) {
         $numero_totale = 0;
 
         foreach ($righe as $riga) {
+            $articolo = null;
             if ($riga['id'] != null) {
                 $articolo = Articolo::find($riga['id']);
+            }
+
+            if (empty($articolo)) {
+                continue;
             }
 
             if ($articolo->prezzo_unitario != $riga['price']) {

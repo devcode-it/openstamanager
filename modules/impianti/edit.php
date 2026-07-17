@@ -60,7 +60,6 @@ $img = !empty($impianto) ? $impianto->image : null;
 						<div class="clearfix"></div>
 
 						<div class="col-md-4">
-							<?php echo Modules::link('Anagrafiche', $record['id_anagrafica'], null, null, 'class="pull-right"'); ?>
 							{[ "type": "select", "label": "<?php echo tr('Cliente'); ?>", "name": "id_anagrafica", "required": 1, "value": "$id_anagrafica$", "extra": "", "ajax-source": "clienti" ]}
 						</div>
 						<?php

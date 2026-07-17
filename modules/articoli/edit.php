@@ -22,6 +22,7 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Models\Plugin;
 use Modules\Iva\Aliquota;
+use Modules\AttributiCombinazioni\Attributo;
 
 if ($articolo->servizio) {
     $ignore = Plugin::where('name', 'Movimenti')
@@ -57,7 +58,7 @@ if ($articolo->servizio) {
 					{[ "type": "image", "label": "<?php echo tr('Immagine'); ?>", "name": "immagine", "class": "img-thumbnail", "value": "<?php echo $articolo->image; ?>", "accept": "image/x-png,image/gif,image/jpeg" ]}
 
 <?php
-$numero_attributi = database()->fetchOne('SELECT COUNT(*) AS count FROM mg_attributi')['count'];
+$numero_attributi = Attributo::count();
 if ($numero_attributi > 0) {
     ?>
                     <div class="card card-info mt-4" id="varianti-wrapper">

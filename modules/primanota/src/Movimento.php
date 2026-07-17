@@ -84,8 +84,8 @@ class Movimento extends Model
     public function save(array $options = [])
     {
         // Aggiornamento automatico di totale_reddito
-        $conto = database()->fetchOne('SELECT percentuale_deducibile FROM co_piano_dei_conti3 WHERE id = '.prepare($this->id_conto));
-        $percentuale = floatval($conto['percentuale_deducibile']);
+        $conto = CoPianoDeiConti3::find($this->id_conto);
+        $percentuale = floatval($conto?->percentuale_deducibile ?? 0);
         $this->totale_reddito = $this->totale * $percentuale / 100;
 
         return parent::save($options);

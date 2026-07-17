@@ -100,7 +100,12 @@ switch (get('op')) {
                                     </button>';
 
                     // dettagli intervento
-                    $rs_sessioni = $dbo->fetchOne("SELECT MIN(orario_inizio) AS data, GROUP_CONCAT(DISTINCT ragione_sociale SEPARATOR ', ') AS tecnici FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico=an_anagrafiche.id WHERE id_intervento=".prepare($records[$i]['id_intervento']).' GROUP BY id_intervento');
+                    $rs_sessioni = $dbo->fetchOne("SELECT 
+                        MIN(`in_interventi_tecnici`.`orario_inizio`) AS data, 
+                        GROUP_CONCAT(DISTINCT `an_anagrafiche`.`ragione_sociale` SEPARATOR ', ') AS tecnici 
+                    FROM `in_interventi_tecnici` 
+                    INNER JOIN `an_anagrafiche` ON `in_interventi_tecnici`.`id_tecnico`=`an_anagrafiche`.`id` 
+                    WHERE `in_interventi_tecnici`.`id_intervento`=".prepare($records[$i]['id_intervento']).' GROUP BY `in_interventi_tecnici`.`id_intervento`');
 
                     $descrizione .= '<hr>';
                     $descrizione .= '<b>Data</b>: '.(!empty($rs_sessioni['data']) ? Translator::dateToLocale($rs_sessioni['data']) : Translator::dateToLocale($records[$i]['data_richiesta'])).'<br>';

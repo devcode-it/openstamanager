@@ -27,7 +27,14 @@ class EmailTask extends Manager
 {
     public function needsExecution()
     {
-        $lista = database()->fetchArray('SELECT id FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at LIMIT 1');
+        $max_tentativi = setting('Numero massimo di tentativi');
+        $lista = Mail::where(function($q) {
+            $q->whereNull('sent_at')->orWhereNotNull('failed_at');
+        })
+        ->where('attempt', '<', $max_tentativi)
+        ->orderBy('created_at')
+        ->limit(1)
+        ->get();
         $remaining = sizeof($lista);
 
         return !empty($remaining);
@@ -35,12 +42,19 @@ class EmailTask extends Manager
 
     public function execute()
     {
+        $max_tentativi = setting('Numero massimo di tentativi');
         $result = [
             'response' => 1,
             'message' => tr('Email inviate correttamente!'),
         ];
 
-        $lista = database()->fetchArray('SELECT * FROM em_emails WHERE (sent_at IS NULL OR failed_at IS NOT NULL) AND attempt<'.prepare(setting('Numero massimo di tentativi')).' ORDER BY created_at LIMIT 0,'.setting('Numero email da inviare in contemporanea per account'));
+        $lista = Mail::where(function($q) {
+            $q->whereNull('sent_at')->orWhereNotNull('failed_at');
+        })
+        ->where('attempt', '<', $max_tentativi)
+        ->orderBy('created_at')
+        ->limit(setting('Numero email da inviare in contemporanea per account'))
+        ->get();
 
         if (empty($lista)) {
             $result = [

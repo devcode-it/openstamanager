@@ -68,12 +68,13 @@ $id_zona = $anagrafica->id_zona;
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
-    $contratto = $dbo->fetchOne('SELECT *, (SELECT id_zona FROM an_anagrafiche WHERE id = co_contratti.id_anagrafica) AS id_zona FROM co_contratti WHERE id = '.prepare($id_contratto));
+    // Recupero id_zona dell'anagrafica in un'unica query
+    $contratto = $dbo->fetchOne('SELECT co_contratti.*, an_anagrafiche.id_zona FROM co_contratti INNER JOIN an_anagrafiche ON an_anagrafiche.id = co_contratti.id_anagrafica WHERE co_contratti.id = '.prepare($id_contratto));
     $id_anagrafica = $contratto['id_anagrafica'];
     $id_zona = $contratto['id_zona'];
 
-    // Informazioni del Promemoria
-    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipi_intervento` WHERE `id` = `co_promemoria`.`id_tipo_intervento`) AS tempo_standard FROM `co_promemoria` WHERE `id_contratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
+    // Informazioni del Promemoria con tempo_standard
+    $promemoria = $dbo->fetchOne('SELECT co_promemoria.*, in_tipi_intervento.tempo_standard FROM co_promemoria INNER JOIN in_tipi_intervento ON in_tipi_intervento.id = co_promemoria.id_tipo_intervento WHERE co_promemoria.id_contratto='.prepare($id_contratto).' AND co_promemoria.id = '.prepare($id_promemoria_contratto));
     $id_tipo = $promemoria['id_tipo_intervento'];
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];

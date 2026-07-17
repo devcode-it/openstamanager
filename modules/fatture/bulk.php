@@ -507,8 +507,15 @@ switch (post('op')) {
         $fatture = Fattura::whereIn('id', $id_records)->get()->keyBy('id');
 
         $id_records_prepared = array_map('prepare', $id_records);
-        $emails = database()->fetchArray("SELECT COUNT(`em_emails`.`id`) as `count`, `em_emails`.`id_record` FROM `em_emails` INNER JOIN `zz_operations` ON `zz_operations`.`id_email` = `em_emails`.`id` WHERE `id_module` IN(SELECT `id` FROM `zz_modules` WHERE name = 'Fatture di vendita') AND `zz_operations`.`op` = 'send-email' AND `em_emails`.`id_record` IN (".implode(',', $id_records_prepared).") GROUP BY `em_emails`.`id_record`");
-        $email_counts = array_column($emails, 'count', 'id_record');
+        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
+        $emails = Mail::join('zz_operations', 'zz_operations.id_email', '=', 'em_emails.id')
+            ->whereIn('em_emails.id_record', $id_records)
+            ->where('zz_operations.op', 'send-email')
+            ->where('em_emails.id_module', $id_module)
+            ->select('em_emails.id_record', DB::raw('COUNT(em_emails.id) as count'))
+            ->groupBy('em_emails.id_record')
+            ->get();
+        $email_counts = $emails->pluck('count', 'id_record')->toArray();
 
         foreach ($id_records as $id) {
             $documento = $fatture[$id] ?? null;

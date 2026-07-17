@@ -9,7 +9,7 @@ $op = 'addrow';
 $qta = 1;
 
 if (!empty($id_articolo) && !empty($idautomezzo)) {
-    $qta = $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.id_articolo='.prepare($id_articolo).' AND mg_movimenti.id_sede='.prepare($idautomezzo))['qta'];
+    $qta = $dbo->fetchOne('SELECT IFNULL(SUM(mg_movimenti.qta), 0) AS qta FROM mg_movimenti WHERE mg_movimenti.id_articolo='.prepare($id_articolo).' AND mg_movimenti.id_sede='.prepare($idautomezzo))['qta'];
     $op = 'editrow';
 }
 

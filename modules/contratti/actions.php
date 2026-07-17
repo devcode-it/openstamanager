@@ -562,7 +562,11 @@ switch (post('op')) {
 
         // ...altrimenti la creo
         else {
-            if ($dbo->query('INSERT INTO `co_contratti_tipi_intervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico ) VALUES( '.prepare(post('id_contratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
+            $id_contratto = post('id_contratto');
+            $id_tipo_intervento = post('id_tipo_intervento');
+            // Recupero tariffe in un'unica query
+            $tariffa = $dbo->fetchOne('SELECT `costo_orario`, `costo_km`, `costo_diritto_chiamata`, `costo_orario_tecnico`, `costo_km_tecnico`, `costo_diritto_chiamata_tecnico` FROM `in_tipi_intervento` WHERE `id` = '.prepare($id_tipo_intervento));
+            if ($dbo->query('INSERT INTO `co_contratti_tipi_intervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico ) VALUES('.prepare($id_contratto).', '.prepare($id_tipo_intervento).', '.prepare($tariffa['costo_orario']).', '.prepare($tariffa['costo_km']).', '.prepare($tariffa['costo_diritto_chiamata']).', '.prepare($tariffa['costo_orario_tecnico']).', '.prepare($tariffa['costo_km_tecnico']).', '.prepare($tariffa['costo_diritto_chiamata_tecnico']).')')) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));
             } else {
                 flash()->error(tr("Errore durante l'importazione tariffe!"));

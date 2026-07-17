@@ -4,6 +4,7 @@ include_once __DIR__.'/../../core.php';
 
 use Carbon\Carbon;
 use Modules\Articoli\Articolo;
+use Modules\Articoli\Movimento;
 
 switch (post('op')) {
     case 'update':
@@ -71,7 +72,10 @@ switch (post('op')) {
         $articolo = Articolo::find($id_articolo);
         $automezzo = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
-        $qta = post('qta') - $dbo->fetchOne('SELECT SUM(mg_movimenti.qta) AS qta FROM mg_movimenti WHERE mg_movimenti.id_articolo='.prepare($id_articolo).' AND mg_movimenti.id_sede='.prepare($id_record))['qta'];
+        $qta_mov = Movimento::where('id_articolo', $id_articolo)
+            ->where('id_sede', $id_record)
+            ->sum('qta');
+        $qta = post('qta') - ($qta_mov ?: 0);
 
         // Registrazione del movimento verso la sede di destinazione
         $articolo->registra($qta, tr('Carico dal magazzino sull\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [
@@ -93,7 +97,10 @@ switch (post('op')) {
 
         $articolo = Articolo::find($id_articolo);
         $automezzo = $dbo->table('an_sedi')->where('id', $idautomezzotecnico)->first();
-        $qta = $dbo->fetchOne('SELECT SUM(qta) AS qta FROM mg_movimenti WHERE id_articolo='.prepare($id_articolo).' AND id_sede='.prepare($idautomezzotecnico))['qta'];
+        $qta_mov = Movimento::where('id_articolo', $id_articolo)
+            ->where('id_sede', $idautomezzotecnico)
+            ->sum('qta');
+        $qta = $qta_mov ?: 0;
 
         // Registrazione del movimento verso la sede di destinazione
         $articolo->registra($qta, tr('Carico nel magazzino dall\'automezzo _SEDE_', ['_SEDE_' => $automezzo->nome_sede]), Carbon::now(), 1, [

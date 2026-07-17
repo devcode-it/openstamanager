@@ -63,7 +63,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.11.1",
-        "@babel/preset-env": "^7.11.0",
+        "@babel/preset-env": "^8.0.2",
         "archiver": "^8.0.0",
         "del": "^6.0.0",
         "globby": "^14.0.1",

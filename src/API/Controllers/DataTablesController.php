@@ -3,7 +3,6 @@
 namespace API\Controllers;
 
 use ApiPlatform\Metadata\Post;
-use DTO\DataTablesLoadRequest\Column;
 use DTO\DataTablesLoadRequest\DataTablesLoadRequest;
 use DTO\DataTablesLoadResponse\DataTablesLoadResponse;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -61,31 +60,6 @@ final class DataTablesController extends BaseController
         return true;
     }
 
-    /*
-    public function process(mixed $request, Operation $operation, array $uriVariables = [], array $context = []): DataTablesLoadResponse
-    {
-        if (!$request instanceof DataTablesLoadRequest) {
-            throw new \InvalidArgumentException();
-        }
-
-        $id_module = !empty($uriVariables['id_module']) ? $uriVariables['id_module'] : null;
-        $id_plugin = !empty($uriVariables['id_plugin']) ? $uriVariables['id_plugin'] : null;
-        $id_parent = !empty($uriVariables['id_parent']) ? $uriVariables['id_parent'] : null;
-
-        $module = \Modules::get($id_module);
-        \Modules::setCurrent($id_module);
-
-        $plugin = null;
-        if (!empty($id_plugin)) {
-            \Plugins::setCurrent($id_plugin);
-            $plugin = \Plugins::get($id_plugin);
-        }
-
-        $structure = $plugin ?? $module;
-
-        return $this->retrieveRecords($structure, $request, $id_module, $id_plugin, $id_parent);
-    }*/
-
     private function retrieveRecords($structure, DataTablesLoadRequest $request, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
     {
         // Informazioni fondamentali
@@ -111,7 +85,7 @@ final class DataTablesController extends BaseController
         $columns = $request->columns;
         array_shift($columns);
         for ($i = 0; $i < count($columns); ++$i) {
-            $col = Column::fromArray($columns[$i]);
+            $col = $columns[$i];
             if (!empty($col->search->value) || $col->search->value == '0') {
                 $search[$query_structure['fields'][$i]] = $col->search->value;
             }
@@ -195,7 +169,7 @@ final class DataTablesController extends BaseController
 
         $result = [
             'id' => $r['id'],
-            '<span class="hide" request-id="'.$r['id'].'"></span>', // Colonna ID
+            '<span class="hide" data-id="'.$r['id'].'"></span>', // Colonna ID
         ];
 
         foreach ($query_structure['fields'] as $pos => $field) {
@@ -203,9 +177,9 @@ final class DataTablesController extends BaseController
 
             if (!empty($r['_bg_'])) {
                 if (preg_match('/-light$/', (string) $r['_bg_'])) {
-                    $column['request-background'] = substr((string) $r['_bg_'], 0, -6); // Remove the "-light" suffix from the word
+                    $column['data-background'] = substr((string) $r['_bg_'], 0, -6); // Remove the "-light" suffix from the word
                 } else {
-                    $column['request-background'] = $r['_bg_'];
+                    $column['data-background'] = $r['_bg_'];
                 }
             }
 
@@ -252,7 +226,7 @@ final class DataTablesController extends BaseController
                 }
 
                 $column['class'] = 'text-center small';
-                $column['request-background'] = $r[$field];
+                $column['data-background'] = $r[$field];
             }
 
             // Icona di stampa
@@ -286,8 +260,8 @@ final class DataTablesController extends BaseController
             }
 
             // Colore del testo
-            if (!empty($column['request-background'])) {
-                $column['request-color'] ??= color_inverse(trim((string) $column['request-background']));
+            if (!empty($column['data-background'])) {
+                $column['data-color'] ??= color_inverse(trim((string) $column['data-background']));
             } elseif (preg_match('/^mailto_(.+?)$/', trim((string) $field), $m)) {
                 $column['class'] = '';
                 $value = ($r[$field] ? '<a class="btn btn-default btn-sm btn-block" style="font-weight:normal;" href="mailto:'.$r[$field].'" target="_blank"><i class="fa fa-envelope text-primary"></i> '.$r[$field].'</a>' : '');
@@ -310,13 +284,13 @@ final class DataTablesController extends BaseController
 
                 // Link per i moduli
                 if (empty($id_plugin)) {
-                    $column['request-link'] = base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
+                    $column['data-link'] = base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$id_record.$hash;
                 }
                 // Link per i plugin
                 else {
-                    $column['request-link'] = base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
+                    $column['data-link'] = base_path_osm().'/add.php?id_module='.$id_module.'&id_record='.$id_record.'&id_plugin='.$id_plugin.'&id_parent='.$id_parent.'&edit=1'.$hash;
 
-                    $column['request-type'] = 'dialog';
+                    $column['data-type'] = 'dialog';
                 }
             }
 

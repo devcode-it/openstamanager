@@ -31,7 +31,7 @@ class DataTablesLoadResponse
             'data' => $this->data,
             'summable' => $this->summable,
             'avg' => $this->avg,
-            $this->error ? ['error' => $this->error] : [],
+            'error' => $this->error,
         ];
     }
 }

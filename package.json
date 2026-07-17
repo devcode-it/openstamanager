@@ -62,7 +62,7 @@
         "ua-parser-js": "github:Pek5892/ua-parser-js#patch-1"
     },
     "devDependencies": {
-        "@babel/core": "^7.11.1",
+        "@babel/core": "^8.0.1",
         "@babel/preset-env": "^7.11.0",
         "archiver": "^8.0.0",
         "del": "^6.0.0",

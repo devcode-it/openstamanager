@@ -108,7 +108,7 @@ function aggiungiAllegato(gestione) {
 
     form.ajaxSubmit({
         url: globals.rootdir + "/actions.php",
-        data: data,
+        data: form.serialize(),
         type: "post",
         uploadProgress: function (event, position, total, percentComplete) {
             $(id + " #upload").prop("disabled", true).html(percentComplete + "%").removeClass("btn-success").addClass("btn-info");

@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/ScadenzeTestHelpers.inc';
+require_once __DIR__ . '/ScadenzeTestHelpers.php';
 
 use Carbon\Carbon;
 use Modules\Fatture\Fattura;

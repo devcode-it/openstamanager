@@ -19,7 +19,7 @@
  */
 
 use API\Services;
-use Respect\Validation\ValidatorBuilder as v;
+use Respect\Validation\Validator as v;
 
 /**
  * Classe per la gestione delle funzioni VALIDATE richiamabili del progetto.

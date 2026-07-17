@@ -19,7 +19,7 @@
  */
 
 use Models\Setting;
-use Respect\Validation\ValidatorBuilder as v;
+use Respect\Validation\Validator as v;
 
 /**
  * Classe per la gestione dell impostazioni del progetto.
@@ -126,7 +126,7 @@ class Settings
         // list
         // verifico che il valore scelto sia nella lista enumerata nel db
         elseif (preg_match("/list\[(.+?)\]/", (string) $setting->tipo, $m)) {
-            $validator = v::in(explode(',', $m[1]))->nonStrict();
+            $validator = v::in(explode(',', $m[1]));
         }
 
         // multiple

@@ -20,7 +20,7 @@
 
 namespace Plugins\ExportFE;
 
-use Respect\Validation\ValidatorBuilder as v;
+use Respect\Validation\Validator as v;
 
 class Validator
 {
@@ -682,7 +682,7 @@ class Validator
                 $validator = v::stringType();
 
                 if (isset($size[1])) {
-                    $validator = $validator->length(v::between($size[0], $size[1]));
+                    $validator = $validator->length($size[0], $size[1]);
                 }
             } elseif ($info['type'] == 'decimal') {
                 $validator = v::floatVal();

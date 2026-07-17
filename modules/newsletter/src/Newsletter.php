@@ -30,7 +30,7 @@ use Modules\Anagrafiche\Sede;
 use Modules\Emails\Account;
 use Modules\Emails\Mail;
 use Modules\Emails\Template;
-use Respect\Validation\ValidatorBuilder as v;
+use Respect\Validation\Validator as v;
 use Traits\RecordTrait;
 
 class Newsletter extends Model

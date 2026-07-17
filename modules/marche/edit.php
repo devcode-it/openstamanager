@@ -21,7 +21,6 @@ include_once __DIR__.'/../../core.php';
 use Models\Module;
 use Modules\Articoli\Marca;
 
-$marca = Marca::find($id_record);
 $img = !empty($marca) ? $marca->image : null;
 ?>
 

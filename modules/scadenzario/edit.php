@@ -109,7 +109,7 @@ if (!empty($documento)) {
 
                     '.Modules::link($documento->module, $record['id_documento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
 } else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record));
+    $scadenza = Modules\Scadenzario\Scadenza::find($id_record);
     echo '
                     </table>
                     <div class="card">

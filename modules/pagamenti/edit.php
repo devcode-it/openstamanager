@@ -113,7 +113,7 @@ $tipi_scadenza_pagamento = [
     ],
 ];
 
-$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` WHERE `co_pagamenti`.`name`='.prepare($record['name']).' ORDER BY `num_giorni` ASC');
+$results = $dbo->fetchArray('SELECT *, `co_pagamenti`.`id` as id FROM `co_pagamenti` WHERE `co_pagamenti`.`name`='.prepare($pagamento->name).' ORDER BY `num_giorni` ASC');
 $numero_rata = 1;
 foreach ($results as $result) {
     $tipo_scadenza_pagamento = 3;

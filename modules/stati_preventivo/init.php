@@ -22,7 +22,5 @@ include_once __DIR__.'/../../core.php';
 use Modules\Preventivi\Stato;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_stati_preventivi` LEFT JOIN `co_stati_preventivi_lang` ON (`co_stati_preventivi`.`id`=`co_stati_preventivi_lang`.`id_record` AND `co_stati_preventivi_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_stati_preventivi`.`id`='.prepare($id_record));
-
     $stato = Stato::find($id_record);
 }

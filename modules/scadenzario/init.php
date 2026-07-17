@@ -19,6 +19,7 @@
  */
 
 use Modules\Fatture\Fattura;
+use Modules\Scadenzario\Scadenza;
 
 include_once __DIR__.'/../../core.php';
 
@@ -28,12 +29,12 @@ if (!empty($id_record)) {
 
     // Scelgo la query in base alla scadenza
     if (!empty($documento)) {
-        $id_record = $dbo->fetchOne('SELECT id FROM co_scadenzario WHERE id_documento='.prepare($documento->id).' ORDER BY id')['id'];
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id_documento = '.prepare($documento->id).' ORDER BY scadenza ASC');
+        $id_record = Scadenza::where('id_documento', $documento->id)->orderBy('id')->value('id');
+        $scadenze = Scadenza::where('id_documento', $documento->id)->orderBy('scadenza')->get();
         $totale_da_pagare = $documento->netto;
     } else {
-        $scadenze = $dbo->fetchArray('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record));
-        $totale_da_pagare = sum(array_column($scadenze, 'da_pagare'));
+        $scadenze = Scadenza::where('id', $id_record)->get();
+        $totale_da_pagare = sum(array_column($scadenze->toArray(), 'da_pagare'));
     }
 }
 

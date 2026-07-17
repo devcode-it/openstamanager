@@ -39,16 +39,16 @@ use Models\Module;
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($record['predefined']); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di ');
-echo ($record['dir'] == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Tipo documento predefinito'); ?>", "name": "predefined", "value": "<?php echo intval($tipo->predefined); ?>", "help":"<?php echo tr('Impostare questo tipo di documento predefinto per le fatture di ');
+echo ($tipo->dir == 'entrata') ? tr('Vendita') : tr('Acquisto'); ?>." ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo ($record['predefined'] && $record['enabled']) ? 1 : 0; ?>",  "value": "<?php echo intval($record['enabled']); ?>" ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "disabled": "<?php echo ($tipo->predefined && $tipo->enabled) ? 1 : 0; ?>",  "value": "<?php echo intval($tipo->enabled); ?>" ]}
         </div>
 
         <div class="col-md-3">
-            {[ "type": "checkbox", "label": "<?php echo tr('Reversed'); ?>", "name": "reversed", "value": "<?php echo intval($record['reversed']); ?>", "readonly": 1 ]}
+            {[ "type": "checkbox", "label": "<?php echo tr('Reversed'); ?>", "name": "reversed", "value": "<?php echo intval($tipo->reversed); ?>", "readonly": 1 ]}
         </div>
 
         <?php
@@ -59,7 +59,7 @@ $id_module_vendite = Module::where('name', 'Fatture di vendita')->first()->id;
 echo '
 		<div class="col-md-3">
         
-			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $record['dir'] == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1, 'tipo' => $record['codice_tipo_documento_fe']]).', "value": "$id_segment$" ]}
+			{[ "type": "select", "label": "'.tr('Sezionale predefinito').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $tipo->dir == 'entrata' ? $id_module_vendite : $id_module_acquisti, 'is_sezionale' => 1, 'tipo' => $tipo->codice_tipo_documento_fe]).', "value": "$id_segment$" ]}
 		</div>
 
         <div class="col-md-12">

@@ -18,8 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Mansioni\Mansione;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_mansioni` WHERE id='.prepare($id_record));
+    $record = Mansione::find($id_record);
 }

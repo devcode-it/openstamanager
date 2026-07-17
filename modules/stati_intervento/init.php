@@ -22,7 +22,5 @@ include_once __DIR__.'/../../core.php';
 use Modules\Interventi\Stato;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `in_stati_intervento`.`id`='.prepare($id_record));
-
     $stato = Stato::find($id_record);
 }

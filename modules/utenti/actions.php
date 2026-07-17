@@ -112,8 +112,7 @@ switch (filter('op')) {
             $sedi = post('id_sede');
 
             if (empty($sedi)) {
-                $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id_anagrafica = '.prepare($id_azienda));
-                $sedi = array_column($sedi, 'id');
+                $sedi = Modules\Anagrafiche\Sede::where('id_anagrafica', $id_azienda)->pluck('id')->toArray();
                 $sedi = array_merge([0], $sedi);
             }
             foreach ($sedi as $id_sede) {
@@ -235,7 +234,7 @@ switch (filter('op')) {
         // Impostazione/reimpostazione dei permessi di accesso di default
     case 'restore_permission':
         // Gruppo Tecnici
-        if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome'] == 'Tecnici') {
+        if (Models\Group::find($id_record)->nome == 'Tecnici') {
             $permessi = [];
             $permessi['Dashboard'] = 'rw';
             $permessi['Anagrafiche'] = 'rw';
@@ -271,12 +270,12 @@ switch (filter('op')) {
 
         // Verifico che ci sia il permesso per questo gruppo
         if ($permessi != '-') {
-            $rs = $dbo->fetchArray('SELECT id FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo));
+            $rs = database()->table('zz_permissions')->where('id_gruppo', $id_record)->where('id_module', $idmodulo)->first();
             if (empty($rs)) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
                 $query = 'INSERT IGNORE INTO zz_permissions(id_gruppo, id_module, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
             } else {
-                $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs[0]['id']);
+                $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs->id);
             }
         } else {
             $query = 'DELETE FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo);

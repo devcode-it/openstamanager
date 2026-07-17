@@ -25,5 +25,7 @@ use Modules\Articoli\Articolo;
 if (!empty($id_record)) {
     $articolo = Articolo::withTrashed()->find($id_record);
 
-    $record = $dbo->fetchOne('SELECT `mg_articoli`.*, `mg_articoli_lang`.`title` as descrizione, `prodotti_count`.`serial` FROM `mg_articoli` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') LEFT JOIN (SELECT `id_articolo`, COUNT(`id`) AS serial FROM `mg_prodotti` GROUP BY `id_articolo`) AS `prodotti_count` ON `prodotti_count`.`id_articolo` = `mg_articoli`.`id` WHERE `mg_articoli`.`id`='.prepare($id_record));
+    $record = $articolo->toArray();
+    $record['descrizione'] = $articolo->getTranslation('title');
+    $record['serial'] = database()->table('mg_prodotti')->where('id_articolo', $id_record)->count();
 }

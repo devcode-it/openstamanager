@@ -51,12 +51,14 @@ class Scadenze
         // Rimozione degli elementi pre-esistenti e ottimizzazione caricamento assicurazioni
         $assicurazioni_map = $this->rimuovi();
 
+        $scadenze = [];
+
         if (!$ignora_fe && $this->fattura->module == 'Fatture di acquisto' && $this->fattura->isFE()) {
-            $scadenze_fe = $this->registraScadenzeFE($is_pagato, $assicurazioni_map);
+            $scadenze = $this->registraScadenzeFE($is_pagato, $assicurazioni_map);
         }
 
-        if (empty($scadenze_fe)) {
-            $this->registraScadenzeTradizionali($is_pagato, $assicurazioni_map);
+        if (empty($scadenze)) {
+            $scadenze = $this->registraScadenzeTradizionali($is_pagato, $assicurazioni_map);
         }
 
         // Registrazione scadenza per Ritenuta d'Acconto
@@ -81,7 +83,7 @@ class Scadenze
             $id_banca_controparte = $this->fattura->id_banca_controparte;
             $importo = -$ritenuta_acconto;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenuta_acconto', $assicurazioni_map);
+            $scadenze[] = $this->registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'ritenuta_acconto', $assicurazioni_map);
         }
 
         return $scadenze;
@@ -102,14 +104,20 @@ class Scadenze
         $assicurazioni_map = [];
 
         if ($id_anagrafiche->isNotEmpty()) {
-            $assicurazioni_list = $this->trovaAssicurazioneCrediti($scadenza->id_anagrafica);
+            foreach ($id_anagrafiche as $id_anagrafica) {
+                $assicurazioni_list = $this->trovaAssicurazioneCrediti($id_anagrafica);
 
-            // Crea una mappa per accesso rapido: chiave = id_anagrafica, valore = lista assicurazioni
-            foreach ($assicurazioni_list as $assicurazione) {
-                if (!isset($assicurazioni_map[$assicurazione->id_anagrafica])) {
-                    $assicurazioni_map[$assicurazione->id_anagrafica] = [];
+                if (empty($assicurazioni_list)) {
+                    continue;
                 }
-                $assicurazioni_map[$assicurazione->id_anagrafica][] = $assicurazione;
+
+                // Crea una mappa per accesso rapido: chiave = id_anagrafica, valore = lista assicurazioni
+                foreach ($assicurazioni_list as $assicurazione) {
+                    if (!isset($assicurazioni_map[$assicurazione->id_anagrafica])) {
+                        $assicurazioni_map[$assicurazione->id_anagrafica] = [];
+                    }
+                    $assicurazioni_map[$assicurazione->id_anagrafica][] = $assicurazione;
+                }
             }
 
             // Salva le assicurazioni da aggiornare dopo la cancellazione
@@ -160,7 +168,7 @@ class Scadenze
 
         $assicurazione_crediti = null;
 
-        if ($assicurazioni_map !== null && isset($assicurazioni_map[$id_anagrafica])) {
+        if ($assicurazioni_map !== null && !empty($assicurazioni_map) && isset($assicurazioni_map[$id_anagrafica])) {
             // Ottimizzazione: usa la mappa delle assicurazioni già caricata
             foreach ($assicurazioni_map[$id_anagrafica] as $assicurazione) {
                 if ($scadenza->scadenza >= $assicurazione->data_inizio && $scadenza->scadenza <= $assicurazione->data_fine) {
@@ -168,6 +176,9 @@ class Scadenze
                     break;
                 }
             }
+        } elseif ($assicurazioni_map !== null) {
+            // Mappa vuota o senza entry per questa anagrafica, nessuna assicurazione da cercare
+            $assicurazione_crediti = null;
         } else {
             // Query al database se la mappa non è disponibile
             $assicurazione_crediti = AssicurazioneCrediti::where('id_anagrafica', $scadenza->id_anagrafica)->where('data_inizio', '<=', $scadenza->scadenza)->where('data_fine', '>=', $scadenza->scadenza)->first();
@@ -205,7 +216,7 @@ class Scadenze
         return Pagamento::where('id', $id_pagamento)->first();
     }
 
-    protected function trovaAssicurazioniCrediti($id_anagrafica)
+    protected function trovaAssicurazioneCrediti($id_anagrafica)
     {
         return AssicurazioneCrediti::where('id_anagrafica', $id_anagrafica)->get();
     }
@@ -254,7 +265,7 @@ class Scadenze
                 $scadenza = !empty($rata['DataScadenzaPagamento']) ? FatturaElettronicaImport::parseDate($rata['DataScadenzaPagamento']) : $this->fattura->data;
                 $importo = $this->fattura->isNota() ? $rata['ImportoPagamento'] : -$rata['ImportoPagamento'];
 
-                self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
+                $results[] = $this->registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
             }
         }
 
@@ -278,15 +289,15 @@ class Scadenze
         $direzione = $this->fattura->tipo->dir;
 
         $results = [];
-        foreach ($rate as $rata) {
-            $scadenza = $rata['scadenza'];
-            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
-            $id_pagamento = $this->fattura->id_pagamento;
-            $id_banca_azienda = $this->fattura->id_banca_azienda;
-            $id_banca_controparte = $this->fattura->id_banca_controparte;
+foreach ($rate as $rata) {
+                $scadenza = $rata['scadenza'];
+                $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
+                $id_pagamento = $this->fattura->id_pagamento;
+                $id_banca_azienda = $this->fattura->id_banca_azienda;
+                $id_banca_controparte = $this->fattura->id_banca_controparte;
 
-            self::registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
-        }
+                $results[] = $this->registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
+            }
 
         return $results;
     }

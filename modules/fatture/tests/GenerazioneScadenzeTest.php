@@ -114,7 +114,6 @@ class GenerazioneScadenzeTest extends PHPUnit\Framework\TestCase
             $ref = $matches[1];
 
             return collect($ref)
-                ->merge($attributeMutatorMethods)
                 ->map(function ($match) {
                     return lcfirst(static::$snakeAttributes ? Str::snake($match) : $match);
                 })->all();

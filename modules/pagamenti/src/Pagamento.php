@@ -119,7 +119,7 @@ class Pagamento extends Model
             }
 
             // Posticipo la scadenza in base alle regole pagamenti dell'anagrafica
-            $regola_pagamento = $database->selectOne('an_pagamenti_anagrafiche', '*', ['idanagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
+            $regola_pagamento = $database->selectOne('an_pagamenti_anagrafiche', '*', ['id_anagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
             if (!empty($regola_pagamento)) {
                 $date->modify('last day of this month');
                 $date->addDays($regola_pagamento['giorno_fisso']);

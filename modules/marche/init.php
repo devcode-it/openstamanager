@@ -22,7 +22,5 @@ include_once __DIR__.'/../../core.php';
 use Modules\Articoli\Marca;
 
 if (isset($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM zz_marche WHERE id='.prepare($id_record));
-
     $marca = Marca::find($id_record);
 }

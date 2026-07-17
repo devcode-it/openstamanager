@@ -19,6 +19,7 @@
  */
 
 use Modules\Fatture\Fattura;
+use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';
 
@@ -73,11 +74,11 @@ $result = [
 ];
 
 // Leggo la provvigione predefinita per l'anagrafica
-$result['provvigione_default'] = $dbo->fetchOne('SELECT provvigione_default FROM an_anagrafiche WHERE id='.prepare($documento->id_agente))['provvigione_default'];
+$result['provvigione_default'] = Anagrafica::find($documento->id_agente)?->provvigione_default ?? 0;
 
 // Leggo l'iva predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
-$iva = $dbo->fetchArray('SELECT id_iva_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_iva FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
-$result['id_iva'] = $iva[0]['id_iva'] ?: setting('Iva predefinita');
+$id_iva = Anagrafica::find($documento['id_anagrafica'])?->getAttribute('id_iva_'.($dir == 'uscita' ? 'acquisti' : 'vendite')) ?? setting('Iva predefinita');
+$result['id_iva'] = $id_iva ?: setting('Iva predefinita');
 
 if (!empty($documento->dichiarazione)) {
     $result['id_iva'] = setting("Iva per lettere d'intento");
@@ -85,8 +86,7 @@ if (!empty($documento->dichiarazione)) {
 
 // Leggo la ritenuta d'acconto predefinita per l'anagrafica e se non c'è leggo quella predefinita generica
 // id_ritenuta_acconto_vendite oppure id_ritenuta_acconto_acquisti
-$ritenuta_acconto = $dbo->fetchOne('SELECT id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite').' AS id_ritenuta_acconto FROM an_anagrafiche WHERE id='.prepare($documento['id_anagrafica']));
-$id_ritenuta_acconto = $ritenuta_acconto['id_ritenuta_acconto'];
+$id_ritenuta_acconto = Anagrafica::find($documento['id_anagrafica'])?->getAttribute('id_ritenuta_acconto_'.($dir == 'uscita' ? 'acquisti' : 'vendite'));
 if ($dir == 'entrata' && empty($id_ritenuta_acconto)) {
     $id_ritenuta_acconto = setting("Ritenuta d'acconto predefinita");
 }
@@ -102,11 +102,12 @@ if (!empty(get('is_descrizione'))) {
     $file = 'articolo';
 
     // Aggiunta sconto di default da listino per le vendite
-    $join = ($dir == 'entrata' ? 'id_piano_sconto_vendite' : 'id_piano_sconto_acquisti');
-    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.'.$join.'=mg_piani_sconto.id WHERE id_anagrafica='.prepare($documento['id_anagrafica']));
+    $anagrafica = Anagrafica::find($documento['id_anagrafica']);
+    $listino = $dir == 'entrata' ? $anagrafica?->pianoScontoVendite : $anagrafica?->pianoScontoAcquisti;
+    $prc_guadagno = $listino?->prc_guadagno;
 
-    if (!empty($listino['prc_guadagno'])) {
-        $result['sconto_percentuale'] = $listino['prc_guadagno'];
+    if (!empty($prc_guadagno)) {
+        $result['sconto_percentuale'] = $prc_guadagno;
         $result['tipo_sconto'] = 'PRC';
     }
 

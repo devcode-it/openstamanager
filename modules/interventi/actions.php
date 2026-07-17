@@ -46,6 +46,27 @@ use Plugins\PianificazioneInterventi\Promemoria;
 $id_modulo_impianti = Module::where('name', 'Impianti')->first()->id;
 $plugin_impianti = Plugin::where('name', 'Impianti')->first()->id;
 
+function getIvaDichiarazione() {
+    static $iva = null;
+    if ($iva === null) {
+        $iva = Aliquota::where('codice_natura_fe', 'N3.5')
+            ->where('deleted_at', null)
+            ->first();
+    }
+    return $iva;
+}
+
+function getPianoSconto($id_anagrafica) {
+    static $piani = [];
+    if (!isset($piani[$id_anagrafica])) {
+        $piani[$id_anagrafica] = database()->table('an_anagrafiche')
+            ->join('mg_piani_sconto', 'an_anagrafiche.id_piano_sconto_vendite', '=', 'mg_piani_sconto.id')
+            ->where('an_anagrafiche.id', $id_anagrafica)
+            ->value('mg_piani_sconto.prc_guadagno');
+    }
+    return $piani[$id_anagrafica];
+}
+
 switch (post('op')) {
     case 'update':
         $id_promemoria = post('id_contratto_riga');
@@ -53,7 +74,7 @@ switch (post('op')) {
 
         // Rimozione del collegamento al promemoria
         if (!empty($id_promemoria) && $intervento->id_contratto != $id_contratto) {
-            $dbo->update('co_promemoria', ['id_intervento' => null], ['id_intervento' => $id_record]);
+            Promemoria::where('id_intervento', $id_record)->update(['id_intervento' => null]);
         }
 
         // Salvataggio modifiche intervento
@@ -84,12 +105,7 @@ switch (post('op')) {
         $intervento->codice_cig = post('codice_cig');
         $intervento->save();
 
-        $tags = $dbo->select('in_interventi_tags', 'id_tag', [], ['id_intervento' => $intervento->id]);
-        $tags_presenti = [];
-
-        foreach ($tags as $tag) {
-            $tags_presenti[] = $tag['id_tag'];
-        }
+        $tags_presenti = database()->table('in_interventi_tags')->where('id_intervento', $intervento->id)->pluck('id_tag')->toArray();
 
         $tags = post('tags') ?: [];
         $tags_presenti = [];
@@ -105,21 +121,24 @@ switch (post('op')) {
             'id_tag' => $tags_presenti,
         ]);
 
-        $tecnici_presenti_array = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $intervento->id]);
+        $tecnici_presenti_array = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $intervento->id)->pluck('id_tecnico')->toArray();
         $tecnici_presenti = [];
 
+        $all_tecnici_ids = array_unique(array_merge($tecnici_presenti_array, $tecnici_assegnati_array));
+        $tecnici_map = Anagrafica::whereIn('id', $all_tecnici_ids)->get()->keyBy('id');
+        $template_rimozione = Template::where('name', 'Notifica rimozione intervento')->first();
+        $template_notifica_intervento = Template::where('name', 'Notifica intervento')->first();
+
         foreach ($tecnici_presenti_array as $tecnico_presente) {
-            $tecnici_presenti[] = $tecnico_presente['id_tecnico'];
+            $tecnici_presenti[] = $tecnico_presente;
 
             // Notifica rimozione tecnico assegnato
             if (setting('Notifica al tecnico la rimozione dell\'assegnazione dall\'attività')) {
-                if (!in_array($tecnico_presente['id_tecnico'], $tecnici_assegnati_array)) {
-                    $tecnico = Anagrafica::find($tecnico_presente['id_tecnico']);
+                if (!in_array($tecnico_presente, $tecnici_assegnati_array)) {
+                    $tecnico = $tecnici_map[$tecnico_presente] ?? null;
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica rimozione intervento')->first();
-
-                        if (!empty($template)) {
-                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                        if (!empty($template_rimozione)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template_rimozione, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -136,13 +155,11 @@ switch (post('op')) {
             // Notifica aggiunta tecnico assegnato
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!in_array($tecnico_assegnato, $tecnici_presenti)) {
-                    $tecnico = Anagrafica::find($tecnico_assegnato);
+                    $tecnico = $tecnici_map[$tecnico_assegnato] ?? null;
 
                     if (!empty($tecnico['email'])) {
-                        $template = Template::where('name', 'Notifica intervento')->first();
-
-                        if (!empty($template)) {
-                            $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                        if (!empty($template_notifica_intervento)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento, $intervento->id);
                             $mail->addReceiver($tecnico['email']);
                             $mail->save();
                             flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -180,18 +197,20 @@ switch (post('op')) {
 
             $tecnici_intervento = [];
             if (!empty($stato['notifica_tecnico_sessione'])) {
-                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
+                $tecnici_intervento = database()->table('in_interventi_tecnici')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
             }
 
             $tecnici_assegnati = [];
             if (!empty($stato['notifica_tecnico_assegnato'])) {
-                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
+                $tecnici_assegnati = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
             }
 
             $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
 
+            $tecnici_map_notifica = Anagrafica::whereIn('id', $tecnici)->get()->keyBy('id');
+
             foreach ($tecnici as $tecnico) {
-                $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id_anagrafica' => $tecnico]);
+                $mail_tecnico = $tecnici_map_notifica[$tecnico] ?? null;
                 if (!empty($mail_tecnico['email'])) {
                     $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
                     $mail->addReceiver($mail_tecnico['email']);
@@ -266,19 +285,34 @@ switch (post('op')) {
 
             // Collegamenti intervento/impianti
             $impianti = post('id_impianti');
-            foreach ($impianti as $impianto) {
-                if (!empty($impianto)) {
+
+            if (!empty($impianti)) {
+                $impianti = array_filter($impianti, fn ($value) => !empty($value));
+
+                $checks_impianti = Check::where('id_module', $id_modulo_impianti)
+                    ->whereIn('id_record', $impianti)
+                    ->get()
+                    ->keyBy('id');
+
+                $all_parents = Check::whereIn('id', $checks_impianti->pluck('id_parent')->filter())
+                    ->get()
+                    ->keyBy('id');
+
+                foreach ($impianti as $impianto) {
                     $dbo->insert('my_impianti_interventi', [
                         'id_intervento' => $id_record,
                         'id_impianto' => $impianto,
                     ]);
 
-                    $checks_impianti = $dbo->fetchArray('SELECT * FROM zz_checks WHERE id_module = '.prepare($id_modulo_impianti).' AND id_record = '.prepare($impianto));
-                    foreach ($checks_impianti as $check_impianto) {
+                    $checks = $checks_impianti->where('id_record', $impianto);
+                    foreach ($checks as $check_impianto) {
                         $id_parent_new = null;
                         if ($check_impianto['id_parent']) {
-                            $parent = $dbo->selectOne('zz_checks', '*', ['id' => $check_impianto['id_parent']]);
-                            $id_parent_new = $dbo->selectOne('zz_checks', '*', ['content' => $parent['content'], 'id_module' => $id_module, 'id_record' => $id_record])['id'];
+                            $parent = $all_parents->get($check_impianto['id_parent']);
+                            $id_parent_new = Check::where('content', $parent['content'])
+                                ->where('id_module', $id_module)
+                                ->where('id_record', $id_record)
+                                ->value('id');
                         }
                         $check = Check::build($user, $structure, $id_record, $check_impianto['content'], $id_parent_new, $check_impianto['is_titolo'], $check_impianto['order'], $id_modulo_impianti, $impianto);
                         $check->id_module = $id_module;
@@ -286,12 +320,7 @@ switch (post('op')) {
                         $check->note = $check_impianto['note'];
                         $check->save();
 
-                        // Riporto anche i permessi della check
-                        $users = [];
-                        $utenti = $dbo->table('zz_check_user')->where('id_check', $check_impianto['id'])->get();
-                        foreach ($utenti as $utente) {
-                            $users[] = $utente->id_utente;
-                        }
+                        $users = $dbo->table('zz_check_user')->where('id_check', $check_impianto['id'])->pluck('id_utente')->toArray();
                         $check->setAccess($users, null);
                     }
                 }
@@ -317,9 +346,7 @@ switch (post('op')) {
             $intervento->id_stato = $id_stato;
             $intervento->save();
 
-            $id_contratto = $dbo->fetchOne('SELECT id_contratto FROM co_promemoria WHERE id_intervento = :id', [
-                ':id' => $id_record,
-            ])['id_contratto'];
+            $id_contratto = Promemoria::where('id_intervento', $id_record)->value('id_contratto');
         }
 
         // Collegamenti tecnici/interventi
@@ -360,8 +387,8 @@ switch (post('op')) {
                     // Calcola i km se necessario
                     if ($tipo_sessione->calcola_km) {
                         if (!empty($intervento['id_sede_destinazione'])) {
-                            $sede = $dbo->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
-                            $km = $sede['km'];
+                            $sede = Modules\Anagrafiche\Sede::find($intervento['id_sede_destinazione']);
+                            $km = $sede ? $sede->km : null;
                         } else {
                             $km = $intervento->anagrafica->sedeLegale->km;
                         }
@@ -395,16 +422,17 @@ switch (post('op')) {
             }
         }
 
+        $tecnici_map_add = Anagrafica::whereIn('id', $tecnici_assegnati)->get()->keyBy('id');
+        $template_notifica_intervento_add = Template::where('name', 'Notifica intervento')->first();
+
         foreach ($tecnici_assegnati as $tecnico_assegnato) {
-            $tecnico = Anagrafica::find($tecnico_assegnato);
+            $tecnico = $tecnici_map_add[$tecnico_assegnato] ?? null;
 
             // Notifica al tecnico
             if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
                 if (!empty($tecnico->email)) {
-                    $template = Template::where('name', 'Notifica intervento')->first();
-
-                    if (!empty($template)) {
-                        $mail = Mail::build(auth_osm()->getUser(), $template, $intervento->id);
+                    if (!empty($template_notifica_intervento_add)) {
+                        $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento_add, $intervento->id);
                         $mail->addReceiver($tecnico->email);
                         $mail->save();
                         flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
@@ -1014,19 +1042,21 @@ switch (post('op')) {
                     }
 
                     if (!empty($stato['notifica_tecnici'])) {
-                        $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
-                        $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
-                        $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+                        $tecnici_ids = array_unique(array_merge(
+                            Sessione::where('id_intervento', $id_record)->pluck('id_anagrafica')->toArray(),
+                            database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray()
+                        ));
+
+                        $tecnici = Anagrafica::whereIn('id', $tecnici_ids)
+                            ->whereNotNull('email')
+                            ->get();
 
                         foreach ($tecnici as $tecnico) {
-                            $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id' => $tecnico]);
-                            if (!empty($mail_tecnico['email'])) {
-                                if (!empty($template)) {
-                                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
-                                    $mail->addReceiver($mail_tecnico['email']);
-                                    $mail->save();
-                                    flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
-                                }
+                            if (!empty($template)) {
+                                $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                $mail->addReceiver($tecnico->email);
+                                $mail->save();
+                                flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                             }
                         }
                     }
@@ -1101,17 +1131,19 @@ switch (post('op')) {
                             }
 
                             if (!empty($stato['notifica_tecnici'])) {
-                                $tecnici_intervento = $dbo->select('in_interventi_tecnici', 'id_tecnico', [], ['id_intervento' => $id_record]);
-                                $tecnici_assegnati = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico AS id_tecnico', [], ['id_intervento' => $id_record]);
-                                $tecnici = array_unique(array_merge($tecnici_intervento, $tecnici_assegnati), SORT_REGULAR);
+                                $tecnici_ids = array_unique(array_merge(
+                                    Sessione::where('id_intervento', $id_record)->pluck('id_anagrafica')->toArray(),
+                                    database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray()
+                                ));
+
+                                $tecnici = Anagrafica::whereIn('id', $tecnici_ids)
+                                    ->whereNotNull('email')
+                                    ->get();
 
                                 foreach ($tecnici as $tecnico) {
-                                    $mail_tecnico = $dbo->selectOne('an_anagrafiche', '*', ['id' => $tecnico]);
-                                    if (!empty($mail_tecnico['email'])) {
-                                        $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
-                                        $mail->addReceiver($mail_tecnico['email']);
-                                        $mail->save();
-                                    }
+                                    $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
+                                    $mail->addReceiver($tecnico->email);
+                                    $mail->save();
                                 }
                             }
                         }
@@ -1389,19 +1421,19 @@ switch (post('op')) {
 
                     // Copia degli impianti
                     if (!empty($copia_impianti)) {
-                        $impianti = $dbo->select('my_impianti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                        $impianti = database()->table('my_impianti_interventi')->where('id_intervento', $intervento->id)->get();
                         foreach ($impianti as $impianto) {
-                            $dbo->insert('my_impianti_interventi', [
+                            database()->table('my_impianti_interventi')->insert([
                                 'id_intervento' => $id_record,
-                                'id_impianto' => $impianto['id_impianto'],
+                                'id_impianto' => $impianto->id_impianto,
                             ]);
                         }
 
-                        $componenti = $dbo->select('my_componenti_interventi', '*', [], ['id_intervento' => $intervento->id]);
+                        $componenti = database()->table('my_componenti_interventi')->where('id_intervento', $intervento->id)->get();
                         foreach ($componenti as $componente) {
-                            $dbo->insert('my_componenti_interventi', [
+                            database()->table('my_componenti_interventi')->insert([
                                 'id_intervento' => $id_record,
-                                'id_componente' => $componente['id_componente'],
+                                'id_componente' => $componente->id_componente,
                             ]);
                         }
                     }
@@ -1434,7 +1466,7 @@ switch (post('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $dbo->query('UPDATE `in_righe_interventi` SET `order` = '.prepare($i + 1).' WHERE id='.prepare($id_riga));
+            Riga::where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;
@@ -1495,9 +1527,9 @@ switch (post('op')) {
                 $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $intervento->id_agente])['provvigione_default'];
 
                 // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-                $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE an_anagrafiche.id='.prepare($id_anagrafica));
+                $piano_sconto = getPianoSconto($id_anagrafica);
                 if (!empty($piano_sconto)) {
-                    $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                    $sconto = parseScontoCombinato($piano_sconto.'+'.$sconto);
                 }
 
                 $articolo->setPrezzoUnitario($prezzo_unitario, $id_iva);
@@ -1672,9 +1704,9 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = getPianoSconto($id_anagrafica);
             if (!empty($piano_sconto)) {
-                $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
+                $sconto = parseScontoCombinato($piano_sconto.'+'.$sconto);
             }
 
             $riga->setSconto($sconto, 'PRC');

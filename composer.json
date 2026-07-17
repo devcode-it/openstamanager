@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": "^8.5",
+        "php": "^8.3",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -41,7 +41,7 @@
         "digitick/sepa-xml": "^3.0",
         "doctrine/sql-formatter": "^1.5",
         "dragonmantank/cron-expression": "^3.0",
-        "endroid/qr-code": "^6.0",
+        "endroid/qr-code": "~6.0.0",
         "ergebnis/json-printer": "^3.8",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.15.0",
@@ -66,7 +66,7 @@
         "owasp/csrf-protector-php": "^1.0",
         "phpmailer/phpmailer": "^7.0",
         "picqer/php-barcode-generator": "^3.2",
-        "respect/validation": "^2.0",
+        "respect/validation": "^2.4",
         "servo/fluidxml": "dev-main",
         "slim/flash": "^0.4.0",
         "spatie/laravel-route-attributes": "^1.25",
@@ -75,11 +75,9 @@
         "symfony/finder": "^7.0",
         "symfony/framework-bundle": "^7.0",
         "symfony/polyfill-ctype": "^1.8",
-        "symfony/translation": "^7.0",
+        "symfony/translation": "^7.0 || ^8.0",
         "symfony/var-dumper": "^7.0",
-        "thenetworg/oauth2-azure": "^2.0",
-        "voku/stringy": "^6.0.0",
-        "willdurand/geocoder": "^5.0"
+        "thenetworg/oauth2-azure": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -89,7 +87,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^12.4.4",
+        "phpunit/phpunit": "^12.5",
         "rector/rector": "^2.0"
     },
     "autoload": {
@@ -138,6 +136,10 @@
             "Modules\\StatoEmail\\": ["modules/stato_email/custom/src/", "modules/stato_email/src/"],
             "Modules\\FileAdapters\\": ["modules/adattatori_archiviazione/custom/src/", "modules/adattatori_archiviazione/src/"],
             "Modules\\CategorieFiles\\": ["modules/categorie_files/custom/src/", "modules/categorie_files/src/"],
+            "Modules\\Automezzi\\": ["modules/automezzi/custom/src/", "modules/automezzi/src/"],
+            "Modules\\Banche\\": ["modules/banche/custom/src/", "modules/banche/src/"],
+            "Modules\\GestioneDocumentale\\": ["modules/gestione_documentale/custom/src/", "modules/gestione_documentale/src/"],
+            "Modules\\Mansioni\\": ["modules/mansioni/custom/src/", "modules/mansioni/src/"],
             "Plugins\\AssicurazioneCrediti\\": ["plugins/assicurazione_crediti/custom/src/", "plugins/assicurazione_crediti/src/"],
             "Plugins\\ExportFE\\": ["plugins/exportFE/custom/src/", "plugins/exportFE/src/"],
             "Plugins\\ImportFE\\": ["plugins/importFE/custom/src/", "plugins/importFE/src/"],
@@ -172,7 +174,7 @@
         "prefer-stable": true,
         "platform-check": false,
         "platform": {
-            "php": "8.5"
+            "php": "8.3"
         },
         "allow-plugins": {
             "kylekatarnls/update-helper": true

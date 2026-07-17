@@ -163,8 +163,9 @@ switch (post('op')) {
 
         // Scollegamento intervento da preventivo
     case 'unlink':
-        if (isset($_GET['id_preventivo']) && isset($_GET['id_intervento'])) {
-            $id_intervento = get('id_intervento');
+        $id_preventivo = get('id_preventivo');
+        $id_intervento = get('id_intervento');
+        if ($id_preventivo !== null && $id_intervento !== null) {
 
             $dbo->table('in_interventi')->where('id', $id_intervento)->update(['id_preventivo' => null]);
 

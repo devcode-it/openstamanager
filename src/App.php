@@ -150,6 +150,8 @@ class App
             $rootdir = substr((string) $_SERVER['SCRIPT_NAME'], 0, strrpos((string) $_SERVER['SCRIPT_NAME'], '/')).'/';
             if (strrpos($rootdir, '/'.basename((string) $docroot).'/') !== false) {
                 $rootdir = substr($rootdir, 0, strrpos($rootdir, '/'.basename((string) $docroot).'/')).'/'.basename((string) $docroot);
+            } else {
+                $rootdir = '/';
             }
             $rootdir = rtrim($rootdir, '/');
             $rootdir = str_replace('%2F', '/', rawurlencode($rootdir));

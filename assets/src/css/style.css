@@ -4620,3 +4620,11 @@ table.dataTable thead th:nth-child(6) {
     margin-top: 12px;
     color: #6c757d;
 }
+
+.colorpicker{
+    box-sizing: border-box;
+}
+
+.nav-tabs{
+    margin-bottom: 1rem;
+}

@@ -50,7 +50,7 @@ const replace = require('gulp-replace');
 
 // Release
 const md5File = require('md5-file')
-const archiver = require('archiver');
+import { ZipArchive } from 'archiver';
 const shell = require('shelljs');
 const { Readable } = require('stream');
 import * as fs from 'fs';
@@ -131,7 +131,7 @@ const JS = gulp.parallel(function vendorJS() {
         '@fullcalendar/moment/index.global.js',
         '@fullcalendar/core/locales/it.global.js',
         'geocomplete/jquery.geocomplete.js',
-        'inputmask/dist/min/jquery.inputmask.bundle.min.js',
+        'inputmask/dist/jquery.inputmask.min.js',
         'jquery-form/src/jquery.form.js',
         'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
         'numeral/numeral.js',
@@ -528,7 +528,7 @@ export function release(done) {
                 // Impostazione dello zip con il nome che include la versione
                 let zipFileName = `openstamanager-${version}.zip`;
                 let output = fs.createWriteStream(`./${zipFileName}`, { flags: 'w' });
-                let archive = archiver('zip');
+                let archive = new ZipArchive();
 
                 output.on('close', function () {
                     console.log(`ZIP completato: ${zipFileName}`);

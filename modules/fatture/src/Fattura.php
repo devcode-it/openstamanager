@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
+use Modules\DDT\Causale;
+use Modules\DDT\Porto;
+use Modules\DDT\Spedizione;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -212,10 +215,9 @@ class Fattura extends Document
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
-            // Ottimizzazione: esegui una sola query per tutti i valori predefiniti
-            $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'] ?? '';
-            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causale_t` WHERE `predefined` = 1')['id'] ?? '';
-            $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
+            $porto = Porto::where('predefined', 1)->value('id') ?? '';
+            $causalet = Causale::where('predefined', 1)->value('id') ?? '';
+            $spedizione = Spedizione::where('predefined', 1)->value('id') ?? '';
 
             $model->id_porto = $porto;
             $model->id_causale_t = $causalet;

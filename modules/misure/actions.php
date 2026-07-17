@@ -20,13 +20,16 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\UnitaMisura;
+
 switch (filter('op')) {
     case 'update':
         $valore = filter('valore');
 
         if (isset($valore)) {
-            if ($dbo->fetchNum('SELECT * FROM `mg_unita_misura` WHERE `valore`='.prepare($valore).' AND `id`!='.prepare($id_record)) == 0) {
-                $dbo->query('UPDATE `mg_unita_misura` SET `valore`='.prepare($valore).' WHERE `id`='.prepare($id_record));
+            $exists = UnitaMisura::where('valore', $valore)->where('id', '!=', $id_record)->exists();
+            if (!$exists) {
+                UnitaMisura::find($id_record)->update(['valore' => $valore]);
                 flash()->info(tr('Salvataggio completato.'));
             } else {
                 flash()->error(tr("E' già presente una tipologia di _TYPE_ con lo stesso valore.", [
@@ -43,10 +46,10 @@ switch (filter('op')) {
         $valore = filter('valore');
 
         if (isset($valore)) {
-            if ($dbo->fetchNum('SELECT * FROM `mg_unita_misura` WHERE `valore`='.prepare($valore)) == 0) {
-                $dbo->query('INSERT INTO `mg_unita_misura` (`valore`) VALUES ('.prepare($valore).')');
-
-                $id_record = $dbo->lastInsertedID();
+            $exists = UnitaMisura::where('valore', $valore)->exists();
+            if (!$exists) {
+                $unita = UnitaMisura::create(['valore' => $valore]);
+                $id_record = $unita->id;
 
                 if (isAjaxRequest()) {
                     echo json_encode(['id' => $valore, 'text' => $valore]);
@@ -67,15 +70,16 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $righe = $dbo->fetchNum('SELECT `id` FROM `co_righe_documenti` WHERE `um`='.prepare($record['valore']).'
-            UNION SELECT `id` FROM `dt_righe_ddt` WHERE `um`='.prepare($record['valore']).'
-            UNION SELECT `id` FROM `or_righe_ordini` WHERE `um`='.prepare($record['valore']).'
-            UNION SELECT `id` FROM `co_righe_contratti` WHERE `um`='.prepare($record['valore']).'
-            UNION SELECT `id` FROM `mg_articoli` WHERE `um`='.prepare($record['valore']).'
-            UNION SELECT `id` FROM `co_righe_preventivi` WHERE `um`='.prepare($record['valore']));
+        $valore = $record['valore'];
+        $has_righe = Modules\Fatture\Components\Riga::where('um', $valore)->exists() ||
+                     Modules\DDT\Components\Riga::where('um', $valore)->exists() ||
+                     Modules\Ordini\Components\Riga::where('um', $valore)->exists() ||
+                     Modules\Contratti\Components\Riga::where('um', $valore)->exists() ||
+                     Modules\Articoli\Articolo::where('um', $valore)->exists() ||
+                     Modules\Preventivi\Components\Riga::where('um', $valore)->exists();
 
-        if ((!empty($id_record)) && empty($righe)) {
-            $dbo->delete('mg_unita_misura', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_righe) {
+            UnitaMisura::find($id_record)->delete();
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'unità di misura',
             ]));

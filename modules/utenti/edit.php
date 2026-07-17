@@ -36,7 +36,7 @@ if (!$group || !$record) {
 $record = $group->toArray();
 
 // Lettura gruppi
-$gruppi = $dbo->fetchArray('SELECT `id`, `nome` FROM `zz_groups`');
+$gruppi = Models\Group::all(['id', 'nome'])->toArray();
 
 // Lettura utenti
 $utenti = $dbo->fetchArray('
@@ -160,7 +160,7 @@ if (!empty($utenti)) {
                 <a title="'.tr('Aggiorna dati utente').'" class="btn btn-xs btn-warning tip" data-msg=""data-backto="record-edit" data-title="'.tr('Aggiorna dati utente').'" data-href="'.$structure->fileurl('user.php').'?id_module='.$id_module.'&id_record='.$id_record.'&id_utente='.$utente['id'].'" data-card-widget="modal"><i class="fa fa-unlock-alt"></i></a>';
 
         // Disabilitazione token API, se diverso da id_utente #1 (admin)
-        $token = $dbo->fetchOne('SELECT `enabled` FROM `zz_tokens` WHERE `id_utente` = '.prepare($utente['id']).'')['enabled'];
+        $token = database()->table('zz_tokens')->where('id_utente', $utente['id'])->value('enabled');
 
         if ($utente['id'] == '1') {
             echo '
@@ -179,7 +179,7 @@ if (!empty($utenti)) {
                 </a>';
         }
 
-        $token_otp_data = $dbo->fetchOne('SELECT `enabled`, `valido_dal`, `valido_al` FROM `zz_otp_tokens` WHERE `id_utente` = '.prepare($utente['id']));
+        $token_otp_data = database()->table('zz_otp_tokens')->where('id_utente', $utente['id'])->first(['enabled', 'valido_dal', 'valido_al']);
 
         $is_not_active = false;
         if (!empty($token_otp_data['valido_dal']) && !empty($token_otp_data['valido_al'])) {

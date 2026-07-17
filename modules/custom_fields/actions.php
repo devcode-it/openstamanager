@@ -25,7 +25,7 @@ switch (post('op')) {
         $plugin = post('plugin_id') ?: null;
         $module = $plugin ? null : post('module_id');
 
-        $dbo->update('zz_fields', [
+        Models\Field::find($id_record)->update([
             'id_module' => $module,
             'id_plugin' => $plugin,
             'name' => post('name'),
@@ -33,7 +33,7 @@ switch (post('op')) {
             'content' => post('content'),
             'on_add' => post('on_add'),
             'top' => post('top'),
-        ], ['id' => $id_record]);
+        ]);
 
         flash()->info(tr('Salvataggio completato'));
 
@@ -43,22 +43,22 @@ switch (post('op')) {
         $plugin = post('plugin_id_add') ?: null;
         $module = $plugin ? null : post('module_id_add');
 
-        $dbo->insert('zz_fields', [
+        $field = Models\Field::create([
             'id_module' => $module,
             'id_plugin' => $plugin,
             'name' => post('name_add'),
             'content' => post('content_add'),
             'html_name' => secure_random_string(8),
         ]);
-        $id_record = $dbo->lastInsertedID();
+        $id_record = $field->id;
 
         flash()->info(tr('Nuovo campo personalizzato creato'));
 
         break;
 
     case 'delete':
-        $dbo->delete('zz_fields', ['id' => $id_record]);
-        $dbo->delete('zz_field_record', ['id_field' => $id_record]);
+        Models\Field::find($id_record)->delete();
+        Models\FieldRecord::where('id_field', $id_record)->delete();
 
         flash()->info(tr('Campo personalizzato eliminato'));
 

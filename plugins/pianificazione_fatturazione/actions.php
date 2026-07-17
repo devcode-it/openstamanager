@@ -163,6 +163,81 @@ switch ($operazione) {
 
         break;
 
+    case 'delete_pianificazione':
+        $id_rata = post('id');
+        $pianificazione = Pianificazione::find($id_rata);
+
+        // Impedisce l'eliminazione se la rata è già stata fatturata
+        if (!empty($pianificazione) && empty($pianificazione->id_documento)) {
+            // Scollega le righe del contratto associate a questa pianificazione
+            $dbo->query('UPDATE `co_righe_contratti` SET `id_pianificazione`=NULL WHERE `id_pianificazione`='.prepare($id_rata));
+
+            // Eliminazione della riga di pianificazione
+            $dbo->delete('co_fatturazione_contratti', ['id' => $id_rata]);
+
+            flash()->info(tr('Riga di pianificazione eliminata!'));
+        } else {
+            flash()->error(tr('Impossibile eliminare la riga di pianificazione già fatturata!'));
+        }
+
+        break;
+
+    case 'link_fattura':
+        $id_rata = post('rata');
+        $id_fattura = post('id_fattura');
+
+        $pianificazione = Pianificazione::find($id_rata);
+
+        if (empty($pianificazione)) {
+            flash()->error(tr('Riga di pianificazione non trovata!'));
+            break;
+        }
+
+        // Impedisce il collegamento se la rata è già stata fatturata
+        if (!empty($pianificazione->id_documento)) {
+            flash()->error(tr('La riga di pianificazione è già collegata ad una fattura!'));
+            break;
+        }
+
+        $fattura = Fattura::find($id_fattura);
+        $contratto = $pianificazione->contratto;
+
+        // Verifica che la fattura esista, sia di vendita e appartenga alla stessa anagrafica del contratto
+        if (empty($fattura) || $fattura->direzione != 'entrata' || $fattura->id_anagrafica != $contratto->id_anagrafica) {
+            flash()->error(tr('Fattura non valida o non collegata alla stessa anagrafica del contratto!'));
+            break;
+        }
+
+        // Collegamento della fattura esistente alla riga di pianificazione
+        $pianificazione->fattura()->associate($fattura);
+        $pianificazione->save();
+
+        flash()->info(tr('Fattura collegata correttamente alla scadenza!'));
+
+        break;
+
+    case 'unlink_fattura':
+        $id_rata = post('rata');
+
+        $pianificazione = Pianificazione::find($id_rata);
+
+        if (empty($pianificazione)) {
+            flash()->error(tr('Riga di pianificazione non trovata!'));
+            break;
+        }
+
+        // Scollegamento della fattura dalla riga di pianificazione (la fattura non viene eliminata)
+        if (!empty($pianificazione->id_documento)) {
+            $pianificazione->id_documento = 0;
+            $pianificazione->save();
+
+            flash()->info(tr('Fattura scollegata correttamente dalla scadenza!'));
+        } else {
+            flash()->error(tr('Nessuna fattura collegata a questa scadenza!'));
+        }
+
+        break;
+
     case 'add_fattura':
         $id_rata = post('rata');
         $accodare = post('accodare');

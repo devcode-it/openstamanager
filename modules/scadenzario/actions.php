@@ -57,7 +57,8 @@ switch (post('op')) {
         flash()->info(tr('Scadenza inserita!'));
 
         // Restituisce l'ID della scadenza appena creata per le chiamate AJAX
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower((string) $_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        $requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+        if (!empty($requested_with) && strtolower((string) $requested_with) == 'xmlhttprequest') {
             echo json_encode(['id_record' => $id_record]);
         }
         break;

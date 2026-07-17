@@ -101,9 +101,7 @@ switch (filter('op')) {
         if (!empty($id_record)) {
             $descrizione = filter('descrizione');
 
-            $dbo->query('DELETE FROM `co_pagamenti` WHERE `id` IN (SELECT `id_record` FROM `co_pagamenti_lang` WHERE `title` = '.prepare($descrizione).')');
-            $dbo->delete('co_pagamenti_lang', ['title' => $descrizione]);
-            $dbo->delete('co_pagamenti', ['id' => $id_record]);
+            Pagamento::where('id', $id_record)->delete();
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'pagamento',
@@ -115,12 +113,14 @@ switch (filter('op')) {
     case 'delete_rata':
         $id = filter('id');
         if (isset($id)) {
-            $dbo->delete('co_pagamenti', ['id' => $id]);
+            Pagamento::where('id', $id)->delete();
             flash()->info(tr('Elemento eliminato con successo!'));
             if ($id_record == $id) {
-                $res = $dbo->fetchArray('SELECT * FROM `co_pagamenti` WHERE `co_pagamenti`.`id`!='.prepare($id).' AND `co_pagamenti`.`name`='.prepare($record['descrizione']));
-                if (count($res) != 0) {
-                    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]['id']);
+                $res = Pagamento::where('id', '!=', $id)
+                    ->where('name', $record['descrizione'])
+                    ->get();
+                if ($res->isNotEmpty()) {
+                    redirect_url(base_path_osm().'/editor.php?id_module='.$id_module.'&id_record='.$res[0]->id);
                 } else {
                     // $_POST['backto'] = 'record-list';
                     redirect_url(base_path_osm().'/controller.php?id_module='.$id_module);

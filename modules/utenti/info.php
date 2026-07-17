@@ -20,6 +20,7 @@
 
 use Models\Module;
 use Models\Setting;
+use Modules\Anagrafiche\Anagrafica;
 
 include_once __DIR__.'/../../core.php';
 
@@ -36,10 +37,10 @@ $token = auth_osm()->getToken();
 $session_token = auth_osm()->getSessionToken();
 $last_login = auth_osm()->getLastLogin();
 
-$rs = $dbo->fetchArray('SELECT * FROM an_anagrafiche WHERE id = '.prepare($user['id_anagrafica']));
+$rs = Modules\Anagrafiche\Anagrafica::find($user['id_anagrafica']);
 $anagrafica = [];
 if (!empty($rs)) {
-    $anagrafica = $rs[0];
+    $anagrafica = $rs->toArray();
 }
 
 $api = base_url().'/api/?token='.$token;

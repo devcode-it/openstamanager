@@ -35,7 +35,7 @@ $selected = [];
 
 if (is_array($_SESSION['superselect']['interventi'])) {
     foreach ($_SESSION['superselect']['interventi'] as $value) {
-        array_push($selected, '`id` = "'.$value.'"');
+        array_push($selected, '`id` = '.prepare($value));
     }
 }
 

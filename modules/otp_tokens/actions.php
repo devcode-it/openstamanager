@@ -44,7 +44,7 @@ switch (post('op')) {
         }
 
         // Aggiornamento record
-        $dbo->update('zz_otp_tokens', [
+        Models\OtpToken::find($id_record)->update([
             'id_utente' => $id_utente,
             'descrizione' => $descrizione,
             'tipo_accesso' => $tipo_accesso,
@@ -54,7 +54,7 @@ switch (post('op')) {
             'id_record_target' => $id_record_target,
             'permessi' => $permessi,
             'email' => $email,
-        ], ['id' => $id_record]);
+        ]);
 
         flash()->info(tr('Token aggiornato correttamente'));
         break;
@@ -65,13 +65,12 @@ switch (post('op')) {
         $token = secure_random_string(32);
 
         // Inserimento nuovo record
-        $dbo->insert('zz_otp_tokens', [
+        $otp = Models\OtpToken::create([
             'token' => $token,
             'descrizione' => $descrizione,
             'enabled' => 0,
         ]);
-
-        $id_record = $dbo->lastInsertedID();
+        $id_record = $otp->id;
 
         if (isAjaxRequest()) {
             echo json_encode(['id' => $id_record, 'text' => $descrizione]);
@@ -81,28 +80,19 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->delete('zz_otp_tokens', ['id' => $id_record]);
+        Models\OtpToken::find($id_record)->delete();
         flash()->info(tr('Token eliminato!'));
         break;
 
     case 'enable':
-        $dbo->update('zz_otp_tokens', [
-            'enabled' => 1,
-        ], ['id' => $id_record]);
+        Models\OtpToken::find($id_record)->update(['enabled' => 1]);
 
         flash()->info(tr('Token abilitato!'));
         break;
 
     case 'disable':
-        $dbo->update('zz_otp_tokens', [
-            'enabled' => 0,
-        ], ['id' => $id_record]);
+        Models\OtpToken::find($id_record)->update(['enabled' => 0]);
 
         flash()->info(tr('Token disabilitato!'));
-        break;
-
-    case 'delete':
-        $dbo->delete('zz_otp_tokens', ['id' => $id_record]);
-        flash()->info(tr('Token eliminato!'));
         break;
 }

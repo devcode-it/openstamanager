@@ -22,20 +22,16 @@ include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'update':
-        $dbo->update('zz_default_description', [
+        Models\DefaultDescription::find($id_record)->update([
             'name' => filter('name'),
             'descrizione' => filter('descrizione'),
             'note' => filter('note'),
-        ], [
-            'id' => $id_record,
         ]);
 
-        $dbo->delete('zz_default_description_module', [
-            'id_description' => $id_record,
-        ]);
+        Models\DefaultDescriptionModule::where('id_description', $id_record)->delete();
         $id_moduli = (array) post('id_moduli');
         foreach ($id_moduli as $id_modulo) {
-            $dbo->insert('zz_default_description_module', [
+            Models\DefaultDescriptionModule::create([
                 'id_description' => $id_record,
                 'id_module' => $id_modulo,
             ]);
@@ -46,16 +42,16 @@ switch (filter('op')) {
         break;
 
     case 'add':
-        $dbo->insert('zz_default_description', [
+        $description = Models\DefaultDescription::create([
             'name' => filter('name'),
             'descrizione' => filter('descrizione'),
             'note' => filter('note'),
         ]);
 
-        $id_record = $dbo->lastInsertedId();
+        $id_record = $description->id;
         $id_moduli = (array) post('id_moduli');
         foreach ($id_moduli as $id_modulo) {
-            $dbo->insert('zz_default_description_module', [
+            Models\DefaultDescriptionModule::create([
                 'id_description' => $id_record,
                 'id_module' => $id_modulo,
             ]);
@@ -66,9 +62,7 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $dbo->delete('zz_default_description', [
-            'id' => $id_record,
-        ]);
+        Models\DefaultDescription::find($id_record)->delete();
 
         flash()->info(tr('Risposta predefinita eliminata!'));
 

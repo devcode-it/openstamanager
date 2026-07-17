@@ -45,8 +45,7 @@ if (!empty($numero_previsto) && intval(setting('Verifica numero intervento'))) {
 </div>';
 }
 
-$tags = $database->fetchArray('SELECT `id_tag` FROM `in_interventi_tags` WHERE id_intervento = '.prepare($id_record));
-$tags = $tags ? array_column($tags, 'id_tag') : [];
+$tags = $intervento->tags()->pluck('id_tag')->toArray();
 
 echo '
 
@@ -104,7 +103,8 @@ echo '
 
                         <div class="col-md-6">';
 
-$id_preventivo_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
+$promemoria = \Plugins\PianificazioneInterventi\Promemoria::where('id_intervento', $id_record)->first();
+$id_preventivo_riga = $promemoria?->id;
 
 echo '
 
@@ -115,7 +115,8 @@ echo '
 
                         <div class="col-md-6">';
 
-$id_contratto_riga = $dbo->fetchOne('SELECT id FROM co_promemoria WHERE id_intervento='.prepare($id_record))['id'];
+$promemoria = \Plugins\PianificazioneInterventi\Promemoria::where('id_intervento', $id_record)->first();
+$id_contratto_riga = $promemoria?->id;
 
 if (!empty($record['id_ordine'])) {
     echo '
@@ -246,11 +247,11 @@ echo '
 
 // Visualizzo solo se l'anagrafica cliente è un ente pubblico
 if (!empty($record['id_contratto'])) {
-    $contratto = $dbo->fetchOne('SELECT num_item,codice_cig,codice_cup,id_documento_fe FROM co_contratti WHERE id = '.prepare($record['id_contratto']));
-    $record['id_documento_fe'] = $contratto['id_documento_fe'];
-    $record['codice_cup'] = $contratto['codice_cup'];
-    $record['codice_cig'] = $contratto['codice_cig'];
-    $record['num_item'] = $contratto['num_item'];
+    $contratto = Modules\Contratti\Contratto::find($record['id_contratto']);
+    $record['id_documento_fe'] = $contratto['id_documento_fe'] ?? null;
+    $record['codice_cup'] = $contratto['codice_cup'] ?? null;
+    $record['codice_cig'] = $contratto['codice_cig'] ?? null;
+    $record['num_item'] = $contratto['num_item'] ?? null;
 }
 
 ?>
@@ -340,8 +341,11 @@ if (!$block_edit) {
     $preventivi = $dbo->fetchArray($prev_query)[0]['tot'];
 
     // Lettura contratti accettati, in attesa di conferma o in lavorazione
-    $contr_query = 'SELECT COUNT(*) AS tot FROM `co_contratti` WHERE `id_anagrafica`='.prepare($record['id_anagrafica']).' AND `id_stato` IN (SELECT `id` FROM `co_stati_contratti` WHERE `is_fatturabile` = 1) AND `co_contratti`.`id` IN (SELECT `id_contratto` FROM `co_righe_contratti` WHERE `co_righe_contratti`.`id_contratto` = `co_contratti`.`id` AND (`qta` - `qta_evasa`) > 0)';
-    $contratti = $dbo->fetchArray($contr_query)[0]['tot'];
+    $contratti = $dbo->fetchOne('SELECT COUNT(*) AS tot FROM `co_contratti` 
+        INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+        WHERE `co_contratti`.`id_anagrafica`='.prepare($record['id_anagrafica']).' 
+        AND `co_stati_contratti`.`is_fatturabile` = 1 
+        AND `co_contratti`.`id` IN (SELECT DISTINCT `id_contratto` FROM `co_righe_contratti` WHERE (`qta` - `qta_evasa`) > 0)')[0]['tot'];
 
     // Lettura ddt (entrata o uscita)
     $ddt_query = 'SELECT

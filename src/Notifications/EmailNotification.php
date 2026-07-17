@@ -20,6 +20,7 @@
 
 namespace Notifications;
 
+use Models\Upload;
 use Modules\Emails\Account;
 use Modules\Emails\Mail;
 use PHPMailer\PHPMailer\Exception;
@@ -251,7 +252,7 @@ class EmailNotification extends PHPMailer implements NotificationInterface
      */
     public function addUpload($file_id)
     {
-        $attachment = database()->fetchOne('SELECT * FROM zz_files WHERE id = '.prepare($file_id));
+        $attachment = Upload::find($file_id);
 
         try {
             $this->addAttachment(base_dir().'/'.\Uploads::getDirectory($attachment['id_module'], $attachment['id_plugin']).'/'.$attachment['filename'], $attachment['original']);

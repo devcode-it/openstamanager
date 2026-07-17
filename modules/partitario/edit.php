@@ -96,8 +96,7 @@ foreach ($primo_livello as $conto_primo) {
                 <tbody>';
 
     // Livello 2
-    $query2 = 'SELECT * FROM `co_piano_dei_conti2` WHERE id_piano_dei_conti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
-    $secondo_livello = $dbo->fetchArray($query2);
+    $secondo_livello = database()->table('co_piano_dei_conti2')->where('id_piano_dei_conti1', $conto_primo['id'])->orderBy('numero', 'asc')->get()->toArray();
 
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
@@ -487,6 +486,21 @@ echo '
         });
     }
 
+    // I sottoconti dei mastri oltre soglia sono renderizzati come DataTable: le loro
+    // righe non vanno mostrate/nascoste direttamente (ci pensa la DataTable), altrimenti
+    // si rompe l\'impaginazione. Questi helper distinguono i due casi.
+    function sottocontoNonInDatatable() {
+        return $(this).closest(".js-sottoconti-datatable").length === 0;
+    }
+
+    function forEachSottocontiDatatable(callback) {
+        $(".js-sottoconti-datatable").each(function () {
+            if ($.fn.DataTable.isDataTable(this)) {
+                callback($(this).DataTable());
+            }
+        });
+    }
+
     $("#button-search").on("click", function(){
         var text = $("#input-cerca").val();
 
@@ -506,14 +520,18 @@ echo '
                             $(this).find(".search").click();
                         }
                     });
-                    $(".conto3").show();
+                    // Azzera il filtro delle DataTable dei sottoconti
+                    forEachSottocontiDatatable(function (dt) {
+                        dt.search("").draw();
+                    });
+                    $(".conto3").filter(sottocontoNonInDatatable).show();
                     $(".conto1").show();
                     $(".conto2").show();
                     $(".totali").show();
                 } else {
                     $(".conto1").hide();
                     $(".conto2").hide();
-                    $(".conto3").hide();
+                    $(".conto3").filter(sottocontoNonInDatatable).hide();
                     $(".totali").hide();
                     results.conti2.forEach(function(item) {
                         $("#conto2-"+ item).parent().parent().parent().parent().parent().show();
@@ -529,10 +547,19 @@ echo '
                     });
 
                     results.conti3.forEach(function(item) {
-                        $("#conto3-"+ item).show();
+                        var $row = $("#conto3-"+ item);
+                        if ($row.length && sottocontoNonInDatatable.call($row[0])) {
+                            $row.show();
+                        }
                     });
 
-                    
+                    // I mastri oltre soglia filtrano i sottoconti tramite la ricerca
+                    // interna della DataTable (la regola "datatable se oltre soglia"
+                    // resta valida anche con risultati filtrati). I mastri espansi ora
+                    // dalla ricerca si auto-filtrano in fase di init.
+                    forEachSottocontiDatatable(function (dt) {
+                        dt.search(text).draw();
+                    });
                 }
             }
         });

@@ -20,6 +20,9 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\DDT\Porto;
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
+use Modules\Preventivi\Preventivo;
 
 switch (filter('op')) {
     case 'update':
@@ -30,7 +33,7 @@ switch (filter('op')) {
             $porto_new = Porto::where('id', '=', (new Porto())->getByField('title', $descrizione))->where('id', '!=', $id_record)->first();
             if (empty($porto_new)) {
                 if (!empty($predefined)) {
-                    $dbo->query('UPDATE `dt_porto` SET `predefined` = 0');
+                    Porto::where('predefined', 1)->update(['predefined' => 0]);
                 }
                 if (Models\Locale::getDefault()->id == Models\Locale::getPredefined()->id) {
                     $porto->name = $descrizione;
@@ -77,12 +80,12 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_porto`='.prepare($id_record).'
-            UNION SELECT `id` FROM `co_documenti` WHERE `id_porto`='.prepare($id_record).'
-            UNION SELECT `id` FROM `co_preventivi` WHERE `id_porto`='.prepare($id_record));
+        $has_ddt = DDT::where('id_porto', $id_record)->exists();
+        $has_documenti = Fattura::where('id_porto', $id_record)->exists();
+        $has_preventivi = Preventivo::where('id_porto', $id_record)->exists();
 
-        if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->delete('dt_porto', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_ddt && !$has_documenti && !$has_preventivi) {
+            Porto::find($id_record)->delete();
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'porto',

@@ -163,7 +163,7 @@ $dbo = $database = database();
 
 /* INTERNAZIONALIZZAZIONE */
 // Istanziamento del gestore delle traduzioni del progetto
-$lang = !empty($config['lang']) ? $config['lang'] : (isset($_GET['lang']) ? $_GET['lang'] : null);
+$lang = !empty($config['lang']) ? $config['lang'] : get('lang');
 $formatter = !empty($config['formatter']) ? $config['formatter'] : [];
 $translator = trans_osm();
 $translator->addLocalePath(base_dir().'/locale');
@@ -241,11 +241,11 @@ if (!API\Response::isAPIRequest()) {
     if ($continue) {
         // Periodo di visualizzazione dei record
         // Personalizzato
-        if (!empty($_GET['period_start'])) {
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_start'])
-                && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['period_end'])) {
-                $_SESSION['period_start'] = $_GET['period_start'];
-                $_SESSION['period_end'] = $_GET['period_end'];
+        if (!empty(get('period_start'))) {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', get('period_start'))
+                && preg_match('/^\d{4}-\d{2}-\d{2}$/', get('period_end'))) {
+                $_SESSION['period_start'] = get('period_start');
+                $_SESSION['period_end'] = get('period_end');
             }
         }
         // Dal 01-01-yyy al 31-12-yyyy
@@ -310,36 +310,27 @@ if (!API\Response::isAPIRequest()) {
     $get = Filter::getGET();
 }
 
-// Inclusione dei file modutil.php
-// TODO: sostituire * con lista module dir {aggiornamenti,anagrafiche,articoli}
-$files = glob(__DIR__.'/{modules,plugins}/*/modutil.php', GLOB_BRACE);
-$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/modutil.php', GLOB_BRACE);
-foreach ($custom_files as $key => $value) {
-    $index = array_search(str_replace('custom/', '', $value), $files);
-    if ($index !== false) {
-        unset($files[$index]);
+function includeModuleFiles($pattern) {
+    $files = glob(__DIR__.'/'.$pattern, GLOB_BRACE);
+    $custom_files = glob(__DIR__.'/'.str_replace('/*/', '/*/custom/', $pattern), GLOB_BRACE);
+    
+    $files_map = array_flip($files);
+    foreach ($custom_files as $file) {
+        $base_path = str_replace('/custom/', '/', $file);
+        if (isset($files_map[$base_path])) {
+            unset($files_map[$base_path]);
+        }
+    }
+    
+    foreach (array_merge(array_keys($files_map), $custom_files) as $file) {
+        if (is_file($file)) {
+            include_once $file;
+        }
     }
 }
 
-$list = array_merge($files, $custom_files);
-foreach ($list as $file) {
-    include_once $file;
-}
-
-// Inclusione dei file vendor/autoload.php di Composer
-$files = glob(__DIR__.'/{modules,plugins}/*/vendor/autoload.php', GLOB_BRACE);
-$custom_files = glob(__DIR__.'/{modules,plugins}/*/custom/vendor/autoload.php', GLOB_BRACE);
-foreach ($custom_files as $key => $value) {
-    $index = array_search(str_replace('custom/', '', $value), $files);
-    if ($index !== false) {
-        unset($files[$index]);
-    }
-}
-
-$list = array_merge($files, $custom_files);
-foreach ($list as $file) {
-    include_once $file;
-}
+includeModuleFiles('{modules,plugins}/*/modutil.php');
+includeModuleFiles('{modules,plugins}/*/vendor/autoload.php');
 
 // Inizializzazione traduzioni
 if (database()->tableExists('zz_settings') && database()->tableExists('zz_langs')) {

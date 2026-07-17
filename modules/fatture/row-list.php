@@ -19,6 +19,7 @@
  */
 
 use Modules\Interventi\Intervento;
+use Modules\PrimaNota\CoPianoDeiConti3;
 
 include_once __DIR__.'/init.php';
 
@@ -98,7 +99,7 @@ foreach ($righe as $riga) {
             $id_documento_fe = $documento_originale['id_documento_fe'];
         }
 
-        $descrizione_conto = $dbo->fetchOne('SELECT descrizione FROM co_piano_dei_conti3 WHERE id = '.prepare($riga->id_conto))['descrizione'];
+        $descrizione_conto = CoPianoDeiConti3::find($riga->id_conto)?->descrizione;
 
         $extra_riga = replace('_DESCRIZIONE_CONTO__ID_DOCUMENTO__NUMERO_RIGA__CODICE_COMMESSA__CODICE_CIG__CODICE_CUP__RITENUTA_ACCONTO__RITENUTA_CONTRIBUTI__RIVALSA_', [
             '_RIVALSA_' => $riga->rivalsa_inps ? '<br>'.tr('Cassa previdenziale').': '.moneyFormat(abs($riga->rivalsa_inps)) : null,
@@ -528,6 +529,24 @@ if ($totale != $netto_a_pagare) {
         </tr>';
 }
 
+// Margine
+if ($dir == 'entrata'){
+    $margine = $fattura->margine;
+    $margine_class = ($margine <= 0 && $fattura->totale > 0) ? 'danger' : 'success';
+    $margine_icon = ($margine <= 0 && $fattura->totale > 0) ? 'warning' : 'check';
+
+    echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Costi').':
+            </td>
+            <td class="text-right">
+                '.moneyFormat($fattura->spesa).'
+            </td>
+            <td></td>
+        </tr>';
+}
+
 // Provvigione
 if ($fattura->provvigione > 0) {
     echo '
@@ -550,6 +569,29 @@ if ($fattura->provvigione > 0) {
                 '.moneyFormat($fattura->totale_imponibile - $fattura->provvigione).'
             </td>
             <td></td>
+        </tr>';
+}
+
+if ($dir == 'entrata'){
+    echo '
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Margine (_PRC_%)', [
+                    '_PRC_' => numberFormat($fattura->margine_percentuale),
+                ]).':
+            </td>
+            <td class="text-right '.$margine_class.'" rowspan="2" style="vertical-align:middle;">
+                <i class="fa fa-'.$margine_icon.' text-'.$margine_class.'"></i> '.moneyFormat($fattura->margine).'
+            </td>
+            <td rowspan="2"></td>
+        </tr>
+
+        <tr>
+            <td colspan="'.$colspan.'" class="text-right">
+                '.tr('Ricarico (_PRC_)', [
+                    '_PRC_' => ($fattura->ricarico_percentuale != 0 ? numberFormat($fattura->ricarico_percentuale).'%' : 'N.D.'),
+                ]).':
+            </td>
         </tr>';
 }
 

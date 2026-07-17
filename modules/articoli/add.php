@@ -136,7 +136,7 @@ $espandi_dettagli = setting('Espandi automaticamente la sezione "Dettagli aggiun
     </div>
 
 <?php
-$numero_attributi = database()->fetchOne('SELECT COUNT(*) AS count FROM mg_attributi')['count'];
+$numero_attributi = Modules\AttributiCombinazioni\Attributo::count();
 if ($numero_attributi > 0) {
     ?>
 

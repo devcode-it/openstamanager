@@ -18,23 +18,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
+namespace Models;
 
-$operazione = filter('op');
+use Common\SimpleModelTrait;
+use Illuminate\Database\Eloquent\Model;
 
-switch ($operazione) {
-    case 'updatecontratto':
-        if (!empty(post('predefined'))) {
-            $dbo->update('co_contratti', [
-                'predefined' => 0,
-            ], ['id_anagrafica' => $id_parent]);
-        }
+class DefaultDescription extends Model
+{
+    use SimpleModelTrait;
 
-        $dbo->update('co_contratti', [
-            'predefined' => post('predefined'),
-        ], ['id' => $id_record]);
+    protected $table = 'zz_default_description';
 
-        flash()->info(tr('Salvataggio completato!'));
+    public $timestamps = false;
 
-        break;
+    protected $fillable = [
+        'name',
+        'descrizione',
+        'note',
+    ];
 }

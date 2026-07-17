@@ -68,7 +68,7 @@ if (empty($response['authorization_url'])) {
     $redirect = $response['authorization_url'];
 }
 
-if (empty($_GET['error'])) {
+if (empty(get('error'))) {
     if ($response['access_token']) {
         $username = $account->getProvider()->getUser($response['access_token']);
 

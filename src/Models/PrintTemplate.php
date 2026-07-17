@@ -42,6 +42,17 @@ class PrintTemplate extends Model
         'title',
     ];
 
+    public static function build($id_module = null, $name = null, $directory = null)
+    {
+        $model = new static();
+        $model->id_module = $id_module;
+        $model->name = $name;
+        $model->directory = $directory;
+        $model->save();
+
+        return $model;
+    }
+
     /* Relazioni Eloquent */
 
     public function getModuleAttribute()

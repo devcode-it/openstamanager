@@ -140,7 +140,7 @@ class Settings
             $validator = v::boolType();
         }
 
-        if (empty($validator) || $validator->validate($value)) {
+        if (empty($validator) || $validator->isValid($value)) {
             $setting->valore = $value;
             $setting->save();
 

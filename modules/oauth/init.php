@@ -23,7 +23,5 @@ use Models\OAuth2;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `zz_oauth2` WHERE id='.prepare($id_record));
     $oauth2 = OAuth2::find($id_record);
-    $a = 0;
 }

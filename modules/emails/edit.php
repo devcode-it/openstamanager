@@ -19,6 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Models\Module;
+use Modules\Emails\Template;
 
 if (!$record['predefined']) {
     $attr = '';
@@ -44,21 +45,36 @@ if (!$record['predefined']) {
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "value": "$title$", "required": 1, "extra": "<?php echo $attr; ?>" ]}
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {[ "type": "span", "label": "<?php echo tr('Modulo del template'); ?>", "name": "module", "values": "query=SELECT `zz_modules`.`id`, `title` AS descrizione FROM `zz_modules` LEFT JOIN `zz_modules_lang` ON (`zz_modules`.`id` = `zz_modules_lang`.`id_record` AND `zz_modules_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `enabled` = 1", "value": "<?php echo Module::find($record['id_module'])->getTranslation('title'); ?>" ]}
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "$enabled$", "values": "Sì,No" ]}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     {[ "type": "select", "label": "<?php echo tr('Indirizzo email'); ?>", "name": "smtp", "value": "$id_account$", "ajax-source": "smtp" ]}
                 </div>
 
-                <div class="col-md-4">
+                  <?php
+                $template_predefinito = Template::where('predefined', true)
+                    ->where('id_module', $record['id_module'])
+                    ->orderBy('id')
+                    ->first();
+if (!empty($template_predefinito)) {
+    $nome_template_predefinito = $template_predefinito->getTranslation('title');
+} else {
+    $nome_template_predefinito = 'Nessuna';
+}
+?>
+                <div class="col-md-3">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "help" : "<?php echo tr('Attiva per impostare questo template come predefinito. Attualmente il template predefinito per questo modulo è: '.$nome_template_predefinito); ?>", "name": "predefined", "value": "$predefined$" ]}
+                </div>
+
+                <div class="col-md-3">
                     {[ "type": "checkbox", "label": "<?php echo tr('Richiedi notifica di lettura'); ?>", "name": "read_notify", "value": "$read_notify$", "placeholder": "<?php echo tr('Richiedi la notifica di lettura al destinatario.'); ?>" ]}
                 </div>
             </div>
@@ -103,14 +119,11 @@ if (!$record['predefined']) {
 <?php
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($id_record));
-$selected_prints = array_column($selected_prints, 'id_print');
+$selected_prints = database()->table('em_print_template')->where('id_template', $id_record)->pluck('id_print')->toArray();
 
-$selected_mansioni = $dbo->fetchArray('SELECT id_mansione FROM em_mansioni_template WHERE id_template = '.prepare($id_record));
-$selected_mansioni = array_column($selected_mansioni, 'id_mansione');
+$selected_mansioni = database()->table('em_mansioni_template')->where('id_template', $id_record)->pluck('id_mansione')->toArray();
 
-$selected_categories = $dbo->fetchArray('SELECT id_category FROM em_files_categories_template WHERE id_template = '.prepare($id_record));
-$selected_categories = array_column($selected_categories, 'id_category');
+$selected_categories = database()->table('em_files_categories_template')->where('id_template', $id_record)->pluck('id_category')->toArray();
 
 echo '
 

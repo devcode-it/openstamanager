@@ -23,6 +23,7 @@ if (!$is_last_page) {
 }
 
 $imponibile = 0;
+$totale_scontato = 0;
 foreach ($v_totale as $key => $v) {
     $totale_scontato += $v;
 }
@@ -78,7 +79,7 @@ $etichette = [
 echo "
 <table class='table-bordered'>
     <tr>
-        <td colspan='5' class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
+        <td colspan=".($show_sconto ? 5 : 3)." class='cell-padded' style='height:".($record['ritenuta_acconto'] != 0 ? 20 : 30)."mm'>";
 
 // Tabella (scadenze + iva)
 echo "
@@ -98,7 +99,7 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
+        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($rs2[$i]['id_pagamento']))['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>
@@ -314,8 +315,13 @@ if ($has_rivalsa) {
     </td>';
 }
 
-$first_colspan = $show_sconto ? 4 : 3;
-$second_colspan = 1;
+$first_colspan = 3;
+$second_colspan = 2;
+
+if (empty($sconto) || $has_sconto_finale) {
+    --$first_colspan;
+    --$second_colspan;
+}
 
 echo '
 <tr>
@@ -351,8 +357,13 @@ echo '
 if ($has_ritenuta) {
     $rs2 = $dbo->fetchArray('SELECT percentuale FROM co_ritenuta_acconto WHERE id=(SELECT id_ritenuta_acconto FROM co_righe_documenti WHERE id_documento='.prepare($id_record).' AND id_ritenuta_acconto!=0 LIMIT 0,1)');
 
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 3;
+    $second_colspan = 2;
+
+    if (empty($sconto)) {
+        --$first_colspan;
+        --$second_colspan;
+    }
 
     $contributi = tr('_DESCRIZIONE_: _PRC_%', [
         '_DESCRIZIONE_' => $documento->ritenutaContributi->descrizione,
@@ -426,8 +437,8 @@ if ($has_ritenuta) {
  * Totale IVA | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA)
  */
 if ($has_split_payment) {
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
@@ -458,8 +469,8 @@ if ($has_split_payment) {
  * Sconto in | Totale (+ Rivalsa INPS - Ritenuta - Totale IVA [se split payment] - Sconto finale)
  */
 if ($has_sconto_finale) {
-    $first_colspan = $show_sconto ? 4 : 2;
-    $second_colspan = $show_sconto ? 1 : 3;
+    $first_colspan = 2;
+    $second_colspan = 1;
 
     echo '
     <tr>
@@ -479,7 +490,7 @@ if ($has_sconto_finale) {
 
     $totale = $totale - $sconto_finale;
     echo '
- 	 <tr>
+	<tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>

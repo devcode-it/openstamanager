@@ -120,7 +120,7 @@ class Combinazione extends Model
                     ]);
                 }
             }
-            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES ('".$articolo->id."', ".\Models\Locale::getDefault()->id.", '".$nome_articolo."')");
+            $database->query("INSERT INTO `mg_articoli_lang` (`id_record`, `id_lang`, `title`) VALUES (".prepare($articolo->id).", ".\Models\Locale::getDefault()->id.", ".prepare($nome_articolo).")");
             $articolo->codice = $this->codice.' - '.implode('|', $variante);
             $articolo->save();
         }

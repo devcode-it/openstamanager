@@ -356,10 +356,58 @@ switch (filter('op')) {
                 // Aggiornamento seriali dalla riga dell'ordine
                 if ($copia->isArticolo()) {
                     if ($tipo == 'Ddt in uscita' || $tipo == 'Ddt in entrata') {
-                        // TODO: estrarre il listino corrispondente se presente
                         $originale = ArticoloOriginale::find($riga->id_articolo);
 
                         $prezzo = ($tipo == 'Ddt in entrata' ? $originale->prezzo_vendita : $originale->prezzo_acquisto);
+
+                        // Estrazione del prezzo dal listino dell'anagrafica se presente
+                        $id_listino = $ddt->anagrafica->id_listino;
+                        if ($id_listino) {
+                            $prezzi_listino = database()->table('mg_listini_articoli')
+                                ->select(['prezzo_unitario', 'minimo', 'massimo'])
+                                ->join('mg_listini', 'mg_listini_articoli.id_listino', '=', 'mg_listini.id')
+                                ->where('mg_listini_articoli.id_listino', $id_listino)
+                                ->where('mg_listini_articoli.id_articolo', $riga->id_articolo)
+                                ->where('mg_listini_articoli.dir', $dir)
+                                ->where('mg_listini.attivo', 1)
+                                ->where('mg_listini.data_attivazione', '<=', database()->raw('NOW()'))
+                                ->where(function ($query) {
+                                    $query->whereNull('mg_listini_articoli.data_scadenza')
+                                          ->orWhere('mg_listini_articoli.data_scadenza', '>=', database()->raw('NOW()'));
+                                })
+                                ->where(function ($query) {
+                                    $query->whereNull('mg_listini.data_scadenza_predefinita')
+                                          ->orWhere('mg_listini.data_scadenza_predefinita', '>=', database()->raw('NOW()'));
+                                })
+                                ->where(function ($query) use ($qta) {
+                                    $query->whereNull('mg_listini_articoli.minimo')
+                                          ->orWhere('mg_listini_articoli.minimo', '<=', $qta);
+                                })
+                                ->where(function ($query) use ($qta) {
+                                    $query->whereNull('mg_listini_articoli.massimo')
+                                          ->orWhere('mg_listini_articoli.massimo', '>=', $qta);
+                                })
+                                ->get()
+                                ->toArray();
+
+                            $prezzo_listino_selezionato = null;
+                            $prezzo_listino_predefinito = null;
+
+                            foreach ($prezzi_listino as $prezzo_listino) {
+                                if ($prezzo_listino['minimo'] == null && $prezzo_listino['massimo'] == null) {
+                                    $prezzo_listino_predefinito = $prezzo_listino;
+                                } else {
+                                    $prezzo_listino_selezionato = $prezzo_listino;
+                                }
+                            }
+
+                            $prezzo_listino_finale = $prezzo_listino_selezionato ?: $prezzo_listino_predefinito;
+
+                            if ($prezzo_listino_finale) {
+                                $prezzo = $prezzo_listino_finale['prezzo_unitario'];
+                            }
+                        }
+
                         if ($dir == 'entrata') {
                             $id_iva = ($ddt->anagrafica->id_iva_vendite ?: setting('Iva predefinita'));
                         } else {
@@ -550,12 +598,7 @@ switch (filter('op')) {
         $order = explode(',', post('order', true));
 
         foreach ($order as $i => $id_riga) {
-            $query = 'UPDATE `dt_righe_ddt` SET `order` = :order_value WHERE id = :id_riga';
-            $params = [
-                ':order_value' => $i + 1,
-                ':id_riga' => $id_riga,
-            ];
-            $dbo->query($query, $params);
+            database()->table('dt_righe_ddt')->where('id', $id_riga)->update(['order' => $i + 1]);
         }
 
         break;

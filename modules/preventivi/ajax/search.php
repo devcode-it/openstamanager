@@ -39,16 +39,17 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_preventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `id_preventivo`) righe ON `righe`.`id_preventivo`=`co_preventivi`.`id` WHERE id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') ';
+$query .= ' FROM co_preventivi LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_preventivo`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_preventivi GROUP BY `id_preventivo`) righe ON `righe`.`id_preventivo`=`co_preventivi`.`id` WHERE 1=1 AND id_anagrafica IN('.implode(',', array_map(prepare(...), $idanagrafiche)).') AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
 }
 
 // Aggiunta ricerca diretta negli articoli
-$query .= ' OR `co_preventivi`.`id` IN (SELECT DISTINCT `co_righe_preventivi`.`id_preventivo` FROM `co_righe_preventivi` LEFT JOIN `mg_articoli` ON `co_righe_preventivi`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
+$query .= ' OR `co_preventivi`.`id` IN (SELECT DISTINCT `co_righe_preventivi`.`id_preventivo` FROM `co_righe_preventivi` LEFT JOIN `mg_articoli` ON `co_righe_preventivi`.`id_articolo` = `mg_articoli`.`id` LEFT JOIN `mg_articoli_lang` ON (`mg_articoli`.`id` = `mg_articoli_lang`.`id_record` AND `mg_articoli_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').' OR `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')
+)';
 
-$query .= Modules::getAdditionalsQuery(Module::where('name', 'Preventivi')->first()->id);
+$query = Modules::replaceAdditionals(Module::where('name', 'Preventivi')->first()->id, $query);
 
 $rs = $dbo->fetchArray($query);
 

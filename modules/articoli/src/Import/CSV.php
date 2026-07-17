@@ -401,9 +401,9 @@ class CSV extends CSVImporter
             unset($record['immagine']);
 
             if (!empty($record['id_fornitore'])) {
-                $result = $database->fetchOne('SELECT id FROM an_anagrafiche WHERE LOWER(ragione_sociale) = LOWER('.prepare($record['id_fornitore']).')');
+                $result = database()->table('an_anagrafiche')->whereRaw('LOWER(ragione_sociale) = LOWER(?)', [$record['id_fornitore']])->first();
                 if ($result) {
-                    $dettagli['id_fornitore'] = $result['id'];
+                    $dettagli['id_fornitore'] = $result->id;
                     $dettagli['anagrafica_listino'] = $record['id_fornitore'];
                 }
             }
@@ -740,9 +740,9 @@ class CSV extends CSVImporter
 
         try {
             $database = database();
-            $um = $database->fetchOne('SELECT id FROM `mg_unita_misura` WHERE `valore`='.prepare($record['um']));
+            $um = $database->table('mg_unita_misura')->where('valore', $record['um'])->first();
             if (empty($um)) {
-                $result = $database->query('INSERT INTO `mg_unita_misura` (`valore`) VALUES ('.prepare($record['um']).')');
+                $result = $database->table('mg_unita_misura')->insert(['valore' => $record['um']]);
                 if (!$result) {
                     throw new \Exception('Impossibile creare l\'unità di misura');
                 }

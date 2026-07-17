@@ -59,53 +59,27 @@ class Interventi extends AppResource
         $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
         if (auth_osm()->getUser()->is_admin) {
-            $query = 'SELECT in_interventi.id FROM in_interventi WHERE
-            deleted_at IS NOT NULL
-            OR (
-                in_interventi.id NOT IN (
-                    SELECT id_intervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
-                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                )
-                AND in_interventi.id IN (
-                    SELECT id_intervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
-                        AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
-                )
-            )';
-
-            $records = database()->fetchArray($query, [
-                ':period_end' => $end,
-                ':period_start' => $start,
-                ':remove_period_end' => $remove_end,
-                ':remove_period_start' => $remove_start,
-            ]);
+            $records = Intervento::where(function ($q) use ($start, $end, $remove_start, $remove_end) {
+                $q->whereNotNull('deleted_at')
+                    ->orWhereDoesntHave('sessioni', function ($q2) use ($start, $end) {
+                        $q2->whereBetween('orario_fine', [$start, $end]);
+                    })
+                    ->whereHas('sessioni', function ($q3) use ($remove_start, $remove_end) {
+                        $q3->whereBetween('orario_fine', [$remove_start, $remove_end]);
+                    });
+            })->pluck('id')->toArray();
         } else {
-            $query = 'SELECT in_interventi.id FROM in_interventi WHERE
-            deleted_at IS NOT NULL
-            OR (
-                in_interventi.id NOT IN (
-                    SELECT id_intervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
-                        AND in_interventi_tecnici.orario_fine BETWEEN :period_start AND :period_end
-                        AND in_interventi_tecnici.id_tecnico = :id_tecnico_q1
-                )
-                AND in_interventi.id IN (
-                    SELECT id_intervento FROM in_interventi_tecnici
-                    WHERE in_interventi_tecnici.id_intervento = in_interventi.id
-                        AND in_interventi_tecnici.orario_fine BETWEEN :remove_period_start AND :remove_period_end
-                        AND in_interventi_tecnici.id_tecnico = :id_tecnico_q2
-                )
-            )';
-
-            $records = database()->fetchArray($query, [
-                ':period_end' => $end,
-                ':period_start' => $start,
-                ':remove_period_end' => $remove_end,
-                ':remove_period_start' => $remove_start,
-                ':id_tecnico_q1' => $id_tecnico,
-                ':id_tecnico_q2' => $id_tecnico,
-            ]);
+            $records = Intervento::where(function ($q) use ($start, $end, $remove_start, $remove_end, $id_tecnico) {
+                $q->whereNotNull('deleted_at')
+                    ->orWhereDoesntHave('sessioni', function ($q2) use ($start, $end) {
+                        $q2->whereBetween('orario_fine', [$start, $end]);
+                    })
+                    ->whereHas('sessioni', function ($q3) use ($remove_start, $remove_end) {
+                        $q3->whereBetween('orario_fine', [$remove_start, $remove_end]);
+                    });
+            })->whereHas('sessioni', function ($q) use ($id_tecnico) {
+                $q->where('id_anagrafica', $id_tecnico);
+            })->pluck('id')->toArray();
         }
 
         $interventi = array_column($records, 'id');

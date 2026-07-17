@@ -23,7 +23,5 @@ use Modules\Anagrafiche\Provenienza;
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_provenienze` LEFT JOIN `an_provenienze_lang` ON (`an_provenienze`.`id`=`an_provenienze_lang`.`id_record` AND `an_provenienze_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `an_provenienze`.`id`='.prepare($id_record));
-
     $provenienza = Provenienza::find($id_record);
 }

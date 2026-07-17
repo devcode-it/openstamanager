@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\DDT\AspettoBeni;
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
 
 switch (post('op')) {
     case 'update':
@@ -69,10 +71,11 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_aspetto_beni`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `id_aspetto_beni`='.prepare($id_record));
+        $has_ddt = DDT::where('id_aspetto_beni', $id_record)->exists();
+        $has_documenti = Fattura::where('id_aspetto_beni', $id_record)->exists();
 
-        if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->delete('dt_aspetto_beni', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_ddt && !$has_documenti) {
+            AspettoBeni::find($id_record)->delete();
             flash()->info(tr('Aspetto beni eliminato con successo.'));
         } else {
             flash()->error(tr('Sono presenti dei documenti collegati a questo aspetto beni.'));

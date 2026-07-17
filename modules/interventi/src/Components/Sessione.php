@@ -23,6 +23,7 @@ namespace Modules\Interventi\Components;
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Sede;
 use Modules\Interventi\Intervento;
 /*
  * Notazione: i costi sono rivolti all'azienda, i prezzi al cliente.
@@ -74,8 +75,8 @@ class Sessione extends Model
         if ($tipo_sessione->calcola_km) {
             // Sede secondaria
             if (!empty($intervento['id_sede_destinazione'])) {
-                $sede = database()->fetchOne('SELECT km FROM an_sedi WHERE id = '.prepare($intervento['id_sede_destinazione']));
-                $km = $sede['km'];
+                $sede = Sede::find($intervento['id_sede_destinazione']);
+                $km = $sede->km;
             }
 
             // Sede legale dell'anagrafica
@@ -107,7 +108,17 @@ class Sessione extends Model
             $tariffa = $this->getTariffa($id_tipo);
 
             // Azzeramento forzato del diritto di chiamata nel caso la sessione non sia la prima dell'intervento nel giorno di inizio o fine
-            $sessioni = database()->fetchArray('SELECT id FROM in_interventi_tecnici WHERE (DATE(orario_inizio) = DATE('.prepare($this->orario_inizio).') OR DATE(orario_fine) = DATE('.prepare($this->orario_fine).')) AND (prezzo_diritto_chiamata != 0 OR prezzo_diritto_chiamata_tecnico != 0) AND id != '.prepare($this->id).' AND id_intervento = '.prepare($this->intervento->id));
+            $sessioni = static::where('id_intervento', $this->intervento->id)
+                ->where(function ($query) {
+                    $query->whereDate('orario_inizio', date('Y-m-d', strtotime($this->orario_inizio)))
+                        ->orWhereDate('orario_fine', date('Y-m-d', strtotime($this->orario_fine)));
+                })
+                ->where(function ($query) {
+                    $query->where('prezzo_diritto_chiamata', '!=', 0)
+                        ->orWhere('prezzo_diritto_chiamata_tecnico', '!=', 0);
+                })
+                ->where('id', '!=', $this->id)
+                ->get();
             if (!empty($sessioni) && setting('Applica diritto di chiamata una volta al giorno')) {
                 $tariffa['costo_diritto_chiamata_tecnico'] = 0;
                 $tariffa['costo_diritto_chiamata'] = 0;
@@ -464,7 +475,7 @@ class Sessione extends Model
         $database = database();
 
         // Costi unitari dalla tariffa del tecnico
-        $result = $database->fetchOne('SELECT * FROM in_tariffe WHERE id_tecnico='.prepare($this->anagrafica->id).' AND id_tipo_intervento = '.prepare($id_tipo));
+        $result = $database->fetchOne('SELECT costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico FROM in_tariffe WHERE id_tecnico='.prepare($this->anagrafica->id).' AND id_tipo_intervento = '.prepare($id_tipo));
 
         // Costi unitari specifici per la sede
         $id_sede = $this->intervento->id_sede_destinazione;

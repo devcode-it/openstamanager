@@ -52,7 +52,7 @@ if (!empty(filter('id_anagrafica'))) {
 
 // Lettura sedi dell'utente già impostate
 if (!empty($user)) {
-    $sedi = $dbo->fetchOne('SELECT GROUP_CONCAT(id_sede) as sedi FROM zz_user_sedi WHERE id_user='.prepare($id_utente).' GROUP BY id_user')['sedi'];
+    $sedi = database()->table('zz_user_sedi')->where('id_user', $id_utente)->pluck('id_sede');
 }
 
 // Verifica se si sta creando un utente per il gruppo Tecnici

@@ -22,6 +22,8 @@ namespace Modules\Fatture\Gestori;
 
 use Modules\Fatture\Components;
 use Modules\Fatture\Fattura;
+use Modules\Iva\Aliquota;
+use Modules\Rivalse\RivalsaINPS;
 
 /**
  * Classe dedicata alla gestione del Bollo per la Fattura, compreso il calcolo del relativo valore e la generazione dinamica della riga associata.
@@ -75,7 +77,7 @@ class Bollo
 
         $cassa_pred = [];
         if (setting('Cassa previdenziale predefinita')) {
-            $cassa_pred = database()->fetchOne('SELECT percentuale FROM co_rivalse WHERE id='.setting('Cassa previdenziale predefinita'));
+            $cassa_pred = RivalsaINPS::find(setting('Cassa previdenziale predefinita'))?->only(['percentuale']) ?? [];
         }
 
         // Verifico se la fattura ha righe con rivalsa applicata, esclusa la marca da bollo
@@ -101,7 +103,7 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = $righe_bollo->id_iva ?? database()->fetchOne('SELECT `id` FROM `co_iva` WHERE `name` = "Escluso art. 15"')['id'];
+        $riga->id_iva = $righe_bollo->id_iva ?? Aliquota::where('name', 'Escluso art. 15')->value('id');
         $riga->id_conto = setting('Conto predefinito per la marca da bollo');
         $riga->id_documento = $this->fattura->id;
 

@@ -432,15 +432,25 @@ switch (filter('op')) {
             $id_articolo = null;
             foreach ($codici as $codice) {
                 if (!empty($anagrafica) && empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                    $id_articolo = database()->table('mg_fornitore_articolo')
+                        ->where('codice_fornitore', $codice['CodiceValore'])
+                        ->where('id_fornitore', $anagrafica->id)
+                        ->value('id_articolo');
 
                     if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE REPLACE(codice_fornitore, " ", "") = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                        $id_articolo = database()->table('mg_fornitore_articolo')
+                            ->whereRaw('REPLACE(codice_fornitore, " ", "") = ?', [$codice['CodiceValore']])
+                            ->where('id_fornitore', $anagrafica->id)
+                            ->value('id_articolo');
                     }
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`id_articolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['id_articolo'];
+                    $id_articolo = database()->table('mg_articoli_barcode')
+                        ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.id_articolo')
+                        ->whereRaw('REPLACE(mg_articoli_barcode.barcode, " ", "") = ?', [$codice['CodiceValore']])
+                        ->where('mg_articoli.deleted_at', null)
+                        ->value('mg_articoli_barcode.id_articolo');
                 }
 
                 if (!empty($id_articolo)) {

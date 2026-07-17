@@ -107,12 +107,14 @@ switch (post('op')) {
 
         $anagrafica->save();
 
-        $dbo->query('DELETE FROM an_anagrafiche_tipi_intervento WHERE id_anagrafica='.prepare($id_record));
-        foreach ($idtipiintervento as $id_tipo_intervento) {
-            if (!empty($id_tipo_intervento) && $id_tipo_intervento != '-1') {
-                $dbo->query('INSERT INTO an_anagrafiche_tipi_intervento(id_tipo_intervento, id_anagrafica) VALUES('.prepare($id_tipo_intervento).', '.prepare($id_record).')');
-            }
-        }
+        $idtipiintervento = (array) post('idtipiintervento');
+        $idtipiintervento = array_filter($idtipiintervento, fn ($value) => !empty($value) && $value != '-1');
+
+        $dbo->sync('an_anagrafiche_tipi_intervento', [
+            'id_anagrafica' => $id_record,
+        ], [
+            'id_tipo_intervento' => $idtipiintervento,
+        ]);
 
         if (!empty($_FILES) && !empty($_FILES['logo']['name'])) {
             $upload = Uploads::upload($_FILES['logo'], [
@@ -225,14 +227,8 @@ switch (post('op')) {
         // Lettura tipologia dell'utente loggato
         $agente_is_logged = false;
         if (!empty($user['id_anagrafica'])) {
-            $rs = $dbo->fetchArray('SELECT `title` AS descrizione FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `id_anagrafica` = '.prepare($user['id_anagrafica']));
-
-            for ($i = 0; $i < count($rs); ++$i) {
-                if ($rs[$i]['descrizione'] == 'Agente') {
-                    $agente_is_logged = true;
-                    $i = count($rs);
-                }
-            }
+            $anagrafica = Anagrafica::find($user['id_anagrafica']);
+            $agente_is_logged = $anagrafica->tipi()->where('name', 'Agente')->exists();
         }
 
         $id_agente = ($agente_is_logged && in_array($id_cliente, $id_tipo_anagrafica)) ? $user['id_anagrafica'] : 0;
@@ -343,12 +339,12 @@ switch (post('op')) {
         // Se l'anagrafica non è l'azienda principale, la disattivo
         if (!$anagrafica->isAzienda()) {
             // $anagrafica->delete();
-            $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE id = '.prepare($id_record));
+            $anagrafica->update(['deleted_at' => date('Y-m-d H:i:s')]);
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
-            $dbo->query('UPDATE zz_users SET enabled = 0 WHERE id_anagrafica = '.prepare($id_record));
+            Models\User::where('id_anagrafica', $id_record)->update(['enabled' => 0]);
             // Disabilito anche il token
-            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id_utente = '.prepare($id_utente));
+            database()->table('zz_tokens')->where('id_utente', $id_utente)->update(['enabled' => 0]);
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

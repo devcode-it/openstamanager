@@ -477,7 +477,7 @@ class Prints
         $name = $module->replacePlaceholders($id_record, $name);
 
         if (in_array($record['name'], ['Fattura elettronica di acquisto'], true)) {
-            $invoice = database()->fetchOne('SELECT `data`, `numero_esterno` FROM `co_documenti` WHERE `id` = ?', [$id_record]);
+            $invoice = Modules\Fatture\Fattura::find($id_record)?->only(['data', 'numero_esterno']);
 
             if (!empty($invoice)) {
                 $date = !empty($invoice['data']) ? date('Ymd', strtotime($invoice['data'])) : null;

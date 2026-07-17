@@ -41,7 +41,7 @@ if ($dbo->isConnected()) {
 switch ($op) {
     case 'login':
         $username = post('username');
-        $password = $_POST['password'];
+        $password = post('password');
 
         if ($dbo->isConnected() && $dbo->isInstalled() && auth_osm()->attempt($username, $password)) {
             $_SESSION['keep_alive'] = true;

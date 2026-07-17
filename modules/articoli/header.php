@@ -84,7 +84,7 @@ echo '
                     
                     <div class="col-md-12 text-right mt-2">';
 
-$varianti = database()->fetchArray('SELECT `mg_attributi_lang`.`title` AS attributo, `mg_valori_attributi`.`nome` AS valore FROM `mg_articolo_attributo` INNER JOIN `mg_valori_attributi` ON `mg_articolo_attributo`.`id_valore` = `mg_valori_attributi`.`id` INNER JOIN `mg_attributi` ON `mg_valori_attributi`.`id_attributo` = `mg_attributi`.`id` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `mg_articolo_attributo`.`id_articolo` = '.prepare($articolo->id).' ORDER BY `mg_attributi`.`ordine` ASC');
+$varianti = $articolo->varianti(true);
 
 if (count($varianti) > 0) {
     foreach ($varianti as $variante) {
@@ -138,8 +138,14 @@ if ($articolo->servizio) {
                         </tr>
                     </thead>
                     <tbody>';
+    $thresholds = database()->table('mg_scorte_sedi')
+        ->where('id_articolo', $articolo->id)
+        ->get(['id_sede', 'threshold_qta'])
+        ->pluck('threshold_qta', 'id_sede')
+        ->toArray();
+
     foreach ($sedi as $sede) {
-        $threshold_sede = $dbo->fetchOne('SELECT `threshold_qta` FROM `mg_scorte_sedi` WHERE `id_sede` = '.prepare($sede['id']).' AND `id_articolo` = '.prepare($articolo->id))['threshold_qta'];
+        $threshold_sede = $thresholds[$sede['id']] ?? 0;
         $giacenza_value = $giacenze[$sede['id']][0];
         $is_low = $giacenza_value < $threshold_sede;
 

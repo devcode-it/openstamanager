@@ -161,25 +161,25 @@ class SollecitoTask extends Manager
             foreach ($rs as $r) {
                 $da_inviare = false;
                 $destinatario = '';
-                $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_1).' AND id_record='.prepare($r['id']));
+                $has_inviata = Mail::where('sent_at', '!=', null)->where('id_template', $template_1)->where('id_record', $r['id'])->first();
                 $data_sollecito_1 = $has_inviata['sent_at'];
                 $id_template = $template_1;
                 if (!$has_inviata) {
                     $da_inviare = date('Y-m-d', strtotime($r['scadenza'].' + '.$giorni_scadenza.' days')) < date('Y-m-d') ? true : false;
                 } else {
-                    $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_2).' AND id_record='.prepare($r['id']));
+                    $has_inviata = Mail::where('sent_at', '!=', null)->where('id_template', $template_2)->where('id_record', $r['id'])->first();
                     $data_sollecito_2 = $has_inviata['sent_at'];
                     $id_template = $template_2;
                     if (!$has_inviata) {
                         $da_inviare = date('Y-m-d', strtotime($data_sollecito_1.' + '.$giorni_prossimo_sollecito.' days')) < date('Y-m-d') ? true : false;
                     } else {
-                        $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_3).' AND id_record='.prepare($r['id']));
+                        $has_inviata = Mail::where('sent_at', '!=', null)->where('id_template', $template_3)->where('id_record', $r['id'])->first();
                         $data_sollecito_3 = $has_inviata['sent_at'];
                         $id_template = $template_3;
                         if (!$has_inviata) {
                             $da_inviare = date('Y-m-d', strtotime($data_sollecito_2.' + '.$giorni_prossimo_sollecito.' days')) < date('Y-m-d') ? true : false;
                         } else {
-                            $has_inviata = database()->fetchOne('SELECT * FROM em_emails WHERE sent_at IS NOT NULL AND id_template='.prepare($template_notifica).' AND id_record='.prepare($r['id']));
+                            $has_inviata = Mail::where('sent_at', '!=', null)->where('id_template', $template_notifica)->where('id_record', $r['id'])->first();
                             $id_template = $template_notifica;
                             if (!$has_inviata) {
                                 $destinatario = setting('Indirizzo email mancato pagamento dopo i solleciti');

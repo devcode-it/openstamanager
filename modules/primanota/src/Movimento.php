@@ -84,8 +84,8 @@ class Movimento extends Model
     public function save(array $options = [])
     {
         // Aggiornamento automatico di totale_reddito
-        $conto = database()->fetchOne('SELECT * FROM co_piano_dei_conti3 WHERE id = '.prepare($this->id_conto));
-        $percentuale = floatval($conto['percentuale_deducibile']);
+        $conto = CoPianoDeiConti3::find($this->id_conto);
+        $percentuale = floatval($conto?->percentuale_deducibile ?? 0);
         $this->totale_reddito = $this->totale * $percentuale / 100;
 
         return parent::save($options);
@@ -163,22 +163,22 @@ class Movimento extends Model
 
         // Determino dare/avere in base alla direzione
         if ($dir == 'entrata') {
-            // Fattura di vendita: Dare sul conto cliente, Avere sul conto contropartita
-            $movimento_cliente = self::build($mastrino, $id_conto_anagrafica, $documento, $scadenza);
-            $movimento_cliente->totale = $importo;
-            $movimento_cliente->save();
-
+            // Fattura di vendita (incasso): Dare sul conto contropartita (banca/cassa), Avere sul conto cliente
             $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, $scadenza);
-            $movimento_contropartita->totale = -$importo;
+            $movimento_contropartita->totale = $importo;
             $movimento_contropartita->save();
+
+            $movimento_cliente = self::build($mastrino, $id_conto_anagrafica, $documento, $scadenza);
+            $movimento_cliente->totale = -$importo;
+            $movimento_cliente->save();
         } else {
-            // Fattura di acquisto: Avere sul conto fornitore, Dare sul conto contropartita
+            // Fattura di acquisto (pagamento): Dare sul conto fornitore, Avere sul conto contropartita (banca/cassa)
             $movimento_fornitore = self::build($mastrino, $id_conto_anagrafica, $documento, $scadenza);
-            $movimento_fornitore->totale = -$importo;
+            $movimento_fornitore->totale = $importo;
             $movimento_fornitore->save();
 
             $movimento_contropartita = self::build($mastrino, $id_conto_contropartita, $documento, $scadenza);
-            $movimento_contropartita->totale = $importo;
+            $movimento_contropartita->totale = -$importo;
             $movimento_contropartita->save();
         }
         $mastrino->aggiornaScadenzario();

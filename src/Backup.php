@@ -387,8 +387,10 @@ class Backup
             $extraction_dir = is_dir($path) ? $path : Zip::extract($path);
         }
 
-        // TODO: Forzo il log out di tutti gli utenti e ne impedisco il login
-        // fino a ripristino ultimato
+        // Annulla i token di sessione per forzare il logout di tutti gli utenti
+        if ($database->columnExists('zz_users', 'session_token')) {
+            $database->query('UPDATE `zz_users` SET `session_token` = NULL');
+        }
 
         // Rimozione del database
         $tables = include base_dir().'/update/tables.php';

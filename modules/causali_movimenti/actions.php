@@ -76,7 +76,7 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
-            $dbo->delete('mg_causali_movimenti', ['id' => $id_record]);
+            Causale::find($id_record)->delete();
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'movimento predefinito',

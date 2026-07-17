@@ -77,9 +77,7 @@
         "symfony/polyfill-ctype": "^1.8",
         "symfony/translation": "^7.0",
         "symfony/var-dumper": "^7.0",
-        "thenetworg/oauth2-azure": "^2.0",
-        "voku/stringy": "^6.0.0",
-        "willdurand/geocoder": "^5.0"
+        "thenetworg/oauth2-azure": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

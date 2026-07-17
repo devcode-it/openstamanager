@@ -65,7 +65,6 @@
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",
         "archiver": "^8.0.0",
-        "cwd": "^0.10.0",
         "del": "^6.0.0",
         "globby": "^14.0.1",
         "gulp": "^4.0.2",
@@ -84,7 +83,6 @@
         "gulp-uglify": "^3.0.2",
         "hotkeys-js": "^4.0.0",
         "inquirer": "^13.2.0",
-        "main-bower-files": "^2.13.1",
         "md5-file": "^5.0.0",
         "sass": "^1.62.1",
         "shelljs": "^0.10.0"

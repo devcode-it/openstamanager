@@ -66,6 +66,32 @@ switch (post('op')) {
         $print->setTranslation('filename', $filename);
         flash()->info(tr('Aggiunta nuova stampa!'));
 
+        break;
+
+    // Duplica stampa
+    case 'copy':
+        $new = $print->replicate();
+
+        $new->predefined = 0;
+        $new->order = PrintTemplate::where('id_module', $print->id_module)->max('order') + 1 ;
+        $new->name = $print->name . ' (' . tr('copia') . ')';
+        $new->save();
+
+        $newTitle = $print->getTranslation('title') . ' (' . tr('copia') . ')';
+        $new->setTranslation('title', $newTitle);
+        $new->setTranslation('filename', $print->getTranslation('filename'));
+
+        $id_record = $new->id;
+
+        flash()->info(tr('Stampa duplicata correttamente!'));
+
+        break;
+
+    case 'delete':
+        $print = PrintTemplate::find($id_record);
+        $print->delete();
+
+        flash()->info(tr('Stampa eliminata!'));
 
         break;
 }

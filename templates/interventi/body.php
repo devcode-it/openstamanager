@@ -356,18 +356,16 @@ echo '
     <thead>
         <tr>
             <th class="text-center bg-gray" colspan="5">
-                <h4>'.tr('Ore tecnici', [], ['upper' => true]).'</h4>
+                <h4>'.tr('Tecnici', [], ['upper' => true]).'</h4>
             </th>
         </tr>
         <tr>
-            <td class="text-center text-muted" style="width:30%">
+            <td class="text-muted" style="width:30%">
                 '.tr('Tecnico', [], ['upper' => true]).'
             </td>
-
             <td class="text-center text-muted" colspan="3" style="width:35%">
                 '.tr('Orario', [], ['upper' => true]).'
             </td>
-
             <td class="text-center" style="font-size:6pt;width:35%; border-left:1px solid #aaa;">
                 '.tr('I dati del ricevente verrano trattati in base alla normativa europea UE 2016/679 del 27 aprile 2016 (GDPR)').'
             </td>
@@ -385,12 +383,18 @@ if (count($sessioni) > 0) {
 
         // Nome tecnico
         echo '
-            <td class="text-center">
+            <td>
                 '.$sessione->anagrafica->ragione_sociale.'
                 ('.$sessione->tipo->getTranslation('title').')';
         if ($sessione->tipo->note) {
             echo '<br><small class="text-muted">'.$sessione->tipo->note.'</small>';
         }
+        
+        if ($options['note-sessione']) {
+            if ($sessione->note) {
+                echo '<br><small class="text-muted">'.$sessione->note.'</small>';
+            }
+        } 
         echo '
             </td>';
 
@@ -401,12 +405,16 @@ if (count($sessioni) > 0) {
         } else {
             $orario = timestampFormat($inizio).' - '.timestampFormat($fine);
         }
-
-        // Orario
-        echo '
-            <td class="text-center" colspan="3">
-                '.$orario.'
-            </td>';
+        
+        if ($options['nascondi-orario']) {
+            echo '<td class="text-center" colspan="3">-</td>';
+        } else{
+            // Orario
+            echo '
+                <td class="text-center" colspan="3">
+                    '.$orario.'
+                </td>';
+        }
 
         // Testo lavori eseguiti 1/2
         if ($i == 0) {
@@ -446,11 +454,17 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
     $ore_totali = Translator::numberToLocale($documento->ore_totali, $d_totali);
 }
 
-echo '
-    <tr>
-        <td class="text-center">
-            <small class="text-muted">'.tr('Ore lavorate', [], ['upper' => true]).'</small><br/>'.$ore_totali.'
-        </td>';
+if ($options['nascondi-ore-km']) {
+    echo    ' <tr>
+            <td class="text-center">
+                <small class="text-muted">'.tr('Ore lavorate', [], ['upper' => true]).'</small><br/>-
+            </td>';
+} else {
+        echo ' <tr>
+            <td class="text-center">
+                <small class="text-muted">'.tr('Ore lavorate', [], ['upper' => true]).'</small><br/>'.$ore_totali.'
+            </td>';
+}
 
 // Costo totale manodopera
 if ($options['pricing']) {
@@ -489,12 +503,19 @@ if (count($sessioni) == 1) {
 echo '
     </tr>';
 
-// Totale km
-echo '
-    <tr>
-        <td class="text-center">
-            <small class="text-muted">'.tr('Km percorsi', [], ['upper' => true]).'</small><br/>'.Translator::numberToLocale($documento->km_totali, $d_qta).'
-        </td>';
+if ($options['nascondi-ore-km']) {
+    echo    ' <tr>
+            <td class="text-center">
+                <small class="text-muted">'.tr('Km percorsi', [], ['upper' => true]).'</small><br/>-
+            </td>';
+} else {
+        // Totale km
+        echo ' <tr>
+            <td class="text-center">
+                <small class="text-muted">'.tr('Km percorsi', [], ['upper' => true]).'</small><br/>'.Translator::numberToLocale($documento->km_totali, $d_qta).'
+            </td>';
+}
+
 
 // Costo trasferta
 if ($options['pricing']) {

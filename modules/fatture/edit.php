@@ -1027,7 +1027,11 @@ if ($fattura->isFE()) {
                 op: "controlla_totali",
             },
             success: function(data){
-                data = JSON.parse(data);
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    return;
+                }
 
                 const div = $("#controlla_totali");
                 div.removeClass("alert-info");

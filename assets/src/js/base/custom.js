@@ -113,7 +113,8 @@ $(document).ready(function () {
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 $(document).on('select2:open', () => {
-    document.querySelector('.select2-container--open .select2-search__field').focus();
+    const el = document.querySelector('.select2-container--open .select2-search__field');
+    if (el) el.focus();
 });
 
 //Send a WhatsApp message using JavaScript
@@ -135,7 +136,7 @@ function alignMaxHeight(element){
     // Azzera l'altezza fissa
     $(element).css('height', 'auto');
 
-    max_height = 0;
+    let max_height = 0;
     $(element).each( function(){
         if($(this).height() > max_height){
             max_height = $(this).height();

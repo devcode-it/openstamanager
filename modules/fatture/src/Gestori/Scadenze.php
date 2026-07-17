@@ -168,7 +168,7 @@ class Scadenze
 
         $assicurazione_crediti = null;
 
-        if ($assicurazioni_map !== null && !empty($assicurazioni_map) && isset($assicurazioni_map[$id_anagrafica])) {
+        if ($assicurazioni_map !== null && !empty($assicurazioni_map) && isset($assicurazioni_map[$id_anagrafica ?? ''])) {
             // Ottimizzazione: usa la mappa delle assicurazioni già caricata
             foreach ($assicurazioni_map[$id_anagrafica] as $assicurazione) {
                 if ($scadenza->scadenza >= $assicurazione->data_inizio && $scadenza->scadenza <= $assicurazione->data_fine) {

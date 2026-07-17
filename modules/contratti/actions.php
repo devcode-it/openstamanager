@@ -71,9 +71,8 @@ switch (post('op')) {
     case 'update':
         if (post('id_record') !== null) {
             // Se non specifico un budget me lo vado a ricalcolare
-            if ($budget != '') {
-                $budget = post('budget');
-            } else {
+            $budget = post('budget');
+            if ($budget) {
                 $q = "SELECT (SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY id_contratto HAVING id_contratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
                 $rs = $dbo->fetchArray($q);
                 $budget = $rs[0]['budget'];
@@ -516,7 +515,7 @@ switch (post('op')) {
         // Recupera lo stato attuale
         $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipi_intervento` WHERE `id_contratto` = '.prepare($id_record).' AND `id_tipo_intervento` = '.prepare(post('id_tipo_intervento')));
 
-        if ($current) {
+        if (!empty($current)) {
             // Inverti lo stato
             $nuovo_stato = $current['is_abilitato'] == 1 ? 0 : 1;
             $dbo->update('co_contratti_tipi_intervento', [

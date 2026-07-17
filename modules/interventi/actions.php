@@ -108,17 +108,14 @@ switch (post('op')) {
         $tags_presenti = database()->table('in_interventi_tags')->where('id_intervento', $intervento->id)->pluck('id_tag')->toArray();
 
         $tags = post('tags') ?: [];
-        $tags_presenti = [];
 
-        foreach ($tags as $tag) {
-            $tags_presenti[] = $tag;
-        }
+        $tags = array_merge($tags_presenti, $tags);
 
         // Assegnazione dei tecnici all'intervento
         $dbo->sync('in_interventi_tags', [
             'id_intervento' => $id_record,
         ], [
-            'id_tag' => $tags_presenti,
+            'id_tag' => $tags,
         ]);
 
         $tecnici_presenti_array = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $intervento->id)->pluck('id_tecnico')->toArray();

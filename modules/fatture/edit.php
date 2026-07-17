@@ -639,7 +639,7 @@ if ($record['descrizione_tipo'] == 'Fattura accompagnatoria di vendita') {
 
             <div class="row">
                 <div class="col-md-3">
-                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "id_spedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "id_spedizionene$" ]}
+                    {[ "type": "select", "label": "'.tr('Tipo di spedizione').'", "name": "id_spedizione", "values": "query=SELECT `dt_spedizione`.`id`, `dt_spedizione_lang`.`title` as descrizione, `esterno` FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id` = `dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') ORDER BY `title` ASC", "value": "$id_spedizione$" ]}
                 </div>
 
                 <div class="col-md-3">';

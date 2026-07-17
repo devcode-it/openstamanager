@@ -107,7 +107,7 @@ switch (post('op')) {
             $ordine->numero_cliente = post('numero_cliente');
             $ordine->data_cliente = post('data_cliente') ?: null;
 
-            $ordine->id_documento_fe = post('numero_cliente');
+            $ordine->id_documento_fe = post('id_documento_fe');
             $ordine->codice_commessa = post('codice_commessa');
             $ordine->codice_cup = post('codice_cup');
             $ordine->codice_cig = post('codice_cig');

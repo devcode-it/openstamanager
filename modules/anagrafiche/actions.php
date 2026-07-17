@@ -344,7 +344,7 @@ switch (post('op')) {
             // Se l'anagrafica è collegata ad un utente lo disabilito
             Models\User::where('id_anagrafica', $id_record)->update(['enabled' => 0]);
             // Disabilito anche il token
-            database()->table('zz_tokens')->where('id_utente', $id_utente)->update(['enabled' => 0]);
+            database()->table('zz_tokens')->where('id_utente', $id_record)->update(['enabled' => 0]);
 
             flash()->info(tr('Anagrafica eliminata!'));
         }

@@ -71,6 +71,7 @@ switch (post('op')) {
     case 'update':
         $id_promemoria = post('id_contratto_riga');
         $tecnici_assegnati_array = post('tecnici_assegnati') ?: [];
+        $id_contratto = post('id_contratto');
 
         // Rimozione del collegamento al promemoria
         if (!empty($id_promemoria) && $intervento->id_contratto != $id_contratto) {
@@ -405,7 +406,6 @@ switch (post('op')) {
         // Assegnazione dei tecnici all'intervento
         $tecnici_assegnati = post('tecnici_assegnati');
         if (!empty($tecnici_assegnati)) {
-            // Converte in array se necessario e filtra i valori vuoti
             $tecnici_assegnati = is_array($tecnici_assegnati) ? $tecnici_assegnati : [$tecnici_assegnati];
             $tecnici_assegnati = array_filter($tecnici_assegnati, fn ($value) => !empty($value) && is_numeric($value));
             $tecnici_assegnati = array_unique($tecnici_assegnati);
@@ -417,22 +417,21 @@ switch (post('op')) {
                     'id_tecnico' => $tecnici_assegnati,
                 ]);
             }
-        }
 
-        $tecnici_map_add = Anagrafica::whereIn('id', $tecnici_assegnati)->get()->keyBy('id');
-        $template_notifica_intervento_add = Template::where('name', 'Notifica intervento')->first();
+            $tecnici_map_add = Anagrafica::whereIn('id', $tecnici_assegnati)->get()->keyBy('id');
+            $template_notifica_intervento_add = Template::where('name', 'Notifica intervento')->first();
 
-        foreach ($tecnici_assegnati as $tecnico_assegnato) {
-            $tecnico = $tecnici_map_add[$tecnico_assegnato] ?? null;
+            foreach ($tecnici_assegnati as $tecnico_assegnato) {
+                $tecnico = $tecnici_map_add[$tecnico_assegnato] ?? null;
 
-            // Notifica al tecnico
-            if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
-                if (!empty($tecnico->email)) {
-                    if (!empty($template_notifica_intervento_add)) {
-                        $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento_add, $intervento->id);
-                        $mail->addReceiver($tecnico->email);
-                        $mail->save();
-                        flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
+                if (setting('Notifica al tecnico l\'assegnazione all\'attività')) {
+                    if (!empty($tecnico->email)) {
+                        if (!empty($template_notifica_intervento_add)) {
+                            $mail = Mail::build(auth_osm()->getUser(), $template_notifica_intervento_add, $intervento->id);
+                            $mail->addReceiver($tecnico->email);
+                            $mail->save();
+                            flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
+                        }
                     }
                 }
             }
@@ -1213,18 +1212,21 @@ switch (post('op')) {
     case 'delete_sessione':
         $id_sessione = post('id_sessione');
 
+        // Recupera informazioni sul tecnico prima di eliminare la sessione
+        $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.email FROM in_interventi_tecnici LEFT JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare($id_sessione));
+
         $dbo->table('in_interventi_tecnici')
             ->where('id', $id_sessione)
             ->delete();
 
         // Notifica rimozione dell' intervento al tecnico
         if (setting('Notifica al tecnico la rimozione della sessione dall\'attività')) {
-            if (!empty($tecnico['email'])) {
+            if (!empty($sessione['email'])) {
                 $template = Template::where('name', 'Notifica rimozione intervento')->first();
 
                 if (!empty($template)) {
                     $mail = Mail::build(auth_osm()->getUser(), $template, $id_record);
-                    $mail->addReceiver($tecnico['email']);
+                    $mail->addReceiver($sessione['email']);
                     $mail->save();
                     flash()->info(tr('Notifica al tecnico aggiunta correttamente.'));
                 }

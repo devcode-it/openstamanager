@@ -121,20 +121,27 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
     // UPLOAD
     if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
-        $upload = Uploads::upload($_FILES['file'], [
-            'name' => filter('nome_allegato'),
-            'id_category' => filter('id_category') ?: null,
-            'id_module' => $id_module,
-            'id_plugin' => $id_plugin,
-            'id_record' => $id_record,
-            'key' => filter('key') ?: null,
-        ]);
+        $file_extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+        $dangerous_extensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'phar', 'htaccess', 'pl', 'cgi', 'py', 'rb', 'asp', 'aspx', 'exe', 'sh', 'bat'];
 
-        // Creazione file fisico
-        if (!empty($upload)) {
-            flash()->info(tr('File caricato correttamente!'));
+        if (in_array(strtolower($file_extension), $dangerous_extensions)) {
+            flash()->error(tr('Estensione file non consentita per motivi di sicurezza!'));
         } else {
-            flash()->error(tr('Errore durante il caricamento del file!'));
+            $upload = Uploads::upload($_FILES['file'], [
+                'name' => filter('nome_allegato'),
+                'id_category' => filter('id_category') ?: null,
+                'id_module' => $id_module,
+                'id_plugin' => $id_plugin,
+                'id_record' => $id_record,
+                'key' => filter('key') ?: null,
+            ]);
+
+            // Creazione file fisico
+            if (!empty($upload)) {
+                flash()->info(tr('File caricato correttamente!'));
+            } else {
+                flash()->error(tr('Errore durante il caricamento del file!'));
+            }
         }
     }
 

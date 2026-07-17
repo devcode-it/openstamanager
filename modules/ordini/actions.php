@@ -125,7 +125,7 @@ switch (post('op')) {
             $ordini = $dbo->fetchArray($query, $params);
 
             if (!empty($ordini)) {
-                $documento = '';
+                $documenti = '';
                 foreach ($ordini as $rs) {
                     $descrizione = tr('Ordine cliente num. _NUM_ del _DATE_', [
                         '_NUM_' => !empty($rs['numero_esterno']) ? $rs['numero_esterno'] : $rs['numero'],

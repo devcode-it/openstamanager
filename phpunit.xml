@@ -12,6 +12,7 @@
 
         <testsuite name="modules">
             <directory suffix=".php">./modules/*/tests/</directory>
+            <exclude>./modules/fatture/tests/ScadenzeTestHelpers.php</exclude>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -80,7 +80,7 @@ echo '
 				</div>
 
 				<div class="col-md-4">
-					{[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipo", "id": "tipo_add", "values": "list=\"Azienda\": \"'.tr('Azienda').'\", \"Ente pubblico\": \"'.tr('Ente pubblico').'\", \"Privato\": \"'.tr('Privato').'\"", "placeholder":"'.tr('Non specificato').'" ]}
+					{[ "type": "select", "label": "'.tr('Tipologia').'", "name": "tipo", "id": "tipo_add", "values": "list=\"Azienda\": \"'.tr('Azienda').'\", \"Ente pubblico\": \"'.tr('Ente pubblico').'\", \"Privato\": \"'.tr('Privato').'\"", "value": "'.setting('Tipologia anagrafica predefinita').'", "placeholder":"'.tr('Non specificato').'" ]}
 				</div>
 			</div>
 

@@ -102,5 +102,7 @@ $(document).ready(function(){
 </script>';
 }
 
-echo '
+if (!isAjaxRequest()) {
+    echo '
 <script>$(document).ready(init)</script>';
+}

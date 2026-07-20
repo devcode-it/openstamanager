@@ -14,15 +14,6 @@ final class OrderItem
     {
     }
 
-    public static function fromArray(array $input = []): self
-    {
-        $col = isset($input['column']) ? (int) $input['column'] : 0;
-        $name = isset($input['name']) && $input['name'] !== '' ? (string) $input['name'] : null;
-        $dirStr = isset($input['dir']) ? (string) $input['dir'] : SortDirection::ASC->value;
-
-        return new self($col, $name, SortDirection::from($dirStr));
-    }
-
     public function getColumnIndex(): int
     {
         return $this->column;

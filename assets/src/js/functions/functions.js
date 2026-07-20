@@ -69,6 +69,10 @@ function openModal(title, href) {
     </div>\
 </div>';
 
+    const onModalShown = function () {
+        restart_inputs();
+    };
+
     // Lettura contenuto div
     if (href.substr(0, 1) === '#') {
         const data = $(href).html();
@@ -82,6 +86,7 @@ function openModal(title, href) {
         }
         
         $(id).modal('show');
+        onModalShown();
     } else {
         $.get(href, function (data, response) {
             if (response === 'success') {
@@ -94,6 +99,7 @@ function openModal(title, href) {
                 }
                 
                 $(id).modal('show');
+                onModalShown();
             }
         });
     }

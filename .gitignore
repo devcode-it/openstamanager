@@ -110,3 +110,5 @@ codeception.yml
 openapi.json
 assets/api
 openapitools.json
+src/generated
+src/OpenAPI

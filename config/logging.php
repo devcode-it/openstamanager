@@ -68,14 +68,14 @@ return [
          */
         'single' => [
             'driver' => 'single',
-            'path' => rtrim(base_path_osm(), '/').'/logs/app.log',
+            'path' => base_path_osm().'logs/app.log',
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => rtrim(base_path_osm(), '/').'/logs/app.log',
+            'path' => base_path_osm().'logs/app.log',
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 30),
             'replace_placeholders' => true,

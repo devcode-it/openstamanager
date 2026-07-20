@@ -2,6 +2,9 @@
 
 namespace API\Controllers;
 
+use CuyZ\Valinor\Mapper\Configurator\ConvertKeysToSnakeCase;
+use CuyZ\Valinor\Mapper\MappingError;
+use CuyZ\Valinor\MapperBuilder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -11,7 +14,7 @@ use Models\Plugin;
 
 class InvalidInputException extends \Exception
 {
-    public function __construct(\CuyZ\Valinor\Mapper\MappingError $error)
+    public function __construct(MappingError $error)
     {
         $messages = $error->messages();
 
@@ -86,16 +89,19 @@ abstract class BaseController extends Controller
     protected function _cast(Request $request, string $class_reference): mixed
     {
         try {
-            return (new \CuyZ\Valinor\MapperBuilder())
+            return (new MapperBuilder())
                 ->allowUndefinedValues()
                 ->allowSuperfluousKeys()
                 ->allowScalarValueCasting()
+                ->configureWith(
+                    new ConvertKeysToSnakeCase(),
+                )
                 ->mapper()
                 ->map(
                     $class_reference,
                     [...$request->route()->parameters(), ...$request->all()]
                 );
-        } catch (\CuyZ\Valinor\Mapper\MappingError $error) {
+        } catch (MappingError $error) {
             throw new InvalidInputException($error);
         }
     }

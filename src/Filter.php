@@ -148,7 +148,9 @@ class Filter
                 $output[$key] = self::parse($value);
             }
         } elseif (!is_null($input)) {
-            $output = formatter()->parse($input);
+            $formatter_instance = formatter();
+            $output = $formatter_instance->parse($input);
+
         }
 
         return $output;

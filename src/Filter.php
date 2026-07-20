@@ -149,7 +149,7 @@ class Filter
             }
         } elseif (!is_null($input)) {
             $formatter_instance = formatter();
-            $output = $formatter_instance->parse($input);
+            $output = $formatter_instance ? $formatter_instance->parse($input) : $input;
 
         }
 

@@ -37,7 +37,6 @@ $disableCSRF = true; // Protezione contro CSRF
 
 // Impostazioni di debug
 $debug = false;
-$api_development = false; // Se true, disabilita l'autenticazione dell'API
 
 $disable_hooks = false;
 

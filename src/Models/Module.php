@@ -120,15 +120,20 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        if (auth_osm()->getUser()->is_admin) {
+        $user = auth_osm()->getUser();
+        if ($user->is_admin) {
             return 'rw';
         }
 
-        $group = auth_osm()->getUser()->group->id;
+        $pivot = $this->pivot; // Se già disponibile, utilizza
+        if(!$pivot) {
+            $group = $user->group->id;
+            $match = $this->groups->first(fn ($item) => $item->id == $group);
+            $pivot = $match ? $match->pivot : null;
+        }
 
-        $pivot = $this->pivot ?: $this->groups->first(fn ($item) => $item->id == $group)->pivot;
-
-        return $pivot->permessi ?: '-';
+        $default = '-';
+        return $pivot ? ($pivot->permessi ?: $default) : $default;
     }
 
     /**

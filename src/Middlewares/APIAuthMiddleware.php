@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Models\User;
 use Models\UserTokens;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Auth\AuthenticationException;
 
 class APIAuthMiddleware
 {
@@ -37,11 +38,6 @@ class APIAuthMiddleware
             }
         }
 
-        // Disabilita autenticazione su base delle opzioni
-        if (config('osm.api_development', false) && !$request->headers->has('X-API-Key')) {
-            return $next($request);
-        }
-
-        return response()->json(['error' => 'Unauthenticated.'], 401);
+        throw new AuthenticationException();
     }
 }

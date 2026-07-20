@@ -186,10 +186,10 @@ foreach ($righe as $riga) {
         if (strlen((string) $riga->note) > 50) {
             $prima_parte = substr((string) $riga->note, 0, (strpos((string) $riga->note, ' ', 50) < 60) && (!str_starts_with((string) $riga->note, ' ')) ? strpos((string) $riga->note, ' ', 50) : 50);
             $seconda_parte = substr((string) $riga->note, (strpos((string) $riga->note, ' ', 50) < 60) && (!str_starts_with((string) $riga->note, ' ')) ? strpos((string) $riga->note, ' ', 50) : 50);
-            $stringa_modificata = '<span class="text-xs">'.$prima_parte.'</small>
-                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="text-xs">'.$seconda_parte.'</small></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
+            $stringa_modificata = '<span class="text-xs text-primary">'.$prima_parte.'</span>
+                <span id="read-more-target-'.$riga->id.'" class="read-more-target"><span class="text-xs text-primary">'.$seconda_parte.'</span></span><a href="#read-more-target-'.$riga->id.'" class="read-more-trigger">...</a>';
         } else {
-            $stringa_modificata = '<span class="text-xs">'.$riga->note.'</small>';
+            $stringa_modificata = '<span class="text-xs text-primary">'.$riga->note.'</span';
         }
 
         echo '

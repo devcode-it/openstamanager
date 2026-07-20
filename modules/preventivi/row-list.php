@@ -117,7 +117,7 @@ foreach ($righe as $key => $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
+                    <br><span class="text-xs text-primary">'.nl2br((string) $riga->note).'</span>';
     }
 
     if (!empty($riga->data_inizio_competenza) || !empty($riga->data_fine_competenza)) {

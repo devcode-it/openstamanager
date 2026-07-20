@@ -23,4 +23,5 @@ use Modules\Pagamenti\Pagamento;
 
 if (!empty($id_record)) {
     $pagamento = Pagamento::find($id_record);
+    $record = $pagamento;
 }

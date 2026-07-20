@@ -23,4 +23,5 @@ include_once __DIR__.'/../../core.php';
 
 if ($id_record) {
     $tipo = Tipo::find($id_record);
+    $record = $tipo;
 }

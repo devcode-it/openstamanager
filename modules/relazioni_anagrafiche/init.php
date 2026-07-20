@@ -23,4 +23,5 @@ include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $relazione = Relazione::find($id_record);
+    $record = $relazione;
 }

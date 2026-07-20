@@ -23,4 +23,5 @@ use Modules\Anagrafiche\Tipo;
 
 if (!empty($id_record)) {
     $tipo = Tipo::find($id_record);
+    $record = $tipo;
 }

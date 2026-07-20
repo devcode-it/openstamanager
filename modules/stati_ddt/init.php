@@ -23,4 +23,5 @@ use Modules\DDT\Stato;
 
 if (!empty($id_record)) {
     $stato = Stato::find($id_record);
+    $record = $stato;
 }

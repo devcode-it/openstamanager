@@ -169,6 +169,15 @@ trait RecordTrait
         return '';
     }
 
+    public function getTitleAttribute($value)
+    {
+        if (method_exists($this, 'getTranslatedFields') && in_array('title', $this->getTranslatedFields())) {
+            return $this->getTranslation('title');
+        }
+
+        return $value;
+    }
+
     public function getByField($field, $value, $id_lang = null)
     {
         $id_lang ??= Locale::getDefault()->id;

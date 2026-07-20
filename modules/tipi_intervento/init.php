@@ -23,4 +23,5 @@ use Modules\TipiIntervento\Tipo;
 
 if (!empty($id_record)) {
     $tipo = Tipo::find($id_record);
+    $record = $tipo;
 }

@@ -24,4 +24,5 @@ include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
     $provenienza = Provenienza::find($id_record);
+    $record = $provenienza;
 }

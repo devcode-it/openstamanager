@@ -35,6 +35,8 @@ use Util\XML;
  */
 class Scadenze
 {
+    private $database;
+
     public function __construct(private readonly Fattura $fattura, $database = null)
     {
         $this->database = $database ?: database(); // Allow mocking

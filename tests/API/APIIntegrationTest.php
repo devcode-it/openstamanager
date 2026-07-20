@@ -51,13 +51,19 @@ class APIIntegrationTest extends TestCase
 
     public function testImpostazioneResourceUpdated()
     {
-        $resource = new \Modules\Impostazioni\API\ImpostazioneResource();
+        $reflection = new \ReflectionClass(\Modules\Impostazioni\API\ImpostazioneResource::class);
+        $attributes = $reflection->getAttributes(\ApiPlatform\Metadata\ApiResource::class);
         
-        $operations = $resource->getOperations();
+        $this->assertNotEmpty($attributes, 'ImpostazioneResource should have ApiResource attribute');
+        
+        $apiResourceAttribute = $attributes[0]->newInstance();
+        $operationsProperty = new \ReflectionProperty($apiResourceAttribute, 'operations');
+        $operations = $operationsProperty->getValue($apiResourceAttribute);
+        
         $this->assertNotEmpty($operations, 'Resource should have operations');
         
         foreach ($operations as $operation) {
-            $this->assertNotEmpty($operation->getController(), 
+            $this->assertNotNull($operation->getController(), 
                 'Operations should use controller instead of provider/processor');
         }
     }

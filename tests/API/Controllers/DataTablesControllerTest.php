@@ -6,7 +6,7 @@ namespace Tests\API\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 use DTO\DataTablesLoadRequest\DataTablesLoadRequest;
 use DTO\DataTablesLoadRequest\Search;
 use DTO\DataTablesLoadRequest\OrderItem;
@@ -29,7 +29,8 @@ class DataTablesControllerTest extends TestCase
         $this->assertNotEmpty($attributes, 'DataTablesResource should have Post attribute');
         
         $postAttribute = $attributes[0]->newInstance();
-        $this->assertEquals(\API\Controllers\DataTablesController::class, $postAttribute->controller,
+        $controllerProperty = new \ReflectionProperty($postAttribute, 'controller');
+        $this->assertEquals(\API\Controllers\DataTablesController::class, $controllerProperty->getValue($postAttribute),
             'Should use controller instead of processor');
     }
 
@@ -74,7 +75,7 @@ class DataTablesControllerTest extends TestCase
 
     public function testBaseControllerHasAccessMethods()
     {
-        $baseController = $this->getMockForAbstractClass(\API\Controllers\BaseController::class);
+        $baseController = $this->createStub(\API\Controllers\BaseController::class);
         
         $this->assertTrue(method_exists($baseController, 'hasModuleReadAccess'),
             'BaseController should have hasModuleReadAccess method');

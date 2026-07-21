@@ -29,7 +29,7 @@ switch (filter('op')) {
     // iversed: specifica se rimuovere dall'array il valore trovato e applicare quindi una deselezione (valori 0 o 1, default 1)
     case 'session_set_array':
         $array = explode(',', get('session'));
-        $value = "'".get('value')."'";
+        $value = get('value');
         $inversed = get('inversed');
 
         $found = false;

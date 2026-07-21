@@ -91,12 +91,12 @@ switch (filter('op')) {
                     `in_interventi_tecnici`.`orario_fine` <= '.prepare($end).'
                 )
             )
-            AND `id_tecnico` IN('.implode(',', $tecnici).')
-            AND `in_interventi`.`id_stato` IN('.implode(',', $stati).')
-            AND `in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', $tipi).')
+            AND `id_tecnico` IN('.implode(',', array_map('prepare', $tecnici)).')
+            AND `in_interventi`.`id_stato` IN('.implode(',', array_map('prepare', $stati)).')
+            AND `in_interventi_tecnici`.`id_tipo_intervento` IN('.implode(',', array_map('prepare', $tipi)).')
             '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id).'
         HAVING
-            `id_zona` IN ('.implode(',', $zone).')';
+            `id_zona` IN ('.implode(',', array_map('prepare', $zone)).')';
         $sessioni = $dbo->fetchArray($query);
 
         $results = [];

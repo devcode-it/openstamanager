@@ -607,9 +607,11 @@ $(document).ready(function() {
 
     // Pre-popola le varianti esistenti
     <?php
-    $varianti = Modules\Articoli\Articolo::find($id_record)->varianti();
-foreach ($varianti as $v) {
-    echo 'addVariante('.json_encode($v['id_attributo']).', '.json_encode($v['nome_attributo']).', '.json_encode($v['id_valore']).', '.json_encode($v['nome_valore']).");\n";
+if (!empty($articolo)) {
+    $varianti = $articolo->varianti();
+    foreach ($varianti as $v) {
+        echo 'addVariante('.json_encode($v['id_attributo']).', '.json_encode($v['nome_attributo']).', '.json_encode($v['id_valore']).', '.json_encode($v['nome_valore']).");\n";
+    }
 }
 ?>
 

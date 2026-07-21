@@ -1101,6 +1101,7 @@ switch ($op) {
             $iva_indetraibile = Aliquota::find($iva_indetraibile_id);
         }
 
+        $totale_imponibile = 0.00;
         if ($imponibile) {
             $totale_imponibile = setting('Utilizza prezzi di vendita comprensivi di IVA') ? ($imponibile - $sconto) + (($imponibile - $sconto) * $iva->percentuale / 100) : ($imponibile - $sconto);
             $totale_imponibile = $fattura->tipo->reversed == 1 ? -$totale_imponibile : $totale_imponibile;

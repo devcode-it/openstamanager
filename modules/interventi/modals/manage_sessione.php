@@ -22,12 +22,14 @@ include_once __DIR__.'/../../../core.php';
 include_once __DIR__.'/../../../../core.php';
 
 use Models\Module;
+use Modules\Interventi\Intervento;
 
 $show_prezzi = true;
 // Limitazione delle azioni dei tecnici
 if ($user['gruppo'] == 'Tecnici') {
     $show_prezzi = !empty($user['id_anagrafica']) && setting('Mostra i prezzi al tecnico');
 }
+$intervento = Intervento::find($id_record);
 
 $sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_sconto_km AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_diritto_chiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
@@ -47,7 +49,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['id_tecnico' => $sessione['id_tecnico'], 'id_intervento' => $id_record]).' ]}
+            {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['id_tecnico' => $sessione['id_tecnico'], 'id_intervento' => $id_record, 'id_anagrafica' => $intervento['id_anagrafica'], 'id_contratto' => $intervento['id_contratto']]).' ]}
         </div>
     </div>';
 

@@ -215,7 +215,7 @@ switch ($resource) {
             $where[] = '`co_righe_contratti`.`id_contratto` = '.prepare($intervento->id_contratto);
         } else {
             // Altrimenti usa solo tariffe tecnico
-            $query = 'SELECT `in_tipi_intervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
+            $query = 'SELECT DISTINCT `in_tipi_intervento`.`id`, CASE WHEN ISNULL(`tempo_standard`) OR `tempo_standard` <= 0 THEN CONCAT(`codice`, \' - \', `title`) WHEN `tempo_standard` > 0 THEN CONCAT(`codice`, \' - \', `title`, \' (\', REPLACE(FORMAT(`tempo_standard`, 2), \'.\', \',\'), \' ore)\') END AS descrizione, `tempo_standard`,
                 `in_tariffe`.`costo_ore` AS prezzo_ore_unitario,
                 `in_tariffe`.`costo_km` AS prezzo_km_unitario,
                 `in_tariffe`.`costo_diritto_chiamata` AS prezzo_diritto_chiamata

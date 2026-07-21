@@ -229,9 +229,9 @@ class Scadenze
         return AssicurazioneCrediti::where('id_anagrafica', $id_anagrafica)->where('data_inizio', '<=', $data_scadenza)->where('data_fine', '>=', $data_scadenza)->first();
     }
 
-    protected function generaScadenza($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato): Scadenza
+    protected function generaScadenza($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato, $id_documento = null): Scadenza
     {
-        return Scadenza::build($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato);
+        return Scadenza::build($id_anagrafica, $descrizione, $importo, $data_scadenza, $id_pagamento, $id_banca_azienda, $id_banca_controparte, $type, $is_pagato, $id_documento);
     }
 
     /**

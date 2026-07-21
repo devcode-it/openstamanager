@@ -29,6 +29,12 @@ class Documento extends Model
 
     protected $table = 'do_documenti';
 
+    protected $fillable = [
+        'id_categoria',
+        'nome',
+        'data',
+    ];
+
     protected $dates = [
         'created_at',
         'updated_at',

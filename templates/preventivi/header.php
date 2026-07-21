@@ -102,6 +102,22 @@ echo '
                 </td>
             </tr>';
 
+$nome_referente = '';
+if ($documento->id_referente) {
+    $nome_referente = database()->table('an_referenti')
+        ->where('id', $documento->id_referente)
+        ->value('nome');
+}
+echo '        
+        <tr>
+            <td class="border-bottom">
+                <p class="small-bold text-muted">'.tr('Referente', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-bottom text-right">
+                <small>'. $nome_referente .' </small>
+            </td>
+        </tr>';
+
 if (!empty($destinazione)) {
     echo '
             <tr>

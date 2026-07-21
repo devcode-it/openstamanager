@@ -101,19 +101,7 @@ echo '
                     <p class="small-bold text-muted">'.tr('Spett.le', [], ['upper' => true]).'</p>
                     <p>$c_ragionesociale$</p>
 					<p>$c_indirizzo$<br> $c_citta_full$</p>
-					<p>$c_telefono$ $c_cellulare$</p>';
-if (empty($destinazione)) {
-    echo '                
-            <tr>
-                <td>
-                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
-                </td>
-                <td class="text-right">
-                    <small>'.$c_codice_destinatario.'</small>
-                </td>
-            </tr>';
-}
-echo '
+					<p>$c_telefono$ $c_cellulare$</p>
                 </td>
             </tr>
 
@@ -133,6 +121,15 @@ echo '
                 <td class="text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
+            </tr>        
+
+            <tr>
+                <td class="border-bottom">
+                    <p class="small-bold text-muted">'.tr('Referente', [], ['upper' => true]).'</p>
+                </td>
+                <td class="border-bottom text-right">
+                    <small>'. $nome_referente .' </small>
+                </td>
             </tr>';
 
 if (!empty($destinazione)) {
@@ -145,17 +142,6 @@ if (!empty($destinazione)) {
                     <p><small>'.$destinazione.'</small></p>
                 </td>
             </tr>';
-    if ($codice_destinatario) {
-        echo '        
-            <tr>
-                <td>
-                    <p class="small-bold text-muted">'.tr('Codice destinatario', [], ['upper' => true]).'</p>
-                </td>
-                <td class="text-right">
-                    <small>'.$codice_destinatario.'</small>
-                </td>
-            </tr>';
-    }
 }
 
 echo '

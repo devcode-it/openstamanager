@@ -209,9 +209,9 @@ foreach ($scadenze as $i => $scadenza) {
     $scadenza = (array) $scadenza;
     if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
         $class = 'success';
-    } elseif (abs($scadenza['pagato']) === 0.000000) {
+    } elseif (abs($scadenza['pagato'] ?? 0) === 0.000000) {
         $class = 'danger';
-    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
+    } elseif (abs($scadenza['pagato'] ?? 0) <= abs($scadenza['da_pagare'] ?? 0)) {
         $class = 'warning';
     } else {
         $class = 'danger';

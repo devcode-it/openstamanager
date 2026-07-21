@@ -87,8 +87,8 @@ function buildAliquotaArray($riga)
 }
 
 // Recupero le righe selezionate
-$riga_id = get('riga_id');
-$righe_ids = sanitizeRighe(get('righe') ?? '');
+$riga_id = get('riga_id', true);
+$righe_ids = sanitizeRighe(get('righe', true) ?? '');
 
 // Array per memorizzare le aliquote IVA distinte
 $aliquote_iva = [];
@@ -185,7 +185,7 @@ $multiple_aliquote = count($aliquote_iva) > 1;
                 </div>
                 <div class="panel-body">
                     {[ "type": "select", "label": "", "name": "iva_id", "required": 1, "ajax-source": "iva" ]}
-                    <input type="hidden" name="riga_id" value="<?php echo get('riga_id'); ?>">
+                    <input type="hidden" name="riga_id" value="<?php echo get('riga_id', true); ?>">
                     <input type="hidden" name="righe" value="<?php echo htmlspecialchars($righe_ids, ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
             </div>

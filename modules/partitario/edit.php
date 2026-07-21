@@ -101,10 +101,11 @@ foreach ($primo_livello as $conto_primo) {
     foreach ($secondo_livello as $conto_secondo) {
         // Livello 2
         if ($conto_primo['descrizione'] == 'Economico') {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $result = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo->id).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']));
+            $totale_conto2 = $result ? $result->totale : 0;
 
             // Calcolo del totale_reddito con gestione dei risconti
-            $totale_reddito2 = $dbo->fetchOne('
+            $result_reddito = $dbo->fetchOne('
                             SELECT SUM(
                                 CASE
                                     WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
@@ -124,7 +125,7 @@ foreach ($primo_livello as $conto_primo) {
                             INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id 
                             WHERE id_conto IN(
                                 SELECT id FROM co_piano_dei_conti3 
-                                WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).'
+                                WHERE id_piano_dei_conti2='.prepare($conto_secondo->id).'
                             ) 
                             AND (
                                 (co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).') 
@@ -145,21 +146,23 @@ foreach ($primo_livello as $conto_primo) {
                                  data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
                                  data_fine_competenza <= '.prepare($_SESSION['period_end']).')
                             )
-                        ')['totale_reddito'];
+                        ');
+            $totale_reddito2 = $result_reddito ? $result_reddito->totale_reddito : 0;
         } else {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $result = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo->id).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']));
+            $totale_conto2 = $result ? $result->totale : 0;
             $totale_reddito2 = 0;
         }
 
         echo '
-                    <tr class="conto2" id="conto2-'.$conto_secondo['id'].'">
+                    <tr class="conto2" id="conto2-'.$conto_secondo->id.'">
                         <td>
                             <h5>
-                                <button type="button" id="conto2-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
-                                <span class="clickable" id="conto2-'.$conto_secondo['id'].'">
-                                    <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+                                <button type="button" id="conto2-'.$conto_secondo->id.'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
+                                <span class="clickable" id="conto2-'.$conto_secondo->id.'">
+                                    <b>'.$conto_secondo->numero.' '.$conto_secondo->descrizione.'</b>
                                 </span>
-                                <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
+                                <div id="conto2_'.$conto_secondo->id.'" style="display:none;"></div>
                             </h5>
                         </td>
 
@@ -179,17 +182,17 @@ foreach ($primo_livello as $conto_primo) {
 
         echo '
                         <td class="text-right">
-                            '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
+                            '.Prints::getLink('Mastrino', $conto_secondo->id, 'btn-info btn-xs', '', null, 'lev=2').'
 
-                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
+                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo->id.', 2)">
                                 <i class="fa fa-edit"></i>
                             </button>
 
-                            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+                            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo->id.')">
                                 <i class="fa fa-plus-circle"></i>
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-xs" onclick="eliminaConto('.$conto_secondo['id'].', 2)">
+                            <button type="button" class="btn btn-danger btn-xs" onclick="eliminaConto('.$conto_secondo->id.', 2)">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>

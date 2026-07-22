@@ -184,8 +184,9 @@ if ($fattura !== null) {
     </div>';
 
         // Lettura della ricevuta
-        if (!empty($ricevuta_principale) && !empty($ricevuta_principale->filename) && file_exists($ricevuta_principale->filename)) {
-            $contenuto_ricevuta = XML::readFile($ricevuta_principale->filename);
+        $ricevuta_path = base_dir().'/files/fatture/vendite/'.$ricevuta_principale->filename;
+        if (!empty($ricevuta_principale) && !empty($ricevuta_principale->filename) && file_exists($ricevuta_path)) {
+            $contenuto_ricevuta = XML::readFile($ricevuta_path);
             $lista_errori = $contenuto_ricevuta['ListaErrori'];
 
             if (!empty($lista_errori)) {

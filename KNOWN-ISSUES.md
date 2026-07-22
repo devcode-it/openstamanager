@@ -139,6 +139,14 @@ https://github.com/devcode-it/openstamanager/commit/feb0f8766
 - Corretto estrazione stampe in invio mail
 https://github.com/devcode-it/openstamanager/commit/9435fc060
 
+- La funzione di rinnovo contratti non calcola correttamente la data di conclusione. Risolto nella 2.11. La riga da modificare è la seguente: https://github.com/devcode-it/openstamanager/blob/v2.10.4/modules/contratti/actions.php#L516
+
+  Da sostituire con:
+```php
+  $diff = $contratto->data_accettazione->diffAsCarbonInterval($contratto->data_conclusione);
+```
+  
+
 ---
 
 #### 2.10.3 - 07/04/2026

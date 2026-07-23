@@ -59,5 +59,5 @@ if (!empty($id_record)) {
     }
 
     $is_anagrafica_deleted = $anagrafica->deleted_at;
-    $is_relazione_bloccata = $anagrafica->idrelazione ? Relazione::find($anagrafica->idrelazione)->is_bloccata : false;
+    $is_relazione_bloccata = $anagrafica->id_relazione ? Relazione::find($anagrafica->id_relazione)->is_bloccata : false;
 }

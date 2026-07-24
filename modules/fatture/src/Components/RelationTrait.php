@@ -203,6 +203,9 @@ trait RelationTrait
 
                 $target->qta_evasa -= $diff;
                 $target->save();
+
+                // Trigger per aggiornare lo stato del documento di origine (DDT)
+                $target->getDocument()->triggerEvasione($target);
             }
         }
 

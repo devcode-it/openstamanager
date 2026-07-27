@@ -150,7 +150,7 @@ class Ordine extends Document
             return;
         }
 
-        $righe = $this->getRighe();
+        $righe = $this->getRighe()->where('is_descrizione',0);
         $qta_evasa = $righe->sum('qta_evasa');
         $qta = $righe->sum('qta');
         $parziale = $qta != $qta_evasa;

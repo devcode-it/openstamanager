@@ -39,7 +39,7 @@ class DateHandler implements HandlerInterface
         ];
         foreach ($detect as $attr) {
             if (isset($values[$attr]) && $values[$attr] == '-now-') {
-                $values[$attr] = date(\Intl\Formatter::getStandardFormats()['timestamp']);
+                $values[$attr] = date(\Intl\Formatter::getStandardFormats()[$values['type']]);
             }
         }
 

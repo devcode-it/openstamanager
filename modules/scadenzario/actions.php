@@ -211,6 +211,7 @@ switch (post('op')) {
             $scadenza->id_banca_controparte = post('id_banca_controparte') ?: null;
             $scadenza->id_pagamento = post('id_pagamento') ?: null;
             $scadenza->data_concordata = post('data_concordata') ?: null;
+            $scadenza->scadenza = post('scadenza') ?: null;
             $scadenza->da_pagare = post('da_pagare') ?: 0;
             $scadenza->pagato = post('pagato') ?: 0;
 

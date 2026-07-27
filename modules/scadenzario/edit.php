@@ -206,7 +206,9 @@ echo '
                         <tbody id="scadenze">';
 
 foreach ($scadenze as $i => $scadenza) {
-    $scadenza = (array) $scadenza;
+    $scadenza = $scadenza->toArray();
+    $scadenza['scadenza'] = $scadenza['scadenza'] ? date('Y-m-d', strtotime($scadenza['scadenza'])) : null;
+    $scadenza['data_concordata'] = $scadenza['data_concordata'] ? date('Y-m-d', strtotime($scadenza['data_concordata'])) : null;
     if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
         $class = 'success';
     } elseif (abs($scadenza['pagato'] ?? 0) === 0.000000) {
@@ -531,6 +533,7 @@ if (!empty($documento)) {
         var id_banca_azienda = input("id_banca_azienda[" + index + "]").get();
         var id_banca_controparte = input("id_banca_controparte[" + index + "]").get();
         var id_pagamento = input("id_pagamento[" + index + "]").get();
+        var scadenza = input("scadenza[" + index + "]").get();
         var data_concordata = input("data_concordata[" + index + "]").get();
         var da_pagare = input("da_pagare[" + index + "]").get();
         var pagato = input("pagato[" + index + "]").get();
@@ -546,6 +549,7 @@ if (!empty($documento)) {
                 id_banca_azienda: id_banca_azienda,
                 id_banca_controparte: id_banca_controparte,
                 id_pagamento: id_pagamento,
+                scadenza: scadenza,
                 data_concordata: data_concordata,
                 da_pagare: da_pagare,
                 pagato: pagato

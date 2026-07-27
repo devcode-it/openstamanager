@@ -31,7 +31,7 @@ if (!empty($id_record)) {
         FROM 
             `in_tipi_intervento` 
             LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id` = `in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') 
-            LEFT JOIN `in_tariffe` ON `in_tipi_intervento`.`id` = `in_tariffe`.`id_tipo_intervento` AND `in_tariffe`.`id_tecnico` = '.prepare($id_record).' 
+            LEFT JOIN (SELECT t.* FROM `in_tariffe` t WHERE t.`id_tecnico` = '.prepare($id_record).' AND t.`id` = (SELECT MIN(t2.`id`) FROM `in_tariffe` t2 WHERE t2.`id_tipo_intervento` = t.`id_tipo_intervento` AND t2.`id_tecnico` = t.`id_tecnico`)) AS `in_tariffe` ON `in_tipi_intervento`.`id` = `in_tariffe`.`id_tipo_intervento`
         WHERE 
             `in_tipi_intervento`.`deleted_at` IS NULL 
         ORDER BY 

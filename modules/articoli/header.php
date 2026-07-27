@@ -88,7 +88,7 @@ $varianti = $articolo->varianti(true);
 
 if (count($varianti) > 0) {
     foreach ($varianti as $variante) {
-        echo '<span class="badge badge-info ml-1 p-2"><i class="fa fa-tag"></i> '.$variante['attributo'].': '.$variante['valore'].'</span>';
+        echo '<span class="badge badge-info ml-1 p-2"><i class="fa fa-tag"></i> '.$variante->attributo.': '.$variante->valore.'</span>';
     }
 }
 echo '

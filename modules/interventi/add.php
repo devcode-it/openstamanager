@@ -572,7 +572,7 @@ echo '
         let selected = !$(this).val();
         let placeholder = selected ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
-        let selected_sede = !$(this).val() || $(this).prop("disabled") ? 1 : 0;
+        let selected_sede = !$(this).val() || ($(this).prop("disabled") && sede.get()) ? 1 : 0;
         sede.setDisabled(selected_sede)
             .getElement().selectReset(placeholder);
 

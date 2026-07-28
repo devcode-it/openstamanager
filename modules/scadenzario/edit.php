@@ -32,7 +32,8 @@ $scadenza_in_chiusura = 0;
 foreach ($scadenze as $scadenza) {
     $scadenza = (array) $scadenza;
     foreach ($mesi_chiusura as $mese) {
-        if (date('m', strtotime(($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'])) == str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT)) {
+        $data_check = ($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'];
+        if (date('m', strtotime($data_check ?: '')) == str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT)) {
             $scadenza_in_chiusura = 1;
         }
     }
@@ -206,7 +207,7 @@ echo '
                         <tbody id="scadenze">';
 
 foreach ($scadenze as $i => $scadenza) {
-    $scadenza = $scadenza->toArray();
+    $scadenza = (is_object($scadenza) && method_exists($scadenza, 'toArray')) ? $scadenza->toArray() : (array) $scadenza;
     $scadenza['scadenza'] = $scadenza['scadenza'] ? date('Y-m-d', strtotime($scadenza['scadenza'])) : null;
     $scadenza['data_concordata'] = $scadenza['data_concordata'] ? date('Y-m-d', strtotime($scadenza['data_concordata'])) : null;
     if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {

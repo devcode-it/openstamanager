@@ -30,11 +30,17 @@ $mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHE
 $scadenza_in_chiusura = 0;
 
 foreach ($scadenze as $scadenza) {
-    $scadenza = (array) $scadenza;
+    $scadenza = $scadenza->toArray();
     foreach ($mesi_chiusura as $mese) {
-        $data_check = ($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'];
-        if (date('m', strtotime($data_check ?: '')) == str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT)) {
-            $scadenza_in_chiusura = 1;
+        $data_check = !empty($scadenza['data_concordata']) && (string)$scadenza['data_concordata'] != '0000-00-00' ? $scadenza['data_concordata'] : $scadenza['scadenza'];
+        $data_check_str = is_object($data_check) ? $data_check->format('Y-m-d') : (string)$data_check;
+        if (!empty($data_check_str)) {
+            $mese_check = date('m', strtotime($data_check_str));
+            $mese_chiusura = str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT);
+
+            if ($mese_check == $mese_chiusura) {
+                $scadenza_in_chiusura = 1;
+            }
         }
     }
 }
@@ -505,8 +511,8 @@ if (!empty($documento)) {
             $("#totale").removeClass("hide");
         }
 
-        $("#diff").html(diff.toLocale());
-        $("#totale_utente").html(totale_utente.toLocale());
+        $("#diff").html(diff.toLocaleString());
+        $("#totale_utente").html(totale_utente.toLocaleString());
     }
 
     function aggiornaScadenzaInline(id_scadenza) {

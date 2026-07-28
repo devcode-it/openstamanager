@@ -30,9 +30,8 @@ $mesi_chiusura = $dbo->fetchArray('SELECT mese FROM an_pagamenti_anagrafiche WHE
 $scadenza_in_chiusura = 0;
 
 foreach ($scadenze as $scadenza) {
-    $scadenza = $scadenza->toArray();
     foreach ($mesi_chiusura as $mese) {
-        $data_check = !empty($scadenza['data_concordata']) && (string)$scadenza['data_concordata'] != '0000-00-00' ? $scadenza['data_concordata'] : $scadenza['scadenza'];
+        $data_check = !empty($scadenza['data_concordata']) ? $scadenza['data_concordata'] : $scadenza['scadenza'];
         $data_check_str = is_object($data_check) ? $data_check->format('Y-m-d') : (string)$data_check;
         if (!empty($data_check_str)) {
             $mese_check = date('m', strtotime($data_check_str));

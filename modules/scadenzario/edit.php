@@ -512,8 +512,8 @@ if (!empty($documento)) {
             $("#totale").removeClass("hide");
         }
 
-        $("#diff").html(diff.toLocaleString());
-        $("#totale_utente").html(totale_utente.toLocaleString());
+        $("#diff").html(diff.toLocaleString("it-IT", {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+        $("#totale_utente").html(totale_utente.toLocaleString("it-IT", {minimumFractionDigits: 2, maximumFractionDigits: 2}));
     }
 
     function aggiornaScadenzaInline(id_scadenza) {

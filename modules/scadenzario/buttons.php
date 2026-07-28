@@ -28,3 +28,8 @@ if (!empty($record['id_documento'])) {
         <i class="fa fa-paperclip"></i> '.tr('Allega fattura').'
     </button>';
 }
+
+echo '
+<button type="button" class="btn btn-info" onclick="showScadenzarioGuide()">
+    <i class="fa fa-question-circle"></i> '.tr('Guida filtri').'
+</button>';

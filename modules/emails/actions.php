@@ -64,19 +64,10 @@ switch (post('op')) {
         $template->setTranslation('title', post('name'));
         $prints[] = post('prints');
 
-        foreach ($prints as $print) {
-            if (!empty($print)) {
-                $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $print]);
-            }
-        }
+        $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $prints]);
 
         $mansioni[] = post('idmansioni');
-        foreach ($mansioni as $mansione) {
-            if (!empty($mansione)) {
-                $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansione]);
-            }
-        }
-
+        $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansioni]);
         $categories[] = post('idcategories');
         foreach ($categories as $category) {
             if (!empty($category)) {

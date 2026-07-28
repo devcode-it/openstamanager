@@ -58,7 +58,10 @@ class Pagamento extends Model
     
     protected function trovaRate()
     {
-        return Pagamento::where('name', '=', $this->name)->get()->sortBy('num_giorni')->toArray();
+        $rate = Pagamento::where('name', '=', $this->name)->where('id', '!=', $this->id)->get();
+        $rate->prepend($this);
+
+        return $rate->sortBy('num_giorni');
     }
 
     public function calcola($importo, $data, $id_anagrafica, $database = null)

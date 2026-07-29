@@ -24,6 +24,8 @@ use Models\Plugin;
 use Modules\Contratti\Contratto;
 use Plugins\PianificazioneInterventi\Promemoria;
 
+$id_module_interventi = Module::where('name', 'Interventi')->first()->id;
+
 // Informazioni contratto
 $contratto = Contratto::find($id_parent);
 $data_accettazione = $contratto['data_accettazione'];

@@ -33,8 +33,8 @@ $id_anagrafica = $contratto['id_anagrafica'];
 // Impianti del contratto
 $promemoria = Promemoria::find($id_record);
 $impianti = [];
-if ($promemoria && $promemoria->id_contratto == $id_parent) {
-    $impianti = $promemoria->impianti()->pluck('id_impianto')->toArray();
+if ($promemoria && $promemoria->id_contratto == $id_parent && !empty($promemoria->id_impianti)) {
+    $impianti = explode(',', trim((string) $promemoria->id_impianti));
 }
 $id_impianti = explode(',', trim((string) ($impianti[0]['id_impianti'] ?? '')));
 

@@ -508,7 +508,6 @@ switch (post('op')) {
         $fatture = Fattura::whereIn('id', $id_records)->get()->keyBy('id');
 
         $id_records_prepared = array_map('prepare', $id_records);
-        $id_module = Module::where('name', 'Fatture di vendita')->first()->id;
         $emails = Mail::join('zz_operations', 'zz_operations.id_email', '=', 'em_emails.id')
             ->whereIn('em_emails.id_record', $id_records)
             ->where('zz_operations.op', 'send-email')

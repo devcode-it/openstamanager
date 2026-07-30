@@ -397,7 +397,7 @@ async function modificaRiga(button) {
 
     // Apertura modal
     content_was_modified = false;
-    openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+    openModal("'.tr('Modifica sessione').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + encodeURIComponent(id) + "&riga_type=" + encodeURIComponent(type));
 }
 
 // Estraggo le righe spuntate

@@ -55,23 +55,23 @@ function anteprimaFirma() {
 
 if (!$is_anagrafica_deleted) {
     // Creazione altri documenti
-    $where = '';
-    if (!setting('Permetti fatturazione delle attività collegate a contratti')) {
-        $where = ' AND in_interventi.id_contratto IS NULL';
-    }
-    if (!setting('Permetti fatturazione delle attività collegate a ordini')) {
-        $where .= ' AND in_interventi.id_ordine IS NULL';
-    }
-    if (!setting('Permetti fatturazione delle attività collegate a preventivi')) {
-        $where .= ' AND in_interventi.id_preventivo IS NULL';
-    }
-
-    $is_fatturabile = $dbo->fetchOne('SELECT
-        `in_interventi`.`id` FROM `in_interventi` INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato`=`in_stati_intervento`.`id`
-    WHERE
-        `in_interventi`.`id`='.prepare($id_record).' AND `in_stati_intervento`.`is_fatturabile`=1 AND `in_interventi`.`id` NOT IN (SELECT `id_intervento` FROM `co_righe_documenti` WHERE `id_intervento` IS NOT NULL) 
-        '.$where
-    )['id'];
+    $is_fatturabile = Modules\Interventi\Intervento::where('id', $id_record)
+        ->whereHas('stato', function ($query) {
+            $query->where('is_fatturabile', 1);
+        })
+        ->whereNotIn('id', function ($query) {
+            $query->select('id_intervento')->from('co_righe_documenti')->whereNotNull('id_intervento');
+        })
+        ->when(!setting('Permetti fatturazione delle attività collegate a contratti'), function ($query) {
+            $query->whereNull('id_contratto');
+        })
+        ->when(!setting('Permetti fatturazione delle attività collegate a ordini'), function ($query) {
+            $query->whereNull('id_ordine');
+        })
+        ->when(!setting('Permetti fatturazione delle attività collegate a preventivi'), function ($query) {
+            $query->whereNull('id_preventivo');
+        })
+        ->exists();
 
     $stati_fatturabili = Stato::where('is_fatturabile', '=', '1')->get();
     $stati = [];

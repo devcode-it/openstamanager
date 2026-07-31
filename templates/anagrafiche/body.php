@@ -43,7 +43,8 @@ echo '
     </tr>
     <tr>
         <td class="text-left" colspan="2" >'.tr('Partita IVA').': <b>'.$anagrafica['p_iva'].'</b></td>
-        <td class="text-left" colspan="2">'.tr('Codice fiscale').': <b>'.$anagrafica['codice_fiscale'].'</b></td>
+        <td class="text-left" colspan="1">'.tr('Codice fiscale').': <b>'.$anagrafica['codice_fiscale'].'</b></td>
+        <td class="text-left" colspan="1">'.tr('Codice destinatario').': <b>'.$anagrafica['codice_destinatario'].'</b></td>
     </tr>
     <tr>
         <td class="text-left" colspan="2" >'.tr('Pec').': <b>'.$anagrafica['pec'].'</b></td>
@@ -55,7 +56,8 @@ echo '
         <td class="text-left">'.tr('fax').': <b>'.$anagrafica['fax'].'</b></td>
     </tr>
     <tr>
-        <td colspan="4" class="text-left" >'.tr('Agente').': <b>'.$agente['ragione_sociale'].'</b></td>
+        <td colspan="2" class="text-left" >'.tr('Agente').': <b>'.$agente['ragione_sociale'].'</b></td>
+        <td colspan="2" class="text-left" >'.tr('Referenti').': <b>'.$referenti.'</b></td>
     </tr>
 </table>';
 
@@ -81,7 +83,7 @@ if (!empty($sedi)) {
             </tr>
             <tr>
                 <td class="text-left" colspan="2">'.tr('Città').': <b>'.$sedi[$i]['citta'].'</b></td>
-                <td class="text-left" >'.tr('Provincia').': <b>'.$sedi[$i]['prov'].'</b></td>
+                <td class="text-left" >'.tr('Provincia').': <b>'.$sedi[$i]['provincia'].'</b></td>
                 <td class="text-left" >'.tr('Cap').': <b>'.$sedi[$i]['cap'].'</b></td>
             </tr>
             <tr>

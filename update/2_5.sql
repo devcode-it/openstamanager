@@ -211,17 +211,6 @@ ALTER TABLE `an_tipianagrafiche`
 
 ALTER TABLE `an_tipianagrafiche_lang` ADD CONSTRAINT `an_tipianagrafiche_lang_ibfk_1` FOREIGN KEY (`id_record`) REFERENCES `an_tipianagrafiche`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT; 
 
--- Allineamento vista Tipi di anagrafiche
-UPDATE `zz_modules` SET `options` = "
-SELECT
-    |select|
-FROM
-    `an_tipianagrafiche`
-    LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.|lang|)
-WHERE
-    1=1
-HAVING
-    2=2" WHERE `name` = 'Tipi di anagrafiche';
 UPDATE `zz_views` INNER JOIN `zz_modules` ON `zz_views`.`id_module` = `zz_modules`.`id` SET `zz_views`.`query` = '`an_tipianagrafiche`.`id`' WHERE `zz_modules`.`name` = 'Tipi di anagrafiche' AND `zz_views`.`name` = 'id';
 
 -- Aggiunta tabella co_iva_lang

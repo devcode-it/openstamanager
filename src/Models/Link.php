@@ -36,6 +36,8 @@ class Link extends Model
 
     protected $table = 'zz_links';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'label',
         'title',

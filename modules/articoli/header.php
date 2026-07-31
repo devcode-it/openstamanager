@@ -83,14 +83,14 @@ echo '
                     </div>
                     
                     <div class="col-md-12 text-right mt-2">';
-                        
-                        $varianti = database()->fetchArray("SELECT `mg_attributi_lang`.`title` AS attributo, `mg_valori_attributi`.`nome` AS valore FROM `mg_articolo_attributo` INNER JOIN `mg_valori_attributi` ON `mg_articolo_attributo`.`id_valore` = `mg_valori_attributi`.`id` INNER JOIN `mg_attributi` ON `mg_valori_attributi`.`id_attributo` = `mg_attributi`.`id` LEFT JOIN `mg_attributi_lang` ON (`mg_attributi`.`id` = `mg_attributi_lang`.`id_record` AND `mg_attributi_lang`.`id_lang` = " . prepare(Models\Locale::getDefault()->id) . ") WHERE `mg_articolo_attributo`.`id_articolo` = " . prepare($articolo->id) . " ORDER BY `mg_attributi`.`ordine` ASC");
-                        
-                        if (count($varianti) > 0) {
-                            foreach ($varianti as $variante) {
-                                echo '<span class="badge badge-info ml-1 p-2" style="font-size: 10px; font-weight: 500;"><i class="fa fa-tag"></i> ' . $variante['attributo'] . ': ' . $variante['valore'] . '</span>';
-                            }
-                        }
+
+$varianti = $articolo->varianti(true);
+
+if (count($varianti) > 0) {
+    foreach ($varianti as $variante) {
+        echo '<span class="badge badge-info ml-1 p-2"><i class="fa fa-tag"></i> '.$variante->attributo.': '.$variante->valore.'</span>';
+    }
+}
 echo '
                     </div>
                 </div>
@@ -99,9 +99,17 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE id_articolo='.prepare($articolo->id).')');
+    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+    $sedi = $all_sedi;
 } else {
-    $sedi = $dbo->fetchArray('SELECT * FROM ((SELECT "0" AS id, "Sede legale" AS nome_sede) UNION (SELECT id, nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')) sedi WHERE id IN(SELECT id_sede FROM mg_movimenti WHERE id_articolo='.prepare($articolo->id).') AND id IN(SELECT id_sede FROM zz_user_sedi WHERE id_user='.prepare($user['id']).')');
+    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+    $allowed_sedi_ids = $user->sedi;
+    $sedi = [];
+    foreach ($all_sedi as $sede) {
+        if (in_array($sede['id'], $allowed_sedi_ids)) {
+            $sedi[] = $sede;
+        }
+    }
 }
 
 $giacenze = $articolo->getGiacenze();
@@ -130,8 +138,14 @@ if ($articolo->servizio) {
                         </tr>
                     </thead>
                     <tbody>';
+    $thresholds = database()->table('mg_scorte_sedi')
+        ->where('id_articolo', $articolo->id)
+        ->get(['id_sede', 'threshold_qta'])
+        ->pluck('threshold_qta', 'id_sede')
+        ->toArray();
+
     foreach ($sedi as $sede) {
-        $threshold_sede = $dbo->fetchOne('SELECT `threshold_qta` FROM `mg_scorte_sedi` WHERE `id_sede` = '.prepare($sede['id']).' AND `id_articolo` = '.prepare($articolo->id))['threshold_qta'];
+        $threshold_sede = $thresholds[$sede['id']] ?? 0;
         $giacenza_value = $giacenze[$sede['id']][0];
         $is_low = $giacenza_value < $threshold_sede;
 
@@ -146,6 +160,45 @@ if ($articolo->servizio) {
                         '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><i class="fa fa-chevron-right pull-left"></i> '.$formatted_secondary.' '.$articolo->um_secondaria.'</td>' : '').'
                     </tr>';
     }
+
+    $sedi_senza_permessi = [];
+    if (!$user->is_admin) {
+        foreach ($all_sedi as $sede) {
+            if (!in_array($sede['id'], $allowed_sedi_ids)) {
+                $sedi_senza_permessi[] = $sede;
+            }
+        }
+    }
+
+if (!empty($sedi_senza_permessi)) {
+    $altre_sedi_giacenza = 0;
+    foreach ($sedi_senza_permessi as $sede) {
+        $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
+    }
+    $altre_sedi_giacenza = numberFormat($altre_sedi_giacenza, null);
+    $altre_sedi_giacenza_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($altre_sedi_giacenza * $articolo->fattore_um_secondaria, null) : '';
+
+    echo '
+                    <tr>
+                        <td>'.tr('Altre sedi').'</td>
+                        <td class="text-right">'.$altre_sedi_giacenza.' '.$articolo->um.'</td>
+                        '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right">'.$altre_sedi_giacenza_secondary.' '.$articolo->um_secondaria.'</td>' : '').'
+                    </tr>';
+}
+
+$totale_tutte_sedi = 0;
+foreach ($all_sedi as $sede) {
+    $totale_tutte_sedi += $giacenze[$sede['id']][0] ?? 0;
+}
+$totale_tutte_sedi = numberFormat($totale_tutte_sedi, null);
+$totale_tutte_sedi_um_secondaria = $articolo->fattore_um_secondaria != 0 ? numberFormat($totale_tutte_sedi * $articolo->fattore_um_secondaria, null) : '';
+
+echo '
+                    <tr>
+                        <td><strong>'.tr('Totale').'</strong></td>
+                        <td class="text-right"><strong>'.$totale_tutte_sedi.' '.$articolo->um.'</strong></td>
+                        '.($articolo->fattore_um_secondaria != 0 ? '<td class="text-right"><strong>'.$totale_tutte_sedi_um_secondaria.' '.$articolo->um_secondaria.'</strong></td>' : '').'
+                    </tr>';
     echo '
                     </tbody>
                 </table>';

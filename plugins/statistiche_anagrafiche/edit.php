@@ -66,6 +66,17 @@ function init_calendar(calendar) {
 
     calendar.addElement(widgets);
 }
+
+function apriPopup(box, type) {
+    var card = $(box).closest(".card");
+    var start = card.data("start");
+    var end = card.data("end");
+
+    var titolo = $(box).find(".info-box-text").first().text().trim();
+    var href = local_url + "popup.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&type=" + type + "&start=" + start + "&end=" + end;
+
+    openModal(titolo, href);
+}
 </script>';
 
 if ($statistiche != null) {

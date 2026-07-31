@@ -25,12 +25,12 @@ use Modules\CategorieFiles\Categoria;
 if (!empty($id_record)) {
     $categoria = Categoria::find($id_record);
 
-    $record = $dbo->fetchOne('SELECT *,
-        (SELECT COUNT(`id`) FROM `zz_files` WHERE `id_category` = '.prepare($id_record).') AS doc_associati
+    $record = $dbo->fetchOne('SELECT `zz_files_categories`.*, `file_count`.`doc_associati`
     FROM 
         `zz_files_categories`
+        LEFT JOIN (SELECT `id_category`, COUNT(`id`) AS doc_associati FROM `zz_files` GROUP BY `id_category`) AS `file_count` ON `file_count`.`id_category` = `zz_files_categories`.`id`
     WHERE 
         `zz_files_categories`.`id`='.prepare($id_record).'
     GROUP BY 
-        `zz_files_categories`.`id`');
+        `zz_files_categories`.`id`, `file_count`.`doc_associati`');
 }

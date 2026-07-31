@@ -19,6 +19,7 @@
  */
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\GeocodingService;
 
 if (!function_exists('geolocalizzazione')) {
     function geolocalizzazione($id_record, $is_sede = false)
@@ -30,59 +31,29 @@ if (!function_exists('geolocalizzazione')) {
             $sede = $dbo->table('an_sedi')->where('id', $id_record)->first();
 
             if (!empty($sede->indirizzo) && !empty($sede->citta) && !empty($sede->provincia) && empty($sede->lat) && empty($sede->lng)) {
-                $indirizzo = urlencode($sede->indirizzo.', '.$sede->citta.', '.$sede->provincia);
+                $indirizzo = $sede->indirizzo.', '.$sede->citta.', '.$sede->provincia;
+                $data = GeocodingService::geocode($indirizzo);
 
-                // TODO: da riscrivere con Guzzle e spostare su hook
-                if (!function_exists('curl_init')) {
-                    // cURL non è attivo
-                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
-
-                    return false;
+                if ($data) {
+                    $dbo->update('an_sedi', [
+                        'gaddress' => $data['gaddress'],
+                        'lat' => $data['lat'],
+                        'lng' => $data['lng'],
+                    ], ['id' => $sede->id]);
                 }
-                $ch = curl_init();
-
-                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
-                $user_agent = 'traccar';
-                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $data = json_decode(curl_exec($ch));
-
-                // Salvataggio informazioni
-                $dbo->update('an_sedi', [
-                    'gaddress' => $data[0]->display_name,
-                    'lat' => $data[0]->lat,
-                    'lng' => $data[0]->lon,
-                ], ['id' => $sede->id]);
             }
         } else {
             $anagrafica = Anagrafica::find($id_record);
             if (!empty($anagrafica->sedeLegale->indirizzo) && !empty($anagrafica->sedeLegale->citta) && !empty($anagrafica->sedeLegale->provincia) && empty($anagrafica->lat) && empty($anagrafica->lng)) {
-                $indirizzo = urlencode($anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia);
+                $indirizzo = $anagrafica->sedeLegale->indirizzo.', '.$anagrafica->sedeLegale->citta.', '.$anagrafica->sedeLegale->provincia;
+                $data = GeocodingService::geocode($indirizzo);
 
-                // TODO: da riscrivere con Guzzle e spostare su hook
-                if (!function_exists('curl_init')) {
-                    // cURL non è attivo
-                    flash()->error(tr('cURL non attivo, impossibile continuare l\'operazione.'));
-
-                    return false;
+                if ($data) {
+                    $anagrafica->gaddress = $data['gaddress'];
+                    $anagrafica->lat = $data['lat'];
+                    $anagrafica->lng = $data['lng'];
+                    $anagrafica->save();
                 }
-                $ch = curl_init();
-
-                $url = 'https://nominatim.openstreetmap.org/search.php?q='.$indirizzo.'&format=jsonv2&accept-language='.$lang;
-                $user_agent = 'traccar';
-                curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $data = json_decode(curl_exec($ch));
-
-                // Salvataggio informazioni
-                $anagrafica->gaddress = $data[0]->display_name;
-                $anagrafica->lat = $data[0]->lat;
-                $anagrafica->lng = $data[0]->lon;
-                $anagrafica->save();
             }
         }
 

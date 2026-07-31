@@ -24,7 +24,7 @@ function initMaskInput(input) {
     let $input = $(input);
 
     if ($input.hasClass('email-mask')) {
-        $input.inputmask('Regex', {
+        $input.inputmask({
             regex: "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
         });
     } else if ($input.hasClass('rea-mask')) {
@@ -39,15 +39,15 @@ function initMaskInput(input) {
             casing: "upper",
         });
     } else if ($input.hasClass('alphanumeric-mask')) {
-        $input.inputmask('Regex', {
+        $input.inputmask({
             regex: "[A-Za-z0-9#_|\/\\-.]*",
         });
     } else if ($input.hasClass('sia-code-mask')) {
-        $input.inputmask('Regex', {
+        $input.inputmask({
             regex: "[A-Za-z0-9#_|\/\\-.\\$]*",
         });
     } else if ($input.hasClass('math-mask')) {
-        $input.inputmask('Regex', {
+        $input.inputmask({
             regex: "[0-9,.+\-]*",
         });
     }

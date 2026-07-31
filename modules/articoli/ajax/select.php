@@ -205,23 +205,24 @@ switch ($resource) {
         // Utilizzo dell'impostazione per disabilitare articoli con quantità <= 0
         $permetti_movimenti_sotto_zero = setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita') ? true : $superselect['permetti_movimento_a_zero'];
 
+        // Pre-carico le quantità per tutte le sedi interessate in un'unica query
+        $id_sede_target = $superselect['dir'] == 'uscita' ? $superselect['id_sede_destinazione'] : $superselect['id_sede_partenza'];
+        $qta_per_articolo = [];
+        if (!$sedi_non_impostate) {
+            $qta_sede_results = $dbo->fetchArray('SELECT `id_articolo`, IFNULL(SUM(`qta`), 0) AS qta FROM `mg_movimenti` WHERE `id_sede` = '.prepare($id_sede_target).' AND `id_articolo` IN ('.implode(',', array_map(prepare(...), array_column($rs, 'id'))).') GROUP BY `id_articolo`');
+            foreach ($qta_sede_results as $qta_row) {
+                $qta_per_articolo[$qta_row['id_articolo']] = $qta_row['qta'];
+            }
+        }
+
         // Eventuali articoli disabilitati
         foreach ($rs as $k => $r) {
-            // Lettura movimenti delle mie sedi
-            // Per documenti di acquisto (dir=uscita): usa id_sede_destinazione
-            // Per documenti di vendita (dir=entrata): usa id_sede_partenza
-            if ($superselect['dir'] == 'uscita') {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_destinazione']))['qta'];
-                $qta_da_usare = $qta_sede;
-            } else {
-                $qta_sede = $dbo->fetchOne('SELECT IFNULL(SUM(`mg_movimenti`.`qta`), 0) AS qta FROM `mg_movimenti` WHERE `mg_movimenti`.`id_articolo` = '.prepare($r['id']).' AND `mg_movimenti`.`id_sede` = '.prepare($superselect['id_sede_partenza']))['qta'];
-                $qta_da_usare = $qta_sede;
-            }
+            $qta_da_usare = $sedi_non_impostate ? 0 : ($qta_per_articolo[$r['id']] ?? 0);
 
             $rs[$k] = array_merge($r, [
                 'text' => $r['codice'].' - '.$r['descrizione'].' '.(!$r['servizio'] ? '('.Translator::numberToLocale($qta_da_usare).(!empty($r['um']) ? ' '.$r['um'] : '').')' : '').($r['codice_fornitore'] ? ' ('.$r['codice_fornitore'].')' : ''),
-                'qta' => $qta_da_usare, // Usa la quantità della sede specificata in base alla direzione del documento
-                'qta_sede' => isset($superselect['id_sede_partenza']) || isset($superselect['id_sede_destinazione']) ? $qta_sede : null,
+                'qta' => $qta_da_usare,
+                'qta_sede' => isset($superselect['id_sede_partenza']) || isset($superselect['id_sede_destinazione']) ? $qta_da_usare : null,
                 'disabled' => $qta_da_usare <= 0 && !$permetti_movimenti_sotto_zero && !$r['servizio'],
             ]);
         }
@@ -344,8 +345,21 @@ switch ($resource) {
     case 'serial-articolo':
         // Query per selezionare i serial disponibili in magazzino
         // Un serial è disponibile se il suo ultimo movimento cronologico ha dir='uscita'
-        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`, '1000-01-01')";
+        
+        // Verifica se il modulo Vendita al banco è installato
+        $modulo_venditabanco = \Models\Module::where('name', 'Vendita al banco')->first();
+        $has_venditabanco = !empty($modulo_venditabanco);
+        
+        // Costruisci la query per ottenere la data del movimento
+        $data_movimento = "COALESCE(`co_documenti`.`data`, `dt_ddt`.`data`, `or_ordini`.`data`, `in_interventi`.`data_richiesta`";
+        
+        if ($has_venditabanco) {
+            $data_movimento .= ", `vb_venditabanco`.`data`";
+        }
+        
+        $data_movimento .= ", '1000-01-01')";
 
+        // Costruisci la query base per i movimenti seriali
         $movimenti_seriali = 'SELECT
             `mg_prodotti`.`id`,
             `mg_prodotti`.`id_articolo`,
@@ -359,6 +373,16 @@ switch ($resource) {
             LEFT JOIN `dt_ddt` ON `dt_righe_ddt`.`id_ddt` = `dt_ddt`.`id`
             LEFT JOIN `or_righe_ordini` ON `mg_prodotti`.`id_riga_ordine` = `or_righe_ordini`.`id`
             LEFT JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
+            LEFT JOIN `in_righe_interventi` ON `mg_prodotti`.`id_riga_intervento` = `in_righe_interventi`.`id`
+            LEFT JOIN `in_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`';
+        
+        if ($has_venditabanco) {
+            $movimenti_seriali .= '
+            LEFT JOIN `vb_righe_venditabanco` ON `mg_prodotti`.`id_riga_venditabanco` = `vb_righe_venditabanco`.`id`
+            LEFT JOIN `vb_venditabanco` ON `vb_righe_venditabanco`.`idvendita` = `vb_venditabanco`.`id`';
+        }
+        
+        $movimenti_seriali .= '
         WHERE `mg_prodotti`.`serial` IS NOT NULL';
 
         $query = 'SELECT `seriali_disponibili`.`serial` AS id, `seriali_disponibili`.`serial` AS descrizione

@@ -66,11 +66,11 @@ foreach ($fields as $name => $value) {
 $where[] = '(`mg_articoli`.`codice` IS NOT NULL AND `mg_articoli`.`codice` LIKE '.prepare('%'.$term.'%').')';
 $where[] = '(`mg_articoli_lang`.`title` IS NOT NULL AND `mg_articoli_lang`.`title` LIKE '.prepare('%'.$term.'%').')';
 
-$query .= ' WHERE ('.implode(' OR ', $where).') ';
+$query .= ' WHERE 1=1 AND ('.implode(' OR ', $where).') ';
 
-$query .= ' GROUP BY in_interventi.id ';
+$query .= ' GROUP BY in_interventi.id HAVING 2=2';
 
-$query .= ' '.Modules::getAdditionalsQuery(Module::where('name', 'Interventi')->first()->id, null, false);
+$query = Modules::replaceAdditionals(Module::where('name', 'Interventi')->first()->id, $query);
 
 $rs = $dbo->fetchArray($query);
 

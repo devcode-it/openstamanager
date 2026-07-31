@@ -202,6 +202,11 @@ class Intervento extends Document
         return $this->hasMany(Components\Sessione::class, 'id_intervento');
     }
 
+    public function tags()
+    {
+        return $this->hasMany(__NAMESPACE__.'\Tags', 'id_intervento');
+    }
+
     #[\Override]
     public function toArray()
     {

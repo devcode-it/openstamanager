@@ -31,18 +31,29 @@ switch ($resource) {
     case 'contratti':
         $query = 'SELECT
                 `co_contratti`.`id` AS id,
-                CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", (SELECT `title` FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_stati_contratti`.`id` = `id_stato`) , "]") AS descrizione,
-                (SELECT SUM(`subtotale`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS totale,
-                (SELECT SUM(`sconto`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS sconto,
-                (SELECT COUNT(`id`) FROM `co_righe_contratti` WHERE `id_contratto`=`co_contratti`.`id`) AS n_righe,
+                CONCAT("Contratto ", `numero`, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_contratti`.`nome`, " [", `co_stati_contratti_lang`.`title`, "]") AS descrizione,
+                IFNULL(`righe_contratti`.`totale`, 0) AS totale,
+                IFNULL(`righe_contratti`.`sconto`, 0) AS sconto,
+                IFNULL(`righe_contratti`.`n_righe`, 0) AS n_righe,
                 `co_contratti`.`id_tipo_intervento`,
                 `in_tipi_intervento_lang`.`title` AS id_tipo_intervento_descrizione,
                 `in_tipi_intervento`.`tempo_standard` AS tempo_standard
             FROM
                 `co_contratti`
                 INNER JOIN `an_anagrafiche` ON `co_contratti`.`id_anagrafica`=`an_anagrafiche`.`id`
+                INNER JOIN `co_stati_contratti` ON `co_stati_contratti`.`id` = `co_contratti`.`id_stato`
+                LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
                 LEFT JOIN `in_tipi_intervento` ON (`co_contratti`.`id_tipo_intervento`=`in_tipi_intervento`.`id`)
                 LEFT JOIN `in_tipi_intervento_lang` ON (`in_tipi_intervento`.`id`=`in_tipi_intervento_lang`.`id_record` AND `in_tipi_intervento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).')
+                LEFT JOIN (
+                    SELECT 
+                        `id_contratto`, 
+                        SUM(`subtotale`) AS totale,
+                        SUM(`sconto`) AS sconto,
+                        COUNT(`id`) AS n_righe
+                    FROM `co_righe_contratti`
+                    GROUP BY `id_contratto`
+                ) AS `righe_contratti` ON `righe_contratti`.`id_contratto` = `co_contratti`.`id`
             |where|
             ORDER BY
                 `co_contratti`.`id`';
@@ -53,7 +64,7 @@ switch ($resource) {
 
         if (empty($elements)) {
             $where[] = '`an_anagrafiche`.`id`='.prepare($superselect['id_anagrafica']);
-            $stati_consentiti = ['is_pianificabile', 'is_completato', 'is_fatturabile'];
+            $stati_consentiti = ['is_pianificabile', 'is_bloccato', 'is_fatturabile'];
             $stato = !empty($superselect['stato']) && in_array($superselect['stato'], $stati_consentiti)
                 ? $superselect['stato']
                 : 'is_pianificabile';
@@ -76,8 +87,10 @@ switch ($resource) {
             if ($ore_previste) {
                 if ($perc_ore < 75) {
                     $color = '#81f794';
-                } elseif ($perc_ore > 75) {
+                } elseif ($perc_ore <= 100) {
                     $color = '#f5cb78';
+                } else {
+                    $color = '#ff7b7b';
                 }
             } else {
                 $color = '';
@@ -150,7 +163,15 @@ switch ($resource) {
          * - id_record
          */
     case 'tipiintervento_abilitati':
-        $id_record = $options['id_record'] ?? get('id_record') ?? $superselect['id_record'];
+        // Try to get id_contratto from various sources
+        $id_contratto = null;
+        if (!empty($superselect['id_record'])) {
+            $id_contratto = $superselect['id_record'];
+        } elseif (!empty($superselect['tipiintervento']['id_record'])) {
+            $id_contratto = $superselect['tipiintervento']['id_record'];
+        } elseif (isset($id_record)) {
+            $id_contratto = $id_record;
+        }
 
         $query = 'SELECT
                     `in_tipi_intervento`.`id` AS id,
@@ -160,7 +181,7 @@ switch ($resource) {
                     INNER JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `co_contratti_tipi_intervento`.`id_tipo_intervento`
                     LEFT JOIN `in_tipi_intervento_lang` ON `in_tipi_intervento_lang`.`id_record` = `in_tipi_intervento`.`id` AND `in_tipi_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).'
                 WHERE
-                    `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_record).'
+                    `co_contratti_tipi_intervento`.`id_contratto` = '.prepare($id_contratto).'
                     AND `co_contratti_tipi_intervento`.`is_abilitato` = 1
                 ORDER BY
                     `in_tipi_intervento_lang`.`title`';

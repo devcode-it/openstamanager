@@ -18,10 +18,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Druidfi\Mysqldump\Mysqldump;
 use Util\FileSystem;
 use Util\Generator;
 use Util\Zip;
-use Druidfi\Mysqldump\Mysqldump;
+
 /**
  * Classe per la gestione dei backup.
  *
@@ -316,7 +317,7 @@ class Backup
     {
         $config = App::getConfig();
 
-        $dsn = 'mysql:host=' . $config['db_host'] . ';dbname=' . $config['db_name'];
+        $dsn = 'mysql:host='.$config['db_host'].';dbname='.$config['db_name'];
         $username = $config['db_username'];
         $password = $config['db_password'];
 
@@ -329,8 +330,8 @@ class Backup
         try {
             $dump = new Mysqldump($dsn, $username, $password, $settings);
             $dump->start($file);
-        } catch (\Exception $e) {
-            throw new \Exception('mysqldump-php error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('mysqldump-php error: '.$e->getMessage());
         }
     }
 
@@ -386,8 +387,10 @@ class Backup
             $extraction_dir = is_dir($path) ? $path : Zip::extract($path);
         }
 
-        // TODO: Forzo il log out di tutti gli utenti e ne impedisco il login
-        // fino a ripristino ultimato
+        // Annulla i token di sessione per forzare il logout di tutti gli utenti
+        if ($database->columnExists('zz_users', 'session_token')) {
+            $database->query('UPDATE `zz_users` SET `session_token` = NULL');
+        }
 
         // Rimozione del database
         $tables = include base_dir().'/update/tables.php';

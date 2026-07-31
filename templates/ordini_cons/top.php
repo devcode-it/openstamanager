@@ -58,8 +58,18 @@ echo '
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
-            </tr>
-        </table>
+            </tr>';
+echo '       
+        <tr>
+            <td class="border-bottom border-left">
+                <p class="small-bold">'.tr('Referente', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-right border-bottom text-right">
+                <small>'. $nome_referente .' </small>
+            </td>
+        </tr>';
+echo '
+       </table>
     </div>
 </div>';
 

@@ -44,7 +44,7 @@ switch (post('op')) {
 
         // Inserisco l'articolo e avviso se esiste un altro articolo con stesso codice.
         $numero_codice = Articolo::where([
-            ['codice', $value],
+            ['codice', $codice],
             ['id', '<>', $id_record],
         ])->count();
         if ($numero_codice > 0) {
@@ -79,9 +79,8 @@ switch (post('op')) {
         // Salvataggio varianti dinamiche
         $id_valori = post('id_valori');
         if (!empty($id_valori) && is_array($id_valori)) {
-
             // Creazione automatica della combinazione (modulo Combinazioni)
-            $combinazione = new \Modules\CombinazioniArticoli\Combinazione();
+            $combinazione = new Combinazione();
             $combinazione->codice = $articolo->codice;
             $combinazione->id_categoria = $articolo->id_categoria;
             $combinazione->id_sottocategoria = $articolo->id_sottocategoria;
@@ -101,7 +100,7 @@ switch (post('op')) {
                         $dbo->insert('mg_attributo_combinazione', [
                             'id_combinazione' => $combinazione->id,
                             'id_attributo' => $id_att,
-                            'order' => $ordine++
+                            'order' => $ordine++,
                         ]);
                     }
                 }
@@ -164,7 +163,7 @@ switch (post('op')) {
             }
         }
 
-        $barcode = ($barcode ?: post('barcode'));
+        $barcode = ($barcode ?? post('barcode'));
         if (!empty($barcode)) {
             $dbo->insert('mg_articoli_barcode', [
                 'id_articolo' => $id_record,
@@ -251,7 +250,7 @@ switch (post('op')) {
         // Aggiornamento delle varianti per i campi comuni
         Combinazione::sincronizzaVarianti($articolo);
 
-                // Salvataggio varianti
+        // Salvataggio varianti
         $id_valori = post('id_valori');
         if ($id_valori !== null) {
             $dbo->query('DELETE FROM `mg_articolo_attributo` WHERE `id_articolo`='.prepare($id_record));
@@ -434,7 +433,7 @@ switch (post('op')) {
         $id_articolo = $rs[0]['id_articolo'];
 
         // Aggiorno la quantità dell'articolo
-        $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-'.$qta.' WHERE `id`='.prepare($id_articolo));
+        $dbo->query('UPDATE `mg_articoli` SET `qta`=`qta`-? WHERE `id`=?', [$qta, $id_articolo]);
 
         if ($dbo->delete('mg_movimenti', ['id' => $idmovimento])) {
             flash()->info(tr('Movimento rimosso!'));

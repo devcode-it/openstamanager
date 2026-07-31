@@ -71,7 +71,7 @@ switch (filter('op')) {
 
         // Creazione movimento in prima nota per liquidazione IVA
         $id_mastrino = null;
-        $print_info = $dbo->fetchOne('SELECT name FROM zz_prints WHERE id = '.prepare($id_print));
+        $print_info = Models\PrintTemplate::find($id_print);
         if ($print_info && $print_info['name'] === 'Liquidazione IVA') {
             $id_mastrino = creaMovimentoLiquidazioneIva($date_start, $date_end);
             if ($id_mastrino) {

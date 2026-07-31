@@ -3,15 +3,6 @@
  * Guida interattiva per l'utilizzo del modulo Scadenzario
  */
 
-$(document).ready(function() {
-    // Verifica se siamo nel modulo Scadenzario
-    var moduleName = $('#main-modal .modal-title').first().text() || $('h1').first().text() || '';
-    
-    if (moduleName.includes('Scadenzario') || $('h1').length > 0 && $('h1').first().text().includes('Scadenzario')) {
-        initScadenzarioGuide();
-    }
-});
-
 function showScadenzarioGuide() {
     if (typeof swal === 'undefined') {
         alert('Guida ai filtri delle tabelle\n\n');

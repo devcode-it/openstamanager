@@ -20,32 +20,34 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\GestioneDocumentale\Documento;
+
 switch (post('op')) {
     case 'add':
-        $dbo->insert('do_documenti', [
+        $documento = Documento::create([
             'id_categoria' => post('id_categoria'),
             'nome' => post('nome'),
             'data' => post('data') ?: null,
         ]);
-        $id_record = $dbo->lastInsertedID();
+        $id_record = $documento->id;
 
         flash()->info(tr('Nuova documento aggiunto!'));
 
         break;
 
     case 'update':
-        $dbo->update('do_documenti', [
+        Documento::find($id_record)->update([
             'id_categoria' => post('id_categoria'),
             'nome' => post('nome'),
             'descrizione' => post('descrizione', true) ?: null,
             'data' => post('data') ?: null,
-        ], ['id' => $id_record]);
+        ]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
         break;
 
     case 'delete':
-        $dbo->delete('do_documenti', ['id' => $id_record]);
+        Documento::find($id_record)->delete();
 
         Uploads::deleteLinked([
             'id_module' => $id_module,

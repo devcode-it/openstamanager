@@ -43,7 +43,7 @@ switch (filter('op')) {
         $adapter->options = post('options');
 
         if (post('is_default') == 1) {
-            $dbo->query('UPDATE `zz_storage_adapters` SET `is_default` = 0');
+            FileAdapter::where('id', '!=', $adapter->id)->update(['is_default' => 0]);
             $adapter->is_default = post('is_default');
         }
 

@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Contratti\CategoriaContratto as Categoria;
+use Modules\Articoli\Articolo;
 
 switch (filter('op')) {
     case 'update':
@@ -98,8 +99,17 @@ switch (filter('op')) {
             $id = $id_record;
         }
 
-        if ($dbo->fetchNum('SELECT `mg_articoli`.* FROM `mg_articoli` WHERE (`id_categoria`='.prepare($id).' OR `id_sottocategoria`='.prepare($id).'  OR `id_sottocategoria` IN (SELECT `id` FROM `co_categorie_contratti` WHERE `parent`='.prepare($id).')) AND `deleted_at` IS NULL') == 0) {
-            $dbo->delete('co_categorie_contratti', ['id' => $id]);
+        $subcategories_ids = Categoria::where('parent', $id)->pluck('id')->toArray();
+        $has_articoli = Articolo::where(function ($query) use ($id, $subcategories_ids) {
+            $query->where('id_categoria', $id)
+                ->orWhere('id_sottocategoria', $id);
+            if (!empty($subcategories_ids)) {
+                $query->orWhereIn('id_sottocategoria', $subcategories_ids);
+            }
+        })->whereNull('deleted_at')->exists();
+
+        if (!$has_articoli) {
+            Categoria::find($id)->delete();
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [
                 '_TYPE_' => 'categoria',

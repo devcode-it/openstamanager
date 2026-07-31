@@ -390,8 +390,8 @@ if (filter('action') == 'do_update') {
 
                 <div id="install-instructions">
                     <p>'.tr("Clicca su _BUTTON_ per avviare l'aggiornamento", [
-        '_BUTTON_' => '<b>"'.$button.'"</b>',
-    ]).'.</p>
+            '_BUTTON_' => '<b>"'.$button.'"</b>',
+        ]).'.</p>
                     <input type="button" class="btn btn-primary btn-lg" value="'.$button.'" onclick="continue_update()" id="continue_button">
                 </div>
 
@@ -427,7 +427,7 @@ if (filter('action') == 'do_update') {
 
                 <div id="result" class="mt-3"></div>';
     }
-    echo'
+    echo '
 
     <!-- Dettaglio versioni spostato in fondo -->
                 <div id="versions-details-container" class="mt-4" style="display: none;">

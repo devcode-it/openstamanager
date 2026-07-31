@@ -154,21 +154,8 @@ function svuotaCacheHooks(button){
             });
         }
     }).catch(swal.noop);
-                }
-
-                renderMessages();
-            },
-            error: function() {
-                buttonRestore(button, restore);
-                Swal.fire({
-                    icon: "error",
-                    title: globals.translations.ajax.error.title,
-                    text: globals.translations.ajax.error.text,
-                });
-            }
-        });
-    })
 }
+
 function disabilitaHook(button){
     const riga = $(button).closest("tr");
     const id = riga.data("id");

@@ -192,7 +192,7 @@ class Validate
         $result = [];
         $result['valid-format'] = true;
 
-        if (!v::email()->validate($email)) {
+        if (!v::email()->isValid($email)) {
             $result['valid-format'] = false;
 
             return $result;

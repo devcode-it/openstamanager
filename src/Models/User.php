@@ -174,7 +174,7 @@ class User extends Model implements Authenticatable
         $file = base_dir().'/files/temp_photo.'.$info['extension'];
 
         // Ridimensionamento
-        $img = getImageManager()->read($filepath)->scaleDown(100, 100);
+        $img = getImageManager()->decodePath($filepath)->scaleDown(100, 100);
         $img->save(slashes($file));
 
         // Aggiunta nuova foto

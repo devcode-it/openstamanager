@@ -22,13 +22,14 @@ include_once __DIR__.'/../../core.php';
 
 switch (filter('op')) {
     case 'update':
-        $dbo->update('zz_oauth2', [
+        $oauth = Models\OAuth2::find($id_record);
+        $oauth->update([
             'client_id' => post('client_id'),
             'client_secret' => post('client_secret'),
             'config' => post('config'),
             'enabled' => post('enabled'),
             'after_configuration' => base_path_osm().'/index.php',
-        ], ['id' => $id_record]);
+        ]);
 
         flash()->info(tr('Salvataggio completato!'));
 

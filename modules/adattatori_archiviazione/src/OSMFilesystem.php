@@ -33,15 +33,27 @@ class OSMFilesystem extends Filesystem
 
     public function upload($directory, $filename, $contents)
     {
-        // Verifico se l'esensione non è consentita
         $extension = pathinfo((string) $filename, PATHINFO_EXTENSION);
         $extension = strtolower($extension);
         $name = pathinfo((string) $filename, PATHINFO_FILENAME);
 
-        // Controllo sulle estensioni permesse
         $allowed = self::isSupportedType($extension);
         if (!$allowed) {
             flash()->error(tr('Estensione non supportata!'));
+
+            return false;
+        }
+
+        $content_mime = finfo_buffer(finfo_open(), $contents, FILEINFO_MIME_TYPE);
+        $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        if (in_array($extension, $image_extensions) && !str_starts_with($content_mime, 'image/')) {
+            flash()->error(tr('Il contenuto del file non corrisponde all\'estensione specificata!'));
+
+            return false;
+        }
+
+        if ($extension == 'pdf' && $content_mime != 'application/pdf') {
+            flash()->error(tr('Il contenuto del file non corrisponde all\'estensione specificata!'));
 
             return false;
         }

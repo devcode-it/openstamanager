@@ -42,6 +42,8 @@ if (!empty($current_op) && $structure->permission != 'rw') {
 
 $database->beginTransaction();
 
+$options = [];
+
 // Upload allegati e rimozione
 if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
     // UPLOAD PER CKEDITOR
@@ -119,20 +121,27 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
     // UPLOAD
     if (filter('op') == 'aggiungi-allegato' && !empty($_FILES) && !empty($_FILES['file']['name'])) {
-        $upload = Uploads::upload($_FILES['file'], [
-            'name' => filter('nome_allegato'),
-            'id_category' => filter('id_category') ?: null,
-            'id_module' => $id_module,
-            'id_plugin' => $id_plugin,
-            'id_record' => $id_record,
-            'key' => filter('key') ?: null,
-        ]);
+        $file_extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+        $dangerous_extensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'phar', 'htaccess', 'pl', 'cgi', 'py', 'rb', 'asp', 'aspx', 'exe', 'sh', 'bat'];
 
-        // Creazione file fisico
-        if (!empty($upload)) {
-            flash()->info(tr('File caricato correttamente!'));
+        if (in_array(strtolower($file_extension), $dangerous_extensions)) {
+            flash()->error(tr('Estensione file non consentita per motivi di sicurezza!'));
         } else {
-            flash()->error(tr('Errore durante il caricamento del file!'));
+            $upload = Uploads::upload($_FILES['file'], [
+                'name' => filter('nome_allegato'),
+                'id_category' => filter('id_category') ?: null,
+                'id_module' => $id_module,
+                'id_plugin' => $id_plugin,
+                'id_record' => $id_record,
+                'key' => filter('key') ?: null,
+            ]);
+
+            // Creazione file fisico
+            if (!empty($upload)) {
+                flash()->info(tr('File caricato correttamente!'));
+            } else {
+                flash()->error(tr('Errore durante il caricamento del file!'));
+            }
         }
     }
 
@@ -166,9 +175,10 @@ if (filter('op') == 'aggiungi-allegato' || filter('op') == 'rimuovi-allegato') {
 
 // Download allegati
 if (filter('op') == 'download-allegato') {
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id='.prepare(filter('id')).' AND filename='.prepare(filter('filename')));
-
-    $file = Upload::find($rs[0]['id']);
+    $file = Upload::where('id_module', $id_module)
+        ->where('id', filter('id'))
+        ->where('filename', filter('filename'))
+        ->first();
 
     if (!empty($file)) {
         $content = $file->get_contents();
@@ -180,11 +190,17 @@ if (filter('op') == 'download-allegato') {
     }
 } elseif (filter('op') == 'visualizza-modifica-allegato') {
     include_once base_dir().'/include/modifica_allegato.php';
+} elseif (filter('op') == 'visualizza-modifica-iva') {
+    include_once base_dir().'/include/modifica_iva.php';
 }
 
 // Zip allegati
 elseif (filter('op') == 'download-zip-allegati') {
-    $rs = $dbo->fetchArray('SELECT * FROM zz_files WHERE id_module='.prepare($id_module).' AND id IN('.implode(',', json_decode(filter('id'))).')');
+    $ids = (array) json_decode(filter('id'));
+    $ids = array_map('intval', $ids);
+    $rs = Upload::where('id_module', $id_module)
+        ->whereIn('id', $ids)
+        ->get();
 
     $dir = base_dir().'/'.$module->upload_directory;
     directory($dir.'tmp/');
@@ -253,7 +269,7 @@ elseif (filter('op') == 'validate') {
         include_once $validation;
     }
 
-    echo json_encode($response);
+    echo json_encode($response ?? []);
 
     return;
 }
@@ -366,13 +382,6 @@ elseif (post('op') == 'send-email') {
 
     $mail = Modules\Emails\Mail::build(user: $user, template: $template, id_record: $id_record, reset_from_template: false);
 
-    // CC e BCC dal template
-    if (!empty($template['cc'])) {
-        $mail->addReceiver($template['cc'], 'cc');
-    }
-    if (!empty($template['bcc'])) {
-        $mail->addReceiver($template['bcc'], 'bcc');
-    }
 
     // Rimozione allegati predefiniti
     $mail->resetPrints();
@@ -538,7 +547,7 @@ if ($structure->permission == 'rw') {
                     Filter::set('get', 'id_record', $id_record);
 
                     foreach ($values as $key => $value) {
-                        $name = $dbo->fetchOne('SELECT `name` FROM `zz_fields` WHERE `id` = '.prepare($key));
+                        $name = database()->table('zz_fields')->where('id', $key)->value('name');
                         $custom_fields = new HTMLBuilder\Manager\FieldManager();
                         $campo = $custom_fields->getValue(['id_record' => $id_record, 'id_module' => $id_module], $name);
                         if (empty($campo)) {

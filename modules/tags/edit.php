@@ -23,11 +23,17 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 	<input type="hidden" name="op" value="update">
 
-	<div class="row">
-		<div class="col-md-9">
-			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$name$" ]}
-		</div>
+    <div class="row">
+        <div class="col-md-6">
+            {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "name", "required": 1, "value": "$name$" ]}
+        </div>
+
+        <div class="col-md-3">
+            {[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "required": 1, "class": "colorpicker text-center", "value": "$colore$", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
+        </div>
 	</div>
+
+
 </form>
 
 
@@ -70,3 +76,16 @@ if (!empty($elementi)) {
         <i class="fa fa-trash"></i> '.tr('Elimina').'
     </a>';
 }
+?>
+
+
+<script>
+    $(document).ready(function() {
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+            $(this).parent().find('.square').css('background', event.value);
+        });
+        $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
+        
+    });
+	
+</script>

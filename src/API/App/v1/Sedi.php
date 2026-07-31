@@ -82,4 +82,24 @@ class Sedi extends AppResource
 
         return $record;
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che la sede appartenga a un cliente con cui il tecnico ha lavorato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM an_sedi
+             WHERE an_sedi.id = '.prepare($id).'
+             AND an_sedi.id_anagrafica IN (
+                 SELECT DISTINCT in_interventi.id_anagrafica
+                 FROM in_interventi
+                 INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+                 WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
+             )'
+        );
+        return $count['cnt'] > 0;
+    }
 }

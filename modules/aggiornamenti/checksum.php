@@ -74,8 +74,6 @@ function verifyFileIntegrity($checksum)
 function renderIntegrityErrorsTable($errors)
 {
     $html = '<p>'.tr("Segue l'elenco dei file che presentano checksum diverso rispetto a quello registrato nella versione ufficiale").'.</p>';
-    $html .= '<div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> '.tr('Attenzione: questa funzionalità può presentare dei risultati falsamente positivi, sulla base del contenuto del file _FILE_', ['_FILE_' => '<b>checksum.json</b>']).'.'.
-    '</div>';
     $html .= '<table class="table table-bordered table-striped table-hover"><thead><tr><th>'.tr('File con integrità errata').'</th></tr></thead><tbody>';
 
     foreach ($errors as $error) {

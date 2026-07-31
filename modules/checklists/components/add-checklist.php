@@ -73,15 +73,15 @@ $(document).ready(function() {
         if ($(this).selectData() && $(this).val()!="") {
             $("#group_id").val("").attr("disabled", true).attr("required", false);
         } else {
-            $("#group_id").val("").attr("disabled", false).attr("required", true);
+            $("#group_id").val("").attr("disabled", false);
         }
     });
 
     $("#group_id").change(function() {
         if ($(this).selectData()) {
-            $("#assigned_users").val("").attr("disabled", true).attr("required", false);
+            $("#assigned_users").val("").attr("disabled", true);
         } else {
-            $("#assigned_users").val("").attr("disabled", false).attr("required", true);
+            $("#assigned_users").val("").attr("disabled", false);
         }
     });
 });

@@ -30,7 +30,19 @@ echo '
     </div>
     <div class="card-body">';
 
-$results = $dbo->fetchArray('SELECT in_interventi.id, in_interventi.codice, descrizione, (SELECT MIN(orario_inizio) FROM in_interventi_tecnici WHERE id_intervento=my_impianti_interventi.id_intervento) AS data FROM my_impianti_interventi INNER JOIN in_interventi ON my_impianti_interventi.id_intervento=in_interventi.id WHERE id_impianto='.prepare($id_record).' ORDER BY data DESC');
+$results = $dbo->fetchArray('SELECT 
+    `in_interventi`.`id`, 
+    `in_interventi`.`codice`, 
+    `in_interventi`.`descrizione`, 
+    `sessioni_min`.`min_orario_inizio` AS data 
+FROM 
+    `my_impianti_interventi` 
+    INNER JOIN `in_interventi` ON `my_impianti_interventi`.`id_intervento`=`in_interventi`.`id`
+    LEFT JOIN (SELECT `id_intervento`, MIN(`orario_inizio`) AS min_orario_inizio FROM `in_interventi_tecnici` GROUP BY `id_intervento`) AS `sessioni_min` ON `sessioni_min`.`id_intervento` = `my_impianti_interventi`.`id_intervento`
+WHERE 
+    `id_impianto`='.prepare($id_record).' 
+ORDER BY 
+    `data` DESC');
 $totale_interventi = 0;
 
 if (!empty($results)) {

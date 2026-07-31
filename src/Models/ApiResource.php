@@ -29,5 +29,7 @@ class ApiResource extends Model
 
     protected $table = 'zz_api_resources';
 
+    protected $guarded = ['id'];
+
     /* Relazioni Eloquent */
 }

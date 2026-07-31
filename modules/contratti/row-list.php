@@ -121,7 +121,7 @@ foreach ($righe as $riga) {
 
     if (!empty($riga->note)) {
         echo '
-                    <br><span class="text-xs">'.nl2br((string) $riga->note).'</small>';
+                    <br><span class="text-xs text-primary">'.nl2br((string) $riga->note).'</span>';
     }
 
     if (!empty($riga->data_inizio_competenza) || !empty($riga->data_fine_competenza)) {
@@ -533,7 +533,7 @@ async function modificaRiga(button) {
 
     // Apertura modal
     content_was_modified = false;
-    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
+    openModal("'.tr('Modifica riga').'", "'.$module->fileurl('row-edit.php').'?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + encodeURIComponent(id) + "&riga_type=" + encodeURIComponent(type));
 }
 
 // Estraggo le righe spuntate
@@ -774,7 +774,7 @@ function apriDocumenti(div) {
 
 function modificaIvaRighe(righe) {
     if (righe.length > 0) {
-        openModal("'.tr('Modifica IVA').'", globals.rootdir + "/include/modifica_iva.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&tipo_documento=contratti&righe=" + righe.join(','));
+        openModal("'.tr('Modifica IVA').'", globals.rootdir + "/actions.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&op=visualizza-modifica-iva&tipo_documento=contratti&righe=" + righe.join(','));
     }
 }
 

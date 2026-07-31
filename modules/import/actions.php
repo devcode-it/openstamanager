@@ -88,7 +88,8 @@ switch (filter('op')) {
             $fields = (array) post('fields');
             $page = post('page');
 
-            $limit = 500;
+            // Batch piccolo: richieste brevi (margine sui timeout/504) e progress più fluida
+            $limit = 100;
 
             // Inizializzazione del lettore CSV
             $filepath = base_dir().'/files/'.$record->directory.'/'.$record->filename;

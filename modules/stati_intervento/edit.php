@@ -23,7 +23,7 @@ use Models\Module;
 use Modules\Interventi\Stato;
 
 $stato = Stato::find($id_record);
-if ($record['can_delete']) {
+if ($stato->can_delete) {
     $attr = '';
 } else {
     $attr = 'readonly';
@@ -62,11 +62,11 @@ if ($record['can_delete']) {
 			<div class="row">
 
 				<div class="col-md-6">
-					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `id_module` = <?php echo Module::where('name', 'Interventi')->first()->id; ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($record['notifica'])); ?>, "required":1 ]}
+					{[ "type": "select", "label": "<?php echo tr('Template email'); ?>", "name": "email", "value": "$id_email$", "values": "query=SELECT `em_templates`.`id`, `em_templates_lang`.`title` AS descrizione FROM `em_templates` LEFT JOIN `em_templates_lang` ON (`em_templates`.`id` = `em_templates_lang`.`id_record` AND `em_templates_lang`.`id_lang` = <?php echo prepare(Models\Locale::getDefault()->id); ?>) WHERE `id_module` = <?php echo Module::where('name', 'Interventi')->first()->id; ?> AND `deleted_at` IS NULL", "disabled": <?php echo intval(empty($stato->notifica)); ?>, "required":1 ]}
 				</div>
 
 				<div class="col-md-6">
-					{[ "type": "text", "label": "<?php echo tr('Destinatario aggiuntivo'); ?>", "name": "destinatari", "value": "$destinatari$", "icon-before": "<i class='fa fa-envelope'></i>", "disabled": <?php echo intval(empty($record['notifica'])); ?> ]}
+					{[ "type": "text", "label": "<?php echo tr('Destinatario aggiuntivo'); ?>", "name": "destinatari", "value": "$destinatari$", "icon-before": "<i class='fa fa-envelope'></i>", "disabled": <?php echo intval(empty($stato->notifica)); ?> ]}
 				</div>
 
 			</div>
@@ -105,7 +105,7 @@ if ($record['can_delete']) {
 
 <?php
 // Record eliminabile solo se permesso
-if ($record['can_delete']) {
+if ($stato->can_delete) {
     ?>
         <a class="btn btn-danger ask" data-backto="record-list">
             <i class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
@@ -115,11 +115,11 @@ if ($record['can_delete']) {
 ?>
 <script>
     $(document).ready(function() {
-        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-            $(this).parent().find('.square').css('background', $(this).val());
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+            $(this).parent().find('.square').css('background', event.value);
         });
         $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
-		notifica();
+        notifica();
     });
 	
 

@@ -19,6 +19,7 @@
  */
 
 use Models\Module;
+use Models\PrintTemplate;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Export\CSV;
@@ -175,9 +176,8 @@ switch (post('op')) {
         $qta = (post('qta') > 0 ? post('qta') : 1);
 
         if (post('tipologia') == 'singola') {
-            $id_print = Prints::getPrints()['Barcode'];
-        } else {
-            $id_print = Prints::getPrints()['Barcode bulk'];
+            $print = PrintTemplate::where('name', 'Barcode')->first();
+            $id_print = $print ? $print->id : Prints::getPrints()['Barcode bulk'];
         }
 
         redirect_url(base_path_osm().'/pdfgen.php?id_print='.$id_print.'&id_record='.Articolo::where('codice', '!=', '')->first()->id.'&qta='.$qta);

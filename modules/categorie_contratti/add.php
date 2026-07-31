@@ -74,14 +74,14 @@ if (!empty($id_record)) {
 
 <script>
 		$(document).ready( function() {
-			$('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
+			$('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+				$('#modals > div #colore_').parent().find('.square').css('background', event.value);
 			});
 
 			$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
 
-            $('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-				$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());
+            $('#modals > div .colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+				$('#modals > div #colore_').parent().find('.square').css('background', event.value);
 			});
 
 			$('#modals > div #colore_').parent().find('.square').css('background', $('#modals > div #colore_').val());

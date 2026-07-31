@@ -71,9 +71,8 @@ switch (post('op')) {
     case 'update':
         if (post('id_record') !== null) {
             // Se non specifico un budget me lo vado a ricalcolare
-            if ($budget != '') {
-                $budget = post('budget');
-            } else {
+            $budget = post('budget');
+            if ($budget) {
                 $q = "SELECT (SELECT SUM(subtotale) FROM co_righe_contratti GROUP BY id_contratto HAVING id_contratto=co_contratti.id) AS 'budget' FROM co_contratti WHERE id=".prepare($id_record);
                 $rs = $dbo->fetchArray($q);
                 $budget = $rs[0]['budget'];
@@ -516,7 +515,7 @@ switch (post('op')) {
         // Recupera lo stato attuale
         $current = $dbo->fetchOne('SELECT `is_abilitato` FROM `co_contratti_tipi_intervento` WHERE `id_contratto` = '.prepare($id_record).' AND `id_tipo_intervento` = '.prepare(post('id_tipo_intervento')));
 
-        if ($current) {
+        if (!empty($current)) {
             // Inverti lo stato
             $nuovo_stato = $current['is_abilitato'] == 1 ? 0 : 1;
             $dbo->update('co_contratti_tipi_intervento', [
@@ -562,7 +561,11 @@ switch (post('op')) {
 
         // ...altrimenti la creo
         else {
-            if ($dbo->query('INSERT INTO `co_contratti_tipi_intervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico ) VALUES( '.prepare(post('id_contratto')).', '.prepare(post('id_tipo_intervento')).', (SELECT `costo_orario` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'),  (SELECT `costo_orario_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_km_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).'), (SELECT `costo_diritto_chiamata_tecnico` FROM `in_tipi_intervento` WHERE `id`='.prepare(post('id_tipo_intervento')).') )')) {
+            $id_contratto = post('id_contratto');
+            $id_tipo_intervento = post('id_tipo_intervento');
+            // Recupero tariffe in un'unica query
+            $tariffa = $dbo->fetchOne('SELECT `costo_orario`, `costo_km`, `costo_diritto_chiamata`, `costo_orario_tecnico`, `costo_km_tecnico`, `costo_diritto_chiamata_tecnico` FROM `in_tipi_intervento` WHERE `id` = '.prepare($id_tipo_intervento));
+            if ($dbo->query('INSERT INTO `co_contratti_tipi_intervento`(id_contratto, id_tipo_intervento, costo_ore, costo_km, costo_diritto_chiamata, costo_ore_tecnico, costo_km_tecnico, costo_diritto_chiamata_tecnico ) VALUES('.prepare($id_contratto).', '.prepare($id_tipo_intervento).', '.prepare($tariffa['costo_orario']).', '.prepare($tariffa['costo_km']).', '.prepare($tariffa['costo_diritto_chiamata']).', '.prepare($tariffa['costo_orario_tecnico']).', '.prepare($tariffa['costo_km_tecnico']).', '.prepare($tariffa['costo_diritto_chiamata_tecnico']).')')) {
                 flash()->info(tr('Informazioni tariffe salvate correttamente!'));
             } else {
                 flash()->error(tr("Errore durante l'importazione tariffe!"));
@@ -886,10 +889,10 @@ switch (post('op')) {
             $sconto = $prezzo_consigliato['sconto'];
 
             $prezzo_unitario = $prezzo_unitario ?: ($prezzi_ivati ? $originale->prezzo_vendita_ivato : $originale->prezzo_vendita);
-            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id_anagrafica' => $contratto->id_agente])['provvigione_default'];
+            $provvigione = $dbo->selectOne('an_anagrafiche', 'provvigione_default', ['id' => $contratto->id_agente])['provvigione_default'];
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE an_anagrafiche.id='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }
@@ -1000,7 +1003,7 @@ switch (post('op')) {
             }
 
             // Aggiunta sconto combinato se è presente un piano di sconto nell'anagrafica
-            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($id_anagrafica));
+            $piano_sconto = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE an_anagrafiche.id='.prepare($id_anagrafica));
             if (!empty($piano_sconto)) {
                 $sconto = parseScontoCombinato($piano_sconto['prc_guadagno'].'+'.$sconto);
             }

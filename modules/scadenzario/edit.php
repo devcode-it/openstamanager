@@ -32,8 +32,16 @@ $scadenza_in_chiusura = 0;
 foreach ($scadenze as $scadenza) {
     $scadenza = (array) $scadenza;
     foreach ($mesi_chiusura as $mese) {
-        if (date('m', strtotime(($scadenza['data_concordata'] && $scadenza['data_concordata'] != '0000-00-00') ? $scadenza['data_concordata'] : $scadenza['scadenza'])) == str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT)) {
-            $scadenza_in_chiusura = 1;
+        $mese = (array) $mese;
+        $data_check = !empty($scadenza['data_concordata']) && (string) $scadenza['data_concordata'] != '0000-00-00' ? $scadenza['data_concordata'] : $scadenza['scadenza'];
+        $data_check_str = is_object($data_check) ? $data_check->format('Y-m-d') : (string)$data_check;
+        if (!empty($data_check_str)) {
+            $mese_check = date('m', strtotime($data_check_str));
+            $mese_chiusura = str_pad((string) $mese['mese'], 2, '0', STR_PAD_LEFT);
+
+            if ($mese_check == $mese_chiusura) {
+                $scadenza_in_chiusura = 1;
+            }
         }
     }
 }
@@ -109,7 +117,7 @@ if (!empty($documento)) {
 
                     '.Modules::link($documento->module, $record['id_documento'], '<i class="fa fa-folder-open"></i> '.tr('Apri documento'), null, 'class="btn btn-primary"').'';
 } else {
-    $scadenza = $dbo->fetchOne('SELECT * FROM co_scadenzario WHERE id = '.prepare($id_record));
+    $scadenza = Modules\Scadenzario\Scadenza::find($id_record);
     echo '
                     </table>
                     <div class="card">
@@ -206,12 +214,14 @@ echo '
                         <tbody id="scadenze">';
 
 foreach ($scadenze as $i => $scadenza) {
-    $scadenza = (array) $scadenza;
+    $scadenza = (is_object($scadenza) && method_exists($scadenza, 'toArray')) ? $scadenza->toArray() : (array) $scadenza;
+    $scadenza['scadenza'] = $scadenza['scadenza'] ? date('Y-m-d', strtotime($scadenza['scadenza'])) : null;
+    $scadenza['data_concordata'] = $scadenza['data_concordata'] ? date('Y-m-d', strtotime($scadenza['data_concordata'])) : null;
     if ($scadenza['da_pagare'] === $scadenza['pagato'] && $scadenza['da_pagare'] > 0) {
         $class = 'success';
-    } elseif (abs($scadenza['pagato']) === 0.000000) {
+    } elseif (abs($scadenza['pagato'] ?? 0) === 0.000000) {
         $class = 'danger';
-    } elseif (abs($scadenza['pagato']) <= abs($scadenza['da_pagare'])) {
+    } elseif (abs($scadenza['pagato'] ?? 0) <= abs($scadenza['da_pagare'] ?? 0)) {
         $class = 'warning';
     } else {
         $class = 'danger';
@@ -502,8 +512,8 @@ if (!empty($documento)) {
             $("#totale").removeClass("hide");
         }
 
-        $("#diff").html(diff.toLocale());
-        $("#totale_utente").html(totale_utente.toLocale());
+        $("#diff").html(diff.toLocaleString("it-IT", {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+        $("#totale_utente").html(totale_utente.toLocaleString("it-IT", {minimumFractionDigits: 2, maximumFractionDigits: 2}));
     }
 
     function aggiornaScadenzaInline(id_scadenza) {
@@ -531,6 +541,7 @@ if (!empty($documento)) {
         var id_banca_azienda = input("id_banca_azienda[" + index + "]").get();
         var id_banca_controparte = input("id_banca_controparte[" + index + "]").get();
         var id_pagamento = input("id_pagamento[" + index + "]").get();
+        var scadenza = input("scadenza[" + index + "]").get();
         var data_concordata = input("data_concordata[" + index + "]").get();
         var da_pagare = input("da_pagare[" + index + "]").get();
         var pagato = input("pagato[" + index + "]").get();
@@ -546,6 +557,7 @@ if (!empty($documento)) {
                 id_banca_azienda: id_banca_azienda,
                 id_banca_controparte: id_banca_controparte,
                 id_pagamento: id_pagamento,
+                scadenza: scadenza,
                 data_concordata: data_concordata,
                 da_pagare: da_pagare,
                 pagato: pagato

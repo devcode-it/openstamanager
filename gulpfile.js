@@ -18,6 +18,7 @@
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { execFileSync } from 'child_process';
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,7 +50,7 @@ const replace = require('gulp-replace');
 
 // Release
 const md5File = require('md5-file')
-const archiver = require('archiver');
+import { ZipArchive } from 'archiver';
 const shell = require('shelljs');
 const { Readable } = require('stream');
 import * as fs from 'fs';
@@ -130,7 +131,7 @@ const JS = gulp.parallel(function vendorJS() {
         '@fullcalendar/moment/index.global.js',
         '@fullcalendar/core/locales/it.global.js',
         'geocomplete/jquery.geocomplete.js',
-        'inputmask/dist/min/jquery.inputmask.bundle.min.js',
+        'inputmask/dist/jquery.inputmask.min.js',
         'jquery-form/src/jquery.form.js',
         'jquery-ui-touch-punch/jquery.ui.touch-punch.js',
         'numeral/numeral.js',
@@ -527,7 +528,7 @@ export function release(done) {
                 // Impostazione dello zip con il nome che include la versione
                 let zipFileName = `openstamanager-${version}.zip`;
                 let output = fs.createWriteStream(`./${zipFileName}`, { flags: 'w' });
-                let archive = archiver('zip');
+                let archive = new ZipArchive();
 
                 output.on('close', function () {
                     console.log(`ZIP completato: ${zipFileName}`);
@@ -664,7 +665,9 @@ export function release(done) {
 
                     // Generazione del dump del database (esclusi zz_users)
                     // Lettura delle credenziali dal config.inc.php
-                    const dbConfigJson = shell.exec(`php -r 'include "${__dirname}/config.inc.php"; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);'`, { silent: true }).stdout.trim();
+                    const phpConfigPath = `${__dirname}/config.inc.php`;
+                    const phpReadConfigCode = 'include $argv[1]; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);';
+                    const dbConfigJson = execFileSync('php', ['-r', phpReadConfigCode, phpConfigPath], { encoding: 'utf8' }).trim();
                     const dbConfig = JSON.parse(dbConfigJson);
                     const { host: dbHost, username: dbUser, password: dbPass, name: dbName } = dbConfig;
 

@@ -18,16 +18,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\PrintTemplate;
+
 include_once __DIR__.'/../../core.php';
 
 switch (post('op')) {
     case 'update':
         if (!empty(intval(post('predefined'))) && !empty(post('module'))) {
-            $dbo->query('UPDATE `zz_prints` SET `predefined` = 0 WHERE `id_module` = '.prepare(post('module')));
+            PrintTemplate::where('id_module', '=', post('module'))->update(['predefined' => 0]);
         }
+        $print->id_module = post('module');
         $print->options = post('options');
+        $print->directory = post('directory');
         $print->order = post('order');
         $print->predefined = intval(post('predefined'));
+        $print->enabled = post('enabled');
         $print->save();
 
         $print->setTranslation('title', post('title'));
@@ -44,6 +49,49 @@ switch (post('op')) {
         }
 
         flash()->info(tr('Modifiche salvate correttamente'));
+
+        break;
+
+    case 'add':
+
+        $module = post('module');
+        $title = post('title');
+        $filename = post('filename');
+        $directory = post('directory');
+        
+        $print = PrintTemplate::build($module, $title, $directory);
+        $id_record = $dbo->lastInsertedID();
+    
+        $print->setTranslation('title', $title);
+        $print->setTranslation('filename', $filename);
+        flash()->info(tr('Aggiunta nuova stampa!'));
+
+        break;
+
+    // Duplica stampa
+    case 'copy':
+        $new = $print->replicate();
+
+        $new->predefined = 0;
+        $new->order = PrintTemplate::where('id_module', $print->id_module)->max('order') + 1 ;
+        $new->name = $print->name . ' (' . tr('copia') . ')';
+        $new->save();
+
+        $newTitle = $print->getTranslation('title') . ' (' . tr('copia') . ')';
+        $new->setTranslation('title', $newTitle);
+        $new->setTranslation('filename', $print->getTranslation('filename'));
+
+        $id_record = $new->id;
+
+        flash()->info(tr('Stampa duplicata correttamente!'));
+
+        break;
+
+    case 'delete':
+        $print = PrintTemplate::find($id_record);
+        $print->delete();
+
+        flash()->info(tr('Stampa eliminata!'));
 
         break;
 }

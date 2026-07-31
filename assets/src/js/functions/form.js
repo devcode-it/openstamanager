@@ -36,7 +36,7 @@ function submitAjax(form, data, callback, errorCallback) {
     data = {...getInputsData(form), ...data};
 
     $("#main_loading").show();
-    content_was_modified = false;
+    window.content_was_modified = false;
 
     // Fix per gli id di default
     data.id_module = data.id_module ? data.id_module : globals.id_module;
@@ -163,7 +163,7 @@ function salvaForm(form, data = {}, button = null) {
 
         // Gestione grafica di salvataggio
         $("#main_loading").show();
-        content_was_modified = false;
+        window.content_was_modified = false;
 
         // Lettura dei contenuti degli input
         data = {...getInputsData(form), ...data};

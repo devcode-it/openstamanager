@@ -18,13 +18,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-include_once __DIR__.'/../../core.php';
-
 use Modules\Anagrafiche\Nazione;
+use Modules\Anagrafiche\Sede;
 
 // id_record = sede
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM an_sedi WHERE id='.prepare($id_record));
+    $record = Sede::find($id_record);
     $record['lat'] = floatval($record['lat']);
     $record['lng'] = floatval($record['lng']);
 }

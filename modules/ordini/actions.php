@@ -107,7 +107,7 @@ switch (post('op')) {
             $ordine->numero_cliente = post('numero_cliente');
             $ordine->data_cliente = post('data_cliente') ?: null;
 
-            $ordine->id_documento_fe = post('numero_cliente');
+            $ordine->id_documento_fe = post('id_documento_fe');
             $ordine->codice_commessa = post('codice_commessa');
             $ordine->codice_cup = post('codice_cup');
             $ordine->codice_cig = post('codice_cig');
@@ -125,7 +125,7 @@ switch (post('op')) {
             $ordini = $dbo->fetchArray($query, $params);
 
             if (!empty($ordini)) {
-                $documento = '';
+                $documenti = '';
                 foreach ($ordini as $rs) {
                     $descrizione = tr('Ordine cliente num. _NUM_ del _DATE_', [
                         '_NUM_' => !empty($rs['numero_esterno']) ? $rs['numero_esterno'] : $rs['numero'],
@@ -993,7 +993,7 @@ switch (post('op')) {
 
         $id_record = $new->id;
 
-        if (!empty(post('copia_righe'))) {
+        if (!empty(post('copia_righe_duplica'))) {
             $righe = $ordine->getRighe();
             foreach ($righe as $riga) {
                 $new_riga = $riga->replicate();

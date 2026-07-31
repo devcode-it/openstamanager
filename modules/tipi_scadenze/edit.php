@@ -20,9 +20,9 @@
 include_once __DIR__.'/../../core.php';
 
 // Collegamenti con scadenzaio (numerici)
-$scadenze = $dbo->fetchNum('SELECT id FROM co_scadenzario WHERE tipo = '.prepare($record['name']));
+$scadenze = $dbo->fetchNum('SELECT id FROM co_scadenzario WHERE tipo = '.prepare($tipo->name));
 
-if ($record['can_delete'] and empty($scadenze)) {
+if ($tipo->can_delete and empty($scadenze)) {
     $attr = '';
 } else {
     $attr = 'readonly';
@@ -53,7 +53,7 @@ if ($record['can_delete'] and empty($scadenze)) {
 
 <?php
 
-if ($record['can_delete']) {
+if ($tipo->can_delete) {
     if (!empty($scadenze)) {
         echo '
 	<div class="alert alert-danger">

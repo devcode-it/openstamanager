@@ -57,7 +57,7 @@ switch ($resource) {
         $id_anagrafica = get('id_anagrafica');
 
         if (!empty($id_anagrafica)) {
-            $where = 'AND id_anagrafica = '.prepare($id_anagrafica);
+            $where = 'AND id = '.prepare($id_anagrafica);
         }
 
         $results = [];
@@ -85,7 +85,7 @@ switch ($resource) {
         }
 
         // Tutti gli agenti del cliente
-        $q = "SELECT DISTINCT(email), ragione_sociale, id FROM an_anagrafiche WHERE email != '' AND (id=(SELECT id_agente FROM an_anagrafiche AS agenti WHERE 1=1 ".$where.') OR id IN (SELECT id_agente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';
+        $q = "SELECT DISTINCT(email), ragione_sociale, id FROM an_anagrafiche WHERE email != '' AND (id=(SELECT id_agente FROM an_anagrafiche_agenti AS agenti WHERE 1=1 ".$where.') OR id IN (SELECT id_agente FROM an_anagrafiche_agenti WHERE 1=1 '.$where.'))';
 
         $rs = $dbo->fetchArray($q);
         foreach ($rs as $r) {

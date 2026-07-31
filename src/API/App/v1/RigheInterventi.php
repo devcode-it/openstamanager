@@ -247,4 +247,21 @@ class RigheInterventi extends AppResource
             $record->serials = explode(',', (string) $data['serials']);
         }
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che la riga appartenga a un intervento a cui il tecnico è assegnato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM in_righe_interventi
+             INNER JOIN in_interventi ON in_righe_interventi.id_intervento = in_interventi.id
+             INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+             WHERE in_righe_interventi.id = '.prepare($id).'
+             AND in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica)
+        );
+        return $count['cnt'] > 0;
+    }
 }

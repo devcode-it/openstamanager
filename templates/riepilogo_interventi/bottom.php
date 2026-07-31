@@ -38,11 +38,10 @@ if (setting('Formato ore in stampa') == 'Sessantesimi') {
 
 echo '
         <tr style="background-color: #eee;">
-            <th width="5%" class="border-end-0"></th>
-            <th class="text-right text-muted border-start-0">
+            <th colspan="2" class="text-right text-muted">
                 <b>'.tr('Totale', [], ['upper' => true]).':</b>
             </th>
-            <th class="text-center">'.$somma_km.'</td>
+            <th class="text-center">'.$somma_km.'</th>
             <th class="text-center">'.$somma_ore.'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_imponibile, $d_totali) : '-').'</th>
             <th class="text-center">'.($pricing ? moneyFormat($somma_sconto, $d_totali) : '-').'</th>
@@ -50,8 +49,7 @@ echo '
         </tr>
 
         <tr style="background-color: #eee;">
-            <th width="5%" class="border-end-0"></th>
-            <th class="text-right text-muted border-start-0">
+            <th colspan="2" class="text-right text-muted">
                 <b>'.tr('Iva', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>
@@ -59,8 +57,7 @@ echo '
         </tr>
 
         <tr style="background-color: #eee;">
-            <th width="5%" class="border-end-0"></th>
-            <th class="text-right text-muted border-start-0">
+            <th colspan="2" class="text-right text-muted">
                 <b>'.tr('Totale Ivato', [], ['upper' => true]).':</b>
             </th>
             <th colspan="4"></th>

@@ -2,18 +2,18 @@
 
 namespace API\Controllers;
 
-use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\State\ProcessorInterface;
-use DTO\DataTablesLoadRequest\Column;
 use DTO\DataTablesLoadRequest\DataTablesLoadRequest;
 use DTO\DataTablesLoadResponse\DataTablesLoadResponse;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Models\Module;
 use Util\Query;
 
 #[Post(
     uriTemplate: '/datatables/list/{id_module}/{id_plugin}/{id_parent}',
-    processor: DataTablesController::class,
+    controller: DataTablesController::class,
     input: DataTablesLoadRequest::class,
     output: DataTablesLoadResponse::class,
 )]
@@ -21,17 +21,15 @@ class DataTablesResource
 {
 }
 
-final class DataTablesController implements ProcessorInterface
+final class DataTablesController extends BaseController
 {
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): DataTablesLoadResponse
+    public function __invoke(Request $request): JsonResponse
     {
-        if (!$data instanceof DataTablesLoadRequest) {
-            throw new \InvalidArgumentException();
-        }
+        $request_body = $this->init($request, DataTablesLoadRequest::class);
 
-        $id_module = !empty($uriVariables['id_module']) ? $uriVariables['id_module'] : null;
-        $id_plugin = !empty($uriVariables['id_plugin']) ? $uriVariables['id_plugin'] : null;
-        $id_parent = !empty($uriVariables['id_parent']) ? $uriVariables['id_parent'] : null;
+        $id_module = (int) $request_body->getIdModule();
+        $id_plugin = (int) $request_body->getIdPlugin();
+        $id_parent = (int) $request_body->getIdParent();
 
         $module = \Modules::get($id_module);
         \Modules::setCurrent($id_module);
@@ -44,21 +42,38 @@ final class DataTablesController implements ProcessorInterface
 
         $structure = $plugin ?? $module;
 
-        return $this->retrieveRecords($structure, $data, $id_module, $id_plugin, $id_parent);
+        if (!$structure->permission == 'r' && !$structure->permission == 'rw') {
+            throw new AuthorizationException();
+        }
+
+        $type = $structure['option'];
+
+        if (!empty($type) && $type != 'menu' && $type != 'custom') {
+            return new JsonResponse($this->retrieveRecords($structure, $request_body, $id_module, $id_plugin, $id_parent));
+        }
+
+        throw new AuthorizationException();
     }
 
-    private function retrieveRecords($structure, DataTablesLoadRequest $data, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
+    protected function hasAccess($request): bool
+    {
+        return true;
+    }
+
+    private function retrieveRecords($structure, DataTablesLoadRequest $request, $id_module, $id_plugin, $id_parent): DataTablesLoadResponse
     {
         // Informazioni fondamentali
-        $order = $data->order ? $data->order[0] : [];
+        $order = $request->order ? $request->order[0] : [];
 
         if (!empty($order)) {
-            $order['column'] = $order['column'] - 1;
+            $order->column = $order->column - 1;
         }
+
+        $order_array = $order->toArray();
 
         $query_structure = Query::readQuery($structure);
 
-        $response = new DataTablesLoadResponse($data->draw);
+        $response = new DataTablesLoadResponse($request->draw);
 
         $query = Query::getQuery($structure, [], [], [], $query_structure);
         if (empty($query)) {
@@ -67,10 +82,10 @@ final class DataTablesController implements ProcessorInterface
 
         // Ricerca
         $search = [];
-        $columns = $data->columns;
+        $columns = $request->columns;
         array_shift($columns);
         for ($i = 0; $i < count($columns); ++$i) {
-            $col = Column::fromArray($columns[$i]);
+            $col = $columns[$i];
             if (!empty($col->search->value) || $col->search->value == '0') {
                 $search[$query_structure['fields'][$i]] = $col->search->value;
             }
@@ -80,7 +95,7 @@ final class DataTablesController implements ProcessorInterface
         $response->recordsTotal = database()->fetchNum($query);
 
         // CONTEGGIO RECORD FILTRATI (senza LIMIT)
-        $query_filtered = Query::getQuery($structure, $search, $order, [], $query_structure);
+        $query_filtered = Query::getQuery($structure, $search, $order_array, [], $query_structure);
         if (empty($id_plugin)) {
             $query_filtered = \Modules::replaceAdditionals($id_module, $query_filtered);
         }
@@ -93,11 +108,11 @@ final class DataTablesController implements ProcessorInterface
         $response->avg = Query::getAverages($structure, $search);
 
         $limit = [
-            'start' => $data->start,
-            'length' => $data->length,
+            'start' => $request->start,
+            'length' => $request->length,
         ];
         // RISULTATI VISIBILI (con LIMIT)
-        $query = Query::getQuery($structure, $search, $order, $limit, $query_structure);
+        $query = Query::getQuery($structure, $search, $order_array, $limit, $query_structure);
 
         // Filtri derivanti dai permessi (eventuali)
         if (empty($id_plugin)) {

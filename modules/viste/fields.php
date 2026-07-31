@@ -246,8 +246,7 @@ echo '
                             {[ "type": "select", "label": "'.tr('Gruppi con accesso').'", "name": "gruppi[-id-][]", "multiple": "1", "values": "query=SELECT DISTINCT `zz_groups`.`id`, `title` AS descrizione FROM `zz_groups` LEFT JOIN `zz_groups_lang` ON (`zz_groups`.`id` = `zz_groups_lang`.`id_record` AND `zz_groups_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `zz_groups`.`id` IN (SELECT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')) OR `zz_groups`.`id` = 1 ORDER BY `zz_groups`.`id` ASC", "value": "';
 
 // Ottieni tutti gli ID dei gruppi che hanno accesso al modulo
-$groups_with_access = $dbo->fetchArray('SELECT DISTINCT `id_gruppo` FROM `zz_permissions` WHERE `id_module` = '.prepare($record->id).' AND `permessi` IN (\'r\', \'rw\')');
-$group_ids = array_column($groups_with_access, 'id_gruppo');
+$group_ids = database()->table('zz_permissions')->where('id_module', $record->id)->whereIn('permessi', ['r', 'rw'])->distinct()->pluck('id_gruppo')->toArray();
 
 // Assicurati che il gruppo Amministratori (ID 1) sia incluso
 $id_gruppo_admin = 1; // ID del gruppo Amministratori

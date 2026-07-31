@@ -23,7 +23,7 @@ include_once __DIR__.'/../../core.php';
 use Models\PrintTemplate;
 
 if (!empty($id_record)) {
-    $print = PrintTemplate::find($id_record);
+    $print = PrintTemplate::withoutGlobalScopes()->find($id_record);
 
     $record = $print->toArray();
     $record['title'] = $print->getTranslation('title');

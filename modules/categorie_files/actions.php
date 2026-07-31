@@ -64,7 +64,11 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $dbo->query('UPDATE `zz_files_categories` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id_record));
+        $categoria = Categoria::find($id_record);
+        if ($categoria) {
+            $categoria->deleted_at = now();
+            $categoria->save();
+        }
 
         flash()->info(tr('Categoria eliminata!'));
 

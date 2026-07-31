@@ -27,15 +27,13 @@ echo '
 <h5 class="text-center"><b>'.tr('Riepilogo attività selezionate', [], ['upper' => true]).'</b></h5>
 
 <table class="table">
-    <thead>
-        <tr>
-            <th colspan="2" class="text-muted"><small>'.tr('Documento', [], ['upper' => true]).'</small></th>
-            <th class="text-center text-muted" style="width:8%"><small>'.tr('KM', [], ['upper' => true]).'</small></th>
-            <th class="text-center text-muted" style="width:8%"><small>'.tr('Ore', [], ['upper' => true]).'</small></th>
-            <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo totale', [], ['upper' => true]) : tr('Imponibile', [], ['upper' => true])).'</th>
-            <th class="text-center text-muted" style="width:15%"><small>'.tr('Sconto', [], ['upper' => true]).'</small></th>
-            <th class="text-center text-muted" style="width:15%"><small>'.($tipo == 'interno' ? tr('Costo netto', [], ['upper' => true]) : tr('Totale imponibile', [], ['upper' => true])).'</small></th>
-        </tr>
-    </thead>
+    <colgroup>
+        <col span="2">
+        <col style="width:8%">
+        <col style="width:8%">
+        <col style="width:15%">
+        <col style="width:15%">
+        <col style="width:15%">
+    </colgroup>
 
     <tbody>';

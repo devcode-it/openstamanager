@@ -20,6 +20,8 @@
 
 namespace Util;
 
+use Modules\Segmenti\Segmento;
+
 /**
  * Classe per la gestione delle interazione di base per le query dinamiche.
  *
@@ -82,7 +84,7 @@ class Query
         // Ottimizzazione: evita query se segment è null
         $is_sezionale = false;
         if (!empty($segment)) {
-            $segment_data = database()->fetchOne('SELECT `is_sezionale` FROM `zz_segments` WHERE `id` = '.prepare($segment));
+            $segment_data = Segmento::find($segment);
             $is_sezionale = !empty($segment_data) ? $segment_data['is_sezionale'] : false;
         }
 
@@ -249,7 +251,7 @@ class Query
 
             if (isset($total['order_by'][$column_index])) {
                 // Rimozione ORDER BY esistente in modo più efficiente
-                $query = preg_replace('/\s+ORDER\s+BY\s+.+$/i', '', (string) $query);
+                $query = preg_replace('/\s+ORDER\s+BY\s+(?!.*\bORDER\s+BY\b).*$/is', '', (string) $query);
                 $order_clause = $total['order_by'][$column_index];
 
                 // Sanitizzazione della clausola ORDER BY

@@ -21,6 +21,10 @@
 include_once __DIR__.'/../../core.php';
 
 use Modules\Anagrafiche\Anagrafica;
+use Modules\Anagrafiche\Referente;
 
 $anagrafica = Anagrafica::find($id_record);
 $agente = Anagrafica::find($anagrafica->id_agente);
+$referenti = implode(', ', Referente::where('id_anagrafica', $anagrafica->id)->pluck('nome')->all());
+
+echo '';

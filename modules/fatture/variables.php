@@ -18,6 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Anagrafica;
+
 $r = $dbo->fetchOne('SELECT 
         `co_documenti`.*,
         `an_anagrafiche`.`pec`,
@@ -42,15 +44,15 @@ $banca = Modules\Banche\Banca::where('id_anagrafica', setting('Azienda predefini
     ->where('predefined', 1)
     ->first();
 
-if (!empty(setting('Logo stampe'))) {
-    $logo_azienda = base_url().'/'.Models\Upload::where('filename', setting('Logo stampe'))->first()->fileurl;
-} else {
+$azienda = Modules\Anagrafiche\Anagrafica::find(setting('Azienda predefinita'));
+$logo_azienda = $azienda->image;
+if (empty($logo_azienda)) {
     $logo_azienda = str_replace(base_dir(), base_url(), App::filepath('templates/base|custom|/logo_azienda.jpg'));
     $logo_azienda = str_replace('\\', '/', $logo_azienda);
 }
 
-$r_user = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE id='.prepare(auth_osm()->getUser()['id_anagrafica']));
-$r_company = $dbo->fetchOne('SELECT * FROM an_anagrafiche WHERE id='.prepare(setting('Azienda predefinita')));
+$r_user = Anagrafica::find(auth_osm()->getUser()['id_anagrafica']);
+$r_company = Anagrafica::find(setting('Azienda predefinita'));
 
 // Variabili da sostituire
 return [

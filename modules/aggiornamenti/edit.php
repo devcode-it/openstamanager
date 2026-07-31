@@ -39,7 +39,6 @@ if (!function_exists('base_dir')) {
 use Models\Module;
 use Modules\Aggiornamenti\IntegrityChecker;
 use Modules\Aggiornamenti\Utils;
-use Update;
 
 // Funzioni per il controllo database (wrapper per compatibilità)
 function integrity_diff($expected, $current)
@@ -270,7 +269,6 @@ function getDatabaseReferenceFile($database)
     }
 
     if ($database->getType() === 'MySQL') {
-
         return 'mysql.json';
     }
 
@@ -1255,7 +1253,7 @@ $(document).ready(function() {
             customClass: {
                 confirmButton: "btn btn-lg btn-warning",
                 cancelButton: "btn btn-lg btn-default",
-            }
+            },
             buttonsStyling: false,
             showLoaderOnConfirm: true,
             preConfirm: function() {

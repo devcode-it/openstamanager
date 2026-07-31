@@ -546,7 +546,7 @@ function getSearchValues($id_module)
 function hasArticoliFiglio($id_articolo)
 {
     if (function_exists('renderDistinta')) {
-        return database()->fetchOne('SELECT qta FROM mg_articoli_distinte WHERE id_articolo='.prepare($id_articolo));
+        return database()->table('mg_articoli_distinte')->where('id_articolo', $id_articolo)->value('qta');
     }
 
     return false;
@@ -560,8 +560,8 @@ function hasArticoliFiglio($id_articolo)
 function getImageManager()
 {
     return extension_loaded('gd')
-        ? ImageManager::usingDriver(Driver::class)
-        : ImageManager::usingDriver(Driver::class);
+        ? ImageManager::usingDriver(new \Intervention\Image\Drivers\Gd\Driver())
+        : ImageManager::usingDriver(new \Intervention\Image\Drivers\Imagick\Driver());
 }
 
 /**

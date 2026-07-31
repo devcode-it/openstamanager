@@ -92,4 +92,24 @@ class Contratti extends AppResource implements RetrieveInterface
     {
         return new Interventi();
     }
+
+    protected function authorizeRecord($id, $user)
+    {
+        if ($user->is_admin) {
+            return true;
+        }
+
+        // Verifica che il contratto appartenga a un cliente con cui il tecnico ha lavorato
+        $count = database()->fetchOne(
+            'SELECT COUNT(*) AS cnt FROM co_contratti
+             WHERE co_contratti.id = '.prepare($id).'
+             AND co_contratti.id_anagrafica IN (
+                 SELECT DISTINCT in_interventi.id_anagrafica
+                 FROM in_interventi
+                 INNER JOIN in_interventi_tecnici ON in_interventi.id = in_interventi_tecnici.idintervento
+                 WHERE in_interventi_tecnici.idtecnico = '.prepare($user->id_anagrafica).'
+             )'
+        );
+        return $count['cnt'] > 0;
+    }
 }

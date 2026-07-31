@@ -58,7 +58,25 @@ echo '
                 <td class="border-right border-bottom text-right">
                     <small>$c_codicefiscale$</small>
                 </td>
-            </tr>
+            </tr>';
+
+$nome_referente = '';
+if ($documento->id_referente) {
+    $nome_referente = database()->table('an_referenti')
+        ->where('id', $documento->id_referente)
+        ->value('nome');
+}
+echo '        
+        <tr>
+            <td class="border-bottom border-left">
+                <p class="small-bold">'.tr('Referente', [], ['upper' => true]).'</p>
+            </td>
+            <td class="border-right border-bottom text-right">
+                <small>'. $nome_referente .' </small>
+            </td>
+        </tr>';
+
+echo '  
         </table>
     </div>
 </div>';

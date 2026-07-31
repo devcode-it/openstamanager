@@ -35,7 +35,7 @@ switch (post('op')) {
             }
             $stato->icona = post('icona');
             $stato->colore = post('colore');
-            $stato->is_bloccato = post('completato');
+            $stato->is_bloccato = post('is_bloccato');
             $stato->is_fatturabile = post('is_fatturabile');
             $stato->impegnato = post('impegnato');
             $stato->save();
@@ -50,7 +50,7 @@ switch (post('op')) {
         $descrizione = post('descrizione');
         $icona = post('icona');
         $colore = post('colore');
-        $is_bloccato = post('completato_add');
+        $is_bloccato = post('is_bloccato_add');
         $is_fatturabile = post('is_fatturabile_add');
         $impegnato = post('impegnato_add');
 

@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\DDT\Causale;
+use Modules\DDT\DDT;
+use Modules\Fatture\Fattura;
 
 switch (filter('op')) {
     case 'update':
@@ -73,14 +75,15 @@ switch (filter('op')) {
         break;
 
     case 'delete':
-        $documenti = $dbo->fetchNum('SELECT `id` FROM `dt_ddt` WHERE `id_causale_t`='.prepare($id_record).' UNION SELECT `id` FROM `co_documenti` WHERE `id_causale_t`='.prepare($id_record));
+        $has_ddt = DDT::where('id_causale_t', $id_record)->exists();
+        $has_documenti = Fattura::where('id_causale_t', $id_record)->exists();
 
-        if ((!empty($id_record)) && empty($documenti)) {
-            $dbo->delete('dt_causale_t', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_ddt && !$has_documenti) {
+            Causale::find($id_record)->delete();
         } else {
-            $dbo->update('dt_causale_t', [
+            Causale::find($id_record)->update([
                 'deleted_at' => date('Y-m-d H:i:s'),
-            ], ['id' => $id_record]);
+            ]);
         }
 
         flash()->info(tr('Causale di trasporto eliminata.'));

@@ -173,7 +173,7 @@ class AJAX
         $module_ids = array_column($available_modules->toArray(), 'id');
 
         if (!empty($module_ids)) {
-            $notes = $dbo->fetchArray('SELECT `zz_notes`.`content`, `zz_notes`.`id_record`, `zz_notes`.`id_module` FROM `zz_notes` WHERE `zz_notes`.`content` LIKE '.prepare('%'.$term.'%').' AND `zz_notes`.`id_module` IN ('.implode(',', $module_ids).')');
+            $notes = Models\Note::where('content', 'LIKE', '%'.$term.'%')->whereIn('id_module', $module_ids)->get(['content', 'id_record', 'id_module']);
 
             foreach ($notes as $note) {
                 $result = [];
@@ -182,7 +182,8 @@ class AJAX
                 $result['category'] = tr('Note interne');
 
                 $text = strip_tags($note['content']);
-                $highlighted = str_replace($term, "<span class='highlight'>".$term.'</span>', $text);
+                $safe_term = htmlspecialchars($term, ENT_QUOTES, 'UTF-8');
+                $highlighted = str_replace($term, "<span class='highlight'>".$safe_term.'</span>', $text);
                 $result['labels'] = [tr('Nota').': '.$highlighted.'<br/>'];
 
                 $results[] = $result;
@@ -378,7 +379,7 @@ class AJAX
         $ragioni_sociali = ['-1'];
 
         try {
-            $rs = $dbo->fetchArray('SELECT id as id_anagrafica, ragione_sociale FROM an_anagrafiche WHERE ragione_sociale LIKE '.prepare('%'.$term.'%'));
+            $rs = Modules\Anagrafiche\Anagrafica::where('ragione_sociale', 'LIKE', '%'.$term.'%')->get(['id as id_anagrafica', 'ragione_sociale']);
 
             for ($a = 0; $a < sizeof($rs); ++$a) {
                 $idanagrafiche[] = $rs[$a]['id_anagrafica'];

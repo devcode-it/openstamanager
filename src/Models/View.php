@@ -45,6 +45,8 @@ class View extends Model
     use RecordTrait;
     protected $table = 'zz_views';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

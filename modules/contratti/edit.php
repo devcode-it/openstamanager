@@ -439,6 +439,9 @@ $(document).ready(function() {
 
     caricaRighe(null);
     content_was_modified = false;
+    setTimeout(function() {
+        content_was_modified = false;
+    }, 500);
 });
 
 /**

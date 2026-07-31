@@ -35,6 +35,21 @@ use Illuminate\Support\Collection;
 abstract class AppResource extends Resource implements RetrieveInterface, CreateInterface, UpdateInterface, DeleteInterface
 {
     /**
+     * Verifica l'autorizzazione dell'utente ad accedere a un record specifico.
+     * Di default, solo gli amministratori possono accedere a tutti i record.
+     * Le sottoclassi possono sovrascrivere questo metodo per implementare logiche di autorizzazione specifiche.
+     *
+     * @param string $id ID del record
+     * @param mixed  $user Utente autenticato
+     *
+     * @return bool True se l'utente è autorizzato, false altrimenti
+     */
+    protected function authorizeRecord($id, $user)
+    {
+        return $user->is_admin;
+    }
+
+    /**
      * Gestisce le operazioni di *retrieve* in tre fasi:
      * - Cleanup (elenco di record da rimuovere nell'applicazione);
      * - Record modificati (elenco di record che sono stati aggiornati nel gestionale);
@@ -77,6 +92,11 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
             foreach ($ids as $single_id) {
                 $single_id = trim($single_id);
                 if (!empty($single_id)) {
+                    // Verifica autorizzazione per ogni record
+                    $user = auth_osm()->getUser();
+                    if (!$this->authorizeRecord($single_id, $user)) {
+                        throw new \API\Exceptions\InternalError();
+                    }
                     $details = $this->retrieveRecord($single_id);
                     $details = $this->forceToString($details);
                     $results[$single_id] = $details;
@@ -89,6 +109,11 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
         }
 
         // Gestione della visualizzazione dei dettagli del record (singolo)
+        // Verifica autorizzazione prima di recuperare il record
+        $user = auth_osm()->getUser();
+        if (!$this->authorizeRecord($id, $user)) {
+            throw new \API\Exceptions\InternalError();
+        }
         $details = $this->retrieveRecord($id);
         $details = $this->forceToString($details);
 
@@ -122,6 +147,14 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     public function update($request)
     {
         $data = $request['data'];
+
+        // Verifica autorizzazione prima di aggiornare il record
+        $user = auth_osm()->getUser();
+        $id = $data['id'];
+        if (!$this->authorizeRecord($id, $user)) {
+            throw new \API\Exceptions\InternalError();
+        }
+
         $response_data = $this->updateRecord($data);
         $response_data = $this->forceToString($response_data);
 
@@ -136,6 +169,13 @@ abstract class AppResource extends Resource implements RetrieveInterface, Create
     public function delete($request)
     {
         $id = $request['id'];
+
+        // Verifica autorizzazione prima di eliminare il record
+        $user = auth_osm()->getUser();
+        if (!$this->authorizeRecord($id, $user)) {
+            throw new \API\Exceptions\InternalError();
+        }
+
         $this->deleteRecord($id);
     }
 

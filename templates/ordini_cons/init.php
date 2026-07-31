@@ -32,3 +32,10 @@ $id_cliente = $documento['id_anagrafica'];
 $id_sede = $documento['id_sede'];
 
 $pricing = $options['pricing'];
+
+$nome_referente = '';
+if ($documento->id_referente) {
+    $nome_referente = database()->table('an_referenti')
+        ->where('id', $documento->id_referente)
+        ->value('nome');
+}

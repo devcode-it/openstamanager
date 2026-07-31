@@ -57,7 +57,8 @@ switch (post('op')) {
         flash()->info(tr('Scadenza inserita!'));
 
         // Restituisce l'ID della scadenza appena creata per le chiamate AJAX
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower((string) $_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        $requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+        if (!empty($requested_with) && strtolower((string) $requested_with) == 'xmlhttprequest') {
             echo json_encode(['id_record' => $id_record]);
         }
         break;
@@ -210,6 +211,7 @@ switch (post('op')) {
             $scadenza->id_banca_controparte = post('id_banca_controparte') ?: null;
             $scadenza->id_pagamento = post('id_pagamento') ?: null;
             $scadenza->data_concordata = post('data_concordata') ?: null;
+            $scadenza->scadenza = post('scadenza') ?: null;
             $scadenza->da_pagare = post('da_pagare') ?: 0;
             $scadenza->pagato = post('pagato') ?: 0;
 

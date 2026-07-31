@@ -93,7 +93,11 @@ switch (filter('op')) {
 
     case 'delete':
         if (!empty($id_record)) {
-            $dbo->query('UPDATE `co_iva` SET deleted_at = NOW() WHERE `id`='.prepare($id_record));
+            $aliquota = Aliquota::find($id_record);
+            if ($aliquota) {
+                $aliquota->deleted_at = now();
+                $aliquota->save();
+            }
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo', [
                 '_TYPE_' => 'IVA',

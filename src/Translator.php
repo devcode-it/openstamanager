@@ -153,9 +153,9 @@ class Translator extends Util\Singleton
 
         if (!empty($operations)) {
             if (!empty($operations['upper'])) {
-                $result = strtoupper((string) $result);
+                $result = mb_strtoupper((string) $result);
             } elseif (!empty($operations['lower'])) {
-                $result = strtolower((string) $result);
+                $result = mb_strtolower((string) $result);
             }
         }
 
@@ -183,9 +183,9 @@ class Translator extends Util\Singleton
     {
         if (!isset(self::$currency)) {
             $id = setting('Valuta');
-            $valuta = database()->fetchOne('SELECT `symbol` FROM `zz_currencies` WHERE `id` = '.prepare($id));
+            $valuta = database()->table('zz_currencies')->where('id', $id)->value('symbol');
 
-            self::$currency = $valuta['symbol'];
+            self::$currency = $valuta;
         }
 
         return self::$currency;

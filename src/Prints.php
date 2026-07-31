@@ -21,6 +21,7 @@
 use Jurosh\PDFMerge\PDFMerger;
 use Models\Module;
 use Models\PrintTemplate;
+use Models\Upload;
 use Mpdf\Mpdf;
 use Util\Query;
 
@@ -38,18 +39,6 @@ class Prints
     protected static $prints = [];
     /** @var array Elenco delle stampe per modulo */
     protected static $modules = [];
-
-    /**
-     * Normalizza il valore di font-size per le stampe.
-     *
-     * @param mixed $font_size
-     *
-     * @return float
-     */
-    protected static function normalizeFontSize($font_size): float
-    {
-        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
-    }
 
     /**
      * Restituisce tutte le informazioni di tutti i moduli installati.
@@ -316,6 +305,14 @@ class Prints
     }
 
     /**
+     * Normalizza il valore di font-size per le stampe.
+     */
+    protected static function normalizeFontSize($font_size): float
+    {
+        return min(max((float) $font_size, self::MIN_FONT_SIZE), self::MAX_FONT_SIZE);
+    }
+
+    /**
      * Restituisce un array associativo dalla codifica JSON delle opzioni di stampa.
      *
      * @param string $string
@@ -429,6 +426,13 @@ class Prints
             // Operazioni di sostituzione
             include base_dir().'/templates/replace.php';
 
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
+
             $mode = !empty($directory) ? 'F' : 'I';
             $mode = !empty($return_string) ? 'S' : $mode;
 
@@ -473,7 +477,7 @@ class Prints
         $name = $module->replacePlaceholders($id_record, $name);
 
         if (in_array($record['name'], ['Fattura elettronica di acquisto'], true)) {
-            $invoice = database()->fetchOne('SELECT `data`, `numero_esterno` FROM `co_documenti` WHERE `id` = ?', [$id_record]);
+            $invoice = Modules\Fatture\Fattura::find($id_record)?->only(['data', 'numero_esterno']);
 
             if (!empty($invoice)) {
                 $date = !empty($invoice['data']) ? date('Ymd', strtotime($invoice['data'])) : null;
@@ -574,9 +578,14 @@ class Prints
             $mpdf->PageNumSubstitutions[] = $mpdfPageNumSubstitutions;
         }
 
+        $watermark = null;
         if (setting('Filigrana stampe')) {
+            $watermark = Upload::find(setting('Filigrana stampe'));
+        }
+
+        if (!empty($watermark)) {
             $mpdf->SetWatermarkImage(
-                base_dir().'/files/anagrafiche/'.setting('Filigrana stampe'),
+                base_dir().'/files/impostazioni/'.$watermark->filename,
                 0.5,
                 'F',
                 'F'
@@ -645,6 +654,23 @@ class Prints
 
             // Operazioni di sostituzione
             include base_dir().'/templates/replace.php';
+
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $head = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $head
+            );
+            $foot = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $foot
+            );
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
 
             // Impostazione di header e footer
             $mpdf->SetHTMLHeader($head);
@@ -729,6 +755,13 @@ class Prints
 
             // Impostazione del titolo del PDF
             $mpdf->SetTitle($title);
+
+            // Sanitizza HTML per prevenire SSRF - rimuove img tags con src esterni (http/https)
+            $report = preg_replace(
+                '/<img\s+[^>]*src\s*=\s*["\']https?:\/\/[^"\']*["\'][^>]*>/i',
+                '',
+                $report
+            );
 
             // Aggiunta dei contenuti
             $mpdf->WriteHTML($report);

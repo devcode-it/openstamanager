@@ -18,11 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Anagrafiche\Referente;
+
 include_once __DIR__.'/../../core.php';
 use Models\Plugin;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `an_referenti` WHERE `id`='.prepare($id_record));
+    $record = Referente::find($id_record);
 }
 
 $id_plugin_sedi = Plugin::where('name', 'Sedi aggiuntive')->first()->id;

@@ -381,7 +381,7 @@ echo '
 </div>';
 
 $modulo_prima_nota = Module::where('name', 'Prima nota')->first()->id;
-echo '
+?>
 <script>
 
 $(".sequenza").select2();
@@ -389,7 +389,6 @@ $(".sequenza").select2();
 function esporta(button) {
     let restore = buttonLoading(button);
 
-    //Creo un array con i valori di sequenza
     var inputs = $(".sequenza");
     var sequenze = new Array();
     for(var i = 0; i < inputs.length; i++){
@@ -405,8 +404,8 @@ function esporta(button) {
         dataType: "json",
         data: {
             id_module: globals.id_module,
-            id_plugin: "'.$id_plugin.'",
-            scadenze: ['.implode(',', $id_scadenze->toArray()).'],
+            id_plugin: <?= json_encode($id_plugin) ?>,
+            scadenze: <?= json_encode($id_scadenze->toArray()) ?>,
             sequenze: sequenze,
             op: "generate",
         },
@@ -417,29 +416,29 @@ function esporta(button) {
             $(button).addClass("hidden");
             $("#info").removeClass("hidden");
 
-            // Salvataggio delle scadenze esportate correttamente
             $("#registrazione_contabile").data("scadenze", response.scadenze);
 
-            // Creazione dei link per il download dei file
             let fileList = $("#files");
             for(const file of response.files){
-                fileList.append(`<li>
-    <a href="` + file + `" target="_blank">` + file + `</a>
-    <button type="button" class="btn btn-xs btn-info" onclick="scaricaFile(\'` + file + `\')">
-        <i class="fa fa-download"></i>
-    </button>
-</li>`)
+                const $li = $('<li>');
+                const $a = $('<a>', { href: file, target: '_blank', text: file });
+                const $btn = $('<button>', { type: 'button', class: 'btn btn-xs btn-info scarica-file' });
+                $btn.html('<i class="fa fa-download"></i>');
+                $btn.data('file', file);
+                $li.append($a).append(' ').append($btn);
+                fileList.append($li);
             }
         } else {
              Swal.fire({
-                title: "'.tr('Impossibile esportare le scadenze indicate!').'",
+                title: <?= json_encode(tr('Impossibile esportare le scadenze indicate!')) ?>,
                 icon: "error",
             })
         }
     });
 }
 
-function scaricaFile(file) {
+$(document).on('click', '.scarica-file', function() {
+    let file = $(this).data('file');
     fetch(file)
         .then(resp => resp.blob())
         .then(blob => {
@@ -448,19 +447,18 @@ function scaricaFile(file) {
             a.style.display = "none";
             a.href = url;
 
-            // the filename you want
             a.download = file.split("/").pop();
             document.body.appendChild(a);
             a.click();
 
             window.URL.revokeObjectURL(url);
         })
-      .catch(() => Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il download').'", "error"));
-}
+      .catch(() => Swal.fire(<?= json_encode(tr('Errore')) ?>, <?= json_encode(tr('Errore durante il download')) ?>, "error"));
+});
 
 function registraPagamenti(button) {
     let scadenze = $(button).data("scadenze");
 
-    openModal("'.tr('Registrazione contabile pagamento').'", globals.rootdir + "/add.php?id_module='.$modulo_prima_nota['id'].'&id_records=" + scadenze.join(";"));
+    openModal(<?= json_encode(tr('Registrazione contabile pagamento')) ?>, globals.rootdir + "/add.php?id_module=<?= $modulo_prima_nota['id'] ?>&id_records=" + scadenze.join(";"));
 }
-</script>';
+</script>

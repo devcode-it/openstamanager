@@ -287,7 +287,7 @@ function initComplete(settings) {
     const $this = $(this);
     const search = getTableSearch();
 
-    api.columns('.search').every(function () {
+    api.columns().every(function () {
         const column = this;
 
         // Valore predefinito della ricerca
@@ -296,9 +296,14 @@ function initComplete(settings) {
         const header = $(column.header());
         const name = header.attr('id').replace('th_', '');
 
+        if ($(header).hasClass('select-checkbox')){
+            return true;
+        }
+        const searchable = $(header).hasClass('search');
+
         const value = search[(id_plugin ? id_plugin : "") + "_search_" + name] ? search[(id_plugin ? id_plugin : "") + "_search_" + name] : '';
 
-        $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"><i class="deleteicon fa fa-times' + (value ? '' : ' hide') + '"></i>')
+        $('<br><input type="text" style="width:100%" class="form-control' + (value ? ' input-searching' : '') + (searchable ? '' : ' disabled') + '" placeholder="' + globals.translations.filter + '..." value="' + value.replace(/"/g, '&quot;') + '"' + (searchable ? '' : ' disabled') + '><i class="deleteicon fa fa-times' + (value ? '' : ' hide') + '"></i>')
             .appendTo(column.header())
             .on('keyup', function (e) {
                 clearInterval(tempo);

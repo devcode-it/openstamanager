@@ -18,8 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\UnitaMisura;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `mg_unita_misura` WHERE id='.prepare($id_record));
+    $record = UnitaMisura::find($id_record);
 }

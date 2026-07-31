@@ -35,12 +35,24 @@ class PrintTemplate extends Model
     use RecordTrait;
 
     protected $table = 'zz_prints';
+    protected $guarded = ['id'];
     protected $main_folder = 'templates';
 
     protected static $translated_fields = [
         'filename',
         'title',
     ];
+
+    public static function build($id_module = null, $name = null, $directory = null)
+    {
+        $model = new static();
+        $model->id_module = $id_module;
+        $model->name = $name;
+        $model->directory = $directory;
+        $model->save();
+
+        return $model;
+    }
 
     /* Relazioni Eloquent */
 

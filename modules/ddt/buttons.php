@@ -50,9 +50,11 @@ function completaTrasporto() {
         customClass: {
             confirmButton: "btn btn-lg btn-success",
             confirmButtonText: "'.tr('Completa').'",
+        },
+        didOpen: function() {
+            start_superselect();
         }
     }).then(function (result) {
-        start_superselect();
         if (result.isConfirmed) {
             if ($("select[name=id_segment]").val() == null) {
                 Swal.fire( "'.tr('Attenzione').'", "'.tr('Devi prima selezionare un segmento').'...", "warning");

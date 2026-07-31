@@ -1164,6 +1164,8 @@ ALTER TABLE `zz_permissions` CHANGE `idmodule` `id_module` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_from` `id_module_from` INT NOT NULL;
 ALTER TABLE `zz_plugins` CHANGE `idmodule_to` `id_module_to` INT NOT NULL;
 
+ALTER TABLE `in_interventi_tecnici` CHANGE `prezzo_dirittochiamata_tecnico` `prezzo_diritto_chiamata_tecnico` DECIMAL(15,6) NOT NULL;
+
 RENAME TABLE `co_ritenutaacconto` TO `co_ritenuta_acconto`;
 RENAME TABLE `an_tipianagrafiche` TO `an_tipi_anagrafiche`;
 RENAME TABLE `an_tipianagrafiche_anagrafiche` TO `an_tipi_anagrafiche_anagrafiche`;
@@ -1305,32 +1307,6 @@ UPDATE `zz_views` SET `query` = 'id_agente' WHERE `zz_views`.`name` = "idagente"
 -- Allineamento viste moduli
 UPDATE `zz_views` SET `query` = "IF(in_interventi.id_sede_destinazione > 0, sede_destinazione.info, CONCAT('', IF(an_anagrafiche.telefono!='',CONCAT(an_anagrafiche.telefono,'<br>'),''),IF(an_anagrafiche.cellulare!='',CONCAT(an_anagrafiche.cellulare,'<br>'),''),IF(an_anagrafiche.citta!='',an_anagrafiche.citta,''),IF(an_anagrafiche.indirizzo!='',CONCAT(' - ',an_anagrafiche.indirizzo),'')))" WHERE `zz_views`.`name` = "Sede" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = 'IFNULL(SUM(in_interventi_tecnici.prezzo_ore_unitario*in_interventi_tecnici.ore-in_interventi_tecnici.sconto + in_interventi_tecnici.prezzo_km_unitario*in_interventi_tecnici.km-in_interventi_tecnici.sconto_km + in_interventi_tecnici.prezzo_diritto_chiamata), 0) + IFNULL(ricavo_righe, 0)' WHERE `zz_views`.`name` = "Ricavi" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
-
-UPDATE `zz_modules` SET `options` = "SELECT
-    |select|
-FROM
-    `mg_articoli`
-    LEFT JOIN `mg_articoli_lang` ON (`mg_articoli_lang`.`id_record` = `mg_articoli`.`id` AND `mg_articoli_lang`.|lang|)
-    LEFT JOIN `an_anagrafiche` ON `mg_articoli`.`id_fornitore` = `an_anagrafiche`.`id`
-    LEFT JOIN `co_iva` ON `mg_articoli`.`id_iva_vendita` = `co_iva`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_impegnata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipi_ordine`.`dir` = 'entrata' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) a ON `a`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS `qta_ordinata`, `or_righe_ordini`.`id_articolo` FROM `or_righe_ordini` INNER JOIN `or_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id` INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id` INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id` WHERE `or_tipi_ordine`.`dir` = 'uscita' AND `or_righe_ordini`.`confermato` = 1 AND `or_stati_ordine`.`impegnato` = 1 GROUP BY `id_articolo`) `ordini_fornitore` ON `ordini_fornitore`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN `zz_categorie` ON `mg_articoli`.`id_categoria` = `zz_categorie`.`id`
-    LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)
-    LEFT JOIN `zz_categorie` AS `sottocategorie` ON `mg_articoli`.`id_sottocategoria` = `sottocategorie`.`id`
-    LEFT JOIN `zz_categorie_lang` AS `sottocategorie_lang` ON (`sottocategorie`.`id` = `sottocategorie_lang`.`id_record` AND `sottocategorie_lang`.|lang|)
-    LEFT JOIN (SELECT `co_iva`.`percentuale` AS `perc`, `co_iva`.`id`, `zz_settings`.`nome` FROM `co_iva` INNER JOIN `zz_settings` ON `co_iva`.`id` = `zz_settings`.`valore`) AS iva ON `iva`.`nome` = 'Iva predefinita'
-    LEFT JOIN `mg_scorte_sedi` ON `mg_scorte_sedi`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT CASE WHEN MIN(`differenza`) < 0 THEN -1 WHEN MAX(`threshold_qta`) > 0 THEN 1 ELSE 0 END AS `stato_giacenza`, `id_articolo` FROM (SELECT SUM(`mg_movimenti`.`qta`) - COALESCE(`mg_scorte_sedi`.`threshold_qta`, 0) AS `differenza`, COALESCE(`mg_scorte_sedi`.`threshold_qta`, 0) AS `threshold_qta`, `mg_movimenti`.`id_articolo` FROM `mg_movimenti` LEFT JOIN `mg_scorte_sedi` ON (`mg_scorte_sedi`.`id_sede` = `mg_movimenti`.`id_sede` AND `mg_scorte_sedi`.`id_articolo` = `mg_movimenti`.`id_articolo`) GROUP BY `mg_movimenti`.`id_articolo`, `mg_movimenti`.`id_sede`) AS `subquery` GROUP BY `id_articolo`) AS `giacenze` ON `giacenze`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN (SELECT CASE WHEN COUNT(`mg_articoli_barcode`.`barcode`) <= 2 THEN GROUP_CONCAT(`mg_articoli_barcode`.`barcode` SEPARATOR '<br />') ELSE CONCAT((SELECT GROUP_CONCAT(`b1`.`barcode` SEPARATOR '<br />') FROM (SELECT `barcode` FROM `mg_articoli_barcode` `b2` WHERE `b2`.`id_articolo` = `mg_articoli_barcode`.`id_articolo` ORDER BY `b2`.`barcode` ASC) `b1`)) END AS `lista`, `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli` LEFT JOIN `mg_articoli_barcode` ON `mg_articoli_barcode`.`id_articolo` = `mg_articoli`.`id` GROUP BY `mg_articoli`.`id`) AS `barcode` ON `barcode`.`id_articolo` = `mg_articoli`.`id`
-    LEFT JOIN `zz_marche` as marca ON `marca`.`id` = `mg_articoli`.`id_marca`
-    LEFT JOIN `zz_marche` as modello ON `modello`.`id` = `mg_articoli`.`id_modello`
-WHERE
-    1=1 AND `mg_articoli`.`deleted_at` IS NULL
-HAVING
-    2=2
-ORDER BY
-    `mg_articoli_lang`.`title`" WHERE `name` = "Articoli";
         
 UPDATE `zz_modules` SET `options` = 'SELECT
     |select|
@@ -1682,6 +1658,7 @@ UPDATE `zz_views` SET `query` = '`dt_aspetto_beni_lang`.`title`' WHERE `zz_views
 UPDATE `zz_views` SET `query` = '`in_stati_intervento`.`colore`' WHERE `zz_views`.`name` = "_bg_" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = '`in_stati_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Stato" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 UPDATE `zz_views` SET `query` = '`in_tipi_intervento_lang`.`title`' WHERE `zz_views`.`name` = "Tipo" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
+UPDATE `zz_views` SET `query` = 'IFNULL(SUM(`in_interventi_tecnici`.`prezzo_ore_unitario_tecnico`*`in_interventi_tecnici`.`ore` + `in_interventi_tecnici`.`prezzo_km_unitario_tecnico`*`in_interventi_tecnici`.`km` + `in_interventi_tecnici`.`prezzo_diritto_chiamata_tecnico`), 0) + IFNULL(`costo_righe`, 0)' WHERE `zz_views`.`name` = "Costi" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi');
 
 UPDATE `zz_views` SET `query` = '`dt_causale_t`.`id`' WHERE `zz_views`.`name` = "id" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali');
 UPDATE `zz_views` SET `query` = '`dt_causale_t_lang`.`title`' WHERE `zz_views`.`name` = "Descrizione" AND `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Causali');
@@ -1815,88 +1792,15 @@ ALTER TABLE `mg_attributi` ADD `predefinito` BOOLEAN NOT NULL DEFAULT FALSE AFTE
 
 -- Aggiunta campo commissioni Ri.Ba. insolute in banche
 ALTER TABLE `co_banche` ADD `commissioni_riba_insolute` DECIMAL(15, 6) NOT NULL DEFAULT 0 AFTER `codice_sia`;
--- Modulo Note spese
-CREATE TABLE IF NOT EXISTS `ns_note_spese` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `numero` VARCHAR(50) NOT NULL,
-    `data` DATE NOT NULL,
-    `id_anagrafica` INT NULL,
-    `oggetto` VARCHAR(255) NOT NULL,
-    `stato` VARCHAR(20) NOT NULL DEFAULT 'bozza',
-    `note` TEXT NULL,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `numero` (`numero`),
-    KEY `id_anagrafica` (`id_anagrafica`),
-    KEY `data` (`data`),
-    CONSTRAINT `ns_note_spese_ibfk_1` FOREIGN KEY (`id_anagrafica`) REFERENCES `an_anagrafiche`(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `ns_righe_note_spese` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `id_nota_spesa` INT NOT NULL,
-    `data` DATE NOT NULL,
-    `categoria` VARCHAR(50) NOT NULL,
-    `descrizione` VARCHAR(255) NOT NULL,
-    `importo` DECIMAL(15,6) NOT NULL DEFAULT 0,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `id_nota_spesa` (`id_nota_spesa`),
-    KEY `data` (`data`),
-    CONSTRAINT `ns_righe_note_spese_ibfk_1` FOREIGN KEY (`id_nota_spesa`) REFERENCES `ns_note_spese`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `zz_modules` (`name`, `directory`, `attachments_directory`, `options`, `options2`, `icon`, `version`, `compatibility`, `order`, `parent`, `default`, `enabled`, `use_notes`, `use_checklists`) VALUES
-('Note spese', 'note_spese', 'note_spese',
-'SELECT
+-- Allineamento vista Tipi di anagrafiche
+UPDATE `zz_modules` SET `options` = "
+SELECT
     |select|
 FROM
-    `ns_note_spese`
-    LEFT JOIN `an_anagrafiche` ON `an_anagrafiche`.`id` = `ns_note_spese`.`id_anagrafica`
-    LEFT JOIN `ns_righe_note_spese` ON `ns_righe_note_spese`.`id_nota_spesa` = `ns_note_spese`.`id`
+    `an_tipi_anagrafiche`
+    LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.|lang|)
 WHERE
-    1=1 |date_period(`ns_note_spese`.`data`)|
-GROUP BY
-    `ns_note_spese`.`id`
+    1=1
 HAVING
-    2=2
-ORDER BY
-    `ns_note_spese`.`data` DESC, `ns_note_spese`.`id` DESC', '', 'fa fa-file-text-o', '2.11', '2.11', 3, (SELECT `id` FROM (SELECT `id` FROM `zz_modules` WHERE `name` = 'Acquisti') AS `tmp_acquisti`), 1, 1, 1, 0);
-
-INSERT INTO `zz_modules_lang` (`id_lang`, `id_record`, `title`, `meta_title`) VALUES
-(1, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Note spese', 'Nota spese num. {numero} del {data}'),
-(2, (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Expense reports', 'Expense report no. {numero} dated {data}');
-
-INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `search_inside`, `order_by`, `visible`, `summable`, `default`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'id', '`ns_note_spese`.`id`', 1, 0, 0, 0, '', '', 0, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Numero', '`ns_note_spese`.`numero`', 2, 1, 0, 0, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Data', '`ns_note_spese`.`data`', 3, 1, 0, 2, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Persona', '`an_anagrafiche`.`ragione_sociale`', 4, 1, 0, 0, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Oggetto', '`ns_note_spese`.`oggetto`', 5, 1, 0, 0, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Stato', '`ns_note_spese`.`stato`', 6, 1, 0, 0, '', '', 1, 0, 1),
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 'Totale', 'COALESCE(SUM(`ns_righe_note_spese`.`importo`), 0)', 7, 1, 0, 1, '', '', 1, 1, 1);
-
-INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'id'), 'id'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'id'), 'id'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Numero'), 'Numero'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Numero'), 'Number'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Data'), 'Data'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Data'), 'Date'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Persona'), 'Persona'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Persona'), 'Person'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Oggetto'), 'Oggetto'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Oggetto'), 'Subject'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Stato'), 'Stato'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Stato'), 'Status'),
-(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Totale'), 'Totale'),
-(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese') AND `name` = 'Totale'), 'Total');
-
-INSERT INTO `zz_prints` (`id_module`, `is_record`, `name`, `directory`, `previous`, `options`, `icon`, `version`, `compatibility`, `order`, `predefined`, `enabled`) VALUES
-((SELECT `id` FROM `zz_modules` WHERE `name` = 'Note spese'), 1, 'Nota spese', 'note_spese', 'id', '{"pricing": true}', 'fa fa-print', '2.11', '2.11', 0, 1, 1);
-
-INSERT INTO `zz_prints_lang` (`id_lang`, `id_record`, `title`, `filename`) VALUES
-(1, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Nota spese'), 'Nota spese', 'Nota spese num. {numero} del {data}'),
-(2, (SELECT `id` FROM `zz_prints` WHERE `name` = 'Nota spese'), 'Expense report', 'Expense report no. {numero} dated {data}');
+    2=2" WHERE `name` = 'Tipi di anagrafiche';

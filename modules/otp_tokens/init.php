@@ -18,10 +18,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Models\OtpToken;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM zz_otp_tokens WHERE id='.prepare($id_record));
+    $record = OtpToken::find($id_record);
 
     // Verifica se il token è scaduto
     $is_not_active = false;

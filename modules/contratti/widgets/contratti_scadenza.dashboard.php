@@ -24,7 +24,7 @@ $rs = $dbo->fetchArray('
 SELECT 
 	`co_contratti`.`id`,
     `co_contratti`.`id_sede_destinazione`,
-    ((SELECT SUM(`co_righe_contratti`.`qta`) FROM `co_righe_contratti` WHERE `co_righe_contratti`.`um` = "ore" AND `co_righe_contratti`.`id_contratto` = `co_contratti`.`id`) - IFNULL((SELECT SUM(`in_interventi_tecnici`.`ore`) FROM `in_interventi_tecnici` INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id` WHERE `in_interventi`.`id_contratto` = `co_contratti`.`id` AND `in_interventi`.`id_stato` IN (SELECT `in_stati_intervento`.`id` FROM `in_stati_intervento` WHERE `in_stati_intervento`.`is_bloccato` = 1)),0)) AS `ore_rimanenti`,
+    (IFNULL(`righe_ore`.`tot_qta`, 0) - IFNULL(`interventi_ore`.`tot_ore`, 0)) AS `ore_rimanenti`,
     `co_contratti`.`nome`, 
     DATEDIFF(`data_conclusione`, NOW()) AS giorni_rimanenti, 
     `co_contratti`.`data_accettazione`,
@@ -44,10 +44,25 @@ FROM
     LEFT JOIN `an_anagrafiche` AS `agente` ON `agente`.`id` = `co_contratti`.`id_agente`
     LEFT JOIN `co_categorie_contratti` ON `co_categorie_contratti`.`id` = `co_contratti`.`id_categoria`
     LEFT JOIN `co_categorie_contratti_lang` ON (`co_categorie_contratti_lang`.`id_record`=`co_categorie_contratti`.`id` AND `co_categorie_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    LEFT JOIN (
+        SELECT `id_contratto`, SUM(`qta`) AS tot_qta 
+        FROM `co_righe_contratti` 
+        WHERE `um` = "ore" 
+        GROUP BY `id_contratto`
+    ) AS `righe_ore` ON `righe_ore`.`id_contratto` = `co_contratti`.`id`
+    LEFT JOIN (
+        SELECT `in_interventi`.`id_contratto`, SUM(`in_interventi_tecnici`.`ore`) AS tot_ore 
+        FROM `in_interventi_tecnici` 
+        INNER JOIN `in_interventi` ON `in_interventi_tecnici`.`id_intervento` = `in_interventi`.`id`
+        INNER JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        WHERE `in_stati_intervento`.`is_bloccato` = 1
+        GROUP BY `in_interventi`.`id_contratto`
+    ) AS `interventi_ore` ON `interventi_ore`.`id_contratto` = `co_contratti`.`id`
 WHERE 
 	`rinnovabile` = 1 
     AND YEAR(`data_conclusione`) > 1970 
-    AND `co_contratti`.`id` NOT IN (SELECT `id_contratto_prev` FROM `co_contratti` contratti) AND `co_stati_contratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza") 
+    AND `co_contratti`.`id` NOT IN (SELECT `id_contratto_prev` FROM `co_contratti` contratti) 
+    AND `co_stati_contratti_lang`.`title` NOT IN ("Concluso", "Rifiutato", "Bozza") 
 HAVING 
     (`ore_rimanenti` <= `ore_preavviso_rinnovo` OR DATEDIFF(`data_conclusione`, NOW()) <= ABS(`giorni_preavviso_rinnovo`)) 
 ORDER BY 

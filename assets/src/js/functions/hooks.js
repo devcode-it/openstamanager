@@ -23,7 +23,7 @@
 // Funzione per richiesta AJAX hooks completata con successo
 function handleHooksSuccess(hooks) {
 
-    completedRequests = 0;
+    let completedRequests = 0;
 
     $("#hooks-header").text(globals.translations.hooksExecuting);
     $("#hooks-number").text(hooks.length);
@@ -71,7 +71,7 @@ function handleHooksSuccess(hooks) {
 
     $("#hooks-header").html(iconHtml + hookMessage);
 
-    totalRequests = hooks.length;
+    let totalRequests = hooks.length;
     if (completedRequests === totalRequests) {
         // Verifica se tutte le richieste sono state completate con successo
         //console.log("Tutte le richieste AJAX sono state eseguite con successo.");
@@ -89,7 +89,7 @@ function startHooks() {
                 op: "hooks",
             },
             success: function (data) {
-                hooks = JSON.parse(data);
+                let hooks = JSON.parse(data);
                 handleHooksSuccess(hooks);
             },
             error: function (xhr, status, error) {
@@ -136,12 +136,12 @@ function renderHook(hook) {
     var content = '';
 
     if (result.link) {
-        content += '<a href="' + result.link + '" class="notification-link">';
+        content += '<a href="' + encodeURI(result.link) + '" class="notification-link">';
     }
 
     content += '<div class="notification-content">';
-    content += '<i class="' + result.icon + '"></i>';
-    content += '<span class="small">' + result.message + '</span>';
+    content += '<i class="' + result.icon.replace(/[^a-zA-Z0-9-_ ]/g, '') + '"></i>';
+    content += '<span class="small">' + $('<span>').text(result.message).html() + '</span>';
 
     if (result.progress) {
         var current = result.progress.current;

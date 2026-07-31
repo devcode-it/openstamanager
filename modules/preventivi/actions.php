@@ -156,15 +156,16 @@ switch (post('op')) {
             $dbo->table('co_preventivi')->where('id', $id_record)->update(['id_stato' => $stato_in_lavorazione]);
 
             flash()->info(tr('Intervento _NUM_ aggiunto!', [
-                '_NUM_' => $rs[0]['codice'],
+                '_NUM_' => $intervento->codice,
             ]));
         }
         break;
 
         // Scollegamento intervento da preventivo
     case 'unlink':
-        if (isset($_GET['id_preventivo']) && isset($_GET['id_intervento'])) {
-            $id_intervento = get('id_intervento');
+        $id_preventivo = get('id_preventivo');
+        $id_intervento = get('id_intervento');
+        if ($id_preventivo !== null && $id_intervento !== null) {
 
             $dbo->table('in_interventi')->where('id', $id_intervento)->update(['id_preventivo' => null]);
 

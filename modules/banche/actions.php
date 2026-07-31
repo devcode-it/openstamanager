@@ -102,12 +102,17 @@ switch (filter('op')) {
         $iban = new IBAN(filter('iban'));
         $nazione = Nazione::where('iso2', '=', $iban->getNation())->first();
 
-        echo json_encode([
-            'id_nazione' => [
+        $nazione_data = null;
+        if ($nazione) {
+            $nazione_data = [
                 'id' => $nazione->id,
                 'iso2' => $nazione->iso2,
                 'text' => $nazione->iso2.' - '.$nazione->getTranslation('title'),
-            ],
+            ];
+        }
+
+        echo json_encode([
+            'id_nazione' => $nazione_data,
             'bank_code' => $iban->getBankCode(),
             'branch_code' => $iban->getBranchCode(),
             'account_number' => $iban->getAccountNumber(),

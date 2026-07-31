@@ -4,6 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.11.1 (2026-06-30)](#2111-2026-06-30)
+- [2.11.0 (2026-06-09)](#2110-2026-06-09)
 - [2.10.4 (2026-04-28)](#2104-2026-04-28)
 - [2.10.3 (2026-04-07)](#2103-2026-04-07)
 - [2.10.2 (2026-03-17)](#2102-2026-03-17)
@@ -72,6 +74,173 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
+## 2.11.1 (2026-06-30)
+
+### Modificato (Changed)
+- Aggiornamento dipendenza protobufjs
+
+### Fixed
+- Corretta visualizzazione limitata alle sedi abilitate nel plugin movimenti
+- Corretta gestione giacenze sedi in base ai permessi
+- Corretta query vista articoli per righe duplicate
+- Corretta impostazione foto articolo da import CSV
+- Corretto avviso uscita documento nei contratti
+- Corretta impostazione cc e bcc da template in invio mail
+- Corretta eliminazione anagrafiche da azioni di gruppo
+- Corretta gestione indirizzo di risposta alle mail inviate
+- Corretta creazione contratto con tipologie di attività disabilitati
+- Corretto completamento automatico dati bancari
+- Corretta inclusione file per modifica iva righe da bulk
+- Corretto grafico ore interventi per tipologia (conteggia correttamente tutte le sessioni)
+- Corretta stampa riepilogo interventi
+- Corretto ordine colonne con query order by che vanno a capo
+- Corretta query liste newsletter
+- Corretta compatibilità PHP <= 8.5 (fputcsv legacy escape)
+- Corretto problema evasione quantità ddt durante import FE
+- Corretto tasto invia in modale di invio mail
+- Corretto selezione allegati in invio mail azienda
+- Corretto visualizzazione impianti in stampa contratti
+- Corretti valori della ricerca con tema chiaro
+- Corretto errore in firma GDPR e Interventi
+- Corretto fullcalendar in selezione data e ora in pausa sessione
+- Corretto refuso che non permette la disabilitazione degli hooks in Stato dei servizi
+- Rimosso pulsante crea per anagrafiche con relazione bloccata
+- Corretta selezione seriali in fatture di vendita
+- Corretta descrizione riga in importazione fattura elettronica
+- Corretta query vista Articoli per compatibilità con MariaDB
+- Corretta select agenti
+- Corretto avviso in fase di salvataggio fattura in stato pagato
+- Corretta creazione immagine docker
+- Corretto aggiornamento del tooltip con le informazioni dell'attività dopo il trascinamento
+- Corretto Unauthenticated RCE via PHP Code Injection in Configuration Wizard
+- Corretto IDOR in OAuth2 Callback Allows Unauthenticated Token Destruction for Any Account
+- Corretto SQL Injection via Unsanitized json_decode in download-zip-allegati Action
+- Corretto IDOR in view.php Allows Any Authenticated User to Download Arbitrary Uploaded Files
+- Corretto Stored XSS via CSV Import Preview — Unescaped Cell Values Rendered in HTML
+- Corretto Reflected XSS via unsanitized period_start/period_end GET parameters embedded in JavaScript
+- Corretto Stored XSS via Content-Type Mismatch in Image File Preview
+- Corretto Token Record-Level Access Control Bypass via editor.php IDOR
+- Corretto Stored SSRF via HTML Injection in PDF Generation (mPDF img tag fetching)
+- Corretto Unauthenticated OAuth2 Token Reset and Injection via IDOR in oauth2.php
+- Corretto IDOR in API AppResource Allows Any Authenticated User to Read/Modify Any Record
+- Corretto SQL Injection in ajax_select.php via unsanitized options[idtipiintervento] parameter in tipiintervento endpoint
+- Corretto SQL Injection in ajax_select.php via unsanitized options[dir] parameter in tipi_documento endpoint
+- Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets
+- Corretta potenziale esecuzione comandi shell da valori ambiente (code scanning alert)
+
+
+## 2.11.0 (2026-06-09)
+### Aggiunto (Added)
+- Aggiunte azioni di gruppo per duplicazione massiva documenti
+- Aggiunta colonna Data insoluto in Fatture di vendita
+- Aggiunta colonna Data pagamento rate in Fatture di vendita
+- Aggiunta colonna Validità in Contratti
+- Aggiunta descrizione aliquota iva in stampa preventivo
+- Aggiunta gestione campo nome in Ordini
+- Aggiunta gestione pausa sessioni
+- Aggiunta gestione per conto di in scheda anagrafica
+- Aggiunta gestione di automezzi e giacenza automezzi nella sincronizzazione da app
+- Aggiunta impostazione per disabilitare controllo sessione
+- Aggiunta impostazione per limitare conteggio ore ad oggi nell'intestazione
+- Aggiunta impostazione ritardo apertura tooltip dashboard
+- Aggiunta informazione Token di sessione e Ultimo login riuscito nella scheda info dell'utente
+- Aggiunta la possibilità di selezionare la sede di destinazione per lo scarico degli articoli in fase di import fattura elettronica
+- Aggiunta possibilità prevedere collegamenti sulla barra di navigazione superiore definendoli da DB
+- Aggiunte colonne Agente e Categoria in widget scadenza contratti in dashboard
+- Aggiunto modulo Link navbar sotto Strumenti per gestire link sulla navbar
+- Aggiunto campo stato su impianti e relativo modulo di gestione
+- Aggiunte commissioni per riba insolute in banche e in registrazione insoluto fattura
+- Aggiunta delle varianti da articolo
+- Adeguamento tracciato SDI 1.9.1
+- Aggiunta azioni di gruppo per aggiornamento massivo agenti principali nelle anagrafiche
+- Ricerca globale cerca ora tra le note interne
+- Aggiunta colonna Conducente al modulo Automezzi
+- Gestione installazione database tramite file install.sql per prima installazione
+- Aggiunta gestione timezone in API esportazione calendario
+- Aggiunta gestione login OAuth2 con Keycloak
+- Aggiunta gestione rinnovo contratto con ore residue
+- Aggiunta gestione tipi di intervento abilitati nei contratti e aggiunta righe per tipi di intervento abilitati
+- Aggiunta gestione firma GDPR con selezione condizioni
+- Aggiunta gestione flag Attivo in aliquote iva
+- Aggiunta gestione flag abilitato stati impianti
+- Aggiunta stampa GDPR in anagrafica
+- Aggiunta stampa liquidazione suddivisa per segmenti
+- Aggiunta gestione ajax documenti collegati anagrafiche e articoli
+- Aggiunta gestione caricamento documenti collegati via ajax
+- Aggiunta creazione contratto da ordine
+- Aggiunta importazione ordine in attività
+
+### Modificato (Changed)
+- Refactoring naming tabelle con snake_case (or_tipiordine → or_tipi_ordine, my_statiimpianti → my_stati_impianti, mg_unitamisura → mg_unita_misura, in_tipiintervento → in_tipi_intervento, in_statiintervento → in_stati_intervento, dt_tipiddt → dt_tipi_ddt, dt_statiddt → dt_stati_ddt, etc.)
+- Refactoring naming colonne con snake_case (idmodule → id_module, idgruppo → id_gruppo, piva → p_iva, idanagrafica → id_, id_conto_fornitore, id_banca_vendite, id_sede_fatturazione, etc.)
+- Allineamento query per compatibilità MariaDB
+- Aggiornamento dipendenze per compatibilità PHP 8.5
+- Aggiornamento dipendenze sweetalert, hotkeys-js,intervention/image, smartwizar, hotkeys-js
+- Ottimizzazione controlli su integrità
+- Ottimizzazione formato ICS
+- Ottimizzazione importazione anagrafiche a blocchi per evitare duplicati
+- Ottimizzazione importazione ricevute per evitare interruzioni in caso di ricevuta di scarto
+- Ottimizzazione invio fatture elettroniche da coda di invio con campo fe_failed_at
+- Ottimizzazione lettura file json moduli premium
+- Ottimizzazione classi documenti e generazione numero progressivo
+- Pulizia file da controlli integrità per evitare timeout
+- Refactoring Dockerfile.dev per installare i pacchetti di sistema richiesti e le estensioni PHP
+- Raggruppamento movimenti per idconto in emissione fatture
+- Rimozione colonna indirizzo2 in an_anagrafiche e an_sedi
+- Rinominato plugin Registrazioni in Contabilizzazione e modificato ordinamento
+- Unificazione funzione di ordinamento righe
+- Se non ci sono prezzi orari, al km o diritto chiamata, non inserire la riga in fattura
+- Aumentata sanitizzazione POST e GET ad eccezione del corpo email
+- Avviso in cambio stato fattura
+- Correzione etichetta per esportazione iCal
+- Modificata etichetta "Data di registrazione" con "Data di ricezione"
+- Modificata impostazione Data inizio controlli su stati FE in Data inizio controlli Fatture di vendita
+- Associazione articolo in fase di importazione fattura di acquisto
+- Copia righe documenti disponibile anche per documenti bloccati
+- Migliorata query colonna Validità in Contratti
+- Miglioria grafica header interventi
+- Miglioria grafica plugin consuntivo
+- Miglioria grafica stampa riepilogo intervento con tabelle di riepilogo sessioni e materiale utilizzato
+- Miglioria grafica tasti azione su righe
+- Miglioria modale di aggiunta articolo
+- Migliorie API calendar
+- Migliorie grafiche plugin Componenti in Impianti
+- Miglioria card header per documenti collegati
+- Miglioria gestione documenti collegati per flusso di evasione
+- Migliorata la gestione di modifica iva massiva righe documenti
+- Introdotto il tour guidato per modulo Anagrafiche, articoli, contratti, ddt, fatture, impianti, interventi, ordini, preventivi e guida ai filtri in scadenzario
+- Assegnazione numero progressivo ai ddt in uscita al momento della loro evasione
+- Allineamento stampa consuntivo diviso per tipo di attività
+- Avviso modifiche fattura di vendita per rigenerazione prima dell'invio
+
+### Fixed
+- Corretto Path Traversal via Unsanitized `directory` Field in ZIP Component Upload (RCE)
+- Corretto Missing Authorization on Settings API (accesso non autorizzato a API keys)
+- Corretto Read-Only Users Can Perform Write Operations via Missing Permission Check in actions.php
+- Corretta inizializzazione dei select
+- Corretto trigger evasione stato in base a quantità evasa
+- Corretto invio email a cc in template email
+- Corretto arrotondamento iva in vista fatture
+- Corretti totali nella stampa fatture rispecchiano totali delle righe
+- Corretta stampa fatturato per data fattura
+- Corretta visualizzazione validità preventivo con valore corretto tradotto
+- Corretto calcolo data validità preventivo
+- Corretto flag completamento versione aggiornamento
+- Corretta visualizzazione stampa mastrino in ordine per conto
+- Corretta importazione fattura
+- Corretta importazione fattura di acquisto con ddt o ordine collegato
+- Corretto controllo fatture da inviare
+- Aggiunte al controllo fatture da inviare anche le fatture non generate
+- Corretta visualizzazione ritenuta in fattura
+- Corretto addebito spese di incasso in fattura
+- Corretto errore copia e incolla righe documenti
+- Corretto HTML Injection in modules/utenti/edit.php
+- Corretto ordinamento plugin in ordine crescente
+- Corretta ricerca riferimenti in importazione fattura per riga con articolo non esistente
+- Corretto suggerimento codice sdi in anagrafiche per compatibiltà MariaDB
+- Rimosso blocco per inclusione modal modifica iva delle righe
+- Corretta dimensione campo indirizzo in anagrafiche
+- Corretta modifica script di aggiornamento per evitare errori causati da classi modificate
 
 ## 2.10.4 (2026-04-28)
 

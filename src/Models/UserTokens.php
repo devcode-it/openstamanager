@@ -29,6 +29,8 @@ class UserTokens extends Model
 
     protected $table = 'zz_tokens';
 
+    protected $guarded = ['id'];
+
     /* Relazioni Eloquent */
 
     public function user()

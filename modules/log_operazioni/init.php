@@ -19,12 +19,14 @@
  */
 declare(strict_types=1);
 
+use Models\OperationLog;
+
 include_once __DIR__.'/../../core.php';
 
 use Ergebnis\Json\Printer;
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM zz_operations WHERE id='.prepare($id_record));
+    $record = OperationLog::find($id_record);
 
     $printer = new Printer\Printer();
     if (!empty($record['context'])) {

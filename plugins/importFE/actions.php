@@ -316,6 +316,7 @@ switch (filter('op')) {
         }
 
         $results = [];
+        $righe_utilizzate = ['ddt' => [], 'ordine' => []];
 
         // Dati ordini
         $DatiOrdini = XML::forceArray($fattura_pa->getBody()['DatiGenerali']['DatiOrdineAcquisto']);
@@ -431,15 +432,25 @@ switch (filter('op')) {
             $id_articolo = null;
             foreach ($codici as $codice) {
                 if (!empty($anagrafica) && empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE codice_fornitore = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                    $id_articolo = database()->table('mg_fornitore_articolo')
+                        ->where('codice_fornitore', $codice['CodiceValore'])
+                        ->where('id_fornitore', $anagrafica->id)
+                        ->value('id_articolo');
 
                     if (empty($id_articolo)) {
-                        $id_articolo = $database->fetchOne('SELECT id_articolo AS id FROM mg_fornitore_articolo WHERE REPLACE(codice_fornitore, " ", "") = '.prepare($codice['CodiceValore']).' AND id_fornitore = '.prepare($anagrafica->id))['id'];
+                        $id_articolo = database()->table('mg_fornitore_articolo')
+                            ->whereRaw('REPLACE(codice_fornitore, " ", "") = ?', [$codice['CodiceValore']])
+                            ->where('id_fornitore', $anagrafica->id)
+                            ->value('id_articolo');
                     }
                 }
 
                 if (empty($id_articolo)) {
-                    $id_articolo = $database->fetchOne('SELECT `mg_articoli_barcode`.`id_articolo` FROM `mg_articoli_barcode` INNER JOIN `mg_articoli` ON `mg_articoli`.`id` = `mg_articoli_barcode`.`id_articolo` WHERE REPLACE(`mg_articoli_barcode`.`barcode`, " ", "") = '.prepare($codice['CodiceValore']).' AND `mg_articoli`.`deleted_at` IS NULL')['id_articolo'];
+                    $id_articolo = database()->table('mg_articoli_barcode')
+                        ->join('mg_articoli', 'mg_articoli.id', '=', 'mg_articoli_barcode.id_articolo')
+                        ->whereRaw('REPLACE(mg_articoli_barcode.barcode, " ", "") = ?', [$codice['CodiceValore']])
+                        ->where('mg_articoli.deleted_at', null)
+                        ->value('mg_articoli_barcode.id_articolo');
                 }
 
                 if (!empty($id_articolo)) {
@@ -472,8 +483,13 @@ switch (filter('op')) {
 
                 // Ricerca di righe DDT con stesso Articolo
                 if (!empty($id_articolo)) {
+                    $where_articolo = '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo);
+                    if (!empty($righe_utilizzate['ddt'])) {
+                        $where_articolo .= ' AND `dt_righe_ddt`.`id` NOT IN ('.implode(',', $righe_utilizzate['ddt']).')';
+                    }
+
                     $query_articolo = replace($query, [
-                        '|where|' => '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo),
+                        '|where|' => $where_articolo,
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -481,8 +497,13 @@ switch (filter('op')) {
 
                 // Ricerca di righe DDT per stessa descrizione
                 if (empty($collegamento)) {
+                    $where_descrizione = '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']);
+                    if (!empty($righe_utilizzate['ddt'])) {
+                        $where_descrizione .= ' AND `dt_righe_ddt`.`id` NOT IN ('.implode(',', $righe_utilizzate['ddt']).')';
+                    }
+
                     $query_descrizione = replace($query, [
-                        '|where|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
+                        '|where|' => $where_descrizione,
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -515,8 +536,13 @@ switch (filter('op')) {
 
                 // Ricerca di righe Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
+                    $where_articolo = '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo);
+                    if (!empty($righe_utilizzate['ordine'])) {
+                        $where_articolo .= ' AND `or_righe_ordini`.`id` NOT IN ('.implode(',', $righe_utilizzate['ordine']).')';
+                    }
+
                     $query_articolo = replace($query, [
-                        '|where|' => '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo),
+                        '|where|' => $where_articolo,
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -524,8 +550,13 @@ switch (filter('op')) {
 
                 // Ricerca di righe Ordine per stessa descrizione
                 if (empty($collegamento)) {
+                    $where_descrizione = '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']);
+                    if (!empty($righe_utilizzate['ordine'])) {
+                        $where_descrizione .= ' AND `or_righe_ordini`.`id` NOT IN ('.implode(',', $righe_utilizzate['ordine']).')';
+                    }
+
                     $query_descrizione = replace($query, [
-                        '|where|' => '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']),
+                        '|where|' => $where_descrizione,
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -583,9 +614,18 @@ switch (filter('op')) {
 
                 // Ricerca di righe DDT/Ordine con stesso Articolo
                 if (!empty($id_articolo)) {
+                    $where_ddt = '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo);
+                    $where_ordini = '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo);
+                    if (!empty($righe_utilizzate['ddt'])) {
+                        $where_ddt .= ' AND `dt_righe_ddt`.`id` NOT IN ('.implode(',', $righe_utilizzate['ddt']).')';
+                    }
+                    if (!empty($righe_utilizzate['ordine'])) {
+                        $where_ordini .= ' AND `or_righe_ordini`.`id` NOT IN ('.implode(',', $righe_utilizzate['ordine']).')';
+                    }
+
                     $query_articolo = replace($query, [
-                        '|where_ddt|' => '`dt_righe_ddt`.`id_articolo` = '.prepare($id_articolo),
-                        '|where_ordini|' => '`or_righe_ordini`.`id_articolo` = '.prepare($id_articolo),
+                        '|where_ddt|' => $where_ddt,
+                        '|where_ordini|' => $where_ordini,
                     ]);
 
                     $collegamento = $database->fetchOne($query_articolo);
@@ -593,9 +633,18 @@ switch (filter('op')) {
 
                 // Ricerca di righe DDT/Ordine per stessa descrizione
                 if (empty($collegamento)) {
+                    $where_ddt = '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']);
+                    $where_ordini = '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']);
+                    if (!empty($righe_utilizzate['ddt'])) {
+                        $where_ddt .= ' AND `dt_righe_ddt`.`id` NOT IN ('.implode(',', $righe_utilizzate['ddt']).')';
+                    }
+                    if (!empty($righe_utilizzate['ordine'])) {
+                        $where_ordini .= ' AND `or_righe_ordini`.`id` NOT IN ('.implode(',', $righe_utilizzate['ordine']).')';
+                    }
+
                     $query_descrizione = replace($query, [
-                        '|where_ddt|' => '`dt_righe_ddt`.`descrizione` = '.prepare($riga['Descrizione']),
-                        '|where_ordini|' => '`or_righe_ordini`.`descrizione` = '.prepare($riga['Descrizione']),
+                        '|where_ddt|' => $where_ddt,
+                        '|where_ordini|' => $where_ordini,
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -603,9 +652,18 @@ switch (filter('op')) {
 
                 // Ricerca di righe DDT/Ordine per stesso importo
                 if (empty($collegamento)) {
+                    $where_ddt = '`dt_righe_ddt`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']);
+                    $where_ordini = '`or_righe_ordini`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']);
+                    if (!empty($righe_utilizzate['ddt'])) {
+                        $where_ddt .= ' AND `dt_righe_ddt`.`id` NOT IN ('.implode(',', $righe_utilizzate['ddt']).')';
+                    }
+                    if (!empty($righe_utilizzate['ordine'])) {
+                        $where_ordini .= ' AND `or_righe_ordini`.`id` NOT IN ('.implode(',', $righe_utilizzate['ordine']).')';
+                    }
+
                     $query_descrizione = replace($query, [
-                        '|where_ddt|' => '`dt_righe_ddt`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']),
-                        '|where_ordini|' => '`or_righe_ordini`.`prezzo_unitario` = '.prepare($riga['PrezzoUnitario']),
+                        '|where_ddt|' => $where_ddt,
+                        '|where_ordini|' => $where_ordini,
                     ]);
 
                     $collegamento = $database->fetchOne($query_descrizione);
@@ -661,6 +719,8 @@ switch (filter('op')) {
                         'desc_conto' => str_replace(' ', '_', $desc_conto ?: ''),
                     ],
                 ];
+
+                $righe_utilizzate[$collegamento['ref']][] = $collegamento['id'];
             }
         }
 

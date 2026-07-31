@@ -43,8 +43,8 @@ include_once __DIR__.'/../../core.php';
 
 <script>
     $(document).ready(function() {
-        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-            $(this).parent().find('.square').css('background', $(this).val());
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+            $(this).parent().find('.square').css('background', event.value);
         });
         $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
     });

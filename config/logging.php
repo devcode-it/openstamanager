@@ -6,6 +6,7 @@ use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Default Log Channel
@@ -17,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'daily'),
+    'default' => env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,6 +51,7 @@ return [
     */
 
     'channels' => [
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
@@ -132,5 +134,7 @@ return [
         'emergency' => [
             'path' => base_path_osm().'logs/app.log',
         ],
+
     ],
+
 ];

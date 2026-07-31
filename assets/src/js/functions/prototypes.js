@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-String.prototype.toEnglish = function () {
-    return numeral(this.toString()).value();
-};
+function toEnglish(value) {
+    return numeral(value).value();
+}
 
-Number.prototype.toLocale = function () {
-    return numeral(this).format();
-};
+function toLocale(value) {
+    return numeral(value).format();
+}

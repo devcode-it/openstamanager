@@ -39,6 +39,12 @@ switch (post('op')) {
         break;
 
     case 'update':
+
+        $predefined_template =  intval(post('predefined'));
+        if($predefined_template){
+            Template::where('id_module', $record['id_module'])->update(['predefined' => 0]);
+        }
+
         $template->id_account = post('smtp');
         $template->icon = post('icon');
         $template->tipo_reply_to = post('tipo_reply_to');
@@ -50,6 +56,7 @@ switch (post('op')) {
         $template->type = post('type');
         $template->indirizzi_proposti = post('indirizzi_proposti');
         $template->enabled = post('enabled');
+        $template->predefined = intval(post('predefined'));
         $template->save();
 
         $template->setTranslation('subject', post('subject'));
@@ -57,19 +64,10 @@ switch (post('op')) {
         $template->setTranslation('title', post('name'));
         $prints[] = post('prints');
 
-        foreach ($prints as $print) {
-            if (!empty($print)) {
-                $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $print]);
-            }
-        }
+        $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $prints]);
 
         $mansioni[] = post('idmansioni');
-        foreach ($mansioni as $mansione) {
-            if (!empty($mansione)) {
-                $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansione]);
-            }
-        }
-
+        $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansioni]);
         $categories[] = post('idcategories');
         foreach ($categories as $category) {
             if (!empty($category)) {

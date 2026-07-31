@@ -69,8 +69,8 @@ if (!empty($righe)) {
 
 <script>
 	$(document).ready( function() {
-		$('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-			$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
+		$('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+			$('#colore').parent().find('.square').css( 'background', event.value );
 		});
 		$('#colore').parent().find('.square').css( 'background', $('#colore').val() );
 	});

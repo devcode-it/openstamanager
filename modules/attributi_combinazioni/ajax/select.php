@@ -30,7 +30,7 @@ switch ($resource) {
             $exclude_ids = is_array($superselect['exclude_ids']) ? $superselect['exclude_ids'] : explode(',', $superselect['exclude_ids']);
             $exclude_ids = array_map('intval', $exclude_ids);
             if (!empty($exclude_ids)) {
-                $where[] = '`mg_attributi`.`id` NOT IN (' . implode(',', $exclude_ids) . ')';
+                $where[] = '`mg_attributi`.`id` NOT IN ('.implode(',', $exclude_ids).')';
             }
         }
 

@@ -31,7 +31,7 @@ switch (post('op')) {
         $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
         foreach ($id_records as $id) {
-            $anagrafica = $dbo->fetchArray('SELECT `an_tipi_anagrafiche`.`id` FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `id`='.prepare($id));
+            $anagrafica = $dbo->fetchArray('SELECT `an_tipi_anagrafiche`.`id` FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`='.prepare($id));
             $tipi = array_column($anagrafica, 'id');
 
             // Se l'anagrafica non è di tipo Azienda
@@ -176,7 +176,7 @@ switch (post('op')) {
         $handle = fopen($file, 'w');
 
         // Scrittura dell'intestazione
-        fputcsv($handle, ['email', 'ragione_sociale', 'fonte', 'sede_referente'], ';');
+        fputcsv($handle, ['email', 'ragione_sociale', 'fonte', 'sede_referente'], ';', escape: '\\');
 
         // Scrittura dei dati
         foreach ($results as $row) {
@@ -185,7 +185,7 @@ switch (post('op')) {
                 $row['ragione_sociale'],
                 $row['fonte'],
                 $row['sede_referente'],
-            ], ';');
+            ], ';', escape: '\\');
         }
         fclose($handle);
 

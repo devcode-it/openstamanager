@@ -23,6 +23,7 @@ if (!$is_last_page) {
 }
 
 $imponibile = 0;
+$totale_scontato = 0;
 foreach ($v_totale as $key => $v) {
     $totale_scontato += $v;
 }
@@ -30,7 +31,7 @@ $totale_scontato = round($totale_scontato, $d_totali);
 
 $sconto = 0;
 foreach ($righe as $riga) {
-    $sconto += floatval($riga->sconto);
+    $sconto += floatval($riga->sconto > 0 ? $riga->sconto : 0);
 }
 
 $rivalsa = 0;
@@ -48,7 +49,7 @@ foreach ($v_iva as $key => $v) {
 $totale_iva = round($totale_iva, $d_totali);
 $totale = round($totale_iva + $totale_imponibile, $d_totali);
 
-$show_sconto = $sconto != 0;
+$show_sconto = $sconto > 0;
 
 $volume = $documento->volume ?: $documento->volume_calcolato;
 $peso_lordo = $documento->peso ?: $documento->peso_calcolato;
@@ -98,7 +99,7 @@ echo "
 $rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
-        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.$rs2[$i]['id_pagamento'])['descrizione'];
+        $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($rs2[$i]['id_pagamento']))['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>
@@ -229,11 +230,11 @@ if ($has_ritenuta || $show_sconto || $has_rivalsa) {
 if ($show_sconto) {
     echo "
         <th class='text-center small' style='width:".$width."'>
-            ".tr($sconto > 0 ? 'Sconto' : 'Maggiorazione', [], ['upper' => true])."
+            ".tr('Sconto', [], ['upper' => true])."
         </th>
 
         <th class='text-center small' style='width:".$width."'>
-            ".tr($sconto > 0 ? 'Totale scontato' : 'Totale maggiorato', [], ['upper' => true]).'
+            ".tr('Totale scontato', [], ['upper' => true]).'
         </th>';
 }
 if ($has_rivalsa) {
@@ -489,7 +490,7 @@ if ($has_sconto_finale) {
 
     $totale = $totale - $sconto_finale;
     echo '
-	 <tr>
+	<tr>
         <td class="cell-padded text-center" colspan="'.$first_colspan.'">
             '.moneyFormat($sconto_finale, 2).'
         </td>

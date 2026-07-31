@@ -159,9 +159,9 @@ switch ($operazione) {
                     $intervento->save();
 
                     // Aggiungo i tecnici selezionati
-                    $id_tecnici = post('id_tecnicoo');
-                    foreach ($id_tecnici as $id_tecnicoo) {
-                        add_tecnico($intervento->id, $id_tecnicoo, $data_promemoria.' '.post('orario_inizio'), $data_promemoria.' '.post('orario_fine'));
+                    $id_tecnici = post('id_tecnico');
+                    foreach ($id_tecnici as $id_tecnico) {
+                        add_tecnico($intervento->id, $id_tecnico, $data_promemoria.' '.post('orario_inizio'), $data_promemoria.' '.post('orario_fine'));
                     }
 
                     // Copia delle informazioni del promemoria

@@ -22,10 +22,10 @@ namespace Modules\Interventi\API\v1;
 
 use API\Interfaces\UpdateInterface;
 use API\Resource;
+use Models\Module;
 
 class Firma extends Resource implements UpdateInterface
 {
-    // TODO: Da rivedere con upload in base64
     public function update($request)
     {
         $database = database();
@@ -35,5 +35,44 @@ class Firma extends Resource implements UpdateInterface
             'firma_data' => $data['firma_data'],
             'firma_nome' => $data['firma_nome'],
         ], ['id' => $data['id']]);
+
+        if (!empty($data['firma_contenuto'])) {
+            $this->salvaFirma($data['firma_contenuto'], $data['id']);
+        }
+
+        return [
+            'id' => $data['id'],
+            'status' => 'success',
+        ];
+    }
+
+    protected function salvaFirma($firma_base64, $id_intervento)
+    {
+        if (empty($firma_base64)) {
+            return;
+        }
+
+        $parts = explode(',', (string) $firma_base64);
+        if (count($parts) < 2) {
+            return;
+        }
+
+        try {
+            $img = getImageManager()->decodeBinary(base64_decode($parts[1]));
+            $img->scaleDown(680, 202);
+            $encoded_image = $img->encodeUsingMediaType('image/jpeg');
+            $file_content = $encoded_image->toString();
+
+            $module_id = Module::where('name', 'Interventi')->first()->id;
+
+            \Uploads::upload($file_content, [
+                'name' => 'firma.jpg',
+                'category' => 'Firme',
+                'id_module' => $module_id,
+                'id_record' => $id_intervento,
+                'key' => 'signature',
+            ]);
+        } catch (\Exception $e) {
+        }
     }
 }

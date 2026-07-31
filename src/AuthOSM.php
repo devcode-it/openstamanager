@@ -1184,7 +1184,6 @@ class AuthOSM extends Util\Singleton
      */
     protected function generateSessionToken($user_id)
     {
-        /*
         // Genera un token sicuro di 64 caratteri esadecimali
         $token = bin2hex(random_bytes(32));
 
@@ -1204,7 +1203,6 @@ class AuthOSM extends Util\Singleton
         if (!empty($this->user) && $this->user->id == $user_id) {
             $this->user->session_token = $token;
         }
-        */
 
         return true;
     }

@@ -39,6 +39,8 @@ class Cache extends Model
 
     protected $table = 'zz_cache';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

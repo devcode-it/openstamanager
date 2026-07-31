@@ -354,7 +354,7 @@ class FatturaOrdinaria extends FatturaElettronica
                     $obj->descrizione = $obj->articolo->getTranslation('title').$nuovo_riferimento;
                 } else {
                     // Per righe e descrizioni, gestisci normalmente
-                    $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : '';
+                    $obj->descrizione = $riferimento_precedente ? str_replace($riferimento_precedente, '', $obj->descrizione) : $obj->descrizione;
                     $obj->descrizione .= $nuovo_riferimento;
                 }
 

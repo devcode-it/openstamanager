@@ -20,12 +20,16 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Modules\Mansioni\Mansione;
+use Modules\Anagrafiche\Referente;
+
 switch (post('op')) {
     case 'update':
         $nome = post('nome');
 
-        if ($dbo->fetchNum('SELECT * FROM `an_mansioni` WHERE `nome`='.prepare($nome).' AND `id`!='.prepare($id_record)) == 0) {
-            $dbo->query('UPDATE `an_mansioni` SET `nome`='.prepare($nome).' WHERE `id`='.prepare($id_record));
+        $exists = Mansione::where('nome', $nome)->where('id', '!=', $id_record)->exists();
+        if (!$exists) {
+            Mansione::find($id_record)->update(['nome' => $nome]);
             flash()->info(tr('Salvataggio completato.'));
         } else {
             flash()->error(tr("E' già presente una _TYPE_ con lo stesso nome", [
@@ -38,12 +42,10 @@ switch (post('op')) {
     case 'add':
         $nome = post('nome');
 
-        if ($dbo->fetchNum('SELECT * FROM `an_mansioni` WHERE `nome`='.prepare($nome)) == 0) {
-            $dbo->insert('an_mansioni', [
-                'nome' => $nome,
-            ]);
-
-            $id_record = $dbo->lastInsertedID();
+        $exists = Mansione::where('nome', $nome)->exists();
+        if (!$exists) {
+            $mansione = Mansione::create(['nome' => $nome]);
+            $id_record = $mansione->id;
 
             if (isAjaxRequest()) {
                 echo json_encode(['id' => $id_record, 'text' => $nome]);
@@ -61,10 +63,10 @@ switch (post('op')) {
         break;
 
     case 'delete':
-        $referenti = $dbo->fetchNum('SELECT id FROM an_referenti WHERE id_mansione='.prepare($id_record));
+        $has_referenti = Referente::where('id_mansione', $id_record)->exists();
 
-        if ((!empty($id_record)) && empty($referenti)) {
-            $dbo->delete('an_mansioni', ['id' => $id_record]);
+        if ((!empty($id_record)) && !$has_referenti) {
+            Mansione::find($id_record)->delete();
             flash()->info(tr('_TYPE_ eliminata con successo.', [
                 '_TYPE_' => 'Mansione',
             ]));

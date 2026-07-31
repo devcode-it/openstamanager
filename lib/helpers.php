@@ -105,9 +105,18 @@ function get($param, $raw = false)
  */
 function setting($name)
 {
+    // Check if database is installed
+    if (!database()->isInstalled()) {
+        return '';
+    }
+
     // Utilizza la classe Settings che implementa il caching per ridurre le query
     /** @var Models\Setting $setting */
     $setting = Settings::get($name);
+
+    if (empty($setting)) {
+        return '';
+    }
 
     $user = auth_osm()->getUser();
     $user_options = [];
@@ -130,11 +139,11 @@ function setting($name)
     }
 
     if ($setting->tipo == 'integer') {
-        $value = (int)$value;
+        $value = (int) $value;
     }
 
     if ($setting->tipo == 'decimal') {
-        $value = (float)$value;
+        $value = (float) $value;
     }
 
     return $value;

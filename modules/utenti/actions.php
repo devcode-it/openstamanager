@@ -57,14 +57,14 @@ switch (filter('op')) {
 
         // Abilita utente
     case 'enable_user':
-        if ($dbo->query('UPDATE `zz_users` SET `enabled`=1 WHERE `id`='.prepare($id_utente))) {
+        if (User::where('id', $id_utente)->update(['enabled' => 1])) {
             flash()->info(tr('Utente abilitato!'));
         }
         break;
 
         // Disabilita utente
     case 'disable_user':
-        if ($dbo->query('UPDATE `zz_users` SET `enabled`=0 WHERE `id`='.prepare($id_utente))) {
+        if (User::where('id', $id_utente)->update(['enabled' => 0])) {
             flash()->info(tr('Utente disabilitato!'));
         }
         break;
@@ -73,7 +73,7 @@ switch (filter('op')) {
     case 'update_user':
         $username = filter('username');
         $email = filter('email');
-        $password = $_POST['password'];
+        $password = post('password');
 
         $id_utente = filter('id_utente');
         if ($dbo->fetchNum('SELECT `username` FROM `zz_users` WHERE `id` != '.prepare($id_utente).' AND `username`='.prepare($username)) == 0) {
@@ -112,8 +112,7 @@ switch (filter('op')) {
             $sedi = post('id_sede');
 
             if (empty($sedi)) {
-                $sedi = $dbo->fetchArray('SELECT id FROM an_sedi WHERE id_anagrafica = '.prepare($id_azienda));
-                $sedi = array_column($sedi, 'id');
+                $sedi = Modules\Anagrafiche\Sede::where('id_anagrafica', $id_azienda)->pluck('id')->toArray();
                 $sedi = array_merge([0], $sedi);
             }
             foreach ($sedi as $id_sede) {
@@ -186,17 +185,17 @@ switch (filter('op')) {
     case 'token_enable':
         $utente = User::find($id_utente);
 
-        $already_token = $dbo->fetchOne('SELECT `id` FROM `zz_tokens` WHERE `id_utente` = '.prepare($id_utente))['id'];
+        $already_token = UserTokens::where('id_utente', $id_utente)->value('id');
 
         if (empty($already_token)) {
             // Quando richiamo getApiTokens,  non trovando nessun token abilitato ne crea uno nuovo
             $tokens = $utente->getApiTokens();
 
             foreach ($tokens as $token) {
-                $dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id = '.prepare($token['id']));
+                UserTokens::where('id', $token['id'])->update(['enabled' => 1]);
                 flash()->info(tr('Token creato!'));
             }
-        } elseif ($dbo->query('UPDATE zz_tokens SET enabled = 1 WHERE id_utente = '.prepare($id_utente))) {
+        } elseif (UserTokens::where('id_utente', $id_utente)->update(['enabled' => 1])) {
             flash()->info(tr('Token abilitato!'));
         }
 
@@ -208,7 +207,7 @@ switch (filter('op')) {
         $tokens = $utente->getApiTokens();
 
         foreach ($tokens as $token) {
-            $dbo->query('UPDATE zz_tokens SET enabled = 0 WHERE id = '.prepare($token['id']));
+            UserTokens::where('id', $token['id'])->update(['enabled' => 0]);
         }
 
         flash()->info(tr('Token disabilitato!'));
@@ -217,10 +216,9 @@ switch (filter('op')) {
         // Elimina gruppo
     case 'deletegroup':
         // Verifico se questo gruppo si può eliminare
-        $query = 'SELECT `editable` FROM `zz_groups` WHERE `id`='.prepare($id_record);
-        $rs = $dbo->fetchArray($query);
+        $editable = Group::where('id', $id_record)->value('editable');
 
-        if ($rs[0]['editable'] == 1) {
+        if ($editable == 1) {
             $group = Group::find($id_record);
             $group->delete();
             User::where('id_gruppo', $id_record)->delete();
@@ -236,7 +234,7 @@ switch (filter('op')) {
         // Impostazione/reimpostazione dei permessi di accesso di default
     case 'restore_permission':
         // Gruppo Tecnici
-        if ($dbo->fetchArray('SELECT `nome` FROM `zz_groups` WHERE `id` = '.prepare($id_record))[0]['nome'] == 'Tecnici') {
+        if (Models\Group::find($id_record)->nome == 'Tecnici') {
             $permessi = [];
             $permessi['Dashboard'] = 'rw';
             $permessi['Anagrafiche'] = 'rw';
@@ -272,12 +270,12 @@ switch (filter('op')) {
 
         // Verifico che ci sia il permesso per questo gruppo
         if ($permessi != '-') {
-            $rs = $dbo->fetchArray('SELECT * FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo));
+            $rs = database()->table('zz_permissions')->where('id_gruppo', $id_record)->where('id_module', $idmodulo)->first();
             if (empty($rs)) {
                 // Usa INSERT IGNORE per evitare errori di duplicazione in caso di race condition
                 $query = 'INSERT IGNORE INTO zz_permissions(id_gruppo, id_module, permessi) VALUES('.prepare($id_record).', '.prepare($idmodulo).', '.prepare($permessi).')';
             } else {
-                $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs[0]['id']);
+                $query = 'UPDATE zz_permissions SET permessi='.prepare($permessi).' WHERE id='.prepare($rs->id);
             }
         } else {
             $query = 'DELETE FROM zz_permissions WHERE id_gruppo='.prepare($id_record).' AND id_module='.prepare($idmodulo);

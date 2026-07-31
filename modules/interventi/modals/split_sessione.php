@@ -20,7 +20,7 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_sconto_km AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_diritto_chiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnicoo = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
+$sessione = $dbo->fetchOne('SELECT in_interventi_tecnici.*, an_anagrafiche.ragione_sociale, an_anagrafiche.deleted_at, in_interventi_tecnici.tipo_sconto_km AS tipo_sconto_km, in_interventi_tecnici.prezzo_ore_unitario, in_interventi_tecnici.prezzo_km_unitario, in_interventi_tecnici.prezzo_diritto_chiamata FROM in_interventi_tecnici INNER JOIN an_anagrafiche ON in_interventi_tecnici.id_tecnico = an_anagrafiche.id WHERE in_interventi_tecnici.id = '.prepare(get('id_sessione')));
 
 $op = 'split_sessione';
 $button = '<i class="fa fa-pause"></i> '.tr('Applica pausa');
@@ -84,3 +84,24 @@ echo '
 		</div>
     </div>
 </form>';
+
+echo '
+<script>$(document).ready(init)</script>';
+
+echo '
+<script>
+$(document).ready(function () {
+    // Quando modifico inizio pausa, allineo anche la fine pausa
+    $("#pausa_inizio").on("dp.change", function (e) {
+        if($("#pausa_fine").data("DateTimePicker").date() < e.date){
+            $("#pausa_fine").data("DateTimePicker").date(e.date);
+        }
+    });
+
+    $("#pausa_fine").on("dp.change", function (e) {
+        if($("#pausa_inizio").data("DateTimePicker").date() > e.date){
+            $("#pausa_inizio").data("DateTimePicker").date(e.date);
+        }
+    });
+});
+</script>';

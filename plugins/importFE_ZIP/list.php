@@ -34,7 +34,7 @@ if (!empty($list)) {
             <th>'.tr('Descrizione').'</th>
             <th class="text-center">'.tr('Cliente').'</th>
             <th class="text-center">'.tr('Data di registrazione').'</th>
-            <th class="text-center">'.tr('Totale imponibile').'</th>
+            <th class="text-center">'.tr('Totale documento').'</th>
             <th width="20%" class="text-center">'.tr('Azioni').'</th>
         </tr>
     </thead>

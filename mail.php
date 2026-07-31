@@ -65,13 +65,13 @@ foreach ($mansioni as $mansione) {
 
 // Aggiungo email tecnici assegnati quando sono sul template Notifica intervento
 if ($template->name == 'Notifica intervento') {
-    $tecnici = $dbo->select('in_interventi_tecnici_assegnati', 'id_tecnico', [], ['id_intervento' => $id_record]);
-    foreach ($tecnici as $tecnico) {
-        $anagrafica = $dbo->table('an_anagrafiche')->where('id', $tecnico['id_tecnico'])->where('email', '!=', '')->first();
-        if (!in_array($anagrafica->email, $emails)) {
+    $tecnici = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_record)->pluck('id_tecnico')->toArray();
+    foreach ($tecnici as $id_tecnico) {
+        $anagrafica = database()->table('an_anagrafiche')->where('id', $id_tecnico)->where('email', '!=', '')->first();
+        if (!empty($anagrafica) && !in_array($anagrafica->email, $emails)) {
             $emails[] = $anagrafica->email;
         }
-    }
+}
 }
 
 // Campi mancanti
@@ -110,14 +110,40 @@ echo '
 
     <p><b>'.tr('Mittente').'</b>: '.$smtp['from_name'].' &lt;'.$smtp['from_address'].'&gt;</p>';
 
+// Verifica se l'utente può modificare CC e CCN
+$allowed_groups = setting('Gruppi abilitati alla modifica CC e CCN');
+$allowed_groups_array = !empty($allowed_groups) ? explode(',', $allowed_groups) : [];
+$user = auth_osm()->getUser();
+$user_group = $user->id_gruppo;
+$can_edit_cc_bcc = in_array($user_group, $allowed_groups_array);
+
+// Mostra CC e CCN
 if (!empty($template['cc'])) {
-    echo '
-    <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
+    if ($can_edit_cc_bcc) {
+        echo '
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "'.tr('CC').'", "name": "cc", "value": "'.$template['cc'].'", "help": "'.tr('Copia carbone').'" ]}
+            </div>
+        </div>';
+    } else {
+        echo '
+        <p><b>'.tr('CC').'</b>: '.$template['cc'].'</p>';
+    }
 }
 
 if (!empty($template['bcc'])) {
-    echo '
-    <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
+    if ($can_edit_cc_bcc) {
+        echo '
+        <div class="row">
+            <div class="col-md-12">
+                {[ "type": "text", "label": "'.tr('CCN').'", "name": "bcc", "value": "'.$template['bcc'].'", "help": "'.tr('Copia carbone nascosta').'" ]}
+            </div>
+        </div>';
+    } else {
+        echo '
+        <p><b>'.tr('CCN').'</b>: '.$template['bcc'].'</p>';
+    }
 }
 
 if (!empty($reply_to)) {
@@ -134,22 +160,19 @@ $idx = 0;
 
 foreach ($emails as $email) {
     echo '
-            <div class="col-md-12">
-                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
-            </div>';
+        <div class="col-md-12">
+            {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "'.$email.'", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
+        </div>';
 }
 
 if (empty($emails)) {
     echo '
-            <div class="col-md-12">
-                {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
-            </div>';
+        <div class="col-md-12">
+            {[ "type": "text", "name": "destinatari['.$idx++.']", "value": "", "icon-before": "choice|email|'.$template['type'].'", "extra": "onkeyup=\'aggiungiDestinatario();\'", "class": "destinatari email-mask", "required": 0 ]}
+        </div>';
 }
 echo '
     </div>
-
-    <br>
-
     <div class="row">
         <div class="col-md-8">
             {[ "type": "text", "label": "'.tr('Oggetto').'", "name": "subject", "value": "'.$subject.'", "required": 1 ]}
@@ -161,8 +184,9 @@ echo '
     </div>';
 
 // Stampe
-$selected_prints = $dbo->fetchArray('SELECT id_print FROM em_print_template WHERE id_template = '.prepare($template['id']));
-$selected = array_column($selected_prints, 'id_print');
+// Recupera gli id delle stampe selezionate tramite query builder
+$selected_prints = database()->table('em_print_template')->where('id_template', $template->id)->pluck('id_print')->toArray();
+$selected = $selected_prints;
 
 echo '
 
@@ -174,8 +198,14 @@ echo '
 $uploads = [];
 
 if ($smtp['pec'] == 1 && $module->name == 'Fatture di vendita') {
-    $pec_uploads = $dbo->fetchArray('SELECT zz_files.id FROM zz_files LEFT JOIN zz_files_categories ON zz_files.id_category = zz_files_categories.id WHERE zz_files.id_module = '.prepare($module['id']).' AND zz_files.id_record = '.prepare($id_record).' AND (zz_files_categories.name = \'Fattura Elettronica\' OR zz_files_categories.name = \'Fattura elettronica\')');
-    $uploads = array_merge($uploads, array_column($pec_uploads, 'id'));
+    $pec_uploads = database()->table('zz_files')
+        ->leftJoin('zz_files_categories', 'zz_files.id_category', '=', 'zz_files_categories.id')
+        ->where('zz_files.id_module', $module->id)
+        ->where('zz_files.id_record', $id_record)
+        ->whereIn('zz_files_categories.name', ['Fattura Elettronica', 'Fattura elettronica'])
+        ->pluck('zz_files.id')
+        ->toArray();
+    $uploads = array_merge($uploads, $pec_uploads);
 }
 
 $template_uploads = $template->uploads($id_record);
@@ -184,17 +214,26 @@ if (!empty($template_uploads)) {
 }
 
 if (empty($template->categories) && empty($uploads)) {
-    $all_document_uploads = $dbo->fetchArray('SELECT `id` FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record));
-    $uploads = array_merge($uploads, array_column($all_document_uploads, 'id'));
+    $all_document_uploads = database()->table('zz_files')->where('id_module', $id_module)->where('id_record', $id_record)->pluck('id')->toArray();
+    $uploads = array_merge($uploads, $all_document_uploads);
 }
 
 $uploads = array_unique($uploads);
+
+$company_uploads_query = 'SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.prepare(Module::where('name', 'Anagrafiche')->first()->id).' AND `id_record` = '.prepare(setting('Azienda predefinita'));
+
+$category_ids = $template->categories->pluck('id')->toArray();
+if (!empty($category_ids)) {
+    $company_uploads_query .= ' AND `id_category` IN ('.implode(',', $category_ids).')';
+} else {
+    $company_uploads_query .= ' AND 0=1';
+}
 
 // Allegati
 echo '
 
         <div class="col-md-6">
-            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION SELECT `id`, CONCAT(`name`, \' (Azienda)\') AS text FROM `zz_files` WHERE `id_module` = '.Module::where('name', 'Anagrafiche')->first()->id.' AND `id_record` = '.setting('Azienda predefinita').'", "link": "allegato" ]}
+            {[ "type": "select", "multiple": "1", "label": "'.tr('Allegati').'", "name": "uploads[]", "value": "'.implode(',', $uploads).'", "help": "'.tr('Allegati del documento o caricati nell\'anagrafica dell\'azienda.').'", "values": "query=SELECT `id`, `name` AS text FROM `zz_files` WHERE `id_module` = '.prepare($id_module).' AND `id_record` = '.prepare($id_record).' UNION '.$company_uploads_query.'", "link": "allegato" ]}
         </div>
     </div>';
 
@@ -211,17 +250,16 @@ echo input([
 ]);
 
 echo '
-            </div>
+        </div>
     </div>';
 
 echo '
-
     <!-- PULSANTI -->
-	<div class="row">
-		<div class="col-md-12 text-right">
+    <div class="modal-footer">
+        <div class="col-md-12 text-right">
             <button type="button" class="btn btn-primary" onclick="inviaEmail()"><i class="fa fa-envelope"></i> '.tr('Invia').'</button>
-		</div>
-	</div>
+        </div>
+    </div>
 </form>';
 
 echo '
@@ -293,8 +331,7 @@ echo '
                 update(suggestions);
             },
             onSelect: function (item) {
-                input.value = item.value;
-                aggiungiDestinatario();
+            
             },
         });
     }

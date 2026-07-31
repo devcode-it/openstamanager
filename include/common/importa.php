@@ -123,11 +123,11 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
         $fatt_differita_vendita = Tipofattura::where('name', 'Fattura differita di vendita')->first()->id;
 
         if (!empty($options['reversed'])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` WHERE `co_tipi_documento`.`name` = "Nota di credito" AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = Tipofattura::where('name', 'Nota di credito')->where('dir', $dir)->value('id');
         } elseif (in_array($original_module->id, [$id_module_ddt_vendita, $id_module_ddt_acquisto])) {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `co_tipi_documento`.`id` = '.($dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita).' AND `dir` = \''.$dir.'\'')['id'];
+            $id_tipo_documento = Tipofattura::where('id', $dir == 'uscita' ? $fatt_differita_acquisto : $fatt_differita_vendita)->where('dir', $dir)->value('id');
         } else {
-            $id_tipo_documento = database()->fetchOne('SELECT `co_tipi_documento`.`id` FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `dir` = \''.$dir.'\' AND `predefined` = 1')['id'];
+            $id_tipo_documento = Tipofattura::where('dir', $dir)->where('predefined', 1)->value('id');
         }
 
         $id_bozza = StatoFattura::where('name', 'Bozza')->first()->id;
@@ -203,7 +203,7 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
 
         echo '
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "tipo_anagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
+                {[ "type": "select", "label": "'.$tipo_anagrafica.'", "name": "id_anagrafica", "required": 1, "ajax-source": "'.$ajax.'", "icon-after": "add|'.Module::where('name', 'Anagrafiche')->first()->id.'|tipoanagrafica='.$tipo_anagrafica.'" ]}
             </div>';
     }
 
@@ -346,10 +346,8 @@ $disponibilita_articoli = [];
 $abilita_controllo_disponibilita = !$documento::$movimenta_magazzino && !empty($options['tipo_documento_finale']) && $options['tipo_documento_finale']::$movimenta_magazzino && $documento->direzione != 'uscita' && !setting('Permetti selezione articoli con quantità minore o uguale a zero in Documenti di Vendita');
 
 // Recupera la sede di partenza dal documento (preventivo/ordine)
-// Per documenti con direzione 'entrata' (DDT in uscita, Ordini cliente), la sede di partenza è id_sede_destinazione
-// Per documenti con direzione 'uscita' (DDT in entrata, Ordini fornitore), la sede di partenza è id_sede_partenza
-$id_sede_partenza = ($documento->direzione == 'entrata') ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
-$id_sede_partenza = $id_sede_partenza ?: 0;
+// Per tutti i documenti, la sede di partenza è id_sede_partenza (magazzino da cui partono le merci)
+$id_sede_partenza = $documento->id_sede_partenza ?: 0;
 
 if ($abilita_controllo_disponibilita) {
     foreach ($righe as $riga) {
@@ -374,7 +372,7 @@ if ($abilita_controllo_disponibilita) {
                     AND or_tipi_ordine.dir = \'entrata\'
                     AND or_righe_ordini.confermato = 1
                     AND or_stati_ordine.impegnato = 1
-                    AND or_ordini.id_sede_destinazione = '.prepare($id_sede_partenza);
+                    AND or_ordini.id_sede_partenza = '.prepare($id_sede_partenza);
 
                 // Se il documento di origine è un ordine cliente, escludiamolo dal calcolo
                 if ($original_module->name == 'Ordini cliente' && !empty($documento->id)) {
@@ -554,15 +552,18 @@ foreach ($righe as $i => $riga) {
 
             $list = [];
             foreach ($serials as $serial) {
-                $list[] = [
-                    'id' => $serial,
-                    'text' => $serial,
-                ];
+                $già_usato = database()->fetchOne('SELECT id FROM mg_prodotti WHERE serial = '.prepare($serial).' AND id_riga_intervento IS NOT NULL');
+                if (empty($già_usato)) {
+                    $list[] = [
+                        'id' => $serial,
+                        'text' => $serial,
+                    ];
+                }
             }
 
-            if (!empty($serials)) {
+            if (!empty($list)) {
                 echo '
-                        {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', $serials).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
+                        {[ "type": "select", "name": "serial['.$riga['id'].'][]", "id": "serial_'.$i.'", "multiple": 1, "values": '.json_encode($list).', "value": "'.implode(',', array_column($list, 'id')).'", "extra": "data-maximum=\"'.intval($riga['qta_rimanente']).'\"" ]}';
             }
         }
 

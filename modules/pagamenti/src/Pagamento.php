@@ -55,10 +55,20 @@ class Pagamento extends Model
     {
         return $this->hasMany(Pagamento::class, 'id');
     }
-
-    public function calcola($importo, $data, $id_anagrafica)
+    
+    protected function trovaRate()
     {
-        $rate = Pagamento::where('name', '=', $this->name)->get()->sortBy('num_giorni')->pluck('id')->toArray();
+        $rate = Pagamento::where('name', '=', $this->name)->where('id', '!=', $this->id)->get();
+        $rate->prepend($this);
+
+        return $rate->sortBy('num_giorni');
+    }
+
+    public function calcola($importo, $data, $id_anagrafica, $database = null)
+    {
+        $database = $database ?: database(); // Allow mocking
+
+        $rate = $this->trovaRate();
         $number = count($rate);
 
         $totale = 0.0;
@@ -67,7 +77,6 @@ class Pagamento extends Model
         $count = 0;
         foreach ($rate as $key => $rata) {
             $date = new Carbon($data);
-            $rata = Pagamento::find($rata);
             // X giorni esatti
             if ($rata->giorno == 0) {
                 // Offset della rata
@@ -113,7 +122,7 @@ class Pagamento extends Model
             }
 
             // Posticipo la scadenza in base alle regole pagamenti dell'anagrafica
-            $regola_pagamento = database()->selectOne('an_pagamenti_anagrafiche', '*', ['id_anagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
+            $regola_pagamento = $database->selectOne('an_pagamenti_anagrafiche', '*', ['id_anagrafica' => $id_anagrafica, 'mese' => $date->format('m')]);
             if (!empty($regola_pagamento)) {
                 $date->modify('last day of this month');
                 $date->addDays($regola_pagamento['giorno_fisso']);

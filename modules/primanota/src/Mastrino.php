@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 use Modules\Fatture\Fattura;
 use Modules\Fatture\Stato;
 use Modules\Scadenzario\Scadenza;
+use Modules\PrimaNota\Movimento;
 
 /*
  * Struttura ausiliaria dedicata alla raggruppamento e alla gestione di un insieme di Movimenti, unificati attraverso il numero di mastrino.
@@ -185,9 +186,9 @@ class Mastrino extends Model
 
     public static function getNextMastrino()
     {
-        $ultimo = database()->fetchOne('SELECT MAX(id_mastrino) AS max FROM co_movimenti');
+        $ultimo = Movimento::max('id_mastrino');
 
-        return intval($ultimo['max']) + 1;
+        return intval($ultimo) + 1;
     }
 
     /**
@@ -304,9 +305,9 @@ class Mastrino extends Model
         $scadenze = [];
         foreach ($documenti as $documento) {
             $scadenze[$documento] = [];
-            $scadenze_documento = database()->fetchArray('SELECT id FROM co_scadenzario WHERE id_documento='.prepare($documento));
+            $scadenze_documento = Scadenza::where('id_documento', $documento)->get();
             foreach ($scadenze_documento as $scadenza_row) {
-                $id_scadenza = $scadenza_row['id'];
+                $id_scadenza = $scadenza_row->id;
                 $scadenze[$documento][$id_scadenza] = $id_scadenza;
             }
         }

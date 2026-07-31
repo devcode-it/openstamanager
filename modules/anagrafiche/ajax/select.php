@@ -160,7 +160,6 @@ switch ($resource) {
 
         break;
 
-    
     case 'vettori':
         $tipologia = Tipo::where('name', 'Vettore')->first()->id;
 
@@ -190,9 +189,18 @@ switch ($resource) {
     case 'agenti':
         $tipologia = Tipo::where('name', 'Agente')->first()->id;
 
-        $query = "SELECT `an_anagrafiche`.`id` AS id, CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `id_tipo_intervento_default` FROM `an_anagrafiche` INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
+        $query = "SELECT 
+            `an_anagrafiche`.`id` AS id, 
+            CONCAT(`ragione_sociale`, IF(`citta` IS NULL OR `citta` = '', '', CONCAT(' (', `citta`, ')')), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, 
+            `id_tipo_intervento_default` 
+        FROM 
+            `an_anagrafiche` 
+            INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
         |where|
-        ORDER BY `ragione_sociale`';
+        GROUP BY
+            `an_anagrafiche`.`id`
+        ORDER BY 
+            `ragione_sociale`';
 
         foreach ($elements as $element) {
             $filter[] = '`an_anagrafiche`.`id`='.prepare($element);
@@ -321,7 +329,7 @@ switch ($resource) {
 
         break;
 
-    // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
+        // Nota Bene: nel campo id viene specificato id_tipo_anagrafica-id_anagrafica -> modulo Utenti e permessi, creazione nuovo utente
     case 'anagrafiche':
         $query = "SELECT `an_anagrafiche`.`id` AS id, CONCAT_WS('', `ragione_sociale`, IF(`citta` !='' OR `provincia` != '', CONCAT(' (', `citta`, IF(`provincia`!='', CONCAT(' ', `provincia`), ''), ')'), ''), IF(`an_anagrafiche`.`deleted_at` IS NULL, '', ' (".tr('eliminata').")'),' - ', `an_anagrafiche`.`codice`) AS descrizione, `an_tipi_anagrafiche_lang`.`title` AS optgroup FROM `an_anagrafiche` INNER JOIN (`an_tipi_anagrafiche_anagrafiche` INNER JOIN `an_tipi_anagrafiche` ON `an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica`=`an_tipi_anagrafiche`.`id` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')) ON `an_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`
         |where| '.Modules::getAdditionalsQuery(Module::where('name', 'Anagrafiche')->first()->id).'
@@ -370,17 +378,17 @@ switch ($resource) {
         }
         break;
 
-    /*
-        * Opzioni utilizzate:
-        * - id_anagrafica
-    */
+        /*
+            * Opzioni utilizzate:
+            * - id_anagrafica
+        */
     case 'sedi':
         if (isset($superselect['id_anagrafica'])) {
             $query = "
             SELECT
                 *
             FROM
-                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where|) AS lng, NULL AS deleted_at, (SELECT `id_zona` FROM `an_anagrafiche` |where|) AS id_zona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione
+                (SELECT '0' AS id, (SELECT `lat` FROM `an_anagrafiche` |where_legale|) AS lat, (SELECT `lng` FROM `an_anagrafiche` |where_legale|) AS lng, NULL AS deleted_at, (SELECT `id_zona` FROM `an_anagrafiche` |where_legale|) AS id_zona, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''), ' (',`ragione_sociale`,')') FROM `an_anagrafiche` |where_legale|)) AS descrizione
 
             UNION
 
@@ -390,7 +398,7 @@ switch ($resource) {
                 `lng`,
                 `id_zona`,
                 `deleted_at`,
-                CONCAT_WS(' - ', `nome_sede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where|) AS tab
+                CONCAT_WS(' - ', `nome_sede`, CONCAT(`citta`, IF(indirizzo!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where_sedi|) AS tab
             HAVING
                 `descrizione` LIKE ".prepare('%'.$search.'%').'
             ORDER BY
@@ -401,16 +409,20 @@ switch ($resource) {
             }
 
             if (empty($filter)) {
-                $where[] = 'deleted_at IS NULL';
+                $where_sedi[] = 'deleted_at IS NULL';
             }
 
-            $where[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
+            $where_sedi[] = '`id_anagrafica`='.prepare($superselect['id_anagrafica']);
+            $where_legale[] = '`id`='.prepare($superselect['id_anagrafica']);
 
             /*
             if (!empty($search)) {
                 $search_fields[] = 'citta LIKE '.prepare('%'.$search.'%');
             }
             */
+
+            $query = str_replace('|where_legale|', !empty($where_legale) ? 'WHERE '.implode(' AND ', $where_legale) : '', $query);
+            $query = str_replace('|where_sedi|', !empty($where_sedi) ? 'WHERE '.implode(' AND ', $where_sedi) : '', $query);
         }
         break;
 
@@ -434,10 +446,10 @@ switch ($resource) {
 
         break;
 
-    /*
-        * Opzioni utilizzate:
-        * - id_anagrafica
-    */
+        /*
+            * Opzioni utilizzate:
+            * - id_anagrafica
+        */
     case 'referenti':
         if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT `an_referenti`.`id`, `an_referenti`.`nome` AS descrizione, `an_mansioni`.`nome` AS optgroup FROM `an_referenti` LEFT JOIN `an_mansioni` ON `an_referenti`.`id_mansione`=`an_mansioni`.`id` |where| ORDER BY optgroup, `an_referenti`.`nome`';

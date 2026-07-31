@@ -36,6 +36,8 @@ class Hook extends Model
     use RecordTrait;
     protected $table = 'zz_hooks';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

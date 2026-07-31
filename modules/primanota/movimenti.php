@@ -254,7 +254,7 @@ function controllaConti(element) {
     container.find("input[id*=dare], input[id*=avere]").each(function() {
         let conto = $(this).closest("tr").find("select").val();
         if (!conto) $(this).prop("disabled", true);
-        if ($(this).val().toEnglish()) continuare &= !!conto;
+        if (toEnglish($(this).val())) continuare &= !!conto;
     });
 
     // Gestione bottoni submit
@@ -294,8 +294,8 @@ function calcolaBilancio(gruppo) {
     totale_avere =  parseFloat(totale_avere);
 
     // Visualizzazione dei totali
-    raggruppamento.find(".totale_dare").text(totale_dare.toLocale());
-    raggruppamento.find(".totale_avere").text(totale_avere.toLocale());
+    raggruppamento.find(".totale_dare").text(toLocale(totale_dare));
+    raggruppamento.find(".totale_avere").text(toLocale(totale_avere));
 
     // Calcolo il bilancio
     let bilancio = totale_dare.toFixed(2) - totale_avere.toFixed(2);
@@ -303,7 +303,7 @@ function calcolaBilancio(gruppo) {
     // Visualizzazione dello sbilancio eventuale
     let sbilancio = raggruppamento.find(".sbilancio");
     let valore_sbilancio = sbilancio.find(".money");
-    valore_sbilancio.text(bilancio.toLocale());
+    valore_sbilancio.text(toLocale(bilancio));
 
     if (bilancio === 0) {
         sbilancio.addClass("hide");
@@ -351,7 +351,7 @@ $(document).on("keyup change", "input[id*=dare], input[id*=avere]", function() {
     let isDare = this.id.includes("dare");
     let oppositeField = isDare ? "input[id*=avere]" : "input[id*=dare]";
 
-    row.find(oppositeField).prop("disabled", $(this).val().toEnglish());
+    row.find(oppositeField).prop("disabled", toEnglish($(this).val()));
     controllaConti(this);
     aggiornaTotali(this);
 });
@@ -364,22 +364,22 @@ function aggiornaTotali(element) {
 
     if (isInModal) {
         $("#modals [id*=dare_add_]").each(function() {
-            totalDare += parseFloat($(this).val().toEnglish()) || 0;
+            totalDare += parseFloat(toEnglish($(this).val())) || 0;
         });
         $("#modals [id*=avere_add_]").each(function() {
-            totalAvere += parseFloat($(this).val().toEnglish()) || 0;
+            totalAvere += parseFloat(toEnglish($(this).val())) || 0;
         });
-        $("#modals #totale_dare_add").text(totalDare.toLocale());
-        $("#modals #totale_avere_add").text(totalAvere.toLocale());
+        $("#modals #totale_dare_add").text(toLocale(totalDare));
+        $("#modals #totale_avere_add").text(toLocale(totalAvere));
     } else {
         $("[id*=dare]:not([id*=_add_])").not("#modals *").each(function() {
-            totalDare += parseFloat($(this).val().toEnglish()) || 0;
+            totalDare += parseFloat(toEnglish($(this).val())) || 0;
         });
         $("[id*=avere]:not([id*=_add_])").not("#modals *").each(function() {
-            totalAvere += parseFloat($(this).val().toEnglish()) || 0;
+            totalAvere += parseFloat(toEnglish($(this).val())) || 0;
         });
-        $("#totale_dare").text(totalDare.toLocale());
-        $("#totale_avere").text(totalAvere.toLocale());
+        $("#totale_dare").text(toLocale(totalDare));
+        $("#totale_avere").text(toLocale(totalAvere));
     }
 }
 

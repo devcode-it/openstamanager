@@ -143,17 +143,27 @@ if (!empty(post('db_host'))) {
         $thousands = $thousands == 'dot' ? '.' : $thousands;
         $thousands = $thousands == 'comma' ? ',' : $thousands;
 
+        $lang = post('lang');
+        $allowed_languages = ['it_IT', 'en_GB'];
+        if (!in_array($lang, $allowed_languages)) {
+            $lang = 'it_IT';
+        }
+
+        function escape_php_string($value) {
+            return str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
+        }
+
         $values = [
-            '|host|' => $db_host,
-            '|username|' => $db_username,
-            '|password|' => $db_password,
-            '|database|' => $db_name,
-            '|lang|' => post('lang'),
-            '|timestamp|' => post('timestamp_format'),
-            '|date|' => post('date_format'),
-            '|time|' => post('time_format'),
-            '|decimals|' => $decimals,
-            '|thousands|' => $thousands,
+            '|host|' => escape_php_string($db_host),
+            '|username|' => escape_php_string($db_username),
+            '|password|' => escape_php_string($db_password),
+            '|database|' => escape_php_string($db_name),
+            '|lang|' => escape_php_string($lang),
+            '|timestamp|' => escape_php_string(post('timestamp_format')),
+            '|date|' => escape_php_string(post('date_format')),
+            '|time|' => escape_php_string(post('time_format')),
+            '|decimals|' => escape_php_string($decimals),
+            '|thousands|' => escape_php_string($thousands),
         ];
         $new_config = str_replace(array_keys($values), $values, $new_config);
 
@@ -190,10 +200,10 @@ if (!empty(post('db_host'))) {
             ]).'</p>
 				<form action="'.base_path_osm().'/index.php?action=updateconfig&firstuse=true" method="post">
 					<div class="hide">
-						<input type="hidden" name="db_name" value="'.$db_name.'">
-						<input type="hidden" name="db_password" value="'.$db_password.'">
-						<input type="hidden" name="db_username" value="'.$db_username.'">;
-						<input type="hidden" name="db_host" value="'.$db_host.'">
+						<input type="hidden" name="db_name" value="'.htmlspecialchars($db_name, ENT_QUOTES, 'UTF-8').'">
+						<input type="hidden" name="db_password" value="'.htmlspecialchars($db_password, ENT_QUOTES, 'UTF-8').'">
+						<input type="hidden" name="db_username" value="'.htmlspecialchars($db_username, ENT_QUOTES, 'UTF-8').'">
+						<input type="hidden" name="db_host" value="'.htmlspecialchars($db_host, ENT_QUOTES, 'UTF-8').'">
 					</div>
 					<a class="btn btn-warning btn-lg" href="'.base_path_osm().'/index.php"><i class="fa fa-arrow-left"></i> '.tr('Indietro').'</a>
 					<button class="btn btn-info btn-lg"><i class="fa fa-refresh"></i> '.tr('Riprova').'</button>

@@ -59,10 +59,10 @@ function init() {
             }
           });
 
-          $.each(CKEDITOR.instances, function (instance) {
-            CKEDITOR.instances[instance].on("change", function (e) {
-              for (instance in CKEDITOR.instances) {
-                CKEDITOR.instances[instance].updateElement();
+          $.each(CKEDITOR.instances, function (name, instance) {
+            instance.on("change", function (e) {
+              for (let editorName in CKEDITOR.instances) {
+                CKEDITOR.instances[editorName].updateElement();
                 $('form').each(function () {
                   if ($(this).attr('novalidate') == undefined) {
                     $(this).parsley().validate();
@@ -77,7 +77,7 @@ function init() {
 
     // Aggiunta nell'URL del nome tab su cui tornare dopo il submit
     // Blocco del pulsante di submit dopo il primo submit
-    $('form').on("submit", function (e) {
+    $('form').off('submit').on("submit", function (e) {
         if ($(this).parsley().validate() && (e.result == undefined || e.result)) {
             $(this).submit(function () {
                 return false;

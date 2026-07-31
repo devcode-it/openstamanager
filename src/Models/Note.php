@@ -29,6 +29,8 @@ class Note extends Model
 
     protected $table = 'zz_notes';
 
+    protected $guarded = ['id'];
+
     /**
      * Crea una nuova nota.
      *

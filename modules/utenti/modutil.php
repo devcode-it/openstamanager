@@ -27,9 +27,9 @@ if (!function_exists('menuSelection')) {
         ++$depth;
 
         // Permessi impostati per il gruppo
-        $permesso_salvato = $dbo->fetchOne('SELECT permessi FROM zz_permissions WHERE id_gruppo = '.prepare($group_id).' AND id_module = '.prepare($element['id']));
+        $permesso_salvato = database()->table('zz_permissions')->where('id_gruppo', $group_id)->where('id_module', $element['id'])->first();
 
-        $permessi = $permesso_salvato ? $permesso_salvato['permessi'] : '-';
+        $permessi = $permesso_salvato ? $permesso_salvato->permessi : '-';
 
         $is_parent = ($depth === 0);
         $parent_class = $is_parent ? 'module-parent' : '';

@@ -62,6 +62,34 @@ class Mail extends Model
 
         $model->save();
 
+        // Reply To
+        if (!empty($template->tipo_reply_to)) {
+            $reply_to = '';
+            if ($template->tipo_reply_to == 'email_fissa') {
+                $module = $model->template->module;
+                $reply_to = $module->replacePlaceholders($model->id_record, $template->reply_to, ['is_pec' => intval($model->account->pec)]);
+            } else {
+                $user = auth_osm()->getUser();
+                $reply_to = $user->email;
+            }
+
+            if (!empty($reply_to)) {
+                $model->options['reply_to'] = $reply_to;
+            }
+        }
+
+        // CC
+        if (!empty($template['cc'])) {
+            $model->addReceiver($template['cc'], 'cc');
+        }
+
+        // BCC
+        if (!empty($template['bcc'])) {
+            $model->addReceiver($template['bcc'], 'bcc');
+        }
+
+        $model->save();
+
         return $model;
     }
 

@@ -402,7 +402,10 @@ class IBAN
         while ($current < $length) {
             $char = $structure[$current];
             if (in_array($char, $keys)) {
-                $count = substr_count($structure, $char);
+                $count = 0;
+                while ($current + $count < $length && $structure[$current + $count] == $char) {
+                    ++$count;
+                }
                 $regex .= '(?<'.self::$parsers[$char].'>[A-Z0-9]{'.$count.'})';
                 $current += $count;
             } else {

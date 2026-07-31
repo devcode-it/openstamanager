@@ -146,7 +146,7 @@ switch (filter('op')) {
         $handle = fopen($file, 'w');
 
         // Scrittura dell'intestazione
-        fputcsv($handle, ['Email', 'Ragione sociale'], ';');
+        fputcsv($handle, ['Email', 'Ragione sociale'], ';', escape: '\\');
 
         // Scrittura dei dati
         foreach ($results as $destinatario) {
@@ -156,7 +156,7 @@ switch (filter('op')) {
             fputcsv($handle, [
                 $origine->email,
                 $anagrafica->ragione_sociale,
-            ], ';');
+            ], ';', escape: '\\');
         }
         fclose($handle);
 

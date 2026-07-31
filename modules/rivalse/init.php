@@ -18,8 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+use Modules\Rivalse\RivalsaINPS;
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {
-    $record = $dbo->fetchOne('SELECT * FROM `co_rivalse` WHERE id='.prepare($id_record));
+    $record = RivalsaINPS::find($id_record);
 }

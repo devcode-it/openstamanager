@@ -20,8 +20,17 @@
 
 include_once __DIR__.'/../../core.php';
 
-// Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_aperto = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_apertura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+use Modules\Partitario\Movimento;
+use Modules\Partitario\PianoDeiConti1;
+use Modules\Partitario\PianoDeiConti2;
+use Modules\Partitario\PianoDeiConti3;
+
+$period_start = $_SESSION['period_start'];
+$period_end = $_SESSION['period_end'];
+
+$bilancio_gia_aperto = Movimento::where('is_apertura', 1)
+    ->whereBetween('data', [$period_start, $period_end])
+    ->exists();
 
 $msg = tr('Sei sicuro di voler aprire il bilancio?');
 $btn_class = 'btn-info';
@@ -50,9 +59,10 @@ echo '
     </div>
 </div>';
 
-// Livello 1
-$query1 = 'SELECT * FROM `co_piano_dei_conti1` ORDER BY id DESC';
-$primo_livello = $dbo->fetchArray($query1);
+$primo_livello = PianoDeiConti1::with(['secondiLivelli' => function ($q) {
+    $q->orderBy('numero', 'asc');
+}])->orderBy('id', 'desc')->get();
+
 foreach ($primo_livello as $conto_primo) {
     $totale_attivita = [];
     $totale_passivita = [];
@@ -60,7 +70,7 @@ foreach ($primo_livello as $conto_primo) {
     $costi = [];
     $ricavi = [];
 
-    $titolo = $conto_primo['descrizione'] == 'Economico' ? tr('Conto economico') : tr('Stato patrimoniale');
+    $titolo = $conto_primo->descrizione == 'Economico' ? tr('Conto economico') : tr('Stato patrimoniale');
 
     echo '
 <hr>
@@ -68,7 +78,7 @@ foreach ($primo_livello as $conto_primo) {
     <div class="card-header">
         <h3 class="card-title">
             '.$titolo.' 
-            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo['id'].', 2)">
+            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_primo->id.', 2)">
                 <i class="fa fa-plus-circle"></i>
             </button>
         </h3>
@@ -82,7 +92,7 @@ foreach ($primo_livello as $conto_primo) {
                     <tr>
                         <th>'.tr('Descrizione').'</th>
                         <th width="10%" class="text-center">'.tr('Importo').'</th>';
-    if ($conto_primo['descrizione'] == 'Economico') {
+    if ($conto_primo->descrizione == 'Economico') {
         echo '
                         <th width="10%" class="text-center">'.tr('Importo reddito').'</th>';
     } else {
@@ -95,72 +105,66 @@ foreach ($primo_livello as $conto_primo) {
                 </thead>
                 <tbody>';
 
-    // Livello 2
-    $query2 = 'SELECT * FROM `co_piano_dei_conti2` WHERE id_piano_dei_conti1 = '.prepare($conto_primo['id']).' ORDER BY numero ASC';
-    $secondo_livello = $dbo->fetchArray($query2);
+    $secondo_livello = $conto_primo->secondiLivelli;
 
     foreach ($secondo_livello as $conto_secondo) {
-        // Livello 2
-        if ($conto_primo['descrizione'] == 'Economico') {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(-totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+        $conto2_id = $conto_secondo->id;
 
-            // Calcolo del totale_reddito con gestione dei risconti
-            $totale_reddito2 = $dbo->fetchOne('
-                            SELECT SUM(
-                                CASE
-                                    WHEN data_inizio_competenza IS NULL OR data_fine_competenza IS NULL THEN
-                                        -totale_reddito
-                                    ELSE
-                                        -totale_reddito * (
-                                            DATEDIFF(
-                                                LEAST(data_fine_competenza, '.prepare($_SESSION['period_end']).'),
-                                                GREATEST(data_inizio_competenza, '.prepare($_SESSION['period_start']).')
-                                            ) + 1
-                                        ) / (
-                                            DATEDIFF(data_fine_competenza, data_inizio_competenza) + 1
-                                        )
-                                END
-                            ) AS totale_reddito
-                            FROM `co_movimenti` 
-                            INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id 
-                            WHERE id_conto IN(
-                                SELECT id FROM co_piano_dei_conti3 
-                                WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).'
-                            ) 
-                            AND (
-                                (co_movimenti.data >= '.prepare($_SESSION['period_start']).' AND co_movimenti.data <= '.prepare($_SESSION['period_end']).') 
-                                OR 
-                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND 
-                                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND 
-                                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).')
-                                OR
-                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
-                                 data_inizio_competenza <= '.prepare($_SESSION['period_start']).' AND
-                                 data_fine_competenza >= '.prepare($_SESSION['period_end']).')
-                                OR
-                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
-                                 data_inizio_competenza <= '.prepare($_SESSION['period_end']).' AND
-                                 data_inizio_competenza >= '.prepare($_SESSION['period_start']).')
-                                OR
-                                (data_inizio_competenza IS NOT NULL AND data_fine_competenza IS NOT NULL AND
-                                 data_fine_competenza >= '.prepare($_SESSION['period_start']).' AND
-                                 data_fine_competenza <= '.prepare($_SESSION['period_end']).')
-                            )
-                        ')['totale_reddito'];
+        if ($conto_primo->descrizione == 'Economico') {
+            $totale_conto2 = Movimento::whereHas('conto', function ($q) use ($conto2_id) {
+                $q->where('id_piano_dei_conti2', $conto2_id);
+            })->whereBetween('data', [$period_start, $period_end])->sum('totale');
+
+            $totale_reddito2 = Movimento::whereHas('conto', function ($q) use ($conto2_id) {
+                $q->where('id_piano_dei_conti2', $conto2_id);
+            })->where(function ($q) use ($period_start, $period_end) {
+                $q->whereBetween('data', [$period_start, $period_end])
+                    ->orWhere(function ($q2) use ($period_start, $period_end) {
+                        $q2->whereNotNull('data_inizio_competenza')
+                            ->whereNotNull('data_fine_competenza')
+                            ->where(function ($q3) use ($period_start, $period_end) {
+                                $q3->where('data_fine_competenza', '>=', $period_start)
+                                    ->where('data_inizio_competenza', '<=', $period_end);
+                            })
+                            ->orWhere(function ($q3) use ($period_start, $period_end) {
+                                $q3->where('data_inizio_competenza', '<', $period_start)
+                                    ->where('data_fine_competenza', '>', $period_end);
+                            })
+                            ->orWhere(function ($q3) use ($period_start, $period_end) {
+                                $q3->where('data_inizio_competenza', '<=', $period_end)
+                                    ->where('data_inizio_competenza', '>=', $period_start);
+                            })
+                            ->orWhere(function ($q3) use ($period_start, $period_end) {
+                                $q3->where('data_fine_competenza', '>=', $period_start)
+                                    ->where('data_fine_competenza', '<=', $period_end);
+                            });
+                    });
+            })->get()->sum(function ($m) use ($period_start, $period_end) {
+                if ($m->data_inizio_competenza === null || $m->data_fine_competenza === null) {
+                    return $m->totale_reddito;
+                }
+                $inizio = max($m->data_inizio_competenza, $period_start);
+                $fine = min($m->data_fine_competenza, $period_end);
+                $giorni_periodo = $inizio->diffInDays($fine) + 1;
+                $giorni_totali = $m->data_inizio_competenza->diffInDays($m->data_fine_competenza) + 1;
+                return $m->totale_reddito * ($giorni_periodo / $giorni_totali);
+            });
         } else {
-            $totale_conto2 = $dbo->fetchOne('SELECT SUM(totale) AS totale FROM `co_movimenti` INNER JOIN co_piano_dei_conti3 ON co_movimenti.id_conto=co_piano_dei_conti3.id WHERE id_conto IN(SELECT id FROM co_piano_dei_conti3 WHERE id_piano_dei_conti2='.prepare($conto_secondo['id']).') AND co_movimenti.data>='.prepare($_SESSION['period_start']).' AND co_movimenti.data<='.prepare($_SESSION['period_end']))['totale'];
+            $totale_conto2 = Movimento::whereHas('conto', function ($q) use ($conto2_id) {
+                $q->where('id_piano_dei_conti2', $conto2_id);
+            })->whereBetween('data', [$period_start, $period_end])->sum('totale');
             $totale_reddito2 = 0;
         }
 
         echo '
-                    <tr class="conto2" id="conto2-'.$conto_secondo['id'].'">
+                    <tr class="conto2" id="conto2-'.$conto_secondo->id.'">
                         <td>
                             <h5>
-                                <button type="button" id="conto2-'.$conto_secondo['id'].'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
-                                <span class="clickable" id="conto2-'.$conto_secondo['id'].'">
-                                    <b>'.$conto_secondo['numero'].' '.$conto_secondo['descrizione'].'</b>
+                                <button type="button" id="conto2-'.$conto_secondo->id.'" class="btn btn-default btn-xs plus-btn search"><i class="fa fa-plus"></i></button>
+                                <span class="clickable" id="conto2-'.$conto_secondo->id.'">
+                                    <b>'.$conto_secondo->numero.' '.$conto_secondo->descrizione.'</b>
                                 </span>
-                                <div id="conto2_'.$conto_secondo['id'].'" style="display:none;"></div>
+                                <div id="conto2_'.$conto_secondo->id.'" style="display:none;"></div>
                             </h5>
                         </td>
 
@@ -168,7 +172,7 @@ foreach ($primo_livello as $conto_primo) {
                             <b>'.moneyFormat($totale_conto2, 2).'</b>
                         </td>';
 
-        if ($conto_primo['descrizione'] == 'Economico') {
+        if ($conto_primo->descrizione == 'Economico') {
             echo '
                         <td class="text-right">
                             <b>'.moneyFormat($totale_reddito2, 2).'</b>
@@ -180,24 +184,23 @@ foreach ($primo_livello as $conto_primo) {
 
         echo '
                         <td class="text-right">
-                            '.Prints::getLink('Mastrino', $conto_secondo['id'], 'btn-info btn-xs', '', null, 'lev=2').'
+                            '.Prints::getLink('Mastrino', $conto_secondo->id, 'btn-info btn-xs', '', null, 'lev=2').'
 
-                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo['id'].', 2)">
+                            <button type="button" class="btn btn-warning btn-xs" onclick="modificaConto('.$conto_secondo->id.', 2)">
                                 <i class="fa fa-edit"></i>
                             </button>
 
-                            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo['id'].')">
+                            <button type="button" class="btn btn-xs btn-primary" data-card-widget="tooltip" title="'.tr('Aggiungi un nuovo conto...').'" onclick="aggiungiConto('.$conto_secondo->id.')">
                                 <i class="fa fa-plus-circle"></i>
                             </button>
 
-                            <button type="button" class="btn btn-danger btn-xs" onclick="eliminaConto('.$conto_secondo['id'].', 2)">
+                            <button type="button" class="btn btn-danger btn-xs" onclick="eliminaConto('.$conto_secondo->id.', 2)">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>
                     </tr>';
-        // Somma dei totali
         if ($totale_conto2) {
-            if ($conto_primo['descrizione'] == 'Patrimoniale') {
+            if ($conto_primo->descrizione == 'Patrimoniale') {
                 if ($totale_conto2 > 0) {
                     $totale_attivita[] = abs($totale_conto2);
                 } else {
@@ -212,7 +215,7 @@ foreach ($primo_livello as $conto_primo) {
             }
         }
         if ($totale_reddito2) {
-            if ($conto_primo['descrizione'] == 'Economico') {
+            if ($conto_primo->descrizione == 'Economico') {
                 if ($totale_reddito2 > 0) {
                     $totale_ricavi_reddito[] = abs($totale_reddito2);
                 } else {
@@ -232,8 +235,7 @@ foreach ($primo_livello as $conto_primo) {
 
         <table class="table table-sm table-hover totali">';
 
-    // Riepiloghi
-    if ($conto_primo['descrizione'] == 'Patrimoniale') {
+    if ($conto_primo->descrizione == 'Patrimoniale') {
         $attivita = abs(sum($totale_attivita));
         $passivita = abs(sum($totale_passivita));
         $utile_perdita = abs(sum($totale_ricavi)) - abs(sum($totale_costi));
@@ -245,7 +247,6 @@ foreach ($primo_livello as $conto_primo) {
             $pareggio2 = abs($passivita) + abs($utile_perdita);
         }
 
-        // Attività
         echo '
             <tr>
                 <th class="text-right">
@@ -256,7 +257,6 @@ foreach ($primo_livello as $conto_primo) {
                 </td>
                 <td width="50"></td>';
 
-        // Passività
         echo '
                 <th class="text-right">
                     <big>'.tr('Passività').':</big>
@@ -267,7 +267,6 @@ foreach ($primo_livello as $conto_primo) {
                 <td width="5%"></td>
             </tr>';
 
-        // Perdita d'esercizio
         if ($utile_perdita < 0) {
             echo '
             <tr>
@@ -298,7 +297,6 @@ foreach ($primo_livello as $conto_primo) {
             </tr>';
         }
 
-        // Totale a pareggio
         echo '
             <tr>
                 <th class="text-right">
@@ -365,14 +363,15 @@ foreach ($primo_livello as $conto_primo) {
 </div>';
 }
 
-// Verifico se è già stata eseguita l'apertura bilancio
-$bilancio_gia_chiuso = $dbo->fetchNum('SELECT id FROM co_movimenti WHERE is_chiusura=1 AND data BETWEEN '.prepare($_SESSION['period_start']).' AND '.prepare($_SESSION['period_end']));
+$bilancio_gia_chiuso = Movimento::where('is_chiusura', 1)
+    ->whereBetween('data', [$period_start, $period_end])
+    ->exists();
 
-$msg = tr('Sei sicuro di voler aprire il bilancio?');
+$msg = tr('Sei sicuro di voler chiudere il bilancio?');
 $btn_class = 'btn-info';
 
 if ($bilancio_gia_chiuso) {
-    $msg .= ' '.tr('I movimenti di apertura già esistenti verranno annullati e ricreati').'.';
+    $msg .= ' '.tr('I movimenti di chiusura già esistenti verranno annullati e ricreati').'.';
     $btn_class = 'btn-default';
 }
 
@@ -396,19 +395,15 @@ echo '
 
         $("button[id^=conto2-], span[id^=conto2-]").each(function() {
             $(this).on("click", function() {
-                // Ottieni l\'ID del conto
                 let id_conto = $(this).attr("id").split("-").pop();
                 let tr = $("#conto2-" + id_conto);
                 let conto3 = $("#conto2_" + id_conto);
                 
-                // Aggiungi una riga dopo la riga corrente se non esiste
                 if (!$("#conto3-row-" + id_conto).length) {
                     tr.after(\'<tr id="conto3-row-\' + id_conto + \'" class="conto3-container"><td colspan="4"><div id="conto3-content-\' + id_conto + \'"></div></td></tr>\');
-                    // Sposta il div dei contenuti nella nuova riga
                     conto3.appendTo("#conto3-content-" + id_conto);
                 }
                 
-                // Mostra/nascondi la riga dei contenuti
                 $("#conto3-row-" + id_conto).toggle();
                 
                 if(!conto3.html()) {
@@ -416,7 +411,6 @@ echo '
                     caricaConti3("conto2_" + id_conto, id_conto);
                 }
 
-                // Cambia l\'icona plus/minus
                 tr.find(".plus-btn i").toggleClass("fa-plus").toggleClass("fa-minus");
             });
         });
@@ -487,6 +481,18 @@ echo '
         });
     }
 
+    function sottocontoNonInDatatable() {
+        return $(this).closest(".js-sottoconti-datatable").length === 0;
+    }
+
+    function forEachSottocontiDatatable(callback) {
+        $(".js-sottoconti-datatable").each(function () {
+            if ($.fn.DataTable.isDataTable(this)) {
+                callback($(this).DataTable());
+            }
+        });
+    }
+
     $("#button-search").on("click", function(){
         var text = $("#input-cerca").val();
 
@@ -506,14 +512,17 @@ echo '
                             $(this).find(".search").click();
                         }
                     });
-                    $(".conto3").show();
+                    forEachSottocontiDatatable(function (dt) {
+                        dt.search("").draw();
+                    });
+                    $(".conto3").filter(sottocontoNonInDatatable).show();
                     $(".conto1").show();
                     $(".conto2").show();
                     $(".totali").show();
                 } else {
                     $(".conto1").hide();
                     $(".conto2").hide();
-                    $(".conto3").hide();
+                    $(".conto3").filter(sottocontoNonInDatatable).hide();
                     $(".totali").hide();
                     results.conti2.forEach(function(item) {
                         $("#conto2-"+ item).parent().parent().parent().parent().parent().show();
@@ -529,10 +538,15 @@ echo '
                     });
 
                     results.conti3.forEach(function(item) {
-                        $("#conto3-"+ item).show();
+                        var $row = $("#conto3-"+ item);
+                        if ($row.length && sottocontoNonInDatatable.call($row[0])) {
+                            $row.show();
+                        }
                     });
 
-                    
+                    forEachSottocontiDatatable(function (dt) {
+                        dt.search(text).draw();
+                    });
                 }
             }
         });

@@ -54,36 +54,36 @@ $zone = $dbo->fetchArray('(SELECT 0 AS ordine, \'0\' AS id, \'Nessuna zona\' AS 
 
 // Prima selezione globale per tutti i filtri
 if (!isset($_SESSION['dashboard']['id_tecnici'])) {
-    $_SESSION['dashboard']['id_tecnici'] = ["'-1'"];
+    $_SESSION['dashboard']['id_tecnici'] = ["-1"];
 
     foreach ($tecnici_disponibili as $tecnico) {
         if (($user['gruppo'] == 'Tecnici' && $user['id_anagrafica'] == $tecnico['id']) || $user['gruppo'] != 'Tecnici') {
-            $_SESSION['dashboard']['id_tecnici'][] = "'".$tecnico['id']."'";
+            $_SESSION['dashboard']['id_tecnici'][] = $tecnico['id'];
         }
     }
 }
 
 if (!isset($_SESSION['dashboard']['idstatiintervento'])) {
-    $_SESSION['dashboard']['idstatiintervento'] = ["'-1'"];
+    $_SESSION['dashboard']['idstatiintervento'] = ["-1"];
 
     foreach ($stati_intervento as $stato) {
-        $_SESSION['dashboard']['idstatiintervento'][] = "'".$stato['id']."'";
+        $_SESSION['dashboard']['idstatiintervento'][] = $stato['id'];
     }
 }
 
 if (!isset($_SESSION['dashboard']['idtipiintervento'])) {
-    $_SESSION['dashboard']['idtipiintervento'] = ["'-1'"];
+    $_SESSION['dashboard']['idtipiintervento'] = ["-1"];
 
     foreach ($tipi_intervento as $tipo) {
-        $_SESSION['dashboard']['idtipiintervento'][] = "'".$tipo['id']."'";
+        $_SESSION['dashboard']['idtipiintervento'][] = $tipo['id'];
     }
 }
 
 if (!isset($_SESSION['dashboard']['idzone'])) {
-    $_SESSION['dashboard']['idzone'] = ["'-1'"];
+    $_SESSION['dashboard']['idzone'] = ["-1"];
 
     foreach ($zone as $zona) {
-        $_SESSION['dashboard']['idzone'][] = "'".$zona['id']."'";
+        $_SESSION['dashboard']['idzone'][] = $zona['id'];
     }
 }
 
@@ -102,7 +102,7 @@ echo '
 $stati_sessione = session_get('dashboard.idstatiintervento', []);
 foreach ($stati_intervento as $stato) {
     $attr = '';
-    if (in_array("'".$stato['id']."'", $stati_sessione)) {
+    if (in_array($stato['id'], $stati_sessione)) {
         $attr = 'checked="checked"';
     }
 
@@ -141,7 +141,7 @@ echo '
 $tipi_sessione = session_get('dashboard.idtipiintervento', []);
 foreach ($tipi_intervento as $tipo) {
     $attr = '';
-    if (in_array("'".$tipo['id']."'", $tipi_sessione)) {
+    if (in_array($tipo['id'], $tipi_sessione)) {
         $attr = 'checked="checked"';
     }
 
@@ -177,7 +177,7 @@ echo '
 $tecnici_sessione = session_get('dashboard.id_tecnici', []);
 foreach ($tecnici_disponibili as $tecnico) {
     $attr = '';
-    if (in_array("'".$tecnico['id']."'", $tecnici_sessione)) {
+    if (in_array($tecnico['id'], $tecnici_sessione)) {
         $attr = 'checked="checked"';
     }
 
@@ -215,7 +215,7 @@ echo '
 $zone_sessione = session_get('dashboard.idzone', []);
 foreach ($zone as $zona) {
     $attr = '';
-    if (in_array("'".$zona['id']."'", $zone_sessione)) {
+    if (in_array($zona['id'], $zone_sessione)) {
         $attr = 'checked="checked"';
     }
 
@@ -655,6 +655,17 @@ globals.dashboard = {
             },
 
             editable: globals.dashboard.write_permission,
+            eventDragStart: function(info) {
+                if ($(info.el).hasClass("tooltipstered")) {
+                    $(info.el).tooltipster("hide");
+                    $(info.el).tooltipster("disable");
+                }
+            },
+            eventDragStop: function(info) {
+                if ($(info.el).hasClass("tooltipstered")) {
+                    $(info.el).tooltipster("enable");
+                }
+            },
             eventDrop: function (info) {// info
                 let event = info.event;
 
@@ -678,6 +689,12 @@ globals.dashboard = {
 
                         if (data !== "ok") {
                             info.revert();
+                        } else {
+                            if ($(info.el).hasClass("tooltipstered")) {
+                                $(info.el).tooltipster("destroy");
+                            }
+                            
+                            createTooltip($(info.el), event.id, event.extendedProps.id_intervento, event.allDay);
                         }
 
                     });
@@ -706,6 +723,12 @@ globals.dashboard = {
 
                     if (data !== "ok") {
                         info.revert();
+                    } else {
+                        if ($(info.el).hasClass("tooltipstered")) {
+                            $(info.el).tooltipster("destroy");
+                        }
+                        
+                        createTooltip($(info.el), event.id, event.extendedProps.id_intervento, event.allDay);
                     }
 
                 });
@@ -754,47 +777,7 @@ echo '
                 let id_record = info.event.extendedProps.id_intervento;
 
                 if (globals.dashboard.tooltip == 1 && element[0].childElementCount > 0 ) {
-                    element.tooltipster({
-                        content: globals.translations.loading + "...",
-                        animation: "grow",
-                        updateAnimation: "grow",
-                        contentAsHTML: true,
-                        hideOnClick: true,
-                        speed: 200,
-                        delay: globals.dashboard.tooltip_delay,
-                        maxWidth: 400,
-                        theme: "tooltipster-shadow",
-                        touchDevices: true,
-                        trigger: "hover",
-                        position: "left",
-                        interactive: true,
-                        autoClose: false,
-                        functionReady: function(instance, helper) {
-                            $(".tooltipster-base").css("z-index", "10000");
-                        },
-                        functionAfter: function(instance, helper) {
-                            // Rimuove il flag "loaded" quando il tooltip viene chiuso
-                            // per permettere di ricaricarlo la prossima volta
-                            $(helper.origin).data("loaded", false);
-                        },
-                        functionBefore: function (instance, helper) {
-                            let $origin = $(helper.origin);
-
-                            if ($origin.data("loaded") !== true) {
-                                $.post(globals.dashboard.load_url, {
-                                    op: "tooltip_info",
-                                    id_record: info.event.id,
-                                    id_intervento: id_record,
-                                    allDay: info.event.allDay,
-                                }, function (data, response) {
-                                    if (data !== "") {
-                                        instance.content(data);
-                                        $origin.data("loaded", true);
-                                     }
-                                });
-                            }
-                        }
-                    });
+                    createTooltip(element, info.event.id, id_record, info.event.allDay);
                 }
             },
 
@@ -835,5 +818,49 @@ echo '
         calendar.render();
 
         globals.dashboard.calendar = calendar;
+    }
+
+    function createTooltip(element, id_event, id_record, allDay) {
+        element.tooltipster({
+            content: globals.translations.loading + "...",
+            animation: "grow",
+            updateAnimation: "grow",
+            contentAsHTML: true,
+            hideOnClick: true,
+            speed: 200,
+            delay: globals.dashboard.tooltip_delay,
+            maxWidth: 400,
+            theme: "tooltipster-shadow",
+            touchDevices: true,
+            trigger: "hover",
+            position: "left",
+            interactive: true,
+            autoClose: false,
+            functionReady: function(instance, helper) {
+                $(".tooltipster-base").css("z-index", "10000");
+            },
+            functionAfter: function(instance, helper) {
+                // Rimuove il flag "loaded" quando il tooltip viene chiuso
+                // per permettere di ricaricarlo la prossima volta
+                $(helper.origin).data("loaded", false);
+            },
+            functionBefore: function (instance, helper) {
+                let $origin = $(helper.origin);
+
+                if ($origin.data("loaded") !== true) {
+                    $.post(globals.dashboard.load_url, {
+                        op: "tooltip_info",
+                        id_record: id_event,
+                        id_intervento: id_record,
+                        allDay: allDay
+                    }, function (data, response) {
+                        if (data !== "") {
+                            instance.content(data);
+                            $origin.data("loaded", true);
+                         }
+                    });
+                }
+            }
+        });
     }
 </script>';

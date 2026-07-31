@@ -19,7 +19,7 @@
 
 include_once __DIR__.'/../../core.php';
 
-if ($record['can_delete']) {
+if ($stato->can_delete) {
     $attr = '';
 } else {
     $attr = 'readonly';
@@ -38,7 +38,7 @@ if ($record['can_delete']) {
 		</div>
 
         <div class="col-md-3">
-			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "$icona$", "extra": "", "icon-after": "<?php echo (!empty($record['icona'])) ? '<i class=\"'.$record['icona'].'\"></i>' : ''; ?>"  ]}
+			{[ "type": "text", "label": "<?php echo tr('Icona'); ?>", "name": "icona", "required": 1, "class": "text-center", "value": "$icona$", "extra": "", "icon-after": "<?php echo (!empty($stato->icona)) ? '<i class=\"'.$stato->icona.'\"></i>' : ''; ?>"  ]}
 		</div>
 
 		<div class="col-md-2">
@@ -76,7 +76,7 @@ if (!empty($preventivi)) {
 </div>';
 }
 
-if (!empty($record['can_delete'])) {
+if (!empty($stato->can_delete)) {
     echo '
 <a class="btn btn-danger ask" data-backto="record-list">
 	<i class="fa fa-trash"></i>'.tr('Elimina').'
@@ -86,11 +86,11 @@ if (!empty($record['can_delete'])) {
 ?>
 <script>
     $(document).ready(function() {
-        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
-            $(this).parent().find('.square').css('background', $(this).val());
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
+            $(this).parent().find('.square').css('background', event.value);
         });
         $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
-		notifica();
-	});
+        notifica();
+    });
 		
 </script>

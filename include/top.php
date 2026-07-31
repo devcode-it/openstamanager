@@ -20,12 +20,41 @@
 
 use Models\Module;
 use Models\Plugin;
+use Models\Upload;
 use Util\FileSystem;
 
 include_once __DIR__.'/../core.php';
 
 $paths = App::getPaths();
 $user = auth_osm()->getUser();
+
+$menu_logo_completo = App::getPaths()['img'].'/logo_completo.png';
+$menu_logo_piccolo = App::getPaths()['img'].'/logo.png';
+
+$menu_logo_esteso_setting = setting('Logo menu');
+if (!empty($menu_logo_esteso_setting)) {
+    try {
+        $menu_logo_esteso_file = Models\Upload::find($menu_logo_esteso_setting);
+    } catch (Exception $e) {
+        $menu_logo_esteso_file = null;
+    }
+    if (!empty($menu_logo_esteso_file)) {
+        $menu_logo_completo = base_path_osm().'/files/'.$menu_logo_esteso_file->attachments_directory.'/'.$menu_logo_esteso_file->filename;
+    }
+}
+
+$menu_logo_compatto_setting = setting('Logo menu quadrato / favicon');
+if (!empty($menu_logo_compatto_setting)) {
+    try {
+        $menu_logo_compatto_file = Models\Upload::find($menu_logo_compatto_setting);
+    } catch (Exception $e) {
+        $menu_logo_compatto_file = null;
+    }
+    if (!empty($menu_logo_compatto_file)) {
+        $menu_logo_piccolo = base_path_osm().'/files/impostazioni/'.$menu_logo_compatto_file->filename;
+    }
+}
+
 
 if (empty($pageTitle)) {
     if ($structure instanceof Module) {
@@ -243,16 +272,17 @@ if (AuthOSM::check()) {
                 locale: "'.explode('_', (string) $lang)[0].'",
 				full_locale: "'.$lang.'",
 
-                start_date: "'.$_SESSION['period_start'].'",
-                start_date_formatted: "'.Translator::dateToLocale($_SESSION['period_start']).'",
-                start_date_settings: "'.Translator::dateToEnglish(setting('Inizio periodo calendario')).'",
-                start_date_settings_formatted: "'.setting('Inizio periodo calendario').'",
-                end_date: "'.$_SESSION['period_end'].'",
-                end_date_formatted: "'.Translator::dateToLocale($_SESSION['period_end']).'",
-                end_date_settings: "'.Translator::dateToEnglish(setting('Fine periodo calendario')).'",
-                end_date_settings_formatted: "'.setting('Fine periodo calendario').'",
+                start_date: '.json_encode($_SESSION['period_start']).',
+                start_date_formatted: '.json_encode(Translator::dateToLocale($_SESSION['period_start'])).',
+                start_date_settings: '.json_encode(Translator::dateToEnglish(setting('Inizio periodo calendario'))).',
+                start_date_settings_formatted: '.json_encode(setting('Inizio periodo calendario')).',
+                end_date: '.json_encode($_SESSION['period_end']).',
+                end_date_formatted: '.json_encode(Translator::dateToLocale($_SESSION['period_end'])).',
+                end_date_settings: '.json_encode(Translator::dateToEnglish(setting('Fine periodo calendario'))).',
+                end_date_settings_formatted: '.json_encode(setting('Fine periodo calendario')).',
                 minute_stepping: '.setting('Numero di minuti di avanzamento delle sessioni delle attività').',
-
+                sidebarLogoExpanded: "'.$menu_logo_completo.'",
+                sidebarLogoCollapsed: "'.$menu_logo_piccolo.'",
                 collapse_plugin_sidebar: '.($show_plugin_bar ? intval(setting('Nascondere la barra dei plugin di default')) : 1).',
                 ckeditorToolbar: [
                     ["Undo","Redo","-","Cut","Copy","Paste","PasteText","PasteFromWord","-","SpellChecker", "Scayt"],
@@ -539,7 +569,7 @@ if (AuthOSM::check()) {
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar '.$theme.' elevation-4">
                 <a href="'.tr('https://www.openstamanager.com').'" class="brand-link" title="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" target="_blank">
-                    <img src="'.App::getPaths()['img'].'/'.(!empty($hide_sidebar) ? 'logo.png' : 'logo_completo.png').'" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" id="sidebar-logo">
+                    <img src="'.(!empty($hide_sidebar) ? $menu_logo_piccolo : $menu_logo_completo).'" class="brand-image" alt="'.tr("Il gestionale open source per l'assistenza tecnica e la fatturazione elettronica").'" id="sidebar-logo">
                     <span class="brand-text font-weight-light">&nbsp;</span>
 
                 </a>
@@ -608,20 +638,53 @@ if (AuthOSM::check()) {
                 </li>';
 
         // Tab dei plugin
-        $plugins = $dbo->fetchArray('SELECT `zz_plugins`.`id`, `title`, `options`, `options2` FROM `zz_plugins` LEFT JOIN `zz_plugins_lang` ON (`zz_plugins`.`id` = `zz_plugins_lang`.`id_record` AND `zz_plugins_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `id_module_to`='.prepare($id_module)." AND `position`='".($in_editor ? 'tab' : 'tab_main')."' AND `enabled` = 1 ORDER BY `zz_plugins`.`order` ASC");
+    $id_lang = Models\Locale::getDefault()->id;
+
+    $plugins = Plugin::where('zz_plugins.id_module_to', $id_module)
+        ->where('position', ($in_editor ? 'tab' : 'tab_main'))
+        ->where('enabled', 1)
+        ->leftJoin('zz_plugins_lang', function ($join) use ($id_lang) {
+            $join->on('zz_plugins.id', '=', 'zz_plugins_lang.id_record')
+                ->where('zz_plugins_lang.id_lang', '=', $id_lang);
+        })
+        ->select(
+            'zz_plugins.id',
+            'zz_plugins_lang.title',
+            'zz_plugins.options',
+            'zz_plugins.options2',
+            'zz_plugins.order'
+        )
+        ->orderBy('zz_plugins.order', 'ASC')
+        ->get();
+
         foreach ($plugins as $plugin) {
             // Badge count per record plugin
             $count = 0;
             $opt = '';
-            if (!empty($plugin['options2'])) {
-                $opt = json_decode((string) $plugin['options2'], true);
-            } elseif (!empty($plugin['options'])) {
-                $opt = json_decode((string) $plugin['options'], true);
+            if (!empty($plugin->options2)) {
+                $opt = json_decode((string) $plugin->options2, true);
+            } elseif (!empty($plugin->options)) {
+                $opt = json_decode((string) $plugin->options, true);
             }
 
             if (!empty($opt)) {
                 $q = str_replace('|id_parent|', $id_record ?: $id_parent, $opt['main_query'][0]['query']);
-                $count = $dbo->fetchNum($q);
+
+                // Se la query è un semplice COUNT su una singola tabella, usa il query builder per migliore performance
+                $count = 0;
+                $q_trim = trim($q);
+                if (preg_match('/^SELECT\s+COUNT\(\*\)\s+AS\s+count\s+FROM\s+`?([a-z0-9_]+)`?\s+WHERE\s+(.+)$/i', $q_trim, $m)) {
+                    $table = $m[1];
+                    $where = $m[2];
+                    try {
+                        $count = database()->table($table)->whereRaw($where)->count();
+                    } catch (Exception $e) {
+                        // Fallback a fetchNum se whereRaw fallisce
+                        $count = $dbo->fetchNum($q);
+                    }
+                } else {
+                    $count = $dbo->fetchNum($q);
+                }
             }
 
             echo '

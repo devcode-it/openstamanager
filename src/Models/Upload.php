@@ -33,6 +33,7 @@ class Upload extends Model
 {
     use SimpleModelTrait;
 
+    protected $guarded = ['id'];
     /**
      * Elenco delle estensioni file per mime type.
      * Fonte: https://www.iana.org/assignments/media-types/media-types.xhtml.
@@ -60,9 +61,9 @@ class Upload extends Model
      */
     public function getCategoryAttribute()
     {
-        $categoria = database()->fetchOne('SELECT `name` FROM `zz_files_categories` WHERE `id` = '.prepare($this->attributes['id_category']));
+        $categoria = Categoria::find($this->attributes['id_category']);
 
-        return $categoria['name'] ?? 'Generale';
+        return $categoria?->name ?? 'Generale';
     }
 
     public function setCategoryAttribute($value)
@@ -597,7 +598,7 @@ class Upload extends Model
             return;
         }
 
-        $img = getImageManager()->read($filepath);
+        $img = getImageManager()->decodePath($filepath);
 
         $img->scaleDown(600, null);
         $img->save(slashes($directory.'/'.$info['filename'].'_thumb600.'.$info['extension']));

@@ -96,47 +96,47 @@ if (empty($id_record)) {
     <input type="hidden" name="backto" value="record-list">
     <input type="hidden" name="op" value="import">
 
-    <div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
+    <div class="alert alert-info import-alert-info">
         <i class="fa fa-info-circle"></i> <strong>'.tr('Informazioni importanti:').'</strong>
-        <div style="margin-top: 8px;">'.tr('I campi con * sono obbligatori e devono essere mappati nel file CSV.').'</div>';
+        <div class="import-alert-content">'.tr('I campi con * sono obbligatori e devono essere mappati nel file CSV.').'</div>';
 
     if ($import_selezionato === CSV::class) {
-        echo '<div style="margin-top: 8px;"><i class="fa fa-check-circle"></i> <strong>'.tr('Campi obbligatori (*):').'</strong> '.tr('Ragione sociale, Tipo di anagrafica, Tipologia.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti aggiuntivi:').'</strong> '.tr('Mappare almeno uno tra: Telefono, Partita IVA, Codice fiscale, Email.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('I campi Tipo anagrafica e Settore merceologico vengono generati automaticamente se mappati.').'</div>';
+        echo '<div class="import-alert-content"><i class="fa fa-check-circle"></i> <strong>'.tr('Campi obbligatori (*):').'</strong> '.tr('Ragione sociale, Tipo di anagrafica, Tipologia.').'</div>
+            <div class="import-alert-content"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti aggiuntivi:').'</strong> '.tr('Mappare almeno uno tra: Telefono, Partita IVA, Codice fiscale, Email.').'</div>
+            <div class="import-alert-content"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('I campi Tipo anagrafica e Settore merceologico vengono generati automaticamente se mappati.').'</div>';
     }
 
     if ($import_selezionato === Modules\Articoli\Import\CSV::class) {
-        echo '<div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Formato numeri:').'</strong> '.tr('Gli importi inseriti devono avere come separatore il punto e presentare due decimali.').'</div>
-        <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Associazione anagrafiche:').'</strong> '.tr('L\'importazione dell\'anagrafica collegata all\'articolo avviene utilizzando come chiave primaria la Partita IVA, e in seguito la ragione sociale se non viene trovata corrispondenza. È opportuno pertanto indicare nel file CSV di importazione la partita IVA dell\'anagrafica per associare correttamente l\'anagrafica cliente/fornitore del listino.').'</div>';
+        echo '<div class="import-alert-content"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Formato numeri:').'</strong> '.tr('Gli importi inseriti devono avere come separatore il punto e presentare due decimali.').'</div>
+            <div class="import-alert-content"><i class="fa fa-link"></i> <strong>'.tr('Associazione anagrafiche:').'</strong> '.tr('L\'importazione dell\'anagrafica collegata all\'articolo avviene utilizzando come chiave primaria la Partita IVA, e in seguito la ragione sociale se non viene trovata corrispondenza. È opportuno pertanto indicare nel file CSV di importazione la partita IVA dell\'anagrafica per associare correttamente l\'anagrafica cliente/fornitore del listino.').'</div>';
     }
 
     if ($import_selezionato === Modules\Interventi\Import\CSV::class) {
-        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
-            <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'attività avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'attività è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-cogs"></i> <strong>'.tr('Impianti:').'</strong> '.tr('Per procedere all\'importazione di attività collegate ad impianti è necessario che la matricola indicata sia già censita in impianti. Procedere quindi prima all\'importazione degli impianti e successivamente delle attività.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('È presente in fase di importazione un automatismo che genera automaticamente i valori dei seguenti campi se mappati: la sessione del tecnico se mappato l\'orario di inizio attività, lo stato attività se non è già presente a gestionale.').'</div>
+        echo '<div class="alert alert-info import-alert-info">
+            <div class="import-alert-content"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'attività avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'attività è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
+            <div class="import-alert-content"><i class="fa fa-cogs"></i> <strong>'.tr('Impianti:').'</strong> '.tr('Per procedere all\'importazione di attività collegate ad impianti è necessario che la matricola indicata sia già censita in impianti. Procedere quindi prima all\'importazione degli impianti e successivamente delle attività.').'</div>
+            <div class="import-alert-content"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('È presente in fase di importazione un automatismo che genera automaticamente i valori dei seguenti campi se mappati: la sessione del tecnico se mappato l\'orario di inizio attività, lo stato attività se non è già presente a gestionale.').'</div>
         </div>';
     }
 
     if ($import_selezionato === Modules\Impianti\Import\CSV::class) {
-        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
-            <div style="margin-top: 8px;"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'impianto avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'impianto è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Matricola e Nome sono obbligatori. Inoltre, è necessario mappare almeno uno tra Partita IVA cliente e Codice Fiscale cliente.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Le categorie e sottocategorie vengono create automaticamente se non esistenti. Le marche vengono create automaticamente se non esistenti.').'</div>
+        echo '<div class="alert alert-info import-alert-info">
+            <div class="import-alert-content"><i class="fa fa-link"></i> <strong>'.tr('Anagrafiche:').'</strong> '.tr('La ricerca dell\'anagrafica da collegare all\'impianto avviene sulla base della partita IVA o del codice fiscale mappato. Per procedere all\'importazione dell\'impianto è pertanto necessario che almeno uno dei due valori siano censiti in anagrafica.').'</div>
+            <div class="import-alert-content"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Matricola e Nome sono obbligatori. Inoltre, è necessario mappare almeno uno tra Partita IVA cliente e Codice Fiscale cliente.').'</div>
+            <div class="import-alert-content"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Le categorie e sottocategorie vengono create automaticamente se non esistenti. Le marche vengono create automaticamente se non esistenti.').'</div>
         </div>';
     }
 
     if ($import_selezionato === Modules\ListiniCliente\Import\CSV::class) {
-        echo '<div class="alert alert-info" style="background-color: #17a2b8; color: white; border: none; padding: 10px 15px;">
-            <div style="margin-top: 8px;"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Nome listino, Codice articolo e Prezzo unitario sono obbligatori.').'</div>
-            <div style="margin-top: 8px;"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Se il listino o l\'articolo non esistono, l\'importazione verrà saltata.').'</div>
+        echo '<div class="alert alert-info import-alert-info">
+            <div class="import-alert-content"><i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Requisiti:').'</strong> '.tr('I campi Nome listino, Codice articolo e Prezzo unitario sono obbligatori.').'</div>
+            <div class="import-alert-content"><i class="fa fa-magic"></i> <strong>'.tr('Automatismi:').'</strong> '.tr('Se il listino o l\'articolo non esistono, l\'importazione verrà saltata.').'</div>
         </div>';
     }
 
-    echo '</div><div class="alert alert-warning" style="background-color: #ffc107; color: #212529; border: none; padding: 10px 15px;">
+    echo '</div><div class="alert alert-warning import-alert-warning">
         <i class="fa fa-warning"></i> <strong>'.tr('ATTENZIONE:').'</strong>
-        <div style="margin-top: 8px;">'.tr('Per record esistenti, tutti i campi mappati sovrascriveranno i dati attuali, anche se vuoti nel CSV. Non mappare le colonne che non si desidera modificare.').'</div>
+        <div class="import-alert-content">'.tr('Per record esistenti, tutti i campi mappati sovrascriveranno i dati attuali, anche se vuoti nel CSV. Non mappare le colonne che non si desidera modificare.').'</div>
     </div>';
     echo '
 
@@ -216,7 +216,7 @@ if (empty($id_record)) {
             echo '
                         <tr>
                             <td>'.($key + 1).'</td>
-                            <td>'.$row[$column].'</td>
+                            <td>'.htmlspecialchars((string) $row[$column], ENT_QUOTES, 'UTF-8').'</td>
                         </tr>';
         }
 
@@ -234,10 +234,44 @@ if (empty($id_record)) {
     </div>
 </form>';
 
+    // Totale record del CSV (intestazione inclusa): serve alla progress bar lato client
+    $totale_record = $csv->getTotalRows();
+
+    // La geolocalizzazione automatica (solo anagrafiche) fa una chiamata online per ogni riga:
+    // se attiva, l'importazione è più lenta e lo segnaliamo nell'overlay di avanzamento.
+    $geoloc_attiva = $import_selezionato === CSV::class && setting('Geolocalizzazione automatica');
+
+    echo '
+<div id="import-progress-overlay" class="import-progress-overlay">
+    <div class="import-progress-container">
+        <h4 class="text-center import-progress-title">'.tr('Importazione in corso...').'</h4>
+        <div class="progress import-progress">
+            <div id="import-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary import-progress-bar" role="progressbar">0%</div>
+        </div>
+        <div id="import-progress-label" class="text-center text-muted import-progress-label"></div>
+        <div class="text-center import-progress-warning">
+            <i class="fa fa-exclamation-triangle"></i> '.tr('Non chiudere né ricaricare questa pagina finché l\'importazione non è completata: interrompendola, alcune righe potrebbero non essere importate.').'
+        </div>'.($geoloc_attiva ? '
+        <div class="text-center import-progress-info">
+            <i class="fa fa-clock-o"></i> '.tr('La geolocalizzazione automatica delle anagrafiche è attiva: ogni riga viene geolocalizzata tramite un servizio online, perciò l\'importazione può richiedere molto più tempo del normale.').'
+        </div>' : '').'
+    </div>
+</div>';
+
     echo '
 <script>
 var count = 0;
 var failed_records_filename = null;  // Variabile globale per mantener il nome del file di errore tra batch
+var importTotalRecords = '.$totale_record.';  // record totali nel CSV (intestazione inclusa)
+var importTotalRows = 0;                       // righe dati effettive da importare
+var importProcessed = 0;                       // righe processate finora (importate + fallite)
+
+function updateImportProgress() {
+    var pct = importTotalRows > 0 ? Math.min(100, Math.round(importProcessed / importTotalRows * 100)) : 0;
+    var done = Math.min(importProcessed, importTotalRows);
+    $("#import-progress-bar").css("width", pct + "%").text(pct + "%");
+    $("#import-progress-label").text(done + " / " + importTotalRows + " '.tr('righe').'");
+}
 
 $(document).ready(function() {';
 
@@ -256,6 +290,12 @@ $(document).ready(function() {';
     save.on("click", function() {
         count = 0;
         failed_records_filename = null;  // Reset della variabile
+
+        // Avanzamento: se la prima riga non viene importata è l\'intestazione, quindi va esclusa dal totale
+        importProcessed = 0;
+        importTotalRows = $("#include_first_row").is(":checked") ? importTotalRecords : Math.max(0, importTotalRecords - 1);
+        updateImportProgress();
+
         importPage(0);
     });
 });
@@ -279,7 +319,7 @@ function importPage(page) {
         }
     }
 
-    $("#main_loading").show();
+    $("#import-progress-overlay").addClass("show");
 
     let data = {
         id_module: "'.$id_module.'",
@@ -302,7 +342,7 @@ function importPage(page) {
 
             // Gestione errori di validazione
             if (data.error) {
-                $("#main_loading").fadeOut();
+                $("#import-progress-overlay").removeClass("show");
 
                 Swal.fire({
                     title: "'.tr('Errore').'",
@@ -321,11 +361,17 @@ function importPage(page) {
             // Aggiorna i contatori
             count += data.imported;
 
+            // Avanzamento: somma le righe processate in questo batch (importate + fallite)
+            importProcessed += data.total;
+            updateImportProgress();
+
             // Se ci sono altre pagine da importare
             if(data.more) {
                 importPage(page + 1);
             } else {
-                $("#main_loading").fadeOut();
+                importProcessed = importTotalRows;
+                updateImportProgress();
+                $("#import-progress-overlay").removeClass("show");
 
                 // Prepara il messaggio di completamento
                 let title = "'.tr('Importazione completata').'";
@@ -399,10 +445,16 @@ function importPage(page) {
                 }
             }
         },
-        error: function(data) {
-            $("#main_loading").fadeOut();
+        error: function(xhr) {
+            $("#import-progress-overlay").removeClass("show");
 
-            alert("'.tr('Errore').': " + data);
+            var message = (xhr && xhr.responseJSON && xhr.responseJSON.message) || (xhr && xhr.responseText) || (xhr && xhr.statusText) || "'.tr('Errore sconosciuto').'";
+
+            Swal.fire({
+                title: "'.tr('Errore').'",
+                text: message,
+                icon: "error",
+            });
         }
     });
 };

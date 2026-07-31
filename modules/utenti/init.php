@@ -28,7 +28,7 @@ if (!empty($id_record)) {
         $record = $group->toArray();
     } else {
         // Fallback: prova a ottenere i dati direttamente dal database
-        $record = $dbo->fetchOne('SELECT * FROM `zz_groups` WHERE `id`='.prepare($id_record));
+        $record = database()->table('zz_groups')->where('id', $id_record)->first();
         if (!$record) {
             // Se il record non esiste, reindirizza alla lista
             flash()->error(tr('Gruppo non trovato'));

@@ -30,6 +30,8 @@ class Clause extends Model
     use RecordTrait;
     protected $table = 'zz_group_module';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];

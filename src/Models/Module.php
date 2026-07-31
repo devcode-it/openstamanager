@@ -57,6 +57,8 @@ class Module extends Model
 
     protected $table = 'zz_modules';
 
+    protected $guarded = ['id'];
+
     protected static $translated_fields = [
         'title',
     ];
@@ -89,7 +91,8 @@ class Module extends Model
 
     public function getPlaceholders($id_record, $options = [])
     {
-        if (!isset($this->variables[$id_record])) {
+        $key = $id_record ?? '';
+        if (!isset($this->variables[$key])) {
             $dbo = $database = database();
 
             // Lettura delle variabili nei singoli moduli
@@ -104,10 +107,10 @@ class Module extends Model
                 $replaces['{'.$key.'}'] = $value;
             }
 
-            $this->variables[$id_record] = $replaces;
+            $this->variables[$key] = $replaces;
         }
 
-        return $this->variables[$id_record];
+        return $this->variables[$key];
     }
 
     /**
@@ -117,15 +120,20 @@ class Module extends Model
      */
     public function getPermissionAttribute()
     {
-        if (auth_osm()->getUser()->is_admin) {
+        $user = auth_osm()->getUser();
+        if ($user->is_admin) {
             return 'rw';
         }
 
-        $group = auth_osm()->getUser()->group->id;
+        $pivot = $this->pivot; // Se già disponibile, utilizza
+        if(!$pivot) {
+            $group = $user->group->id;
+            $match = $this->groups->first(fn ($item) => $item->id == $group);
+            $pivot = $match ? $match->pivot : null;
+        }
 
-        $pivot = $this->pivot ?: $this->groups->first(fn ($item) => $item->id == $group)->pivot;
-
-        return $pivot->permessi ?: '-';
+        $default = '-';
+        return $pivot ? ($pivot->permessi ?: $default) : $default;
     }
 
     /**

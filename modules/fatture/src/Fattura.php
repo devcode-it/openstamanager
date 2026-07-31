@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Banche\Banca;
+use Modules\DDT\Causale;
+use Modules\DDT\Porto;
+use Modules\DDT\Spedizione;
 use Modules\Fatture\Gestori\Bollo as GestoreBollo;
 use Modules\Fatture\Gestori\Movimenti as GestoreMovimenti;
 use Modules\Fatture\Gestori\Scadenze as GestoreScadenze;
@@ -212,10 +215,9 @@ class Fattura extends Document
         $model->note = implode("\n", $notes);
 
         if ($tipo_documento->getTranslation('title') == 'Fattura accompagnatoria di vendita') {
-            // Ottimizzazione: esegui una sola query per tutti i valori predefiniti
-            $porto = database()->fetchOne('SELECT `id` FROM `dt_porto` WHERE `predefined` = 1')['id'] ?? '';
-            $causalet = database()->fetchOne('SELECT `id` FROM `dt_causale_t` WHERE `predefined` = 1')['id'] ?? '';
-            $spedizione = database()->fetchOne('SELECT `id` FROM `dt_spedizione` WHERE `predefined` = 1')['id'] ?? '';
+            $porto = Porto::where('predefined', 1)->value('id') ?? '';
+            $causalet = Causale::where('predefined', 1)->value('id') ?? '';
+            $spedizione = Spedizione::where('predefined', 1)->value('id') ?? '';
 
             $model->id_porto = $porto;
             $model->id_causale_t = $causalet;
@@ -313,7 +315,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getrivalsa_inpsAttribute()
+    public function getRivalsaInpsAttribute()
     {
         return $this->calcola('rivalsa_inps');
     }
@@ -344,7 +346,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getIvarivalsa_inpsAttribute()
+    public function getIvaRivalsaInpsAttribute()
     {
         return $this->calcola('iva_rivalsa_inps');
     }
@@ -354,7 +356,7 @@ class Fattura extends Document
      *
      * @return float
      */
-    public function getritenuta_accontoAttribute()
+    public function getRitenutaAccontoAttribute()
     {
         return $this->getRigheContabili()->sum('ritenuta_acconto') ?? 0;
     }
@@ -519,14 +521,18 @@ class Fattura extends Document
      */
     public function getRicevutaPrincipale()
     {
-        if (empty($this->id_ricevuta_principale)) {
-            return null;
+        if (!empty($this->id_ricevuta_principale)) {
+            $file = $this->getModule()
+                ->files($this->id)
+                ->where('id', $this->id_ricevuta_principale)
+                ->first();
+
+            if (!empty($file)) {
+                return $file;
+            }
         }
 
-        return $this->getModule()
-            ->files($this->id)
-            ->where('id', $this->id_ricevuta_principale)
-            ->first();
+        return $this->getRicevute()->last();
     }
 
     /**

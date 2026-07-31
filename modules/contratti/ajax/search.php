@@ -39,7 +39,7 @@ foreach ($fields as $name => $value) {
     $query .= ', '.$value." AS '".str_replace("'", "\'", $name)."'";
 }
 
-$query .= ' FROM co_contratti LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_contratto`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_contratti GROUP BY `id_contratto`) righe ON `righe`.`id_contratto`=`co_contratti`.`id` WHERE 1=0 ';
+$query .= ' FROM co_contratti LEFT JOIN (SELECT GROUP_CONCAT(`descrizione` SEPARATOR " -- ") AS "descrizione", `id_contratto`, SUM(`qta`) AS "totale_quantita", SUM(`subtotale`) AS "totale_vendita" FROM co_righe_contratti GROUP BY `id_contratto`) righe ON `righe`.`id_contratto`=`co_contratti`.`id` WHERE 1=1 AND (1=0 ';
 
 foreach ($fields as $name => $value) {
     $query .= ' OR '.$value.' LIKE '.prepare('%'.$term.'%');
@@ -55,10 +55,10 @@ $query .= ' OR co_contratti.id IN (
     LEFT JOIN mg_articoli ON co_righe_contratti.id_articolo = mg_articoli.id
     LEFT JOIN mg_articoli_lang ON (mg_articoli.id = mg_articoli_lang.id_record AND mg_articoli_lang.id_lang = '.prepare(Models\Locale::getDefault()->id).')
     WHERE mg_articoli.codice LIKE '.prepare('%'.$term.'%').'
-    OR mg_articoli_lang.title LIKE '.prepare('%'.$term.'%').'
+    OR mg_articoli_lang.title LIKE '.prepare('%'.$term.'%').')
 )';
 
-$query .= Modules::getAdditionalsQuery(Module::where('name', 'Contratti')->first()->id);
+$query = Modules::replaceAdditionals(Module::where('name', 'Contratti')->first()->id, $query);
 
 $rs = $dbo->fetchArray($query);
 

@@ -57,3 +57,6 @@ if (!empty($documento->id_sede_destinazione)) {
         }
     }
 }
+
+// Elenco impianti
+$impianti = $dbo->fetchArray('SELECT nome, matricola FROM my_impianti WHERE id IN (SELECT my_impianti_contratti.id_impianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($documento['id']).')');

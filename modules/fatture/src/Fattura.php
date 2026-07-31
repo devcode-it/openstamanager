@@ -521,14 +521,18 @@ class Fattura extends Document
      */
     public function getRicevutaPrincipale()
     {
-        if (empty($this->id_ricevuta_principale)) {
-            return null;
+        if (!empty($this->id_ricevuta_principale)) {
+            $file = $this->getModule()
+                ->files($this->id)
+                ->where('id', $this->id_ricevuta_principale)
+                ->first();
+
+            if (!empty($file)) {
+                return $file;
+            }
         }
 
-        return $this->getModule()
-            ->files($this->id)
-            ->where('id', $this->id_ricevuta_principale)
-            ->first();
+        return $this->getRicevute()->last();
     }
 
     /**

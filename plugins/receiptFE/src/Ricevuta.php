@@ -197,7 +197,7 @@ class Ricevuta
             'original_name' => $filename.'.xml',
         ], tr('Ricevuta _TYPE_', [
             '_TYPE_' => $codice,
-        ]), tr('Fattura Elettronica'));
+        ]), tr('Fattura Elettronica'), force: true);
 
         return $upload;
     }

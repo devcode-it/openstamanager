@@ -20,8 +20,6 @@
 
 include_once __DIR__.'/../../../core.php';
 
-$impegnato = 0;
-$ordinato = 0;
 $giacenze = $articolo->getGiacenze();
 
 $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
@@ -39,11 +37,12 @@ foreach ($all_sedi as $sede) {
 
 $sedi = $sedi_allowed;
 
-$query = 'SELECT
+$query_entrata = 'SELECT
         `or_ordini`.`id` AS id,
         `or_ordini`.`numero`,
         `or_ordini`.`numero_esterno`,
         `data`,
+        `or_ordini`.`id_sede_partenza` AS id_sede,
         SUM(`or_righe_ordini`.`qta`) AS qta_ordinata,
         SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_impegnata,
         `or_righe_ordini`.`um`
@@ -54,7 +53,7 @@ $query = 'SELECT
         INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
     WHERE 
         `id_articolo` = '.prepare($articolo->id)."
-        AND `or_tipi_ordine`.`dir`= '|dir|'
+        AND `or_tipi_ordine`.`dir`= 'entrata'
         AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
         AND `or_righe_ordini`.`confermato` = 1
         AND `or_stati_ordine`.`impegnato` = 1
@@ -62,6 +61,55 @@ $query = 'SELECT
         `or_ordini`.`id`
     HAVING 
         `qta_ordinata` > 0";
+
+$query_uscita = 'SELECT
+        `or_ordini`.`id` AS id,
+        `or_ordini`.`numero`,
+        `or_ordini`.`numero_esterno`,
+        `data`,
+        `or_ordini`.`id_sede_destinazione` AS id_sede,
+        SUM(`or_righe_ordini`.`qta`) AS qta_ordinata,
+        SUM(`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) AS qta_impegnata,
+        `or_righe_ordini`.`um`
+    FROM 
+        `or_ordini`
+        INNER JOIN `or_righe_ordini` ON `or_ordini`.`id` = `or_righe_ordini`.`id_ordine`
+        INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato`=`or_stati_ordine`.`id`
+        INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine`=`or_tipi_ordine`.`id`
+    WHERE 
+        `id_articolo` = '.prepare($articolo->id)."
+        AND `or_tipi_ordine`.`dir`= 'uscita'
+        AND (`or_righe_ordini`.`qta` - `or_righe_ordini`.`qta_evasa`) > 0
+        AND `or_righe_ordini`.`confermato` = 1
+        AND `or_stati_ordine`.`impegnato` = 1
+    GROUP BY
+        `or_ordini`.`id`
+    HAVING 
+        `qta_ordinata` > 0";
+
+$ordini_entrata = $dbo->fetchArray($query_entrata);
+$impegnato = sum(array_column($ordini_entrata, 'qta_impegnata'));
+
+$impegnato_per_sede = [];
+foreach ($ordini_entrata as $documento) {
+    $id_sede = $documento['id_sede'];
+    if (!isset($impegnato_per_sede[$id_sede])) {
+        $impegnato_per_sede[$id_sede] = 0;
+    }
+    $impegnato_per_sede[$id_sede] += $documento['qta_impegnata'];
+}
+
+$ordini_uscita = $dbo->fetchArray($query_uscita);
+$ordinato = sum(array_column($ordini_uscita, 'qta_ordinata'));
+
+$ordinato_per_sede = [];
+foreach ($ordini_uscita as $documento) {
+    $id_sede = $documento['id_sede'];
+    if (!isset($ordinato_per_sede[$id_sede])) {
+        $ordinato_per_sede[$id_sede] = 0;
+    }
+    $ordinato_per_sede[$id_sede] += $documento['qta_ordinata'];
+}
 
 /*
  ** Impegnato
@@ -76,8 +124,8 @@ echo '
 			</div>
 			<div class="card-body" style="min-height:98px;">';
 
-$ordini = $dbo->fetchArray(str_replace('|dir|', 'entrata', $query));
-$impegnato = sum(array_column($ordini, 'qta_impegnata'));
+$ordini = $ordini_entrata;
+$impegnato = sum(array_column($ordini_entrata, 'qta_impegnata'));
 if (!empty($ordini)) {
     echo '
                 <table class="table table-bordered table-sm table-striped">
@@ -142,7 +190,7 @@ echo '
 			</div>
 			<div class="card-body" style="min-height:98px;">';
 
-$ordini = $dbo->fetchArray(str_replace('|dir|', 'uscita', $query));
+$ordini = $ordini_uscita;
 
 if (!empty($ordini)) {
     $ordinato = sum(array_column($ordini, 'qta_ordinata'));
@@ -213,7 +261,9 @@ echo '
 
 foreach ($sedi as $sede) {
     $qta_presente = $giacenze[$sede['id']][0] ?? 0;
-    $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+    $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+    $ordinato_sede = $ordinato_per_sede[$sede['id']] ?? 0;
+    $diff = ($qta_presente - $impegnato_sede + $ordinato_sede) * -1;
     $da_ordinare = (($diff <= 0) ? 0 : $diff);
     echo '
                     <tr>
@@ -226,7 +276,9 @@ if (!empty($sedi_not_allowed)) {
     $altre_sedi_da_ordinare = 0;
     foreach ($sedi_not_allowed as $sede) {
         $qta_presente = $giacenze[$sede['id']][0] ?? 0;
-        $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+        $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+        $ordinato_sede = $ordinato_per_sede[$sede['id']] ?? 0;
+        $diff = ($qta_presente - $impegnato_sede + $ordinato_sede) * -1;
         $da_ordinare = (($diff <= 0) ? 0 : $diff);
         $altre_sedi_da_ordinare += $da_ordinare;
     }
@@ -240,7 +292,9 @@ if (!empty($sedi_not_allowed)) {
 $totale_da_ordinare = 0;
 foreach ($all_sedi as $sede) {
     $qta_presente = $giacenze[$sede['id']][0] ?? 0;
-    $diff = ($qta_presente - $impegnato + $ordinato) * -1;
+    $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+    $ordinato_sede = $ordinato_per_sede[$sede['id']] ?? 0;
+    $diff = ($qta_presente - $impegnato_sede + $ordinato_sede) * -1;
     $da_ordinare = (($diff <= 0) ? 0 : $diff);
     $totale_da_ordinare += $da_ordinare;
 }
@@ -271,33 +325,39 @@ echo '
 
 foreach ($sedi as $sede) {
     $giacenza_sede = $giacenze[$sede['id']][0] ?? 0;
+    $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+    $disponibile = $giacenza_sede - $impegnato_sede;
     echo '
                     <tr>
                         <td>'.$sede['nome_sede'].'</td>
-                        <td class="text-right">'.numberFormat($giacenza_sede, 'qta').'</td>
+                        <td class="text-right">'.numberFormat($disponibile, 'qta').'</td>
                     </tr>';
 }
 
 if (!empty($sedi_not_allowed)) {
-    $altre_sedi_giacenza = 0;
+    $altre_sedi_disponibile = 0;
     foreach ($sedi_not_allowed as $sede) {
-        $altre_sedi_giacenza += $giacenze[$sede['id']][0] ?? 0;
+        $giacenza_sede = $giacenze[$sede['id']][0] ?? 0;
+        $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+        $altre_sedi_disponibile += $giacenza_sede - $impegnato_sede;
     }
     echo '
                     <tr>
                         <td>'.tr('Altre sedi').'</td>
-                        <td class="text-right">'.numberFormat($altre_sedi_giacenza, 'qta').'</td>
+                        <td class="text-right">'.numberFormat($altre_sedi_disponibile, 'qta').'</td>
                     </tr>';
 }
 
-$totale_giacenza = 0;
+$totale_disponibile = 0;
 foreach ($all_sedi as $sede) {
-    $totale_giacenza += $giacenze[$sede['id']][0] ?? 0;
+    $giacenza_sede = $giacenze[$sede['id']][0] ?? 0;
+    $impegnato_sede = $impegnato_per_sede[$sede['id']] ?? 0;
+    $totale_disponibile += $giacenza_sede - $impegnato_sede;
 }
 echo '
                     <tr>
                         <td><strong>'.tr('Totale').'</strong></td>
-                        <td class="text-right"><strong>'.numberFormat($totale_giacenza, 'qta').'</strong></td>
+                        <td class="text-right"><strong>'.numberFormat($totale_disponibile, 'qta').'</strong></td>
                     </tr>';
 
 echo '

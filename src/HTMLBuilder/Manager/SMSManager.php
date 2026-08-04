@@ -24,7 +24,7 @@ use Models\Module;
 use Modules\SMS\Sms;
 
 /**
- * Gestione SMS.
+ * Gestione SMS e WhatsApp.
  *
  * @since 2.4.2
  */
@@ -46,7 +46,7 @@ class SMSManager implements ManagerInterface
             return ' ';
         }
 
-        // Visualizzo il log delle operazioni di invio SMS
+        // Visualizzo il log delle comunicazioni SMS e WhatsApp
         $messages = Sms::whereRaw('id_template IN (SELECT id FROM sms_templates WHERE id_module = '.prepare($options['id_module']).')')
             ->where('id_record', $options['id_record'])
             ->orderBy('created_at', 'DESC')
@@ -60,7 +60,7 @@ class SMSManager implements ManagerInterface
         $result = '
 <div class="card card-info collapsable collapsed-card">
     <div class="card-header with-border">
-        <h3 class="card-title"><i class="fa fa-comment"></i> '.tr('SMS inviati: _NUM_', [
+        <h3 class="card-title"><i class="fa fa-comment"></i> '.tr('SMS e WhatsApp: _NUM_', [
             '_NUM_' => $messages->count(),
         ]).'</h3>
         <div class="card-tools pull-right">
@@ -71,18 +71,40 @@ class SMSManager implements ManagerInterface
         <ul>';
 
         foreach ($messages as $message) {
-            $sent = !empty($message['sent_at']) ? tr('inviato il _DATE_ alle _HOUR_', [
-                '_DATE_' => dateFormat($message['sent_at']),
-                '_HOUR_' => timeFormat($message['sent_at']),
-            ]) : tr('in coda di invio');
+            $message_type = $message->message_type ?: 'sms';
+            $is_whatsapp = in_array($message_type, ['whatsapp', 'whatsapp_link']);
+            $channel = $is_whatsapp ? tr('WhatsApp') : tr('SMS');
+            $icon = $is_whatsapp ? 'fa-whatsapp' : 'fa-comment';
 
-            $descrizione = \Modules::link('Coda SMS', $message->id, tr('SMS "_TEMPLATE_" da _USER_', [
+            if ($message_type === 'whatsapp_link') {
+                $status = !empty($message['sent_at']) ? tr('aperto il _DATE_ alle _HOUR_', [
+                    '_DATE_' => dateFormat($message['sent_at']),
+                    '_HOUR_' => timeFormat($message['sent_at']),
+                ]) : tr('apertura non completata');
+            } elseif (!empty($message['sent_at'])) {
+                $status = tr('inviato il _DATE_ alle _HOUR_', [
+                    '_DATE_' => dateFormat($message['sent_at']),
+                    '_HOUR_' => timeFormat($message['sent_at']),
+                ]);
+            } elseif (!empty($message['failed_at'])) {
+                $status = tr('invio non riuscito');
+            } else {
+                $status = tr('in coda di invio');
+            }
+
+            $description = \Modules::link('Coda SMS', $message->id, tr('_CHANNEL_ "_TEMPLATE_" da _USER_', [
+                '_CHANNEL_' => $channel,
                 '_TEMPLATE_' => $message->template ? $message->template->name : tr('Template eliminato'),
                 '_USER_' => $message->user ? $message->user->username : tr('Utente eliminato'),
             ]));
 
             $result .= '
-            <li>'.$descrizione.' ('.$sent.')</li>';
+            <li>
+                <i class="fa '.$icon.'"></i> '.$description.' ('.$status.').
+                <ul>
+                    <li><b>'.tr('Destinatario').'</b>: '.htmlspecialchars((string) $message->cellulare, ENT_QUOTES, 'UTF-8').'.</li>
+                </ul>
+            </li>';
         }
 
         $result .= '

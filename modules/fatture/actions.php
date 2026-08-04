@@ -205,8 +205,8 @@ switch ($op) {
             flash()->info(tr('Fattura modificata correttamente!'));
         }
 
-        $results = $results ?? [];
-        
+        $results ??= [];
+
         foreach ($results as $numero => $result) {
             foreach ($result as $title => $links) {
                 foreach ($links as $link => $errors) {

@@ -10,6 +10,36 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 - **Commit di risoluzione**: Link diretto al commit GitHub che contiene la correzione del bug
 
 ---
+
+#### 2.11.1 - 30/06/2026
+
+##### Problemi noti
+- Corretta trigger evasione nel caso di note di credito a storno di fatture collegate a ddt
+https://github.com/devcode-it/openstamanager/commit/ad4336e73
+
+- Corretta inizializzazione imponibile a 0 per evitare eccezioni con NULL
+https://github.com/devcode-it/openstamanager/commit/5fcfe5c22
+
+- Corretta lettura fatture per compatibilità
+https://github.com/devcode-it/openstamanager/commit/a41ea3f38
+
+- Corretta lettura stato fattura
+https://github.com/devcode-it/openstamanager/commit/fe2a91416
+
+- Corretta SQL injection modulo segmenti
+https://github.com/devcode-it/openstamanager/commit/d39d057df
+
+- Corretto footer template di stampa fatture
+https://github.com/devcode-it/openstamanager/commit/d4986e931
+
+- Corretti movimenti contabili per registrazione pagamento automatico
+https://github.com/devcode-it/openstamanager/commit/5b01a18cd
+
+- Corretta estrazione valori iban
+https://github.com/devcode-it/openstamanager/commit/fe98f9703
+
+
+---
 #### 2.11 - 09/06/2026
 
 ##### Problemi noti

@@ -238,6 +238,67 @@ switch (post('op')) {
 
         break;
 
+    case 'change_date':
+        $campo_data = post('date_field');
+        $nuova_data = post('new_date');
+
+        $campi_disponibili = [
+            'request' => 'data_richiesta',
+            'deadline' => 'data_scadenza',
+        ];
+
+        $data = DateTime::createFromFormat('Y-m-d', (string) $nuova_data);
+        if (!isset($campi_disponibili[$campo_data]) || empty($nuova_data) || $data === false || $data->format('Y-m-d') !== $nuova_data) {
+            flash()->error(tr('Seleziona un campo e una data validi.'));
+            break;
+        }
+
+        $campo = $campi_disponibili[$campo_data];
+        $aggiornate = 0;
+        $ignorate_stato = 0;
+        $ignorate_scadenza = 0;
+
+        foreach ($id_records as $id) {
+            $intervento = Intervento::find($id);
+
+            if (empty($intervento) || empty($intervento->stato) || $intervento->stato->codice !== 'TODO') {
+                ++$ignorate_stato;
+                continue;
+            }
+
+            if ($campo === 'data_scadenza' && !empty($intervento->data_richiesta) && $nuova_data < $intervento->data_richiesta->format('Y-m-d')) {
+                ++$ignorate_scadenza;
+                continue;
+            }
+
+            $intervento->{$campo} = $nuova_data;
+            $intervento->save();
+
+            ++$aggiornate;
+        }
+
+        if ($aggiornate > 0) {
+            flash()->info(tr('_NUM_ attività aggiornate correttamente.', [
+                '_NUM_' => $aggiornate,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna attività aggiornata.'));
+        }
+
+        if ($ignorate_stato > 0) {
+            flash()->warning(tr('_NUM_ attività ignorate perché non erano nello stato Da programmare.', [
+                '_NUM_' => $ignorate_stato,
+            ]));
+        }
+
+        if ($ignorate_scadenza > 0) {
+            flash()->warning(tr('_NUM_ attività ignorate perché la nuova data di scadenza precede la data richiesta.', [
+                '_NUM_' => $ignorate_scadenza,
+            ]));
+        }
+
+        break;
+
     case 'copy_bulk':
         $id_stato = post('id_stato');
         $data_richiesta = post('data_richiesta');
@@ -451,6 +512,19 @@ $operations['change_status'] = [
         'title' => tr('Vuoi davvero cambiare lo stato per questi interventi?'),
         'msg' => tr('Seleziona lo stato in cui spostare tutti gli interventi non completati').'.<br>
             <br>{[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+        'blank' => false,
+    ],
+];
+
+$operations['change_date'] = [
+    'text' => '<span><i class="fa fa-calendar"></i> '.tr('Cambia data').'</span>',
+    'data' => [
+        'title' => tr('Cambiare la data delle attività selezionate?'),
+        'msg' => tr('La modifica sarà applicata solamente alle attività nello stato Da programmare.').'<br><br>
+            {[ "type": "select", "label": "'.tr('Campo da modificare').'", "name": "date_field", "required": 1, "values": "list=\"request\":\"'.tr('Data richiesta').'\",\"deadline\":\"'.tr('Data scadenza').'\"", "value": "request" ]}<br>
+            {[ "type": "date", "label": "'.tr('Nuova data').'", "name": "new_date", "required": 1 ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

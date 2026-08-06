@@ -4,6 +4,7 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
+- [2.11.2 (2026-08-04)](#2112-2026-08-04)
 - [2.11.1 (2026-06-30)](#2111-2026-06-30)
 - [2.11.0 (2026-06-09)](#2110-2026-06-09)
 - [2.10.4 (2026-04-28)](#2104-2026-04-28)
@@ -73,6 +74,34 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.23 (2021-05-18)](#2423-2021-05-18)
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
+
+## 2.11.2 (2026-08-04)
+
+### Fixed
+- Corretta trigger evasione nel caso di note di credito a storno di fatture collegate a ddt
+- Corretto rilevamento relazione bloccata
+- Corretto percorso ricevute in importazione
+- Corretta inizializzazione imponibile a 0 per evitare eccezioni con NULL
+- Corretta notifica eliminazione sessione tecnico
+- Corretta lettura fatture per compatibilità
+- Corretta lettura stato fattura
+- Corretta rimozione link cliente duplicato in impianti
+- Corretto link allo stato impianto
+- Corretta gestione seriali evasi in attività
+- Corretto tasto eliminazione promemoria
+- Corretta SQL injection modulo segmenti
+- Corretti caratteri accentati su traduzioni
+- Corretto stile campi input di colorpicker
+- Corretto footer template di stampa fatture
+- Corretta inizializzazione variabile template
+- Corretti movimenti contabili per registrazione pagamento automatico
+- Corretta apertura modal via ajax da sottocartelle
+- Corretta #1852 Ricerca globale restituisce un solo risultato quando il modulo ha un segmento con filtro non vuoto
+- Corretto colore select contratti
+- Corretta verifica disponibilità quantità in evasione ordini in attività
+- Aggiornamento openapi client
+- Corretta estrazione valori iban
+
 
 ## 2.11.1 (2026-06-30)
 

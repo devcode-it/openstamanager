@@ -18,6 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Modulo Contratti fornitori.
+ *
+ * @author sajotrei
+ * @link https://github.com/sajotrei
+ */
+
 include_once __DIR__.'/../../core.php';
 
 if (!empty($id_record)) {

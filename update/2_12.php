@@ -80,3 +80,6 @@ if (!empty($filigrana['valore']) && !is_numeric($filigrana['valore'])) {
         $dbo->update('zz_settings', ['valore' => ''], ['nome' => 'Filigrana stampe']);
     }
 }
+
+// Rigenerazione del manifest per rendere scope e start_url indipendenti dal percorso di installazione
+include base_dir().'/include/init/manifest.php';

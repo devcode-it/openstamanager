@@ -31,6 +31,8 @@ use Modules\Anagrafiche\Referente;
 switch (post('op')) {
     case 'restore':
         $anagrafica->restore();
+        // Ripristina anche i referenti collegati
+        $dbo->query('UPDATE an_referenti SET deleted_at = NULL WHERE id_anagrafica = '.prepare($id_record));
         flash()->info(tr('Anagrafica _NAME_ ripristinata correttamente!', [
             '_NAME_' => post('ragione_sociale'),
         ]));
@@ -375,6 +377,8 @@ switch (post('op')) {
         if (!$anagrafica->isAzienda()) {
             // $anagrafica->delete();
             $dbo->query('UPDATE an_anagrafiche SET deleted_at = NOW() WHERE id = '.prepare($id_record));
+            // dopo la riga che setta deleted_at per l'anagrafica
+            $dbo->query('UPDATE an_referenti SET deleted_at = NOW() WHERE id_anagrafica = '.prepare($id_record));
 
             // Se l'anagrafica è collegata ad un utente lo disabilito
             $dbo->query('UPDATE zz_users SET enabled = 0 WHERE id_anagrafica = '.prepare($id_record));

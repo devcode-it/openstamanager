@@ -22,24 +22,24 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Referente extends Model
 {
     use SimpleModelTrait;
+    use SoftDeletes;
 
     protected $table = 'an_referenti';
 
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
     protected $guarded = [];
 
     /**
      * Crea un nuovo referente.
      *
-     * @param string $nome
+     * @param int|null $id (id anagrafica)
+     * @param string|null $nome
+     * @param int|null $id_mansione
+     * @param int|null $id_sede
      *
      * @return self
      */
@@ -48,11 +48,11 @@ class Referente extends Model
         $model = new static();
 
         $model->id_anagrafica = $id;
-
         $model->nome = $nome;
-
         $model->id_mansione = $id_mansione;
-        $model->id_sede = $id_sede;
+
+        // Se non è fornita id_sede, impostiamo 0 (sede legale / default)
+        $model->id_sede = $id_sede ?? 0;
 
         $model->save();
 

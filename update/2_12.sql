@@ -102,3 +102,14 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Tipologia anagrafica predefinita'), 'Tipologia anagrafica predefinita', 'Tipologia (Azienda, Ente pubblico o Privato) preselezionata automaticamente nella finestra di aggiunta di una nuova anagrafica. Se non impostata, nessuna tipologia viene preselezionata.'),
 (2, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Tipologia anagrafica predefinita'), 'Default entity classification', 'Classification (Company, Public entity or Private) automatically preselected in the new entity creation window. If not set, no classification is preselected.');
+
+-- Aggiunge il supporto a soft-delete per i referenti
+-- Aggiunge la colonna deleted_at e un indice, quindi propaga lo stato deleted_at esistente dall'anagrafica ai referenti
+
+ALTER TABLE `an_referenti` ADD COLUMN `deleted_at` DATETIME NULL AFTER `updated_at`;
+
+CREATE INDEX `idx_an_referenti_deleted_at` ON `an_referenti` (`deleted_at`);
+
+-- Se ci sono anagrafiche già soft-deleted, sincronizza lo stato sui referenti esistenti
+UPDATE `an_referenti` r JOIN `an_anagrafiche` a ON r.`id_anagrafica` = a.`id` SET r.`deleted_at` = a.`deleted_at` WHERE a.`deleted_at` IS NOT NULL AND (r.`deleted_at` IS NULL OR r.`deleted_at` = '');
+

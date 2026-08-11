@@ -8,14 +8,6 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 include_once __DIR__.'/../../core.php';
@@ -106,7 +98,7 @@ echo '
 <div class="row"><div class="col-md-4"><div class="border rounded p-3 h-100"><div class="mb-3"><strong><i class="fa fa-bell"></i> '.tr('Disdetta').'</strong><div class="text-muted small">'.tr('Il termine viene calcolato sottraendo il preavviso dalla data di scadenza.').'</div></div>{[ "type":"date","label":"'.tr('Termine ultimo per la disdetta').'","name":"data_limite_disdetta","value":"$data_limite_disdetta$","disabled":1,"help":"'.tr('Data entro cui inviare la comunicazione di disdetta.').'" ]}</div></div><div class="col-md-8"><div class="border rounded p-3 h-100"><div class="mb-3"><strong><i class="fa fa-repeat"></i> '.tr('Rinnovo').'</strong><div class="text-muted small">'.tr('Configura l’eventuale rinnovo automatico e le relative condizioni.').'</div></div><div class="row"><div class="col-md-4">{[ "type":"checkbox","label":"'.tr('Rinnovo automatico').'","name":"rinnovo_automatico","value":"$rinnovo_automatico$","help":"'.tr('Indica che il contratto si rinnova automaticamente alla scadenza.').'" ]}</div><div class="col-md-3 cf-renewal-field">{[ "type":"number","label":"'.tr('Durata rinnovo').'","name":"mesi_rinnovo","decimals":0,"value":"$mesi_rinnovo$","icon-after":"'.tr('mesi').'","help":"'.tr('Durata del nuovo periodo contrattuale.').'" ]}</div><div class="col-md-5 cf-renewal-field">{[ "type":"text","label":"'.tr('Condizioni di rinnovo').'","name":"condizioni_rinnovo","value":"$condizioni_rinnovo$","help":"'.tr('Eventuali variazioni di prezzo, durata o condizioni.').'" ]}</div></div></div></div></div>
 </div></div>
 
-<div class="card card-secondary"><div class="card-header"><h3 class="card-title">'.tr('Informazioni economiche indicative').'</h3></div><div class="card-body"><div class="row"><div class="col-md-3">{[ "type":"number","label":"'.tr('Importo indicativo').'","name":"importo","decimals":2,"value":"$importo$","icon-after":"€" ]}</div><div class="col-md-3">{[ "type":"select","label":"'.tr('Periodicità').'","name":"periodicita","values":"list=\"mensile\":\"Mensile\",\"trimestrale\":\"Trimestrale\",\"semestrale\":\"Semestrale\",\"annuale\":\"Annuale\",\"una_tantum\":\"Una tantum\",\"variabile\":\"Variabile\"","value":"$periodicita$" ]}</div><div class="col-md-6">{[ "type":"text","label":"'.tr('Note economiche').'","name":"note_economiche","value":"$note_economiche$" ]}</div></div></div></div>
+<div class="card card-secondary"><div class="card-header"><h3 class="card-title">'.tr('Informazioni economiche indicative').'</h3></div><div class="card-body"><div class="row"><div class="col-md-3">{[ "type":"number","label":"'.tr('Importo indicativo').'","name":"importo","decimals":2,"value":"$importo$","icon-after":"€" ]}</div><div class="col-md-3">{[ "type":"select","label":"'.tr('Periodicità').'","name":"periodicita","values":"list=\"mensile\":\"Mensile\",\"bimestrale\":\"Bimestrale\",\"trimestrale\":\"Trimestrale\",\"semestrale\":\"Semestrale\",\"annuale\":\"Annuale\",\"una_tantum\":\"Una tantum\",\"variabile\":\"Variabile\"","value":"$periodicita$" ]}</div><div class="col-md-6">{[ "type":"text","label":"'.tr('Note economiche').'","name":"note_economiche","value":"$note_economiche$" ]}</div></div></div></div>
 <div class="card card-light"><div class="card-header"><h3 class="card-title">'.tr('Note').'</h3></div><div class="card-body">{[ "type":"textarea","label":"'.tr('Note operative').'","name":"note","value":"$note$","rows":6 ]}</div></div>
 </form>
 {( "name": "filelist_and_upload", "id": "'.random_int(1, 999).'", "id_record": "'.$id_record.'", "id_module": "'.$id_module.'", "id_plugin": "" )}

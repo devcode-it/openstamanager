@@ -311,7 +311,7 @@ class AJAX
      *
      * @return array
      */
-    protected static function applyLinkTransformation($list, $link)
+    public static function applyLinkTransformation($list, $link)
     {
         foreach ($list as &$element) {
             // Gestione degli elementi con children (optgroup)

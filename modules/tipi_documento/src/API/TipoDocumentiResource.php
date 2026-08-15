@@ -5,28 +5,34 @@ namespace Modules\TipiDocumento\API;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\QueryParameter;
 use Modules\Fatture\Tipo;
 use Modules\TipiDocumento\API\Controllers\CreateTipiDocumentoController;
 use Modules\TipiDocumento\API\Controllers\DeleteTipiDocumentoController;
 use Modules\TipiDocumento\API\Controllers\GetTipiDocumentoController;
 use Modules\TipiDocumento\API\Controllers\Models\CreateTipiDocumentoRequest;
 use Modules\TipiDocumento\API\Controllers\Models\CreateTipiDocumentoResponse;
+use Modules\TipiDocumento\API\Controllers\Models\SelectOptionsTipiDocumentoResponse;
 use Modules\TipiDocumento\API\Controllers\Models\UpdateTipiDocumentoRequest;
+use Modules\TipiDocumento\API\Controllers\SelectOptionsTipiDocumentoController;
 use Modules\TipiDocumento\API\Controllers\UpdateTipiDocumentoController;
 
 #[ApiResource(
     shortName: 'TipiDocumenti',
     operations: [
-        /*
-        new GetCollection(
-            uriTemplate: '/tipi-documenti',
-            controller: ListTipiDocumentoController::class,
-            paginationEnabled: false,
+        new Get(
+            uriTemplate: '/select-options/tipi-documenti',
+            controller: SelectOptionsTipiDocumentoController::class,
+            parameters: [
+                'dir' => new QueryParameter(required: false),
+                'page' => new QueryParameter(required: false),
+                'search' => new QueryParameter(required: false),
+                'retrieve_only_for' => new QueryParameter(required: false, schema: ['type' => 'array']),
+            ],
+            output: SelectOptionsTipiDocumentoResponse::class,
         ),
-        */
         new Get(
             uriTemplate: '/tipo-documenti/{id}',
             controller: GetTipiDocumentoController::class,

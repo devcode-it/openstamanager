@@ -58,7 +58,7 @@ if ($tipo->can_delete) {
         echo '
 	<div class="alert alert-danger">
 		'.tr('Ci sono _NUM_ scadenze collegate', [
-            '_NUM_' => count($scadenze),
+            '_NUM_' => $scadenze,
         ]).'.
 	</div>';
     } ?>

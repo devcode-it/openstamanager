@@ -51,6 +51,7 @@ class Banca extends Model
         $model->nome = $nome;
         $model->iban = $iban;
         $model->bic = $bic;
+        $model->enabled = 1;
 
         // Salvataggio delle informazioni
         $model->save();
@@ -84,11 +85,20 @@ class Banca extends Model
 
     protected function fixPredefined()
     {
+        $enabled = $this->enabled ?? true;
         $predefined = $this->predefined ?? false;
 
-        // Selezione automatica per primo record
+        // Una banca disabilitata non può essere predefinita.
+        if (empty($enabled)) {
+            $this->attributes['predefined'] = 0;
+
+            return;
+        }
+
+        // Selezione automatica per primo record attivo.
         $count = self::where('id_anagrafica', $this->id_anagrafica)
             ->where('id', '!=', $this->id)
+            ->where('enabled', 1)
             ->count();
         if (empty($predefined) && empty($count)) {
             $predefined = true;

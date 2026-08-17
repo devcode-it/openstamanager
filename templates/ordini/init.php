@@ -67,6 +67,7 @@ $pagamento = $dbo->fetchOne('SELECT `co_pagamenti_lang`.`title` FROM `co_pagamen
 $porto = $dbo->fetchOne('SELECT `dt_porto_lang`.`title` as descrizione FROM `dt_porto` LEFT JOIN `dt_porto_lang` ON (`dt_porto`.`id` = `dt_porto_lang`.`id_record` AND `dt_porto_lang`.`id_lang` ='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_porto`.`id` = '.prepare($documento['id_porto']));
 $spedizione = $dbo->fetchOne('SELECT `dt_spedizione_lang`.`title` as descrizione FROM `dt_spedizione` LEFT JOIN `dt_spedizione_lang` ON (`dt_spedizione`.`id`=`dt_spedizione_lang`.`id_record` AND `dt_spedizione_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `dt_spedizione`.`id` = '.prepare($documento['id_spedizione']));
 $vettore = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['id_vettore']));
+$agente = $dbo->fetchOne('SELECT ragione_sociale FROM an_anagrafiche WHERE id = '.prepare($documento['id_agente']));
 $nome_referente = '';
 if ($documento->id_referente) {
     $nome_referente = database()->table('an_referenti')
@@ -83,4 +84,7 @@ $custom = [
     'porto' => $porto['descrizione'],
     'spedizione' => $spedizione['descrizione'],
     'vettore' => $vettore['ragione_sociale'],
+    'numero_cliente' => $documento['numero_cliente'],
+    'data_cliente' => !empty($documento['data_cliente']) ? Translator::dateToLocale($documento['data_cliente']) : '',
+    'agente' => $agente['ragione_sociale'] ?? '',
 ];

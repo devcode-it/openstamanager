@@ -180,6 +180,13 @@ $(document).ready(function () {
     });
 });
 
+function chiudiSalvataggioSessione() {
+    renderMessages();
+    $("#modals > div").modal("hide");
+    caricaCosti();
+    caricaTecnici();
+}
+
 function salvaSessione() {
     // Validazione del form
     var valid = $("#add_form").parsley().validate();
@@ -208,20 +215,17 @@ function salvaSessione() {
                     id_record: globals.id_record,
                     id_automezzo: $("#id_automezzo").val(),
                 },
-                complete: function() {
-                    renderMessages();
-
-                    // Chiusura del modale
-                    $("#modals > div").modal("hide");
-
-                    // Ricaricamento dei costi e delle sessioni
-                    caricaCosti();
-                    caricaTecnici();
+                success: function() {
+                    chiudiSalvataggioSessione();
+                },
+                error: function(xhr) {
+                    var response = xhr.responseJSON || {};
+                    Swal.fire("'.tr('Errore').'", response.error || "'.tr('Errore durante il salvataggio dell’automezzo').'", "error");
                 }
             });
         },
         error: function() {
-            alert("'.tr('Errore durante il salvataggio').'");
+            Swal.fire("'.tr('Errore').'", "'.tr('Errore durante il salvataggio della sessione').'", "error");
         }
     });
 }

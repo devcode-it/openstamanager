@@ -41,7 +41,7 @@ echo '
     <input type="hidden" name="backto" value="record-edit">
     <input type="hidden" name="id_sessione" value="'.$sessione['id'].'">';
 
-// Tecnico
+// Tecnico, tipo attività e automezzo
 echo '
     <div class="row">
         <div class="col-md-4">
@@ -50,6 +50,10 @@ echo '
 
         <div class="col-md-4">
             {[ "type": "select", "label": "'.tr('Tipo attività').'", "name": "id_tipo_interventot", "value": "'.$sessione['id_tipo_intervento'].'", "required": 1, "ajax-source": "tipiintervento-tecnico", "select-options": '.json_encode(['id_tecnico' => $sessione['id_tecnico'], 'id_intervento' => $id_record, 'id_anagrafica' => $intervento['id_anagrafica'], 'id_contratto' => $intervento['id_contratto']]).' ]}
+        </div>
+
+        <div class="col-md-4">
+            {[ "type": "select", "label": "'.tr('Automezzo').'", "name": "id_automezzo", "value": "'.$sessione['id_automezzo'].'", "values": "query=SELECT `id`, `nome_sede` AS descrizione FROM `an_sedi` WHERE `is_automezzo` = 1 ORDER BY `nome_sede`" ]}
         </div>
     </div>';
 
@@ -134,11 +138,12 @@ $(document).ready(function () {
         }
     });
 
-    // Quando cambio il tecnico, aggiorno le select-options del tipo attività
+    // Quando cambio il tecnico, aggiorno tipo attività e propongo l\'automezzo assegnato.
     $("#id_tecnico").change(function() {
         var id_tecnico = $(this).val();
 
         if (!id_tecnico) {
+            $("#id_automezzo").val(null).trigger("change");
             return;
         }
 
@@ -148,6 +153,19 @@ $(document).ready(function () {
 
         // Resetto e ricarico il select dei tipi di intervento
         $("#id_tipo_interventot").selectReset();
+
+        $.ajax({
+            url: globals.rootdir + "/modules/interventi/ajax_automezzo.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                op: "default",
+                id_tecnico: id_tecnico,
+            },
+            success: function(response) {
+                $("#id_automezzo").val(response.id_automezzo || null).trigger("change");
+            }
+        });
     });
 
     // Quando cambio il tipo di intervento, aggiorno i prezzi
@@ -169,7 +187,7 @@ function salvaSessione() {
         return false;
     }
 
-    // Invio dei dati via AJAX
+    // Invio dei dati standard della sessione via AJAX
     $("#add_form").ajaxSubmit({
         url: globals.rootdir + "/actions.php",
         data: {
@@ -179,14 +197,28 @@ function salvaSessione() {
         },
         type: "post",
         success: function(response) {
-            renderMessages();
+            // Salvataggio dell\'automezzo separato per mantenere la modifica poco invasiva sul core Interventi.
+            $.ajax({
+                url: globals.rootdir + "/modules/interventi/ajax_automezzo.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    op: "set",
+                    id_sessione: '.$sessione['id'].',
+                    id_record: globals.id_record,
+                    id_automezzo: $("#id_automezzo").val(),
+                },
+                complete: function() {
+                    renderMessages();
 
-            // Chiusura del modale
-            $("#modals > div").modal("hide");
+                    // Chiusura del modale
+                    $("#modals > div").modal("hide");
 
-            // Ricaricamento dei costi
-            caricaCosti();
-            caricaTecnici();
+                    // Ricaricamento dei costi e delle sessioni
+                    caricaCosti();
+                    caricaTecnici();
+                }
+            });
         },
         error: function() {
             alert("'.tr('Errore durante il salvataggio').'");

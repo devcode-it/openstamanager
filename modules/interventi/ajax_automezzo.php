@@ -25,6 +25,7 @@ if ($op === 'default') {
         ->where('zz_users.id_anagrafica', $id_tecnico)
         ->where('an_sedi.is_automezzo', 1)
         ->distinct()
+        ->limit(2)
         ->pluck('an_sedi.id')
         ->toArray();
 
@@ -39,9 +40,15 @@ if ($op === 'set') {
     $id_record = post('id_record');
     $id_automezzo = post('id_automezzo') ?: null;
 
+    if (!is_numeric($id_sessione) || !is_numeric($id_record) || (!empty($id_automezzo) && !is_numeric($id_automezzo))) {
+        http_response_code(422);
+        echo json_encode(['error' => tr('Parametri non validi')]);
+        exit;
+    }
+
     $sessione = database()->table('in_interventi_tecnici')
-        ->where('id', $id_sessione)
-        ->where('id_intervento', $id_record)
+        ->where('id', (int) $id_sessione)
+        ->where('id_intervento', (int) $id_record)
         ->first();
 
     if (empty($sessione)) {
@@ -52,7 +59,7 @@ if ($op === 'set') {
 
     if (!empty($id_automezzo)) {
         $automezzo = database()->table('an_sedi')
-            ->where('id', $id_automezzo)
+            ->where('id', (int) $id_automezzo)
             ->where('is_automezzo', 1)
             ->first();
 
@@ -64,9 +71,9 @@ if ($op === 'set') {
     }
 
     database()->table('in_interventi_tecnici')
-        ->where('id', $id_sessione)
-        ->where('id_intervento', $id_record)
-        ->update(['id_automezzo' => $id_automezzo]);
+        ->where('id', (int) $id_sessione)
+        ->where('id_intervento', (int) $id_record)
+        ->update(['id_automezzo' => empty($id_automezzo) ? null : (int) $id_automezzo]);
 
     echo json_encode(['success' => true]);
     exit;

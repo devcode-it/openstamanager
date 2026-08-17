@@ -60,6 +60,7 @@ class Sessione extends Model
 
         $model->document()->associate($intervento);
         $model->anagrafica()->associate($anagrafica);
+        $model->setAutomezzoPredefinito();
 
         $id_tipo = $intervento['id_tipo_intervento'];
         $tipo_sessione = TipoSessione::find($id_tipo);
@@ -148,10 +149,36 @@ class Sessione extends Model
         $anagrafica = Anagrafica::find($id_tecnico);
         $this->anagrafica()->associate($anagrafica);
 
+        if ($previous != $id_tecnico) {
+            $this->setAutomezzoPredefinito(true);
+        }
+
         // Se il tecnico è cambiato, ricarico le tariffe per il tipo di intervento corrente
         if ($previous != $id_tecnico && !empty($this->id_tipo_intervento)) {
             $this->setTipo($this->id_tipo_intervento, false);
         }
+    }
+
+    /**
+     * Propone automaticamente l'automezzo quando il tecnico ha un solo mezzo assegnato.
+     * In presenza di zero o più automezzi la scelta rimane manuale.
+     */
+    public function setAutomezzoPredefinito($force = false)
+    {
+        if (!$force && !empty($this->id_automezzo)) {
+            return;
+        }
+
+        $automezzi = database()->table('zz_user_sedi')
+            ->join('zz_users', 'zz_user_sedi.id_user', '=', 'zz_users.id')
+            ->join('an_sedi', 'zz_user_sedi.id_sede', '=', 'an_sedi.id')
+            ->where('zz_users.id_anagrafica', $this->id_tecnico)
+            ->where('an_sedi.is_automezzo', 1)
+            ->distinct()
+            ->pluck('an_sedi.id')
+            ->toArray();
+
+        $this->id_automezzo = count($automezzi) === 1 ? reset($automezzi) : null;
     }
 
     public function getOreCalcolateAttribute()
@@ -196,6 +223,11 @@ class Sessione extends Model
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'id_tecnico');
+    }
+
+    public function automezzo()
+    {
+        return $this->belongsTo(Sede::class, 'id_automezzo');
     }
 
     public function tipo()

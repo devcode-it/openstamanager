@@ -2,16 +2,41 @@
 
 include_once __DIR__.'/../../core.php';
 
+function noteSpeseTipologiaNormalizeDescription($value)
+{
+    return trim(strip_tags((string) $value));
+}
+
+function noteSpeseTipologiaStringLength($value)
+{
+    $value = (string) $value;
+
+    if (function_exists('mb_strlen')) {
+        return mb_strlen($value, 'UTF-8');
+    }
+
+    $count = preg_match_all('/./us', $value, $matches);
+
+    return $count !== false ? $count : strlen($value);
+}
+
+function noteSpeseTipologiaDescriptionIsValid($value)
+{
+    $value = (string) $value;
+
+    return $value !== '' && noteSpeseTipologiaStringLength($value) <= 100;
+}
+
 switch (post('op')) {
     case 'add':
         Permissions::check('rw');
 
-        $descrizione = trim((string) post('descrizione'));
+        $descrizione = noteSpeseTipologiaNormalizeDescription(post('descrizione'));
         $ordine = max(0, (int) post('ordine'));
         $id_lang = (int) Models\Locale::getDefault()->id;
 
-        if ($descrizione === '') {
-            flash()->error(tr('Inserire una descrizione.'));
+        if (!noteSpeseTipologiaDescriptionIsValid($descrizione)) {
+            flash()->error(tr('Inserire una descrizione valida di massimo 100 caratteri.'));
             break;
         }
 
@@ -28,7 +53,7 @@ switch (post('op')) {
         $dbo->insert('co_note_spese_tipologie', [
             'codice' => null,
             'descrizione' => $descrizione,
-            'ordine' => $ordine ?: 100,
+            'ordine' => $ordine,
             'enabled' => 1,
             'can_delete' => 1,
         ]);
@@ -50,13 +75,13 @@ switch (post('op')) {
             break;
         }
 
-        $descrizione = trim((string) post('descrizione'));
+        $descrizione = noteSpeseTipologiaNormalizeDescription(post('descrizione'));
         $ordine = max(0, (int) post('ordine'));
         $enabled = (int) post('enabled');
         $id_lang = (int) Models\Locale::getDefault()->id;
 
-        if ($descrizione === '') {
-            flash()->error(tr('Inserire una descrizione.'));
+        if (!noteSpeseTipologiaDescriptionIsValid($descrizione)) {
+            flash()->error(tr('Inserire una descrizione valida di massimo 100 caratteri.'));
             break;
         }
 

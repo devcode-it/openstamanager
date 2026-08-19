@@ -18,14 +18,18 @@ if (!function_exists('noteSpeseWidgetSummary')) {
             return $cache[$cache_key];
         }
 
+        // Le confermate valide ai fini della rendicontazione 1.9.0 devono
+        // avere Operatore e Tipologia attiva. Le righe storiche non coerenti
+        // restano visibili nel registro ma non alterano i KPI.
         $summary = $dbo->fetchOne(
             'SELECT '
-            .'COALESCE(SUM(IF(st.`name` = '.prepare('confermato').', n.`importo`, 0)), 0) AS confermato_totale, '
-            .'SUM(IF(st.`name` = '.prepare('confermato').', 1, 0)) AS confermato_righe, '
+            .'COALESCE(SUM(IF(st.`name` = '.prepare('confermato').' AND COALESCE(n.`id_operatore`, 0) > 0 AND COALESCE(t.`enabled`, 0) = 1, n.`importo`, 0)), 0) AS confermato_totale, '
+            .'SUM(IF(st.`name` = '.prepare('confermato').' AND COALESCE(n.`id_operatore`, 0) > 0 AND COALESCE(t.`enabled`, 0) = 1, 1, 0)) AS confermato_righe, '
             .'COALESCE(SUM(IF(st.`name` = '.prepare('da_verificare').', n.`importo`, 0)), 0) AS verifica_totale, '
             .'SUM(IF(st.`name` = '.prepare('da_verificare').', 1, 0)) AS verifica_righe '
             .'FROM `co_note_spese` n '
             .'LEFT JOIN `co_note_spese_stati` st ON st.`id` = n.`id_stato` '
+            .'LEFT JOIN `co_note_spese_tipologie` t ON t.`id` = n.`id_tipologia` '
             .'WHERE n.`data` >= '.prepare($period_start).' AND n.`data` <= '.prepare($period_end)
         ) ?: [];
 
@@ -35,7 +39,9 @@ if (!function_exists('noteSpeseWidgetSummary')) {
                 'SELECT COUNT(*) AS totale '
                 .'FROM `co_note_spese` n '
                 .'INNER JOIN `co_note_spese_stati` st ON st.`id` = n.`id_stato` AND st.`name` = '.prepare('confermato').' '
+                .'INNER JOIN `co_note_spese_tipologie` t ON t.`id` = n.`id_tipologia` AND t.`enabled` = 1 '
                 .'WHERE n.`data` >= '.prepare($period_start).' AND n.`data` <= '.prepare($period_end).' '
+                .'AND COALESCE(n.`id_operatore`, 0) > 0 '
                 .'AND NOT EXISTS ('
                 .'SELECT 1 FROM `zz_files` f '
                 .'WHERE f.`id_module` = '.prepare($id_module_note_spese).' '

@@ -20,11 +20,12 @@ $rows = $dbo->fetchArray(
     .'AND f.`id_record` = n.`id` AND (f.`key` IS NULL OR f.`key` = "")) AS allegati '
     .'FROM `co_note_spese` n '
     .'INNER JOIN `co_note_spese_stati` st ON st.`id` = n.`id_stato` AND st.`name` = '.prepare('confermato').' '
-    .'LEFT JOIN `co_note_spese_tipologie` t ON t.`id` = n.`id_tipologia` '
+    .'INNER JOIN `co_note_spese_tipologie` t ON t.`id` = n.`id_tipologia` AND t.`enabled` = 1 '
     .'LEFT JOIN `co_note_spese_tipologie_lang` tl ON tl.`id_record` = t.`id` AND tl.`id_lang` = '.prepare($lang).' '
     .'LEFT JOIN `an_anagrafiche` a ON a.`id` = n.`id_anagrafica` '
-    .'LEFT JOIN `an_anagrafiche` op ON op.`id` = n.`id_operatore` '
+    .'INNER JOIN `an_anagrafiche` op ON op.`id` = n.`id_operatore` '
     .'WHERE n.`data` >= '.prepare($date_start).' AND n.`data` <= '.prepare($date_end).' '
+    .'AND COALESCE(n.`id_operatore`, 0) > 0 '
     .'ORDER BY n.`data`, n.`id`'
 );
 

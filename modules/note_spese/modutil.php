@@ -5,9 +5,6 @@
  * Le funzioni sono prefissate per evitare collisioni con il core.
  */
 
-require_once __DIR__.'/src/PendingExpensesHook.php';
-
-
 function noteSpeseLower($value)
 {
     $value = (string) $value;
@@ -44,7 +41,6 @@ function noteSpeseCsvSafeCell($value)
 
     return $value;
 }
-
 
 function noteSpeseParseAmount($value)
 {
@@ -129,6 +125,10 @@ function noteSpeseGuessCategoryCode($value)
 {
     $value = noteSpeseLower(trim(strip_tags((string) $value)));
 
+    // L'auto-classificazione riguarda soltanto tipologie coerenti con una
+    // spesa anticipata personalmente dall'Operatore. I costi aziendali dismessi
+    // (assicurazioni, affitti, tributi, spese bancarie, personale) non vengono
+    // più proposti né dedotti automaticamente.
     $rules = [
         'carburante' => ['carburante', 'benzina', 'diesel', 'gasolio', 'rifornimento'],
         'pedaggio' => ['pedaggio', 'autostrada', 'telepass'],
@@ -137,11 +137,6 @@ function noteSpeseGuessCategoryCode($value)
         'alloggio' => ['hotel', 'albergo', 'alloggio', 'pernottamento'],
         'trasporto' => ['taxi', 'treno', 'aereo', 'trasporto', 'bus', 'autobus'],
         'materiale_consumo' => ['materiale di consumo', 'consumabile', 'cancelleria'],
-        'assicurazioni' => ['assicurazione', 'assicurazioni', 'polizza', 'polizze'],
-        'affitti' => ['affitto', 'locazione', 'canone locazione'],
-        'contributi_tributi' => ['inps', 'inail', 'contributo', 'contributi', 'tributo', 'tributi', 'f24'],
-        'spese_bancarie' => ['commissione bancaria', 'commissioni bancarie', 'spese bancarie', 'spesa bancaria', 'commissione', 'commissioni'],
-        'personale' => ['stipendio', 'stipendi', 'cedolino', 'cedolini', 'busta paga'],
     ];
 
     foreach ($rules as $code => $keywords) {
@@ -184,7 +179,6 @@ function noteSpeseFindDuplicate($dbo, $date, $amount, $description, $counterpart
     );
 }
 
-
 function noteSpeseAnagraficaExists($dbo, $idAnagrafica)
 {
     $idAnagrafica = (int) $idAnagrafica;
@@ -196,7 +190,6 @@ function noteSpeseAnagraficaExists($dbo, $idAnagrafica)
         'SELECT `id` FROM `an_anagrafiche` WHERE `id` = '.prepare($idAnagrafica).' LIMIT 1'
     ));
 }
-
 
 function noteSpeseOperatorSelectQuery($currentId = null)
 {
@@ -337,10 +330,13 @@ function noteSpeseGetCategory($dbo, $value)
         return $row;
     }
 
+    // Per valori non riconosciuti usa esclusivamente la tipologia Altro, se
+    // attiva. Non ripiega sulla prima tipologia disponibile: eviterebbe errori
+    // di classificazione silenziosi (es. una voce non riconosciuta come Carburante).
     return $dbo->fetchOne(
         'SELECT t.`id`, t.`codice`, COALESCE(l.`title`, t.`descrizione`) AS `descrizione` '
         .'FROM `co_note_spese_tipologie` t '
         .'LEFT JOIN `co_note_spese_tipologie_lang` l ON l.`id_record` = t.`id` AND l.`id_lang` = '.prepare($lang).' '
-        .'WHERE t.`enabled` = 1 ORDER BY t.`ordine`, t.`id` LIMIT 1'
+        .'WHERE t.`enabled` = 1 AND t.`codice` = '.prepare('altro').' LIMIT 1'
     );
 }

@@ -16,11 +16,14 @@ $operator_query = noteSpeseOperatorSelectQuery($record['id_operatore'] ?? null);
 $source_label = noteSpeseSourceLabel($record['origine'] ?? 'manuale');
 $source_url = null;
 $source_hint = null;
+$legacy_automatic_source = in_array((string) ($record['origine'] ?? ''), ['automezzi_rifornimento', 'scadenzario_generico'], true);
 
+// I collegamenti alle vecchie sorgenti vengono conservati esclusivamente per
+// la tracciabilità delle registrazioni già esistenti prima della 1.9.0.
 if (($record['origine'] ?? '') === 'automezzi_rifornimento' && !empty($record['id_origine'])) {
     $module_source = Module::where('name', 'Automezzi')->first();
     $can_read_source = !empty($module_source) && in_array(Modules::getPermission($module_source->id), ['r', 'rw'], true);
-    if ($can_read_source) {
+    if ($can_read_source && $dbo->tableExists('an_automezzi_rifornimenti') && $dbo->tableExists('an_automezzi_viaggi')) {
         $source = $dbo->fetchOne(
             'SELECT v.`id_sede` FROM `an_automezzi_rifornimenti` r '
             .'LEFT JOIN `an_automezzi_viaggi` v ON v.`id` = r.`id_viaggio` WHERE r.`id` = '.prepare($record['id_origine']).' LIMIT 1'
@@ -51,7 +54,22 @@ $duplicate = noteSpeseFindDuplicate(
 $period_start = $_SESSION['period_start'] ?? date('Y-01-01');
 $period_end = $_SESSION['period_end'] ?? date('Y-12-31');
 $is_in_period = noteSpeseIsDateInPeriod($record['data'] ?? null, $period_start, $period_end);
+$missing_operator = empty($record['id_operatore']);
 ?>
+
+<?php if ($missing_operator) { ?>
+<div class="alert alert-warning py-2">
+    <i class="fa fa-user-times mr-1"></i>
+    <?php echo tr('Questa registrazione storica non ha un Operatore associato. Selezionare la persona che ha anticipato personalmente la spesa prima di confermarla.'); ?>
+</div>
+<?php } ?>
+
+<?php if ($legacy_automatic_source) { ?>
+<div class="alert alert-warning py-2">
+    <i class="fa fa-exclamation-triangle mr-1"></i>
+    <?php echo tr('Questa registrazione proviene da una sorgente automatica dismessa nella versione 1.9.0. Verificare che il costo sia stato realmente anticipato dall’Operatore prima di confermarlo come Nota spesa.'); ?>
+</div>
+<?php } ?>
 
 <form action="" method="post" id="edit-form">
     <input type="hidden" name="backto" value="record-edit">
@@ -63,7 +81,7 @@ $is_in_period = noteSpeseIsDateInPeriod($record['data'] ?? null, $period_start, 
             <div class="row">
                 <div class="col-md-3">{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$" ]}</div>
                 <div class="col-md-3">{[ "type": "select", "label": "<?php echo tr('Tipologia'); ?>", "name": "id_tipologia", "required": 1, "value": "$id_tipologia$", "values": "query=<?php echo $category_query; ?>" ]}</div>
-                <div class="col-md-3">{[ "type": "select", "label": "<?php echo tr('Operatore / tecnico'); ?>", "name": "id_operatore", "value": "$id_operatore$", "values": "query=<?php echo $operator_query; ?>", "help": "<?php echo tr('Opzionale. Sono proposte solo le anagrafiche attive di tipo Tecnico; eventuali utenti collegati devono essere attivi.'); ?>" ]}</div>
+                <div class="col-md-3">{[ "type": "select", "label": "<?php echo tr('Operatore'); ?>", "name": "id_operatore", "required": 1, "value": "$id_operatore$", "values": "query=<?php echo $operator_query; ?>", "help": "<?php echo tr('Persona che ha anticipato personalmente la spesa.'); ?>" ]}</div>
                 <div class="col-md-3">{[ "type": "number", "label": "<?php echo tr('Importo'); ?>", "name": "importo", "required": 1, "value": "$importo$", "icon-after": "€", "min-value": "0.01", "decimals": 2 ]}</div>
             </div>
 

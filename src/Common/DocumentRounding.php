@@ -172,9 +172,6 @@ class DocumentRounding
         if (abs((float) ($invoice->pagamento?->importo_percentuale_incasso ?? 0)) > 0.0000001) {
             $reasons[] = 'percentage_collection_fee';
         }
-        if (!empty($invoice->addebita_bollo) && !isset($invoice->bollo)) {
-            $reasons[] = 'automatic_stamp_duty';
-        }
         if (abs((float) ($invoice->sconto_finale ?? 0)) > 0.0000001 || abs((float) ($invoice->sconto_finale_percentuale ?? 0)) > 0.0000001) {
             $reasons[] = 'final_discount';
         }
@@ -186,6 +183,46 @@ class DocumentRounding
         }
 
         return array_values(array_unique($reasons));
+    }
+
+    public static function stampDutyTransition($invoice, int $vatId, array $plan): bool
+    {
+        if (empty($invoice->addebita_bollo) || isset($invoice->bollo)) {
+            return false;
+        }
+
+        $stampNatureCodes = ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4'];
+        $stampTaxable = 0.0;
+        $context = self::context($invoice);
+        $existing = $context['existing'];
+
+        foreach ($invoice->getRighe() as $row) {
+            if ($existing && get_class($row) === get_class($existing) && (int) $row->id === (int) $existing->id) {
+                continue;
+            }
+            $nature = (string) ($row->aliquota->codice_natura_fe ?? '');
+            if (in_array($nature, $stampNatureCodes, true)) {
+                $stampTaxable += (float) ($row->subtotale ?? 0);
+            }
+        }
+
+        $stampAmount = abs((float) setting('Importo marca da bollo'));
+        $threshold = abs((float) setting("Soglia minima per l'applicazione della marca da bollo"));
+        $currentStamp = $stampAmount > 0 && abs($stampTaxable) > $threshold;
+
+        $vat = \Modules\Iva\Aliquota::find($vatId);
+        if (!$vat) {
+            return false;
+        }
+        $nature = (string) ($vat->codice_natura_fe ?? '');
+        if (in_array($nature, $stampNatureCodes, true)) {
+            $effects = self::storedEffects((float) $plan['input'], (float) $vat->percentuale, (bool) setting('Utilizza prezzi di vendita comprensivi di IVA'));
+            $stampTaxable -= (float) $effects['net'];
+        }
+
+        $afterStamp = $stampAmount > 0 && abs($stampTaxable) > $threshold;
+
+        return $currentStamp !== $afterStamp;
     }
 
     public static function hasSections($document): bool

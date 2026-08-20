@@ -523,8 +523,11 @@ $operations['change_date'] = [
     'data' => [
         'title' => tr('Cambiare la data delle attività selezionate?'),
         'msg' => tr('La modifica sarà applicata solamente alle attività nello stato Da programmare.').'<br><br>
-            {[ "type": "select", "label": "'.tr('Campo da modificare').'", "name": "date_field", "required": 1, "values": "list=\"request\":\"'.tr('Data richiesta').'\",\"deadline\":\"'.tr('Data scadenza').'\"", "value": "request" ]}<br>
-            {[ "type": "date", "label": "'.tr('Nuova data').'", "name": "new_date", "required": 1 ]}',
+            {[ "type": "select", "label": "'.tr('Campo da modificare').'", "name": "date_field", "required": 1, "values": "list=\"request\":\"'.tr('Data richiesta').'\",\"deadline\":\"'.tr('Data scadenza').'\"", "value": "request" ]}
+            <div class="form-group" style="margin-top:15px; text-align:left;">
+                <label for="bulk_new_date" style="display:block; text-align:center;"><b>'.tr('Nuova data').'</b><span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="bulk_new_date" name="new_date" required>
+            </div>',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => false,

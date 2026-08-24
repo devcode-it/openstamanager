@@ -509,7 +509,7 @@ if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_a
     // Ricalcola scadenze disponibile solo per fatture di acquisto
     if ($fattura->isFE() && $ricalcola && Module::find($id_module)->name == 'Fatture di acquisto') {
         echo '
-                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Ricalcola le scadenze').'. '.tr('Per ricalcolare correttamente le scadenze, imposta la fattura di acquisto nello stato \'\'Bozza\'\' e correggi il documento come desiderato, poi re-imposta lo stato \'\'Emessa\'\' e utilizza questa funzione').'." id="ricalcola_scadenze">
+                    <button type="button" class="btn btn-info btn-xs pull-right tip" title="'.tr('Questa è una fattura elettronica per cui sono state importate le scadenze di pagamento della fattura del fornitore. Questo pulsante forza il ricalcolo delle scadenze in base al tipo di pagamento selezionato').'." id="ricalcola_scadenze">
                         <i class="fa fa-calculator" aria-hidden="true"></i>
                     </button>';
     }

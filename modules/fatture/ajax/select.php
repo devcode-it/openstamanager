@@ -113,7 +113,7 @@ switch ($resource) {
                 INNER JOIN `or_righe_ordini` ON `or_righe_ordini`.`id_ordine` = `or_ordini`.`id`
                 INNER JOIN `or_stati_ordine` ON `or_ordini`.`id_stato` = `or_stati_ordine`.`id`
                 LEFT JOIN `or_stati_ordine_lang` ON (`or_stati_ordine_lang`.`id_record` = `or_stati_ordine`.`id` AND `or_stati_ordine_lang`.`id_lang` = ".prepare(Models\Locale::getDefault()->id).')
-                INNER JOIN `or_tipi_ordine` ON `or_ordini`.`idtipiordine` = `or_tipi_ordine`.`id`
+                INNER JOIN `or_tipi_ordine` ON `or_ordini`.`id_tipo_ordine` = `or_tipi_ordine`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)."
                 AND `title` != 'Fatturato'
@@ -138,7 +138,7 @@ switch ($resource) {
                 INNER JOIN `dt_tipi_ddt` ON `dt_ddt`.`id_tipo_ddt` = `dt_tipi_ddt`.`id`
             WHERE 
                 `id_articolo` = '.prepare($id_articolo)." AND
-                `dt_stati_lang`.`title` != 'Fatturato' AND
+                `dt_stati_ddt_lang`.`title` != 'Fatturato' AND
                 `dt_tipi_ddt`.`dir`=".prepare($direzione).'AND 
                 |where|
             GROUP BY 

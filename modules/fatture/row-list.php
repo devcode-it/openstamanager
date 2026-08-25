@@ -28,7 +28,7 @@ use Models\Plugin;
 $block_edit = !empty($note_accredito) || in_array($record['stato'], ['Emessa', 'Pagato', 'Parzialmente pagato']) || !$abilita_genera;
 $order_row_desc = $_SESSION['module_'.$id_module]['order_row_desc'];
 $righe = $order_row_desc ? $fattura->getRighe()->sortByDesc('created_at') : $fattura->getRighe();
-$colspan = $dir == 'entrata' ? '8' : '7';
+$colspan = $dir == 'entrata' ? '9' : '8';
 
 echo '
 <div class="table-responsive row-list">
@@ -44,6 +44,7 @@ echo '
                 </th>
                 <th width="35" class="text-center" >'.tr('#').'</th>
                 <th class="text-left" style="width:30%;">'.tr('Descrizione').'</th>
+                <th width="100">'.tr('Documenti').'</th>
                 <th class="text-center" width="120">'.tr('Q.tà').'</th>';
 if ($dir == 'entrata') {
     echo '<th class="text-center" width="150">'.tr('Costo unitario').'</th>';
@@ -131,18 +132,6 @@ foreach ($righe as $riga) {
     echo '
                 <small class="pull-right text-right text-muted">
                     '.$extra_riga;
-
-    // Aggiunta dei riferimenti ai documenti
-    if ($riga->hasOriginalComponent()) {
-        echo '
-                    <br>'.reference($riga->getOriginalComponent()->getDocument(), tr('Origine'));
-    }
-    // Fix per righe da altre componenti degli Interventi
-    elseif (!empty($riga->id_intervento)) {
-        echo '
-                    <br>'.reference(Intervento::find($riga->id_intervento), tr('Origine'));
-    }
-
     echo '
                 </small>';
 
@@ -211,6 +200,33 @@ foreach ($righe as $riga) {
         ]).'
                     '.($has_alert ? '<i class="fa fa-warning text-danger"></i>' : '').'
                 </span>';
+    }
+    echo '
+            </td>';
+
+    $numero_riferimenti_riga = $riga->referenceTargets()->count();
+    $numero_riferimenti_collegati = $riga->referenceSources()->count();
+    $riferimenti_presenti = $numero_riferimenti_riga;
+    $testo_aggiuntivo = $riferimenti_presenti ? '<span class="badge bg-info">'.$numero_riferimenti_riga.'</span>' : '';
+    echo '
+            <td>
+                <button type="button" class="btn btn-xs btn-default btn-block" onclick="apriRiferimenti(this)">
+                    <i class="fa fa-chevron-right"></i> '.tr('Riferimenti').' '.$testo_aggiuntivo.'
+                </button>';
+
+    // Aggiunta dei riferimenti ai documenti
+    if ($riga->hasOriginalComponent()) {
+        echo '
+                <button type="button" class="btn btn-xs btn-default btn-block">
+                    <i class="fa fa-file-text-o"></i> '.reference($riga->getOriginalComponent()->getDocument(), tr('Origine')).'
+                </button>';
+    }
+    // Fix per righe da altre componenti degli Interventi
+    elseif (!empty($riga->id_intervento)) {
+        echo '
+                <button type="button" class="btn btn-xs btn-default btn-block">
+                    <i class="fa fa-file-text-o"></i> '.reference(Intervento::find($riga->id_intervento), tr('Origine')).'
+                </button>';
     }
     echo '
             </td>';

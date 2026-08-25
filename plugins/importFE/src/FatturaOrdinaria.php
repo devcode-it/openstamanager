@@ -322,15 +322,15 @@ class FatturaOrdinaria extends FatturaElettronica
 
                 $obj->movimentazione($movimentazione);
 
-                $target_type = Articolo::class;
+                $source_type = Articolo::class;
             } elseif ($is_descrizione) {
                 $obj = Descrizione::build($fattura);
 
-                $target_type = Descrizione::class;
+                $source_type = Descrizione::class;
             } else {
                 $obj = Riga::build($fattura);
 
-                $target_type = Riga::class;
+                $source_type = Riga::class;
             }
 
             // Imposta la descrizione dalla fattura elettronica per righe e descrizioni
@@ -367,10 +367,10 @@ class FatturaOrdinaria extends FatturaElettronica
 
             if (!empty($tipi_riferimenti_vendita[$key])) {
                 database()->insert('co_riferimenti_righe', [
-                    'source_type' => $tipi_riferimenti_vendita[$key],
-                    'source_id' => $id_riferimenti_vendita[$key],
-                    'target_type' => $target_type,
-                    'target_id' => $obj->id,
+                    'source_type' => $source_type,
+                    'source_id' => $obj->id,
+                    'target_type' => $tipi_riferimenti_vendita[$key],
+                    'target_id' => $id_riferimenti_vendita[$key],
                 ]);
             }
 

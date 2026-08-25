@@ -62,18 +62,15 @@ switch (post('op')) {
         $template->setTranslation('subject', post('subject'));
         $template->setTranslation('body', post('body'));
         $template->setTranslation('title', post('name'));
-        $prints[] = post('prints');
 
+        $prints = array_filter((array) post('prints'), fn ($value) => $value !== '' && $value !== null);
         $dbo->sync('em_print_template', ['id_template' => $id_record], ['id_print' => $prints]);
 
-        $mansioni[] = post('idmansioni');
+        $mansioni = array_filter((array) post('idmansioni'), fn ($value) => $value !== '' && $value !== null);
         $dbo->sync('em_mansioni_template', ['id_template' => $id_record], ['id_mansione' => $mansioni]);
-        $categories[] = post('idcategories');
-        foreach ($categories as $category) {
-            if (!empty($category)) {
-                $dbo->sync('em_files_categories_template', ['id_template' => $id_record], ['id_category' => $category]);
-            }
-        }
+
+        $categories = array_filter((array) post('idcategories'), fn ($value) => $value !== '' && $value !== null);
+        $dbo->sync('em_files_categories_template', ['id_template' => $id_record], ['id_category' => $categories]);
 
         flash()->info(tr('Informazioni salvate correttamente!'));
 

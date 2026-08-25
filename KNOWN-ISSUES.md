@@ -175,6 +175,8 @@ https://github.com/devcode-it/openstamanager/commit/9435fc060
 ```php
   $diff = $contratto->data_accettazione->diffAsCarbonInterval($contratto->data_conclusione);
 ```
+- Corretto i segni degli importi nelle note di credito durante l'importazione delle FE 
+https://github.com/devcode-it/openstamanager/commit/10ce985
   
 
 ---

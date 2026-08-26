@@ -254,6 +254,7 @@ class DDT extends Document
     public function aggiornaStatiOrdiniCollegati()
     {
         $ordini_da_aggiornare = [];
+        $preventivi_da_aggiornare = [];
 
         // Raccogli tutti gli ordini collegati
         foreach ($this->getRighe() as $riga_ddt) {
@@ -284,6 +285,42 @@ class DDT extends Document
 
             $ordine->stato()->associate($stato);
             $ordine->save();
+
+            // Raccogli i preventivi collegati all'ordine
+            foreach ($ordine->getRighe() as $riga_ordine) {
+                if (!empty($riga_ordine->original_id) && !empty($riga_ordine->original_type) && str_contains((string) $riga_ordine->original_type, 'Preventivi')) {
+                    $riga_preventivo = $riga_ordine->getOriginalComponent();
+
+                    if (!empty($riga_preventivo)) {
+                        $preventivo = $riga_preventivo->getDocument();
+
+                        if (!empty($preventivo) && !isset($preventivi_da_aggiornare[$preventivo->id])) {
+                            $preventivi_da_aggiornare[$preventivo->id] = $preventivo;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Aggiorna gli stati dei preventivi
+        foreach ($preventivi_da_aggiornare as $preventivo) {
+            $righe = $preventivo->getRighe();
+
+            $qta_evasa = $righe->sum('qta_evasa');
+            $qta = $righe->sum('qta');
+            $parziale = $qta != $qta_evasa;
+            $stato = $preventivo->stato;
+
+            // Impostazione del nuovo stato
+            if ($qta_evasa == 0) {
+                $descrizione = 'In lavorazione';
+            } else {
+                $descrizione = $parziale ? 'Parzialmente fatturato' : 'Fatturato';
+            }
+
+            $stato_id = \Modules\Preventivi\Stato::where('name', $descrizione)->first()->id;
+            $preventivo->stato()->associate($stato_id);
+            $preventivo->save();
         }
     }
 

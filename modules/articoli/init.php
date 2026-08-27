@@ -25,7 +25,9 @@ use Modules\Articoli\Articolo;
 if (!empty($id_record)) {
     $articolo = Articolo::withTrashed()->find($id_record);
 
-    $record = $articolo->toArray();
-    $record['descrizione'] = $articolo->getTranslation('title');
-    $record['serial'] = database()->table('mg_prodotti')->where('id_articolo', $id_record)->count();
+    if ($articolo) {
+        $record = $articolo->toArray();
+        $record['descrizione'] = $articolo->getTranslation('title');
+        $record['serial'] = database()->table('mg_prodotti')->where('id_articolo', $id_record)->count();
+    }
 }

@@ -43,7 +43,11 @@ $endpoint = setting('Endpoint ibanapi.com');
                     {[ "type": "checkbox", "label": "<?php echo tr('Predefinito'); ?>", "name": "predefined", "value": "$predefined$", "disabled": "<?php echo intval($record['predefined']); ?>" ]}
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-2">
+                    {[ "type": "checkbox", "label": "<?php echo tr('Attivo'); ?>", "name": "enabled", "value": "$enabled$" ]}
+                </div>
+
+                <div class="col-md-4">
                     {[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": "1", "value": "$nome$" ]}
                 </div>
             </div>

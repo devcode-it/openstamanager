@@ -63,7 +63,8 @@ switch (filter('op')) {
         $banca->codice_sia = post('codice_sia');
         $banca->commissioni_riba_insolute = post('commissioni_riba_insolute');
 
-        $banca->predefined = post('predefined');
+        $banca->enabled = post('enabled');
+        $banca->predefined = $banca->enabled ? post('predefined') : 0;
 
         $banca->save();
 

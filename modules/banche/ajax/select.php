@@ -34,6 +34,7 @@ switch ($resource) {
 
         if (empty($filter)) {
             $where[] = 'deleted_at IS NULL';
+            $where[] = 'enabled = 1';
         }
 
         $where[] = 'id_anagrafica='.prepare($superselect['id_anagrafica']);

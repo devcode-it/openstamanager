@@ -116,7 +116,7 @@ foreach ($prints_old as $print) {
     echo '
                 <tr>
                     <td>
-                        <a href="'.Prints::getHref($print->getTranslation('title'), $mail->id_record).'" target="_blank">'.$print->getTranslation('title').'</a>
+                        <a href="'.Prints::getHref($print->name, $mail->id_record).'" target="_blank">'.$print->getTranslation('title').'</a>
                     </td>
                 </tr>';
 }

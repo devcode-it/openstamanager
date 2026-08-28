@@ -24,6 +24,9 @@ use Models\Module;
 use Models\PrintTemplate;
 use Models\Upload;
 use Modules\Anagrafiche\Anagrafica;
+//mod maulapi
+use Modules\Anagrafiche\Referente;
+//fine mod maulapi
 
 switch (post('op')) {
     case 'restore':
@@ -254,6 +257,34 @@ switch (post('op')) {
         $anagrafica->partita_iva = strtoupper(post('p_iva'));
 
         $anagrafica->save();
+
+        //mod maulapi
+        // Se sono stati forniti dati per il referente, li salvo nella tabella an_referenti
+        if (!empty(post('referente_nome')) || !empty(post('referente_cellulare')) || !empty(post('referente_email')) || !empty(post('referente_mansione'))) {
+            try {
+                // Normalizzo l'id mansione (se presente)
+                $id_mansione = (!empty(post('referente_mansione')) && post('referente_mansione') != '-1') ? post('referente_mansione') : null;
+
+                // Creo il referente (build salva già il record)
+                //$referente = Referente::build($anagrafica->id, post('referente_nome') ?: null,
+                //$id_mansione);
+                $referente = Referente::build($anagrafica->id, post('referente_nome') ?: null, $id_mansione, 0);
+
+                // Aggiungo i campi opzionali e salvo (build() esegue già save, ma risalvo per sicurezza dopo aver settato gli altri campi)
+                if (!empty(post('referente_cellulare'))) {
+                    $referente->telefono = post('referente_cellulare');
+                }
+                if (!empty(post('referente_email'))) {
+                    $referente->email = post('referente_email');
+                }
+                $referente->save();
+            } catch (\Throwable $e) {
+                // Non bloccare la creazione dell'anagrafica: loggare l'errore e mostrare warning
+                \error_log('Errore salvataggio referente: '.$e->getMessage());
+                flash()->warning(tr('Impossibile salvare il referente:').' '.$e->getMessage());
+            }
+        }
+        //fine mod maulapi
 
         if ($anagrafica->isAzienda()) {
             flash()->info(tr('Anagrafica Azienda impostata come predefinita').'. '.tr('Per ulteriori informazioni, visitare "Strumenti -> Impostazioni -> Generali"'));

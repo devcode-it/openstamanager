@@ -65,6 +65,31 @@ class Bollo
     }
 
     /**
+     * Restituisce l'aliquota IVA da utilizzare come fallback per la marca da bollo.
+     */
+    private function getAliquotaBollo()
+    {
+        $aliquota = Aliquota::whereNull('deleted_at')
+            ->where('name', 'Escluso art. 15')
+            ->where('percentuale', 0)
+            ->where('esente', 1)
+            ->where('codice_natura_fe', 'N1')
+            ->first();
+
+        if (!empty($aliquota)) {
+            return $aliquota;
+        }
+
+        $aliquote = Aliquota::whereNull('deleted_at')
+            ->where('percentuale', 0)
+            ->where('esente', 1)
+            ->where('codice_natura_fe', 'N1')
+            ->get();
+
+        return $aliquote->count() === 1 ? $aliquote->first() : null;
+    }
+
+    /**
      * Metodo per aggiornare ed eventualmente aggiungere la marca da bollo al documento.
      */
     public function manageRigaMarcaDaBollo()
@@ -103,7 +128,13 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = $righe_bollo->id_iva ?? Aliquota::where('name', 'Escluso art. 15')->value('id');
+
+        $id_iva = $righe_bollo->id_iva ?? $this->getAliquotaBollo()?->id;
+        if (empty($id_iva)) {
+            throw new \UnexpectedValueException(tr('Aliquota IVA per la marca da bollo non trovata.'));
+        }
+
+        $riga->id_iva = $id_iva;
         $riga->id_conto = setting('Conto predefinito per la marca da bollo');
         $riga->id_documento = $this->fattura->id;
 

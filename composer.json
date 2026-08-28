@@ -127,6 +127,7 @@
             "Modules\\StatiContratto\\": ["modules/stati_contratto/custom/src/", "modules/stati_contratto/src/"],
             "Modules\\StatiOrdine\\": ["modules/stati_ordine/custom/src/", "modules/stati_ordine/src/"],
             "Modules\\TipiIntervento\\": ["modules/tipi_intervento/custom/src/", "modules/tipi_intervento/src/"],
+            "Modules\\TipiDocumento\\": ["modules/tipi_documento/custom/src/", "modules/tipi_documento/src/"],
             "Modules\\CategorieDocumentali\\": ["modules/categorie_documenti/custom/src/", "modules/categorie_documenti/src/"],
             "Modules\\PianiSconto\\": ["modules/piano_sconto/custom/src/", "modules/piano_sconto/src/"],
             "Modules\\Impianti\\": ["modules/impianti/custom/src/", "modules/impianti/src/"],

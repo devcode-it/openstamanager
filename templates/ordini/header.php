@@ -61,6 +61,37 @@ echo '
                 </td>
             </tr>
         </table>';
+
+if (!empty($documento['numero_cliente']) || !empty($documento['data_cliente']) || !empty($agente['ragione_sociale'])) {
+    echo '
+        <table class="table">
+            <tr>';
+    if (!empty($documento['numero_cliente'])) {
+        echo '
+                <td valign="top" class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Numero ordine cliente', [], ['upper' => true]).'</p>
+                    <p>$numero_cliente$</p>
+                </td>';
+    }
+    if (!empty($documento['data_cliente'])) {
+        echo '
+                <td class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Data ordine cliente', [], ['upper' => true]).'</p>
+                    <p>$data_cliente$</p>
+                </td>';
+    }
+    if (!empty($agente['ragione_sociale'])) {
+        echo '
+                <td class="border-bottom border-top text-center">
+                    <p class="small-bold text-muted">'.tr('Agente', [], ['upper' => true]).'</p>
+                    <p>$agente$</p>
+                </td>';
+    }
+    echo '
+            </tr>
+        </table>';
+}
+
 if ($porto || $spedizione || $vettore) {
     echo '           
 		<table class="table">

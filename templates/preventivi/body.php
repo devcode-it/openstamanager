@@ -529,6 +529,13 @@ if ($banca) {
 echo '
 </table>';
 
+if (!empty($documento['note'])) {
+    echo '
+<br>
+<p class="small-bold text-muted">'.tr('Note', [], ['upper' => true]).':</p>
+<p><small>'.nl2br((string) $documento['note']).'</small></p>';
+}
+
 // Conclusione
 echo '
 <p class="text-center">'.tr("In attesa di un Vostro Cortese riscontro, colgo l'occasione per porgere Cordiali Saluti").'</p>';

@@ -27,12 +27,53 @@ use Illuminate\Database\QueryException;
 $op = filter('op');
 $token = filter('token');
 
-$microsoft = null;
-$keycloack = null;
-if ($dbo->isConnected()) {
+// Lingua pre-login: solo sessione/richiesta corrente, senza modificare l'impostazione globale.
+$available_login_locales = [];
+$selected_login_locale = trans_osm()->getCurrentLocale();
+if ($dbo->isConnected() && $dbo->isInstalled() && !AuthOSM::check()) {
     try {
-        $microsoft = $dbo->selectOne('zz_oauth2', '*', ['name' => 'Microsoft', 'enabled' => 1, 'is_login' => 1]);
-        $keycloack = $dbo->selectOne('zz_oauth2', '*', ['name' => 'Keycloak', 'enabled' => 1, 'is_login' => 1]);
+        $catalog_locales = trans_osm()->getAvailableLocales();
+        $enabled_locales = $dbo->fetchArray('SELECT `id`, `name`, `iso_code`, `language_code`, `date`, `time`, `timestamp`, `decimals`, `thousands`, `predefined` FROM `zz_langs` WHERE `enabled` = 1 ORDER BY `predefined` DESC, `name` ASC');
+
+        foreach ($enabled_locales as $enabled_locale) {
+            if (!empty($enabled_locale['predefined']) || trans_osm()->isLocaleAvailable($enabled_locale['language_code']) || in_array($enabled_locale['language_code'], $catalog_locales)) {
+                $available_login_locales[] = $enabled_locale;
+            }
+        }
+
+        $requested_login_locale = null;
+        $has_requested_login_locale = array_key_exists('login_locale', $_POST) || array_key_exists('login_locale', $_GET);
+        if ($has_requested_login_locale) {
+            $requested_login_locale = post('login_locale') ?: get('login_locale');
+        } elseif (!empty($_SESSION['login_locale'])) {
+            $requested_login_locale = $_SESSION['login_locale'];
+        }
+
+        $login_locale = null;
+        foreach ($available_login_locales as $available_login_locale) {
+            if ($available_login_locale['language_code'] === $requested_login_locale) {
+                $login_locale = $available_login_locale;
+                break;
+            }
+        }
+
+        if (!empty($login_locale)) {
+            $_SESSION['login_locale'] = $login_locale['language_code'];
+            $selected_login_locale = $login_locale['language_code'];
+            $lang = $selected_login_locale;
+
+            trans_osm()->setLocale($selected_login_locale, [
+                'timestamp' => $login_locale['timestamp'],
+                'date' => $login_locale['date'],
+                'time' => $login_locale['time'],
+                'number' => [
+                    'decimals' => $login_locale['decimals'],
+                    'thousands' => $login_locale['thousands'],
+                ],
+            ]);
+        } elseif ($has_requested_login_locale) {
+            unset($_SESSION['login_locale']);
+        }
     } catch (QueryException $e) {
     }
 }
@@ -140,80 +181,11 @@ $pageTitle = (!$dbo->isInstalled() || !$dbo->isConnected()) ? tr('Installazione'
 
 include_once App::filepath('include|custom|', 'top.php');
 
-// Controllo se è una beta e in caso mostro un warning
-if (Update::isBeta()) {
-    echo '
-			<div class="clearfix"></div>
-            <div class="alert alert-warning alert-dismissible col-md-6 offset-md-3 text-center show">
-                <i class="fa fa-exclamation-triangle"></i> <strong>'.tr('Attenzione!').'</strong> '.tr('Stai utilizzando una versione <b>non stabile</b> di OSM.').'
-                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-            </div>';
-}
-
-// Controllo se è una beta e in caso mostro un warning
-if (AuthOSM::isBrute()) {
-    echo '
-    <div class="card card-danger shadow-lg col-md-6 offset-md-3 mt-5" id="brute">
-        <div class="card-header text-center">
-            <h3 class="card-title"><i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione').'</h3>
-        </div>
-        <div class="card-body text-center">
-            <p class="lead">'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-            <div class="alert alert-warning">
-                <p>'.tr('Tempo rimanente').':</p>
-                <h3><span id="brute-timeout" class="badge badge-danger">'.(AuthOSM::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    $(document).ready(function(){
-        $(".login-box").hide();
-        brute();
-    });
-
-    function brute() {
-        var value = parseFloat($("#brute-timeout").text()) - 1;
-        $("#brute-timeout").text(value);
-
-        if(value > 0){
-            setTimeout(brute, 1000);
-        } else {
-            $("#brute").fadeOut(500, function() {
-                $(".login-box").fadeIn(500);
-            });
-        }
-    }
-    </script>';
-}
 // Recupera il messaggio di errore dalla variabile di sessione
 $error_message = $_SESSION['login_error'] ?? null;
 if (!empty($error_message)) {
     // Rimuovi il messaggio dalla sessione dopo averlo recuperato
     unset($_SESSION['login_error']);
-
-    echo '
-            <script>
-            $(document).ready(function(){
-                // Add shake animation to login box
-                $(".login-box").addClass("animated shake");
-
-                // Add error styling to password field
-                $(".password-field").addClass("is-invalid");
-
-                // Add error message under password field
-                $(".password-field-container").append(\'<div class="invalid-feedback d-block"><i class="fa fa-exclamation-circle mr-1"></i>'.addslashes($error_message).'</div>\');
-
-                // Focus on password field
-                $("input[name=password]").focus();
-
-                // Remove error styling when user starts typing in any field
-                $("input[name=password], input[name=username]").on("keydown", function() {
-                    $(".password-field").removeClass("is-invalid");
-                    $(".invalid-feedback").fadeOut(300);
-                });
-            });
-            </script>';
 }
 
 $login_logo = App::getPaths()['img'].'/logo_completo.png';
@@ -229,100 +201,17 @@ if (!empty($login_logo_setting)) {
     }
 }
 
+$oauth_providers = [];
 if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) {
-    echo '
-			<form action="?op=login" method="post" autocomplete="off">
-				<div class="login-box card-center-medium">
-                    <div class="card card-primary shadow-lg">
-                        <div class="card-header text-center bg-light py-4">
-                            <img src="'.$login_logo.'" alt="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica').'" class="img-fluid">
-                        </div>
-
-                        <div class="card-body pt-4">
-                            <p class="login-box-msg text-secondary mb-4"><i class="fa fa-lock mr-2"></i>'.tr('Accedi con le tue credenziali').'</p>
-                            <div class="input-group mb-4">
-                                <input type="text" name="username" autocomplete="username" class="form-control form-control-lg" placeholder="'.tr('Nome utente').'"';
-    if (isset($username)) {
-        echo ' value="'.$username.'"';
+    try {
+        $oauth_providers = $dbo->fetchArray('SELECT `id`, `name` FROM `zz_oauth2` WHERE `enabled` = 1 AND `is_login` = 1 ORDER BY `name` ASC');
+    } catch (QueryException $e) {
+        $oauth_providers = [];
     }
+}
 
-    echo ' required>
-                                <div class="input-group-append">
-                                    <div class="input-group-text after">
-                                        <i class="fa fa-user"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4 password-field-container">
-                                {[ "type": "password", "name": "password", "autocomplete": "current-password", "placeholder": "'.tr('Password').'", "class": "form-control-lg password-field" ]}
-                            </div>
-
-                            <button type="submit" class="btn btn-primary btn-block btn-lg shadow-sm" id="login-button">
-                                <i class="fa fa-sign-in mr-2"></i>'.tr('Accedi').'
-                            </button>
-
-                            <div class="text-center mt-4">
-                                <a href="'.base_path_osm().'/reset.php" class="text-secondary">
-                                    <i class="fa fa-question-circle mr-1"></i>'.tr('Password dimenticata?').'
-                                </a>
-                            </div>';
-    if ($microsoft || $keycloack) {
-        echo '
-                        <div class="social-auth-links text-center mt-4 pt-3 border-top">
-                            <p class="text-muted">'.tr('- oppure -').'</p>';
-        if ($microsoft) {
-            echo '
-                            <a href="'.base_path_osm().'/oauth2_login.php?id='.$microsoft['id'].'" class="btn btn-block btn-social btn-primary btn-flat shadow-sm">
-                                <i class="fa fa-windows mr-2"></i>'.tr('Accedi con Microsoft').'
-                            </a>';
-        }
-        if ($keycloack) {
-            echo '
-                            <a href="'.base_path_osm().'/oauth2_login.php?id='.$keycloack['id'].'" class="btn btn-block btn-social btn-info btn-flat shadow-sm">
-                                <i class="fa fa-key mr-2"></i>'.tr('Accedi con Keycloack').'
-                            </a>';
-        }
-        echo '
-                        </div>';
-    }
-    echo '
-                        </div>
-                    </div>
-                </div>
-			</form>
-			<!-- /.box -->
-
-            <script>
-            $(document).ready(function(){
-                // Focus on first empty field
-                if($("input[name=username]").val() == ""){
-                    $("input[name=username]").focus();
-                } else {
-                    $("input[name=password]").focus();
-                }
-
-                // Add hover effect to login button
-                $("#login-button").hover(
-                    function() {
-                        $(this).removeClass("shadow-sm").addClass("shadow");
-                    },
-                    function() {
-                        $(this).removeClass("shadow").addClass("shadow-sm");
-                    }
-                );
-
-                // Show loading text on button click
-                $("#login-button").click(function(){
-                    $(this).html(\'<i class="fa fa-circle-o-notch fa-spin mr-2"></i> '.tr('Autenticazione').'...\');
-                });
-
-                // Add subtle animation to input fields on focus
-                $("input").focus(function(){
-                    $(this).parent().animate({marginLeft: "5px"}, 200).animate({marginLeft: "0px"}, 200);
-                });
-            });
-            </script>';
+if ($dbo->isInstalled() && $dbo->isConnected() && !Update::isUpdateAvailable()) {
+    include_once App::filepath('include|custom|', 'login.php');
 }
 
 $custom_css = $dbo->isInstalled() ? html_entity_decode(setting('CSS Personalizzato')) : '';

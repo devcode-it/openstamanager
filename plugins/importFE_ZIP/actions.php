@@ -154,11 +154,11 @@ switch (filter('op')) {
                             $id_pagamento = setting('Tipo di pagamento predefinito');
                         }
 
-                        // Ottieni il sezionale predefinito per le fatture di vendita
+                        // Ottieni il sezionale per le fatture di vendita
                         $id_module_fatture_vendita = Module::where('name', 'Fatture di vendita')->first()->id;
-                        $id_segment_predefinito = getSegmentPredefined($id_module_fatture_vendita);
+                        $id_segment = post('id_segment') ?: getSegmentPredefined($id_module_fatture_vendita);
 
-                        $fattura->saveFattura($id_pagamento, $id_segment_predefinito, $id_tipo, $data, false, false, 'Cliente');
+                        $fattura->saveFattura($id_pagamento, $id_segment, $id_tipo, $data, false, false, 'Cliente');
 
                         $righe = $fattura->getRighe();
 

@@ -2,7 +2,11 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Models\Module;
 use Plugins\ImportFE\Interaction;
+
+$id_module_fatture_vendita = Module::where('name', 'Fatture di vendita')->first()?->id ?: $id_module;
+$id_segment_predefinito = getSegmentPredefined($id_module_fatture_vendita);
 
 if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
     echo '
@@ -25,6 +29,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                 op: "save",
                                 id_module: "'.$id_module.'",
                                 id_plugin: "'.$id_plugin.'",
+                                id_segment: $("#id_segment").val(),
                             },
                             type: "post",
                             success: function(data){
@@ -103,6 +108,7 @@ if (setting('Metodo di importazione XML fatture di vendita') == 'Automatico') {
                                 op: "save",
                                 id_module: "'.$id_module.'",
                                 id_plugin: "'.$id_plugin.'",
+                                id_segment: $("#id_segment").val(),
                             },
                             type: "post",
                             success: function(data){
@@ -181,6 +187,30 @@ echo '
                 <button type="button" class="btn btn-primary btn-block" onclick="upload1(this)">
                     <i class="fa fa-upload mr-1"></i> '.tr('Carica documenti').'
                 </button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card card-secondary card-outline collapsable collapsed-card mb-0">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-cog mr-2"></i>'.tr('Impostazioni').'
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "id": "id_segment", "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_module_fatture_vendita, 'is_fiscale' => 1, 'is_sezionale' => 1, 'for_fe' => 1]).', "value": "'.($id_segment_predefinito ?: '').'" ]}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

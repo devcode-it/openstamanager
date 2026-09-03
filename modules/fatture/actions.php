@@ -204,7 +204,6 @@ switch ($op) {
         // Flag pagamento ritenuta
         $fattura->is_ritenuta_pagata = post('is_ritenuta_pagata') ?: 0;
 
-        $fattura->setScontoFinale(post('sconto_finale'), post('tipo_sconto_finale'));
 
         $anagrafica = Anagrafica::find($fattura->id_anagrafica);
         if ($anagrafica->tipo === 'Privato' && $fattura->is_fattura_conto_terzi) {

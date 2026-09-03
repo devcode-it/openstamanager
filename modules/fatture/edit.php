@@ -359,9 +359,6 @@ echo '
 		<div class="card-body">
 			<div class="row">
 
-                <!-- id_segment -->
-				{[ "type": "hidden", "label": "Segmento", "name": "id_segment", "class": "text-center", "value": "$id_segment$" ]}
-
                 <?php
                 if ($dir == 'uscita') {
                     echo '
@@ -462,7 +459,7 @@ if ($dir == 'entrata') {
                 </div>
             </div>
 
-            <!-- Split payment + Fattura per conto terzi (solo uscita) + Sconto in fattura (solo uscita) -->
+            <!-- Split payment + Fattura per conto terzi (solo entrata) + Sezionale -->
             <div class="row">
 
                 <div class="col-md-3">
@@ -472,25 +469,23 @@ if ($dir == 'entrata') {
                 <?php
     // TODO: Fattura per conto del fornitore (es. cooperative agricole che emettono la fattura per conto dei propri soci produttori agricoli conferenti)
     if ($dir == 'entrata') {
+        $ragione_sociale_help = stripslashes(database()->table('an_anagrafiche')->where('id', setting('Azienda predefinita'))->value('ragione_sociale'));
         ?>
                 <div class="col-md-3">
-                    <?php
-                    $ragione_sociale_help = stripslashes(database()->table('an_anagrafiche')->where('id', setting('Azienda predefinita'))->value('ragione_sociale'));
-                    ?>
                     {[ "type": "checkbox", "label": "<?php echo tr('Fattura per conto terzi'); ?>", "name": "is_fattura_conto_terzi", "value": "$is_fattura_conto_terzi$", "help": "<?php echo tr('Nell\'XML della Fattura Elettronica sarà indicato il fornitore ('.$ragione_sociale_help.') come cessionario e il cliente come cedente/prestatore.'); ?>", "placeholder": "<?php echo tr('Fattura per conto terzi'); ?>" ]}
                 </div>
-
                 <?php
-                echo '
-                <div class="col-md-3">
-                    {[ "type": "number", "label": "'.tr('Sconto in fattura').'", "name": "sconto_finale", "value": "'.($fattura->sconto_finale_percentuale ?: $fattura->sconto_finale).'", "icon-after": "choice|untprc|'.(empty($fattura->sconto_finale) ? 'PRC' : 'UNT').'", "help": "'.tr('Sconto in fattura, utilizzabile per applicare sconti sul Netto a pagare del documento e le relative scadenze').'. '.tr('Per utilizzarlo in relazione a una riga della Fattura Elettronica, inserire il tipo di dato in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'TipoDato\'\' e il testo di descrizione in \'\'Attributi avanzati\'\' -> \'\'Altri Dati Gestionali\'\' -> \'\'RiferimentoTesto\'\' della specifica riga').'. '.tr('Nota: lo sconto in fattura non influenza i movimenti contabili').'." ]}
-                </div>';
     } else {
         echo '
-                <div class="col-md-3"></div>
                 <div class="col-md-3"></div>';
     }
+    ?>
 
+                <div class="col-md-3">
+                    {[ "type": "select", "label": "<?php echo tr('Sezionale'); ?>", "name": "id_segment", "value": "$id_segment$", "ajax-source": "segmenti", "select-options": <?php echo json_encode(['id_module' => $id_module, 'is_sezionale' => 1]); ?>, "disabled": 1 ]}
+                </div>
+
+    <?php
 if ($fattura->stato->id != $id_stato_bozza && $fattura->stato->id != $id_stato_annullata) {
     $scadenze = $fattura->scadenze;
 

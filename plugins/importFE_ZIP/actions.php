@@ -212,6 +212,14 @@ switch (filter('op')) {
 
                         // Imposto lo stato in GEN
                         $dbo->query("UPDATE co_documenti SET codice_stato_fe='GEN', data_stato_fe=NOW() WHERE id=".prepare($id_record));
+                        
+                        // Rimuove eventuale XML generato automaticamente da exportFE alla creazione della fattura
+                        if (!empty($fattura_doc)) {
+                            $precedente = $fattura_doc->getFatturaElettronica();
+                            if (!empty($precedente)) {
+                                $precedente->delete();
+                            }
+                        }
 
                         // Salva gli allegati DOPO che tutte le righe sono state caricate e la fattura è completamente salvata
                         // Questo garantisce che l'XML sia salvato una sola volta con il contenuto completo

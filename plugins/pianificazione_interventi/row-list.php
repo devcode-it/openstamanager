@@ -144,11 +144,11 @@ if (!$righe->isEmpty()) {
             }
 
             echo '
-                <button type="button" class="btn btn-warning btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode($riga::class).'\');">
+                <button type="button" class="btn btn-warning btn-xs" data-widget="tooltip" onclick="launch_modal(\''.tr('Modifica').'\', \''.$structure->fileurl('row-edit.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&idriga='.$riga->id.'&type='.urlencode($riga::class).'\');">
                     <i class="fa fa-edit"></i>
                 </button>
 
-                <button type="button" class="btn btn-danger btn-xs" data-widget="tooltip" onclick="elimina_riga(\''.addslashes($riga::class).'\', \''.$riga->id.'\');">
+                <button type="button" class="btn btn-danger btn-xs" data-widget="tooltip" onclick="elimina_riga(\''.addslashes($riga::class).'\', \''.$riga->id.'\', '.$id_record.');">
                     <i class="fa fa-trash"></i>
                 </button>
             </td>';
@@ -166,25 +166,3 @@ if (!$righe->isEmpty()) {
 }
 
 ?>
-
-<script type="text/javascript">
-    function elimina_riga(type, id){
-        if(confirm('<?php echo tr('Eliminare questa riga?'); ?>')) {
-            $.post(globals.rootdir + '/actions.php', {
-                op: 'delete_riga',
-                id_module: globals.id_module,
-                id_record: globals.id_record,
-                type: type,
-                idriga: id,
-            }, function (data, result) {
-                if (result == 'success') {
-                    // Ricarico le righe
-                    $('#righe').load('<?php echo $module->fileurl('row-list.php'); ?>?id_module=<?php echo $id_module; ?>&id_record=<?php echo $id_record; ?>');
-
-                    // Toast
-                    alertPush();
-                }
-            });
-        }
-    }
-</script>

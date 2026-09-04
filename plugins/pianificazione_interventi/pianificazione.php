@@ -26,6 +26,11 @@ use Plugins\PianificazioneInterventi\Promemoria;
 
 $id_module_interventi = Module::where('name', 'Interventi')->first()->id;
 
+if (!isset($_SESSION['module_'.$id_module_interventi]['id_segment'])) {
+    $segments = Modules::getSegments($id_module_interventi);
+    $_SESSION['module_'.$id_module_interventi]['id_segment'] = isset($segments[0]['id']) ? $segments[0]['id'] : null;
+}
+
 // Informazioni contratto
 $contratto = Contratto::find($id_parent);
 $data_accettazione = $contratto['data_accettazione'];
@@ -58,6 +63,8 @@ $id_tipo_intervento = $record['id_tipo_intervento'];
 if (!empty($id_sede)) {
     $id_impianti = explode(',', trim((string) $record['id_impianti']));
 }
+
+$block_edit = false;
 
 $pianificazione = [
     [
@@ -160,12 +167,12 @@ echo '
 
 if (!$block_edit) {
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo" data-widget="tooltip" data-title="'.tr('Aggiungi articolo').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_articolo=1" data-widget="tooltip" data-title="'.tr('Aggiungi articolo').'">
                         <i class="fa fa-plus"></i> '.tr('Articolo').'
                     </a>';
 
     echo '
-                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga" data-widget="tooltip" data-title="'.tr('Aggiungi riga').'">
+                    <a class="btn btn-sm btn-primary" data-href="'.$structure->fileurl('row-add.php').'?id_module='.$id_module.'&id_plugin='.$id_plugin.'&id_record='.$id_record.'&is_riga=1" data-widget="tooltip" data-title="'.tr('Aggiungi riga').'">
                         <i class="fa fa-plus"></i> '.tr('Riga').'
                     </a>';
 }
@@ -334,6 +341,23 @@ echo '
     });
 
     function refreshRighe(id) {
-        $("#righe_promemoria").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add='.$block_edit.'");
+        $("#righe_promemoria").load("'.$plugin->fileurl('row-list.php').'?id_plugin='.$id_plugin.'&id_record=" + id + "&add=1");
+    }
+
+function elimina_riga(type, id, id_promemoria) {
+        if (confirm(\''.addslashes(tr('Eliminare questa riga?')).'\')) {
+            $.post(globals.rootdir + "/actions.php?id_plugin='.$id_plugin.'", {
+                op: "delete_riga",
+                id_module: globals.id_module,
+                id_record: id_promemoria,
+                type: type,
+                idriga: id,
+            }, function (data, result) {
+                if (result == "success") {
+                    refreshRighe(id_promemoria);
+                    alertPush();
+                }
+            });
+        }
     }
 </script>';

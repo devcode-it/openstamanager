@@ -46,8 +46,15 @@ $articolo = $database->fetchOne('SELECT
 
 $qta_minima = $articolo['qta_minima'];
 
+$disabled = 1;
+$required = 0;
+if($options['edit']==1){
+    $disabled = 0;
+    $required = 1;
+}
+
 echo '
-    {[ "type": "select", "disabled":"1", "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "'.$result['id_articolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
+    {[ "type": "select", "disabled":'.$disabled.', "required":'.$required.', "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "'.$result['id_articolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
 
     <script>
         $(document).ready(function (){
@@ -154,6 +161,7 @@ $("#id_articolo").on("change", function() {
 
     // Preimpostazione immediata del prezzo di acquisto e descrizione
     $("#costo_unitario").val($data.prezzo_acquisto);
+    $("#prezzo_unitario").val($data.prezzo_vendita);
     $("#descrizione_riga").val($data.descrizione);
 
     ottieniDettagliArticolo($data.id).then(function() {

@@ -33,6 +33,7 @@ $options = [
     'totale_imponibile_documento' => $documento->totale_imponibile,
     'totale_documento' => $documento->totale,
     'id_plugin' => $id_plugin, // Modificato
+    'edit' => 1,
 ];
 
 // Dati di default
@@ -62,7 +63,7 @@ if (!empty(get('is_descrizione'))) {
     $file = 'articolo';
 
     // Aggiunta sconto di default da listino per le vendite
-    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE id_anagrafica='.prepare($documento['id_anagrafica']));
+    $listino = $dbo->fetchOne('SELECT prc_guadagno FROM an_anagrafiche INNER JOIN mg_piani_sconto ON an_anagrafiche.id_piano_sconto_vendite=mg_piani_sconto.id WHERE an_anagrafiche.id='.prepare($documento['id_anagrafica']));
 
     if (!empty($listino['prc_guadagno'])) {
         $result['sconto_percentuale'] = $listino['prc_guadagno'];
@@ -70,6 +71,8 @@ if (!empty(get('is_descrizione'))) {
     }
 
     $options['op'] = 'manage_articolo';
+    $options['select-options']['articoli'] = ['permetti_movimento_a_zero' => 1];
+
 } elseif (!empty(get('is_sconto'))) {
     $file = 'sconto';
 
@@ -85,6 +88,21 @@ echo App::load($file.'.php', $result, $options);
 echo '
 </div>
 <script type="text/javascript">
+    window.submitForm = function() {
+        var form = input("#submit-form");
+        var id_riga = form.getElement().find("input[name=idriga]").val();
+
+        salvaForm("#submit-form", {
+            id_module: "'.$id_module.'",
+            id_record: "'.$id_record.'",
+        }).then(function(response) {
+            form.getElement().closest("div[id^=bs-popup").modal("hide");
+            refreshRighe('.$id_record.');
+        });
+
+        return false;
+    };
+
     $(document).ready(function() {
         $("#riga-promemoria").ajaxForm({
             success: function(responseText, statusText, xhr, form){

@@ -102,3 +102,7 @@ INSERT INTO `zz_settings` (`nome`, `valore`, `tipo`, `editable`, `sezione`, `ord
 INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 (1, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Tipologia anagrafica predefinita'), 'Tipologia anagrafica predefinita', 'Tipologia (Azienda, Ente pubblico o Privato) preselezionata automaticamente nella finestra di aggiunta di una nuova anagrafica. Se non impostata, nessuna tipologia viene preselezionata.'),
 (2, (SELECT `id` FROM `zz_settings` WHERE `nome` = 'Tipologia anagrafica predefinita'), 'Default entity classification', 'Classification (Company, Public entity or Private) automatically preselected in the new entity creation window. If not set, no classification is preselected.');
+
+-- Aggiunto sconto combinato
+ALTER TABLE `co_righe_promemoria` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
+ALTER TABLE `co_righe_promemoria` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;

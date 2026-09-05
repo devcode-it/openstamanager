@@ -27,6 +27,8 @@ switch (post('op')) {
     case 'update':
         $nome = filter('name');
         $link = filter('link');
+        $link_support = filter('link_support');
+        $note_marche = filter('note_marche');
         $id_original = filter('id_original') ?: null;
         $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
         $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
@@ -53,6 +55,8 @@ switch (post('op')) {
         if (isset($nome)) {
             $marca->link = $link;
             $marca->name = $nome;
+            $marca->link_support = $link_support;
+            $marca->note_marche = $note_marche;
             $marca->parent = $id_original ?: null;
             $marca->is_articolo = $is_articolo;
             $marca->is_impianto = $is_impianto;
@@ -116,6 +120,8 @@ switch (post('op')) {
     case 'add':
         $nome = filter('name');
         $link = filter('link');
+        $link_support = filter('link_support');
+        $note_marche = filter('note_marche');
         $id_original = filter('id_original') ?: null;
         $is_articolo = (filter('is_articolo_add') ?: filter('is_articolo')) ?: 0;
         $is_impianto = (filter('is_impianto_add') ?: filter('is_impianto')) ?: 0;
@@ -149,6 +155,8 @@ switch (post('op')) {
         }
         $marca = Marca::build($nome);
         $marca->parent = $id_original;
+        $marca->link_support = $link_support;
+        $marca->note_marche = $note_marche;
         $marca->is_articolo = $is_articolo;
         $marca->is_impianto = $is_impianto;
         $marca->link = $link;

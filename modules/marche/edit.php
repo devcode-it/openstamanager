@@ -52,6 +52,14 @@ $img = !empty($marca) ? $marca->image : null;
 					{[ "type": "checkbox", "label": "<?php echo tr('Impianto'); ?>", "name": "is_impianto", "value": "<?php echo $marca->is_impianto; ?>" ]}
 				</div>
 			</div>
+			<div class="row">
+                <div class="col-md-3">
+                    {[ "type": "text", "label": "<?php echo tr('Link support'); ?>", "name": "link_support", "value":"$link_support$" ]}
+                </div>
+                <div class="col-md-9">
+                    {[ "type": "text", "label": "<?php echo tr('Note'); ?>", "name": "note_marche", "value":"$note_marche$" ]}
+                </div>
+			</div>
 		</div>
 	</div>
 </form>

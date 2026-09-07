@@ -70,7 +70,6 @@ class Bollo
     public function manageRigaMarcaDaBollo()
     {
         $riga = $this->fattura->rigaBollo;
-        $righe_bollo = $this->fattura->getRighe()->filter(fn ($item, $key) => $item->aliquota != null && in_array($item->aliquota->codice_natura_fe, ['N2.1', 'N2.2', 'N3.5', 'N3.6', 'N4']))->first();
 
         $addebita_bollo = $this->fattura->addebita_bollo;
         $marca_da_bollo = $this->getBollo();
@@ -103,7 +102,7 @@ class Bollo
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = $righe_bollo->id_iva ?? Aliquota::where('name', 'Escluso art. 15')->value('id');
+        $riga->id_iva = Aliquota::where('name', 'Escluso art. 15')->value('id');
         $riga->id_conto = setting('Conto predefinito per la marca da bollo');
         $riga->id_documento = $this->fattura->id;
 

@@ -57,6 +57,14 @@ if (!empty($id_record)) {
             {[ "type": "checkbox", "label": "<?php echo tr('Impianto'); ?>", "name": "is_impianto_add", "value": "<?php echo $marca ? $marca->is_impianto : ($id_original ? Marca::find($id_original)->is_impianto : 0); ?>", "disabled": "<?php echo !empty($id_original) ? 1 : 0; ?>" ]}
         </div>
 	</div>
+	<div class="row">
+        <div class="col-md-3">
+            {[ "type": "text", "label": "<?php echo tr('Link support'); ?>", "name": "link_support", "value":"$link_support$"]}
+        </div>
+        <div class="col-md-9">
+            {[ "type": "text", "label": "<?php echo tr('Note'); ?>", "name": "note_marche", "value":"$note_marche$"]}
+        </div>
+	</div>
 
 	<!-- PULSANTI -->
 	<div class="modal-footer">

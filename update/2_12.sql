@@ -106,3 +106,8 @@ INSERT INTO `zz_settings_lang` (`id_lang`, `id_record`, `title`, `help`) VALUES
 -- Aggiunto sconto combinato
 ALTER TABLE `co_righe_promemoria` CHANGE `tipo_sconto` `tipo_sconto` ENUM('UNT','PRC','PRC+') NOT NULL DEFAULT 'UNT';
 ALTER TABLE `co_righe_promemoria` ADD `sconto_percentuale_combinato` VARCHAR(255) NULL AFTER `sconto_percentuale`;
+
+--Aggiunto campo note_marche e link_support su Marche
+ALTER TABLE `zz_marche` ADD `note_marche` VARCHAR(255) NULL AFTER `parent`;
+ALTER TABLE `zz_marche` ADD `link_support` VARCHAR(255) NULL AFTER `link`;
+

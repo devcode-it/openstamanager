@@ -177,8 +177,16 @@ https://github.com/devcode-it/openstamanager/commit/9435fc060
 ```
 - Corretto i segni degli importi nelle note di credito durante l'importazione delle FE 
 https://github.com/devcode-it/openstamanager/commit/10ce985
-  
 
+- La stampa del calendario in dashboard non visualizza correttamente gli interventi. Risolto nella 2.12. Le righe da modificare sono le seguenti: https://github.com/devcode-it/openstamanager/blob/v2.10.4/templates/dashboard/body.php#L79-L81
+
+  Da sostituire con:
+```php
+$stati = array_map(fn($v) => (int) trim($v, "'"), (array) $calendar['idstatiintervento']);
+$tipi = array_map(fn($v) => (int) trim($v, "'"), (array) $calendar['idtipiintervento']);
+$tecnici = array_map(fn($v) => (int) trim($v, "'"), (array) $calendar['idtecnici']);
+```
+  
 ---
 
 #### 2.10.3 - 07/04/2026

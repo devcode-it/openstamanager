@@ -456,16 +456,18 @@ function caricaMappaSede() {
 function rimuoviSede(button) {
     let hash = window.location.href.split("#")[1];
 
-    confirmDelete(button).then(function () {
-        redirect_url(globals.rootdir + "/editor.php", {
-            backto: "record-edit",
-            hash: hash,
-            op: "deletesede",
-            id: "'.$record['id'].'",
-            id_plugin: "'.$id_plugin.'",
-            id_module: "'.$id_module.'",
-            id_parent: "'.$id_parent.'",
-        });
+    confirmDelete(button).then(function (result) {
+        if (result.isConfirmed) {
+            redirect_url(globals.rootdir + "/editor.php", {
+				backto: "record-edit",
+				hash: hash,
+				op: "deletesede",
+				id: "'.$record['id'].'",
+				id_plugin: "'.$id_plugin.'",
+				id_module: "'.$id_module.'",
+				id_parent: "'.$id_parent.'",
+			});
+        }
     }).catch(swal.noop);
 }
 

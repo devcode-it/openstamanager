@@ -43,12 +43,12 @@ if (!empty($id_record)) {
     ]);
     Query::setSegments(true);
 }
-// Rimozione della condizione deleted_at IS NULL per visualizzare anche i record eliminati
+// Rimozione dell'ultima condizione deleted_at IS NULL per visualizzare anche i record eliminati
 if (!empty($query)) {
-    if (preg_match('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/si', $query, $m)) {
+    if (preg_match_all('/[`]*([a-z0-9_]*)[`]*[\.]*([`]*deleted_at[`]* IS NULL)/si', $query, $m)) {
         $query = str_replace(["\n", "\t"], ' ', $query);
         $conditions_to_remove = [];
-        $condition = trim($m[0]);
+        $condition = trim($m[0][count($m[0])-1]);
 
         if (!empty($table_name)) {
             $condition = $table_name.'.'.$condition;

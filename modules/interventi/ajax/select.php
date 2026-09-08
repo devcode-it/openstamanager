@@ -232,6 +232,11 @@ switch ($resource) {
             $filter[] = '`in_tipi_intervento`.`id`='.prepare($element);
         }
 
+        // Applica il filtro deleted_at sempre, tranne quando si filtrano elementi specifici
+        if (empty($filter)) {
+            $where[] = '`in_tipi_intervento`.`deleted_at` IS NULL';
+        }
+
         if (!empty($search)) {
             $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
         }

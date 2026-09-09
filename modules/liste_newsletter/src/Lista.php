@@ -51,7 +51,7 @@ class Lista extends Model
     }
 
     #[\Override]
-    public function save(array $options = [])
+public function save(array $options = [])
     {
         // Salva sempre i dati base (nome, descrizione, ecc.) indipendentemente dalla query
         $result = parent::save($options);
@@ -78,8 +78,24 @@ class Lista extends Model
                 'id_list' => $this->id,
             ]);
 
+            // Verifica se la query restituisce la colonna tipo_lista
+            $tipo_lista_presente = false;
+            try {
+                $statement = $database->getPDO()->prepare('SELECT * FROM ('.$query.') AS subq_check LIMIT 0');
+                $statement->execute();
+                for ($i = 0; $i < $statement->columnCount(); ++$i) {
+                    $meta = $statement->getColumnMeta($i);
+                    if (isset($meta['name']) && strtolower($meta['name']) === 'tipo_lista') {
+                        $tipo_lista_presente = true;
+                        break;
+                    }
+                }
+            } catch (\Exception $e) {
+            }
+
             // Ricerca nuovi record - usa subquery per limitare le colonne
-            $wrapped_query = 'SELECT '.prepare($this->id).', subq.id, subq.tipo_lista FROM ('.$query.') AS subq';
+            $tipo_expression = $tipo_lista_presente ? 'subq.tipo_lista' : prepare(Anagrafica::class);
+            $wrapped_query = 'SELECT '.prepare($this->id).', subq.id, '.$tipo_expression.' FROM ('.$query.') AS subq';
             $database->query('INSERT INTO em_list_receiver (id_list, record_id, record_type) '.$wrapped_query);
         }
 

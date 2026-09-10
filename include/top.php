@@ -384,8 +384,8 @@ echo '
                     var defaults = {
                         buttonsStyling: false,
                         customClass: {
-                            confirmButton: "btn btn-lg btn-success",
-                            cancelButton: "btn btn-lg btn-danger"
+                            confirmButton: "btn btn-lg btn-primary",
+                            cancelButton: "btn btn-lg btn-secondary"
                         },
                         cancelButtonText: "'.tr('Annulla').'"
                     };
@@ -401,6 +401,13 @@ echo '
                     } else {
                         options = opts;
                     }
+
+                    var confirmText = (options.confirmButtonText || "OK").toLowerCase();
+                    if (confirmText === "elimina" || confirmText === "delete") {
+                        options.customClass = options.customClass || {};
+                        options.customClass.confirmButton = "btn btn-lg btn-danger";
+                    }
+
                     return _originalFire.call(Swal, options);
                 };
             })();

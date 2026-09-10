@@ -345,19 +345,29 @@ echo '
     }
 
 function elimina_riga(type, id, id_promemoria) {
-        if (confirm(\''.addslashes(tr('Eliminare questa riga?')).'\')) {
-            $.post(globals.rootdir + "/actions.php?id_plugin='.$id_plugin.'", {
-                op: "delete_riga",
-                id_module: globals.id_module,
-                id_record: id_promemoria,
-                type: type,
-                idriga: id,
-            }, function (data, result) {
-                if (result == "success") {
-                    refreshRighe(id_promemoria);
-                    alertPush();
-                }
-            });
-        }
+        Swal.fire({
+            title: \''.addslashes(tr('Eliminare questa riga?')).'\',
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: globals.translations.delete,
+            customClass: {
+                confirmButton: "btn btn-lg btn-danger",
+            },
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.post(globals.rootdir + "/actions.php?id_plugin='.$id_plugin.'", {
+                    op: "delete_riga",
+                    id_module: globals.id_module,
+                    id_record: id_promemoria,
+                    type: type,
+                    idriga: id,
+                }, function (data, result) {
+                    if (result == "success") {
+                        refreshRighe(id_promemoria);
+                        alertPush();
+                    }
+                });
+            }
+        });
     }
 </script>';

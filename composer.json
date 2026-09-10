@@ -14,12 +14,6 @@
         "email": "info@openstamanager.com"
     }],
     "type": "project",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/Pek5892/fluidxml.php"
-        }
-    ],
     "require": {
         "php": "^8.3",
         "ext-curl": "*",

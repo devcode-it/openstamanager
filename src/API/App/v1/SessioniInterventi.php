@@ -112,8 +112,7 @@ class SessioniInterventi extends AppResource
     public function createRecord($data)
     {
         // Informazioni sull'utente
-        $user = auth_osm()->getUser();
-        $id_tecnico = $user->id_anagrafica;
+        $id_tecnico = $data['id_tecnico'];
 
         // Informazioni di base
         $intervento = Intervento::find($data['id_intervento']);

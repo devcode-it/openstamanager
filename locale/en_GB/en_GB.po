@@ -20181,6 +20181,22 @@ msgid ""
 "l'amministratore del sistema."
 msgstr ""
 
+#: include/login.php
+msgid "Selezione lingua"
+msgstr "Language selection"
+
+#: include/login.php
+msgid "Lingua"
+msgstr "Language"
+
+#: include/login.php
+msgid "Accessi alternativi"
+msgstr "Alternative sign-ins"
+
+#: include/login.php
+msgid "Accedi con"
+msgstr "Sign in with"
+
 #~ msgid "Il gestionale open source per l'assistenza tecnica e la fatturazione"
 #~ msgstr ""
 #~ "The open source management software for technical assistance and billing"

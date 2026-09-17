@@ -129,7 +129,8 @@ class Checklists extends AppResource
         $id_interventi = array_keys($interventi);
         if ($user->is_admin) {
             $query = 'SELECT 
-                `zz_checks`.`id`
+                `zz_checks`.`id`,
+                `zz_checks`.`updated_at`
             FROM 
                 `zz_checks`
                 INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
@@ -142,13 +143,22 @@ class Checklists extends AppResource
 
             // Filtro per data
             if ($last_sync_at) {
-                $query .= ' AND `zz_checks`.`updated_at` > '.prepare($last_sync_at);
+                $query .= ' AND (
+                    zz_checks.updated_at > '.prepare($last_sync_at).'
+                    OR in_interventi.updated_at > '.prepare($last_sync_at).'
+                    OR in_interventi.id IN (
+                        SELECT id_intervento FROM in_interventi_tecnici
+                        WHERE DATE_SUB(in_interventi_tecnici.orario_fine, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                           OR in_interventi_tecnici.updated_at > '.prepare($last_sync_at).'
+                    )
+                )';
             }
 
             $records = database()->fetchArray($query);
         } else {
             $query = 'SELECT 
-                `zz_checks`.`id`
+                `zz_checks`.`id`,
+                `zz_checks`.`updated_at`
             FROM 
                 `zz_checks`
                 INNER JOIN `in_interventi` ON `zz_checks`.`id_record` = `in_interventi`.`id`
@@ -163,7 +173,15 @@ class Checklists extends AppResource
 
             // Filtro per data
             if ($last_sync_at) {
-                $query .= ' AND `zz_checks`.`updated_at` > '.prepare($last_sync_at);
+                $query .= ' AND (
+                    zz_checks.updated_at > '.prepare($last_sync_at).'
+                    OR in_interventi.updated_at > '.prepare($last_sync_at).'
+                    OR in_interventi.id IN (
+                        SELECT id_intervento FROM in_interventi_tecnici
+                        WHERE DATE_SUB(in_interventi_tecnici.orario_fine, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                           OR in_interventi_tecnici.updated_at > '.prepare($last_sync_at).'
+                    )
+                )';
             }
             $records = database()->fetchArray($query, [
                 ':id_tecnico' => $user->id,

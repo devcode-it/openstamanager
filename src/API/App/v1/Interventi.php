@@ -98,12 +98,19 @@ class Interventi extends AppResource
         // Informazioni sull'utente
         $id_tecnico = auth_osm()->getUser()->id_anagrafica;
 
+        $updated_at_select = 'GREATEST(
+            `in_interventi`.`updated_at`,
+            IFNULL((SELECT MAX(it.updated_at) FROM `in_interventi_tecnici` it WHERE it.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`updated_at`),
+            IFNULL((SELECT MAX(ita.created_at) FROM `in_interventi_tecnici_assegnati` ita WHERE ita.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`updated_at`),
+            IFNULL((SELECT MAX(mii.created_at) FROM `my_impianti_interventi` mii WHERE mii.`id_intervento` = `in_interventi`.`id`), `in_interventi`.`updated_at`)
+        ) AS `updated_at`';
+
         if (setting('Visualizza solo promemoria assegnati') == 1) {
             if (auth_osm()->getUser()->is_admin) {
                 $query = '
                 SELECT
                     `in_interventi`.`id`,
-                    `in_interventi`.`updated_at`
+                    '.$updated_at_select.'
                 FROM
                     `in_interventi`
                 WHERE
@@ -117,7 +124,7 @@ class Interventi extends AppResource
                 $query = '
                     SELECT
                         `in_interventi`.`id`,
-                        `in_interventi`.`updated_at`
+                        '.$updated_at_select.'
                     FROM 
                         `in_interventi` 
                     WHERE
@@ -143,7 +150,7 @@ class Interventi extends AppResource
                 $query = '
                     SELECT
                         `in_interventi`.`id`,
-                        `in_interventi`.`updated_at`
+                        '.$updated_at_select.'
                     FROM 
                         `in_interventi` 
                     WHERE
@@ -164,7 +171,7 @@ class Interventi extends AppResource
                 $query = '
                     SELECT
                         `in_interventi`.`id`,
-                        `in_interventi`.`updated_at`
+                        '.$updated_at_select.'
                     FROM 
                         `in_interventi` 
                     WHERE
@@ -185,15 +192,21 @@ class Interventi extends AppResource
             }
         }
 
-        // Filtro per data
-        // Gestione di tecnici assegnati o impianti modificati
-        // Possibile problematica: in caso di rimozione di un tecnico assegnato o impianto collegato, la modifica non viene rilevata
+        // Filtro per data (gestione modifiche su tabelle collegate ed entrata nella finestra temporale dei promemoria/sessioni future)
         if ($last_sync_at) {
             $query .= ' AND (
-                `in_interventi`.`updated_at` > '.prepare($last_sync_at).' OR
-                `in_interventi`.`id` IN (
-                    SELECT `id_intervento` FROM `my_impianti_interventi` WHERE `my_impianti_interventi`.`created_at` > '.prepare($last_sync_at).'
-                    UNION SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati` WHERE `in_interventi_tecnici_assegnati`.`created_at` > '.prepare($last_sync_at).'
+                `in_interventi`.`updated_at` > '.prepare($last_sync_at).'
+                OR `in_interventi`.`id` IN (
+                    SELECT `id_intervento` FROM `in_interventi_tecnici`
+                    WHERE `in_interventi_tecnici`.`updated_at` > '.prepare($last_sync_at).'
+                       OR `in_interventi_tecnici`.`created_at` > '.prepare($last_sync_at).'
+                       OR DATE_SUB(`in_interventi_tecnici`.`orario_fine`, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                    UNION SELECT `id_intervento` FROM `in_interventi_tecnici_assegnati`
+                    WHERE `in_interventi_tecnici_assegnati`.`created_at` > '.prepare($last_sync_at).'
+                    UNION SELECT `id_intervento` FROM `my_impianti_interventi`
+                    WHERE `my_impianti_interventi`.`created_at` > '.prepare($last_sync_at).'
+                    UNION SELECT `id_intervento` FROM `in_righe_interventi`
+                    WHERE `in_righe_interventi`.`updated_at` > '.prepare($last_sync_at).'
                 )
             )';
         }

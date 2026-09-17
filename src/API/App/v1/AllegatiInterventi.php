@@ -60,9 +60,21 @@ class AllegatiInterventi extends AppResource
         $id_interventi = array_keys($interventi);
         $query = 'SELECT `zz_files`.`id`, `zz_files`.`updated_at` FROM `zz_files` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = "Interventi") AND `id_record` IN ('.implode(',', array_map(prepare(...), $id_interventi)).')';
 
-        // Filtro per data
+        // Filtro per data (include modifiche e allegati di interventi/sessioni appena entrate nella finestra temporale)
         if ($last_sync_at) {
-            $query .= ' AND zz_files.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND (
+                zz_files.updated_at > '.prepare($last_sync_at).'
+                OR zz_files.created_at > '.prepare($last_sync_at).'
+                OR zz_files.id_record IN (
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE DATE_SUB(in_interventi_tecnici.orario_fine, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                       OR in_interventi_tecnici.updated_at > '.prepare($last_sync_at).'
+                       OR in_interventi_tecnici.created_at > '.prepare($last_sync_at).'
+                )
+                OR zz_files.id_record IN (
+                    SELECT id FROM in_interventi WHERE in_interventi.updated_at > '.prepare($last_sync_at).'
+                )
+            )';
         }
 
         $records = database()->fetchArray($query);

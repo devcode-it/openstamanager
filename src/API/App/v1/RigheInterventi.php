@@ -87,9 +87,21 @@ class RigheInterventi extends AppResource
         $id_interventi = array_keys($interventi);
         $query = 'SELECT in_righe_interventi.id, in_righe_interventi.updated_at FROM in_righe_interventi WHERE in_righe_interventi.id_intervento IN ('.implode(',', array_map(prepare(...), $id_interventi)).')';
 
-        // Filtro per data
+        // Filtro per data (include modifiche e righe di interventi/sessioni appena entrate nella finestra temporale)
         if ($last_sync_at) {
-            $query .= ' AND in_righe_interventi.updated_at > '.prepare($last_sync_at);
+            $query .= ' AND (
+                in_righe_interventi.updated_at > '.prepare($last_sync_at).'
+                OR in_righe_interventi.created_at > '.prepare($last_sync_at).'
+                OR in_righe_interventi.id_intervento IN (
+                    SELECT id_intervento FROM in_interventi_tecnici
+                    WHERE DATE_SUB(in_interventi_tecnici.orario_fine, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                       OR in_interventi_tecnici.updated_at > '.prepare($last_sync_at).'
+                       OR in_interventi_tecnici.created_at > '.prepare($last_sync_at).'
+                )
+                OR in_righe_interventi.id_intervento IN (
+                    SELECT id FROM in_interventi WHERE in_interventi.updated_at > '.prepare($last_sync_at).'
+                )
+            )';
         }
         $records = database()->fetchArray($query);
 

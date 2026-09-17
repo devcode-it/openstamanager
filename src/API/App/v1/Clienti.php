@@ -65,9 +65,23 @@ class Clienti extends AppResource
                 )';
         }
 
-        // Filtro per data (solo nel caso in cui la sincronizzazione non sia totale)
+        // Filtro per data
         if ($last_sync_at) {
-            $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
+            if (!empty($sincronizza_lavorati)) {
+                $query .= ' AND (
+                    an_anagrafiche.updated_at > '.prepare($last_sync_at).'
+                    OR an_anagrafiche.created_at > '.prepare($last_sync_at).'
+                    OR an_anagrafiche.id IN (
+                        SELECT id_anagrafica FROM in_interventi
+                        INNER JOIN in_interventi_tecnici ON in_interventi_tecnici.id_intervento = in_interventi.id
+                        WHERE DATE_SUB(in_interventi_tecnici.orario_fine, INTERVAL 1 MONTH) > '.prepare($last_sync_at).'
+                           OR in_interventi_tecnici.updated_at > '.prepare($last_sync_at).'
+                           OR in_interventi.updated_at > '.prepare($last_sync_at).'
+                    )
+                )';
+            } else {
+                $query .= ' AND an_anagrafiche.updated_at > '.prepare($last_sync_at);
+            }
         }
 
         $records = database()->fetchArray($query, $parameters);

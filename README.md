@@ -145,7 +145,7 @@ cd openstamanager
 
 # Download di composer da https://getcomposer.org/download/
 
-yarn develop-OSM
+yarn install && yarn develop-OSM
 ```
 
 

@@ -24,15 +24,19 @@ include_once __DIR__.'/../../core.php';
 	<input type="hidden" name="backto" value="record-edit">
 
 	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1 ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
 			{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1  ]}
 		</div>
 
-		<div class="col-md-3">
+		<div class="col-md-2">
+			{[ "type": "date", "label": "<?php echo tr('Data fine'); ?>", "name": "data_fine" ]}
+		</div>
+
+		<div class="col-md-4">
 			{[ "type": "select", "label": "<?php echo tr('Nazione'); ?>", "name": "id_nazione",  "required": 1, "ajax-source": "nazioni" ]}
 		</div>
 		

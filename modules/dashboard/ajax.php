@@ -211,11 +211,14 @@ switch (filter('op')) {
             $eventi = $dbo->fetchArray($query);
 
             foreach ($eventi as $evento) {
+                $end_date = !empty($evento['data_fine']) ? $evento['data_fine'] : $evento['data'];
+                $end_date_display = date('Y-m-d', strtotime($end_date . ' +1 day'));
+
                 $results[] = [
                     'id' => $modulo_eventi->id.'_'.$evento['id'],
                     'title' => '<b>'.tr('Evento').':</b> '.$evento['nome'].'</b>',
                     'start' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $evento['data'])) : $evento['data']),
-                    // 'end' => $evento['data'],
+                    'end' => ($evento['is_recurring'] ? date('Y-', strtotime($start)).date('m-d', strtotime((string) $end_date_display)) : $end_date_display),
                     'extendedProps' => [
                         'link' => base_path_osm().'/editor.php?id_module='.$modulo_eventi->id.'&id_record='.$evento['id'],
                         'id_intervento' => $evento['id'],
@@ -640,41 +643,57 @@ switch (filter('op')) {
         $eventi = $dbo->fetchArray('SELECT * FROM `zz_events` WHERE `is_bank_holiday` = 1');
 
         $results = [];
-        $is_cross_year = ($start_dt->format('Y') != $end_dt->format('Y'));
 
         foreach ($eventi as $evento) {
             $start_date = $evento['data'];
+            $end_date = !empty($evento['data_fine']) ? $evento['data_fine'] : $evento['data'];
 
             if ($evento['is_recurring']) {
-                $month_day = date('-m-d', strtotime($start_date));
+                $month_day_start = date('-m-d', strtotime($start_date));
+                $month_day_end = !empty($evento['data_fine']) ? date('-m-d', strtotime($end_date)) : $month_day_start;
+                $is_range = $month_day_start !== $month_day_end;
 
                 for ($year = $start_dt->format('Y'); $year <= $end_dt->format('Y'); $year++) {
-                    $event_date = $year . $month_day;
+                    $event_start = $year . $month_day_start;
+                    $event_end = $year . $month_day_end;
 
-                    if ($month_day === '-02-29' && !date('L', strtotime($event_date))) {
-                        $event_date = $year . '-02-28';
-                    }
-
-                    if ($event_date >= $start && $event_date <= $end) {
-                        $results[] = [
-                            'id' => $evento['id'],
-                            'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
-                            'start' => $event_date,
-                            'display' => 'background',
-                            'allDay' => true,
-                            'overlap' => true,
-                        ];
+                    if ($is_range) {
+                        if ($event_start <= $end && $event_end >= $start) {
+                            $results[] = [
+                                'id' => $evento['id'].'_'.$year,
+                                'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
+                                'start' => max($event_start, $start),
+                                'end' => date('Y-m-d', strtotime(min($event_end, $end) . ' +1 day')),
+                                'display' => 'background',
+                                'allDay' => true,
+                                'overlap' => true,
+                            ];
+                        }
+                    } else {
+                        if ($event_start >= $start && $event_start <= $end) {
+                            $results[] = [
+                                'id' => $evento['id'].'_'.$year,
+                                'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
+                                'start' => $event_start,
+                                'display' => 'background',
+                                'allDay' => true,
+                                'overlap' => true,
+                            ];
+                        }
                     }
                 }
-            } elseif ($start_date >= $start && $start_date <= $end) {
-                $results[] = [
-                    'id' => $evento['id'],
-                    'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
-                    'start' => $start_date,
-                    'display' => 'background',
-                    'allDay' => true,
-                    'overlap' => true,
-                ];
+            } else {
+                if ($start_date <= $end && $end_date >= $start) {
+                    $results[] = [
+                        'id' => $evento['id'],
+                        'title' => '<span class="fc-event-title">'.$evento['nome'].'</span>',
+                        'start' => max($start_date, $start),
+                        'end' => date('Y-m-d', strtotime(min($end_date, $end) . ' +1 day')),
+                        'display' => 'background',
+                        'allDay' => true,
+                        'overlap' => true,
+                    ];
+                }
             }
         }
 

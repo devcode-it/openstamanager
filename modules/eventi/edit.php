@@ -35,14 +35,18 @@ include_once __DIR__.'/../../core.php';
 
 		<div class="card-body">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 					{[ "type": "text", "label": "<?php echo tr('Nome'); ?>", "name": "nome", "required": 1, "value": "$nome$" ]}
 				</div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
 					{[ "type": "date", "label": "<?php echo tr('Data'); ?>", "name": "data", "required": 1, "value": "$data$"  ]}
 				</div>
-			</div>
+
+                <div class="col-md-4">
+                    {[ "type": "date", "label": "<?php echo tr('Data fine'); ?>", "name": "data_fine", "value": "$data_fine$" ]}
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-6">

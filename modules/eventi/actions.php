@@ -24,6 +24,7 @@ switch (post('op')) {
     case 'update':
         $nome = post('nome');
         $data = post('data');
+        $data_fine = post('data_fine');
         $id_nazione = post('id_nazione');
         $id_regione = post('id_regione');
         $is_recurring = post('is_recurring');
@@ -34,6 +35,7 @@ switch (post('op')) {
             Models\Event::find($id_record)->update([
                 'nome' => $nome,
                 'data' => $data,
+                'data_fine' => $data_fine ?: null,
                 'id_nazione' => $id_nazione,
                 'id_regione' => $id_regione,
                 'is_recurring' => $is_recurring,
@@ -52,6 +54,7 @@ switch (post('op')) {
     case 'add':
         $nome = post('nome');
         $data = post('data');
+        $data_fine = post('data_fine') ?: null;
         $id_nazione = post('id_nazione');
         $exists = Models\Event::where('id_nazione', $id_nazione)
             ->where('nome', $nome)
@@ -61,6 +64,7 @@ switch (post('op')) {
             $event = Models\Event::create([
                 'nome' => $nome,
                 'data' => $data,
+                'data_fine' => $data_fine,
                 'id_nazione' => $id_nazione,
             ]);
             $id_record = $event->id;

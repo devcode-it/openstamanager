@@ -33,11 +33,13 @@ class Event extends Model
 
     protected $dates = [
         'data',
+        'data_fine',
     ];
 
     protected $fillable = [
         'nome',
         'data',
+        'data_fine',
         'id_nazione',
         'id_regione',
         'is_recurring',

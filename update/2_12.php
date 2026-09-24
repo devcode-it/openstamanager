@@ -22,6 +22,41 @@ use Models\User;
 
 $dbo = database();
 
+// Aggiunta colonna Logo nell'elenco Marche
+$id_module_marche = $dbo->fetchOne('SELECT `id` FROM `zz_modules` WHERE `name` = "Marche"')['id'] ?? null;
+if (!empty($id_module_marche)) {
+    $id_view_logo = $dbo->fetchOne('SELECT `id` FROM `zz_views` WHERE `id_module` = '.prepare($id_module_marche).' AND `name` = "Logo"')['id'] ?? null;
+
+    if (empty($id_view_logo)) {
+        $dbo->insert('zz_views', [
+            'id_module' => $id_module_marche,
+            'name' => 'Logo',
+            'query' => 'IFNULL(CONCAT(\'<img src="files/marche/\', (SELECT `filename` FROM `zz_files` WHERE `id_module` = '.prepare($id_module_marche).' AND `id_record` = `zz_marche`.`id` AND `key` = \'cover\' ORDER BY `id` DESC LIMIT 1), \'" style="max-width:140px;max-height:40px;object-fit:contain;border-radius:4px">\'), \'\')',
+            'order' => 2,
+            'search' => 0,
+            'slow' => 0,
+            'format' => 0,
+            'html_format' => 1,
+            'visible' => 1,
+            'summable' => 0,
+            'avg' => 0,
+            'default' => 1,
+        ]);
+
+        $id_view_logo = $dbo->lastInsertedID();
+        $dbo->insert('zz_views_lang', [
+            'id_lang' => 1,
+            'id_record' => $id_view_logo,
+            'title' => 'Logo',
+        ]);
+        $dbo->insert('zz_views_lang', [
+            'id_lang' => 2,
+            'id_record' => $id_view_logo,
+            'title' => 'Logo',
+        ]);
+    }
+}
+
 $groups = $dbo->fetchArray('SELECT `id` FROM `zz_groups` ORDER BY `id`');
 
 $groups_string = implode(',', array_column($groups, 'id'));

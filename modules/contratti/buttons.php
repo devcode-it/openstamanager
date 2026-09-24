@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Common\DocumentRounding;
+
 if (!$is_anagrafica_deleted) {
     $is_fatturabile = $record['is_fatturabile'];
     $stati_fatturabili = $dbo->fetchOne('SELECT GROUP_CONCAT(`title` SEPARATOR ", ") AS stati_abilitati FROM `co_stati_contratti` LEFT JOIN `co_stati_contratti_lang` ON (`co_stati_contratti`.`id` = `co_stati_contratti_lang`.`id_record` AND `co_stati_contratti_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `is_fatturabile` = 1')['stati_abilitati'];
@@ -46,6 +48,13 @@ if (!$is_anagrafica_deleted) {
             <i class="fa fa-refresh"></i> '.tr('Rinnova').'
         </button>
     </div>';
+}
+
+if (DocumentRounding::defaultMode() !== null && empty($record['is_bloccato'])) {
+    echo '
+<button type="button" class="btn btn-default" data-widget="modal" data-title="'.tr('Arrotonda totale').'" data-href="'.base_path_osm().'/include/document-rounding.php?id_module='.$id_module.'&id_record='.$id_record.'">
+    <i class="fa fa-calculator"></i> '.tr('Arrotonda').'
+</button>';
 }
 
 // Duplica contratto

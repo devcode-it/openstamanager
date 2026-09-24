@@ -27,7 +27,7 @@ switch ($resource) {
         $id_record = $superselect['id_record'];
 
         if (isset($id_module) || isset($id_plugin)) {
-            $query = 'SELECT `id`, `title` AS descrizione FROM zz_files |where|';
+            $query = 'SELECT `id`, `name` AS descrizione FROM zz_files |where|';
 
             if (isset($id_module)) {
                 $where[] = '`zz_files`.`id_module` = '.prepare($id_module);
@@ -36,26 +36,14 @@ switch ($resource) {
                 $where[] = '`zz_files`.`id_plugin` = '.prepare($id_plugin);
             }
             $where[] = '`zz_files`.`id_record` = '.prepare($id_record);
-            $where[] = '`zz_files`.`key` IS NULL';
-
-            if ($is_fiscale != null) {
-                $where[] = '`zz_segments`.`is_fiscale` = '.prepare($is_fiscale);
-            }
-
-            if ($is_sezionale != null) {
-                $where[] = '`zz_segments`.`is_sezionale` = '.prepare($is_sezionale);
-            }
-
-            if ($escludi_id != null) {
-                $where[] = '`zz_segments`.`id` != '.prepare($escludi_id);
-            }
+            $where[] = '(`key` IS NULL OR `key` = "")';
 
             foreach ($elements as $element) {
                 $filter[] = '`id`='.prepare($element);
             }
 
             if (!empty($search)) {
-                $search_fields[] = '`zz_segments`.`title` LIKE '.prepare('%'.$search.'%');
+                $search_fields[] = '`zz_files`.`name` LIKE '.prepare('%'.$search.'%');
             }
         }
 

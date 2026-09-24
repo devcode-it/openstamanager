@@ -88,9 +88,9 @@ VALUES
 UPDATE `zz_views` SET `name` = 'tel_Telefono' WHERE `zz_views`.`name` = 'Telefono'; 
 UPDATE `zz_views` SET `name` = 'tel_Cellulare' WHERE `zz_views`.`name` = 'Cellulare'; 
 UPDATE `zz_views` SET `name` = 'emailto_Email' WHERE `zz_views`.`name` = 'Email'; 
-UPDATE `zz_views_lang` SET `title` = 'tel_Telefono' WHERE `zz_views_lang`.`id_record` = (SELECT `id` FROM `zz_views` WHERE `name` = 'tel_Telefono'); 
-UPDATE `zz_views_lang` SET `title` = 'tel_Cellulare' WHERE `zz_views_lang`.`id_record` = (SELECT `id` FROM `zz_views` WHERE `name` = 'tel_Cellulare');
-UPDATE `zz_views_lang` SET `title` = 'emailto_Email' WHERE `zz_views_lang`.`id_record` = (SELECT `id` FROM `zz_views` WHERE `name` = 'emailto_Email');
+UPDATE `zz_views_lang` SET `title` = 'tel_Telefono' WHERE `zz_views_lang`.`id_record` IN (SELECT `id` FROM `zz_views` WHERE `name` = 'tel_Telefono'); 
+UPDATE `zz_views_lang` SET `title` = 'tel_Cellulare' WHERE `zz_views_lang`.`id_record` IN (SELECT `id` FROM `zz_views` WHERE `name` = 'tel_Cellulare');
+UPDATE `zz_views_lang` SET `title` = 'emailto_Email' WHERE `zz_views_lang`.`id_record` IN (SELECT `id` FROM `zz_views` WHERE `name` = 'emailto_Email');
 
 -- Aggiunta campo modello
 ALTER TABLE `mg_articoli` ADD `modello` VARCHAR(255) NULL AFTER `id_marchio`; 

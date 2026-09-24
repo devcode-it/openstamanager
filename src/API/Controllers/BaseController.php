@@ -2,6 +2,9 @@
 
 namespace API\Controllers;
 
+use CuyZ\Valinor\Mapper\Configurator\ConvertKeysToSnakeCase;
+use CuyZ\Valinor\Mapper\MappingError;
+use CuyZ\Valinor\MapperBuilder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -11,7 +14,7 @@ use Models\Plugin;
 
 class InvalidInputException extends \Exception
 {
-    public function __construct(\CuyZ\Valinor\Mapper\MappingError $error)
+    public function __construct(MappingError $error)
     {
         $messages = $error->messages();
 
@@ -22,6 +25,39 @@ class InvalidInputException extends \Exception
 
         parent::__construct('Invalid input: '.implode("\n", $formatted));
     }
+}
+
+// https://www.php.net/manual/en/function.parse-str.php//76792
+function proper_parse_str($str) {
+  // result array
+  $arr = array();
+
+  // split on outer delimiter
+  $pairs = explode('&', $str);
+
+  // loop through each pair
+  foreach ($pairs as $i) {
+    // split into name and value
+    list($name,$value) = explode('=', $i, 2);
+    
+    // if name already exists
+    if( isset($arr[$name]) ) {
+      // stick multiple values into an array
+      if( is_array($arr[$name]) ) {
+        $arr[$name][] = $value;
+      }
+      else {
+        $arr[$name] = array($arr[$name], $value);
+      }
+    }
+    // otherwise, simply stick it in a scalar
+    else {
+      $arr[$name] = $value;
+    }
+  }
+
+  // return result array
+  return $arr;
 }
 
 abstract class BaseController extends Controller
@@ -85,17 +121,21 @@ abstract class BaseController extends Controller
      */
     protected function _cast(Request $request, string $class_reference): mixed
     {
+        $query_params = proper_parse_str($_SERVER['QUERY_STRING']);
         try {
-            return (new \CuyZ\Valinor\MapperBuilder())
+            return (new MapperBuilder())
                 ->allowUndefinedValues()
                 ->allowSuperfluousKeys()
                 ->allowScalarValueCasting()
+                ->configureWith(
+                    new ConvertKeysToSnakeCase(),
+                )
                 ->mapper()
                 ->map(
                     $class_reference,
-                    [...$request->route()->parameters(), ...$request->all()]
+                    [...$request->route()->parameters(), ...$request->all(), ...$query_params]
                 );
-        } catch (\CuyZ\Valinor\Mapper\MappingError $error) {
+        } catch (MappingError $error) {
             throw new InvalidInputException($error);
         }
     }

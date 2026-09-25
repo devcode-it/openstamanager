@@ -121,3 +121,8 @@ INSERT INTO `zz_views` (`id`, `id_module`, `name`, `query`, `order`, `visible`, 
 INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 (1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi') AND `name` = 'Data fine'), 'Data fine'),
 (2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Eventi') AND `name` = 'Data fine'), 'End date');
+
+-- Aggiunta campo id_sede alle righe dei documenti che movimentano il magazzino
+ALTER TABLE `co_righe_documenti` ADD `id_sede` INT NOT NULL;
+ALTER TABLE `dt_righe_ddt` ADD `id_sede` INT NOT NULL;
+ALTER TABLE `in_righe_interventi` ADD `id_sede` INT NOT NULL;

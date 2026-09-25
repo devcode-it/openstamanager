@@ -48,6 +48,9 @@ abstract class Article extends Accounting
         $model->descrizione = $articolo->getTranslation('title');
         $model->abilita_serial = $articolo->abilita_serial;
         $model->um = $articolo->um;
+        if ($document->movimenta_magazzino) {
+            $model->id_sede = $document->direzione == 'uscita' ? $document->id_sede_destinazione : $document->id_sede_partenza;
+        }
 
         if (empty($model->id_iva)) {
             $default_iva = setting('Iva predefinita');
@@ -81,7 +84,7 @@ abstract class Article extends Accounting
     /**
      * Metodo dedicato a gestire in automatico la movimentazione del magazzino in relazione all'articolo di riferimento sulla base delle caratteristiche del movimento (magazzino abilitato o meno).
      */
-    public function movimenta($qta)
+    public function movimenta($qta, $id_sede = null)
     {
         if (!$this->getDocument()->movimenta_magazzino) {
             return;
@@ -96,7 +99,7 @@ abstract class Article extends Accounting
         }
 
         if ($movimenta) {
-            $this->movimentaMagazzino($qta);
+            $this->movimentaMagazzino($qta, $id_sede);
         }
     }
 
@@ -216,7 +219,6 @@ abstract class Article extends Accounting
      *
      * @param float $value
      */
-    #[\Override]
     public function setQtaAttribute($value)
     {
         if (!$this->cleanupSerials($value)) {
@@ -251,10 +253,12 @@ abstract class Article extends Accounting
      *
      * @return bool
      */
-    #[\Override]
     public function save(array $options = [])
     {
-        if (!empty($this->qta_movimentazione)) {
+        // Gestione del cambio di sede di magazzino sulla riga: ripristino della quantità nella sede precedente e scarico dell'intera quantità nella nuova sede
+        if ($this->isSedeCambiata()) {
+            $this->movimentaRipristinoSede();
+        } elseif (!empty($this->qta_movimentazione)) {
             $this->movimenta($this->qta_movimentazione);
             $this->qta_movimentazione = 0;
         }
@@ -262,7 +266,33 @@ abstract class Article extends Accounting
         return parent::save($options);
     }
 
-    #[\Override]
+    /**
+     * Verifica se la sede di magazzino della riga è stata modificata rispetto al valore registrato nel database (solo per gli Interventi).
+     *
+     * @return bool
+     */
+    protected function isSedeCambiata()
+    {
+        if (!$this->exists || !array_key_exists('id_sede', $this->attributes)) {
+            return false;
+        }
+        $sede_precedente = (int) ($this->original['id_sede'] ?: 0);
+
+        return $this->id_sede !== $sede_precedente;
+    }
+
+    /**
+     * Gestisce il cambio di sede di magazzino sulla riga: ripristino della quantità nella sede precedente (+qta) e scarico dell'intera quantità nella nuova sede (-qta).
+     */
+    protected function movimentaRipristinoSede()
+    {
+        // Ripristino della quantità nella sede precedente
+        $this->movimenta(-$this->original['qta'], $this->original['id_sede'] ?: 0);
+
+        // Scarico dell'intera quantità nella nuova sede
+        $this->movimenta($this->qta);
+    }
+
     public function canDelete()
     {
         $serials = $this->usedSerials();
@@ -270,7 +300,6 @@ abstract class Article extends Accounting
         return empty($serials);
     }
 
-    #[\Override]
     public function delete()
     {
         if (!$this->canDelete()) {
@@ -292,7 +321,7 @@ abstract class Article extends Accounting
         return !empty($this->abilita_serial) && !empty($this->serialRowID);
     }
 
-    protected function movimentaMagazzino($qta)
+    protected function movimentaMagazzino($qta, $id_sede = null)
     {
         $documento = $this->getDocument();
         $data = $documento->getReferenceDate();
@@ -300,13 +329,9 @@ abstract class Article extends Accounting
         $qta_movimento = $documento->direzione == 'uscita' ? $qta : -$qta;
         $movimento = Movimento::descrizioneMovimento($qta_movimento, $documento->direzione).' - '.$documento->getReference();
 
-        // Gestione della sede: priorità alla sede esplicita, poi quella del documento
-        if (isset($this->qta_movimentazione_sede)) {
-            $id_sede = $this->qta_movimentazione_sede;
-        } elseif ($documento instanceof \Modules\Interventi\Intervento) {
-            $id_sede = $documento->id_sede_partenza;
-        } else {
-            $id_sede = $documento->direzione == 'uscita' ? $documento->id_sede_destinazione : $documento->id_sede_partenza;
+        // Gestione della sede: priorità alla sede esplicita, poi alla sede della riga per gli Interventi, poi a quella del documento
+        if (!isset($id_sede)) {
+            $id_sede = $this->id_sede;
         }
 
         // Fix per valori di sede a NULL
@@ -323,18 +348,32 @@ abstract class Article extends Accounting
 
             // Se la quantità supera la giacenza in sede allora movimento solo quello che resta
             if (($qta_sede + $qta_finale) < 0 && $qta_sede >= 0) {
+                $giacenza_disponibile = $qta_sede;
+                $quantita_richiesta = $this->attributes['qta'];
+                $quantita_mancante = $quantita_richiesta - $giacenza_disponibile - $this->original['qta'];
+                flash()->error(tr('Quantità non disponibile in magazzino: la giacenza è _GIACENZA_ ma hai inserito _RICHIESTA_. Mancano _MANCANTE_', [
+                    '_GIACENZA_' => numberFormat($giacenza_disponibile, 'qta'),
+                    '_RICHIESTA_' => numberFormat($quantita_richiesta, 'qta'),
+                    '_MANCANTE_' => numberFormat($quantita_mancante, 'qta'),
+                ]));
                 $qta_finale = -$qta_sede;
                 $this->attributes['qta'] = $qta_sede + ($qta_modifica != 0 ? $this->original['qta'] : 0);
             }
 
             // Se la quantità sede per qualche motivo è negativa correggo la quantità della riga con la differenza
             elseif ($qta_sede < 0 && $this->original['qta'] >= abs($qta_sede)) {
+                flash()->error(tr('Giacenza in sede non valida: la giacenza attuale è negativa (_GIACENZA_)', [
+                    '_GIACENZA_' => numberFormat($qta_sede, 'qta'),
+                ]));
                 $qta_finale = abs($qta_sede);
                 $this->attributes['qta'] = $this->original['qta'] - abs($qta_sede);
             }
 
             // Se la quantità sede per qualche motivo è negativa e supera la quantità della riga azzero quest'ultima
             elseif ($qta_sede < 0 && $this->original['qta'] < abs($qta_sede)) {
+                flash()->error(tr('Giacenza in sede non valida: la giacenza attuale è negativa (_GIACENZA_)', [
+                    '_GIACENZA_' => numberFormat($qta_sede, 'qta'),
+                ]));
                 $qta_finale = $this->original['qta'];
                 $this->attributes['qta'] = 0;
             }
@@ -347,7 +386,6 @@ abstract class Article extends Accounting
         ]);
     }
 
-    #[\Override]
     protected static function boot()
     {
         parent::boot();

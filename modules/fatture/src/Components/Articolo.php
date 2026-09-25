@@ -33,7 +33,7 @@ class Articolo extends Article
     protected $serialRowID = 'documento';
 
     #[\Override]
-    public function movimenta($qta)
+    public function movimenta($qta, $id_sede = null)
     {
         $documento = $this->getDocument();
         if (!$documento->movimenta_magazzino) {
@@ -71,7 +71,7 @@ class Articolo extends Article
         }
 
         if ($movimenta) {
-            $this->movimentaMagazzino($qta);
+            $this->movimentaMagazzino($qta, $id_sede);
         }
     }
 }

@@ -48,7 +48,7 @@ abstract class Article extends Accounting
         $model->descrizione = $articolo->getTranslation('title');
         $model->abilita_serial = $articolo->abilita_serial;
         $model->um = $articolo->um;
-        if ($document->movimenta_magazzino) {
+        if ($document->movimenta_magazzino && $model->hasColumn('id_sede')) {
             $model->id_sede = $document->direzione == 'uscita' ? $document->id_sede_destinazione : $document->id_sede_partenza;
         }
 

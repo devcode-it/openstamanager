@@ -62,19 +62,18 @@ if (empty($id_anagrafica)) {
     $id_anagrafica = Modules\Interventi\Intervento::where('id', $id_intervento)->first()->id_anagrafica;
 }
 
-$anagrafica = database()->table('an_anagrafiche')->where('id', $id_anagrafica)->first(['id_tipo_intervento_default', 'id_zona']);
-$id_tipo = $anagrafica->id_tipo_intervento_default;
-$id_zona = $anagrafica->id_zona;
+$anagrafica = $dbo->fetchOne('SELECT id_tipo_intervento_default, id_zona FROM an_anagrafiche WHERE id='.prepare($id_anagrafica));
+$id_tipo = $anagrafica['id_tipo_intervento_default'];
+$id_zona = $anagrafica['id_zona'];
 
 // Trasformazione di un Promemoria dei Contratti in Intervento
 if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
-    // Recupero id_zona dell'anagrafica in un'unica query
-    $contratto = $dbo->fetchOne('SELECT co_contratti.*, an_anagrafiche.id_zona FROM co_contratti INNER JOIN an_anagrafiche ON an_anagrafiche.id = co_contratti.id_anagrafica WHERE co_contratti.id = '.prepare($id_contratto));
+    $contratto = $dbo->fetchOne('SELECT *, (SELECT id_zona FROM an_anagrafiche WHERE id = co_contratti.id_anagrafica) AS id_zona FROM co_contratti WHERE id = '.prepare($id_contratto));
     $id_anagrafica = $contratto['id_anagrafica'];
     $id_zona = $contratto['id_zona'];
 
-    // Informazioni del Promemoria con tempo_standard
-    $promemoria = $dbo->fetchOne('SELECT co_promemoria.*, in_tipi_intervento.tempo_standard FROM co_promemoria INNER JOIN in_tipi_intervento ON in_tipi_intervento.id = co_promemoria.id_tipo_intervento WHERE co_promemoria.id_contratto='.prepare($id_contratto).' AND co_promemoria.id = '.prepare($id_promemoria_contratto));
+    // Informazioni del Promemoria
+    $promemoria = $dbo->fetchOne('SELECT *, (SELECT `tempo_standard` FROM `in_tipi_intervento` WHERE `id` = `co_promemoria`.`id_tipo_intervento`) AS tempo_standard FROM `co_promemoria` WHERE `id_contratto`='.prepare($id_contratto).' AND `co_promemoria`.`id` = '.prepare($id_promemoria_contratto));
     $id_tipo = $promemoria['id_tipo_intervento'];
     $data = filter('data') ?? $promemoria['data_richiesta'];
     $richiesta = $promemoria['richiesta'];
@@ -91,14 +90,14 @@ if (!empty($id_contratto) && !empty($id_promemoria_contratto)) {
 
     // Caricamento degli impianti a Contratto se non definiti in Promemoria
     if (empty($impianti_collegati)) {
-        $rs = database()->table('my_impianti_contratti')->where('id_contratto', $id_contratto)->pluck('id_impianto')->toArray();
-        $impianti_collegati = implode(',', $rs);
+        $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_contratti WHERE id_contratto = '.prepare($id_contratto));
+        $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
     }
 }
 
 // Gestione dell'aggiunta di una sessione a un Intervento senza sessioni (Promemoria intervento) da Dashboard
 elseif (!empty($id_intervento)) {
-    $intervento = $dbo->fetchOne('SELECT `in_interventi`.*, `co_promemoria`.`id_contratto`, `in_tipi_intervento`.`tempo_standard` FROM `in_interventi` LEFT JOIN `co_promemoria` ON `co_promemoria`.`id_intervento` = `in_interventi`.`id` LEFT JOIN `in_tipi_intervento` ON `in_tipi_intervento`.`id` = `in_interventi`.`id_tipo_intervento` WHERE `in_interventi`.`id` = '.prepare($id_intervento));
+    $intervento = $dbo->fetchOne('SELECT *, (SELECT `id_contratto` FROM `co_promemoria` WHERE `id_intervento` = `in_interventi`.`id` LIMIT 0,1) AS id_contratto, `in_interventi`.`id_preventivo` as id_preventivo, (SELECT `tempo_standard` FROM `in_tipi_intervento` WHERE `id` = `in_interventi`.`id_tipo_intervento`) AS tempo_standard FROM `in_interventi` WHERE `id` = '.prepare($id_intervento));
 
     $id_tipo = $intervento['id_tipo_intervento'];
     $data = filter('data') ?? $intervento['data_richiesta'];
@@ -118,17 +117,17 @@ elseif (!empty($id_intervento)) {
         $orario_fine = date('H:i:s', strtotime($orario_inizio) + ((60 * 60) * $intervento['tempo_standard']));
     }
 
-    $rs = database()->table('my_impianti_interventi')->where('id_intervento', $id_intervento)->pluck('id_impianto')->toArray();
-    $impianti_collegati = implode(',', $rs);
+    $rs = $dbo->fetchArray('SELECT id_impianto FROM my_impianti_interventi WHERE id_intervento = '.prepare($id_intervento));
+    $impianti_collegati = implode(',', array_column($rs, 'id_impianto'));
 
-    $rs = database()->table('in_interventi_tecnici_assegnati')->where('id_intervento', $id_intervento)->pluck('id_tecnico')->toArray();
-    $tecnici_assegnati = implode(',', $rs);
+    $rs = $dbo->fetchArray('SELECT id_tecnico FROM in_interventi_tecnici_assegnati WHERE id_intervento = '.prepare($id_intervento));
+    $tecnici_assegnati = implode(',', array_column($rs, 'id_tecnico'));
 }
 
 // Selezione dei tecnici predefiniti per gli impianti selezionati
 if (!empty($impianti_collegati)) {
-    $tecnici_impianti = database()->table('my_impianti')->whereIn('id', explode(',', $impianti_collegati))->pluck('id_tecnico')->toArray();
-    $id_tecnico = array_unique($tecnici_impianti);
+    $tecnici_impianti = $dbo->fetchArray('SELECT id_tecnico FROM my_impianti WHERE id IN ('.prepare($impianti_collegati).')');
+    $id_tecnico = array_unique(array_column($tecnici_impianti, 'id_tecnico'));
 }
 
 // Impostazione della data se mancante
@@ -219,7 +218,7 @@ echo '
         </div>
 
         <div class="col-md-4">
-            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `title`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
+            {[ "type": "select", "label": "'.tr('Stato').'", "name": "id", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL ORDER BY `sort_order`, `title`", "value": "'.($origine_dashboard ? setting('Stato predefinito dell\'attività da Dashboard') : setting('Stato predefinito dell\'attività')).'" ]}
         </div>
     </div>
 
@@ -414,7 +413,7 @@ echo '
 
                             <div class="row mt-3">
                                 <div class="col-md-6">
-                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "id_statoricorrenze", "values": "query=SELECT `in_stati_intervento`.`id`,`in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento`  LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `title`" ]}
+                                    {[ "type": "select", "label": "'.tr('Stato ricorrenze').'", "name": "id_statoricorrenze", "values": "query=SELECT `in_stati_intervento`.`id`,`in_stati_intervento_lang`.`title` as descrizione, `colore` AS _bgcolor_ FROM `in_stati_intervento`  LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato`=0 ORDER BY `sort_order`, `title`" ]}
                                 </div>
                                 <div class="col-md-6">
                                     {[ "type": "checkbox", "label": "'.tr('Riporta sessioni di lavoro').'", "name": "riporta_sessioni_add", "value": "" ]}
@@ -521,15 +520,10 @@ echo '
 
         // Refresh modulo dopo la chiusura di una pianificazione attività derivante dalle attività
         // da pianificare, altrimenti il promemoria non si vede più nella lista a destra
-        const id_contratto_riga = $("input[name=id_contratto_riga]").val();
-        if(id_contratto_riga) {
-            $("#modals").on("hidden.bs.modal", function(e) {
-                // Ricarica le DataTables per aggiornare la lista dei promemoria
-                $(".main-records, .datatables").each(function() {
-                    if($.fn.DataTable.isDataTable($(this))) {
-                        $(this).DataTable().ajax.reload();
-                    }
-                });
+		// TODO: da gestire via ajax
+        if($("input[name=id_contratto_riga]").val()) {
+            $("#modals > div button.close").on("click", function() {
+                location.reload();
             });
         }
 
@@ -572,7 +566,7 @@ echo '
         let selected = !$(this).val();
         let placeholder = selected ? "'.tr('Seleziona prima un cliente').'" : "'.tr("Seleziona un'opzione").'";
 
-        let selected_sede = !$(this).val() || ($(this).prop("disabled") && sede.get()) ? 1 : 0;
+        let selected_sede = !$(this).val() || $(this).prop("disabled") ? 1 : 0;
         sede.setDisabled(selected_sede)
             .getElement().selectReset(placeholder);
 

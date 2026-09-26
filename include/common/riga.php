@@ -129,8 +129,8 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
             margine = isNaN(margine) || !isFinite(margine) ? 0: margine; // Fix per magine NaN
             ricarico = isNaN(ricarico) || !isFinite(ricarico) ? 0: ricarico; // Fix per ricarico NaN
 
-            if ($("#id_articolo").val()) {
-                mediaponderata = parseFloat($("#id_articolo").selectData().media_ponderata);
+            if ($("#id_articolo_add").val()) {
+                mediaponderata = parseFloat($("#id_articolo_add").selectData().media_ponderata);
             }
 
             div.html("<table class=\"table table-extra-condensed table-margine\" style=\"margin-top:-13px;\" >\

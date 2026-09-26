@@ -126,3 +126,7 @@ ALTER TABLE `in_stati_intervento`
 ADD COLUMN `sort_order` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `id`;
 
 UPDATE `zz_modules` SET `options` = 'SELECT\r\n |select|\r\nFROM \r\n `in_stati_intervento`\r\n LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.|lang|)\r\nWHERE \r\n 1=1 AND `deleted_at` IS NULL \r\nHAVING \r\n 2=2\r\nORDER BY `sort_order`, `title`' WHERE `zz_modules`.`id` = 10;
+-- Aggiunta campo id_sede alle righe dei documenti che movimentano il magazzino
+ALTER TABLE `co_righe_documenti` ADD `id_sede` INT NOT NULL;
+ALTER TABLE `dt_righe_ddt` ADD `id_sede` INT NOT NULL;
+ALTER TABLE `in_righe_interventi` ADD `id_sede` INT NOT NULL;

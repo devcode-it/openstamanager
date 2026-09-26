@@ -253,8 +253,6 @@ switch ($op) {
             flash()->warning($message);
         }
 
-        aggiorna_sedi_movimenti('documenti', $id_record);
-
         // Controllo sulla presenza di fattura di acquisto con lo stesso numero secondario nello stesso periodo
         $direzione = $fattura->direzione;
         if ($direzione == 'uscita') {
@@ -539,6 +537,7 @@ switch ($op) {
 
         $articolo->id_iva = post('id_iva');
         $articolo->id_conto = post('id_conto') ?: null;
+        $articolo->id_sede = post('id_sede');
 
         $articolo->calcolo_ritenuta_acconto = post('calcolo_ritenuta_acconto') ?: null;
         $articolo->id_ritenuta_acconto = post('id_ritenuta_acconto') ?: null;
@@ -1062,7 +1061,6 @@ switch ($op) {
         $nota->save();
 
         $id_record = $nota->id;
-        aggiorna_sedi_movimenti('documenti', $id_record);
 
         break;
 
@@ -1557,5 +1555,4 @@ if (get('op') == 'nota_addebito') {
     $nota->save();
 
     $id_record = $nota->id;
-    aggiorna_sedi_movimenti('documenti', $id_record);
 }

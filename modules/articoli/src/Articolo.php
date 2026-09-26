@@ -383,7 +383,7 @@ class Articolo extends Model
     {
         $movimenti = $this->movimenti()
             ->selectRaw('*, mg_movimenti.created_at AS data_movimento, SUM(mg_movimenti.qta) as qta_documento, IFNULL(mg_movimenti.reference_type, mg_movimenti.id) as tipo_gruppo')
-            ->groupBy(['tipo_gruppo', 'mg_movimenti.reference_id', 'mg_movimenti.id_utente']);
+            ->groupBy(['id_sede', 'tipo_gruppo', 'mg_movimenti.reference_id', 'mg_movimenti.id_utente']);
 
         if (!empty($mostra_vuoti)) {
             return $movimenti;

@@ -143,8 +143,6 @@ switch (filter('op')) {
                 }
             }
 
-            aggiorna_sedi_movimenti('ddt', $id_record);
-
             // Controllo sulla presenza di DDT con lo stesso numero secondario
             $direzione = $ddt->direzione;
             if ($direzione == 'uscita' and !empty($numero_esterno)) {
@@ -184,6 +182,7 @@ switch (filter('op')) {
         $articolo->setPrezzoUnitario(post('prezzo_unitario'), post('id_iva'));
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->id_conto = post('id_conto') ?: null;
+        $articolo->id_sede = post('id_sede');
         if ($dir == 'entrata') {
             $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         }

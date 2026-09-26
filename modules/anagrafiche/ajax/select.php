@@ -433,6 +433,7 @@ switch ($resource) {
         $query = "SELECT * FROM (SELECT '0' AS id, 'Sede legale' AS `nome_sede`, CONCAT_WS(' - ', \"".tr('Sede legale')."\" , (SELECT CONCAT (`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), ''),' (', `ragione_sociale`,')') FROM `an_anagrafiche` |where|)) AS descrizione UNION SELECT `id`, `nome_sede`, CONCAT_WS(' - ', `nome_sede`, CONCAT(`citta`, IF(`indirizzo`!='',CONCAT(' (', `indirizzo`, ')'), '')) ) FROM `an_sedi` |where| ORDER BY `nome_sede`) AS tab |filter| ORDER BY descrizione";
 
         $where[] = '`id`='.prepare($id_azienda);
+        $where[] = 'deleted_at IS NULL';
 
         // filtro in base alle sedi abilitate dell'utente
         if ($user->gruppo != 'Amministratori') {

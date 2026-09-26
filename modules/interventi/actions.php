@@ -228,8 +228,6 @@ switch (post('op')) {
             OperationLog::build('cambio_stato_intervento');
         }
 
-        aggiorna_sedi_movimenti('interventi', $id_record);
-
         flash()->info(tr('Attività modificata correttamente!'));
 
         break;
@@ -765,7 +763,6 @@ switch (post('op')) {
 
         $qta = post('qta');
 
-        $articolo->id_sede_partenza = post('id_sede_partenza');
         $articolo->descrizione = post('descrizione');
         $articolo->note = post('note');
         $articolo->um = post('um') ?: null;
@@ -778,6 +775,7 @@ switch (post('op')) {
         $articolo->setSconto(post('sconto'), post('tipo_sconto'), post('sconto_percentuale_combinato'));
         $articolo->setProvvigione(post('provvigione'), post('tipo_provvigione'));
         $articolo->id_conto = post('id_conto') ?: null;
+        $articolo->id_sede = post('id_sede');
 
         try {
             $articolo->qta = $qta;

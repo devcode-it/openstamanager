@@ -416,6 +416,11 @@ class Query
         // Gestione confronti - ottimizzata
         $real_value = trim(str_replace(['&lt;', '&gt;'], ['<', '>'], $value));
 
+        // Controllo intervallo di date PRIMA degli operatori singoli (es. 01/01/2026-31/12/2026)
+        if (preg_match('/^\d{2}\/\d{2}\/\d{4}\s*-\s*\d{2}\/\d{2}\/\d{4}$/', $real_value)) {
+            return self::buildRangeFilter($search_query, $real_value);
+        }
+
         // Controlli ottimizzati per operatori
         $operators = [
             '>=' => ['>=', '> ='],
@@ -476,6 +481,33 @@ class Query
         }
 
         return null;
+    }
+
+    /**
+     * Costruisce un filtro per intervalli di date (es. 01/01/2026-31/12/2026).
+     *
+     * @param string $search_query
+     * @param string $value
+     *
+     * @return string
+     */
+    protected static function buildRangeFilter($search_query, $value)
+    {
+        // Parse dell'intervallo: 01/01/2026-31/12/2026
+        if (!preg_match('/^(\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})$/', $value, $m)) {
+            return '';
+        }
+
+        $date1 = $m[1];
+        $date2 = $m[2];
+
+        // Conversione date da DD/MM/YYYY a YYYY-MM-DD
+        [$d1, $m1, $y1] = explode('/', $date1);
+        [$d2, $m2, $y2] = explode('/', $date2);
+        $sql_date1 = "'{$y1}-{$m1}-{$d1}'";
+        $sql_date2 = "'{$y2}-{$m2}-{$d2}'";
+
+        return '('.$search_query.' >= '.$sql_date1.' AND '.$search_query.' <= '.$sql_date2.')';
     }
 
     /**

@@ -201,6 +201,15 @@ foreach ($righe as $riga) {
                     '.($has_alert ? '<i class="fa fa-warning text-danger"></i>' : '').'
                 </span>';
     }
+
+    // Avviso per articoli scaricati da una sede di magazzino diversa da quella predefinita del documento
+    $sedi_nomi = array_column(Modules\Anagrafiche\Sede::where('id_anagrafica', (setting('Azienda predefinita')))->get()->toArray(), 'nome_sede', 'id');
+    $id_sede = $fattura->direzione == 'uscita' ? $fattura->id_sede_destinazione : $fattura->id_sede_partenza;
+    if ($riga->isArticolo() && $riga->id_sede != $id_sede) {
+        $nome_sede = $sedi_nomi[$riga->id_sede] ?? tr('Sede legale');
+        echo '
+                <br><span class="badge badge-warning pull-right"><i class="fa fa-truck"></i> '.$nome_sede.'</span>';
+    }
     echo '
             </td>';
 

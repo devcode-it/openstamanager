@@ -21,6 +21,8 @@
 $result['id_articolo'] ??= null;
 $qta_minima = 0;
 $id_sede_destinazione = $options['select-options']['articoli']['id_sede_destinazione'] ?? null;
+$riga = $result['type']::find($result['id']);
+$movimenta_magazzino = $riga->getDocument()->movimenta_magazzino;
 
 $id_listino = null;
 if ($id_sede_destinazione) {
@@ -54,7 +56,10 @@ if($options['edit']==1){
 }
 
 echo '
-    {[ "type": "select", "disabled":'.$disabled.', "required":'.$required.', "label": "'.tr('Articolo').'", "name": "id_articolo", "value": "'.$result['id_articolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
+<div class="row">
+    <div class="col-md-'.($movimenta_magazzino ? '8' : '12').'">
+        {[ "type": "select", "disabled":'.$disabled.', "required":'.$required.', "label": "'.tr('Articolo').'", "name": "id_articolo", "id": "id_articolo_add", "value": "'.$result['id_articolo'].'", "ajax-source": "articoli", "select-options": '.json_encode($options['select-options']['articoli']).' ]}
+    </div>
 
     <script>
         $(document).ready(function (){
@@ -75,6 +80,22 @@ echo '
     <input type="hidden" name="provvigione_default" id="provvigione_default" value="'.$result['provvigione_default'].'">
     <input type="hidden" name="tipo_provvigione_default" id="provvigione_default" value="'.$result['tipo_provvigione_default'].'">
     <input type="hidden" name="blocca_minimo_vendita" value="'.setting('Bloccare i prezzi inferiori al minimo di vendita').'">';
+
+if ($movimenta_magazzino) {
+    // Se la riga ha gia' un movimento, non permettere di cambiare la sede
+    $disabled_sede = 0;
+    if ($riga->hasOriginalComponent()) {
+        $original = $riga->getOriginalComponent();
+        $disabled_sede = $original->getDocument()->movimenta_magazzino;
+    }
+    $label_sede = $options['dir'] == 'entrata' ? tr('Sede partenza') : tr('Sede destinazione');
+    echo '
+    <div class="col-md-4">
+        {[ "type": "select", "label": "'.$label_sede.'", "name": "id_sede", "ajax-source": "sedi_azienda", "value": "'.$result['id_sede'].'", "help": "'.tr("Magazzino da cui movimentare la quantità dell'articolo. Modificandolo su una riga già movimentata, la quantità viene ripristinata nella sede precedente e movimentata nella nuova sede. Se la riga è gia' movimentata da un altro documento, non è possibile cambiare la sede").'", "disabled": "'.$disabled_sede.'" ]}
+    </div>';
+}
+echo '
+</div>';
 
 // Selezione impianto per gli Interventi
 if ($module->name == 'Interventi') {
@@ -134,7 +155,7 @@ input("tipo_sconto").on("change", function() {
     verificaScontoArticolo();
 });
 
-$("#id_articolo").on("change", function() {
+$("#id_articolo_add").on("change", function() {
     // Operazioni sui prezzi in fondo alla pagina
     let prezzi_precedenti = $("#prezzi_articolo button");
     if (prezzi_precedenti.length) {
@@ -451,7 +472,7 @@ function verificaPrezzoArticolo() {
     let prezzo_listino = getPrezzoListino(qta);
     let prezzo_std = getPrezzoScheda();
     let prezzo_last = getPrezzoUltimo();
-    let prezzo_minimo = parseFloat($("#id_articolo").selectData().minimo_vendita);
+    let prezzo_minimo = parseFloat($("#id_articolo_add").selectData().minimo_vendita);
     let prezzi_visibili = getPrezziListinoVisibili("", qta);
 
     if (prezzo_anagrafica || prezzo_listino || prezzo_std || prezzo_last || prezzo_minimo || prezzi_visibili) {
@@ -594,7 +615,7 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
     } else if (aggiorna == "last") {
         prezzo_previsto = getPrezzoUltimo();
     } else if (aggiorna == "minimo") {
-        prezzo_previsto = parseFloat($("#id_articolo").selectData().minimo_vendita);
+        prezzo_previsto = parseFloat($("#id_articolo_add").selectData().minimo_vendita);
     } else if (aggiorna != "") {
         prezzo_previsto = getPrezziListinoVisibili(aggiorna, qta);
     } else {
@@ -677,7 +698,7 @@ function aggiornaQtaMinima() {
 function verificaMinimoVendita() {
     let prezzo_unitario_input = $("#prezzo_unitario");
     let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
-    let minimo_vendita = parseFloat($("#id_articolo").selectData().minimo_vendita);
+    let minimo_vendita = parseFloat($("#id_articolo_add").selectData().minimo_vendita);
 
     let div = $(".minimo_vendita");
     div.css("margin-top", "-13px");

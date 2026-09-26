@@ -290,6 +290,10 @@ abstract class Component extends Model
             }
         }
 
+        if (!isset($this->id_sede)) {
+            $model->id_sede = $document->direzione == 'uscita' ? $document->id_sede_destinazione : $document->id_sede_partenza;
+        }
+
         $model->save();
 
         // Impostazione degli attributi

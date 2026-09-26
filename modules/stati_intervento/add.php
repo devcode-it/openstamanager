@@ -31,7 +31,11 @@ include_once __DIR__.'/../../core.php';
 		<div class="col-md-6">
 			{[ "type": "text", "label": "<?php echo tr('Descrizione'); ?>", "name": "descrizione", "required": 1 ]}
 		</div>
-
+		<div class="col-md-3">
+            {[ "type": "text", "label": "<?php echo tr('Ordinamento'); ?>", "name": "sort_order" ]}
+		</div>
+    </div>
+    <div class="row">
 		<div class="col-md-3">
 			{[ "type": "text", "label": "<?php echo tr('Colore'); ?>", "name": "colore", "id": "colore_", "required": 1, "class": "colorpicker text-center", "value": "#ffffff", "extra": "maxlength='7'", "icon-after": "<div class='img-circle square'></div>" ]}
 		</div>
@@ -49,8 +53,8 @@ include_once __DIR__.'/../../core.php';
 
 <script>
     $(document).ready(function() {
-        $('.colorpicker').colorpicker({ format: 'hex' }).on('colorpickerChange', function(event) {
-            $(this).parent().find('.square').css('background', event.value);
+        $('.colorpicker').colorpicker({ format: 'hex' }).on('changeColor', function() {
+            $(this).parent().find('.square').css('background', $(this).val());
         });
         $('.colorpicker').parent().find('.square').css('background', $('.colorpicker').val());
     });

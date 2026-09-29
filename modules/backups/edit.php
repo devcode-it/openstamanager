@@ -79,13 +79,12 @@ function creaBackup(button){
         title: "'.tr('Creare un nuovo backup?').'",
         html: "<style>#swal-backup-select{width:100%}</style>" +
               "<div class=\"swal2-select-container\">" +
-              "<label class=\"swal2-select-label\">'.tr('Seleziona cosa escludere dal backup:').'</label>" +
+              "<label class=\"swal2-select-label\">'.tr('Seleziona cosa includere nel backup:').'</label>" +
               "<select id=\"swal-backup-select\" class=\"form-control\">" +
-              "<option value=\"\">'.tr('Non escludere nulla').'</option>" +
-              "<option value=\"exclude_attachments\">📎 '.tr('Allegati').'</option>" +
-              "<option value=\"only_database\">🗃️ '.tr('Tutto tranne database').'</option>" +
+              "<option value=\"\">'.tr('OSM + database + allegati').'</option>" +
+              "<option value=\"exclude_attachments\">'.tr('OSM + database').'</option>" +
+              "<option value=\"only_database\">'.tr('Solo database').'</option>" +
               "</select>" +
-              "<div class=\"swal2-select-help\">'.tr('Seleziona un\'opzione per personalizzare il backup, oppure lascia vuoto per includere tutto').'</div>" +
               "</div>",
         showCancelButton: true,
         confirmButtonText: "'.tr('Crea').'",

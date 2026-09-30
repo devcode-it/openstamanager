@@ -336,7 +336,7 @@ if (empty(get('modal'))) {
                     // Ricerca inserimenti su ordini
                     $query = 'SELECT
                             *,
-                            `or_tipi_ordine_lang`.`title` AS tipo_ordine,
+                            `or_tipi_ordine_lang`.`title` AS tipo_documento,
                             `or_tipi_ordine`.`dir`,
                             `or_ordini`.`numero`,
                             `or_ordini`.`numero_esterno`,
@@ -358,12 +358,12 @@ if (empty(get('modal'))) {
                     $module = 'Interventi';
 
                     // Ricerca inserimenti su interventi
-                    $query = 'SELECT in_righe_interventi.*, in_interventi.codice, ( SELECT orario_inizio FROM in_interventi_tecnici WHERE id_intervento=in_righe_interventi.id_intervento LIMIT 0,1 ) AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.id_intervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
+                    $query = 'SELECT in_righe_interventi.*, in_interventi.codice AS numero, in_interventi.data_richiesta AS data FROM in_righe_interventi JOIN in_interventi ON in_interventi.id = in_righe_interventi.id_intervento WHERE in_righe_interventi.id='.prepare($vendita['id_riga_intervento']);
                     $data = $dbo->fetchArray($query);
 
                     $id = $data[0]['id_intervento'];
 
-                    $data[0]['tipo_documento'] = tr('Intervento').' '.$data[0]['codice'];
+                    $data[0]['tipo_documento'] = tr('Intervento');
                 }
 
                 // Inserito su contratto

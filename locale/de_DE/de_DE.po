@@ -10726,3 +10726,19 @@ msgid ""
 "Il browser non supporta i contenuti iframe: clicca qui per raggiungere il "
 "file originale"
 msgstr ""
+
+#: include/login.php
+msgid "Selezione lingua"
+msgstr "Sprachauswahl"
+
+#: include/login.php
+msgid "Lingua"
+msgstr "Sprache"
+
+#: include/login.php
+msgid "Accessi alternativi"
+msgstr "Alternative Anmeldungen"
+
+#: include/login.php
+msgid "Accedi con"
+msgstr "Anmelden mit"

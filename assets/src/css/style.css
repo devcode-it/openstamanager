@@ -216,6 +216,192 @@ input[type=file] {
     box-shadow: 0 1px 3px rgba(255, 193, 7, 0.3);
 }
 
+.login-page .osm-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 32px 16px;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.04), rgba(14, 165, 233, 0.08)),
+        #f5f7fb;
+}
+
+.login-page .osm-login__panel {
+    width: min(100%, 430px);
+}
+
+.login-page .osm-login__brand {
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.login-page .osm-login__logo {
+    width: min(100%, 310px);
+    max-height: 86px;
+    object-fit: contain;
+}
+
+.login-page .osm-login__locale {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.login-page .osm-login__locale-label {
+    margin-bottom: 0;
+    color: #4b5563;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.login-page .osm-login__locale-select {
+    width: auto;
+    min-width: 180px;
+}
+
+.login-page .osm-login__form {
+    padding: 32px;
+    background: #fff;
+    border: 1px solid #dbe3ef;
+    border-radius: 8px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+.login-page .osm-login__title {
+    margin: 0;
+    color: #111827;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+}
+
+.login-page .osm-login__subtitle {
+    margin: 8px 0 24px;
+    color: #64748b;
+}
+
+.login-page .osm-login__notice,
+.login-page .osm-login__error {
+    border-radius: 8px;
+}
+
+.login-page .osm-login__brute {
+    display: block;
+    margin-top: 8px;
+}
+
+.login-page .osm-login__field {
+    margin-bottom: 18px;
+}
+
+.login-page .osm-login__field label {
+    color: #334155;
+    font-weight: 600;
+}
+
+.login-page .osm-login__field .form-control {
+    min-height: 46px;
+    border-color: #cbd5e1;
+    border-radius: 6px 0 0 6px;
+}
+
+.login-page .osm-login__field .input-group-text,
+.login-page .osm-login__password-toggle {
+    min-width: 46px;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #475569;
+}
+
+.login-page .osm-login__password-toggle {
+    border-radius: 0 6px 6px 0;
+}
+
+.login-page .osm-login__submit {
+    min-height: 48px;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+.login-page .osm-login__links {
+    margin-top: 18px;
+    text-align: center;
+}
+
+.login-page .osm-login__links a {
+    color: #475569;
+    font-weight: 600;
+}
+
+.login-page .osm-login__links a:hover {
+    color: #0f766e;
+}
+
+.login-page .osm-login__divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.login-page .osm-login__divider::before,
+.login-page .osm-login__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.login-page .osm-login__oauth-button {
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+.login-page .osm-login :focus-visible {
+    outline: 3px solid rgba(14, 165, 233, 0.35);
+    outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+    .login-page .osm-login {
+        align-items: flex-start;
+        padding: 22px 12px;
+    }
+
+    .login-page .osm-login__brand {
+        margin-bottom: 14px;
+    }
+
+    .login-page .osm-login__logo {
+        width: min(100%, 250px);
+        max-height: 72px;
+    }
+
+    .login-page .osm-login__locale {
+        justify-content: stretch;
+    }
+
+    .login-page .osm-login__locale-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .login-page .osm-login__form {
+        padding: 24px 18px;
+    }
+
+    .login-page .osm-login__title {
+        font-size: 1.45rem;
+    }
+}
+
 /* Disabilita il widget sidebar-search di AdminLTE */
 [data-widget-disabled="true"] .sidebar-search-results,
 .sidebar-search-results,

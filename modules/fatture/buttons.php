@@ -19,6 +19,7 @@
  */
 
 include_once __DIR__.'/../../core.php';
+use Common\DocumentRounding;
 use Models\Module;
 
 // Pulsante "Attributi avanzati" per fatture di vendita e di acquisto
@@ -132,7 +133,6 @@ if (!empty($record['is_fiscale'])) {
                 <i class="fa fa-euro"></i> '.tr('Registra contabile').'
             </a>';
 
-    // Riapri documento - sempre visibile ma disabilitato se non utilizzabile
     echo '
             <a class="btn dropdown-item '.($record['stato'] == 'Pagato' ? 'ask tip' : 'disabled').'" '.($record['stato'] == 'Pagato' ? 'data-msg="'.tr('Se riapri questo documento verrà azzerato lo scadenzario e la relativa prima nota. Continuare?').'" data-button="'.tr('Procedi').'" data-method="post" data-op="reopen" data-backto="record-edit" data-title="'.tr('Riaprire il documento?').'" title="'.tr("Riporta il documento nello stato di 'Emessa' e ne elimina i movimenti contabili").'"' : '').'>
                 <i class="fa fa-folder-open"></i> '.tr('Riapri documento').'...
@@ -141,6 +141,13 @@ if (!empty($record['is_fiscale'])) {
     echo '
         </ul>
     </div>';
+}
+
+if ($module->name === 'Fatture di vendita' && $record['stato'] === 'Bozza' && empty($record['is_reversed']) && DocumentRounding::defaultMode() !== null) {
+    echo '
+<button type="button" class="btn btn-default" data-widget="modal" data-title="'.tr('Arrotonda totale').'" data-href="'.base_path_osm().'/include/document-rounding.php?id_module='.$id_module.'&id_record='.$id_record.'">
+    <i class="fa fa-calculator"></i> '.tr('Arrotonda').'
+</button>';
 }
 
 // Duplica fattura

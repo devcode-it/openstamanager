@@ -40,7 +40,7 @@
         "jszip": "^3.10.1",
         "leaflet": "^1.9.4",
         "leaflet-gesture-handling": "^1.2.2",
-        "leaflet.fullscreen": "^3.0.2",
+        "leaflet.fullscreen": "^5.3.3",
         "merge-stream": "^2.0.0",
         "moment": "^2.18.1",
         "numeral": "^2.0.6",

@@ -42,6 +42,7 @@ switch (post('op')) {
             $stato->notifica_tecnico_assegnato = post('notifica_tecnico_assegnato');
             $stato->id_email = post('email') ?: null;
             $stato->destinatari = post('destinatari');
+            $stato->sort_order = post('sort_order');
             $stato->save();
 
             $stato->setTranslation('title', $descrizione);
@@ -54,7 +55,6 @@ switch (post('op')) {
         $codice = post('codice');
         $descrizione = post('descrizione');
         $colore = post('colore');
-
         $stato_new = Stato::where('name', $descrizione)->first()->id;
 
         if ($stato_new) {
@@ -62,6 +62,7 @@ switch (post('op')) {
         } else {
             $stato = Stato::build($codice, $colore);
             $stato->name = $descrizione;
+            $stato->sort_order = post('sort_order');
             $id_record = $dbo->lastInsertedID();
             $stato->save();
 

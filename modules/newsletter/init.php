@@ -26,7 +26,16 @@ include_once __DIR__.'/../../core.php';
 if (!empty($id_record)) {
     $newsletter = Newsletter::find($id_record);
 
-    $record = $newsletter->toArray();
+    if (!empty($newsletter) && $newsletter->state == 'WAIT') {
+        $newsletter->fixStato();
+    }
 
-    $template = Template::find($record['id_template']);
+    $record = $newsletter ? $newsletter->toArray() : [];
+
+    $template = !empty($record['id_template']) ? Template::find($record['id_template']) : null;
+} else {
+    $newslettersInWait = Newsletter::where('state', 'WAIT')->get();
+    foreach ($newslettersInWait as $n) {
+        $n->fixStato();
+    }
 }

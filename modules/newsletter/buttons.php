@@ -20,7 +20,7 @@
 
 if ($newsletter->state == 'DEV' && !empty($template)) {
     echo '
-    <button type="button" class="btn btn-primary ask" data-msg="'.tr('Procedere ad inviare la newsletter?').'" data-op="send" data-button="'.tr('Invia').'" data-class="btn btn-lg btn-warning">
+    <button type="button" class="btn btn-primary" id="btn-invia-newsletter" onclick="avviaInvioNewsletter(this)">
     <i class="fa fa-envelope"></i> '.tr('Invia newsletter').'
     </button>';
 } elseif ($newsletter->state == 'WAIT') {

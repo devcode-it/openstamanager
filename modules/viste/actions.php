@@ -404,9 +404,9 @@ switch (filter('op')) {
 
         if (check_query($options2)) {
             Module::where('id', $id_record)->update(['options2' => $options2]);
-            $module = Module::find($id_record);
-            if ($module) {
-                $module->setTranslation('title', post('title'));
+            $module_update = Module::find($id_record);
+            if ($module_update) {
+                $module_update->setTranslation('title', post('title'));
             }
             $rs = true;
         } else {
@@ -430,7 +430,7 @@ switch (filter('op')) {
             if (check_query($query)) {
                 $array = [
                     'name' => post('name')[$c],
-                    'query' => $query,
+                    'query' => html_entity_decode($query),
                     'visible' => post('visible')[$c],
                     'search' => post('search')[$c],
                     'slow' => post('slow')[$c],

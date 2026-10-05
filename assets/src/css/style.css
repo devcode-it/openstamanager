@@ -4104,6 +4104,7 @@ table.dataTable tbody td:nth-child(6) {
 /* Stili generali per migliorare le tabelle DataTables */
 table.dataTable tbody td {
     vertical-align: middle;
+    overflow-wrap: break-word;
 }
 
 /* Stile per header della colonna Data e ora */

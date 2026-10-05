@@ -121,10 +121,11 @@ foreach ($destinatari_filtrati as $destinatario) {
         '<div class="text-center">'.(empty($lista) && !empty($origine->email) && !empty($origine->enable_newsletter) ? '
             <a class="btn btn-warning btn-xs" data-type="'.$origine::class.'" data-id="'.$origine->id.'" data-email="'.$origine->email.'" onclick="testInvio(this)">
                 <i class="fa fa-paper-plane "></i>
-            </a>' : '').'
+            </a>' : '').
+            (!empty($newsletter) && $newsletter->state != 'DEV' ? '' : '
             <a class="btn btn-danger ask btn-xs" data-backto="record-edit" data-op="remove_receiver" data-type="'.$destinatario->record_type.'" data-id="'.$destinatario->record_id.'">
                 <i class="fa fa-trash"></i>
-            </a>
+            </a>').'
         </div>',
     ]);
 

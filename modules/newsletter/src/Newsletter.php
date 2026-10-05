@@ -70,15 +70,27 @@ class Newsletter extends Model
 
     public function fixStato()
     {
-        // Verifica se esistono email associate a questa newsletter che non sono state ancora inviate.
-        $hasUnsentEmails = $this->emails()->whereNull('sent_at')->exists();
+        if ($this->state !== 'WAIT') {
+            return;
+        }
 
-        // Se non ci sono email non inviate, la newsletter è completata.
-        $completed = !$hasUnsentEmails;
+        $maxAttempts = (int) setting('Numero massimo di tentativi');
+        if ($maxAttempts < 1) {
+            $maxAttempts = 1;
+        }
 
-        if ($completed && $this->state !== 'OK') {
+        // Verifica se esistono email associate a questa newsletter che devono essere ancora inviate
+        // (email non inviate e con tentativi inferiori alla soglia massima)
+        $hasUnsentEmails = $this->emails()
+            ->whereNull('sent_at')
+            ->where('attempt', '<', $maxAttempts)
+            ->exists();
+
+        // Se non ci sono più email da inviare in coda, la newsletter è completata
+        if (!$hasUnsentEmails) {
             $this->state = 'OK';
-            $this->completed_at = date('Y-m-d H:i:s'); // Utilizza la funzione helper now() per ottenere la data e l'ora correnti
+            $lastSent = $this->emails()->max('sent_at');
+            $this->completed_at = $lastSent ?: date('Y-m-d H:i:s');
             $this->save();
         }
     }
@@ -86,18 +98,27 @@ class Newsletter extends Model
     public function getNumeroDestinatariSenzaEmail()
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
-            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'record_id')
-            ->where('email', '=', '')
+            ->leftJoin('an_anagrafiche', 'an_anagrafiche.id', '=', 'record_id')
+            ->where(function ($query) {
+                $query->whereNull('an_anagrafiche.email')
+                    ->orWhereRaw("TRIM(an_anagrafiche.email) = ''");
+            })
             ->count();
 
         $sedi = $this->getDestinatari(Sede::class)
-            ->join('an_sedi', 'an_sedi.id', '=', 'record_id')
-            ->where('email', '=', '')
+            ->leftJoin('an_sedi', 'an_sedi.id', '=', 'record_id')
+            ->where(function ($query) {
+                $query->whereNull('an_sedi.email')
+                    ->orWhereRaw("TRIM(an_sedi.email) = ''");
+            })
             ->count();
 
         $referenti = $this->getDestinatari(Referente::class)
-            ->join('an_referenti', 'an_referenti.id', '=', 'record_id')
-            ->where('email', '=', '')
+            ->leftJoin('an_referenti', 'an_referenti.id', '=', 'record_id')
+            ->where(function ($query) {
+                $query->whereNull('an_referenti.email')
+                    ->orWhereRaw("TRIM(an_referenti.email) = ''");
+            })
             ->count();
 
         return $anagrafiche + $sedi + $referenti;
@@ -107,19 +128,32 @@ class Newsletter extends Model
     {
         $anagrafiche = $this->getDestinatari(Anagrafica::class)
             ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'record_id')
-            ->where('an_anagrafiche.enable_newsletter', '=', false)
+            ->where(function ($query) {
+                $query->whereNull('an_anagrafiche.enable_newsletter')
+                    ->orWhere('an_anagrafiche.enable_newsletter', '!=', 1);
+            })
             ->count();
 
         $sedi = $this->getDestinatari(Sede::class)
             ->join('an_sedi', 'an_sedi.id', '=', 'record_id')
-            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_sedi.id_anagrafica')
-            ->where('an_anagrafiche.enable_newsletter', '=', false)
+            ->leftJoin('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_sedi.id_anagrafica')
+            ->where(function ($query) {
+                $query->whereNull('an_sedi.enable_newsletter')
+                    ->orWhere('an_sedi.enable_newsletter', '!=', 1)
+                    ->orWhereNull('an_anagrafiche.enable_newsletter')
+                    ->orWhere('an_anagrafiche.enable_newsletter', '!=', 1);
+            })
             ->count();
 
         $referenti = $this->getDestinatari(Referente::class)
             ->join('an_referenti', 'an_referenti.id', '=', 'record_id')
-            ->join('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_referenti.id_anagrafica')
-            ->where('an_anagrafiche.enable_newsletter', '=', false)
+            ->leftJoin('an_anagrafiche', 'an_anagrafiche.id', '=', 'an_referenti.id_anagrafica')
+            ->where(function ($query) {
+                $query->whereNull('an_referenti.enable_newsletter')
+                    ->orWhere('an_referenti.enable_newsletter', '!=', 1)
+                    ->orWhereNull('an_anagrafiche.enable_newsletter')
+                    ->orWhere('an_anagrafiche.enable_newsletter', '!=', 1);
+            })
             ->count();
 
         return $anagrafiche + $sedi + $referenti;
@@ -136,23 +170,30 @@ class Newsletter extends Model
      *
      * @return Mail|null
      */
-    public function inviaDestinatario(Destinatario $destinatario, $test = false)
+    public function inviaDestinatario(Destinatario $destinatario, $test = false, $uploads = null, $template = null, $user = null)
     {
-        $template = $this->template;
-        $uploads = $this->uploads()->pluck('id');
+        $template = $template ?: $this->template;
+        $uploads = $uploads !== null ? $uploads : $this->uploads()->pluck('id');
+        $user = $user ?: auth_osm()->getUser();
 
         $origine = $destinatario->getOrigine();
-
-        $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
-
-        $abilita_newsletter = $origine->enable_newsletter;
-        $email = $destinatario->email;
-        if (empty($email) || empty($abilita_newsletter) || !v::email()->isValid($email)) {
+        if (empty($origine)) {
             return null;
         }
 
-        // Inizializzazione email
-        $mail = Mail::build(auth_osm()->getUser(), $template, $anagrafica->id);
+        $anagrafica = $origine instanceof Anagrafica ? $origine : $origine->anagrafica;
+        if (empty($anagrafica)) {
+            return null;
+        }
+
+        $abilita_newsletter = $origine->enable_newsletter;
+        $email = $destinatario->email;
+        if (empty($email) || empty($abilita_newsletter) || !v::email()->validate($email)) {
+            return null;
+        }
+
+        // Inizializzazione email (passando false per reset_from_template per evitare overhead inutile di parsing e stampe/pdf)
+        $mail = Mail::build($user, $template, $anagrafica->id, null, false);
 
         // Completamento informazioni
         $mail->addReceiver($email);
@@ -179,7 +220,7 @@ class Newsletter extends Model
 
     public function emails()
     {
-        return $this->belongsToMany(Mail::class, 'em_newsletter_receiver', 'id_newsletter', 'id_email')->withPivot(['record_id', 'record_type']);
+        return $this->hasMany(Mail::class, 'id_newsletter');
     }
 
     public function account()

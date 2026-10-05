@@ -60,6 +60,11 @@ switch (filter('op')) {
         break;
 
     case 'delete':
+        if ($newsletter->state != 'DEV') {
+            flash()->error(tr('È possibile eliminare la newsletter solo quando è in stato di bozza!'));
+            break;
+        }
+
         $newsletter->delete();
 
         flash()->info(tr('Campagna newsletter rimossa!'));
@@ -67,17 +72,114 @@ switch (filter('op')) {
         break;
 
     case 'send':
-        $newsletter = Newsletter::find($id_record);
+        @set_time_limit(0);
+        @ini_set('max_execution_time', 0);
+        ignore_user_abort(true);
 
-        $destinatari = $newsletter->destinatari();
-        $count = $destinatari->count();
-        for ($i = 0; $i < $count; ++$i) {
-            $destinatario = $destinatari->skip($i)->first();
+        $newsletter = Newsletter::find($id_record);
+        if (empty($newsletter)) {
+            flash()->error(tr('Newsletter non trovata!'));
+            break;
+        }
+
+        $template = $newsletter->template;
+        $uploads = $newsletter->uploads()->pluck('id')->toArray();
+        $user = auth_osm()->getUser();
+
+        $last_id = 0;
+        $batch_size = 100;
+
+        while (true) {
+            $destinatari = $newsletter->destinatari()
+                ->where('id', '>', $last_id)
+                ->orderBy('id', 'asc')
+                ->limit($batch_size)
+                ->get();
+
+            if ($destinatari->isEmpty()) {
+                break;
+            }
+
+            foreach ($destinatari as $destinatario) {
+                $last_id = $destinatario->id;
+
+                if (empty($destinatario->id_email)) {
+                    $mail = $newsletter->inviaDestinatario($destinatario, false, $uploads, $template, $user);
+
+                    // Aggiornamento riferimento per la newsletter
+                    if (!empty($mail)) {
+                        $destinatario->id_email = $mail->id;
+                        $destinatario->save();
+                    }
+                }
+            }
+
+            if ($destinatari->count() < $batch_size) {
+                break;
+            }
+        }
+
+        // Aggiornamento stato newsletter
+        $newsletter->state = 'WAIT';
+        $newsletter->save();
+        $newsletter->fixStato();
+
+        flash()->info(tr('Campagna newsletter in invio!'));
+
+        break;
+
+    case 'send_batch':
+        @set_time_limit(0);
+        @ini_set('max_execution_time', 0);
+        ignore_user_abort(true);
+
+        $newsletter = Newsletter::find($id_record);
+        if (empty($newsletter)) {
+            echo json_encode(['error' => tr('Newsletter non trovata')]);
+            break;
+        }
+
+        $last_id = (int) post('last_id');
+        $batch_size = (int) post('batch_size') ?: 50;
+        if ($batch_size < 1) {
+            $batch_size = 50;
+        }
+
+        $total = $newsletter->destinatari()->count();
+        $processed = (int) post('processed');
+
+        $template = $newsletter->template;
+        $uploads = $newsletter->uploads()->pluck('id')->toArray();
+        $user = auth_osm()->getUser();
+
+        $destinatari = $newsletter->destinatari()
+            ->where('id', '>', $last_id)
+            ->orderBy('id', 'asc')
+            ->limit($batch_size)
+            ->get();
+
+        if ($destinatari->isEmpty()) {
+            $newsletter->state = 'WAIT';
+            $newsletter->save();
+            $newsletter->fixStato();
+
+            echo json_encode([
+                'completed' => true,
+                'total' => $total,
+                'processed' => $total,
+                'last_id' => $last_id,
+            ]);
+            break;
+        }
+
+        $current_last_id = $last_id;
+        foreach ($destinatari as $destinatario) {
+            $current_last_id = $destinatario->id;
+            ++$processed;
 
             if (empty($destinatario->id_email)) {
-                $mail = $newsletter->inviaDestinatario($destinatario);
+                $mail = $newsletter->inviaDestinatario($destinatario, false, $uploads, $template, $user);
 
-                // Aggiornamento riferimento per la newsletter
                 if (!empty($mail)) {
                     $destinatario->id_email = $mail->id;
                     $destinatario->save();
@@ -85,11 +187,19 @@ switch (filter('op')) {
             }
         }
 
-        // Aggiornamento stato newsletter
-        $newsletter->state = 'WAIT';
-        $newsletter->save();
+        $completed = ($destinatari->count() < $batch_size);
+        if ($completed) {
+            $newsletter->state = 'WAIT';
+            $newsletter->save();
+            $newsletter->fixStato();
+        }
 
-        flash()->info(tr('Campagna newsletter in invio!'));
+        echo json_encode([
+            'completed' => $completed,
+            'total' => $total,
+            'processed' => min($processed, $total),
+            'last_id' => $current_last_id,
+        ]);
 
         break;
 
@@ -147,7 +257,7 @@ switch (filter('op')) {
 
             // Rimozione riferimento email dalla newsletter
             $database->update('em_newsletter_receiver', [
-                'id_email' => $null,
+                'id_email' => null,
             ], [
                 'id_email' => $mail->id,
                 'id_newsletter' => $newsletter->id,
@@ -166,29 +276,68 @@ switch (filter('op')) {
         break;
 
     case 'add_receivers':
+        if ($newsletter->state != 'DEV') {
+            flash()->error(tr('È possibile aggiungere i destinatari solo quando la newsletter è in stato di bozza!'));
+            break;
+        }
+
+        $tipo_anagrafica = prepare(Anagrafica::class);
+        $tipo_sede = prepare(Sede::class);
+        $tipo_referente = prepare(Referente::class);
+        $id_newsletter = prepare($newsletter->id);
+
         // Selezione manuale
         $id_receivers = post('receivers');
-        foreach ($id_receivers as $id_receiver) {
-            [$tipo, $id] = explode('_', (string) $id_receiver);
-            if ($tipo == 'anagrafica') {
-                $type = Anagrafica::class;
-            } elseif ($tipo == 'sede') {
-                $type = Sede::class;
-            } else {
-                $type = Referente::class;
-            }
+        if (!empty($id_receivers)) {
+            foreach ($id_receivers as $id_receiver) {
+                [$tipo, $id] = explode('_', (string) $id_receiver);
+                if ($tipo == 'anagrafica') {
+                    $type = Anagrafica::class;
+                    $entity = Anagrafica::find($id);
+                } elseif ($tipo == 'sede') {
+                    $type = Sede::class;
+                    $entity = Sede::find($id);
+                } else {
+                    $type = Referente::class;
+                    $entity = Referente::find($id);
+                }
 
-            // Dati di registrazione
-            $data = [
-                'record_type' => $type,
-                'record_id' => $id,
-                'id_newsletter' => $newsletter->id,
-            ];
+                if (empty($entity)) {
+                    continue;
+                }
 
-            // Aggiornamento destinatari
-            $registrato = $database->select('em_newsletter_receiver', '*', [], $data);
-            if (empty($registrato)) {
-                $database->insert('em_newsletter_receiver', $data);
+                $email = strtolower(trim((string) $entity->email));
+
+                // Dati di registrazione
+                $data = [
+                    'record_type' => $type,
+                    'record_id' => $id,
+                    'id_newsletter' => $newsletter->id,
+                ];
+
+                // Aggiornamento destinatari
+                $registrato = $database->select('em_newsletter_receiver', '*', [], $data);
+                if (empty($registrato)) {
+                    // Controllo se l'indirizzo email è già presente tra i destinatari di questa newsletter
+                    if (!empty($email)) {
+                        $email_prep = prepare($email);
+                        $emailExists = !empty($database->fetchOne("
+                            SELECT 1 FROM em_newsletter_receiver nr
+                            LEFT JOIN an_anagrafiche a ON nr.record_type = {$tipo_anagrafica} AND a.id = nr.record_id
+                            LEFT JOIN an_sedi s ON nr.record_type = {$tipo_sede} AND s.id = nr.record_id
+                            LEFT JOIN an_referenti r ON nr.record_type = {$tipo_referente} AND r.id = nr.record_id
+                            WHERE nr.id_newsletter = {$id_newsletter}
+                            AND LOWER(TRIM(COALESCE(a.email, s.email, r.email))) = {$email_prep}
+                            LIMIT 1
+                        "));
+
+                        if ($emailExists) {
+                            continue;
+                        }
+                    }
+
+                    $database->insert('em_newsletter_receiver', $data);
+                }
             }
         }
 
@@ -203,13 +352,51 @@ switch (filter('op')) {
             }
             $lista->save();
 
+            $id_list_prep = prepare($id_list);
+
             // Rimozione preventiva dei record duplicati dalla newsletter
             $database->query('DELETE em_newsletter_receiver.* FROM em_newsletter_receiver
                 INNER JOIN em_list_receiver ON em_list_receiver.record_type = em_newsletter_receiver.record_type AND em_list_receiver.record_id = em_newsletter_receiver.record_id
-            WHERE em_newsletter_receiver.id_newsletter = '.prepare($newsletter->id).' AND em_list_receiver.id_list = '.prepare($id_list));
+            WHERE em_newsletter_receiver.id_newsletter = '.$id_newsletter.' AND em_list_receiver.id_list = '.$id_list_prep);
 
-            // Copia dei record della lista newsletter
-            $database->query('INSERT INTO em_newsletter_receiver (id_newsletter, record_type, record_id) SELECT '.prepare($newsletter->id).', record_type, record_id FROM em_list_receiver WHERE id_list = '.prepare($id_list));
+            // Copia dei record della lista newsletter evitando duplicazioni di email
+            $database->query("
+                INSERT INTO em_newsletter_receiver (id_newsletter, record_type, record_id)
+                SELECT {$id_newsletter}, sub.record_type, sub.record_id
+                FROM (
+                    SELECT 
+                        lr.record_type,
+                        lr.record_id,
+                        LOWER(TRIM(COALESCE(a.email, s.email, r.email))) AS email_clean,
+                        ROW_NUMBER() OVER(
+                            PARTITION BY CASE 
+                                WHEN TRIM(COALESCE(a.email, s.email, r.email)) != '' 
+                                THEN LOWER(TRIM(COALESCE(a.email, s.email, r.email)))
+                                ELSE CONCAT(lr.record_type, '_', lr.record_id)
+                            END 
+                            ORDER BY lr.id ASC
+                        ) AS rn
+                    FROM em_list_receiver lr
+                    LEFT JOIN an_anagrafiche a ON lr.record_type = {$tipo_anagrafica} AND a.id = lr.record_id
+                    LEFT JOIN an_sedi s ON lr.record_type = {$tipo_sede} AND s.id = lr.record_id
+                    LEFT JOIN an_referenti r ON lr.record_type = {$tipo_referente} AND r.id = lr.record_id
+                    WHERE lr.id_list = {$id_list_prep}
+                ) sub
+                WHERE sub.rn = 1
+                AND (
+                    sub.email_clean = '' 
+                    OR sub.email_clean IS NULL 
+                    OR sub.email_clean NOT IN (
+                        SELECT LOWER(TRIM(COALESCE(cur_a.email, cur_s.email, cur_r.email)))
+                        FROM em_newsletter_receiver cur_nr
+                        LEFT JOIN an_anagrafiche cur_a ON cur_nr.record_type = {$tipo_anagrafica} AND cur_a.id = cur_nr.record_id
+                        LEFT JOIN an_sedi cur_s ON cur_nr.record_type = {$tipo_sede} AND cur_s.id = cur_nr.record_id
+                        LEFT JOIN an_referenti cur_r ON cur_nr.record_type = {$tipo_referente} AND cur_r.id = cur_nr.record_id
+                        WHERE cur_nr.id_newsletter = {$id_newsletter}
+                        AND TRIM(COALESCE(cur_a.email, cur_s.email, cur_r.email)) != ''
+                    )
+                )
+            ");
         }
 
         /*
@@ -258,6 +445,11 @@ switch (filter('op')) {
         break;
 
     case 'remove_receiver':
+        if ($newsletter->state != 'DEV') {
+            flash()->error(tr('È possibile rimuovere i destinatari solo quando la newsletter è in stato di bozza!'));
+            break;
+        }
+
         $receiver_id = post('id');
         $receiver_type = post('type');
 
@@ -272,6 +464,11 @@ switch (filter('op')) {
         break;
 
     case 'remove_all_receivers':
+        if ($newsletter->state != 'DEV') {
+            flash()->error(tr('È possibile rimuovere i destinatari solo quando la newsletter è in stato di bozza!'));
+            break;
+        }
+
         $database->delete('em_newsletter_receiver', [
             'id_newsletter' => $newsletter->id,
         ]);

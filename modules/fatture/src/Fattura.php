@@ -507,7 +507,7 @@ class Fattura extends Document
     {
         $nome = 'Ricevuta';
 
-        return $this->uploads()->filter(fn ($item) => str_contains((string) $item->getTranslation('title'), $nome))->sortBy('created_at');
+        return $this->uploads()->filter(fn ($item) => str_contains((string) $item->name, $nome))->sortBy('created_at');
     }
 
     /**

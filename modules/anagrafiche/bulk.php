@@ -31,12 +31,12 @@ switch (post('op')) {
         $id_tipo_azienda = Tipo::where('name', 'Azienda')->first()->id;
 
         foreach ($id_records as $id) {
-            $anagrafica = $dbo->fetchArray('SELECT `an_tipi_anagrafiche`.`id` FROM `an_tipi_anagrafiche` LEFT JOIN `an_tipi_anagrafiche_lang` ON (`an_tipi_anagrafiche`.`id` = `an_tipi_anagrafiche_lang`.`id_record` AND `an_tipi_anagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipi_anagrafiche_anagrafiche` ON `an_tipi_anagrafiche`.`id`=`an_tipi_anagrafiche_anagrafiche`.`id_tipo_anagrafica` WHERE `an_tipi_anagrafiche_anagrafiche`.`id_anagrafica`='.prepare($id));
+            $anagrafica = $dbo->fetchArray('SELECT `an_tipianagrafiche`.`id` FROM `an_tipianagrafiche` LEFT JOIN `an_tipianagrafiche_lang` ON (`an_tipianagrafiche`.`id` = `an_tipianagrafiche_lang`.`id_record` AND `an_tipianagrafiche_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') INNER JOIN `an_tipianagrafiche_anagrafiche` ON `an_tipianagrafiche`.`id`=`an_tipianagrafiche_anagrafiche`.`idtipoanagrafica` WHERE `idanagrafica`='.prepare($id));
             $tipi = array_column($anagrafica, 'id');
 
             // Se l'anagrafica non è di tipo Azienda
             if (!in_array($id_tipo_azienda, $tipi)) {
-                $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `id` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
+                $dbo->query('UPDATE `an_anagrafiche` SET `deleted_at` = NOW() WHERE `idanagrafica` = '.prepare($id).Modules::getAdditionalsQuery($id_module));
                 ++$eliminate;
             }
         }
@@ -64,7 +64,7 @@ switch (post('op')) {
         $exporter = new CSV($file);
 
         // Esportazione dei record selezionati
-        $anagrafiche = Anagrafica::whereIn('id', $id_records)->get();
+        $anagrafiche = Anagrafica::whereIn('idanagrafica', $id_records)->get();
         $exporter->setRecords($anagrafiche);
 
         $count = $exporter->exportRecords();
@@ -73,12 +73,12 @@ switch (post('op')) {
         exit;
 
     case 'change_relation':
-        $id_relazione = post('id_relazione');
+        $idrelazione = post('idrelazione');
 
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
 
-            $anagrafica->id_relazione = $id_relazione;
+            $anagrafica->idrelazione = $idrelazione;
 
             $anagrafica->save();
         }
@@ -99,16 +99,74 @@ switch (post('op')) {
         break;
 
     case 'update_agenti':
-        $id_agente = post('id_agente') ?: 0;
+        $idagente = post('idagente') ?: 0;
         foreach ($id_records as $id) {
             $anagrafica = Anagrafica::find($id);
             if ($anagrafica->isTipo('Cliente')) {
-                $anagrafica->id_agente = $id_agente;
+                $anagrafica->idagente = $idagente;
                 $anagrafica->save();
             }
         }
 
         flash()->info(tr('Agenti aggiornati correttamente!'));
+
+        break;
+
+    case 'update_address_data':
+        $citta = trim((string) post('citta'));
+        $cap = trim((string) post('cap'));
+        $provincia = strtoupper(trim((string) post('provincia')));
+        $sovrascrivi = !empty(post('sovrascrivi'));
+
+        if (empty($citta) || empty($cap) || empty($provincia)) {
+            flash()->error(tr('Città, CAP e provincia sono obbligatori.'));
+            break;
+        }
+
+        if (strlen($citta) > 255 || strlen($cap) > 10 || !preg_match('/^[A-Z]{2}$/', $provincia)) {
+            flash()->error(tr('Controlla i dati inseriti: la provincia deve contenere due lettere.'));
+            break;
+        }
+
+        $aggiornate = 0;
+
+        foreach ($id_records as $id) {
+            $anagrafica = Anagrafica::find($id);
+
+            if (empty($anagrafica)) {
+                continue;
+            }
+
+            $modificata = false;
+
+            if ($sovrascrivi || empty($anagrafica->citta)) {
+                $anagrafica->citta = $citta;
+                $modificata = true;
+            }
+
+            if ($sovrascrivi || empty($anagrafica->cap)) {
+                $anagrafica->cap = $cap;
+                $modificata = true;
+            }
+
+            if ($sovrascrivi || empty($anagrafica->provincia)) {
+                $anagrafica->provincia = $provincia;
+                $modificata = true;
+            }
+
+            if ($modificata) {
+                $anagrafica->save();
+                ++$aggiornate;
+            }
+        }
+
+        if ($aggiornate > 0) {
+            flash()->info(tr('Città, CAP e provincia aggiornati correttamente per _NUM_ anagrafiche.', [
+                '_NUM_' => $aggiornate,
+            ]));
+        } else {
+            flash()->warning(tr('Nessuna anagrafica è stata aggiornata.'));
+        }
 
         break;
 
@@ -119,17 +177,17 @@ switch (post('op')) {
         if ($tipo_esportazione == 'anagrafiche') {
             // Esportazione email e ragione sociale dalle anagrafiche selezionate
             $query = "SELECT DISTINCT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
-                WHERE id IN ($id_records_list)
+                WHERE idanagrafica IN ($id_records_list)
                 AND email != ''
                 AND email IS NOT NULL
                 AND enable_newsletter = 1
                 AND deleted_at IS NULL";
         } elseif ($tipo_esportazione == 'sedi') {
             // Esportazione email, ragione sociale e nome sede dalle sedi delle anagrafiche selezionate
-            $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nome_sede as sede_referente
+            $query = "SELECT DISTINCT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
                 FROM an_sedi s
-                LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
-                WHERE s.id_anagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
+                WHERE s.idanagrafica IN ($id_records_list)
                 AND s.email != ''
                 AND s.email IS NOT NULL
                 AND s.enable_newsletter = 1";
@@ -137,8 +195,8 @@ switch (post('op')) {
             // Esportazione email, ragione sociale e nome referente dai referenti delle anagrafiche selezionate
             $query = "SELECT DISTINCT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
                 FROM an_referenti r
-                LEFT JOIN an_anagrafiche a ON r.id_anagrafica = a.id
-                WHERE r.id_anagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
+                WHERE r.idanagrafica IN ($id_records_list)
                 AND r.email != ''
                 AND r.email IS NOT NULL
                 AND r.enable_newsletter = 1";
@@ -146,24 +204,24 @@ switch (post('op')) {
             // Esportazione email, ragione sociale e nomi da tutte e tre le fonti delle anagrafiche selezionate
             $query = "SELECT DISTINCT email, ragione_sociale, fonte, sede_referente FROM (
                 SELECT email, ragione_sociale, 'Anagrafica' as fonte, '' as sede_referente FROM an_anagrafiche
-                WHERE id IN ($id_records_list)
+                WHERE idanagrafica IN ($id_records_list)
                 AND email != ''
                 AND email IS NOT NULL
                 AND enable_newsletter = 1
                 AND deleted_at IS NULL
                 UNION
-                SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nome_sede as sede_referente
+                SELECT s.email, a.ragione_sociale, 'Sede' as fonte, s.nomesede as sede_referente
                 FROM an_sedi s
-                LEFT JOIN an_anagrafiche a ON s.id_anagrafica = a.id
-                WHERE s.id_anagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON s.idanagrafica = a.idanagrafica
+                WHERE s.idanagrafica IN ($id_records_list)
                 AND s.email != ''
                 AND s.email IS NOT NULL
                 AND s.enable_newsletter = 1
                 UNION
                 SELECT r.email, a.ragione_sociale, 'Referente' as fonte, r.nome as sede_referente
                 FROM an_referenti r
-                LEFT JOIN an_anagrafiche a ON r.id_anagrafica = a.id
-                WHERE r.id_anagrafica IN ($id_records_list)
+                LEFT JOIN an_anagrafiche a ON r.idanagrafica = a.idanagrafica
+                WHERE r.idanagrafica IN ($id_records_list)
                 AND r.email != ''
                 AND r.email IS NOT NULL
                 AND r.enable_newsletter = 1
@@ -176,7 +234,7 @@ switch (post('op')) {
         $handle = fopen($file, 'w');
 
         // Scrittura dell'intestazione
-        fputcsv($handle, ['email', 'ragione_sociale', 'fonte', 'sede_referente'], ';', escape: '\\');
+        fputcsv($handle, ['email', 'ragione_sociale', 'fonte', 'sede_referente'], ';');
 
         // Scrittura dei dati
         foreach ($results as $row) {
@@ -185,7 +243,7 @@ switch (post('op')) {
                 $row['ragione_sociale'],
                 $row['fonte'],
                 $row['sede_referente'],
-            ], ';', escape: '\\');
+            ], ';');
         }
         fclose($handle);
 
@@ -257,7 +315,7 @@ $operations = [];
 $operations['change_relation'] = [
     'text' => '<span><i class="fa fa-copy"></i> '.tr('Cambia relazione').'</span>',
     'data' => [
-        'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "id_relazione", "required": 1, "ajax-source": "relazioni"]}',
+        'msg' => tr('Vuoi davvero cambiare la relazione delle anagrafiche selezionate?').'<br><br>{[ "type": "select", "label": "'.tr('Relazione con il cliente').'", "name": "idrelazione", "required": 1, "ajax-source": "relazioni"]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],
@@ -285,7 +343,7 @@ $operations['export_csv'] = [
 $operations['update_agenti'] = [
     'text' => '<span><i class="fa fa-users"></i> '.tr('Aggiorna agente').'</span>',
     'data' => [
-        'msg' => tr('Vuoi aggiornare l\'agente a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Agente principale').'", "name": "id_agente", "ajax-source": "agenti", "value": "$id_agente$" ]}',
+        'msg' => tr('Vuoi aggiornare l\'agente a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Agente principale').'", "name": "idagente", "ajax-source": "agenti", "value": "$idagente$" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',
     ],
@@ -296,6 +354,19 @@ $operations['update_price_list'] = [
     'data' => [
         'msg' => tr('Vuoi impostare il listino cliente selezionato a queste anagrafiche?').'<br><br>{[ "type": "select", "label": "'.tr('Listino cliente').'", "name": "id_listino", "required": 0, "ajax-source": "listini", "placeholder": "'.tr('Nessun listino').'" ]}',
         'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['update_address_data'] = [
+    'text' => '<span><i class="fa fa-map-marker"></i> '.tr('Aggiorna città, CAP e provincia').'</span>',
+    'data' => [
+        'msg' => tr('Inserisci i dati da applicare alle anagrafiche selezionate.').'<br><br>
+        {[ "type": "text", "label": "'.tr('Città').'", "name": "citta", "required": 1 ]}
+        {[ "type": "text", "label": "'.tr('CAP').'", "name": "cap", "required": 1 ]}
+        {[ "type": "text", "label": "'.tr('Provincia').'", "name": "provincia", "required": 1, "maxlength": 2 ]}
+        {[ "type": "checkbox", "label": "'.tr('Sovrascrivi i dati già presenti').'", "name": "sovrascrivi", "value": 1, "help": "'.tr('Se disattivato, verranno compilati soltanto i campi vuoti.').'" ]}',
+        'button' => tr('Aggiorna'),
         'class' => 'btn btn-lg btn-warning',
     ],
 ];

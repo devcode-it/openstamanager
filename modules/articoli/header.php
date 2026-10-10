@@ -99,10 +99,10 @@ echo '
     </div>';
 
 if ($user->is_admin) {
-    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE deleted_at is NULL AND id_anagrafica='.prepare(setting('Azienda predefinita')).')');
     $sedi = $all_sedi;
 } else {
-    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE id_anagrafica='.prepare(setting('Azienda predefinita')).')');
+    $all_sedi = $dbo->fetchArray('(SELECT "0" AS id, IF(indirizzo!=\'\', CONCAT_WS(" - ", "'.tr('Sede legale').'", CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", "'.tr('Sede legale').'", citta)) AS nome_sede FROM an_anagrafiche WHERE id = '.prepare(setting('Azienda predefinita')).') UNION (SELECT id, IF(indirizzo!=\'\',CONCAT_WS(" - ", nome_sede, CONCAT(citta, \' (\', indirizzo, \')\')), CONCAT_WS(" - ", nome_sede, citta )) AS nome_sede FROM an_sedi WHERE deleted_at is NULL AND id_anagrafica='.prepare(setting('Azienda predefinita')).')');
     $allowed_sedi_ids = $user->sedi;
     $sedi = [];
     foreach ($all_sedi as $sede) {

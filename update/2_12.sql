@@ -122,3 +122,11 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ALTER TABLE `co_righe_documenti` ADD `id_sede` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` ADD `id_sede` INT NOT NULL;
 ALTER TABLE `in_righe_interventi` ADD `id_sede` INT NOT NULL;
+
+-- Add the "Merce" column to the activities list, showing the goods linked to each activity
+INSERT INTO `zz_views` (`id_module`, `name`, `query`, `order`, `search`, `slow`, `format`, `html_format`, `search_inside`, `order_by`, `visible`, `summable`, `avg`, `default`) VALUES
+((SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi'), 'Merce', '(SELECT GROUP_CONCAT(DISTINCT CONCAT(`in_righe_interventi`.`qta`, ''x '', `in_righe_interventi`.`descrizione`) SEPARATOR ''<br />'') FROM `in_righe_interventi` WHERE `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`)', 90, 1, 1, 0, 1, '', '', 1, 0, 0, 0);
+
+INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Merce'), 'Merce'),
+(2, (SELECT `id` FROM `zz_views` WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Interventi') AND `name` = 'Merce'), 'Goods');

@@ -66,12 +66,12 @@ function start_datatables( $elements ) {
                 });
             });
 
-            $this.on('preInit.dt', function (ev, settings) {
-                $('#mini-loader').show();
-            });
-
-            const table = $this.DataTable({
-                language: globals.translations.datatables,
+            $this.DataTable({
+                language: Object.assign({}, globals.translations.datatables, {
+                    // Use the DataTables built-in processing slot with a FontAwesome
+                    // spinner instead of the corner loader.
+                    processing: '<i class="fa fa-spinner fa-spin fa-2x"></i>',
+                }),
                 autoWidth: true,
                 dom: "ti",
                 serverSide: true,
@@ -116,14 +116,6 @@ function start_datatables( $elements ) {
                 initComplete: initComplete,
                 drawCallback: drawCallback,
                 footerCallback: footerCallback,
-            });
-
-            table.on('processing.dt', function (e, settings, processing) {
-                if (processing) {
-                    $('#mini-loader').show();
-                } else {
-                    $('#mini-loader').hide();
-                }
             });
         }
     });

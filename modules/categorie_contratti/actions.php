@@ -20,7 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 use Modules\Contratti\CategoriaContratto as Categoria;
-use Modules\Articoli\Articolo;
+use Modules\Contratti\Contratto;
 
 switch (filter('op')) {
     case 'update':
@@ -100,15 +100,15 @@ switch (filter('op')) {
         }
 
         $subcategories_ids = Categoria::where('parent', $id)->pluck('id')->toArray();
-        $has_articoli = Articolo::where(function ($query) use ($id, $subcategories_ids) {
+        $has_contratti = Contratto::where(function ($query) use ($id, $subcategories_ids) {
             $query->where('id_categoria', $id)
                 ->orWhere('id_sottocategoria', $id);
             if (!empty($subcategories_ids)) {
                 $query->orWhereIn('id_sottocategoria', $subcategories_ids);
             }
-        })->whereNull('deleted_at')->exists();
+        })->exists();
 
-        if (!$has_articoli) {
+        if (!$has_contratti) {
             Categoria::find($id)->delete();
 
             flash()->info(tr('Tipologia di _TYPE_ eliminata con successo!', [

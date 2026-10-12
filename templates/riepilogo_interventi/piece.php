@@ -28,6 +28,41 @@ $d_importi = (int) setting('Cifre decimali per importi in stampa');
 
 $intervento = Intervento::find($record['id']);
 $sessioni = $intervento->sessioni;
+
+$data_inizio = get('data_inizio') ?: ($_SESSION['superselect']['data_inizio'] ?? null);
+$data_fine = get('data_fine') ?: ($_SESSION['superselect']['data_fine'] ?? null);
+
+if (!empty($data_inizio) && !formatter()->isStandardDate($data_inizio)) {
+    $data_inizio = formatter()->parseDate($data_inizio);
+}
+if (!empty($data_fine) && !formatter()->isStandardDate($data_fine)) {
+    $data_fine = formatter()->parseDate($data_fine);
+}
+
+// Filtro sessioni per intervallo di date
+if (!empty($data_inizio) || !empty($data_fine)) {
+    $sessioni = $sessioni->filter(function ($sessione) use ($data_inizio, $data_fine) {
+        $inizio_sessione = date('Y-m-d', strtotime((string) $sessione->orario_inizio));
+        $fine_sessione = !empty($sessione->orario_fine) ? date('Y-m-d', strtotime((string) $sessione->orario_fine)) : $inizio_sessione;
+
+        if (!empty($data_inizio) && $fine_sessione < $data_inizio) {
+            return false;
+        }
+        if (!empty($data_fine) && $inizio_sessione > $data_fine) {
+            return false;
+        }
+
+        return true;
+    });
+
+    // Se le date sono specificate e l'intervento non ha sessioni nel periodo, non viene mostrato
+    if ($sessioni->isEmpty()) {
+        return;
+    }
+
+    $intervento->setRelation('sessioni', $sessioni);
+}
+
 $iva_predefinita = floatval(Aliquota::find(setting('Iva predefinita'))->percentuale);
 
 // Recupera la sede dell'intervento se disponibile

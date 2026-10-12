@@ -231,6 +231,8 @@ class Services
             self::$client = new Client([
                 'base_uri' => $url,
                 'verify' => false,
+                'timeout' => 30,
+                'connect_timeout' => 10,
             ]);
         }
 

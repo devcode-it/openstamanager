@@ -384,7 +384,21 @@ switch (post('op')) {
         $_SESSION['superselect']['interventi'] = $id_records;
         $id_print = Prints::getPrints()['Riepilogo interventi'];
 
-        redirect_url(base_path_osm().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo'));
+        $data_inizio = post('data_inizio');
+        $data_fine = post('data_fine');
+
+        $_SESSION['superselect']['data_inizio'] = $data_inizio;
+        $_SESSION['superselect']['data_fine'] = $data_fine;
+
+        $url = base_path_osm().'/pdfgen.php?id_print='.$id_print.'&tipo='.post('tipo');
+        if (!empty($data_inizio)) {
+            $url .= '&data_inizio='.urlencode($data_inizio);
+        }
+        if (!empty($data_fine)) {
+            $url .= '&data_fine='.urlencode($data_fine);
+        }
+
+        redirect_url($url);
         exit;
 
     case 'send_mail':
@@ -529,7 +543,10 @@ $operations['print_summary'] = [
     'text' => '<span><i class="fa fa-print"></i> '.tr('Stampa riepilogo'),
     'data' => [
         'title' => tr('Stampare il riepilogo delle attività selezionate?'),
-        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stampa riepilogo').'", "name": "tipo", "required": "1", "values": "list=\"cliente\": \"Clienti\", \"interno\": \"Interno\"", "value": "cliente" ]}',
+        'msg' => '<br>{[ "type": "select", "label": "'.tr('Stampa riepilogo').'", "name": "tipo", "required": "1", "values": "list=\"cliente\": \"Clienti\", \"interno\": \"Interno\"", "value": "cliente" ]}
+            <br>{[ "type": "date", "label": "'.tr('Inizio').'", "name": "data_inizio" ]}
+            <br>{[ "type": "date", "label": "'.tr('Fine').'", "name": "data_fine" ]}
+            <style>.swal2-modal{ width:600px !important; }</style>',
         'button' => tr('Stampa'),
         'class' => 'btn btn-lg btn-warning',
         'blank' => true,

@@ -67,9 +67,10 @@ class App
             'custom.min.js',
             'i18n/parsleyjs/|lang|.min.js',
             'i18n/select2/|lang|.min.js',
-            'i18n/moment/|lang|.min.js',
+            // The per-locale moment build is an ES module and fails as a classic
+            // script; the combined locales bundle already registers the locale.
             'i18n/locales.min.js',
-            'i18n/@fullcalendar/|lang|.min.js',
+            'i18n/@fullcalendar/|lang|.global.min.js',
             'api.js',
         ],
     ];

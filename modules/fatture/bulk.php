@@ -184,6 +184,7 @@ switch (post('op')) {
                     $fattura->codice_stato_fe = 'QUEUE';
                     $fattura->data_stato_fe = date('Y-m-d H:i:s');
                     $fattura->hook_send = true;
+                    $fattura->fe_attempt = 0;
                     $fattura->save();
 
                     // Logging dell'operazione di aggiunta alla coda di invio

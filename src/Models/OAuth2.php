@@ -24,7 +24,7 @@ use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken;
+use TheNetworg\OAuth2\Client\Token\AccessToken as AzureAccessToken;
 
 class OAuth2 extends Model
 {
@@ -52,9 +52,22 @@ class OAuth2 extends Model
                 'clientId' => $this->client_id,
                 'clientSecret' => $this->client_secret,
             ]);
+            
+            // Log configurazione provider
+            $logger = logger_osm();
+            $logger->addRecord(\Monolog\Logger::DEBUG, 'Creazione provider OAuth2', [
+                'oauth2_id' => $this->id,
+                'class' => $this->class,
+                'config_keys' => array_keys($config),
+                'has_tenant_id' => isset($config['tenant_id']),
+                'tenant_id' => $config['tenant_id'] ?? null,
+            ]);
 
             $class = $this->class;
             if (!class_exists($class)) {
+                $logger->addRecord(\Monolog\Logger::ERROR, 'Classe provider OAuth2 non esistente', [
+                    'class' => $class,
+                ]);
                 throw new \InvalidArgumentException('Classe non esistente');
             }
 
@@ -108,7 +121,7 @@ class OAuth2 extends Model
 
             // Redirect the user to the authorization URL.
             return ['authorization_url' => $authorization_url];
-        } elseif (empty($this->state) || $this->state !== $state) {
+        } elseif (!empty($this->state) && $this->state !== $state) {
             $this->state = null;
             $this->save();
 
@@ -150,7 +163,7 @@ class OAuth2 extends Model
     {
         $this->checkTokens();
 
-        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token'], ['allowed_classes' => [AccessToken::class]]) : null;
+        return $this->attributes['access_token'] ? unserialize($this->attributes['access_token'], ['allowed_classes' => [AzureAccessToken::class, \League\OAuth2\Client\Token\AccessToken::class]]) : null;
     }
 
     /**
@@ -192,20 +205,53 @@ class OAuth2 extends Model
      */
     protected function checkTokens()
     {
-        $access_token = $this->access_token ? unserialize($this->access_token, ['allowed_classes' => [AccessToken::class]]) : null;
+        $access_token = $this->access_token ? unserialize($this->access_token, ['allowed_classes' => [AzureAccessToken::class, \League\OAuth2\Client\Token\AccessToken::class]]) : null;
+        
+        // Log stato iniziale
+        $logger = logger_osm();
+        $logger->addRecord(\Monolog\Logger::DEBUG, 'Controllo token OAuth2', [
+            'oauth2_id' => $this->id,
+            'class' => $this->class,
+            'has_access_token' => !empty($this->access_token),
+            'access_token_expired' => !empty($access_token) && $access_token->hasExpired(),
+            'has_refresh_token' => !empty($this->refresh_token),
+            'refresh_token_length' => strlen($this->refresh_token ?? ''),
+        ]);
 
-        if (!empty($access_token) && $access_token instanceof AccessToken && $access_token->hasExpired()) {
+        if (!empty($access_token) && $access_token instanceof AzureAccessToken && $access_token->hasExpired()) {
             // Tentativo di refresh del token di accesso
             $refresh_token = $this->refresh_token;
             if (!empty($refresh_token)) {
-                $access_token = $this->getProvider()->getAccessToken('refresh_token', [
-                    'refresh_token' => $this->refresh_token,
-                ]);
-
-                $refresh_token = $access_token->getRefreshToken();
+                try {
+                    $access_token = $this->getProvider()->getAccessToken('refresh_token', [
+                        'refresh_token' => $this->refresh_token,
+                    ]);
+                    
+                    $refresh_token = $access_token->getRefreshToken();
+                    
+                    $logger->addRecord(\Monolog\Logger::DEBUG, 'Token OAuth2 refreshato con successo', [
+                        'oauth2_id' => $this->id,
+                        'new_token_expiration' => $access_token->getExpires(),
+                    ]);
+                } catch (\Exception $e) {
+                    $logger->addRecord(\Monolog\Logger::ERROR, 'Errore durante il refresh del token OAuth2', [
+                        'oauth2_id' => $this->id,
+                        'class' => $this->class,
+                        'exception_message' => $e->getMessage(),
+                        'exception_code' => $e->getCode(),
+                        'exception_trace' => $e->getTraceAsString(),
+                    ]);
+                    
+                    throw $e;
+                }
             } else {
                 $access_token = null;
                 $refresh_token = null;
+                
+                $logger->addRecord(\Monolog\Logger::ERROR, 'Refresh token mancante per OAuth2', [
+                    'oauth2_id' => $this->id,
+                    'class' => $this->class,
+                ]);
             }
 
             $this->updateTokens($access_token, $refresh_token);

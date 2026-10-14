@@ -122,3 +122,17 @@ INSERT INTO `zz_views_lang` (`id_lang`, `id_record`, `title`) VALUES
 ALTER TABLE `co_righe_documenti` ADD `id_sede` INT NOT NULL;
 ALTER TABLE `dt_righe_ddt` ADD `id_sede` INT NOT NULL;
 ALTER TABLE `in_righe_interventi` ADD `id_sede` INT NOT NULL;
+
+-- Aggiunta segmento in anagrafiche per visualizzazione eliminate
+INSERT INTO `zz_segments` (`id`, `id_module`, `name`, `clause`, `position`, `pattern`, `note`, `dicitura_fissa`, `predefined`, `predefined_accredito`, `predefined_addebito`, `autofatture`, `for_fe`, `is_sezionale`, `is_fiscale`) VALUES 
+(NULL, (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche'), 'Attive', '1=1 AND an_anagrafiche.deleted_at IS NULL', 'WHR', '####', '', '', '1', '0', '0', '0', '0', '0', '0'),
+(NULL, (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche'), 'Eliminate', '1=1 AND an_anagrafiche.deleted_at IS NOT NULL', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0'),
+(NULL, (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche'), 'Tutte', '1=1', 'WHR', '####', '', '', '0', '0', '0', '0', '0', '0', '0');
+
+INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Attive'), 'Attive'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Attive'), 'Active'),
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Tutte'), 'Tutte'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Tutte'), 'All'),
+(NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Eliminate'), 'Eliminate'),
+(NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Eliminate'), 'Deleted');

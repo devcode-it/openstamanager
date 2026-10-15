@@ -83,13 +83,24 @@ function start_datatables( $elements ) {
                 scrollY: "60vh",
                 scrollX: '100%',
                 retrieve: true,
-                stateSave: false,
+                stateSave: true,
                 rowId: 'id',
                 stateSaveCallback: function (settings, data) {
                     sessionStorage.setItem('DataTables_' + id_module + '-' + id_plugin + '-' + id_parent, JSON.stringify(data));
                 },
                 stateLoadCallback: function (settings) {
-                    return JSON.parse(sessionStorage.getItem('DataTables_' + id_module + '-' + id_plugin + '-' + id_parent));
+                    const state = JSON.parse(sessionStorage.getItem('DataTables_' + id_module + '-' + id_plugin + '-' + id_parent));
+
+                    // Rimozione delle ricerche dallo stato salvato, per evitare il ripristino di filtri fantasma
+                    if (state) {
+                        delete state.search;
+
+                        (state.columns || []).forEach(function (column) {
+                            delete column.search;
+                        });
+                    }
+
+                    return state;
                 },
                 columnDefs: [{
                     searchable: false,

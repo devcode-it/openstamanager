@@ -25,6 +25,13 @@ use Models\Module;
 
 $dbo = database();
 
+function troncaTesto($value, $limite = 100)
+{
+    $value = trim((string) $value);
+
+    return mb_strlen($value) > $limite ? mb_substr($value, 0, $limite).'...' : $value;
+}
+
 $type = post('type');
 $id_record = (int) post('id_record');
 $id_documento = (int) post('id_documento');
@@ -69,14 +76,14 @@ if (in_array($type, ['articoli_venduti', 'articoli_acquistati'])) {
     }
 
     $righe = $dbo->fetchArray('
-        SELECT d.id AS documento_id, d.numero, d.data, td.name AS tipo_documento,
+        SELECT d.id AS documento_id, IF(d.numero_esterno != \'\', d.numero_esterno, d.numero) AS numero, d.data, td.name AS tipo_documento,
             \'fattura\' AS source, rd.descrizione, rd.qta, rd.subtotale
         FROM co_righe_documenti rd
         INNER JOIN co_documenti d ON d.id = rd.id_documento
         INNER JOIN co_tipi_documento td ON td.id = d.id_tipo_documento
         WHERE d.id_anagrafica = '.prepare($id_record).' AND td.dir = '.prepare($dir).' AND d.data BETWEEN '.prepare($start).' AND '.prepare($end).' AND rd.id_articolo = '.prepare($id_articolo).'
         UNION ALL
-        SELECT dd.id AS documento_id, dd.numero, dd.data, tdd.name AS tipo_documento,
+        SELECT dd.id AS documento_id, IF(dd.numero_esterno != \'\', dd.numero_esterno, dd.numero) AS numero, dd.data, tdd.name AS tipo_documento,
             \'ddt\' AS source, rdd.descrizione, rdd.qta, rdd.subtotale
         FROM dt_righe_ddt rdd
         INNER JOIN dt_ddt dd ON dd.id = rdd.id_ddt
@@ -86,7 +93,7 @@ if (in_array($type, ['articoli_venduti', 'articoli_acquistati'])) {
 
     if (empty($righe)) {
         echo '
-    <table class="table table-sm table-bordered" style="margin-bottom: 0;">
+    <table class="table table-sm table-bordered table-popup-statistiche" style="margin-bottom: 0;">
         <thead>
             <tr>
                 <th class="text-left">'.tr('Documento').'</th>
@@ -104,11 +111,17 @@ if (in_array($type, ['articoli_venduti', 'articoli_acquistati'])) {
         return;
     }
 
-    $link_module_fatture = Module::where('name', 'Fatture di vendita')->first()->id;
-    $link_module_ddt = Module::where('name', 'Ddt in uscita')->first()->id;
+    $link_module_fatture = Module::where('name', $dir == 'entrata' ? 'Fatture di vendita' : 'Fatture di acquisto')->first()->id;
+    $link_module_ddt = Module::where('name', $dir == 'entrata' ? 'Ddt in uscita' : 'Ddt in entrata')->first()->id;
 
     echo '
-    <table class="table table-sm table-bordered" style="margin-bottom: 0;">
+    <style>
+    .table-popup-statistiche td {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+    </style>
+    <table class="table table-sm table-bordered table-popup-statistiche" style="margin-bottom: 0;">
         <thead>
             <tr>
                 <th class="text-left">'.tr('Documento').'</th>
@@ -123,11 +136,12 @@ if (in_array($type, ['articoli_venduti', 'articoli_acquistati'])) {
         $module_id = $riga['source'] == 'ddt' ? $link_module_ddt : $link_module_fatture;
         $link = base_path_osm().'/editor.php?id_module='.$module_id.'&id_record='.$riga['documento_id'];
         $numero = !empty($riga['numero']) ? $riga['numero'] : '#'.$riga['documento_id'].' - '.$riga['tipo_documento'];
+        $descrizione = troncaTesto($riga['descrizione']);
 
         echo '
             <tr>
                 <td class="text-left"><a href="'.$link.'" target="_blank">'.$numero.'</a></td>
-                <td class="text-left">'.nl2br($riga['descrizione']).'</td>
+                <td class="text-left">'.nl2br($descrizione).'</td>
                 <td class="text-right">'.numberFormat($riga['qta'], 2).'</td>
                 <td class="text-right">'.moneyFormat($riga['subtotale']).'</td>
             </tr>';
@@ -155,7 +169,13 @@ if ($type == 'interventi') {
 $righe = $dbo->fetchArray('SELECT '.$select.' FROM '.$table.' WHERE '.$key.' = ? ORDER BY id ASC', [$id_documento]);
 
 echo '
-<table class="table table-sm table-bordered" style="margin-bottom: 0;">
+<style>
+.table-popup-statistiche td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+</style>
+<table class="table table-sm table-bordered table-popup-statistiche" style="margin-bottom: 0;">
     <thead>
         <tr>
             <th class="text-left">'.tr('Descrizione').'</th>
@@ -174,7 +194,7 @@ if (empty($righe)) {
     foreach ($righe as $riga) {
         echo '
         <tr>
-            <td class="text-left">'.nl2br($riga['descrizione']).'</td>
+            <td class="text-left">'.nl2br(troncaTesto($riga['descrizione'])).'</td>
             <td class="text-right">'.numberFormat($riga['qta'], 2).'</td>
             <td class="text-right">'.moneyFormat($riga['subtotale']).'</td>
         </tr>';

@@ -44,6 +44,13 @@ $link_module = function ($name) {
     return Module::where('name', $name)->value('id');
 };
 
+$limite_testo = 100;
+$tronca = function ($value) use ($limite_testo) {
+    $value = trim((string) $value);
+
+    return mb_strlen($value) > $limite_testo ? mb_substr($value, 0, $limite_testo).'...' : $value;
+};
+
 $titolo = '';
 $results = [];
 $columns = [];
@@ -79,9 +86,11 @@ switch ($type) {
         break;
 
     case 'ordini_cliente':
-        $titolo = tr('Ordini cliente');
+        $ordini_dir = $anagrafica->isTipo('Fornitore') ? 'uscita' : 'entrata';
+        $titolo = $anagrafica->isTipo('Fornitore') ? tr('Ordini fornitore') : tr('Ordini cliente');
         $results = Ordine::whereBetween('data', [$start, $end])
             ->where('id_anagrafica', $id_record)
+            ->whereHas('tipo', fn ($query) => $query->where('or_tipi_ordine.dir', '=', $ordini_dir))
             ->get();
         $columns = [
             'numero' => tr('Numero'),
@@ -271,7 +280,13 @@ $tipi_documento = [
 $espandibile = in_array($type, $tipi_documento);
 
 echo '
-<table class="table table-striped table-bordered table-hover table-condensed">
+<style>
+.table-popup-statistiche td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+</style>
+<table class="table table-striped table-bordered table-hover table-condensed table-popup-statistiche">
     <thead>
         <tr>';
 if ($espandibile) {
@@ -292,25 +307,26 @@ foreach ($results as $result) {
     $id = is_object($result) ? $result->id : ($result['id_articolo'] ?? $result['id']);
     $link = '#';
     $module_name = '';
-    $source = '';
+    $source = is_object($result) ? ($result->source ?? '') : ($result['source'] ?? '');
 
-    if (is_object($result)) {
-        $source = $result->source ?? '';
+    if (in_array($type, ['articoli_venduti', 'articoli_acquistati'])) {
+       
+        $module_name = 'Articoli';
+    } else {
         $module_name = match ($type) {
             'preventivi' => 'Preventivi',
             'contratti' => 'Contratti',
-            'ordini_cliente' => 'Ordini cliente',
+            'ordini_cliente' => $anagrafica->isTipo('Fornitore') ? 'Ordini fornitore' : 'Ordini cliente',
             'interventi' => 'Interventi',
             'ddt' => 'Ddt in uscita',
             'fatture' => 'Fatture di vendita',
             'impianti' => 'Impianti',
-            'articoli_venduti', 'articoli_acquistati' => $source == 'ddt' ? 'Ddt in uscita' : 'Fatture di vendita',
             default => '',
         };
+    }
 
-        if (!empty($module_name)) {
-            $link = base_path_osm().'/editor.php?id_module='.$link_module($module_name).'&id_record='.$id;
-        }
+    if (!empty($module_name)) {
+        $link = base_path_osm().'/editor.php?id_module='.$link_module($module_name).'&id_record='.$id;
     }
 
     $row_attr = $espandibile ? ' data-toggle="details" data-type="'.$type.'" data-id="'.$id.'" data-start="'.$start.'" data-end="'.$end.'"'.($source ? ' data-source="'.$source.'"' : '').' style="cursor: pointer;"' : '';
@@ -344,7 +360,17 @@ foreach ($results as $result) {
         } elseif ($key == 'qta') {
             $value = numberFormat($value, 2);
         } elseif ($key == 'numero') {
-            $value = is_object($result) ? $result->numero : (isset($result['numero']) ? $result['numero'] : $result['codice']);
+            $numero_esterno = is_object($result) ? ($result->numero_esterno ?? '') : ($result['numero_esterno'] ?? '');
+            $numero_interno = is_object($result) ? $result->numero : (isset($result['numero']) ? $result['numero'] : $result['codice']);
+            $value = $numero_esterno ?: $numero_interno;
+            if ((string) $value === '') {
+
+                $value = 'n.d.';
+            }
+        }
+
+        if (is_string($value) && mb_strlen($value) > $limite_testo) {
+            $value = $tronca($value);
         }
 
         if (!empty($link) && $link != '#' && $key == array_key_first($columns)) {

@@ -54,9 +54,12 @@ $contratti = Contratto::whereBetween('data_bozza', [$start, $end])
     ->get();
 $totale_contratti = $contratti->sum('totale_imponibile');
 
-// Ordini cliente
+// Ordini cliente/fornitore
+$ordini_dir = $anagrafica->isTipo('Fornitore') ? 'uscita' : 'entrata';
+$ordini_label = $anagrafica->isTipo('Fornitore') ? tr('Ordini fornitore') : tr('Ordini cliente');
 $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', fn ($query) => $query->where('or_tipi_ordine.dir', '=', $ordini_dir))
     ->get();
 $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
 
@@ -210,7 +213,7 @@ echo '
                 <div class="info-box" style="cursor: pointer;" onclick="apriPopup(this, \'ordini_cliente\')">
                     <span class="info-box-icon bg-'.($ordini_cliente->count() == 0 ? 'gray' : 'blue').'"><i class="fa fa-file-text"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Ordini cliente').'
+                        <span class="info-box-text pull-left">'.$ordini_label.'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ordini_cliente->count().'</big><br>

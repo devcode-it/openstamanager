@@ -56,8 +56,16 @@ $totale_contratti = $contratti->sum('totale_imponibile');
 // Ordini cliente
 $ordini_cliente = Ordine::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', fn ($query) => $query->where('or_tipi_ordine.dir', '=', 'entrata'))
     ->get();
 $totale_ordini_cliente = $ordini_cliente->sum('totale_imponibile');
+
+// Ordini fornitore
+$ordini_fornitore = Ordine::whereBetween('data', [$start, $end])
+    ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', fn ($query) => $query->where('or_tipi_ordine.dir', '=', 'uscita'))
+    ->get();
+$totale_ordini_fornitore = $ordini_fornitore->sum('totale_imponibile');
 
 // Interventi e Ore lavorate
 $interventi = [];
@@ -82,6 +90,11 @@ if ($sessioni) {
     $totale_ore_lavorate = $sessioni->sum('ore');
 }
 
+// Filtri di ricerca per il modulo Interventi: solo il campo attivo è valorizzato, gli altri vengono azzerati (sovrascrivendo eventuali filtri salvati in sessione)
+$ragione_sociale = rawurlencode((string) $anagrafica['ragione_sociale']);
+$filtri_interventi_cliente = '_search_Ragione-sociale='.$ragione_sociale.'&_search_Tecnici=&_search_Tecnici-assegnati=';
+$filtri_interventi_tecnico = '_search_Tecnici='.$ragione_sociale.'&_search_Ragione-sociale=&_search_Tecnici-assegnati=';
+
 // Ddt in uscita
 $ddt_uscita = DDT::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
@@ -91,6 +104,15 @@ $ddt_uscita = DDT::whereBetween('data', [$start, $end])
     ->get();
 $totale_ddt_uscita = $ddt_uscita->sum('totale_imponibile');
 
+// Ddt in entrata
+$ddt_entrata = DDT::whereBetween('data', [$start, $end])
+    ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', function ($query) {
+        $query->where('dt_tipi_ddt.dir', '=', 'uscita');
+    })
+    ->get();
+$totale_ddt_entrata = $ddt_entrata->sum('totale_imponibile');
+
 // Fatture di vendita
 $segmenti = $dbo->select('zz_segments', 'id', [], ['autofatture' => 0]);
 $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
@@ -99,12 +121,26 @@ $fatture_vendita = Fattura::whereBetween('data', [$start, $end])
         ->where('co_tipi_documento.reversed', '=', 0))
     ->whereIn('id_segment', array_column($segmenti, 'id'))
     ->get();
-$note_credito = Fattura::whereBetween('data', [$start, $end])
+$note_credito_vendita = Fattura::whereBetween('data', [$start, $end])
     ->where('id_anagrafica', $id_record)
     ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'entrata')
         ->where('co_tipi_documento.reversed', '=', 1))
     ->get();
-$totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito->sum('totale_imponibile');
+$totale_fatture_vendita = $fatture_vendita->sum('totale_imponibile') - $note_credito_vendita->sum('totale_imponibile');
+
+// Fatture di acquisto
+$fatture_acquisto = Fattura::whereBetween('data', [$start, $end])
+    ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'uscita')
+        ->where('co_tipi_documento.reversed', '=', 0))
+    ->whereIn('id_segment', array_column($segmenti, 'id'))
+    ->get();
+$note_credito_acquisto = Fattura::whereBetween('data', [$start, $end])
+    ->where('id_anagrafica', $id_record)
+    ->whereHas('tipo', fn ($query) => $query->where('co_tipi_documento.dir', '=', 'uscita')
+        ->where('co_tipi_documento.reversed', '=', 1))
+    ->get();
+$totale_fatture_acquisto = $fatture_acquisto->sum('totale_imponibile') - $note_credito_acquisto->sum('totale_imponibile');
 
 // Impianti
 $impianti = Impianto::whereBetween('data', [$start, $end])
@@ -171,15 +207,30 @@ echo '
 
             <div class="col-md-3">
                 <div class="info-box">
+                    <span class="info-box-icon bg-'.($ordini_fornitore->count() == 0 ? 'gray' : 'teal').'"><i class="fa fa-file-text-o"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Ordini fornitore').'
+                        '.($ordini_fornitore->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ordini fornitore')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.$ordini_fornitore->count().'</big><br>
+                            <small class="help-block">'.moneyFormat($totale_ordini_fornitore).'</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box">
                     <span class="info-box-icon bg-'.($interventi->count() == 0 ? 'gray' : 'red').'"><i class="fa fa-cog"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Attività');
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
+                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&'.$filtri_interventi_cliente.'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 } else {
     echo '
-                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
+                            '.($interventi->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&'.$filtri_interventi_tecnico.'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 }
 echo '                     
                         <br class="clearfix">
@@ -196,7 +247,7 @@ echo '
                     <span class="info-box-icon bg-'.($ddt_uscita->count() == 0 ? 'gray' : 'maroon').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text pull-left">'.tr('Ddt in uscita').'
-                        '.($ddt_uscita->count() > 0 ? '<a class="pull-right"href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        '.($ddt_uscita->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ddt in uscita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
                             <big>'.$ddt_uscita->count().'</big><br>
@@ -208,14 +259,44 @@ echo '
 
             <div class="col-md-3">
                 <div class="info-box">
-                    <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
+                    <span class="info-box-icon bg-'.($ddt_entrata->count() == 0 ? 'gray' : 'pink').'"><i class="fa fa-truck"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text pull-left">'.tr('Fatture').'
-                        '.($fatture_vendita->count() + $note_credito->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        <span class="info-box-text pull-left">'.tr('Ddt in entrata').'
+                        '.($ddt_entrata->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Ddt in entrata')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
                         <br class="clearfix">
                         <span class="info-box-number">
-                            <big>'.($fatture_vendita->count() + $note_credito->count()).'</big><br>
+                            <big>'.$ddt_entrata->count().'</big><br>
+                            <small class="help-block">'.moneyFormat($totale_ddt_entrata).'</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-'.($fatture_vendita->count() + $note_credito_vendita->count() == 0 ? 'gray' : 'green').'"><i class="fa fa-money"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Fatture di vendita').'
+                        '.($fatture_vendita->count() + $note_credito_vendita->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Fatture di vendita')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.($fatture_vendita->count() + $note_credito_vendita->count()).'</big><br>
                             <small class="help-block">'.moneyFormat($totale_fatture_vendita).'</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-'.($fatture_acquisto->count() + $note_credito_acquisto->count() == 0 ? 'gray' : 'navy').'"><i class="fa fa-shopping-cart"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text pull-left">'.tr('Fatture di acquisto').'
+                        '.($fatture_acquisto->count() + $note_credito_acquisto->count() > 0 ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Fatture di acquisto')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>').'
+                        <br class="clearfix">
+                        <span class="info-box-number">
+                            <big>'.($fatture_acquisto->count() + $note_credito_acquisto->count()).'</big><br>
+                            <small class="help-block">'.moneyFormat($totale_fatture_acquisto).'</small>
                         </span>
                     </div>
                 </div>
@@ -244,10 +325,10 @@ echo '
                         <span class="info-box-text pull-left">'.tr('Ore lavorate');
 if ($anagrafica->isTipo('Cliente')) {
     echo '
-                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Ragione-sociale='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
+                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&'.$filtri_interventi_cliente.'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 } else {
     echo '
-                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&_search_Tecnici='.rawurlencode((string) $anagrafica['ragione_sociale']).'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
+                            '.($sessioni ? '<a class="pull-right" href="'.base_path_osm().'/controller.php?id_module='.Module::where('name', 'Interventi')->first()->id.'&'.$filtri_interventi_tecnico.'">'.tr('Visualizza').' <i class="fa fa-chevron-circle-right"></i></a></span>' : '</span>');
 }
 echo '                     
                         <br class="clearfix">

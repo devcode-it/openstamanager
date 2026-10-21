@@ -204,6 +204,9 @@ if (filter('action') == 'do_update') {
     }
     // Update completed
     elseif (Update::isUpdateCompleted()) {
+        $postUpdateUrl = base_path_osm().'/index.php';
+        $autoRedirect = (($_GET['firstuse'] ?? '') !== 'true') ? 'true' : 'false';
+
         Update::updateCleanup();
 
         echo '
@@ -216,7 +219,13 @@ if (filter('action') == 'do_update') {
                 // Mostra tutti i segni di spunta per gli aggiornamenti completati
                 $("#updates-list .fa-check").show();
 
-                $("#versions-details-container").after(\'<div class="mt-4"><a class="btn btn-success btn-lg btn-block shadow" href="'.base_path_osm().'"><i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'</a></div>\');
+                var postUpdateUrl = '.json_encode($postUpdateUrl).';
+                $("#versions-details-container").after(\'<div class="mt-4"><a class="btn btn-success btn-lg btn-block shadow" href="\' + postUpdateUrl + \'"><i class="fa fa-check mr-2"></i> '.tr('Configura il gestionale').'</a></div>\');
+                if ('.$autoRedirect.') {
+                    setTimeout(function() {
+                        window.location.href = postUpdateUrl;
+                    }, 1200);
+                }
             </script>';
 
         // Instructions for the first installation

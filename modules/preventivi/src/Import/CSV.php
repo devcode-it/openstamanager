@@ -39,6 +39,26 @@ use Modules\TipiIntervento\Tipo as TipoSessione;
  */
 class CSV extends CSVImporter
 {
+    protected $import_session_key;
+
+    public function __construct($file)
+    {
+        parent::__construct($file);
+
+        $filepath = realpath($file) ?: $file;
+        $this->import_session_key = 'preventivi_import_'.hash('sha256', (string) $filepath);
+    }
+
+    public function init()
+    {
+        $_SESSION[$this->import_session_key] = [];
+    }
+
+    public function complete()
+    {
+        unset($_SESSION[$this->import_session_key]);
+    }
+
     /**
      * Definisce i campi disponibili per l'importazione.
      *
@@ -49,7 +69,8 @@ class CSV extends CSVImporter
         return [
             [
                 'field' => 'numero',
-                'label' => 'Numero',
+                'label' => 'Riferimento importazione',
+                'names' => ['Riferimento importazione', 'Numero'],
                 'primary_key' => true,
                 'required' => true,
             ],
@@ -97,6 +118,10 @@ class CSV extends CSVImporter
                 'label' => 'Quantità riga',
             ],
             [
+                'field' => 'um',
+                'label' => 'Unità di misura riga',
+            ],
+            [
                 'field' => 'data_evasione',
                 'label' => 'Data prevista evasione riga',
             ],
@@ -120,8 +145,6 @@ class CSV extends CSVImporter
     public function import($record, $update_record = true, $add_record = true)
     {
         try {
-            $database = database();
-
             if (empty($record['numero']) || empty($record['nome']) || empty($record['ragione_sociale'])
                 || empty($record['data_bozza']) || empty($record['prezzo_unitario'])) {
                 return false;
@@ -131,9 +154,9 @@ class CSV extends CSVImporter
                 return false;
             }
 
-            $preventivo = $this->trovaPreventivo($record, $database);
+            $preventivo = $this->trovaPreventivo($record);
 
-            if (($preventivo && !$update_record) || (!$preventivo && !$add_record)) {
+            if (empty($preventivo) && !$add_record) {
                 return null;
             }
 
@@ -142,6 +165,8 @@ class CSV extends CSVImporter
                 if (empty($preventivo)) {
                     return false;
                 }
+
+                $this->registraPreventivo($record, $preventivo);
             }
 
             $this->aggiungiRigaAlPreventivo($preventivo, $record);
@@ -162,30 +187,36 @@ class CSV extends CSVImporter
     public static function getExample()
     {
         return [
-            ['Numero', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Partita IVA Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Descrizione riga generica', 'Aliquota IVA riga (%)', 'Quantità riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', 'OSM-BUDGET', '', '22', '1', '30/04/2025', '100'],
-            ['15', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', '', 'Manodopera', '22', '1', '10/05/2025', '150'],
-            ['16', 'Preventivo Servizi', 'Preventivo servizi', 'Mario Rossi', '123456789', 'Generico', '28/04/2025', '', 'Consulenza tecnica', '22', '1', '05/05/2025', '150'],
+            ['Riferimento importazione', 'Nome Preventivo', 'Descrizione Preventivo', 'Cliente', 'Partita IVA Cliente', 'Tipo Attività', 'Data', 'Codice Articolo', 'Descrizione riga generica', 'Aliquota IVA riga (%)', 'Quantità riga', 'Unità di misura riga', 'Data prevista evasione riga', 'Prezzo unitario riga'],
+            ['PREV-001', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', 'OSM-BUDGET', '', '22', '1', 'nr', '30/04/2025', '100'],
+            ['PREV-001', 'Preventivo Materiali', 'Preventivo iniziale', 'Mario Rossi', '123456789', 'Generico', '27/04/2025', '', 'Manodopera', '22', '1', 'ore', '10/05/2025', '150'],
+            ['PREV-002', 'Preventivo Servizi', 'Preventivo servizi', 'Mario Rossi', '123456789', 'Generico', '28/04/2025', '', 'Consulenza tecnica', '22', '1', 'ore', '05/05/2025', '150'],
         ];
     }
 
     /**
-     * Trova il preventivo esistente in base al numero.
+     * Trova il preventivo già creato durante l'importazione.
      *
-     * @param array  $record   Record da importare
-     * @param object $database Connessione al database
+     * @param array $record Record da importare
      *
      * @return Preventivo|null
      */
-    protected function trovaPreventivo($record, $database)
+    protected function trovaPreventivo($record)
     {
-        if (empty($record['numero'])) {
-            return null;
-        }
+        $id_preventivo = $_SESSION[$this->import_session_key][$record['numero']] ?? null;
 
-        $id_preventivo = $database->fetchOne('SELECT id FROM `co_preventivi` WHERE `numero`='.prepare($record['numero']));
+        return !empty($id_preventivo) ? Preventivo::find($id_preventivo) : null;
+    }
 
-        return !empty($id_preventivo) ? Preventivo::find($id_preventivo['id']) : null;
+    /**
+     * Registra il preventivo creato per il riferimento di importazione.
+     *
+     * @param array      $record     Record importato
+     * @param Preventivo $preventivo Preventivo creato
+     */
+    protected function registraPreventivo($record, $preventivo)
+    {
+        $_SESSION[$this->import_session_key][$record['numero']] = $preventivo->id;
     }
 
     /**
@@ -206,7 +237,6 @@ class CSV extends CSVImporter
             $tipo = $this->trovaTipoIntervento($record);
 
             $preventivo = Preventivo::build($anagrafica, $tipo, $record['nome'], $this->parseData($record['data_bozza']), 0);
-            $preventivo->numero = $record['numero'];
             $preventivo->id_stato = Stato::where('name', 'Bozza')->first()->id;
             $preventivo->descrizione = $record['descrizione'] ?? '';
             $preventivo->save();
@@ -312,7 +342,7 @@ class CSV extends CSVImporter
     {
         try {
             $riga_articolo = Articolo::build($preventivo, $articolo_orig);
-            $riga_articolo->um = $articolo_orig->um ?: null;
+            $riga_articolo->um = !empty($record['um']) ? $record['um'] : ($articolo_orig->um ?: null);
 
             if (!empty($record['data_evasione'])) {
                 $riga_articolo->data_evasione = $this->parseData($record['data_evasione']);
@@ -357,6 +387,7 @@ class CSV extends CSVImporter
             $riga->descrizione = $record['descrizione_riga'];
             $riga->setPrezzoUnitario($record['prezzo_unitario'], $id_iva);
             $riga->qta = !empty($record['qta']) ? $record['qta'] : 1;
+            $riga->um = !empty($record['um']) ? $record['um'] : null;
 
             $riga->save();
 

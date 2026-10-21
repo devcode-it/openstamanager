@@ -559,10 +559,11 @@ function getTable(selector) {
         },
 
         /**
-         * Nuovi valori dei campi summable
+         * New values for a footer totals group, restricted to the selected rows.
+         * @param {string} op Backend operation returning the group
          * @returns
          */
-        getSelectedRowsFooter: function () {
+        getSelectedRowsFooter: function (op) {
             let ids = this.getSelectedRows();
 
             return $.ajax({
@@ -572,26 +573,36 @@ function getTable(selector) {
                 data: {
                     id_module: this.id_module,
                     id_plugin: this.id_plugin,
-                    op: "summable-results",
+                    op: op,
                     ids: ids,
                 }
             });
         },
 
         /**
-         * Aggiornamento dei campi summable
+         * Update the footer totals and averages for the selected rows
          */
         updateFooterForSelectedRows: function () {
             let datatable = this.datatable;
 
-            this.getSelectedRowsFooter().then(function (response) {
+            const applyTotals = function (response, marker) {
                 for (let [column, value] of Object.entries(response)) {
                     let index = parseInt(column) + 1;
                     let sel = datatable.column(index).footer();
                     $(sel).css("text-align", "right")
-                        .attr("id", "summable")
+                        .attr("id", marker)
                         .html(value);
                 }
+            };
+
+            // Averages are requested together with sums so both follow the selection,
+            // applying them in the same order as footerCallback to keep the result stable.
+            Promise.all([
+                this.getSelectedRowsFooter("summable-results"),
+                this.getSelectedRowsFooter("avg-results"),
+            ]).then(function ([summables, averages]) {
+                applyTotals(summables, "summable");
+                applyTotals(averages, "avg");
             });
         },
     };

@@ -1440,7 +1440,7 @@ class FatturaElettronica implements \Stringable
                     }
                 }
 
-                $descrizione = $riga['descrizione'];
+                
                 // Aggiunta dei riferimenti ai documenti
                 if (setting('Riferimento dei documenti in Fattura Elettronica') == 0) {
                     $pos = strpos((string) $descrizione, 'Rif.');

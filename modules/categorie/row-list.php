@@ -21,9 +21,16 @@
 use Modules\Articoli\Articolo;
 use Modules\Articoli\Categoria;
 
-$subcategorie = Categoria::where('parent', '=', $id_record)->get();
+$subcategorie = Categoria::where('parent', '=', $id_record)
+    ->join('zz_categorie_lang', function ($join) {
+        $join->on('zz_categorie.id', '=', 'zz_categorie_lang.id_record')
+            ->where('zz_categorie_lang.id_lang', '=', Models\Locale::getDefault()->id);
+    })
+    ->orderBy('zz_categorie_lang.title')
+    ->get('zz_categorie.id');
 
-foreach ($subcategorie as $sub) {
+foreach ($subcategorie as $subcategoria) {
+    $sub = Categoria::find($subcategoria['id']);
     $n_articoli = Articolo::where('id_sottocategoria', '=', $sub['id'])->count();
     $n_impianti = database()->table('my_impianti')->where('id_sottocategoria', '=', $sub['id'])->count();
 

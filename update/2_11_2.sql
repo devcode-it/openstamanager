@@ -8,3 +8,6 @@ UPDATE `zz_modules` SET `options` = REPLACE(`options`, 'CAST(`co_documenti`.`num
 
 -- Cambio filtro Scadenzario completo
 UPDATE `zz_segments` SET `clause` = '(`co_scadenziario`.`scadenza` BETWEEN \'|period_start|\' AND \'|period_end|\' AND (codice_tipo_documento_fe NOT IN (\'TD16\', \'TD17\', \'TD18\', \'TD19\', \'TD20\', \'TD21\', \'TD22\', \'TD23\', \'TD26\', \'TD27\', \'TD28\') OR codice_tipo_documento_fe IS NULL))' WHERE `zz_segments`.`name` = 'Scadenzario completo';
+
+-- Fix ordinamento modulo Categorie
+UPDATE `zz_modules` SET `options` = 'SELECT\n |select|\nFROM \n `zz_categorie`\n LEFT JOIN `zz_categorie_lang` ON (`zz_categorie`.`id` = `zz_categorie_lang`.`id_record` AND `zz_categorie_lang`.|lang|)\nWHERE \n 1=1 AND `parent` IS NULL \nHAVING \n 2=2\n\nORDER BY zz_categorie_lang.title' WHERE `zz_modules`.`name` = 'Categorie';

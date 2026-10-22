@@ -1086,6 +1086,12 @@ switch ($op) {
             ->whereIn('co_iva.codice_natura_fe', $natura_fe_list)
             ->get(['co_righe_documenti.subtotale', 'co_righe_documenti.sconto', 'co_iva.indetraibile', 'co_iva.id as id_iva']);
 
+        if ($righe_fe->isEmpty()) {
+            flash()->error(tr("Impossibile creare l'autofattura: nessuna riga della fattura di acquisto ha un'aliquota IVA compatibile. Verificare le aliquote IVA."));
+
+            break;
+        }
+
         $imponibile = $righe_fe->where('indetraibile', '!=', 100)->sum('subtotale');
         $sconto = $righe_fe->where('indetraibile', '!=', 100)->sum('sconto');
         $imponibile_indetraibile = $righe_fe->where('indetraibile', 100)->sum('subtotale');

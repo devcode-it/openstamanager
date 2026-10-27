@@ -284,22 +284,22 @@ class Scadenze
     {
         // Inversione di segno per le note
         $netto = $this->fattura->netto;
-        $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
         $rate = ($this->fattura->pagamento ?: $this->trovaPagamento($this->fattura->id_pagamento))->calcola($netto, $this->fattura->data, $this->fattura->id_anagrafica, $this->database);
         $direzione = $this->fattura->tipo->dir;
 
         $results = [];
-foreach ($rate as $rata) {
-                $scadenza = $rata['scadenza'];
-                $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
-                $id_pagamento = $this->fattura->id_pagamento;
-                $id_banca_azienda = $this->fattura->id_banca_azienda;
-                $id_banca_controparte = $this->fattura->id_banca_controparte;
+        foreach ($rate as $rata) {
+            $scadenza = $rata['scadenza'];
+            $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
+            $importo = $this->fattura->isNota() ? -$importo : $importo;
+            $id_pagamento = $this->fattura->id_pagamento;
+            $id_banca_azienda = $this->fattura->id_banca_azienda;
+            $id_banca_controparte = $this->fattura->id_banca_controparte;
 
-                $results[] = $this->registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
-            }
+            $results[] = $this->registraScadenza($this->fattura, $importo, $scadenza, $is_pagato, $id_pagamento, $id_banca_azienda, $id_banca_controparte, 'fattura', $assicurazioni_map);
+        }
 
         return $results;
     }

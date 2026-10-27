@@ -205,6 +205,7 @@ class Mastrino extends Model
                 $dir = $movimento->totale < 0 ? 'uscita' : 'entrata';
             } else {
                 $dir = $documento->direzione;
+                $is_nota = $documento->isNota();
             }
 
             // Se il movimento ha una scadenza specifica, aggiorna solo quella

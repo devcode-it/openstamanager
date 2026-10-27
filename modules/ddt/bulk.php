@@ -131,6 +131,10 @@ switch (post('op')) {
                             $copia->save();
                         }
                     }
+
+                    if (!empty($fattura)) {
+                        $fattura->save();
+                    }
                 }
             }
         }

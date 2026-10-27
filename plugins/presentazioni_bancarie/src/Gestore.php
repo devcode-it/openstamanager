@@ -161,6 +161,7 @@ class Gestore
             return false;
         }
         $ctgypurp = $this->getTipo($scadenza)['ctgypurp'] ?: 'SUPP';
+        $data_scadenza = $scadenza->data_concordata ?: $scadenza->scadenza;
 
         $pagamento = $scadenza->pagamento;
         $direzione = $documento->direzione;
@@ -183,15 +184,15 @@ class Gestore
         }
 
         if ($is_credito_diretto) {
-            return $this->aggiungiCreditoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $ctgypurp);
+            return $this->aggiungiCreditoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $data_scadenza, $ctgypurp);
         } elseif ($is_debito_diretto) {
-            return $this->aggiungiDebitoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $method, $codice_sequenza);
+            return $this->aggiungiDebitoDiretto($identifier, $controparte, $banca_controparte, $descrizione, $totale, $data_scadenza, $method, $codice_sequenza);
         } elseif ($is_riba) {
             $totale = $totale * 100;
 
-            return $this->aggiungiRiBa($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza);
+            return $this->aggiungiRiBa($identifier, $controparte, $banca_controparte, $descrizione, $totale, $data_scadenza);
         } elseif ($is_bonifico) {
-            return $this->aggiungiBonifico($identifier, $controparte, $banca_controparte, $descrizione, $totale, $scadenza->scadenza, $ctgypurp);
+            return $this->aggiungiBonifico($identifier, $controparte, $banca_controparte, $descrizione, $totale, $data_scadenza, $ctgypurp);
         }
 
         return false;

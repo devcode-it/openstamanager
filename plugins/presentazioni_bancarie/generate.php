@@ -341,11 +341,11 @@ foreach ($raggruppamento as $id_anagrafica => $scadenze_anagrafica) {
                     </select>
                 </span>';
         }
-
+        $data_scadenza = $scadenza->data_concordata ?: $scadenza->scadenza;
         echo '
             </td>
             <td class="text-center">
-                '.dateFormat($scadenza->scadenza).'
+                '.dateFormat($data_scadenza).'
             </td>
             <td class="text-right">
                 '.moneyFormat($totale).'

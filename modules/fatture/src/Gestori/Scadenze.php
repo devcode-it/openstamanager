@@ -214,7 +214,6 @@ class Scadenze
     {
         // Inversione di segno per le note
         $netto = $this->fattura->netto;
-        $netto = $this->fattura->isNota() ? -$netto : $netto;
 
         // Calcolo delle rate
         $rate = ($this->fattura->pagamento ?: \Modules\Pagamenti\Pagamento::where('id', $this->fattura->id_pagamento)->first())->calcola($netto, $this->fattura->data, $this->fattura->id_anagrafica);
@@ -223,6 +222,7 @@ class Scadenze
         foreach ($rate as $rata) {
             $scadenza = $rata['scadenza'];
             $importo = $direzione == 'uscita' ? -$rata['importo'] : $rata['importo'];
+            $importo = $this->fattura->isNota() ? -$importo : $importo;
             $id_pagamento = $this->fattura->id_pagamento;
             $id_banca_azienda = $this->fattura->id_banca_azienda;
             $id_banca_controparte = $this->fattura->id_banca_controparte;

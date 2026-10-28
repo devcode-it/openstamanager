@@ -335,7 +335,7 @@ if (empty($record) || !$has_access) {
                 let form = $("#edit-form").first();
 
                 // Ultima sezione/campo del form
-                let last = form.find(".panel").last();
+                let last = form.find(".card").last();
 
                 if (!last.length) {
                     last = form.find(".box").last();
@@ -598,8 +598,30 @@ if ($read_only || !empty($block_edit)) {
                 }
             });
 
+            
             $(".content .superselect, .content .superselectajax").on("change", function (e) {
-                content_was_modified = true;
+                
+                let current = $(this).val() === null ? "" : String($(this).val());
+                let previous = $(this).data("previous-value");
+
+                if (previous === undefined) {
+                    previous = "";
+                }
+                if (String(previous) !== current) {
+                    content_was_modified = true;
+                }
+
+            }).each(function() {
+                $(this).data("previous-value", $(this).val() === null ? "" : String($(this).val()));
+            });
+
+            $(document).ready(function () {
+                setTimeout(function () {
+                    $(".content .superselect, .content .superselectajax").each(function () {
+                        $(this).data("previous-value", $(this).val() === null ? "" : String($(this).val()));
+                    });
+                    content_was_modified = false;
+                }, 300);
             });
 
             // Tolgo il controllo se sto salvando

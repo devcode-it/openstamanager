@@ -418,8 +418,8 @@ echo '
     }
 
     function getIndirizzoAzienda() {
-        const indirizzo = "'.$sede_azienda->indirizzo.'";
-        const citta = "'.$sede_azienda->citta.'";
+        const indirizzo = "'.addslashes($sede_azienda->indirizzo).'";
+        const citta = "'.addslashes($sede_azienda->citta).'";
 
         const lat = parseFloat("'.$sede_azienda->lat.'");
         const lng = parseFloat("'.$sede_azienda->lng.'");
@@ -432,8 +432,8 @@ echo '
     }
 
     function getIndirizzoAnagrafica() {
-        const indirizzo = "'.$sede_cliente->indirizzo.'";
-        const citta = "'.$sede_cliente->citta.'";
+        const indirizzo = "'.addslashes($sede_cliente->indirizzo).'";
+        const citta = "'.addslashes($sede_cliente->citta).'";
 
         const lat = parseFloat("'.$sede_cliente->lat.'");
         const lng = parseFloat("'.$sede_cliente->lng.'");

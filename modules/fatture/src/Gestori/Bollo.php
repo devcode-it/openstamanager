@@ -99,10 +99,10 @@ class Bollo
         if (empty($riga)) {
             $riga = Components\Riga::build($this->fattura);
         }
+        $riga->id_iva = Aliquota::where('name', 'Escluso art. 15')->value('id');
         $riga->prezzo_unitario = $marca_da_bollo;
         $riga->qta = 1;
         $riga->descrizione = setting('Descrizione addebito bollo');
-        $riga->id_iva = Aliquota::where('name', 'Escluso art. 15')->value('id');
         $riga->id_conto = setting('Conto predefinito per la marca da bollo');
         $riga->id_documento = $this->fattura->id;
 

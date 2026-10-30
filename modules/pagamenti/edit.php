@@ -166,7 +166,7 @@ ORDER BY `data`');
 
 						<div class="row">
 							<div class="col-md-6">
-								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale['.$numero_rata.']", "decimals": "2", "min-value": "0", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+								{[ "type": "number", "label": "'.tr('Percentuale').'", "name": "percentuale['.$numero_rata.']", "decimals": "4", "min-value": "0", "value": "'.$result['prc'].'", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
 							</div>
 
 							<div class="col-md-6">
@@ -233,7 +233,7 @@ echo '
 
             <div class="row">
                 <div class="col-md-6">
-                    {[ "type": "number", "label": "'.tr('Percentuale').'", "decimals": "2", "name": "percentuale[-id-]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
+                    {[ "type": "number", "label": "'.tr('Percentuale').'", "decimals": "4", "name": "percentuale[-id-]", "icon-after": "<i class=\"fa fa-percent\"></i>" ]}
                 </div>
 
                 <div class="col-md-6">

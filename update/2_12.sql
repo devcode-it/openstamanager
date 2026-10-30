@@ -136,3 +136,6 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Tutte'), 'All'),
 (NULL, '1', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Eliminate'), 'Eliminate'),
 (NULL, '2', (SELECT `id` FROM `zz_segments` WHERE `id_module` = (SELECT id FROM zz_modules WHERE `name` = 'Anagrafiche') AND `name` = 'Eliminate'), 'Deleted');
+
+-- Ampliamento a 4 decimali nella % delle rate dei pagamenti
+ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(7,4) NOT NULL;

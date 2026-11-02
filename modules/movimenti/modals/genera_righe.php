@@ -45,6 +45,7 @@ foreach ($righe as $riga) {
     $descrizione = $riga['descrizione'];
     $giacenza_attuale = floatval($riga['giacenza_attuale']);
     $nuova_giacenza = floatval($riga['nuova_giacenza']);
+    $ubicazione = $riga['ubicazione'];
 
     $ultimo_movimento = $dbo->fetchOne('SELECT data, movimento FROM mg_movimenti WHERE id_articolo = '.prepare($riga['id_articolo']).' ORDER BY data DESC LIMIT 1');
     $data_movimento = $ultimo_movimento['data'];

@@ -1011,11 +1011,13 @@ function impostaRiferimento(id_riga, documento, riga) {
     }
 
     if (riga.id_articolo) {
-        input("articoli["+id_riga+"]").getElement().selectSetNew(riga.id_articolo, riga.desc_articolo.replace(/_/g, " ").replace(/\n/g, "<br>"));
+        let desc = riga.desc_articolo.replace(/_/g, " ").replace(/\n/g, " ");
+        let label = desc.length > 50 ? desc.substring(0, 50) + \'...\' : desc;
+        input("articoli["+id_riga+"]").getElement().selectSetNew(riga.id_articolo, label);
     }
 
     if (riga.id_conto && riga.desc_conto !== null && riga.desc_conto !== undefined) {
-        input("conto["+id_riga+"]").getElement().selectSetNew(riga.id_conto, riga.desc_conto.replace(/_/g, " ").replace(/\n/g, "<br>"));
+        input("conto["+id_riga+"]").getElement().selectSetNew(riga.id_conto, riga.desc_conto.replace(/_/g, " ").replace(/\n/g, ""));
     }
 }
 

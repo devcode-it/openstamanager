@@ -106,6 +106,29 @@ if ($nome_stampa == 'Libro giornale') {
 </div>';
 }
 
+// Avviso di sequenzialità per le stampe IVA (Registro IVA e Liquidazione IVA)
+$is_stampa_iva = in_array($nome_stampa, ['Registro IVA', 'Liquidazione IVA']);
+
+if ($is_stampa_iva) {
+    $periodicita_iva = setting('Liquidazione iva') == 'Trimestrale' ? tr('trimestrale') : tr('mensile');
+    echo '
+<div class="alert alert-danger hidden" id="avviso_sequenza">
+    <div class="row">
+        <div class="col-md-1 text-center d-flex align-items-center justify-content-center">
+            <i class="fa fa-exclamation-triangle fa-2x"></i>
+        </div>
+        <div class="col-md-11">
+            <strong>'.tr('Attenzione: la stampa definitiva selezionata non è consecutiva alle stampe definitive precedenti!').'</strong><br>
+            <span id="dettagli_sequenza"></span><br>
+            <small>'.tr('Le stampe definitive dovrebbero essere sequenziali in base alla periodicità IVA impostata (_PERIODICITA_).', ['_PERIODICITA_' => $periodicita_iva]).'</small><br>
+            <button type="button" class="btn btn-warning" id="procedi_comunque" style="margin-top:10px;">
+                <i class="fa fa-check-circle"></i> '.tr('Voglio procedere comunque').'
+            </button>
+        </div>
+    </div>
+</div>';
+}
+
 echo '
 <form action="" method="post" id="form" class="mb-3">
     <div class="card card-primary card-outline">
@@ -286,6 +309,9 @@ echo '
 
 echo '
 <script>
+	// Flag globale: gestito su window perché le funzioni sono globali e lo script è iniettato dinamicamente nel modal
+	window.sequenza_ignorata = false;
+
 	$("#modals > div").on("shown.bs.modal", function () {
 		eseguiControlli();
 	});
@@ -303,6 +329,8 @@ echo '
 	});
 
 	function eseguiControlli() {
+		// Reset del flag a ogni nuova verifica delle date
+		window.sequenza_ignorata = false;
 		let date_start = $("#date_start").data("DateTimePicker").date().format("YYYY-MM-DD");
 		let date_end = $("#date_end").data("DateTimePicker").date().format("YYYY-MM-DD");
 		controllaDate(date_start, date_end);
@@ -351,6 +379,8 @@ echo '
 			m_end += 1;
 		}
 		$("#is_definitiva").addClass("hidden");
+		'.($is_stampa_iva ? '$("#avviso_sequenza").addClass("hidden");
+		$("#btn-stampa").removeClass("hidden");' : '').'
 
 		if (intervallo_corretto) {
 			$("#period").addClass("hidden");
@@ -387,8 +417,62 @@ echo '
 				input("definitiva").disable();
 				$("#definitiva").prop("checked", false);
 			}
+
+			// Controllo sequenzialità per i registri IVA e la liquidazione IVA
+			'.($is_stampa_iva ? 'controllaSequenza(date_start, date_end);' : '').'
 		});
 	}
+
+	// Controllo se la stampa definitiva selezionata è consecutiva all\'ultima stampa definitiva effettuata
+	function controllaSequenza(date_start, date_end) {
+		$.ajax({
+			url: globals.rootdir + "/ajax_complete.php",
+			type: "GET",
+			data: {
+				module: "stampe_contabili",
+				op: "controlla_sequenza_stampa",
+				dir: "'.$dir.'",
+				id_print: "'.$id_print.'",
+				id_sezionale: $("#id_sezionale").val(),
+				date_start: date_start,
+				date_end: date_end
+			},
+			success: function(response) {
+				try {
+					let risultato = JSON.parse(response);
+
+					if (risultato.sequenziale) {
+						$("#avviso_sequenza").addClass("hidden");
+					} else {
+						$("#dettagli_sequenza").html(risultato.messaggio);
+						$("#avviso_sequenza").removeClass("hidden");
+
+						// Nasconde il pulsante di stampa e disabilita la stampa definitiva, a meno che l\'utente non abbia confermato esplicitamente di procedere
+						if (!window.sequenza_ignorata) {
+							$("#btn-stampa").addClass("hidden");
+							input("definitiva").disable();
+							$("#definitiva").prop("checked", false);
+						}
+					}
+				} catch (e) {
+					console.error("Errore nel parsing della risposta per controllo sequenzialità:", e);
+				}
+			},
+			error: function() {
+				console.error("Errore nella richiesta di controllo sequenzialità");
+			}
+		});
+	}
+
+	$("#procedi_comunque").on("click", function() {
+		window.sequenza_ignorata = true;
+		$("#btn-stampa").removeClass("hidden");
+
+		// Riabilita la stampa definitiva solo se non è già presente una stampa definitiva per il periodo selezionato
+		if ($("#is_definitiva").hasClass("hidden")) {
+			input("definitiva").enable();
+		}
+	});
 
 	$(document).ready(init);
 

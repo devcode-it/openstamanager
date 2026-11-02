@@ -65,4 +65,73 @@ switch ($resource) {
         echo json_encode($risultato);
 
         break;
+
+    case 'controlla_sequenza_stampa':
+        $date_start = get('date_start');
+        $id_print = get('id_print');
+        $id_sezionale = get('id_sezionale');
+        $dir = get('dir');
+
+        $risultato = [
+            'sequenziale' => true,
+            'messaggio' => '',
+        ];
+
+        if (!empty($date_start)) {
+            $where_conditions = [
+                'id_print='.prepare($id_print),
+            ];
+
+            if (!empty($dir)) {
+                $where_conditions[] = 'dir='.prepare($dir);
+            } else {
+                $where_conditions[] = '(dir IS NULL OR dir = "")';
+            }
+
+            if (!empty($id_sezionale)) {
+                $where_conditions[] = 'id_sezionale='.prepare($id_sezionale);
+            }
+
+            $where_clause = implode(' AND ', $where_conditions);
+
+            // Ultima stampa definitiva effettuata per la stampa e la direzione selezionata
+            $ultima_stampa = $dbo->fetchOne('SELECT date_start, date_end FROM co_stampe_contabili WHERE '.$where_clause.' ORDER BY date_end DESC, date_start DESC LIMIT 1');
+
+            // Se non è presente alcuna stampa definitiva precedente, la stampa è da considerarsi sequenziale
+            if (!empty($ultima_stampa)) {
+                $ultima_fine = new DateTime($ultima_stampa['date_end']);
+                $trimestrale = setting('Liquidazione iva') == 'Trimestrale';
+
+                // Calcolo del periodo atteso successivo all'ultima stampa, in base alla periodicità IVA (mensile o trimestrale)
+                if ($trimestrale) {
+                    $mese_inizio_trimestre = (int) (floor(((int) $ultima_fine->format('n') - 1) / 3) * 3 + 1);
+                    $attesa_inizio = new DateTime($ultima_fine->format('Y').'-'.str_pad((string) $mese_inizio_trimestre, 2, '0', STR_PAD_LEFT).'-01');
+                    $attesa_inizio->modify('+3 months');
+                    $attesa_fine = (clone $attesa_inizio)->modify('+3 months -1 day');
+                } else {
+                    $attesa_inizio = new DateTime($ultima_fine->format('Y-m-01'));
+                    $attesa_inizio->modify('+1 month');
+                    $attesa_fine = (clone $attesa_inizio)->modify('last day of this month');
+                }
+
+                $selezionata_inizio = new DateTime($date_start);
+                $sequenziale = $selezionata_inizio->format('Y-m-d') === $attesa_inizio->format('Y-m-d');
+
+                if (!$sequenziale) {
+                    $periodicita = $trimestrale ? tr('trimestrale') : tr('mensile');
+                    $risultato['sequenziale'] = false;
+                    $risultato['messaggio'] = tr('L\'ultima stampa definitiva risulta dal _ULTIMA_INIZIO_ al _ULTIMA_FINE_: con periodicità _PERIODICITA_ il periodo atteso risulta dal _ATTESA_INIZIO_ al _ATTESA_FINE_.', [
+                        '_ULTIMA_INIZIO_' => Translator::dateToLocale($ultima_stampa['date_start']),
+                        '_ULTIMA_FINE_' => Translator::dateToLocale($ultima_stampa['date_end']),
+                        '_PERIODICITA_' => $periodicita,
+                        '_ATTESA_INIZIO_' => Translator::dateToLocale($attesa_inizio->format('Y-m-d')),
+                        '_ATTESA_FINE_' => Translator::dateToLocale($attesa_fine->format('Y-m-d')),
+                    ]);
+                }
+            }
+        }
+
+        echo json_encode($risultato);
+
+        break;
 }

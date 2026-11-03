@@ -678,8 +678,8 @@ class FatturaElettronica implements \Stringable
             $result['ContattiTrasmittente']['Email'] = $anagrafica['email'];
         }
 
-        // Inizializzazione PEC solo se anagrafica azienda e codice destinatario non compilato, per privato e PA la PEC non serve
-        if (empty($cliente['codice_destinatario']) && $cliente['tipo'] == 'Azienda' && !empty($cliente['pec'])) {
+        // Include the recipient PEC when no recipient code is set and the client has a PEC (company or private)
+        if (empty($cliente['codice_destinatario']) && in_array($cliente['tipo'], ['Azienda', 'Privato']) && !empty($cliente['pec'])) {
             $result['PECDestinatario'] = $cliente['pec'];
         }
 

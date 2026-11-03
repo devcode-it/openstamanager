@@ -30,6 +30,7 @@ $user = auth_osm()->getUser();
 
 $menu_logo_completo = App::getPaths()['img'].'/logo_completo.png';
 $menu_logo_piccolo = App::getPaths()['img'].'/logo.png';
+$favicon = $paths['img'].'/favicon.png';
 
 $menu_logo_esteso_setting = setting('Logo menu');
 if (!empty($menu_logo_esteso_setting)) {
@@ -52,6 +53,7 @@ if (!empty($menu_logo_compatto_setting)) {
     }
     if (!empty($menu_logo_compatto_file)) {
         $menu_logo_piccolo = base_path_osm().'/files/impostazioni/'.$menu_logo_compatto_file->filename;
+        $favicon = $menu_logo_piccolo;
     }
 }
 
@@ -86,7 +88,7 @@ echo '<!DOCTYPE html>
         <meta name="description" content="'.tr('OpenSTAManager, il software gestionale open source per assistenza tecnica e fatturazione elettronica.').'">
         <meta name="author" content="DevCode s.r.l.">
 
-		<link href="'.$paths['img'].'/favicon.png" rel="icon" type="image/x-icon" />';
+		<link href="'.$favicon.'" rel="icon" />';
 
 if (file_exists(base_dir().'/manifest.json')) {
     echo '

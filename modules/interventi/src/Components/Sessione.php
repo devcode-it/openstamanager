@@ -157,8 +157,13 @@ class Sessione extends Model
     public function getOreCalcolateAttribute()
     {
         $inizio = new \DateTime($this->orario_inizio);
-        $diff = $inizio->diff(new \DateTime($this->orario_fine));
+        $fine = new \DateTime($this->orario_fine);
 
+        if ($fine <= $inizio) {
+            throw new \InvalidArgumentException('La data/ora di fine deve essere successiva alla data/ora di inizio.');
+        }
+
+        $diff = $inizio->diff($fine);
         $ore = $diff->i / 60 + $diff->h + ($diff->days * 24);
 
         return $ore;

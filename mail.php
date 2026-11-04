@@ -290,15 +290,30 @@ echo '
     function addAutoComplete(input) {
         autocomplete({
             minLength: 0,
+            showOnFocus: true,
+            disableAutoSelect: true,
             input: input,
             emptyMsg: globals.translations.noResults,
             fetch: function (text, update) {
-                text = text.toLowerCase();
-                const suggestions = emails.filter(n => n.value.toLowerCase().startsWith(text));
+                // La ricerca ignora i segnaposto della maschera _@_ del campo,
+                // preservando gli underscore e gli altri caratteri digitati
+                const q = (text || \'\').toLowerCase();
+                const locale = q.split(\'@\')[0].replace(/^_+/, \'\').replace(/_+$/, \'\');
+                const dominio = q.includes(\'@\') ? q.split(\'@\').pop().replace(/_+$/, \'\') : \'\';
+
+                const suggestions = emails.filter(n => {
+                    const value = (n.value || \'\').toLowerCase();
+                    const local = value.split(\'@\')[0];
+                    const domain = value.split(\'@\')[1] || \'\';
+                    const label = (n.label || \'\').toLowerCase();
+
+                    return (local.startsWith(locale) && domain.startsWith(dominio)) || (locale !== \'\' && label.includes(locale)) || (dominio !== \'\' && label.includes(dominio));
+                });
                 update(suggestions);
             },
             onSelect: function (item) {
-                input.value = item.value;
+                // Imposta il valore tramite Inputmask per mantenere coerente la maschera
+                $(input).inputmask(\'setvalue\', item.value);
                 aggiungiDestinatario();
             },
         });

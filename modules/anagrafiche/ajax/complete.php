@@ -56,9 +56,10 @@ switch ($resource) {
     case 'get_email':
         $id_anagrafica = get('id_anagrafica');
 
-        if (!empty($id_anagrafica)) {
-            $where = 'AND id = '.prepare($id_anagrafica);
-        }
+        // Filtro per le tabelle collegate all'anagrafica (an_referenti, an_sedi, an_anagrafiche_agenti)
+        $where = !empty($id_anagrafica) ? 'AND id_anagrafica = '.prepare($id_anagrafica) : '';
+        // Filtro per la tabella an_anagrafiche 
+        $where_anagrafica = !empty($id_anagrafica) ? 'AND id = '.prepare($id_anagrafica) : '';
 
         $results = [];
 
@@ -96,10 +97,10 @@ switch ($resource) {
         }
 
         // Email del cliente
-        $query = "SELECT DISTINCT(email) AS email, ragione_sociale, id FROM an_anagrafiche WHERE email != '' ".$where;
+        $query = "SELECT DISTINCT(email) AS email, ragione_sociale, id FROM an_anagrafiche WHERE email != '' ".$where_anagrafica;
         // Se type pec, propongo anche la pec
         if (get('type') == 'pec') {
-            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, id FROM an_anagrafiche WHERE pec != '' ".$where;
+            $query .= " UNION SELECT DISTINCT(pec), ragione_sociale, id FROM an_anagrafiche WHERE pec != '' ".$where_anagrafica;
         }
         $query .= ' ORDER BY id';
 

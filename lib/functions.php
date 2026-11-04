@@ -145,13 +145,18 @@ function copyr($source, $destination, $ignores = [])
 
     $files = Finder::create()
         ->files()
-        ->exclude((array) $ignores['dirs'])
+        ->exclude((array) ($ignores['dirs'] ?? []))
         ->ignoreDotFiles(false)
         ->ignoreVCS(true)
         ->in($source);
 
-    foreach ((array) $ignores['files'] as $value) {
+    foreach ((array) ($ignores['files'] ?? []) as $value) {
         $files->notName($value);
+    }
+
+    // Esclusioni basate sul percorso relativo rispetto alla root di origine
+    foreach ((array) ($ignores['paths'] ?? []) as $value) {
+        $files->notPath('#^'.preg_quote(ltrim(slashes((string) $value), '/'), '#').'(/|$)#');
     }
 
     $result = true;

@@ -87,11 +87,11 @@ class FatturaElettronica
                     '_CF_' => !empty($azienda->codice_fiscale) ? $azienda->codice_fiscale : '-',
                 ])."\n";
                 $message .= tr('Cessionario: P.IVA _PIVA_, CF _CF_', [
-                    '_PIVA_' => !empty($piva_cessionario) ? $p_iva_cessionario : '-',
+                    '_PIVA_' => !empty($p_iva_cessionario) ? $p_iva_cessionario : '-',
                     '_CF_' => !empty($cf_cessionario) ? $cf_cessionario : '-',
                 ])."\n";
                 $message .= tr('Cedente: P.IVA _PIVA_, CF _CF_', [
-                    '_PIVA_' => !empty($piva_cedente) ? $p_iva_cedente : '-',
+                    '_PIVA_' => !empty($p_iva_cedente) ? $p_iva_cedente : '-',
                     '_CF_' => !empty($cf_cedente) ? $cf_cedente : '-',
                 ]);
 

@@ -192,7 +192,7 @@ class Backup
         self::checkSpace();
 
         $backup_dir = self::getDirectory();
-        $backup_name = tr(self::getNextName(), ['AAAAAAA' => ($ignores['dirs'] || $ignores['files']) ? 'PARTIAL' : 'FULL']);
+        $backup_name = tr(self::getNextName(), ['AAAAAAA' => (!empty($ignores['dirs']) || !empty($ignores['files']) || !empty($ignores['paths'])) ? 'PARTIAL' : 'FULL']);
 
         set_time_limit(0);
 
@@ -220,9 +220,13 @@ class Backup
 
         $ignores = array_merge_recursive($ignores, $default_ignores);
 
-        // Escludo la directory dei backup
+        // Escludo la directory dei backup solo dal percorso relativo della root,
+        // per non escludere anche le directory omonime in sotto-cartelle (es. modules/backups)
         if (string_starts_with($backup_dir, slashes(base_dir()))) {
-            $ignores['dirs'][] = basename($backup_dir);
+            $relative_backup_dir = ltrim(substr(slashes($backup_dir), strlen(slashes(base_dir()))), '/');
+            if ($relative_backup_dir !== '') {
+                $ignores['paths'][] = $relative_backup_dir;
+            }
         }
 
         // Nome del file di backup

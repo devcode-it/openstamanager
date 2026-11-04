@@ -59,9 +59,9 @@ switch (filter('op')) {
         $ignores = ['dirs' => [], 'files' => []];
 
         if (filter('exclude') == 'exclude_attachments') {
-            $ignores = ['dirs' => ['files']];
+            $ignores = ['paths' => ['files']];
         } elseif (filter('exclude') == 'only_database') {
-            $ignores = ['dirs' => ['vendor', 'update', 'templates', 'src', 'plugins', 'modules', 'logs', 'locale', 'lib', 'include', 'files', 'config', 'assets', 'api'], 'files' => ['*.php', '*.md', '*.json', '*.js', '*.xml', '.*']];
+            $ignores = ['paths' => ['vendor', 'update', 'templates', 'src', 'plugins', 'modules', 'logs', 'locale', 'lib', 'include', 'files', 'config', 'assets', 'api'], 'files' => ['*.php', '*.md', '*.json', '*.js', '*.xml', '.*']];
         }
 
         try {

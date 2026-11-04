@@ -436,8 +436,8 @@ switch ($resource) {
         $where[] = 'deleted_at IS NULL';
         $where_sedi[] = '`id_anagrafica`='.prepare($id_azienda);
         $where_sedi[] = 'deleted_at IS NULL';
-        $query = str_replace('|where_sedi|', 'WHERE '.implode(' AND ', $where_sedi), $query);
-
+        $query = str_replace('|where_sedi|', !empty($where_sedi) ? 'WHERE '.implode(' AND ', $where_sedi): '', $query);
+        
         // filtro in base alle sedi abilitate dell'utente
         if ($user->gruppo != 'Amministratori') {
             $filter[] = '`id` IN('.implode(',', array_map(prepare(...), $user->sedi)).')';

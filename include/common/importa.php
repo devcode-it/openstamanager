@@ -148,13 +148,16 @@ if (!empty($options['create_document']) && empty($options['tipi_attivita'])) {
 
     // Opzioni aggiuntive per gli Interventi
     elseif ($final_module->name == 'Interventi') {
+        // Prevalorizzazione del tipo di attività dal documento di origine
+        $id_tipo_intervento_origine = $documento->id_tipo_intervento ?: '';
+
         echo '
             <div class="col-md-4">
                 {[ "type": "select", "label": "'.tr('Stato').'", "name": "id_stato", "required": 1, "values": "query=SELECT `in_stati_intervento`.`id`, `in_stati_intervento_lang`.`title` as `descrizione`, `colore` AS _bgcolor_ FROM `in_stati_intervento` LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento`.`id` = `in_stati_intervento_lang`.`id_record` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).') WHERE `deleted_at` IS NULL AND `is_bloccato` = 0 ORDER BY `title`" ]}
             </div>
 
             <div class="col-md-4">
-                {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento" ]}
+                {[ "type": "select", "label": "'.tr('Tipo').'", "name": "id_tipo_intervento", "required": 1, "ajax-source": "tipiintervento", "value": "'.$id_tipo_intervento_origine.'" ]}
             </div>';
     }
 

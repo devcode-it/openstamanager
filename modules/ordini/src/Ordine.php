@@ -163,15 +163,16 @@ class Ordine extends Document
 
         // Ottimizzazione: singola query per calcolare quantità fatturate
         $righe_ids = $righe->pluck('id')->toArray();
+        $riga_types = [Components\Articolo::class, Components\Riga::class, Components\Sconto::class, Components\Descrizione::class];
 
         $qta_fatturate = (float) database()->table('co_righe_documenti')
             ->whereIn('original_id', $righe_ids)
-            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->whereIn('original_type',$riga_types)
             ->sum('qta');
 
         $fatture_collegate_totali = database()->table('co_righe_documenti')
             ->whereIn('original_id', $righe_ids)
-            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->whereIn('original_type',$riga_types)
             ->distinct('id_documento')
             ->count('id_documento');
 

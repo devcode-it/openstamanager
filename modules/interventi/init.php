@@ -45,5 +45,28 @@ if (!empty($id_record)) {
     WHERE 
         `in_interventi`.`id`='.prepare($id_record));
 
+    $elementi = $dbo->fetchArray('SELECT
+        `co_documenti`.`id`,
+        `co_documenti`.`data`,
+        `co_documenti`.`numero`,
+        `co_documenti`.`numero_esterno`,
+        `co_tipi_documento_lang`.`title` AS tipo_documento,
+        IF(`co_tipi_documento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
+        GROUP_CONCAT(CONCAT(`co_righe_documenti`.`original_id`, " - ", `co_righe_documenti`.`qta`) SEPARATOR ", ") AS righe,
+        `co_stati_documento_lang`.`title` AS stato_documento
+    FROM
+        `co_documenti`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+        LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE
+        (`co_righe_documenti`.`original_document_id` = '.prepare($id_record).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\Interventi\\\\Intervento\')
+        OR `co_righe_documenti`.`id_intervento` = '.prepare($id_record).'
+    GROUP BY
+        `co_documenti`.`id`
+    ORDER BY `modulo`');
+
     $is_anagrafica_deleted = !$intervento->anagrafica;
 }

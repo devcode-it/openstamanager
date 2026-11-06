@@ -64,5 +64,50 @@ if (!empty($id_record)) {
         $record['flag_completato'] = 1;
     }
 
+    $elementi = $dbo->fetchArray('SELECT
+        `co_documenti`.`id`,
+        `co_documenti`.`data`,
+        `co_documenti`.`numero`,
+        `co_documenti`.`numero_esterno`,
+        `co_tipi_documento_lang`.`title` AS tipo_documento,
+        IF(`co_tipi_documento`.`dir` = \'entrata\', \'Fatture di vendita\', \'Fatture di acquisto\') AS modulo,
+        GROUP_CONCAT(CONCAT(`co_righe_documenti`.`original_id`, " - ", `co_righe_documenti`.`qta`) SEPARATOR ", ") AS righe,
+        `co_stati_documento_lang`.`title` AS stato_documento
+    FROM
+        `co_documenti`
+        INNER JOIN `co_righe_documenti` ON `co_righe_documenti`.`id_documento` = `co_documenti`.`id`
+        INNER JOIN `co_tipi_documento` ON `co_tipi_documento`.`id` = `co_documenti`.`id_tipo_documento`
+        LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento_lang`.`id_record` = `co_tipi_documento`.`id` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+        LEFT JOIN `co_stati_documento` ON `co_documenti`.`id_stato` = `co_stati_documento`.`id`
+        LEFT JOIN `co_stati_documento_lang` ON (`co_stati_documento_lang`.`id_record` = `co_stati_documento`.`id` AND `co_stati_documento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE
+        (`co_righe_documenti`.`original_document_id` = '.prepare($id_record).' AND `co_righe_documenti`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\')
+        OR `co_righe_documenti`.`id_ddt` = '.prepare($id_record).'
+    GROUP BY
+        `co_documenti`.`id`
+
+    UNION
+
+    SELECT
+        `in_interventi`.`id`,
+        `in_interventi`.`data_richiesta`,
+        `in_interventi`.`codice`,
+        NULL,
+        \'Attività\' AS tipo_documento,
+        \'Interventi\' AS modulo,
+        GROUP_CONCAT(CONCAT(`in_righe_interventi`.`original_id`, " - ", `in_righe_interventi`.`qta`) SEPARATOR ", ") AS righe,
+        `in_stati_intervento_lang`.`title` AS stato_documento
+    FROM
+        `in_interventi`
+        LEFT JOIN `in_righe_interventi` ON `in_righe_interventi`.`id_intervento` = `in_interventi`.`id`
+        LEFT JOIN `in_stati_intervento` ON `in_interventi`.`id_stato` = `in_stati_intervento`.`id`
+        LEFT JOIN `in_stati_intervento_lang` ON (`in_stati_intervento_lang`.`id_record` = `in_stati_intervento`.`id` AND `in_stati_intervento_lang`.`id_lang` = '.prepare(Models\Locale::getDefault()->id).')
+    WHERE
+        `in_righe_interventi`.`original_document_id` = '.prepare($id_record).' AND `in_righe_interventi`.`original_document_type` = \'Modules\\\\DDT\\\\DDT\'
+    GROUP BY
+        `in_interventi`.`id`
+
+    ORDER BY `modulo`');
+
     $is_anagrafica_deleted = !$ddt->anagrafica;
 }

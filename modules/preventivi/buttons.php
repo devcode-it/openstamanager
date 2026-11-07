@@ -20,6 +20,7 @@
 
 include_once __DIR__.'/../../core.php';
 
+use Common\DocumentRounding;
 use Modules\Interventi\Intervento;
 use Modules\Preventivi\Stato;
 
@@ -86,6 +87,13 @@ if (!$is_anagrafica_deleted) {
             </a>
         </div>
     </div>';
+}
+
+if (DocumentRounding::defaultMode() !== null && empty($record['is_bloccato'])) {
+    echo '
+<button type="button" class="btn btn-default" data-widget="modal" data-title="'.tr('Arrotonda totale').'" data-href="'.base_path_osm().'/include/document-rounding.php?id_module='.$id_module.'&id_record='.$id_record.'">
+    <i class="fa fa-calculator"></i> '.tr('Arrotonda').'
+</button>';
 }
 
 // Duplica preventivo

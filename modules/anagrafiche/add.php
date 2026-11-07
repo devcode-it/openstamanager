@@ -137,6 +137,40 @@ echo '
 		</div>
 	</div>';
 
+//mod maulapi
+//<!-- INSERIRE questo blocco prima dei PULSANTI / modal-footer -->
+echo '
+   <br>
+   <div class="card card-info collapsed-card">
+      <div class="card-header">
+         <h3 class="card-title">'.tr('Referente').'</h3>
+         <div class="card-tools pull-right">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+               <i class="fa fa-plus"></i>
+            </button>
+         </div>
+      </div>
+      <div class="card-body collapse">
+         <div class="row">
+            <div class="col-md-6">
+               {[ "type": "text", "label": "'.tr('Nominativo').'", "name": "referente_nome", "id": "referente_nome_add" ]}
+            </div>
+            <div class="col-md-6">
+               {[ "type": "telefono", "label": "'.tr('Cellulare').'", "name": "referente_cellulare", "id": "referente_cellulare_add", "class": "text-center" ]}
+            </div>
+         </div>
+         <div class="row" style="margin-top:10px;">
+            <div class="col-md-6">
+               {[ "type": "email", "label": "'.tr('E-mail').'", "name": "referente_email", "id": "referente_email_add", "placeholder":"referente@dominio.ext" ]}
+            </div>
+            <div class="col-md-6">
+               {[ "type": "select", "label": "'.tr('Mansione').'", "name": "referente_mansione", "id": "referente_mansione_add", "values": "query=SELECT `id` AS id, `nome` AS descrizione FROM `an_mansioni` ORDER BY `nome`", "include_blank": true ]}
+            </div>
+         </div>
+      </div>
+   </div>';
+//fine mod maulapi
+
 echo '
 	<!-- PULSANTI -->
     <div class="modal-footer">

@@ -490,10 +490,12 @@ class DDT extends Document
      */
     protected function getQtaFatturata()
     {
+        $riga_types = [Components\Articolo::class, Components\Riga::class, Components\Sconto::class, Components\Descrizione::class];
+
         $qta_id_ddt = database()->table('co_righe_documenti')
             ->selectRaw('SUM(qta) as qta_fatturata')
             ->where('id_ddt', $this->id)
-            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->whereIn('original_type', $riga_types)
             ->value('qta_fatturata') ?? 0;
 
         if ($qta_id_ddt > 0) {
@@ -505,7 +507,7 @@ class DDT extends Document
             ->selectRaw('SUM(qta) as qta_fatturata')
             ->where('original_document_id', $this->id)
             ->where('original_document_type', 'Modules\\DDT\\DDT')
-            ->whereIn('original_type', [Components\Articolo::class, Components\Riga::class])
+            ->whereIn('original_type', $riga_types)
             ->value('qta_fatturata') ?? 0;
     }
 

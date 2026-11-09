@@ -44,7 +44,7 @@ switch ($resource) {
             $search_fields[] = '|table_listini|.prezzo_unitario_ivato LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '|table_listini|.sconto_percentuale LIKE '.prepare('%'.$search.'%');
             $search_fields[] = '|table_articoli|.codice LIKE '.prepare('%'.$search.'%');
-            $search_fields[] = '|table_articoli|.descrizione LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = 'mg_articoli_lang.title LIKE '.prepare('%'.$search.'%');
             $search_fields[] = ($prezzi_ivati ? '|table_articoli|.minimo_vendita_ivato' : '|table_articoli|.minimo_vendita').' LIKE '.prepare('%'.$search.'%');
         }
 

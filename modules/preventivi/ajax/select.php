@@ -30,7 +30,7 @@ switch ($resource) {
         if (isset($superselect['id_anagrafica'])) {
             $query = 'SELECT
                     `co_preventivi`.`id` AS id,
-                    `an_anagrafiche`.`id`,
+                    `an_anagrafiche`.`id` AS id_anagrafica,
                     CONCAT("Preventivo ", numero, " del ", DATE_FORMAT(`data_bozza`, "%d/%m/%Y"), " - ", `co_preventivi`.`nome`, " [", `co_stati_preventivi_lang`.`title` , "]") AS descrizione,
                     `co_preventivi`.`id_tipo_intervento`,
                     `in_tipi_intervento_lang`.`title` AS id_tipo_intervento_descrizione,

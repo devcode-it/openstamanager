@@ -153,15 +153,21 @@ if (Update::isBeta()) {
 // Controllo se è una beta e in caso mostro un warning
 if (AuthOSM::isBrute()) {
     echo '
-    <div class="card card-danger shadow-lg col-md-6 offset-md-3 mt-5" id="brute">
+    <div class="card card-danger shadow-lg mt-5" id="brute" role="alert" style="width:100%;max-width:450px;">
         <div class="card-header text-center">
             <h3 class="card-title"><i class="fa fa-exclamation-triangle mr-2"></i>'.tr('Attenzione').'</h3>
         </div>
         <div class="card-body text-center">
-            <p class="lead">'.tr('Sono stati effettuati troppi tentativi di accesso consecutivi!').'</p>
-            <div class="alert alert-warning">
-                <p>'.tr('Tempo rimanente').':</p>
-                <h3><span id="brute-timeout" class="badge badge-danger">'.(AuthOSM::getBruteTimeout() + 1).'</span> '.tr('secondi').'</h3>
+            <p class="lead">'.tr('Sono stati rilevati troppi tentativi di accesso consecutivi.').'</p>
+            <p>'.tr("Per motivi di sicurezza l'accesso è stato temporaneamente bloccato.").'</p>
+            <div class="alert" style="background:#f8f9fa;border-color:#e9ecef;">
+                <p><i class="fa fa-clock mr-1"></i>'.tr('Tempo rimanente').':</p>
+                <div class="display-4 text-danger" id="brute-timeout" style="transition:color .5s;">'.(AuthOSM::getBruteTimeout() + 1).'</div>
+                <div class="text-muted">'.tr('secondi').'</div>
+                <input type="hidden" id="brute-total" value="'.(AuthOSM::getBruteTimeout() + 1).'">
+                <div class="progress mt-2" style="height:6px;">
+                    <div class="progress-bar bg-danger" id="brute-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width:100%;transition:width 1s linear, background-color .5s linear;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -175,6 +181,18 @@ if (AuthOSM::isBrute()) {
     function brute() {
         var value = parseFloat($("#brute-timeout").text()) - 1;
         $("#brute-timeout").text(value);
+
+        var total = parseFloat($("#brute-total").val());
+        var percent = Math.max(0, Math.round(value / total * 100));
+
+        var color = "#dc3545";
+        if (percent <= 20) {
+            color = "#16a34a";
+        } else if (percent <= 50) {
+            color = "#d97706";
+        }
+        $("#brute-timeout").css("color", color);
+        $("#brute-progress").css("width", percent + "%").css("background-color", color).attr("aria-valuenow", percent);
 
         if(value > 0){
             setTimeout(brute, 1000);

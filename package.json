@@ -30,6 +30,7 @@
         "fullcalendar-scheduler": "^6.1.5",
         "geocomplete": "^1.7.0",
         "gl-matrix": "^3.4.3",
+        "hotkeys-js": "^4.0.0",
         "html5sortable": "^0.14.0",
         "inputmask": "^3.3.9",
         "ismobilejs": "^1.1.1",
@@ -82,7 +83,6 @@
         "gulp-sass": "^6.0.0",
         "gulp-stylus": "^3.0.0",
         "gulp-uglify": "^3.0.2",
-        "hotkeys-js": "^4.0.0",
         "inquirer": "^13.2.0",
         "main-bower-files": "^2.13.1",
         "md5-file": "^5.0.0",
@@ -108,5 +108,5 @@
         "fix-openapi-js": "node -e \"require('fs').writeFileSync('assets/api/src/main.js', \\\"import * as API from './index';global.window.API = API;\\\");\"",
         "update-openapi-client": "npm run-script export-openapi && npx @openapitools/openapi-generator-cli generate -i openapi.json -g javascript -o assets/api --skip-validate-spec && npm run-script fix-openapi-js && cd ./assets/api && npm install && npx babel src -d dist && cd ../.. && npx browserify -y ./assets/api/dist/main.js -o ./assets/dist/js/api.js"
     },
-    "packageManager": "yarn@4.12.0"
+    "packageManager": "yarn@4.18.1"
 }

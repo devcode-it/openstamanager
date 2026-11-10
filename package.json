@@ -30,6 +30,7 @@
         "fullcalendar-scheduler": "^6.1.5",
         "geocomplete": "^1.7.0",
         "gl-matrix": "^3.4.3",
+        "hotkeys-js": "^4.0.0",
         "html5sortable": "^0.14.0",
         "inputmask": "^5.0.9",
         "ismobilejs": "^1.1.1",
@@ -81,7 +82,6 @@
         "gulp-sass": "^6.0.0",
         "gulp-stylus": "^3.0.0",
         "gulp-uglify": "^3.0.2",
-        "hotkeys-js": "^4.0.0",
         "inquirer": "^13.2.0",
         "md5-file": "^5.0.0",
         "sass": "^1.62.1",
@@ -110,5 +110,5 @@
         "update-openapi-client-js": "npx @openapitools/openapi-generator-cli generate -i openapi.json -g javascript -o assets/api --skip-validate-spec && npm run-script fix-openapi-js && cd ./assets/api && npm install && npx babel src -d dist && cd ../.. && npx browserify -y ./assets/api/dist/main.js -o ./assets/dist/js/api.js",
         "update-openapi-client-php": "npx @openapitools/openapi-generator-cli generate -i openapi.json -g php -o src/generated --skip-validate-spec && SRC=./src/generated/lib DEST=./src/OpenAPI/Client npm run copy-folder && rm -rf src/generated"
     },
-    "packageManager": "yarn@4.17.1"
+    "packageManager": "yarn@4.18.1"
 }

@@ -74,6 +74,11 @@ $php_time_limit = '';
 // Forza l'esecuzione del cron in ambiente localhost
 $forza_cron_localhost = false;
 
+// Token segreto per l'esecuzione del cron via HTTP (cron.php?cron_token=...).
+// Lasciare vuoto per consentire l'esecuzione SOLO da CLI (php cron.php).
+$cron_token = '';
+
+
 // Integrazione con Laravel per Rate limiting
 $rate_limiting = [
     'enabled' => false,

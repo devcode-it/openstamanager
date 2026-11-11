@@ -33,6 +33,21 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Tasks\Task;
 
+// Il cron e' eseguibile solo dalla CLI di sistema (crontab),
+// oppure via HTTP con il token segreto configurato in config.inc.php ($cron_token).
+// Senza token configurato, ogni richiesta HTTP riceve 404.
+if (php_sapi_name() !== 'cli') {
+    include_once __DIR__.'/config.inc.php';
+
+    $expected = $cron_token ?? '';
+    $provided = $_GET['cron_token'] ?? '';
+
+    if (!is_string($expected) || $expected === '' || !is_string($provided) || !hash_equals($expected, $provided)) {
+        http_response_code(404);
+        exit;
+    }
+}
+
 // Rimozione delle limitazioni sull'esecuzione
 $php_time_limit = $config['php_time_limit'] ?? 86400;
 set_time_limit($php_time_limit);

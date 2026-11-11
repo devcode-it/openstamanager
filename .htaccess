@@ -18,6 +18,11 @@
     Require all denied  
 </Files> 
 
+# Deny HTTP execution of the cron scheduler (run it via system crontab: php cron.php)
+<Files "cron.php">
+    Require all denied
+</Files>
+
 # Disable indexing of php, html, htm, pdf files
 ServerSignature Off
 <IfModule mod_headers.c>

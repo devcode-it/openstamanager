@@ -28,6 +28,41 @@ $list = Interaction::getInvoiceList();
 
 $directory = FatturaElettronica::getImportDirectory();
 
+$readLocalSupplier = static function ($path) {
+    if (!is_readable($path) || strtolower(pathinfo($path, PATHINFO_EXTENSION)) !== 'xml') {
+        return '';
+    }
+
+    // Anteprima in sola lettura, senza avviare la procedura di importazione.
+    $previous_errors = libxml_use_internal_errors(true);
+    try {
+        $xml = new DOMDocument();
+        if (!$xml->load($path, LIBXML_NONET | LIBXML_NOCDATA) || $xml->doctype !== null) {
+            return '';
+        }
+
+        $xpath = new DOMXPath($xml);
+        $supplier = $xpath->query('/*[local-name()="FatturaElettronica" or local-name()="FatturaElettronicaSemplificata"]/*[local-name()="FatturaElettronicaHeader"]/*[local-name()="CedentePrestatore"]')->item(0);
+        if ($supplier === null) {
+            return '';
+        }
+
+        $anagrafica = $xpath->query('./*[local-name()="DatiAnagrafici"]/*[local-name()="Anagrafica"]', $supplier)->item(0) ?: $supplier;
+        $denominazione = trim($xpath->evaluate('string(./*[local-name()="Denominazione"])', $anagrafica));
+        if ($denominazione !== '') {
+            return $denominazione;
+        }
+
+        $nome = trim($xpath->evaluate('string(./*[local-name()="Nome"])', $anagrafica));
+        $cognome = trim($xpath->evaluate('string(./*[local-name()="Cognome"])', $anagrafica));
+
+        return trim($nome.' '.$cognome);
+    } finally {
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous_errors);
+    }
+};
+
 if (!empty($list)) {
     echo '
 <table class="table table-striped table-hover table-sm table-bordered">
@@ -50,12 +85,14 @@ if (!empty($list)) {
         <tr>';
 
         if (!empty($element['file'])) {
+            $supplier = $readLocalSupplier($directory.'/'.$name);
+
             echo '
             <td>
                 <p>'.$name.'</p>
             </td>
 
-            <td class="text-center">-</td>
+            <td class="text-center">'.htmlspecialchars($supplier !== '' ? $supplier : '-', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8').'</td>
             <td class="text-center">-</td>
             <td class="text-center">-</td>
 

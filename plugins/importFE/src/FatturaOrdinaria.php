@@ -28,6 +28,7 @@ use Modules\Fatture\Components\Articolo;
 use Modules\Fatture\Components\Descrizione;
 use Modules\Fatture\Components\Riga;
 use Modules\Fatture\Fattura;
+use Modules\Iva\Aliquota;
 use Plugins\ListinoClienti\DettaglioPrezzo;
 use Util\XML;
 
@@ -375,7 +376,8 @@ class FatturaOrdinaria extends FatturaElettronica
             }
 
             if (!$is_descrizione) {
-                $iva_value = !empty($iva[$key]) ? $iva[$key] : setting('Iva predefinita');
+                $iva_xml = Aliquota::where('percentuale', $riga['AliquotaIVA'])->first();
+                $iva_value = !empty($iva[$key]) ? $iva[$key] : (!empty($iva_xml) ? $iva_xml->id : setting('Iva predefinita'));
                 $conto_value = !empty($conto[$key]) ? $conto[$key] : setting('Conto predefinito fatture di acquisto');
 
                 $obj->id_iva = $iva_value;

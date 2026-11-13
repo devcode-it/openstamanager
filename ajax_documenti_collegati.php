@@ -28,10 +28,6 @@ while (ob_get_level() > 0) {
 
 include_once __DIR__.'/core.php';
 
-// Abilita error reporting per debug
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-
 // Verifica che l'id_record sia valido
 if (empty($id_record) || !is_numeric($id_record)) {
     $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';

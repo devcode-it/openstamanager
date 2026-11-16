@@ -63,6 +63,9 @@ switch (post('op')) {
         $file = temp_file();
         $exporter = new CSV($file);
 
+        // Inclusione dei referenti: una riga per ogni referente dell'anagrafica
+        $exporter->setIncludiReferenti(!empty(post('includi_referenti')));
+
         // Esportazione dei record selezionati
         $anagrafiche = Anagrafica::whereIn('id', $id_records)->get();
         $exporter->setRecords($anagrafiche);
@@ -275,7 +278,7 @@ $operations['delete_bulk'] = [
 $operations['export_csv'] = [
     'text' => '<span><i class="fa fa-download"></i> '.tr('Esporta').'</span>',
     'data' => [
-        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?'),
+        'msg' => tr('Vuoi esportare un CSV con le anagrafiche selezionate?').'<br><br>{[ "type": "checkbox", "label": "'.tr('Includi referenti').'", "name": "includi_referenti", "value": 0, "help": "'.tr('Aggiunge i campi del referente e ripete l\'anagrafica su una riga per ogni referente.').'" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-success',
         'blank' => true,

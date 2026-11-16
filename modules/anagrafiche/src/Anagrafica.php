@@ -405,6 +405,11 @@ class Anagrafica extends Model
         return $this->hasMany(Sede::class, 'id_anagrafica');
     }
 
+    public function referenti()
+    {
+        return $this->hasMany(Referente::class, 'id_anagrafica');
+    }
+
     public function nazione()
     {
         return $this->belongsTo(Nazione::class, 'id_nazione');

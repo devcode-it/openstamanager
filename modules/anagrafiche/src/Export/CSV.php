@@ -30,6 +30,13 @@ use Modules\Anagrafiche\Anagrafica;
  */
 class CSV extends CSVExporter
 {
+    protected $includi_referenti = false;
+
+    public function setIncludiReferenti($includi_referenti)
+    {
+        $this->includi_referenti = (bool) $includi_referenti;
+    }
+
     public function getAvailableFields()
     {
         return [
@@ -130,11 +137,108 @@ class CSV extends CSVExporter
                 'field' => 'tipo',
                 'label' => 'Tipologia',
             ],
+            [
+                'field' => 'referente.nome',
+                'label' => 'Referente',
+            ],
+            [
+                'field' => 'referente.mansione',
+                'label' => 'Mansione referente',
+            ],
+            [
+                'field' => 'referente.telefono',
+                'label' => 'Telefono referente',
+            ],
+            [
+                'field' => 'referente.email',
+                'label' => 'Email referente',
+            ],
+            [
+                'field' => 'referente.sede',
+                'label' => 'Sede referente',
+            ],
         ];
     }
 
     public function getRecords()
     {
         return Anagrafica::all();
+    }
+
+    public function exportRecords()
+    {
+        // Esportazione header
+        $fields = $this->getAvailableFields();
+        $this->csv->insertOne(array_column($fields, 'label'));
+
+        $records = $this->records ?: $this->getRecords();
+        $count = 0;
+        foreach ($records as $record) {
+            if ($this->includi_referenti) {
+                $referenti = $record->referenti;
+
+                // Ripetizione dell'anagrafica su una riga per ogni referente
+                foreach ($referenti as $referente) {
+                    $this->export($record, $referente);
+                    ++$count;
+                }
+
+                // Anagrafica senza referenti: riga singola con campi referente vuoti
+                if ($referenti->isEmpty()) {
+                    $this->export($record);
+                    ++$count;
+                }
+            } else {
+                $this->export($record);
+                ++$count;
+            }
+        }
+
+        return $count;
+    }
+
+    public function export($record, $referente = null)
+    {
+        $fields = $this->getAvailableFields();
+
+        $row = [];
+        foreach ($fields as $field) {
+            $nome = $field['field'];
+
+            if (str_starts_with((string) $nome, 'referente.')) {
+                $contenuto = $referente !== null ? $this->getReferenteField($referente, substr((string) $nome, 10)) : null;
+            } else {
+                // Navigazione secondo dot notation
+                $dot_notation = explode('.', (string) $nome);
+                $contenuto = $record;
+                foreach ($dot_notation as $segment) {
+                    $contenuto = $contenuto[$segment] ?? null;
+                }
+            }
+
+            // Formattazione automatica del campo
+            $type = $field['type'] ?? 'string';
+            if ($type == 'number') {
+                $contenuto = numberFormat($contenuto);
+            }
+
+            $row[] = $contenuto;
+        }
+
+        return $this->csv->insertOne($row);
+    }
+
+    protected function getReferenteField($referente, $field)
+    {
+        switch ($field) {
+            case 'mansione':
+                return $referente->mansione?->nome;
+
+            case 'sede':
+                return $referente->id_sede == 0 ? tr('Sede legale') : $referente->sede?->nome_sede;
+
+            default:
+                return $referente->{$field};
+        }
     }
 }

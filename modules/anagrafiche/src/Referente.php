@@ -22,6 +22,7 @@ namespace Modules\Anagrafiche;
 
 use Common\SimpleModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Mansioni\Mansione;
 
 class Referente extends Model
 {
@@ -62,6 +63,11 @@ class Referente extends Model
     public function anagrafica()
     {
         return $this->belongsTo(Anagrafica::class, 'id_anagrafica');
+    }
+
+    public function mansione()
+    {
+        return $this->belongsTo(Mansione::class, 'id_mansione');
     }
 
     public function sede()

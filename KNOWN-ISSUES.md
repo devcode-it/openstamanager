@@ -14,9 +14,6 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 #### 2.11.2 - 13/11/2026
 
 ##### Problemi noti
-- Ripristinata visualizzazione strisce colorate di evasione nelle righe dei documenti
-https://github.com/devcode-it/openstamanager/commit/d1d763d3f
-
 - Corretto collegamento del preventivo alle righe dei documenti
 https://github.com/devcode-it/openstamanager/commit/f90eea79f
 
@@ -25,9 +22,6 @@ https://github.com/devcode-it/openstamanager/commit/22e91056e
 
 - Corretta gestione seriali evasi in attività
 https://github.com/devcode-it/openstamanager/commit/31b59de60
-
-- Corrette voci di riferimento dei documenti collegati ai seriali (#1922)
-https://github.com/devcode-it/openstamanager/commit/9eb257a90
 
 - Corretto cambio stato automatico tra documenti collegati
 https://github.com/devcode-it/openstamanager/commit/9e4d85619
@@ -40,9 +34,6 @@ https://github.com/devcode-it/openstamanager/commit/bd398c350
 
 - Corretti riferimenti ai documenti di vendita nelle fatture elettroniche
 https://github.com/devcode-it/openstamanager/commit/7e063271e
-
-- Corretto troncamento delle descrizioni nelle righe delle fatture elettroniche
-https://github.com/devcode-it/openstamanager/commit/0a3953991
 
 - Corretto invio fatture elettroniche da azioni di gruppo (codice ERR - Trasmissione non riuscita)
 https://github.com/devcode-it/openstamanager/commit/fa5120a71
@@ -58,12 +49,6 @@ https://github.com/devcode-it/openstamanager/commit/3f9d692dd
 
 - Corretto calcolo IVA per la riga marca da bollo
 https://github.com/devcode-it/openstamanager/commit/eacd36bad
-
-- Corretto rilevamento relazione bloccata
-https://github.com/devcode-it/openstamanager/commit/e1d8f2ad1
-
-- Corretto percorso ricevute in importazione
-https://github.com/devcode-it/openstamanager/commit/fc7e63cb7
 
 - Corretta importazione file ricevute da script in cron
 https://github.com/devcode-it/openstamanager/commit/a6209e386
@@ -83,9 +68,6 @@ https://github.com/devcode-it/openstamanager/commit/82ce23bf0
 - Ripristinato ordinamento colonne nelle viste dei moduli
 https://github.com/devcode-it/openstamanager/commit/f8fe3ec30
 
-- Corretta visualizzazione card Campi personalizzati e segnalazione falsi positivi di record non modificati
-https://github.com/devcode-it/openstamanager/commit/5d8967d63
-
 - Corretto pulsante elimina nei plugin Barcode, Pagamenti anagrafiche e Sedi: se si annulla la conferma il record non viene più eliminato
 https://github.com/devcode-it/openstamanager/commit/bc6e8b475
 
@@ -94,17 +76,11 @@ https://github.com/devcode-it/openstamanager/commit/1aa2e6e36
 https://github.com/devcode-it/openstamanager/commit/8964d14c8
 https://github.com/devcode-it/openstamanager/commit/aa7e7d745
 
-- Corretto recupero lista mail e ricerca mail per destinatari secondari
-https://github.com/devcode-it/openstamanager/commit/f55e1bb5a
-
 - Corretto controllo token scaduto per invio mail
 https://github.com/devcode-it/openstamanager/commit/fe0762b13
 
 - Corretto salvataggio template email
 https://github.com/devcode-it/openstamanager/commit/3687ab692
-
-- Corretto inserimento liste nella newsletter
-https://github.com/devcode-it/openstamanager/commit/94bfd21a0
 
 - Corretto filtro per sede nel selettore delle anagrafiche
 https://github.com/devcode-it/openstamanager/commit/56b81601d
@@ -114,12 +90,6 @@ https://github.com/devcode-it/openstamanager/commit/cc823e293
 
 - Corretta creazione al volo degli articoli
 https://github.com/devcode-it/openstamanager/commit/e5dca2039
-
-- Corretta quantità disponibile nel plugin Giacenze degli articoli
-https://github.com/devcode-it/openstamanager/commit/46aebd7b4
-
-- Corretta tabella per ricerca degli articoli nei listini cliente
-https://github.com/devcode-it/openstamanager/commit/5ad858abd
 
 - Corretta gestione backup opzione senza gli allegati
 https://github.com/devcode-it/openstamanager/commit/a4f28f07f
@@ -374,7 +344,7 @@ https://github.com/devcode-it/openstamanager/commit/047dcfab9
 - Corrette vulnerabilità minori
 https://github.com/devcode-it/openstamanager/commit/9fa295094
 
-- Fix sicurezza
+- Corretta validazione degli stati consentiti nei selettori di contratti, ordini e preventivi e sanitizzazione del parametro righe 
 https://github.com/devcode-it/openstamanager/commit/e45e971de
 
 - Corretto generazione fatture con righe descrittive da bulk

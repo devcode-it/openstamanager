@@ -59,7 +59,7 @@ if (get('preview') == '1') {
     if ($file->isImage()) {
         $finfo = finfo_open();
         $mime_type = finfo_buffer($finfo, $file_content, FILEINFO_MIME_TYPE);
-        finfo_close($finfo);
+        //finfo_close($finfo);
 
         $allowed_image_types = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
         if (!in_array($mime_type, $allowed_image_types)) {

@@ -1,13 +1,20 @@
 # Problematiche Note - OpenSTAManager
 
-Questo documento raccoglie e documenta le problematiche del gestionale OpenSTAManager che sono già state identificate e risolte dalla community di sviluppo.
+Questo documento raccoglie le problematiche più rilevanti del gestionale OpenSTAManager già identificate e risolte dalla community di sviluppo.
+
+## Obiettivo del documento
+
+Vengono riportati **solo i fix degni di nota**: correzioni che, se non applicate tempestivamente su un'installazione in produzione, possono causare documenti fiscali errati (fatture, note di credito, scadenze, IVA, fatturazione elettronica), dati disallineati che richiedono interventi manuali di riallineamento, blocchi di aggiornamento o installazione, malfunzionamenti critici (invio email, invio FE, gestione magazzino e seriali) oppure l'esposizione a vulnerabilità di sicurezza.
+
+L'obiettivo è fornire un riferimento rapido agli utenti che **non possono aggiornare subito** il gestionale: per ogni versione sono indicati i problemi risolti e i relativi commit, così da poter valutare l'urgenza dell'aggiornamento oppure applicare manualmente la correzione dove fornita.
 
 ## Struttura del documento
 
-Le problematiche sono organizzate per versione di release in ordine cronologico decrescente (dalla più recente alla più datata). Per ogni problema identificato viene fornito:
+Le problematiche sono organizzate per versione di release in ordine cronologico decrescente (dalla più recente alla più datata). Per ogni versione vengono forniti:
 
-- **Descrizione**: Una breve spiegazione del problema riscontrato
-- **Commit di risoluzione**: Link diretto al commit GitHub che contiene la correzione del bug
+- **Descrizione**: il problema riscontrato e risolto
+- **Commit di risoluzione**: link diretto al commit GitHub che contiene la correzione
+- **Soluzione**: dove disponibile, le istruzioni per applicare la correzione manualmente senza aggiornare il gestionale
 
 ---
 
@@ -56,20 +63,11 @@ https://github.com/devcode-it/openstamanager/commit/a6209e386
 - Aggiunto fallback sull'ultima ricevuta per avviso fatture scartate
 https://github.com/devcode-it/openstamanager/commit/9449f25d6
 
-- Corretta notifica eliminazione sessione tecnico
-https://github.com/devcode-it/openstamanager/commit/b1ca44c26
-
 - Corretta ricerca globale che restituiva un solo risultato in presenza di segmenti con filtro (#1852)
 https://github.com/devcode-it/openstamanager/commit/34fa6a150
 
 - Corretto filtro segmento Scadenzario completo
 https://github.com/devcode-it/openstamanager/commit/82ce23bf0
-
-- Ripristinato ordinamento colonne nelle viste dei moduli
-https://github.com/devcode-it/openstamanager/commit/f8fe3ec30
-
-- Corretto pulsante elimina nei plugin Barcode, Pagamenti anagrafiche e Sedi: se si annulla la conferma il record non viene più eliminato
-https://github.com/devcode-it/openstamanager/commit/bc6e8b475
 
 - Corretto plugin Pianificazione interventi nella gestione e salvataggio dei promemoria
 https://github.com/devcode-it/openstamanager/commit/1aa2e6e36
@@ -81,15 +79,6 @@ https://github.com/devcode-it/openstamanager/commit/fe0762b13
 
 - Corretto salvataggio template email
 https://github.com/devcode-it/openstamanager/commit/3687ab692
-
-- Corretto filtro per sede nel selettore delle anagrafiche
-https://github.com/devcode-it/openstamanager/commit/56b81601d
-
-- Corretta assegnazione tecnico decisa dall'app
-https://github.com/devcode-it/openstamanager/commit/cc823e293
-
-- Corretta creazione al volo degli articoli
-https://github.com/devcode-it/openstamanager/commit/e5dca2039
 
 - Corretta gestione backup opzione senza gli allegati
 https://github.com/devcode-it/openstamanager/commit/a4f28f07f
@@ -105,10 +94,10 @@ https://github.com/devcode-it/openstamanager/commit/ad4336e73
 - Corretta inizializzazione imponibile a 0 per evitare eccezioni con NULL
 https://github.com/devcode-it/openstamanager/commit/5fcfe5c22
 
-- Corretta lettura fatture per compatibilità
+- Corretto errore JavaScript nel controllo totali delle fatture elettroniche di vendita
 https://github.com/devcode-it/openstamanager/commit/a41ea3f38
 
-- Corretta lettura stato fattura
+- IVA errata nell'importazione sessioni nelle fatture di vendita e prezzi non aggiornati per articoli eliminati
 https://github.com/devcode-it/openstamanager/commit/fe2a91416
 
 - Corretta SQL injection modulo segmenti
@@ -117,7 +106,7 @@ https://github.com/devcode-it/openstamanager/commit/d39d057df
 - Corretto footer template di stampa fatture
 https://github.com/devcode-it/openstamanager/commit/d4986e931
 
-- Corretti movimenti contabili per registrazione pagamento automatico
+- Corretta registrazione automatica del pagamento con movimenti contabili errati
 https://github.com/devcode-it/openstamanager/commit/5b01a18cd
 
 - Corretta estrazione valori iban
@@ -224,10 +213,7 @@ https://github.com/devcode-it/openstamanager/commit/883cb90b6
 - Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets (vulnerabilità critica)
 https://github.com/devcode-it/openstamanager/commit/5e32e86eb
 
-- Corretto errore HTML Injection in modules/utenti/edit.php
-https://github.com/devcode-it/openstamanager/commit/184
-
-- Corretto SQL injection e vulnerability minori in controlli su tipo valore database per compatibilità MariaDB
+- Corretto SQL injection e vulnerabilità minori in controlli su tipo valore database per compatibilità MariaDB
 https://github.com/devcode-it/openstamanager/commit/5d4f1f3d6
 
 - Corretto calcolo arrotondamento iva in vista fatture
@@ -241,9 +227,6 @@ https://github.com/devcode-it/openstamanager/commit/a0375a68e
 
 - Corretto trigger evasione stato in base a quantità evasa
 https://github.com/devcode-it/openstamanager/commit/8ecc58470
-
-- Aggiunte al controllo fatture da inviare anche le fatture non generate
-https://github.com/devcode-it/openstamanager/commit/216564e3d
 
 - Corretto visualizzazione ritenuta in fattura
 https://github.com/devcode-it/openstamanager/commit/9496b21a3
@@ -341,10 +324,7 @@ https://github.com/devcode-it/openstamanager/commit/43970676b
 - Corrette vulnerabilità SQL injection attraverso l'utilizzo della funzione prepare() per l'escaping delle variabili nelle query SQL
 https://github.com/devcode-it/openstamanager/commit/047dcfab9
 
-- Corrette vulnerabilità minori
-https://github.com/devcode-it/openstamanager/commit/9fa295094
-
-- Corretta validazione degli stati consentiti nei selettori di contratti, ordini e preventivi e sanitizzazione del parametro righe 
+- Corretta validazione degli stati consentiti nei selettori di contratti, ordini e preventivi e sanitizzazione del parametro righe
 https://github.com/devcode-it/openstamanager/commit/e45e971de
 
 - Corretto generazione fatture con righe descrittive da bulk
@@ -371,13 +351,10 @@ https://github.com/devcode-it/openstamanager/commit/10a37e375
 - Corretto impostazione di max_rows a 0 per prevenzione divisione per 0
 https://github.com/devcode-it/openstamanager/commit/2393fcb55
 
-- Corrette le etichette delle date di registrazione/ricezione
-https://github.com/devcode-it/openstamanager/commit/32134c1c6
-
-- Corretto pagamenti automatici importFE
+- Corretta registrazione dei pagamenti automatici in importazione FE
 https://github.com/devcode-it/openstamanager/commit/20ca9143d
 
-- Corretto movimento automatico rilevazione IVA
+- Corretta rilevazione IVA nel movimento contabile automatico
 https://github.com/devcode-it/openstamanager/commit/b62da4979
 
 - Corretto errore duplica ordine cliente/fornitore (#1773)
@@ -400,10 +377,6 @@ https://github.com/devcode-it/openstamanager/commit/44788f51d
 - Corretta sanitizzazione per prevenire SQL injection
 https://github.com/devcode-it/openstamanager/commit/aa5c4a305
 
-- Corrette vulnerabilità minori
-https://github.com/devcode-it/openstamanager/commit/6040c7f4e
-https://github.com/devcode-it/openstamanager/commit/fc14a056c
-
 - Corretto carattere speciale in generazione XML
 https://github.com/devcode-it/openstamanager/commit/ba6dc3665
 
@@ -425,9 +398,6 @@ https://github.com/devcode-it/openstamanager/commit/1092859df
 - Corretta corrispondenza anagrafica in controllo di integrità XML e documenti di vendita
 https://github.com/devcode-it/openstamanager/commit/4af28973e
 
-- Corretto percorso suggerito per la configurazione del cron, non veniva riportata la root dir
-https://github.com/devcode-it/openstamanager/commit/163f88fef
-
 #### 2.9.8 - 23/12/2025
 
 ##### Problemi noti
@@ -443,7 +413,7 @@ https://github.com/devcode-it/openstamanager/commit/a4aa0a3d0
 - Corretta importazione fatture con tipo documento e data registrazione mancanti in xml
 https://github.com/devcode-it/openstamanager/commit/7402d4371
 
-- Corretta prevenzione sql injection
+- Corrette vulnerabilità di SQL injection nelle ricerche dei moduli, azioni di gruppo e API App
 https://github.com/devcode-it/openstamanager/commit/bae00c059
 
 #### 2.9.7 - 09/12/2025
@@ -521,9 +491,6 @@ https://github.com/devcode-it/openstamanager/commit/5220c2693
 - Query installazione causavano errori durante l'aggiornamento
 https://github.com/devcode-it/openstamanager/commit/21c331268
 
-- Importazione sequenziale fatture di acquisto non funzionava
-https://github.com/devcode-it/openstamanager/commit/8633f354f
-
 #### 2.9.1 - 08/09/2025
 
 ##### Problemi noti
@@ -569,7 +536,7 @@ https://github.com/devcode-it/openstamanager/commit/7be63d2ee
 - Importazione sequenziale fatture di acquisto non funzionava
 https://github.com/devcode-it/openstamanager/commit/8633f354f
 
-- Risolta inaggiornabilità/installabilità moduli con templates
+- Risolta impossibilità di installare/aggiornare moduli con template
 https://github.com/devcode-it/openstamanager/commit/fd7f020d4
 
 #### 2.8.1 - 10/06/2025
@@ -581,7 +548,7 @@ https://github.com/devcode-it/openstamanager/commit/7a5b4d81b
 - Retrofix query installazione per compatibilità
 https://github.com/devcode-it/openstamanager/commit/873c9b813
 
-- Compatibilità PHP8 non completa
+- API non funzionanti su PHP 8
 https://github.com/devcode-it/openstamanager/commit/66e519670
 
 #### 2.8-beta - 20/05/2025
@@ -637,7 +604,7 @@ oppure aggiornare alla **v.2.5** di OpenSTAManager.
 
 ##### Soluzione
 Eseguire a database la seguente query di allineamento:
-```bash
+```sql
 ALTER TABLE `zz_groups` ADD `id_module_start` INT NULL AFTER `editable`;
 ```
 

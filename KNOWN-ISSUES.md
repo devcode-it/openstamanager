@@ -213,7 +213,7 @@ https://github.com/devcode-it/openstamanager/commit/883cb90b6
 - Corretto Missing Authorization on Settings API Allows Any Authenticated User to Read and Modify Sensitive API Keys and Secrets (vulnerabilità critica)
 https://github.com/devcode-it/openstamanager/commit/5e32e86eb
 
-- Corretto SQL injection e vulnerabilità minori in controlli su tipo valore database per compatibilità MariaDB
+- Corretto controllo su tipo valore database per compatibilità MariaDB: differenze fittizie segnalate dal controllo database
 https://github.com/devcode-it/openstamanager/commit/5d4f1f3d6
 
 - Corretto calcolo arrotondamento iva in vista fatture
@@ -237,14 +237,9 @@ https://github.com/devcode-it/openstamanager/commit/feb0f8766
 - Corretto estrazione stampe in invio mail
 https://github.com/devcode-it/openstamanager/commit/9435fc060
 
-- La funzione di rinnovo contratti non calcola correttamente la data di conclusione. Risolto nella 2.11. La riga da modificare è la seguente: https://github.com/devcode-it/openstamanager/blob/v2.10.4/modules/contratti/actions.php#L516
-
-  Da sostituire con:
-```php
-  $diff = $contratto->data_accettazione->diffAsCarbonInterval($contratto->data_conclusione);
-```
-- Corretto i segni degli importi nelle note di credito durante l'importazione delle FE 
-https://github.com/devcode-it/openstamanager/commit/10ce985
+- La funzione di rinnovo contratti non calcola correttamente la data di conclusione. Risolto nella 2.11, dove la procedura di rinnovo è stata riscritta: si consiglia l'aggiornamento alla 2.11
+- Corretto i segni degli importi nelle note di credito durante l'importazione delle FE
+https://github.com/devcode-it/openstamanager/commit/bd398c350
 
 - La stampa del calendario in dashboard non visualizza correttamente gli interventi. Risolto nella 2.12. Le righe da modificare sono le seguenti: https://github.com/devcode-it/openstamanager/blob/v2.10.4/templates/dashboard/body.php#L79-L81
 
@@ -450,10 +445,10 @@ https://github.com/devcode-it/openstamanager/commit/0ef3a71f5
 
 ##### Problemi noti
 - Corretta generazione autofattura per reverse charge
-https://github.com/devcode-it/openstamanager/commit/ab87cf4bc
+https://github.com/devcode-it/openstamanager/commit/27162d189
 
 - Corretto carattere non supportato XML
-https://github.com/devcode-it/openstamanager/commit/51cfe9606
+https://github.com/devcode-it/openstamanager/commit/53d0f8b4f
 
 #### 2.9.4 - 28/10/2025
 
@@ -464,24 +459,24 @@ https://github.com/devcode-it/openstamanager/commit/96b9eac0b
 #### 2.9.3 - 14/10/2025
 
 ##### Problemi noti
-- Corretta verifica esigibilità IVA non funzionante correttamente
-https://github.com/devcode-it/openstamanager/commit/c72c4386d
+- Corrette query di installazione che causavano errori durante l'aggiornamento
+https://github.com/devcode-it/openstamanager/commit/38def6ea9
 
-- Corrette query installazione che causavano errori durante l'aggiornamento
-https://github.com/devcode-it/openstamanager/commit/230d95e30
-
-- Corretto calcolo arrotondamento per fatture elettroniche non corretto
-https://github.com/devcode-it/openstamanager/commit/ecdd0fd9d
-
-- Corretto import righe fatture elettroniche con quantità non definita ma prezzo unitario definito
-https://github.com/devcode-it/openstamanager/commit/4e003a850
-
-- Corretta gestione XML righe senza quantità che causava errori di importazione
-https://github.com/devcode-it/openstamanager/commit/21f91c1c9
+- Corretto arrotondamento IVA in importazione fatture elettroniche
+https://github.com/devcode-it/openstamanager/commit/beb10a2f2
 
 #### 2.9.2 - 25/09/2025
 
 ##### Problemi noti
+- Corretta verifica esigibilità IVA non funzionante correttamente
+https://github.com/devcode-it/openstamanager/commit/28ccbad0f
+
+- Corretto import righe fatture elettroniche con quantità non definita ma prezzo unitario definito
+https://github.com/devcode-it/openstamanager/commit/75d4bab68
+
+- Corretta gestione XML righe senza quantità che causava errori di importazione
+https://github.com/devcode-it/openstamanager/commit/dee094b56
+
 - Rimozione record orfani dalle tabelle del database
 https://github.com/devcode-it/openstamanager/commit/f115707f8
 

@@ -96,14 +96,14 @@ echo "
                             </tr>';
 
 // Elenco scadenze
-$rs2 = $dbo->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento`='.prepare($id_record).' ORDER BY `scadenza` ASC');
+$rs2 = $dbo->fetchArray("SELECT *, IF(`data_concordata` IS NOT NULL AND `data_concordata` != '0000-00-00', `data_concordata`, `scadenza`) AS `data_scadenza` FROM `co_scadenzario` WHERE `id_documento`=".prepare($id_record).' ORDER BY `data_scadenza` ASC');
 if (!empty($rs2)) {
     for ($i = 0; $i < sizeof($rs2); ++$i) {
         $pagamento = $dbo->fetchOne('SELECT `fe_modalita_pagamento_lang`.`title` as descrizione FROM `co_pagamenti` INNER JOIN `fe_modalita_pagamento` ON `fe_modalita_pagamento`.`codice` = `co_pagamenti`.`codice_modalita_pagamento_fe` LEFT JOIN `fe_modalita_pagamento_lang` ON (`fe_modalita_pagamento_lang`.`id_record`=`fe_modalita_pagamento`.`codice` AND `fe_modalita_pagamento_lang`.`id_lang`='.prepare(Models\Locale::getDefault()->id).') WHERE `co_pagamenti`.`id`='.prepare($rs2[$i]['id_pagamento']))['descrizione'];
         echo '
                             <tr>
                                 <td style=\'width:15%;\'>
-                                    <small>'.Translator::dateToLocale($rs2[$i]['scadenza'])."</small>
+                                    <small>'.Translator::dateToLocale($rs2[$i]['data_scadenza'])."</small>
                                 </td>
                                 <td style='width:15%;'>
                                     ".(($rs2[$i]['pagato'] == $rs2[$i]['da_pagare']) ? '<small>PAGATO</small>' : '')."

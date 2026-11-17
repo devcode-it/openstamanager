@@ -430,6 +430,32 @@ abstract class Component extends Model
     }
 
     /**
+     * Verifica se una colonna esiste nella tabella del modello.
+     *
+     * @param string $column
+     *
+     * @return bool
+     */
+    protected function hasColumn($column)
+    {
+        static $columns = [];
+
+        $table = $this->getTable();
+
+        if (!isset($columns[$table][$column])) {
+            try {
+                // Usa una query diretta per verificare l'esistenza della colonna
+                $result = database()->fetchArray("SHOW COLUMNS FROM `{$table}` LIKE '{$column}'");
+                $columns[$table][$column] = !empty($result);
+            } catch (\Exception) {
+                $columns[$table][$column] = false;
+            }
+        }
+
+        return $columns[$table][$column] ?? false;
+    }
+
+    /**
      * Verifica e calcola quantità e differenziale delle quantità.
      *
      * @return array [nuova quantità, differenza rispetto alla quantità precedente]

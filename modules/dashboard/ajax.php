@@ -38,12 +38,12 @@ switch (filter('op')) {
         $start = filter('start');
         $end = filter('end');
 
-        $stati = (array) $_SESSION['dashboard']['idstatiintervento'];
+        $stati = isset($_SESSION['dashboard']['idstatiintervento']) ? (array) $_SESSION['dashboard']['idstatiintervento'] : ['-1'];
         $stati[] = prepare('');
 
-        $tipi = (array) $_SESSION['dashboard']['idtipiintervento'];
-        $zone = (array) $_SESSION['dashboard']['idzone'];
-        $tecnici = (array) $_SESSION['dashboard']['id_tecnici'];
+        $tipi = isset($_SESSION['dashboard']['idtipiintervento']) ? (array) $_SESSION['dashboard']['idtipiintervento'] : ['-1'];
+        $zone = isset($_SESSION['dashboard']['idzone']) ? (array) $_SESSION['dashboard']['idzone'] : ['-1'];
+        $tecnici = isset($_SESSION['dashboard']['id_tecnici']) ? (array) $_SESSION['dashboard']['id_tecnici'] : ['-1'];
 
         $query = 'SELECT
             `in_interventi_tecnici`.`id`,

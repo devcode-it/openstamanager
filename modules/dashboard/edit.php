@@ -425,6 +425,15 @@ globals.dashboard = {
         informazioni_aggiuntive: '.intval(setting('Visualizza informazioni aggiuntive sul calendario')).',
     };
 
+    // Flag per riconoscere la navigazione in corso: le chiamate AJAX cancellate dal browser al cambio di pagina non devono generare falsi errori
+    globals.dashboard.navigazione_in_corso = false;
+    window.addEventListener("pagehide", function () {
+        globals.dashboard.navigazione_in_corso = true;
+    });
+    window.addEventListener("beforeunload", function () {
+        globals.dashboard.navigazione_in_corso = true;
+    });
+
     function aggiorna_contatore(counter_id) {
         let counter = $(counter_id);
 
@@ -789,7 +798,11 @@ echo '
                         op: "interventi_periodo",
                         id_module: "'.$id_module.'"
                     },
-                    failure: function () {
+                    failure: function (e) {
+                        if (globals.dashboard.navigazione_in_corso || (e && e.name === "AbortError")) {
+                            return;
+                        }
+
                         Swal.fire(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
                 },
@@ -800,7 +813,11 @@ echo '
                         op: "calendario_eventi",
                         id_module: "'.$id_module.'"
                     },
-                    failure: function () {
+                    failure: function (e) {
+                        if (globals.dashboard.navigazione_in_corso || (e && e.name === "AbortError")) {
+                            return;
+                        }
+
                         Swal.fire(globals.dashboard.genericError, globals.dashboard.error, "error");
                     }
                 }

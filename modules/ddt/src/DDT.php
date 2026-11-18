@@ -228,7 +228,7 @@ class DDT extends Document
 
         // Impostazione del nuovo stato
         if ($qta_evasa == 0 && !$collegato_a_ordine) {
-            $descrizione = 'Bozza';
+            $descrizione = 'Evaso';
         } elseif ($fatture) {
             $qta_fatturate = $this->getQtaFatturata();
             $parziale_fatturato = $qta != $qta_fatturate;

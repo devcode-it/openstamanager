@@ -826,8 +826,6 @@ switch (post('op')) {
             $contratto->save();
         }
 
-        ricalcola_costiagg_ordine($id_record);
-
         // Messaggio informativo
         if ($is_renewal) {
             $message = tr('Contratto rinnovato correttamente!');

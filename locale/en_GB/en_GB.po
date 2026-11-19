@@ -4707,7 +4707,6 @@ msgstr "Longitude"
 msgid "La posizione non è stata definita"
 msgstr "The position has not been defined"
 
-#: modules/anagrafiche/modutil.php:38 modules/anagrafiche/modutil.php:68
 #: modules/anagrafiche/src/Anagrafica.php:468 modules/anagrafiche/src/Sede.php:110
 msgid "cURL non attivo, impossibile continuare l'operazione."
 msgstr "cURL is not active, operation cannot continue."
@@ -10729,7 +10728,7 @@ msgstr "Error saving data"
 
 #: modules/interventi/actions.php:125 modules/interventi/actions.php:148
 #: modules/interventi/actions.php:345 modules/interventi/actions.php:802
-#: modules/interventi/actions.php:979 modules/interventi/modutil.php:117
+#: modules/interventi/actions.php:979
 msgid "Notifica al tecnico aggiunta correttamente."
 msgstr "Notification to technician added successfully."
 
@@ -11585,19 +11584,19 @@ msgstr "Hourly discount"
 msgid "Sconto al km"
 msgstr "Discount per km"
 
-#: modules/interventi/modutil.php:191
+#: modules/interventi/modutil.php:120
 msgid "L'attività _NUM_ non ha sessioni di lavoro!"
 msgstr "Activity _NUM_ has no working sessions!"
 
-#: modules/interventi/modutil.php:252
+#: modules/interventi/modutil.php:200
 msgid "Ore di lavoro dell'attività _NUM_ del _DATE_"
 msgstr "Hours worked for activity _NUM_ on _DATE_"
 
-#: modules/interventi/modutil.php:302
+#: modules/interventi/modutil.php:256
 msgid "Diritto di chiamata dell'attività _NUM_ del _DATE_"
 msgstr "Right to call activity _NUM_ of _DATE_"
 
-#: modules/interventi/modutil.php:346
+#: modules/interventi/modutil.php:306
 msgid "Trasferta dell'attività _NUM_ del _DATE_"
 msgstr "Business transfer _NUM_ on _DATE_"
 

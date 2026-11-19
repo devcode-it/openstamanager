@@ -3511,36 +3511,12 @@ msgstr ""
 msgid "Duplica"
 msgstr ""
 
-#: modules/articoli/modutil.php:70
-msgid "Ripristino articolo da intervento _NUM_"
-msgstr ""
-
-#: modules/articoli/modutil.php:70
-msgid "Scarico magazzino per intervento _NUM_"
-msgstr ""
-
-#: modules/articoli/modutil.php:81 modules/articoli/src/Movimento.php:167
+#: modules/articoli/src/Movimento.php:165
 msgid "Carico magazzino"
 msgstr ""
 
-#: modules/articoli/modutil.php:81 modules/articoli/src/Movimento.php:168
+#: modules/articoli/src/Movimento.php:166
 msgid "Scarico magazzino"
-msgstr ""
-
-#: modules/articoli/modutil.php:91
-msgid "Ripristino articolo da _TYPE_ numero _NUM_"
-msgstr ""
-
-#: modules/articoli/modutil.php:91 update/v2_4_10/Components/Articolo.php:41
-msgid "Carico magazzino da _TYPE_ numero _NUM_"
-msgstr ""
-
-#: modules/articoli/modutil.php:92
-msgid "Rimozione articolo da _TYPE_ numero _NUM_"
-msgstr ""
-
-#: modules/articoli/modutil.php:92 update/v2_4_10/Components/Articolo.php:42
-msgid "Scarico magazzino per _TYPE_ numero _NUM_"
 msgstr ""
 
 #: modules/articoli/plugins/articoli.giacenze.php:48
@@ -6561,22 +6537,6 @@ msgid ""
 "Selezione per riportare anche le sessioni di lavoro nella nuova attività"
 msgstr ""
 
-#: modules/interventi/modutil.php:155
-msgid "L'intervento _NUM_ non ha sessioni di lavoro!"
-msgstr ""
-
-#: modules/interventi/modutil.php:166
-msgid "Ore di lavoro dell'intervento _NUM_ del _DATE_"
-msgstr ""
-
-#: modules/interventi/modutil.php:196
-msgid "Diritto di chiamata dell'intervento _NUM_ del _DATE_"
-msgstr ""
-
-#: modules/interventi/modutil.php:225
-msgid "Trasferta dell'intervento _NUM_ del _DATE_"
-msgstr ""
-
 #: modules/interventi/occupazione_tecnici.php:100
 msgid "Sono presenti dei conflitti con le sessioni di lavoro di alcuni tecnici"
 msgstr ""
@@ -8161,18 +8121,6 @@ msgstr ""
 msgid "Widgets"
 msgstr ""
 
-#: modules/stato_servizi/edit.php:71 modules/stato_servizi/modutil.php:33
-msgid "Abilitato"
-msgstr ""
-
-#: modules/stato_servizi/edit.php:71 modules/stato_servizi/modutil.php:34
-msgid "Clicca per disabilitarlo"
-msgstr ""
-
-#: modules/stato_servizi/edit.php:74 modules/stato_servizi/modutil.php:37
-msgid "Non abilitato"
-msgstr ""
-
 #: modules/stato_servizi/edit.php:80
 msgid "Disabilitare questo widget?"
 msgstr ""
@@ -8197,40 +8145,12 @@ msgstr ""
 msgid "Cambiare la posizione di questo widget?"
 msgstr ""
 
-#: modules/stato_servizi/modutil.php:44
-msgid "Disabilitare questo modulo?"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:46
-msgid "Abilitare questo modulo?"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:60
-msgid "Compatibile"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:63
+#: modules/stato_servizi/elenco-moduli.php:314
 msgid "Non compatibile!"
 msgstr ""
 
-#: modules/stato_servizi/modutil.php:63
-msgid "Questo modulo è compatibile solo con le versioni"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:80
+#: modules/stato_servizi/elenco-moduli.php:379
 msgid "Disinstalla"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:80
-msgid "Vuoi disinstallare questo modulo?"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:80
-msgid "Tutti i dati salvati andranno persi!"
-msgstr ""
-
-#: modules/stato_servizi/modutil.php:80
-msgid "Sei veramente sicuro?"
 msgstr ""
 
 #: modules/tecnici_tariffe/edit.php:57 modules/tipi_intervento/add.php:70

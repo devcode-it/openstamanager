@@ -25,35 +25,6 @@ use Modules\Iva\Aliquota;
 use Util\Generator;
 
 /*
- * Funzione per generare un nuovo numero per il ddt.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_new_numeroddt')) {
-    function get_new_numeroddt($data)
-    {
-        global $dir;
-
-        return DDT::getNextNumero($data, $dir);
-    }
-}
-
-/*
- * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_new_numerosecondarioddt')) {
-    function get_new_numerosecondarioddt($data)
-    {
-        global $dir;
-        global $id_segment;
-
-        return DDT::getNextNumeroSecondario($data, $dir, $id_segment);
-    }
-}
-
-/*
  * Calcolo imponibile ddt (totale_righe - sconto).
  *
  * @deprecated 2.4.5
@@ -80,48 +51,6 @@ if (!function_exists('get_totale_ddt')) {
         return $ddt->totale;
     }
 }
-/*
- * Calcolo netto a pagare ddt (totale - ritenute - bolli).
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_netto_ddt')) {
-    function get_netto_ddt($id_ddt)
-    {
-        $ddt = DDT::find($id_ddt);
-
-        return $ddt->netto;
-    }
-}
-
-/*
- * Calcolo iva detraibile ddt.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_ivadetraibile_ddt')) {
-    function get_ivadetraibile_ddt($id_ddt)
-    {
-        $ddt = DDT::find($id_ddt);
-
-        return $ddt->iva_detraibile;
-    }
-}
-
-/*
- * Calcolo iva indetraibile ddt.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_ivaindetraibile_ddt')) {
-    function get_ivaindetraibile_ddt($id_ddt)
-    {
-        $ddt = DDT::find($id_ddt);
-
-        return $ddt->iva_indetraibile;
-    }
-}
-
 /*
  * Ricalcola i costi aggiuntivi in ddt (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
@@ -204,31 +133,6 @@ if (!function_exists('ricalcola_costiagg_ddt')) {
             $dbo->query('UPDATE dt_ddt SET ritenuta_acconto='.prepare($ritenuta_acconto).', bollo='.prepare($marca_da_bollo).' WHERE id='.prepare($id_ddt));
         } else {
             $dbo->query("UPDATE dt_ddt SET ritenuta_acconto='0', bollo='0', rivalsa_inps='0', iva_rivalsa_inps='0' WHERE id=".prepare($id_ddt));
-        }
-    }
-}
-
-/*
- * Restituisce lo stato del ddt in base alle righe.
- */
-if (!function_exists('get_stato_ddt')) {
-    function get_stato_ddt($id_ddt)
-    {
-        $dbo = database();
-
-        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM dt_righe_ddt GROUP BY id_ddt HAVING id_ddt='.prepare($id_ddt));
-
-        if ($rs[0]['qta'] == 0) {
-            return 'Bozza';
-        }
-        if ($rs[0]['qta_evasa'] > 0) {
-            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-                return 'Parzialmente fatturato';
-            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-                return 'Fatturato';
-            }
-        } else {
-            return 'Evaso';
         }
     }
 }

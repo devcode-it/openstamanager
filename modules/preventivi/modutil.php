@@ -32,29 +32,6 @@ if (!function_exists('get_imponibile_preventivo')) {
     }
 }
 
-/*
- * Restituisce lo stato del preventivo in base alle righe.
- */
-
-if (!function_exists('get_stato_preventivo')) {
-    function get_stato_preventivo($id_preventivo)
-    {
-        $dbo = database();
-
-        $rs = $dbo->fetchArray('SELECT SUM(qta) AS qta, SUM(qta_evasa) AS qta_evasa FROM co_righe_preventivi GROUP BY id_preventivo HAVING id_preventivo='.prepare($id_preventivo));
-
-        if ($rs[0]['qta_evasa'] > 0) {
-            if ($rs[0]['qta'] > $rs[0]['qta_evasa']) {
-                return 'Parzialmente evaso';
-            } elseif ($rs[0]['qta'] == $rs[0]['qta_evasa']) {
-                return 'Evaso';
-            }
-        } else {
-            return 'Non evaso';
-        }
-    }
-}
-
 if (!function_exists('get_totale_interventi_preventivo')) {
     function get_totale_interventi_preventivo($id_preventivo)
     {

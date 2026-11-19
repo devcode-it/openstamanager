@@ -228,35 +228,6 @@ if (!function_exists('customFields')) {
     }
 }
 
-/*
- * Ottiene l'elenco delle viste modificate (con query personalizzata).
- *
- * @return array
- */
-if (!function_exists('customViews')) {
-    function customViews()
-    {
-        $database = database();
-
-        // Ottieni l'ID della lingua di default
-        $default_lang = $database->fetchOne("SELECT valore FROM zz_settings WHERE nome = 'Lingua'")['valore'] ?? 1;
-
-        $query = 'SELECT
-            zz_modules.id,
-            COALESCE(zz_modules_lang.title, zz_modules.name) as module_name,
-            zz_modules.directory,
-            zz_modules.updated_at
-        FROM zz_modules
-        LEFT JOIN zz_modules_lang ON (zz_modules.id = zz_modules_lang.id_record AND zz_modules_lang.id_lang = '.prepare($default_lang).")
-        WHERE zz_modules.options2 != '' AND zz_modules.options2 IS NOT NULL
-        ORDER BY module_name";
-
-        $results = $database->fetchArray($query);
-
-        return $results;
-    }
-}
-
 /**
  * Raggruppa file personalizzati per percorso.
  */

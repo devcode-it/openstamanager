@@ -25,36 +25,6 @@ use Modules\Iva\Aliquota;
 use Modules\Ordini\Ordine;
 
 /*
- * Funzione per generare un nuovo numero per l'ordine.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_new_numeroordine')) {
-    function get_new_numeroordine($data)
-    {
-        global $dir;
-
-        return Ordine::getNextNumero($data, $dir);
-    }
-}
-
-/*
- * Funzione per calcolare il numero secondario successivo utilizzando la maschera dalle impostazioni.
- *
- * @deprecated 2.4.5
- */
-
-if (!function_exists('get_new_numerosecondarioordine')) {
-    function get_new_numerosecondarioordine($data)
-    {
-        global $dir;
-        global $id_segment;
-
-        return Ordine::getNextNumeroSecondario($data, $dir, $id_segment);
-    }
-}
-
-/*
  * Calcolo imponibile ordine (totale_righe - sconto).
  *
  * @deprecated 2.4.5
@@ -83,47 +53,6 @@ if (!function_exists('get_totale_ordine')) {
     }
 }
 
-/*
- * Calcolo netto a pagare ordine (totale - ritenute - bolli).
- *
- * @deprecated 2.4.5
- */
-
-if (!function_exists('get_netto_ordine')) {
-    function get_netto_ordine($id_ordine)
-    {
-        $ordine = Ordine::find($id_ordine);
-
-        return $ordine->netto;
-    }
-}
-/*
- * Calcolo iva detraibile ordine.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_ivadetraibile_ordine')) {
-    function get_ivadetraibile_ordine($id_ordine)
-    {
-        $ordine = Ordine::find($id_ordine);
-
-        return $ordine->iva_detraibile;
-    }
-}
-
-/*
- * Calcolo iva indetraibile ordine.
- *
- * @deprecated 2.4.5
- */
-if (!function_exists('get_ivaindetraibile_ordine')) {
-    function get_ivaindetraibile_ordine($id_ordine)
-    {
-        $ordine = Ordine::find($id_ordine);
-
-        return $ordine->iva_indetraibile;
-    }
-}
 /*
  * Ricalcola i costi aggiuntivi in ordine (rivalsa inps, ritenuta d'acconto, marca da bollo)
  * Deve essere eseguito ogni volta che si aggiunge o toglie una riga
@@ -210,58 +139,6 @@ if (!function_exists('ricalcola_costiagg_ordine')) {
         }
     }
 }
-/*
- * Restituisce lo stato dell'ordine in base alle righe.
- */
-if (!function_exists('get_stato_ordine')) {
-    function get_stato_ordine($id_ordine)
-    {
-        $dbo = database();
-
-        $rs_ordine = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM or_righe_ordini WHERE id_ordine='.prepare($id_ordine));
-        $qta_ordine = $rs_ordine[0]['qta'];
-
-        // Righe dell'ordine in ddt
-        $rs_ddt = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine));
-        $qta_ddt = $rs_ddt[0]['qta'];
-
-        // Righe dell'ordine in fattura
-        $rs_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE id_ordine='.prepare($id_ordine));
-        $qta_fattura = $rs_fattura[0]['qta'];
-
-        // Righe dell'ordine in fattura passando da ddt
-        $rs_ddt_fattura = $dbo->fetchArray('SELECT IFNULL(SUM(qta), 0) AS qta FROM co_righe_documenti WHERE id_ddt IN(SELECT DISTINCT id_ddt FROM dt_righe_ddt WHERE id_ordine='.prepare($id_ordine).')');
-        $qta_ddt_fattura = $rs_ddt_fattura[0]['qta'];
-
-        if ($qta_ddt == 0) {
-            $stato = 'Accettato';
-        }
-        if ($qta_fattura == 0) {
-            $stato = 'Accettato';
-        }
-        if ($qta_ddt > 0 && $qta_ddt < $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Parzialmente evaso';
-        }
-        if ($qta_ddt == $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Evaso';
-        }
-        if ($qta_fattura > 0 && $qta_fattura < $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Parzialmente fatturato';
-        }
-        if ($qta_fattura == $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Fatturato';
-        }
-        if ($qta_ddt_fattura > 0 && $qta_ddt_fattura < $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Parzialmente fatturato';
-        }
-        if ($qta_ddt_fattura == $qta_ordine && $qta_ordine > 0) {
-            $stato = 'Fatturato';
-        }
-
-        return $stato;
-    }
-}
-
 if (!function_exists('get_totale_interventi_ordine')) {
     function get_totale_interventi_ordine($id_ordine)
     {

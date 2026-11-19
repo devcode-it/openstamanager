@@ -32,70 +32,6 @@ use Modules\Interventi\Components\Sessione;
 use Modules\Interventi\Intervento;
 use Modules\Iva\Aliquota;
 use Util\Generator;
-use Util\Ini;
-
-/*
- * Recupera il totale delle ore spese per un intervento.
- *
- * @param int $id_intervento
- *
- * @deprecated
- */
-
-if (!function_exists('get_ore_intervento')) {
-    function get_ore_intervento($id_intervento)
-    {
-        $intervento = Intervento::find($id_intervento);
-
-        return $intervento->ore_totali;
-    }
-}
-
-/*
- * Funzione per collegare gli articoli, usati in un intervento, ai rispettivi impianti.
- *
- * @param int $id_intervento
- * @param int $id_impianto
- * @param int $id_articolo
- * @param int $qta
- *
- * @deprecated 2.4.25
- */
-if (!function_exists('link_componente_to_articolo')) {
-    function link_componente_to_articolo($id_intervento, $id_impianto, $id_articolo, $qta)
-    {
-        if (empty($id_impianto) || empty($id_intervento)) {
-            return;
-        }
-
-        $dbo = database();
-        $intervento = Intervento::find($id_intervento);
-
-        // Data di inizio dell'intervento (data_richiesta in caso di assenza di sessioni)
-        $data = $intervento->inizio;
-
-        // Se l'articolo aggiunto è collegato a un componente, aggiungo il componente all'impianto selezionato
-        $componente_articolo = $dbo->fetchOne('SELECT `componente_filename`, `contenuto` FROM `mg_articoli` WHERE `id` = '.prepare($id_articolo));
-        if (!empty($componente_articolo) && !empty($componente_articolo['componente_filename'])) {
-            $contenuto_ini = Ini::read($componente_articolo['contenuto']);
-            $nome_componente = Ini::getValue($contenuto_ini, 'Nome');
-
-            $dati = [
-                'id_impianto' => $id_impianto,
-                'id_intervento' => $id_intervento,
-                'nome' => $nome_componente,
-                'data' => $data,
-                'filename' => $componente_articolo['componente_filename'],
-                'contenuto' => $componente_articolo['contenuto'],
-            ];
-
-            // Inserisco il componente tante volte quante la quantità degli articoli inseriti
-            for ($q = 0; $q < $qta; ++$q) {
-                $dbo->insert('my_impianto_componenti', $dati);
-            }
-        }
-    }
-}
 
 if (!function_exists('add_tecnico')) {
     function add_tecnico($id_intervento, $id_tecnico, $inizio, $fine, $id_contratto = null)
@@ -140,28 +76,6 @@ if (!function_exists('add_tecnico')) {
         $intervento->save();
 
         return true;
-    }
-}
-
-/*
- * Calcola le ore presenti tra due date.
- *
- * @param string $orario_inizio
- * @param string $orario_fine
- *
- * @return float
- *
- * @deprecated
- */
-if (!function_exists('calcola_ore_intervento')) {
-    function calcola_ore_intervento($orario_inizio, $orario_fine)
-    {
-        $inizio = new DateTime($orario_inizio);
-        $diff = $inizio->diff(new DateTime($orario_fine));
-
-        $ore = $diff->i / 60 + $diff->h + ($diff->days * 24);
-
-        return $ore;
     }
 }
 

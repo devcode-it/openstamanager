@@ -21,6 +21,7 @@
 namespace Modules\Interventi;
 
 use Common\Document;
+use Models\Setting;
 use Modules\Anagrafiche\Anagrafica;
 use Modules\Contratti\Contratto;
 use Modules\Preventivi\Preventivo;
@@ -31,7 +32,11 @@ use Traits\ReferenceTrait;
 class Intervento extends Document
 {
     use ReferenceTrait;
-    use RecordTrait;
+    use RecordTrait {
+        save as private salvaIntervento;
+    }
+
+    public const IMPOSTAZIONE_IMPEGNO_MATERIALI = 'Impegna i materiali nelle nuove attività';
 
     protected $table = 'in_interventi';
 
@@ -40,9 +45,22 @@ class Intervento extends Document
     protected $casts = [
         'data_richiesta' => 'date',
         'data_scadenza' => 'date',
+        'impegna_materiali' => 'boolean',
     ];
 
     protected static $translated_fields = [];
+
+    public function save(array $options = [])
+    {
+        if (!$this->exists) {
+            $valore = Setting::where('nome', self::IMPOSTAZIONE_IMPEGNO_MATERIALI)->value('valore');
+            if ($valore !== null) {
+                $this->impegna_materiali = (string) $valore === '1';
+            }
+        }
+
+        return $this->salvaIntervento($options);
+    }
 
     /**
      * Crea un nuovo intervento.

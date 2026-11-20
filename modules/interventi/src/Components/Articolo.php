@@ -28,4 +28,30 @@ class Articolo extends Article
 
     protected $table = 'in_righe_interventi';
     protected $serialRowID = 'intervento';
+
+    public function save(array $options = [])
+    {
+        if (!$this->exists || $this->isDirty(['idarticolo', 'impegnato_magazzino'])) {
+            if ($this->getDocument()->impegna_materiali) {
+                $articolo = $this->exists && $this->isDirty('idarticolo') ? $this->articolo()->first() : $this->articolo;
+                $origine = $this->getOriginalComponent();
+
+                // Una riga già coperta dal documento di origine non impegna di nuovo il magazzino.
+                $this->impegnato_magazzino = $articolo && !$articolo->servizio
+                    && !$origine?->getDocument()?->movimenta_magazzino;
+            } elseif (array_key_exists('impegnato_magazzino', $this->attributes)) {
+                $this->impegnato_magazzino = false;
+            }
+        }
+
+        return parent::save($options);
+    }
+
+    public function movimenta($qta)
+    {
+        // La modalità dell'attività vale anche per le copie che movimentano prima di salvare la riga.
+        if (!$this->getDocument()->impegna_materiali) {
+            parent::movimenta($qta);
+        }
+    }
 }

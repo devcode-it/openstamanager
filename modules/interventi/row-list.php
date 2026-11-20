@@ -83,6 +83,10 @@ foreach ($righe as $riga) {
     echo Modules::link($riga->isArticolo() ? 'Articoli' : null, $riga->isArticolo() ? $riga['idarticolo'] : null, $descrizione);
 
     if ($riga->isArticolo()) {
+        if ($riga->impegnato_magazzino && $riga->qta > 0) {
+            echo '<br><span class="badge badge-info">'.tr('Impegnato').'</span>';
+        }
+
         if (!empty($mancanti)) {
             echo '
                     <br><b><small class="text-danger">'.tr('_NUM_ serial mancanti', [

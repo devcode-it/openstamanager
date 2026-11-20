@@ -111,7 +111,7 @@ $(document).ready(function () {
 
         if (table.data('selected')) {
             $(this).attr("data-id_records", table.data('selected'));
-            $(this).data("id_records", table.data('selected'));
+            $(this).data("id_records", (table.data('selected')).replace(';', '%3B'));
 
             if ($(this).data("type") === "modal") {
                 var data = JSON.parse(JSON.stringify($(this).data()));

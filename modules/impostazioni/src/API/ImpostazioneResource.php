@@ -29,8 +29,8 @@ use Modules\Impostazioni\API\Models\UpdateImpostazioneResponse;
             controller: ListImpostazioniController::class,
             paginationEnabled: false,
             parameters: [
-                'ricerca' => new QueryParameter(property: 'hydra:freetextQuery', required: false),
-                'sezione' => new QueryParameter(property: 'hydra:freetextQuery', required: false),
+                'ricerca' => new QueryParameter(required: false),
+                'sezione' => new QueryParameter(required: false),
             ]
         ),
         new Get(

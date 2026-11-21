@@ -22,16 +22,16 @@ include_once __DIR__.'/../../../core.php';
 
 switch ($resource) {
     case 'tipi_documento':
-        $query = 'SELECT `co_tipi_documento`.`id`, `co_tipi_documento_lang`.`title` AS descrizione FROM `co_tipi_documento` |where| ORDER BY `title` ASC';
+        $query = 'SELECT `co_tipi_documento`.`id`, `co_tipi_documento_lang`.`title` AS descrizione FROM `co_tipi_documento` LEFT JOIN `co_tipi_documento_lang` ON (`co_tipi_documento`.`id` = `co_tipi_documento_lang`.`id_record` AND `co_tipi_documento_lang`.`id_lang` = '.prepare(Locale::getDefault()->id).') |where| ORDER BY `title` ASC';
 
         $where[] = '`co_tipi_documento`.`enabled` = 1';
-        $where[] = '`dir`='.prepare($superselect['dir']);
+        $where[] = '`co_tipi_documento`.`dir`='.prepare($superselect['dir']);
 
         foreach ($elements as $element) {
-            $filter[] = '`id`='.prepare($element);
+            $filter[] = '`co_tipi_documento`.`id`='.prepare($element);
         }
         if (!empty($search)) {
-            $search_fields[] = '`title` LIKE '.prepare('%'.$search.'%');
+            $search_fields[] = '`co_tipi_documento_lang`.`title` LIKE '.prepare('%'.$search.'%');
         }
 
         $custom['link'] = 'module:Tipi documento';

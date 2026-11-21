@@ -18,43 +18,46 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-$creation = file_put_contents('manifest.json', '');
+$manifest_lang = (!empty($lang) && $lang != '|lang|') ? $lang : ($GLOBALS['lang'] ?? 'it_IT');
+$manifest_lang = empty($manifest_lang) || $manifest_lang == '|lang|' ? 'it_IT' : $manifest_lang;
 
-if (!$creation) {
-    $manifest = '{
+$manifest = [
+    'dir' => 'ltr',
+    'lang' => str_replace('_', '-', $manifest_lang),
+    'name' => tr('OpenSTAManager'),
+    'scope' => './',
+    'display' => 'fullscreen',
+    'start_url' => './',
+    'short_name' => 'OSM',
+    'theme_color' => 'transparent',
+    'description' => tr('OpenSTAManager'),
+    'orientation' => 'any',
+    'background_color' => 'transparent',
+    'generated' => 'true',
+    'icons' => [
+        [
+            'src' => 'assets/dist/img/logo_completo.png',
+            'type' => 'image/png',
+            'sizes' => '489x91',
+        ],
+    ],
+];
 
-        "dir" : "ltr",
-        "lang" : "'.((empty($lang) || $lang == '|lang|') ? 'it-IT' : str_replace('_', '-', $lang)).'",
-        "name" : "'.tr('OpenSTAManager').'",
-        "scope" : "'.((empty(base_path_osm()) || base_path_osm() == '/') ? '' : '.').'",
-        "display" : "fullscreen",
-        "start_url" : "'.((empty(base_path_osm()) || base_path_osm() == '/') ? '/' : './').'",
-        "short_name" : "OSM",
-        "theme_color" : "transparent",
-        "description" : "'.tr('OpenSTAManager').'",
-        "orientation" : "any",
-        "background_color" : "transparent",
-        "generated" : "true",
-        "icons" : [
-            {
-                "src": "'.App::getPaths()['img'].'/logo_completo.png",
-                "type": "image/png",
-                "sizes": "489x91"
-            }
-        ]
-}';
+$manifest_content = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$creation = $manifest_content !== false
+    ? file_put_contents(base_dir().'/manifest.json', $manifest_content.PHP_EOL)
+    : false;
 
-    file_put_contents('manifest.json', $manifest);
-} else {
+if ($creation === false) {
     echo '
     <div class="card card-center card-danger card-solid text-center">
-			<div class="card-header with-border">
-				<h3 class="card-title">'.tr('Permessi di scrittura mancanti').'</h3>
-			</div>
-			<div class="card-body">
-                <p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
+        <div class="card-header with-border">
+            <h3 class="card-title">'.tr('Permessi di scrittura mancanti').'</h3>
+        </div>
+        <div class="card-body">
+            <p>'.tr('Sembra che non ci siano i permessi di scrittura sul file _FILE_', [
         '_FILE_' => '<b>manifest.json</b>',
     ]).'</p>
-            </div>
+        </div>
     </div>';
 }

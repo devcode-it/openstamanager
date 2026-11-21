@@ -36,6 +36,8 @@ class Update
 
     /** @var array Elenco degli aggiornamento da completare */
     protected static $updates;
+    /** @var array Ordine degli aggiornamenti individuati su disco */
+    protected static $update_order = [];
     /** @var array Percorsi da controllare per gli aggiornamenti */
     protected static $directories = [
         'modules',
@@ -99,13 +101,23 @@ class Update
 
             $updates = $database->isConnected() ? $database->fetchArray('SELECT * FROM `updates` WHERE `done` != 1 OR `done` IS NULL ORDER BY `done` DESC, `id` ASC') : [];
 
+            // Gli ID restano stabili: l'ordine segue i file, dopo gli aggiornamenti già iniziati.
+            usort($updates, function ($left, $right) {
+                $progress = ($right['done'] ?? -1) <=> ($left['done'] ?? -1);
+                $left_order = self::$update_order[self::findUpdatePath($left)] ?? PHP_INT_MAX;
+                $right_order = self::$update_order[self::findUpdatePath($right)] ?? PHP_INT_MAX;
+
+                return $progress ?: (($left_order <=> $right_order) ?: ($left['id'] <=> $right['id']));
+            });
+
             foreach ($updates as $key => $value) {
                 $name = explode('/', (string) $value['directory']);
                 $updates[$key]['name'] = ucwords(end($name)).' '.$value['version'];
 
-                $updates[$key]['filename'] = str_replace('.', '_', $value['version']);
-
-                $updates[$key]['directory'] = $value['directory'].'/update/';
+                // Riconosce anche le righe legacy senza riscrivere lo storico.
+                $path = self::findUpdatePath($value);
+                $updates[$key]['filename'] = basename($path);
+                $updates[$key]['directory'] = dirname($path).'/';
             }
 
             self::$updates = $updates;
@@ -593,6 +605,7 @@ class Update
 
         $results = array_merge($core, $modules);
         $paths = array_column($results, 'path');
+        self::$update_order = array_flip($paths);
 
         // Individuazione di tutti gli aggiornamenti inseriti nel database
         $updates = ($database_ready) ? $database->fetchArray('SELECT * FROM `updates`') : [];
@@ -601,39 +614,52 @@ class Update
             $versions[] = self::findUpdatePath($update);
         }
 
-        $reset = count(array_intersect($paths, $versions)) != count($results);
+        $missing = array_diff($paths, $versions);
 
         // Memorizzazione degli aggiornamenti
-        if ($reset && $database->isConnected()) {
-            // Reimpostazione della tabella degli aggiornamenti
-            $create = base_dir().'/update/create_updates.sql';
-            if (file_exists($create)) {
-                $database->query('DROP TABLE IF EXISTS `updates`');
-                $database->multiQuery($create);
+        if (!empty($missing) && $database->isConnected()) {
+            // Serializza la registrazione fra richieste web, API e cron dello stesso database.
+            $lock_name = 'osm_updates_'.sha1($database->getDatabaseName());
+            $lock = $database->fetchOne('SELECT GET_LOCK(:name, 30) AS acquired', [':name' => $lock_name]);
+            if ((int) ($lock['acquired'] ?? 0) !== 1) {
+                throw new RuntimeException(tr('Impossibile acquisire il blocco degli aggiornamenti'));
             }
 
-            // Inserimento degli aggiornamenti individuati
-            foreach ($results as $result) {
-                // Individuazione di script e sql
-                $sql = file_exists($result['path'].'.sql') ? 1 : 0;
-                $script = file_exists($result['path'].'.php') ? 1 : 0;
+            try {
+                if (!$database->tableExists('updates')) {
+                    $database->multiQuery(base_dir().'/update/create_updates.sql');
+                }
 
-                // Reimpostazione degli stati per gli aggiornamenti precedentemente presenti
-                $pos = array_search($result['path'], $versions);
-                $done = ($pos !== false) ? $updates[$pos]['done'] : null;
+                // Una richiesta concorrente potrebbe aver già registrato i nuovi file.
+                $updates = $database->fetchArray('SELECT * FROM `updates`');
+                $versions = [];
+                foreach ($updates as $update) {
+                    $versions[] = self::findUpdatePath($update);
+                }
 
-                $directory = explode('update/', (string) $result['path'])[0];
-                $database->insert('updates', [
-                    'directory' => rtrim($directory, '/'),
-                    'version' => $result['version'],
-                    'sql' => $sql,
-                    'script' => $script,
-                    'done' => $done,
-                ]);
+                // Aggiunge solo le migrazioni mancanti, preservando ID, flag e checkpoint esistenti.
+                foreach ($results as $result) {
+                    if (in_array($result['path'], $versions, true)) {
+                        continue;
+                    }
+
+                    $file = base_dir().'/'.$result['path'];
+                    $directory = explode('update/', (string) $result['path'])[0];
+                    $database->insert('updates', [
+                        'directory' => rtrim($directory, '/'),
+                        'version' => $result['version'],
+                        'sql' => file_exists($file.'.sql') ? 1 : 0,
+                        'script' => file_exists($file.'.php') ? 1 : 0,
+                        'done' => null,
+                    ]);
+                    $versions[] = $result['path'];
+                }
+
+                // Normalizzazione di charset e collation
+                self::normalizeDatabase($database->getDatabaseName());
+            } finally {
+                $database->fetchOne('SELECT RELEASE_LOCK(:name)', [':name' => $lock_name]);
             }
-
-            // Normalizzazione di charset e collation
-            self::normalizeDatabase($database->getDatabaseName());
         }
     }
 

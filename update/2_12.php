@@ -80,3 +80,31 @@ if (!empty($filigrana['valore']) && !is_numeric($filigrana['valore'])) {
         $dbo->update('zz_settings', ['valore' => ''], ['nome' => 'Filigrana stampe']);
     }
 }
+
+// Aggiunta colonna Vettore nell'elenco degli ordini cliente
+$id_module_ordini_cliente = $dbo->fetchOne('SELECT `id` FROM `zz_modules` WHERE `name` = "Ordini cliente"')['id'] ?? null;
+if (!empty($id_module_ordini_cliente)) {
+    $id_view_vettore = $dbo->fetchOne('SELECT `id` FROM `zz_views` WHERE `id_module` = '.prepare($id_module_ordini_cliente).' AND `name` = "Vettore"')['id'] ?? null;
+
+    if (empty($id_view_vettore)) {
+        $dbo->insert('zz_views', [
+            'id_module' => $id_module_ordini_cliente,
+            'name' => 'Vettore',
+            'query' => 'IFNULL((SELECT `ragione_sociale` FROM `an_anagrafiche` WHERE `an_anagrafiche`.`id` = `or_ordini`.`id_vettore`), \'\')',
+            'order' => 20,
+            'visible' => 1,
+        ]);
+
+        $id_view_vettore = $dbo->lastInsertedID();
+        $dbo->insert('zz_views_lang', [
+            'id_lang' => 1,
+            'id_record' => $id_view_vettore,
+            'title' => 'Vettore',
+        ]);
+        $dbo->insert('zz_views_lang', [
+            'id_lang' => 2,
+            'id_record' => $id_view_vettore,
+            'title' => 'Carrier',
+        ]);
+    }
+}

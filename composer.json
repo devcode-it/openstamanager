@@ -40,7 +40,7 @@
         "ergebnis/json-printer": "^3.8",
         "ezyang/htmlpurifier": "^4.8",
         "filp/whoops": "^2.15.0",
-        "greenlion/php-sql-parser": "^4.5",
+        "greenlion/php-sql-parser": "^5.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "druidfi/mysqldump-php": "^2.0",
         "illuminate/cache": "^12.0",

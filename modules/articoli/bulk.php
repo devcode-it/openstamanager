@@ -25,6 +25,9 @@ use Modules\Articoli\Articolo;
 use Modules\Articoli\Export\CSV;
 use Modules\Iva\Aliquota;
 use Modules\ListiniCliente\Articolo as ArticoloListino;
+use Modules\Ordini\Components\Articolo as ArticoloOrdine;
+use Modules\Ordini\Ordine;
+use Modules\Ordini\Tipo as TipoOrdine;
 use Modules\Preventivi\Components\Articolo as ArticoloPreventivo;
 use Modules\Preventivi\Preventivo;
 use Modules\TipiIntervento\Tipo as TipoSessione;
@@ -35,6 +38,8 @@ include_once __DIR__.'/../../core.php';
 // Segmenti
 $id_preventivi = Module::where('name', 'Preventivi')->first()->id;
 $id_segment = $_SESSION['module_'.$id_preventivi]['id_segment'];
+$id_ordini_fornitore = Module::where('name', 'Ordini fornitore')->first()->id;
+$id_segment_ordini_fornitore = $_SESSION['module_'.$id_ordini_fornitore]['id_segment'] ?? getSegmentPredefined($id_ordini_fornitore);
 
 switch (post('op')) {
     case 'change_purchase_price':
@@ -244,6 +249,56 @@ switch (post('op')) {
 
         $database->commitTransaction();
         redirect_url(base_path_osm().'/editor.php?id_module='.$id_preventivi.'&id_record='.$id_preventivo);
+        exit;
+
+    case 'create_supplier_order':
+        $id_fornitore = post('id_fornitore');
+        $nome = post('nome');
+        $data = post('data');
+        $id_segment_ordine = post('id_segment_ordine');
+
+        $fornitore = Anagrafica::find($id_fornitore);
+        $tipo = TipoOrdine::where('dir', 'uscita')->first();
+
+        if (empty($fornitore) || empty($tipo)) {
+            flash()->error(tr('Impossibile creare l\'ordine fornitore.'));
+            break;
+        }
+
+        $ordine = Ordine::build($fornitore, $tipo, $nome, $data, $id_segment_ordine);
+        $n_articoli = 0;
+        $id_iva = $dbo->fetchOne('SELECT `id_iva_acquisti` AS `id_iva` FROM `an_anagrafiche` WHERE `id` = '.prepare($id_fornitore))['id_iva'] ?: setting('Iva predefinita');
+
+        foreach ($id_records as $id) {
+            $originale = Articolo::find($id);
+
+            if (empty($originale)) {
+                continue;
+            }
+
+            $dettaglio_prezzo = DettaglioPrezzo::dettaglioPredefinito($originale->id, $id_fornitore, 'uscita')->first();
+            $prezzo_acquisto = $dettaglio_prezzo ? $dettaglio_prezzo->prezzo_unitario : $originale->prezzo_acquisto;
+
+            $articolo = ArticoloOrdine::build($ordine, $originale);
+            $articolo->qta = 1;
+            $articolo->um = $originale->um ?: null;
+            $articolo->costo_unitario = $prezzo_acquisto;
+            $articolo->setPrezzoUnitario($prezzo_acquisto, $id_iva);
+            $articolo->save();
+
+            ++$n_articoli;
+        }
+
+        if ($n_articoli > 0) {
+            flash()->info(tr('_NUM_ articoli sono stati aggiunti all\'ordine fornitore', [
+                '_NUM_' => $n_articoli,
+            ]));
+        } else {
+            flash()->warning(tr('Nessun articolo aggiunto all\'ordine fornitore!'));
+        }
+
+        $database->commitTransaction();
+        redirect_url(base_path_osm().'/editor.php?id_module='.$id_ordini_fornitore.'&id_record='.$ordine->id);
         exit;
 
     case 'export_csv':
@@ -757,6 +812,20 @@ $operations['create_estimate'] = [
         {[ "type": "select", "label": "'.tr('Cliente').'", "name": "id_cliente", "ajax-source": "clienti", "required": 1 ]}
         {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_preventivi, 'is_sezionale' => 1]).', "value": "'.$id_segment.'", "select-options-escape": true ]}
         {[ "type": "select", "label": "'.tr('Tipo di attività').'", "name": "id_tipo", "ajax-source": "tipiintervento", "required": 1 ]}
+        {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
+        'button' => tr('Procedi'),
+        'class' => 'btn btn-lg btn-warning',
+    ],
+];
+
+$operations['create_supplier_order'] = [
+    'text' => '<span><i class="fa fa-shopping-cart"></i> '.tr('Crea ordine fornitore').'</span>',
+    'data' => [
+        'title' => tr('Creare ordine fornitore?'),
+        'msg' => tr('Gli articoli selezionati verranno aggiunti a un nuovo ordine fornitore').'
+        <br><br>{[ "type": "select", "label": "'.tr('Fornitore').'", "name": "id_fornitore", "ajax-source": "fornitori", "required": 1 ]}
+        {[ "type": "text", "label": "'.tr('Nome').'", "name": "nome" ]}
+        {[ "type": "select", "label": "'.tr('Sezionale').'", "name": "id_segment_ordine", "required": 1, "ajax-source": "segmenti", "select-options": '.json_encode(['id_module' => $id_ordini_fornitore, 'is_sezionale' => 1]).', "value": "'.$id_segment_ordini_fornitore.'", "select-options-escape": true ]}
         {[ "type": "date", "label": "'.tr('Data').'", "name": "data", "required": 1, "value": "-now-" ]}',
         'button' => tr('Procedi'),
         'class' => 'btn btn-lg btn-warning',

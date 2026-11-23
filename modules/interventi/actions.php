@@ -1282,6 +1282,13 @@ switch (post('op')) {
         $id_sessione = post('id_sessione');
         $sessione = Sessione::find($id_sessione);
 
+        // Block saving when the entered end datetime precedes the start datetime
+        if (!empty(post('data_inizio')) && !empty(post('data_fine'))
+            && strtotime(post('data_fine')) < strtotime(post('data_inizio'))) {
+            flash()->error(tr('La data/ora di fine non può precedere quella di inizio.'));
+            break;
+        }
+
         $sessione->orario_inizio = post('data_inizio');
         $sessione->orario_fine = post('data_fine');
         if (post('ore') != round($sessione->ore, 2)) {

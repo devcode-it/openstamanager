@@ -97,7 +97,16 @@ class Update
 
             $database = database();
 
-            $updates = $database->isConnected() ? $database->fetchArray('SELECT * FROM `updates` WHERE `done` != 1 OR `done` IS NULL ORDER BY `done` DESC, `id` ASC') : [];
+            $rows = $database->isConnected() ? $database->fetchArray('SELECT * FROM `updates` ORDER BY `id` ASC') : [];
+
+            // La stessa migrazione può essere registrata nel formato storico e in quello corrente.
+            $completed_paths = [];
+            foreach ($rows as $row) {
+                if ((int) $row['done'] === 1) {
+                    $completed_paths[self::findUpdatePath($row)] = true;
+                }
+            }
+            $updates = array_values(array_filter($rows, static fn ($row) => !isset($completed_paths[self::findUpdatePath($row)])));
 
             // Gli ID restano stabili: l'ordine segue i file, dopo gli aggiornamenti già iniziati.
             usort($updates, function ($left, $right) use ($update_order) {
@@ -630,9 +639,9 @@ class Update
                 }
 
                 $file = base_dir().'/'.$result['path'];
-                $directory = explode('update/', (string) $result['path'])[0];
+                $directory = dirname($result['path'], 2);
                 $database->insert('updates', [
-                    'directory' => rtrim($directory, '/'),
+                    'directory' => $directory === '.' ? '' : $directory,
                     'version' => $result['version'],
                     'sql' => file_exists($file.'.sql') ? 1 : 0,
                     'script' => file_exists($file.'.php') ? 1 : 0,

@@ -504,6 +504,38 @@ check(
     ['exit' => $registration['exit'], 'error' => $registration['stderr']]
 );
 
+// The directory name may itself end in "update".
+createFixture('component_name_ending_in_update', 0, 0);
+mkdir(base_dir().'/modules/lab_update/update', 0700, true);
+file_put_contents(base_dir().'/modules/lab_update/update/1_0.sql', 'SELECT 1;'.PHP_EOL);
+Update::getTodoUpdates();
+$firstScan = readJournal();
+$registration = finishRegistration(startRegistration(base_dir()));
+$secondScan = readJournal();
+check(
+    'component_name_ending_in_update_is_registered_once',
+    $registration['exit'] === 0
+        && count($firstScan) === 1
+        && $firstScan[0]['directory'] === 'modules/lab_update'
+        && $secondScan === $firstScan,
+    ['first_count' => count($firstScan), 'second_count' => count($secondScan), 'directory' => $firstScan[0]['directory'] ?? null]
+);
+
+// A completed legacy entry and a pending modern entry can refer to the same migration.
+createFixture('completed_legacy_duplicate', 0, 0);
+file_put_contents(base_dir().'/modules/lab_component/update/1_0.sql', 'SELECT 1;'.PHP_EOL);
+file_put_contents(base_dir().'/plugins/lab_plugin/update/1_0.sql', 'SELECT 1;'.PHP_EOL);
+database()->insert('updates', ['id' => 1001, 'directory' => '', 'version' => 'lab_component_1.0', 'sql' => 1, 'script' => 0, 'done' => 1]);
+database()->insert('updates', ['id' => 1002, 'directory' => 'modules/lab_component', 'version' => '1.0', 'sql' => 1, 'script' => 0, 'done' => null]);
+database()->insert('updates', ['id' => 1003, 'directory' => 'plugins/lab_plugin', 'version' => '1.0', 'sql' => 1, 'script' => 0, 'done' => null]);
+$before = readJournal();
+$pendingIds = array_map('intval', array_column(Update::getTodoUpdates(), 'id'));
+check(
+    'completed_legacy_migration_is_not_queued_twice',
+    $pendingIds === [1003] && readJournal() === $before,
+    ['pending_ids' => $pendingIds, 'journal_unchanged' => readJournal() === $before]
+);
+
 $failures = count(array_filter($results, static fn ($row) => !$row['pass']));
 $summary = [
     'tests' => count($results),

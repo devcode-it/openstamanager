@@ -663,7 +663,7 @@ export function release(done) {
                     bufferStream.push(null);
                     archive.append(bufferStream, { name: 'REVISION' });
 
-                    // Generazione del dump del database (esclusi zz_users)
+                    // Generazione del dump del database 
                     // Lettura delle credenziali dal config.inc.php
                     const phpConfigPath = `${__dirname}/config.inc.php`;
                     const phpReadConfigCode = 'include $argv[1]; echo json_encode(["host" => $db_host, "username" => $db_username, "password" => $db_password, "name" => $db_name]);';
@@ -672,23 +672,12 @@ export function release(done) {
                     const { host: dbHost, username: dbUser, password: dbPass, name: dbName } = dbConfig;
 
                     // Dump completo (struttura e dati) esclusa zz_users
-                    const dumpAllCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ignore-table=${dbName}.zz_users --ignore-table=${dbName}.an_anagrafiche`;
+                    const dumpAllCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName}`;
                     const dumpAll = shell.exec(dumpAllCommand, { silent: true }).stdout;
 
-                    // Dump solo struttura di zz_users
-                    const dumpUsersStructureCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --no-data --tables zz_users`;
-                    const dumpUsersStructure = shell.exec(dumpUsersStructureCommand, { silent: true }).stdout;
-
-                    // Dump solo struttura di an_anagrafiche
-                    const dumpAnagraficheStructureCommand = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --no-data --tables an_anagrafiche`;
-                    const dumpAnagraficheStructure = shell.exec(dumpAnagraficheStructureCommand, { silent: true }).stdout;
-
-
-                    // Concatenazione dei tre dump
+                    // Concatenazione dump
                     bufferStream = new Readable();
                     bufferStream.push(dumpAll);
-                    bufferStream.push(dumpUsersStructure);
-                    bufferStream.push(dumpAnagraficheStructure);
                     bufferStream.push(null);
                     archive.append(bufferStream, { name: 'install.sql' });
 

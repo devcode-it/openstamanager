@@ -4,7 +4,8 @@ Tutti i maggiori cambiamenti di questo progetto saranno documentati in questo fi
 
 Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://keepachangelog.com/), e il progetto segue il [Semantic Versioning](http://semver.org/) per definire le versioni delle release.
 
-- [2.11.2 (2026-08-04)](#2112-2026-08-04)
+- [2.11.3 (2026-11-24)](#2113-2026-11-24)
+- [2.11.2 (2026-11-13)](#2112-2026-11-13)
 - [2.11.1 (2026-06-30)](#2111-2026-06-30)
 - [2.11.0 (2026-06-09)](#2110-2026-06-09)
 - [2.10.4 (2026-04-28)](#2104-2026-04-28)
@@ -75,7 +76,19 @@ Il formato utilizzato è basato sulle linee guida di [Keep a Changelog](http://k
 - [2.4.22 (2021-03-01)](#2422-2021-03-01)
 - [2.4.21 (2021-01-14)](#2421-2021-01-14)
 
-## 2.11.2 (2026-08-04)
+## 2.11.3 (2026-11-24)
+
+### Modificato (Changed)
+- Modificata la gestione delle scadenze con data concordata
+- Aggiornate le viste del modulo Scadenzario
+
+### Fixed
+- Corretto il gulpfile per la generazione di install.sql 
+- Corretto il filtro del periodo nel segmento "Scadenzario completo", ora calcolato sulla data concordata se presente
+- Corretta generazione delle scadenze nella stampa delle fatture se presente la data concordata 
+- Corretta generazione scadenze nella Fattura Elettronica se viene utilizzata la data concordata come data di scadenza nei pagamenti
+
+## 2.11.2 (2026-11-13)
 
 ### Fixed
 - Corretta trigger evasione nel caso di note di credito a storno di fatture collegate a ddt

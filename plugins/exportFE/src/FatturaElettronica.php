@@ -1676,19 +1676,29 @@ class FatturaElettronica implements \Stringable
          * TP02 - Unica Soluzione
          * TP03 - Anticipato.
          */
+        $co_scadenzario = $database->fetchArray("SELECT *, IF(`data_concordata` IS NOT NULL AND `data_concordata` != '0000-00-00', `data_concordata`, `scadenza`) AS `data_scadenza` FROM `co_scadenzario` WHERE `id_documento` = ".prepare($documento['id']).' ORDER BY `data_scadenza` ASC');
+
         $result = [
-            'CondizioniPagamento' => ($co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
+            'CondizioniPagamento' => (count($co_scadenzario) > 1 || $co_pagamenti['prc'] < 100) ? 'TP01' : 'TP02',
         ];
 
-        $co_scadenzario = $database->fetchArray('SELECT * FROM `co_scadenzario` WHERE `id_documento` = '.prepare($documento['id']));
         foreach ($co_scadenzario as $scadenza) {
             $co_pagamenti = Pagamento::find($scadenza['id_pagamento']);
             $banca = Banca::find(($co_pagamenti && $co_pagamenti->isRiBa()) ? $scadenza['id_banca_controparte'] : ($scadenza['id_banca_azienda'])) ?? Banca::where('id_anagrafica', $scadenza['id_anagrafica'])->where('predefined', 1)->first();
+
+            // Priorità alla data concordata nello scadenzario
+            $data_scadenza = $scadenza['data_scadenza'];
+
             $pagamento = [
                 'ModalitaPagamento' => $co_pagamenti['codice_modalita_pagamento_fe'],
-                'DataScadenzaPagamento' => $scadenza['scadenza'],
-                'ImportoPagamento' => abs($scadenza['da_pagare']),
             ];
+            
+            // DataScadenzaPagamento è opzionale: valorizzato solo con una data valida (il tag deve precedere ImportoPagamento)
+            if (!empty($data_scadenza) && $data_scadenza != '0000-00-00') {
+                $pagamento['DataScadenzaPagamento'] = $data_scadenza;
+            }
+
+            $pagamento['ImportoPagamento'] = abs($scadenza['da_pagare']);
 
             if (!empty($banca->nome)) {
                 $pagamento['IstitutoFinanziario'] = $banca->nome;

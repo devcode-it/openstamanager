@@ -246,6 +246,12 @@ if (empty(get('modal'))) {
 
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
 
+                // The localized document type can come back empty when the language
+                // row is missing, which left the label without any document word.
+                if (empty($data[0]['tipo_documento'])) {
+                    $data[0]['tipo_documento'] = tr($module);
+                }
+
                 $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                     '_DOC_' => $data[0]['tipo_documento'],
                     '_NUM_' => $numero,
@@ -391,6 +397,12 @@ if (empty(get('modal'))) {
                 $totali[] = [$data[0]['prezzo_unitario'] - $data[0]['sconto_unitario'], $data[0]['iva_unitaria']];
 
                 $numero = !empty($data[0]['numero_esterno']) ? $data[0]['numero_esterno'] : $data[0]['numero'];
+
+                // The localized document type can come back empty when the language
+                // row is missing, which left the label without any document word.
+                if (empty($data[0]['tipo_documento'])) {
+                    $data[0]['tipo_documento'] = tr($module);
+                }
 
                 $text = tr('_DOC_ num. _NUM_ del _DATE_', [
                     '_DOC_' => $data[0]['tipo_documento'],

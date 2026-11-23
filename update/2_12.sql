@@ -139,3 +139,22 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 
 -- Ampliamento a 4 decimali nella % delle rate dei pagamenti
 ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(7,4) NOT NULL;
+
+-- Registrazione risorse API per preventivi, contratti e relative righe
+INSERT INTO `zz_api_resources` (`version`, `type`, `resource`, `class`, `enabled`) VALUES
+('v1', 'retrieve', 'preventivi', 'Modules\\Preventivi\\API\\v1\\Preventivi', 1),
+('v1', 'create', 'preventivi', 'Modules\\Preventivi\\API\\v1\\Preventivi', 1),
+('v1', 'update', 'preventivi', 'Modules\\Preventivi\\API\\v1\\Preventivi', 1),
+('v1', 'delete', 'preventivi', 'Modules\\Preventivi\\API\\v1\\Preventivi', 1),
+('v1', 'retrieve', 'righe_preventivo', 'Modules\\Preventivi\\API\\v1\\Righe', 1),
+('v1', 'create', 'righe_preventivo', 'Modules\\Preventivi\\API\\v1\\Righe', 1),
+('v1', 'update', 'righe_preventivo', 'Modules\\Preventivi\\API\\v1\\Righe', 1),
+('v1', 'delete', 'righe_preventivo', 'Modules\\Preventivi\\API\\v1\\Righe', 1),
+('v1', 'retrieve', 'contratti', 'Modules\\Contratti\\API\\v1\\Contratti', 1),
+('v1', 'create', 'contratti', 'Modules\\Contratti\\API\\v1\\Contratti', 1),
+('v1', 'update', 'contratti', 'Modules\\Contratti\\API\\v1\\Contratti', 1),
+('v1', 'delete', 'contratti', 'Modules\\Contratti\\API\\v1\\Contratti', 1),
+('v1', 'retrieve', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1),
+('v1', 'create', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1),
+('v1', 'update', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1),
+('v1', 'delete', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1);

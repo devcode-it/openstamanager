@@ -139,14 +139,3 @@ INSERT INTO `zz_segments_lang` (`id`, `id_lang`, `id_record`, `title`) VALUES
 
 -- Ampliamento a 4 decimali nella % delle rate dei pagamenti
 ALTER TABLE `co_pagamenti` CHANGE `prc` `prc` DECIMAL(7,4) NOT NULL;
-
--- Scadenzario: priorità alla data concordata sulle scadenze
-UPDATE `zz_views` SET `query` = 'IF(data_concordata IS NOT NULL AND data_concordata != ''0000-00-00'', data_concordata, scadenza)'
-WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Data scadenza';
-
--- Colonna "Scadenza giorni": giorni calcolati sulla data effettiva
-UPDATE `zz_views` SET `query` = 'DATEDIFF(IF(data_concordata IS NOT NULL AND data_concordata != ''0000-00-00'', data_concordata, co_scadenzario.scadenza), NOW())'
-WHERE `id_module` = (SELECT `id` FROM `zz_modules` WHERE `name` = 'Scadenzario') AND `name` = 'Scadenza giorni';
-
--- Ordinamento di lista sulla data effettiva
-UPDATE `zz_modules` SET `options` = REPLACE(`options`, '`scadenza` ASC', 'IF(`co_scadenzario`.`data_concordata` IS NOT NULL AND `co_scadenzario`.`data_concordata` != ''0000-00-00'', `co_scadenzario`.`data_concordata`, `co_scadenzario`.`scadenza`) ASC') WHERE `name` = 'Scadenzario';

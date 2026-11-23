@@ -1035,11 +1035,11 @@ if ($fattura->isFE()) {
 
                 if (stored == null) {
                     div.addClass("alert-info").html("'.tr("Il file XML non contiene il nodo ''ImportoTotaleDocumento'': impossibile controllare corrispondenza dei totali").'.")
-                } else if (stored.toLocale() != calculated.toLocale()){
+                } else if (toLocale(stored) != toLocale(calculated)){
                     div.addClass("alert-warning").html("'.tr('Il totale del file XML non corrisponde a quello calcolato dal gestionale: previsto _XML_, calcolato _CALC_ (differenza _DIFF_)', [
-        '_XML_' => '" + stored.toLocale() + " " + globals.currency + "',
-        '_CALC_' => '" + calculated.toLocale() + " " + globals.currency + "',
-        '_DIFF_' => '" + (calculated - stored).toLocale() + " " + globals.currency + "',
+        '_XML_' => '" + toLocale(stored) + " " + globals.currency + "',
+        '_CALC_' => '" + toLocale(calculated) + " " + globals.currency + "',
+        '_DIFF_' => '" + toLocale(calculated - stored) + " " + globals.currency + "',
     ]).'.")
                 }
 

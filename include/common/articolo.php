@@ -186,13 +186,13 @@ $("#id_articolo_add").on("change", function() {
     $("#descrizione_riga").val($data.descrizione);
 
     ottieniDettagliArticolo($data.id).then(function() {
-        if ($("#prezzo_unitario").val().toEnglish() === 0){
+        if (toEnglish($("#prezzo_unitario").val()) === 0){
             aggiornaPrezzoArticolo();
         } else {
             verificaPrezzoArticolo();
         }
 
-        if ($("#sconto").val().toEnglish() === 0){
+        if (toEnglish($("#sconto").val()) === 0){
             aggiornaScontoArticolo();
         } else {
             verificaScontoArticolo();
@@ -460,14 +460,14 @@ function ottieniDettagliArticolo(id_articolo) {
 */
 function verificaPrezzoArticolo() {
     let prezzo_unitario_input = $("#prezzo_unitario");
-    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+    let prezzo_unitario = toEnglish(prezzo_unitario_input.val());
 
     let div = $(".prezzi");
 
     div.css("padding-top", "0");
     div.html("");
 
-    let qta = $("#qta").val().toEnglish();
+    let qta = toEnglish($("#qta").val());
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
     let prezzo_listino = getPrezzoListino(qta);
     let prezzo_std = getPrezzoScheda();
@@ -481,7 +481,7 @@ function verificaPrezzoArticolo() {
     let table = $(".table-prezzi");
 
     if (prezzo_anagrafica) {
-        table.append(`<tr><td class="pr_anagrafica"><small>'.($options['dir'] == 'uscita' ? tr('Prezzo listino') : tr('Netto cliente')).': '.Plugins::link($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Netto Clienti', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_anagrafica"><small>` + prezzo_anagrafica.toLocale() + ` ` + globals.currency + `</small></td>`);
+        table.append(`<tr><td class="pr_anagrafica"><small>'.($options['dir'] == 'uscita' ? tr('Prezzo listino') : tr('Netto cliente')).': '.Plugins::link($options['dir'] == 'uscita' ? 'Listino Fornitori' : 'Netto Clienti', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_anagrafica"><small>` + toLocale(prezzo_anagrafica) + ` ` + globals.currency + `</small></td>`);
 
         let tr = $(".pr_anagrafica").parent();
         if (prezzo_unitario == prezzo_anagrafica.toFixed(2)) {
@@ -493,7 +493,7 @@ function verificaPrezzoArticolo() {
     }
 
     if (prezzo_listino) {
-        table.append(`<tr><td class="pr_listino"><small>'.tr('Prezzo listino').': '.Modules::link('Listini Cliente', $id_listino, tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_listino"><small>` + prezzo_listino.toLocale() + ` ` + globals.currency + `</small></td>`);
+        table.append(`<tr><td class="pr_listino"><small>'.tr('Prezzo listino').': '.Modules::link('Listini Cliente', $id_listino, tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_listino"><small>` + toLocale(prezzo_listino) + ` ` + globals.currency + `</small></td>`);
 
         let tr = $(".pr_listino").parent();
         if (prezzo_unitario == prezzo_listino.toFixed(2)) {
@@ -505,7 +505,7 @@ function verificaPrezzoArticolo() {
     }
 
     if (prezzo_std) {
-        table.append(`<tr><td class="pr_std"><small>'.tr('Prezzo articolo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_std"><small>` + prezzo_std.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
+        table.append(`<tr><td class="pr_std"><small>'.tr('Prezzo articolo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_std"><small>` + toLocale(prezzo_std) + ` ` + globals.currency + `</small></td></tr>`);
 
         let tr = $(".pr_std").parent();
         if (prezzo_unitario == prezzo_std.toFixed(2)) {
@@ -516,7 +516,7 @@ function verificaPrezzoArticolo() {
     }
 
     if (prezzo_last) {
-        table.append(`<tr><td class="pr_last"><small>'.tr('Ultimo prezzo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_last"><small>` + prezzo_last.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
+        table.append(`<tr><td class="pr_last"><small>'.tr('Ultimo prezzo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_last"><small>` + toLocale(prezzo_last) + ` ` + globals.currency + `</small></td></tr>`);
 
         let tr = $(".pr_last").parent();
         if (prezzo_unitario == prezzo_last.toFixed(2)) {
@@ -527,7 +527,7 @@ function verificaPrezzoArticolo() {
     }
 
     if (prezzo_minimo) {
-        table.append(`<tr><td class="pr_minimo"><small>'.tr('Prezzo minimo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_minimo"><small>` + prezzo_minimo.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
+        table.append(`<tr><td class="pr_minimo"><small>'.tr('Prezzo minimo').': '.Modules::link('Articoli', $result['id_articolo'], tr('Visualizza'), null, '').'</small></td><td align="right" class="pr_minimo"><small>` + toLocale(prezzo_minimo) + ` ` + globals.currency + `</small></td></tr>`);
 
         let tr = $(".pr_minimo").parent();
         if (prezzo_unitario == prezzo_minimo.toFixed(2)) {
@@ -542,7 +542,7 @@ function verificaPrezzoArticolo() {
         for (const prezzo_visibile of prezzi_visibili) {
             i++;
             let prezzo_listino_visibile = parseFloat(prezzo_visibile.prezzo_unitario_listino_visibile);
-            table.append(`<tr><td class="pr_visibile_`+ i +`"><small>'.tr('Listino visibile ').'(` + prezzo_visibile.nome + `): </small></td><td align="right" class="pr_visibile_`+ i +`"><small>` + prezzo_listino_visibile.toLocale() + ` ` + globals.currency + `</small></td></tr>`);
+            table.append(`<tr><td class="pr_visibile_`+ i +`"><small>'.tr('Listino visibile ').'(` + prezzo_visibile.nome + `): </small></td><td align="right" class="pr_visibile_`+ i +`"><small>` + toLocale(prezzo_listino_visibile) + ` ` + globals.currency + `</small></td></tr>`);
 
             let tr = $(".pr_visibile_"+ i).parent();
             if (prezzo_unitario == prezzo_listino_visibile.toFixed(2)) {
@@ -563,9 +563,9 @@ function verificaPrezzoArticolo() {
 * Funzione per verificare se lo sconto unitario corrisponde a quello registrato per l\'articolo, e proporre in automatico una correzione.
 */
 function verificaScontoArticolo() {
-    let qta = $("#qta").val().toEnglish();
+    let qta = toEnglish($("#qta").val());
     let prezzo_unitario_input = $("#prezzo_unitario");
-    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+    let prezzo_unitario = toEnglish(prezzo_unitario_input.val());
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
     let prezzo_listino = getPrezzoListino(qta);
     let prezzi_visibili = getPrezziListinoVisibili("", qta);
@@ -586,7 +586,7 @@ function verificaScontoArticolo() {
     }
 
     let sconto_input = $("#sconto");
-    let sconto = sconto_input.val().toEnglish();
+    let sconto = toEnglish(sconto_input.val());
 
     let div = $(".sconto");
     if (sconto_previsto === 0 || sconto_previsto === sconto) {
@@ -597,7 +597,7 @@ function verificaScontoArticolo() {
     }
 
     div.css("margin-top", "-13px");
-    div.html(` <span class="right badge badge-info">'.tr('Sconto suggerito').': ` + sconto_previsto.toLocale()  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
+    div.html(` <span class="right badge badge-info">'.tr('Sconto suggerito').': ` + toLocale(sconto_previsto)  + `%<button type="button" class="btn btn-xs btn-info pull-right" onclick="aggiornaScontoArticolo()"><i class="fa fa-refresh"></i> '.tr('Aggiorna').'</button></small>`);
 }
 
 /**
@@ -605,7 +605,7 @@ function verificaScontoArticolo() {
 */
 function aggiornaPrezzoArticolo(aggiorna = "") {
     let prezzo_previsto = 0;
-    let qta = $("#qta").val().toEnglish();
+    let qta = toEnglish($("#qta").val());
     if (aggiorna == "listino") {
         prezzo_previsto = getPrezzoListino(qta);
     } else if (aggiorna == "anagrafica") {
@@ -640,9 +640,9 @@ function aggiornaPrezzoArticolo(aggiorna = "") {
 * Funzione per aggiornare lo sconto unitario sulla base dei valori automatici.
 */
 function aggiornaScontoArticolo() {
-    let qta = $("#qta").val().toEnglish();
+    let qta = toEnglish($("#qta").val());
     let prezzo_unitario_input = $("#prezzo_unitario");
-    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+    let prezzo_unitario = toEnglish(prezzo_unitario_input.val());
     let prezzo_anagrafica = getPrezzoPerQuantita(qta);
     let prezzo_listino = getPrezzoListino(qta);
     let prezzi_visibili = getPrezziListinoVisibili("", qta);
@@ -676,7 +676,7 @@ function aggiornaScontoArticolo() {
 */
 function aggiornaQtaMinima() {
     let qta_minima = parseFloat($("#qta_minima").val());
-    let qta = $("#qta").val().toEnglish();
+    let qta = toEnglish($("#qta").val());
 
     if (qta_minima === 0) {
         return;
@@ -685,7 +685,7 @@ function aggiornaQtaMinima() {
     let parent = $("#qta").closest("div").parent();
     let div = parent.find("div[id*=errors]");
 
-    div.html("<small>'.tr('Quantità minima').': " + qta_minima.toLocale() + "</small>");
+    div.html("<small>'.tr('Quantità minima').': " + toLocale(qta_minima) + "</small>");
     if (qta < qta_minima) {
         parent.addClass("has-error");
         div.addClass("text-danger").removeClass("text-success");
@@ -697,14 +697,14 @@ function aggiornaQtaMinima() {
 
 function verificaMinimoVendita() {
     let prezzo_unitario_input = $("#prezzo_unitario");
-    let prezzo_unitario = prezzo_unitario_input.val().toEnglish();
+    let prezzo_unitario = toEnglish(prezzo_unitario_input.val());
     let minimo_vendita = parseFloat($("#id_articolo_add").selectData().minimo_vendita);
 
     let div = $(".minimo_vendita");
     div.css("margin-top", "-13px");
     if (prezzo_unitario < minimo_vendita) {
         if (input("blocca_minimo_vendita").get() == "0") {
-            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>valore inferiore al prezzo minimo di vendita ').'` + toLocale(minimo_vendita) + ` ` + globals.currency + `</p>`);
         }
     } else {
         div.html("");
@@ -712,7 +712,7 @@ function verificaMinimoVendita() {
     if (prezzo_unitario <= minimo_vendita) {
         if (input("blocca_minimo_vendita").get() == "1") {
             prezzo_unitario_input.val(minimo_vendita);
-            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + minimo_vendita.toLocale() + ` ` + globals.currency + `</p>`);
+            div.html(`<p class="badge-warning">'.tr('Attenzione:<br>non è possibile inserire un prezzo inferiore al prezzo minimo di vendita ').'` + toLocale(minimo_vendita) + ` ` + globals.currency + `</p>`);
         }
     }
 }

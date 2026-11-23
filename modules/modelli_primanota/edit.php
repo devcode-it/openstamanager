@@ -151,7 +151,7 @@ echo '
         let row = $(this).parent().parent().parent();
 
         if (!$(this).prop("disabled")) {
-            row.find("input[id*=avere]").prop("disabled", $(this).val().toEnglish());
+            row.find("input[id*=avere]").prop("disabled", toEnglish($(this).val()));
         }
     });
 
@@ -159,7 +159,7 @@ echo '
         let row = $(this).parent().parent().parent();
 
         if (!$(this).prop("disabled")) {
-            row.find("input[id*=dare]").prop("disabled", $(this).val().toEnglish());
+            row.find("input[id*=dare]").prop("disabled", toEnglish($(this).val()));
         }
     });
 

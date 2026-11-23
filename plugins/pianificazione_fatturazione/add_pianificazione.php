@@ -263,13 +263,13 @@ echo '
             var riga = JSON.parse($(this).attr("options"));
 
             var imponibile_riga = (riga.totale_imponibile/riga.qta)*qta;
-            imponibile_riga = imponibile_riga.toLocale()+" &euro;";
+            imponibile_riga = toLocale(imponibile_riga)+" &euro;";
 
             var iva_riga = (riga.iva/riga.qta)*qta;
-            iva_riga = iva_riga.toLocale()+" &euro;";
+            iva_riga = toLocale(iva_riga)+" &euro;";
 
             var totale_riga = (riga.totale/riga.qta)*qta;
-            totale_riga = totale_riga.toLocale()+" &euro;";
+            totale_riga = toLocale(totale_riga)+" &euro;";
 
             $("#totali_"+riga.id).html("<p><b>Imponibile</b>: "+imponibile_riga+"</p>\
             <p><b>IVA</b>: "+iva_riga+"</p>\

@@ -1032,7 +1032,7 @@ function impostaContenuto(valore_riga, valore_riferimento, contenuto_successivo,
     valore_riga = parseFloat(valore_riga);
     valore_riferimento = parseFloat(valore_riferimento);
 
-    let contenuto = (parse_riferimento ? valore_riferimento.toLocale() + contenuto_successivo : valore_riferimento + contenuto_successivo);
+    let contenuto = (parse_riferimento ? toLocale(valore_riferimento) + contenuto_successivo : valore_riferimento + contenuto_successivo);
     if (valore_riferimento === valore_riga) {
         contenuto = `<i class="fa fa-check"></i> ` + contenuto;
         elemento.addClass("text-success").removeClass("text-warning");

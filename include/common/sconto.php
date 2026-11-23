@@ -66,15 +66,15 @@ echo '
     var totale = '.($totale_documento ?: 0).';
 
     function aggiorna_sconto_percentuale() {
-        var sconto = sconto_percentuale.val().toEnglish();
+        var sconto = toEnglish(sconto_percentuale.val());
         var unitario = sconto / 100 * totale;
         var msg = sconto >= 0 ? "'.tr('Sconto percentuale').'" : "'.tr('Maggiorazione percentuale').'";
         var div = sconto_percentuale.closest("div").next("div[id*=errors]");
 
-        sconto_unitario.val(unitario.toLocale());
+        sconto_unitario.val(toLocale(unitario));
 
         if (sconto !== 0) {
-            descrizione.val(msg + " " + Math.abs(sconto).toLocale() + "%");
+            descrizione.val(msg + " " + toLocale(Math.abs(sconto)) + "%");
         }
 
         if (sconto > 0) {
@@ -87,7 +87,7 @@ echo '
     }
 
     function aggiorna_sconto_unitario(){
-        var sconto = sconto_unitario.val().toEnglish();
+        var sconto = toEnglish(sconto_unitario.val());
         var msg = sconto >= 0 ? "'.tr('Sconto unitario').'" : "'.tr('Maggiorazione unitaria').'";
         var div = sconto_unitario.closest("div").next("div[id*=errors]");
 

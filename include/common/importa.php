@@ -790,9 +790,9 @@ echo '
             if ((qta_richiesta > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1)) {
                 body.append(`<tr>
             <td>` + scorte[id_articolo]["link"] + `</td>
-            <td class="text-center">` + qta_richiesta.toLocale() + `</td>
-            <td class="text-center">` + qta_scorta.toLocale() + `</td>
-            <td class="text-center text-danger"><strong>` + (qta_richiesta - qta_scorta).toLocale() + `</strong></td>
+            <td class="text-center">` + toLocale(qta_richiesta) + `</td>
+            <td class="text-center">` + toLocale(qta_scorta) + `</td>
+            <td class="text-center text-danger"><strong>` + toLocale(qta_richiesta - qta_scorta) + `</strong></td>
         </tr>`);
             }
         }
@@ -805,18 +805,18 @@ echo '
             if ((qta_rimanente > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) && !richieste[id_articolo]) {
                 body.append(`<tr>
             <td>` + scorte[id_articolo]["link"] + `</td>
-            <td class="text-center">` + qta_rimanente.toLocale() + `</td>
-            <td class="text-center">` + qta_scorta.toLocale() + `</td>
-            <td class="text-center text-danger"><strong>` + (qta_rimanente - qta_scorta).toLocale() + `</strong></td>
+            <td class="text-center">` + toLocale(qta_rimanente) + `</td>
+            <td class="text-center">` + toLocale(qta_scorta) + `</td>
+            <td class="text-center text-danger"><strong>` + toLocale(qta_rimanente - qta_scorta) + `</strong></td>
         </tr>`);
             }
             // Mostra anche se la riga è selezionata ma la qta originale > disponibilità (differenza non evadibile)
             if ((qta_rimanente > qta_scorta) && (scorte[id_articolo]["servizio"] !== 1) && richieste[id_articolo] && richieste[id_articolo] <= qta_scorta) {
                 body.append(`<tr>
             <td>` + scorte[id_articolo]["link"] + `</td>
-            <td class="text-center">` + qta_rimanente.toLocale() + `</td>
-            <td class="text-center">` + qta_scorta.toLocale() + `</td>
-            <td class="text-center text-danger"><strong>` + (qta_rimanente - qta_scorta).toLocale() + `</strong></td>
+            <td class="text-center">` + toLocale(qta_rimanente) + `</td>
+            <td class="text-center">` + toLocale(qta_scorta) + `</td>
+            <td class="text-center text-danger"><strong>` + toLocale(qta_rimanente - qta_scorta) + `</strong></td>
         </tr>`);
             }
         }
@@ -845,7 +845,7 @@ echo '
 
         let prezzo_scontato = prezzo_unitario - sconto;
 
-        let qta = ($("#modals #qta_" + r).val()).toEnglish();
+        let qta = toEnglish($("#modals #qta_" + r).val());
 
         // Se inserisco una quantità da evadere maggiore di quella rimanente, la imposto al massimo possibile
         if (qta > qta_max) {
@@ -866,7 +866,7 @@ echo '
             initSelectInput("#modals #serial_" + r);
         }
 
-        let subtotale = (prezzo_scontato * qta).toLocale();
+        let subtotale = toLocale(prezzo_scontato * qta);
 
         $("#modals #subtotale_" + r).html(subtotale + " " + globals.currency);
 
@@ -879,7 +879,7 @@ echo '
         let totale_qta = 0;
 
         $("#modals input[id*=qta_]").each(function() {
-            let qta = $(this).val().toEnglish();
+            let qta = toEnglish($(this).val());
             let r = $(this).attr("id").replace("qta_", "");
 
             if (!$("#modals #checked_" + r).is(":checked") || isNaN(qta)) {
@@ -901,7 +901,7 @@ echo '
             totale_qta += qta;
         });
 
-        $("#modals #totale").html((totale.toLocale()) + " " + globals.currency);
+        $("#modals #totale").html((toLocale(totale)) + " " + globals.currency);
 
         controllaMagazzino();
     }
@@ -963,7 +963,7 @@ echo '
         let totale_qta = 0;
 
         $("#modals input[name*=qta_ore_]").each(function() {
-            let qta = $(this).val().toEnglish();
+            let qta = toEnglish($(this).val());
             let r = $(this).attr("id").replace("qta_ore_", "");
             
             if (!$("#checked_ore_" + r).is(":checked") || isNaN(qta)) {
@@ -974,6 +974,6 @@ echo '
             totale_qta += qta;
         });
 
-        $("#modals #totale").html(totale_ore.toLocale(2) + " " + globals.currency);
+        $("#modals #totale").html(toLocale(totale_ore) + " " + globals.currency);
     }
 </script>';

@@ -290,7 +290,7 @@ function scorpora_iva_add() {
     if(!percentuale) return;
 
     let input = $("#prezzo_vendita");
-    let prezzo = input.val().toEnglish();
+    let prezzo = toEnglish(input.val());
     let scorporato = prezzo * 100 / (100 + percentuale);
     input.val(scorporato);
 }

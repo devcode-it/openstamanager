@@ -311,10 +311,10 @@ echo '
                 .replace("|misura|", articolo.um)
                 .replace("|misura|", articolo.um)
                 .replace("|descrizione-movimento|", text)
-                .replace("|movimento|", qta_movimento.toLocale())
-                .replace("|rimanente|", qta_rimanente.toLocale())
-                .replace("|prezzo_acquisto|", prezzo_acquisto.toLocale())
-                .replace("|prezzo_vendita|", prezzo_vendita.toLocale())
+                .replace("|movimento|", toLocale(qta_movimento))
+                .replace("|rimanente|", toLocale(qta_rimanente))
+                .replace("|prezzo_acquisto|", toLocale(prezzo_acquisto))
+                .replace("|prezzo_vendita|", toLocale(prezzo_vendita))
                 .replace("|iva_vendita|", iva_vendita);
 
             $("#messages").html(testo);

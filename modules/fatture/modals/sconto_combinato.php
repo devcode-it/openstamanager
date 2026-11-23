@@ -66,7 +66,7 @@ $(document).ready(function() {
                 dataType: "json",
                 success: function(response) {
                     if (response.success) {
-                        sconto_field.val(response.sconto.toLocale());
+                        sconto_field.val(toLocale(response.sconto));
                         $("#sconto_percentuale_combinato").val(prc_combinato);
                         label_sconto.removeClass("hidden");
                         label_sconto.text("'.tr('Sconto combinato').': " + prc_combinato);

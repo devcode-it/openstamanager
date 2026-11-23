@@ -188,7 +188,7 @@ foreach ($rs_stati as $stato) {
                 input("gaddress").set(data[0].display_name);
 
                 var latlng = L.latLng(data[0].lat, data[0].lon);
-                var radius = $("#range").val().toEnglish();
+                var radius = toEnglish($("#range").val());
 
                 L.marker(latlng).addTo(map)
                     .bindPopup("You are here").openPopup();
@@ -231,7 +231,7 @@ foreach ($rs_stati as $stato) {
         if (circle && $("#lat").val() && $("#lng").val()) {
             var lat = $("#lat").val();
             var lng = $("#lng").val();
-            var radius = $("#range").val().toEnglish();
+            var radius = toEnglish($("#range").val());
             var latlng = L.latLng(lat, lng);
 
             map.removeLayer(circle);
@@ -262,7 +262,7 @@ foreach ($rs_stati as $stato) {
         var lng = position.coords.longitude;
 
         var latlng = L.latLng(lat, lng);
-        var radius = $("#range").val().toEnglish();
+        var radius = toEnglish($("#range").val());
 
         if (circle) {
             map.removeLayer(circle);

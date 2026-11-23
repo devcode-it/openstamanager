@@ -100,21 +100,21 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
     <script>
         function aggiorna_guadagno() {
             var prezzi_ivati = input("prezzi_ivati").get();
-            var costo_unitario = $("#costo_unitario").val().toEnglish();
+            var costo_unitario = toEnglish($("#costo_unitario").val());
             var prezzo = 0;
-            var sconto = $("#sconto").val().toEnglish();
+            var sconto = toEnglish($("#sconto").val());
 
             if ($("#modals select[id^=\'tipo_sconto\']").val() === "PRC") {
-                sconto = sconto / 100 * $("#prezzo_unitario").val().toEnglish();
+                sconto = sconto / 100 * toEnglish($("#prezzo_unitario").val());
             }
             if (prezzi_ivati!=0) {
                 percentuale_iva = input("id_iva").getElement().selectData().percentuale;
-                prezzo = ($("#prezzo_unitario").val().toEnglish() / (1 + percentuale_iva / 100)) - (sconto / (1 + percentuale_iva / 100));
+                prezzo = (toEnglish($("#prezzo_unitario").val()) / (1 + percentuale_iva / 100)) - (sconto / (1 + percentuale_iva / 100));
             } else {
-                prezzo = $("#prezzo_unitario").val().toEnglish() - sconto;
+                prezzo = toEnglish($("#prezzo_unitario").val()) - sconto;
             }
             
-            var provvigione = $("#provvigione").val().toEnglish();
+            var provvigione = toEnglish($("#provvigione").val());
             if ($("#modals select[id^=\'tipo_provvigione\']").val() === "PRC") {
                 provvigione = provvigione / 100 * prezzo;
             }
@@ -139,7 +139,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                                 <small>&nbsp;'.tr('Guadagno').':</small>\
                             </td>\
                             <td align=\"right\">\
-                                <small>" + guadagno.toLocale() + "</small>\
+                                <small>" + toLocale(guadagno) + "</small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>" + globals.currency + "</small>\
@@ -150,7 +150,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                                 <small>&nbsp;'.tr('Margine').':</small>\
                             </td>\
                             <td align=\"right\">\
-                                <small>" + margine.toLocale() + "<small>\
+                                <small>" + toLocale(margine) + "<small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>&nbsp;%<small>\
@@ -161,7 +161,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                                 <small>&nbsp;'.tr('Ricarico').':</small>\
                             </td>\
                             <td align=\"right\">\
-                                <small>" + ricarico.toLocale() + "<small>\
+                                <small>" + toLocale(ricarico) + "<small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>&nbsp;%<small>\
@@ -172,7 +172,7 @@ if ($options['dir'] == 'entrata' && empty($options['nascondi_prezzi'])) {
                                 <small>&nbsp;'.tr('Costo medio').':</small>\
                             </td>\
                             <td align=\"right\">\
-                                <small>" + (mediaponderata!=0 ? mediaponderata.toLocale() : "- ") + "</small>\
+                                <small>" + (mediaponderata!=0 ? toLocale(mediaponderata) : "- ") + "</small>\
                             </td>\
                             <td align=\"center\">\
                                 <small>" + globals.currency + "</small>\
@@ -376,7 +376,7 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
         });
 
         function controlla_prezzo() {
-            let prezzo_unitario = $("#prezzo_unitario").val().toEnglish();
+            let prezzo_unitario = toEnglish($("#prezzo_unitario").val());
             let div = $("#prezzo_unitario").closest("div").next("div[id*=errors]");
             if (prezzo_unitario < 0) {
                 if (input("is_nota").get() == true) {
@@ -398,7 +398,7 @@ if (in_array($module->name, ['Fatture di vendita', 'Fatture di acquisto'])) {
         }
 
         function controlla_sconto() {
-            let sconto = $("#sconto").val().toEnglish();
+            let sconto = toEnglish($("#sconto").val());
             let div = $("#sconto").closest("div").next("div[id*=errors]");
             let div_margine = $(".margine");
             let div_prezzi = $(".prezzi");

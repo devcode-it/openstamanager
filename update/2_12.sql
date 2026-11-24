@@ -158,3 +158,8 @@ INSERT INTO `zz_api_resources` (`version`, `type`, `resource`, `class`, `enabled
 ('v1', 'create', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1),
 ('v1', 'update', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1),
 ('v1', 'delete', 'righe_contratto', 'Modules\\Contratti\\API\\v1\\Righe', 1);
+
+-- Aggiunta traduzione task "Pagamento automatico"
+INSERT INTO `zz_tasks_lang` (`id_lang`, `id_record`, `title`) VALUES
+(1, (SELECT `id` FROM `zz_tasks` WHERE `name`='Pagamento automatico'), 'Pagamento automatico'),
+(2, (SELECT `id` FROM `zz_tasks` WHERE `name`='Pagamento automatico'), 'Automatic payment');

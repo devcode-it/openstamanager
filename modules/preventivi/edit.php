@@ -573,9 +573,9 @@ echo '
 
 ?>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i id="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+<button type="button" class="btn btn-danger ask" id="elimina_preventivo" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina preventivo'); ?>
+</button>
 
 <script>
 $("#id_sede_destinazione").change(function(){

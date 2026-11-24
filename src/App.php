@@ -166,7 +166,11 @@ class App
             // Impostazione delle variabili globali
             define('DOCROOT', $docroot);
             define('ROOTDIR', $rootdir);
-            define('BASEURL', $baseurl);
+            
+            // BASEURL può essere predefinito dagli script CLI (es. sincronizzazioni)
+            if (!defined('BASEURL')) {
+                define('BASEURL', $baseurl);
+            }
 
             self::$docroot = $docroot;
             self::$rootdir = $rootdir;

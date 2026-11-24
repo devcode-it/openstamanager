@@ -573,7 +573,7 @@ echo '
 
 ?>
 
-<button type="button" class="btn btn-danger ask" id="elimina_preventivo" data-backto="record-list">
+<button type="button" class="btn btn-danger ask" id="elimina_documento" data-backto="record-list">
     <i class="fa fa-trash"></i> <?php echo tr('Elimina preventivo'); ?>
 </button>
 

@@ -722,7 +722,7 @@ function duplicaRiga(id) {
 
 function aggiornaComandiEliminazione() {
     const righeSelezionate = $("#righe").find(".check").is(":checked");
-    $("#elimina_preventivo").prop("disabled", righeSelezionate);
+    $("#elimina_documento").prop("disabled", righeSelezionate);
     $("#elimina_righe").prop("disabled", !righeSelezionate);
 
     return righeSelezionate;

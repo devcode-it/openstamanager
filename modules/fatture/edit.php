@@ -1231,9 +1231,9 @@ if (in_array($record[$field_name], $user->sedi) || AuthOSM::admin()) {
     $disabilita_eliminazione = in_array($fattura->codice_stato_fe, ['RC', 'MC', 'EC01', 'WAIT']);
 
     echo '
-    <a id ="elimina" class="btn btn-danger ask '.($disabilita_eliminazione ? 'disabled' : '').'" data-backto="record-list" '.($disabilita_eliminazione ? 'disabled' : '').'>
-        <i class="fa fa-trash"></i> '.tr('Elimina').'
-    </a>';
+    <button type="button" id="elimina_documento" class="btn btn-danger ask" data-backto="record-list"'.($disabilita_eliminazione ? ' disabled data-eliminazione-bloccata' : '').'>
+        <i class="fa fa-trash"></i> '.tr('Elimina fattura').'
+    </button>';
 }
 
 echo '

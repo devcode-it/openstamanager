@@ -151,16 +151,16 @@ switch (post('op')) {
             $rinnova = !empty($contratto->data_accettazione) && !empty($contratto->data_conclusione) && $contratto->data_accettazione != '0000-00-00' && $contratto->data_conclusione != '0000-00-00' && $contratto->stato->is_bloccato & $contratto->rinnovabile;
 
             if ($rinnova) {
-                $diff = $contratto->data_conclusione->diffAsCarbonInterval($contratto->data_accettazione);
+                $diff =  abs($contratto->data_conclusione->diffInDays($contratto->data_accettazione));
 
                 $new_contratto = $contratto->replicate();
 
-                $new_contratto->numero = Contratto::getNextNumero($contratto->data_conclusione->copy()->addDays(1), $contratto->id_segment);
+                $new_contratto->data_bozza = Carbon::now();
+                $new_contratto->numero = Contratto::getNextNumero($new_contratto->data_bozza, $contratto->id_segment);
 
                 $new_contratto->id_contratto_prev = $contratto->id;
                 $new_contratto->data_accettazione = $contratto->data_conclusione->copy()->addDays(1);
-                $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->add($diff);
-                $new_contratto->data_bozza = Carbon::now();
+                $new_contratto->data_conclusione = $new_contratto->data_accettazione->copy()->addDays($diff);
 
                 // Disabilita il calcolo automatico della data di conclusione
                 $new_contratto->validita = null;

@@ -1,0 +1,61 @@
+name: Updater registration regression
+
+on:
+  pull_request:
+    paths:
+      - 'src/Update.php'
+      - 'update/create_updates.sql'
+      - 'tests/integration/updater-registration.inc'
+      - '.github/workflows/updater-registration.yml'
+  push:
+    branches:
+      - 'codex/preserve-update-history'
+    paths:
+      - 'src/Update.php'
+      - 'update/create_updates.sql'
+      - 'tests/integration/updater-registration.inc'
+      - '.github/workflows/updater-registration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.5']
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: updater-test
+          MYSQL_DATABASE: osm_updater_lab_ci
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -pupdater-test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql
+          coverage: none
+      - name: Check PHP syntax
+        run: |
+          php -l src/Update.php
+          php -l tests/integration/updater-registration.inc
+      - name: Verify migration registration and recovery
+        env:
+          OSM_TEST_DSN: mysql:host=127.0.0.1;port=${{ job.services.mysql.ports[3306] }};dbname=osm_updater_lab_ci;charset=utf8mb4
+          OSM_TEST_USER: root
+          OSM_TEST_PASSWORD: updater-test
+        run: php tests/integration/updater-registration.inc

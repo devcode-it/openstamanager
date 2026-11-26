@@ -691,9 +691,9 @@ echo '
 </div>';
 ?>
 
-<a class="btn btn-danger ask" data-backto="record-list">
-    <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-</a>
+<button type="button" class="btn btn-danger ask" id="elimina_documento" data-backto="record-list">
+    <i class="fa fa-trash"></i> <?php echo tr('Elimina contratto'); ?>
+</button>
 
 <script type="text/javascript">
 $(document).ready(function() {

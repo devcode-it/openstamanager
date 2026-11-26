@@ -347,8 +347,8 @@ if (sizeof($righe) > 0) {
                 <i class="fa fa-copy"></i> '.tr('Duplica').'
             </button>
     
-            <button type="button" class="btn btn-sm btn-danger disabled" id="elimina_righe" onclick="rimuoviRiga(getSelectData());">
-                <i class="fa fa-trash"></i> '.tr('Elimina').'
+            <button type="button" class="btn btn-sm btn-danger" id="elimina_righe" disabled onclick="rimuoviRiga(getSelectData());">
+                <i class="fa fa-trash"></i> '.tr('Elimina righe').'
             </button>
     
             <button type="button" class="btn btn-sm btn-info disabled" id="confronta_righe" onclick="confrontaRighe(getSelectData());">
@@ -534,27 +534,28 @@ function modificaSeriali(button) {
     openModal("'.tr('Aggiorna SN').'", globals.rootdir + "/modules/fatture/add_serial.php?id_module=" + globals.id_module + "&id_record=" + globals.id_record + "&riga_id=" + id + "&riga_type=" + type);
 }
 
-$(".check").on("change", function() {
-    let checked = 0;
-    $(".check").each(function() {
-        if ($(this).is(":checked")) {
-            checked = 1;
-        }
-    });
+function aggiornaComandiEliminazione() {
+    const righeSelezionate = $("#righe").find(".check").is(":checked");
+    $("#elimina_documento").prop("disabled", righeSelezionate);
+    $("#elimina_righe").prop("disabled", !righeSelezionate);
 
-    if (checked) {
+    return righeSelezionate;
+}
+
+aggiornaComandiEliminazione();
+
+$("#righe").find(".check").on("change", function() {
+    if (aggiornaComandiEliminazione()) {
         // Pulsanti sempre attivi anche se documento bloccato
         $("#copia_righe").removeClass("disabled");
 
         // Pulsanti attivi solo se documento non bloccato';
 if (!$block_edit) {
     echo '
-        $("#elimina_righe").removeClass("disabled");
         $("#duplica_righe").removeClass("disabled");
         $("#confronta_righe").removeClass("disabled");
         $("#aggiorna_righe").removeClass("disabled");
-        $("#modifica_iva_righe").removeClass("disabled");
-        $("#elimina").addClass("disabled");';
+        $("#modifica_iva_righe").removeClass("disabled");';
 }
 echo '
     } else {
@@ -564,26 +565,26 @@ echo '
         // Pulsanti disabilitati solo se documento non bloccato';
 if (!$block_edit) {
     echo '
-        $("#elimina_righe").addClass("disabled");
         $("#duplica_righe").addClass("disabled");
         $("#confronta_righe").addClass("disabled");
         $("#aggiorna_righe").addClass("disabled");
-        $("#modifica_iva_righe").addClass("disabled");
-        $("#elimina").removeClass("disabled");';
+        $("#modifica_iva_righe").addClass("disabled");';
 }
 echo '
     }
 });
 
-$("#check_all").click(function(){
+$("#righe").find("#check_all").click(function(){
+    const righe = $("#righe").find(".check");
+
     if( $(this).is(":checked") ){
-        $(".check").each(function(){
+        righe.each(function(){
             if( !$(this).is(":checked") ){
                 $(this).trigger("click");
             }
         });
     }else{
-        $(".check").each(function(){
+        righe.each(function(){
             if( $(this).is(":checked") ){
                 $(this).trigger("click");
             }

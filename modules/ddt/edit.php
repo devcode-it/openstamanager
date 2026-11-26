@@ -737,9 +737,9 @@ echo '
 $field_name = ($dir == 'entrata') ? 'id_sede_partenza' : 'id_sede_destinazione';
 if (in_array($record[$field_name], $user->sedi) || AuthOSM::admin()) {
     ?>
-    <a class="btn btn-danger ask" data-backto="record-list">
-        <i id ="elimina" class="fa fa-trash"></i> <?php echo tr('Elimina'); ?>
-    </a>
+    <button type="button" class="btn btn-danger ask" id="elimina_documento" data-backto="record-list">
+        <i class="fa fa-trash"></i> <?php echo tr('Elimina DDT'); ?>
+    </button>
 <?php
 }
 

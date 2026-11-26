@@ -21,17 +21,10 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 #### 2.11.3 - 24/11/2026
 
 ##### Problemi noti
-- Corretta gestione scadenze con data concordata in fatturazione elettronica e stampa fattura
-https://github.com/devcode-it/openstamanager/commit/9ba79f397
-
-- Corretta priorità data concordata nello Scadenzario
+- In caso di prima installazione non era possibile installare il gestionale: la procedura si bloccava sulla schermata "Installazione in corso...", nel database venivano scritte soltanto 3 tabelle vuote e non compariva alcun avviso, né a video né nei log.
+La causa era un refuso nella query di aggiornamento 2.11.2 relativa al segmento Scadenzario completo.
 https://github.com/devcode-it/openstamanager/commit/ba4f127d2
 
-- Corretto refuso in query di aggiornamento 2.11.2 del segmento Scadenzario completo
-https://github.com/devcode-it/openstamanager/commit/ba4f127d2
-
-- Corretto gulpfile con rimozione dump superflui per creare file install.sql 
-https://github.com/devcode-it/openstamanager/commit/bebe05b54
 
 
 #### 2.11.2 - 13/11/2026

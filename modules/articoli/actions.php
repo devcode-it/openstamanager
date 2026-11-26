@@ -356,6 +356,12 @@ switch (post('op')) {
 
         // Generazione seriali in sequenza
     case 'generate_serials':
+        // Blocco se il serial è disabilitato per l'articolo
+        if (empty($articolo->abilita_serial)) {
+            flash()->error(tr('Serial number disabilitato per questo articolo!'));
+
+            break;
+        }
         // Seriali
         $serial_start = post('serial_start');
         $serial_end = post('serial_end');
@@ -384,6 +390,13 @@ switch (post('op')) {
 
         // no break
     case 'add_serials':
+        // Blocco se il serial è disabilitato per l'articolo
+        if (empty($articolo->abilita_serial)) {
+            flash()->error(tr('Serial number disabilitato per questo articolo!'));
+
+            break;
+        }
+        // Seriali
         $serials = $serials ?: filter('serials');
 
         $count = $dbo->attach('mg_prodotti', ['id_articolo' => $id_record, 'dir' => 'uscita'], ['serial' => $serials]);

@@ -20,6 +20,8 @@
 
 include_once __DIR__.'/../../../core.php';
 
+// Valore reale del flag prima della forzatura per articoli con seriali esistenti
+$abilita_serial_reale = !empty($record['abilita_serial']);
 $record['abilita_serial'] = ($record['serial'] > 0) ? 1 : $record['abilita_serial'];
 if (empty($record['abilita_serial'])) {
     echo '
@@ -487,6 +489,12 @@ $(document).ready(function() {
 });
 
 function addSerial(form_id, numero) {
+    // Blocco la generazione/inserimento se i seriali sono disabilitati per l\'articolo
+    if ('.($abilita_serial_reale ? 'false' : 'true').') {
+        Swal.fire("'.tr('Errore').'", "'.tr('Serial number disabilitato per questo articolo!').'", "error");
+        return;
+    }
+
     if (numero > 0){
         Swal.fire({
             title: "'.tr('Nuovi seriali').'",

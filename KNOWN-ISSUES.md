@@ -25,8 +25,11 @@ Le problematiche sono organizzate per versione di release in ordine cronologico 
 La causa era un refuso nella query di aggiornamento 2.11.2 relativa al segmento Scadenzario completo.
 https://github.com/devcode-it/openstamanager/commit/ba4f127d2
 
+- Quando venivano aggiunte più rate di scadenza per le fatture compilando solo il campo 'data concordata', la generazione della FE non considerava tali scadenze, usando un valore non valido gg/mm/-0001 portando al conseguente scarto della fattura 
+https://github.com/devcode-it/openstamanager/commit/9ba79f397
 
 
+---
 #### 2.11.2 - 13/11/2026
 
 ##### Problemi noti

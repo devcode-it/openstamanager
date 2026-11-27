@@ -74,8 +74,9 @@ class Zip
      * @param array|string $source
      * @param string       $destination
      * @param array        $ignores
+     * @param string|null  $password eventuale password per proteggere l'archivio con AES-256
      */
-    public static function create($source, $destination, $ignores = [])
+    public static function create($source, $destination, $ignores = [], $password = null)
     {
         if (!directory(dirname($destination))) {
             return false;
@@ -85,6 +86,11 @@ class Zip
 
         $result = $zip->open($destination, \ZipArchive::CREATE);
         if ($result === true && is_writable(dirname($destination))) {
+            $encrypted = !empty($password) && method_exists($zip, 'setEncryptionIndex');
+            if ($encrypted) {
+                $zip->setPassword($password);
+            }
+
             $finder = Finder::create()
                 ->files()
                 ->exclude((array) ($ignores['dirs'] ?? []))
@@ -107,6 +113,11 @@ class Zip
                     // Verifica se il file è accessibile prima di aggiungerlo
                     if (is_readable($file->getRealPath())) {
                         $zip->addFile($file, $file->getRelativePathname());
+
+                        // Cripta la voce appena aggiunta con AES-256, senza caricare il contenuto in memoria
+                        if ($encrypted) {
+                            $zip->setEncryptionIndex($zip->numFiles - 1, \ZipArchive::EM_AES_256, $password);
+                        }
                     }
                 } catch (\Exception $e) {
                     // Log dell'errore ma continua con gli altri file

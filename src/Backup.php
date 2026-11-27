@@ -238,63 +238,12 @@ class Backup
             // Verifica se è impostata una password per il backup
             $password = setting('Password di protezione backup');
 
-            // Se è impostata una password e ZipArchive è disponibile, crea un backup protetto da password
-            if (!empty($password) && class_exists('ZipArchive')) {
-                // Crea un percorso temporaneo per il backup
-                $temp_path = $backup_path.'.tmp';
-
-                // Crea prima un backup normale
-                $result = Zip::create([
-                    base_dir(),
-                    self::getDatabaseDirectory(),
-                ], $temp_path, $ignores);
-
-                if ($result) {
-                    // Crea un nuovo ZIP protetto da password
-                    $zip = new ZipArchive();
-                    if ($zip->open($backup_path, ZipArchive::CREATE) === true) {
-                        // Apri il file ZIP originale in lettura
-                        $original_zip = new ZipArchive();
-                        if ($original_zip->open($temp_path) === true) {
-                            // Imposta la password per il nuovo ZIP
-                            $zip->setPassword($password);
-
-                            // Copia tutti i file dal backup originale al nuovo backup protetto da password
-                            for ($i = 0; $i < $original_zip->numFiles; ++$i) {
-                                $stat = $original_zip->statIndex($i);
-                                $file_content = $original_zip->getFromIndex($i);
-
-                                // Aggiungi il file al nuovo ZIP
-                                $zip->addFromString($stat['name'], $file_content);
-
-                                // Cripta il file con AES-256
-                                $zip->setEncryptionIndex($i, ZipArchive::EM_AES_256, $password);
-                            }
-
-                            // Chiudi i file ZIP
-                            $original_zip->close();
-                            $zip->close();
-
-                            // Rimuovi il file temporaneo
-                            unlink($temp_path);
-                        } else {
-                            // Fallback al metodo normale
-                            $zip->close();
-                            unlink($backup_path);
-                            rename($temp_path, $backup_path);
-                        }
-                    } else {
-                        // Fallback al metodo normale
-                        rename($temp_path, $backup_path);
-                    }
-                }
-            } else {
-                // Crea un backup normale senza password
-                $result = Zip::create([
-                    base_dir(),
-                    self::getDatabaseDirectory(),
-                ], $backup_path, $ignores);
-            }
+            // Crea un backup normale; se è impostata una password, l'archivio viene protetto
+            // con AES-256 direttamente in fase di creazione, senza caricare i file in memoria
+            $result = Zip::create([
+                base_dir(),
+                self::getDatabaseDirectory(),
+            ], $backup_path, $ignores, $password);
         }
         // Creazione backup attraverso la copia dei file
         else {
